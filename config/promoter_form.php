@@ -1,0 +1,170 @@
+<?php
+
+return [
+
+     [
+        [
+            'label'         => 'Branch',
+            'name'          => 'branch',
+            'id'            => 'branchDropdown',
+            'type'          => 'select',
+            'required'      => true,
+            'dynamic'       => true,
+            'options_key'   => 'branches',
+        ],
+        [
+            'label'         => 'Enrollment Date',
+            'name'          => 'enrollment_date',
+            'id'            => 'date2',
+            'type'          => 'date',
+            'required'      => true,
+        ],
+    ],
+
+    'promoter_info' => [
+        [
+            'label'         => 'Title',
+            'name'          => 'title',
+            'id'            => 'title',
+            'type'          => 'radio',
+            'required'      => true,
+            'options'       => ['MD'=>'MD','Mr'=>'Mr','Ms'=>'Ms','Mrs'=>'Mrs'],
+        ],
+        [
+            'label'         => 'Gender',
+            'name'          => 'gender',
+            'id'            => 'gender',
+            'type'          => 'radio',
+            'required'      => true,
+            'options'       => ['Male'=>'Male','Female'=>'Female','Other'=>'Other'],
+        ],
+        [
+            'label'         => 'First Name',
+            'name'          => 'first_name',
+            'id'            => 'first_name',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Middle Name',
+            'name'          => 'middle_name',
+            'id'            => 'middle_name',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Last Name',
+            'name'          => 'lastname',
+            'id'            => 'lastname',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Date of Birth',
+            'name'          => 'dob',
+            'id'            => 'date',
+            'type'          => 'date',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Occupation',
+            'name'          => 'occupation',
+            'id'            => 'occupation',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Father Name',
+            'name'          => 'father_name',
+            'id'            => 'father_name',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Mother Name',
+            'name'          => 'mother_name',
+            'id'            => 'mother_name',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+        [
+            'label'         => 'Marital Status',
+            'name'          => 'mariatal_status',
+            'id'            => 'mariatal_status',
+            'type'          => 'select',
+            'required'      => false,
+            'dynamic'       => true,
+            'options_key'   => 'marital_statuses',
+        ],
+        [
+            'label'         => 'Member Religion',
+            'name'          => 'member_religion',
+            'id'            => 'member_religion',
+            'type'          => 'select',
+            'required'      => false,
+            'dynamic'       => true,
+            'options_key'   => 'religions',
+        ],
+        [
+            'label'         => 'Spouse Name',
+            'name'          => 'spouse',
+            'id'            => 'spouse',
+            'type'          => 'text',
+            'required'      => false,
+        ],
+        [
+            'label'         => 'Landline No.',
+            'name'          => 'landline_no',
+            'id'            => 'landline_no',
+            'type'          => 'text',
+            'required'      => false,
+        ],
+        [
+            'label'         => 'Email',
+            'name'          => 'email',
+            'id'            => 'email',
+            'type'          => 'email',
+            'required'      => false,
+        ],
+        [
+            'label'         => 'Mobile No.',
+            'name'          => 'mobile_no',
+            'id'            => 'mobile_no',
+            'type'          => 'text',
+            'required'      => true,
+        ],
+    ],
+
+    'kyc' => [
+        ['label'=>'Aadhaar No.','name'=>'aadhaar_no','id'=>'aadhaar_no','type'=>'text','required'=>false],
+        ['label'=>'Voter ID No.','name'=>'voter_no','id'=>'voter_no','type'=>'text','required'=>false],
+        ['label'=>'PAN No.','name'=>'pan_no','id'=>'pan_no','type'=>'text','required'=>false],
+        ['label'=>'Ration Card No.','name'=>'ration_no','id'=>'ration_no','type'=>'text','required'=>false],
+        ['label'=>'Meter No.','name'=>'meter_no','id'=>'meter_no','type'=>'text','required'=>false],
+        ['label'=>'CI No.','name'=>'ci_no','id'=>'ci_no','type'=>'text','required'=>false],
+        ['label'=>'CI Relation','name'=>'ci_relation','id'=>'ci_relation','type'=>'text','required'=>false],
+        ['label'=>'DL No.','name'=>'dl_no','id'=>'dl_no','type'=>'text','required'=>false],
+    ],
+
+    'nominee_info' => [
+        ['label'=>'Nominee Name','name'=>'nomine_name','id'=>'nomine_name','type'=>'text','required'=>false],
+        ['label'=>'Nominee Relation','name'=>'nomine_relation','id'=>'nomine_relation','type'=>'text','required'=>false],
+        ['label'=>'Nominee Mobile','name'=>'nomine_mobile','id'=>'nomine_mobile','type'=>'text','required'=>false],
+        ['label'=>'Nominee Aadhar No.','name'=>'nomine_aadhar','id'=>'nomine_aadhar','type'=>'text','required'=>false],
+        ['label'=>'Nominee Voter ID No.','name'=>'nomine_voter','id'=>'nomine_voter','type'=>'text','required'=>false],
+        ['label'=>'Nominee PAN No.','name'=>'nomine_pan','id'=>'nomine_pan','type'=>'text','required'=>false],
+        ['label'=>'Nominee Address','name'=>'nomine_address','id'=>'nomine_address','type'=>'text','required'=>false],
+    ],
+
+    'extra_settings' => [
+        [
+            'label'         => 'SMS',
+            'name'          => 'sms',
+            'id'            => 'sms',
+            'type'          => 'checkbox',
+            'required'      => false,
+            'default'       => 0,
+        ],
+    ],
+
+];

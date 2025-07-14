@@ -1,0 +1,190 @@
+<?php
+return [
+
+    'company_identity' => [
+        'heading' => 'Company Identity',
+        'fields' => [
+            [
+                'label' => 'Company Website',
+                'name' => 'company_website',
+                'id' => 'company_website',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Company Name',
+                'name' => 'company_name',
+                'id' => 'company_name',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'Short Name',
+                'name' => 'short_name',
+                'id' => 'short_name',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'About Company',
+                'name' => 'about_company',
+                'id' => 'about_company',
+                'type' => 'textarea',
+                'required' => false,
+            ],
+            [
+                'label' => 'Company Category',
+                'name' => 'company_category',
+                'id' => 'company_category',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Company Class',
+                'name' => 'company_class',
+                'id' => 'company_class',
+                'type' => 'text',
+                'required' => false,
+            ],
+        ],
+    ],
+
+    'registered_office' => [
+        'heading' => 'Registered Office Details',
+        'fields' => [
+            [
+                'label' => 'Reg. Office Address Line 1',
+                'name' => 'address_line1',
+                'id' => 'address_line1',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'Reg. Office Address Line 2',
+                'name' => 'address_line2',
+                'id' => 'address_line2',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'City',
+                'name' => 'city',
+                'id' => 'city',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'State',
+                'name' => 'state',
+                'id' => 'state',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'Pincode',
+                'name' => 'pincode',
+                'id' => 'pincode',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'Country',
+                'name' => 'country',
+                'id' => 'country',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'Mobile No',
+                'name' => 'mobile_no',
+                'id' => 'mobile_no',
+                'type' => 'text',
+                'required' => true,
+            ],
+            [
+                'label' => 'Landline No',
+                'name' => 'landline_no',
+                'id' => 'landline_no',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Contact Email',
+                'name' => 'contact_email',
+                'id' => 'contact_email',
+                'type' => 'email',
+                'required' => false,
+            ],
+        ],
+    ],
+
+    'legal_info' => [
+        'heading' => 'Legal & Incorporation Details',
+        'fields' => [
+            [
+                'label' => 'CIN No.',
+                'name' => 'cin_no',
+                'id' => 'cin_no',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'PAN No.',
+                'name' => 'pan_no',
+                'id' => 'pan_no',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'TAN No.',
+                'name' => 'tan_no',
+                'id' => 'tan_no',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'GST No.',
+                'name' => 'gst_no',
+                'id' => 'gst_no',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Incorporation Date',
+                'name' => 'incorporation_date',
+                'id' => 'incorporation_date',
+                'type' => 'date',
+                'required' => false,
+            ],
+            [
+                'label' => 'Incorporation State',
+                'name' => 'incorporation_state',
+                'id' => 'incorporation_state',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Incorporation Country',
+                'name' => 'incorporation_country',
+                'id' => 'incorporation_country',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Authorized Capital',
+                'name' => 'authorized_capital',
+                'id' => 'authorized_capital',
+                'type' => 'number',
+                'required' => false,
+            ],
+            [
+                'label' => 'Paid Up Capital',
+                'name' => 'paid_up_capital',
+                'id' => 'paid_up_capital',
+                'type' => 'number',
+                'required' => false,
+            ],
+        ],
+    ],
+
+];
