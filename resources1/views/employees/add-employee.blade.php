@@ -1,0 +1,355 @@
+@extends('layout.main')
+
+@section('content')
+<div class="main-inner">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+        <h3 class="h2">New Employee</h3>
+    </div>
+    @if (session('success'))
+    <div id="success-alert"
+        style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+        <strong>Success:</strong> {{ session('success') }}
+        <span onclick="document.getElementById('success-alert').style.display='none';"
+            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
+    </div>
+    @endif
+
+    @if (session('error'))
+    <div id="error-alert"
+        style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+        <strong>Error:</strong> {{ session('error') }}
+        <span onclick="document.getElementById('error-alert').style.display='none';"
+            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
+    </div>
+    @endif
+
+    <div class="box mb-4 xxxl:mb-6">
+        <form id="companyForm" action="" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+            @csrf
+            <div class="col-span-2 md:col-span-1">
+                <label for="member" class="md:text-lg font-medium block mb-4">Link Member Profile
+                    <!-- <select name="member" id="memberDropdown"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        <option value="">Select Member</option>
+                    </select> -->
+
+                    <select name="member" id="memberDropdown"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        <option value="">Select Member</option>
+
+                        <optgroup label="Promoters">
+                            @foreach($promoters as $promoter)
+                            <option value="promoter_{{ $promoter->id }}">{{ $promoter->name }}</option>
+                            @endforeach
+                        </optgroup>
+
+                        <optgroup label="Members">
+                            @foreach($members as $member)
+                            <option value="member_{{ $member->id }}">{{ $member->name }}</option>
+                            @endforeach
+                        </optgroup>
+                    </select>
+                    @error('member')
+                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="branch" class="md:text-lg font-medium block mb-4">Branch</label>
+                <select name="branch" id="branchDropdown"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select</option>
+                </select>
+                @error('branch')
+                <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="joining_date" class="md:text-lg font-medium block mb-4">Joining Date<span
+                        class="text-red-500">*</span></label>
+                <div class="relative bg-secondary/5 rounded-10 py-3 dark:bg-bg3 border border-n30 dark:border-n500">
+                    <input name="joining_date" id="date2" class="border-none" placeholder="DD/MM/YYYY" value="{{ old('joining_date') }}"
+                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" autocomplete="off" />
+                    <i
+                        class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i>
+                </div>
+                @error('joining_date')
+                <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="rate" class="md:text-lg font-medium block mb-4">
+                    Gender<span class="text-red-500">*</span>
+                </label>
+
+                <label>
+                    <input type="radio" name="male" value="male"
+                        {{ old('male') == 'male' ? 'checked' : '' }}>
+                    Male
+                </label>
+
+                <label>
+                    <input type="radio" name="female" value="female"
+                        {{ old('female', 'female') == 'female' ? 'checked' : '' }}>
+                    Female
+                </label>
+
+                @error('gender')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="dob" class="md:text-lg font-medium block mb-4">Date of Birth<span
+                        class="text-red-500">*</span></label>
+                <div class="relative bg-secondary/5 py-3 dark:bg-bg3 rounded-10 border border-n30 dark:border-n500">
+                    <input name="dob" id="date" class="border-none" placeholder="DD/MM/YYYY" value="{{ old('dob') }}"
+                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" autocomplete="off" />
+                    <i
+                        class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i>
+                </div>
+                @error('dob')
+                <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="email" class="md:text-lg font-medium block mb-4">Email</span></label>
+                <input type="text" name="email" value="{{ old('email') }}" id="email"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    placeholder="Enter Email" value="">
+                @error('email')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="mobile_no" class="md:text-lg font-medium block mb-4">Mobile No.<span
+                        class="text-red-500">*</span></label>
+                <input type="text" name="mobile_no" id="mobile_no" value="{{ old('mobile_no') }}"
+                    placeholder="Enter Mobile No."
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="">
+                @error('mobile_no')
+                <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="address" class="md:text-lg font-medium block mb-4">Address<span class="text-red-500">*</span></label>
+                <input type="text" name="address" id="address" placeholder="Enter Address"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('address')}}">
+                @error('address')
+                <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="father_name" class="md:text-lg font-medium block mb-4">Father Name</label>
+                <input type="text" name="father_name" id="father_name" placeholder="Enter Father Name"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('father_name')}}">
+                @error('father_name')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="pan_no" class="md:text-lg font-medium block mb-4">PAN No.</label>
+                <input type="text" name="pan_no" id="pan_no" placeholder="Enter PAN No"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('pan_no')}}">
+                @error('pan_no')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="aadhar_no" class="md:text-lg font-medium block mb-4">Aadhaar No.</label>
+                <input type="text" name="aadhar_no" id="aadhar_no" placeholder="Enter Aadhar No"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('aadhar_no')}}">
+                @error('aadhar_no')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="blood_group" class="md:text-lg font-medium block mb-4">Blood Group</label>
+                <select name="blood_group" id="bloodGroupDropdown"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select Blood Group</option>
+                </select>
+                @error('blood_group')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="monthly_salary" class="md:text-lg font-medium block mb-4">Monthly Salary</label>
+                <input type="number" name="monthly_salary" id="monthly_salary" placeholder="Enter Monthly Salary"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('monthly_salary')}}">
+                @error('monthly_salary')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="location" class="md:text-lg font-medium block mb-4">Location</label>
+                <input type="text" name="location" id="location" placeholder="Enter Location"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('location')}}">
+                @error('location')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <h4>Bank Info</h4>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="account_holder" class="md:text-lg font-medium block mb-4">Bank A/c Holder's Name</label>
+                <input type="text" name="account_holder" id="account_holder" placeholder="Enter Account Holder"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('account_holder')}}">
+                @error('account_holder')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="bank_name" class="md:text-lg font-medium block mb-4">Bank Name</label>
+                <select name="bank_name" id="bankDropdown"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border rounded-10 border-n30 dark:border-n500 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select Bank</option>
+                </select>
+                @error('bank_name')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="account_no" class="md:text-lg font-medium block mb-4">Bank Account No</label>
+                <input type="number" name="account_no" id="account_holder" placeholder="Enter Bank A/C No"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('account_no')}}">
+                @error('account_no')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="ifsc" class="md:text-lg font-medium block mb-4">Bank IFSC</label>
+                <input type="text" name="ifsc" id="ifsc" placeholder="Enter IFSC Code"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('ifsc')}}">
+                @error('ifsc')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <h4>Nominee Info</h4>
+            <div class="col-span-2 md:col-span-1">
+                <label for="nominee_name" class="md:text-lg font-medium block mb-4">Nominee Name</label>
+                <input type="text" name="nominee_name" id="nominee_name" placeholder="Enter Nominee Name"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('nominee_name')}}">
+                @error('nominee_name')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="nominee_relation" class="md:text-lg font-medium block mb-4">Nominee Relation</label>
+                <select name="nominee_relation" id="nomineeDropdown"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 rounded-10 border border-n30 dark:border-n500 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select Relation</option>
+                </select>
+                @error('nominee_relation')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="nominee_address" class="md:text-lg font-medium block mb-4">Nominee Address</label>
+                <input type="text" name="nominee_address" id="nominee_address" placeholder="Enter Nominee Address"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{old('nominee_address')}}">
+                @error('nominee_address')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <br>
+            <h4>Link With Software Accounting</h4><br>
+            <div class="col-span-2 md:col-span-1">
+                <label for="nominee_address" class="md:text-lg font-medium block mb-4">Auto Generate Payable Ledger</label>
+                <input type="checkbox" name="auto_generate" id="auto_generate_checkbox"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="true" style="height: 17px; width: 17px; margin: 0px; margin-top: -2px; vertical-align: middle;">
+                <span class="ft-600 co-red" id="ledger_note" style="color: red;">( Check this for auto generate )</span>
+                @error('nominee_address')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label for="payable_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Payable Ledger</label>
+                <select name="payable_ledger" id="payableDropdown"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select Member</option>
+                </select>
+                @error('payable_ledger')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+                <label for="expense_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Expense Ledger</label>
+                <select name="expense_ledger" id="expenseDropdown"
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select Accountine Expense Ledger</option>
+                </select>
+                @error('expense_ledger')
+                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                @enderror
+            </div>
+    </div>
+
+    <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
+        <button class="btn-primary" type="submit">
+            Save Employee
+        </button>
+        <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+            Reset
+        </button>
+    </div>
+    </form>
+</div>
+</div>
+@endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    setTimeout(function() {
+        var successAlert = document.getElementById('success-alert');
+        var errorAlert = document.getElementById('error-alert');
+        if (successAlert) successAlert.style.display = 'none';
+        if (errorAlert) errorAlert.style.display = 'none';
+    }, 5000);
+</script>
+
+<!-- <script>
+    $(document).ready(function() {
+        const oldBranchId = $('#oldState').val();
+        $.ajax({
+            url: "{{ url('/GetBranches') }}",
+            type: "GET",
+            success: function(response) {
+                $('#branchDropdown').append('<option value="">Select Branch</option>');
+                $.each(response, function(key, branch) {
+                    let selected = (branch.id == oldBranchId) ? 'selected' : '';
+                    $('#branchDropdown').append(`<option value="${branch.id}" ${selected}>${branch.branch_name}</option>`);
+                });
+            },
+            error: function() {
+                alert('Failed to fetch branches.');
+            }
+        });
+    });
+</script> -->
