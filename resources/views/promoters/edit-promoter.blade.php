@@ -122,6 +122,7 @@
             <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
                 <h3 class="h2">Promoter's Info</h3>
             </div> <br>
+            
             <div class="flex items-start gap-4">
                 <label for="title" class="w-48 text-sm font-medium">Title<span class="text-red-500">*</span></label>
                 <div class="w-full">

@@ -177,7 +177,20 @@ class MemberController extends Controller
      */
     public function show(string $id)
     {
-        return view('member.show');
+        $dynamicOptions = [
+            'states' =>State::pluck('name', 'id'),
+            'branch' => Branch::pluck('branch_name', 'id')
+        ];
+        $memberModel = Member::with('address', 'kyc')->findOrFail($id);
+        $member = array_merge(
+            $memberModel->toArray(),
+            $memberModel->address?->toArray() ?? [],
+            $memberModel->kyc?->toArray() ?? []
+        );
+
+        $sections = config('member_form');
+        $show = true;
+        return view('member.create', compact('sections', 'member', 'show', 'dynamicOptions'));
     }
 
     /**

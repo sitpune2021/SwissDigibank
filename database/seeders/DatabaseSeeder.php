@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         //     'password'=>'123456',
         //     'role_id'=>1
         // ]);
+        $this->call(MenuSeeder::class);
         $this->call(RolePermissionSeeder::class);
     }
 }
