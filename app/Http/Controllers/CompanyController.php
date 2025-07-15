@@ -83,7 +83,8 @@ class CompanyController extends Controller
                 'authorized_capital.numeric' => 'Authorized capital must be a number.',
                 'paid_up_capital.numeric' => 'Paid up capital must be a number.',
             ]);
-            
+
+
             $user = new User();
             $user->name = $request->company_name;
             $user->fname = $request->company_name;

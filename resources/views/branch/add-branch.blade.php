@@ -82,6 +82,7 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter {{ strtolower($label) }}" />
                         @endif
+
                         @error($name)
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                         @enderror

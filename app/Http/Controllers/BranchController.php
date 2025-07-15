@@ -58,29 +58,7 @@ class BranchController extends Controller
                 'gst_no' => 'nullable|string|max:30',
                 'disable_recharge' => 'required|in:yes,no',
                 'disable_neft' => 'required|in:yes,no',
-            ],
-            [
-                'branch_name.required' => 'Branch Name Is Required',
-                'branch_name.string' => 'Branch Name should be string',
-                'branch_code.required' => 'Branch Code is required.',
-                'branch_code.unique' => 'Branch Code already exists.',
-                'open_date.required' => 'Open Date is required.',
-                'open_date.date' => 'Please enter a valid date.',
-                'address_line1.required' => 'Address Line 1 is required.',
-                'city.required' => 'City is required.',
-                'state.required' => 'State is required.',
-                'pincode.required' => 'Pincode is required.',
-                'pincode.numeric' => 'Pincode must be a number.',
-                'country.required' => 'Country is required.',
-                'contact_email.required' => 'Email is required.',
-                'contact_email.email' => 'Please enter a valid email address.',
-                'mobile_no.nullable' => 'Contact Number is required.',
-                'disable_recharge.required' => 'Please select Yes or No for Disable Recharge/Bill Payment Service.',
-                'disable_recharge.in' => 'Invalid option for Disable Recharge.',
-                'disable_neft.required' => 'Please select Yes or No for Disable NEFT/IMPS/WITHIN Transfer Service.',
-                'disable_neft.in' => 'Invalid option for Disable NEFT.',
-            ]
-        );
+            ]        );
 
         try {
             Branch::create([
@@ -94,7 +72,7 @@ class BranchController extends Controller
                 'state' => $request->state,
                 'pincode' => $request->pincode,
                 'country' => $request->country,
-                'email id' => $request->contact_email,
+                'contact_email' => $request->contact_email,
                 'mobile_no' => $request->mobile_no,
                 'landline_no' => $request->landline_no,
                 'gst_no' => $request->gst_no,

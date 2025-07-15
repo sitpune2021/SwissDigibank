@@ -22,11 +22,11 @@
     <div class="relative min-h-screen bg-secondary/5 dark:bg-bg3">
         <img src="{{ asset('assets/images/ellipse1.png') }}" class="absolute top-16 md:top-5 ltr:right-10 rtl:left-10"
             alt="ellipse" />
-        <img src="{{ asset('assets/images/ellipse2.png') }}"
+        <img src="{{ asset('assets/images/ellipse1.png') }}"
             class="absolute bottom-6 ltr:left-0 rtl:right-0 ltr:sm:left-32 rtl:sm:right-32" alt="ellipse" />
         <a href="{{ route('index1') }}">
-            <img src="{{ asset('assets/images/logo-with-text.png') }}" alt="logo"
-                class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" />
+            <img src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
+                class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" width="300" />
         </a>
         <!-- <div class="flex items-center justify-center mt-7">
             <div class="relative z-[2] max-w-[1416px] mx-auto px-3 pb-10"> -->

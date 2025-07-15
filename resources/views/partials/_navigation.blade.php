@@ -4,7 +4,7 @@
     id="topbar">
     <div class="topbar-inner flex items-center justify-between">
       <div class="flex grow items-center gap-4 xxl:gap-6">
-        <a href="{{ route('index1') }}" class="topbar-logo hidden shrink-0">
+        <a href="{{ route('dashboard.index1') }}" class="topbar-logo hidden shrink-0">
           <img width="174" height="38" src="../images/logo-with-text.png" alt="logo"
             class="logo-full2 hidden lg:block" />
         </a>

@@ -206,13 +206,13 @@
                                     <a href="{{ route('member.show', $item->id) }}"
                                         class="text-blue-600 hover:underline">View</a> |
                                     <a href="{{ route('member.edit', $item->id) }}"
-                                        class="text-yellow-600 hover:underline">Edit</a> 
-                                    {{-- <form action="{{ route('member.destroy', $item->id) }}" method="POST"
+                                        class="text-yellow-600 hover:underline">Edit</a> |
+                                    <form action="{{ route('member.destroy', $item->id) }}" method="POST"
                                         class="inline-block" onsubmit="return confirm('Are you sure?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:underline">Delete</button>
-                                    </form> --}}
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach

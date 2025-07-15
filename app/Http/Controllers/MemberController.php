@@ -169,7 +169,7 @@ class MemberController extends Controller
         $member = Member::create($memberData);
         $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
         $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
-        return redirect()->route('members.index')->with('success', 'Member created successfully.');
+        return redirect()->route('member.index')->with('success', 'Member created successfully.');
     }
 
     /**

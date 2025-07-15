@@ -12,10 +12,7 @@ class PromotorController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->input('perPage', 10);
-
         $query = Promotor::query();
-
         if ($request->has('search')) {
             $search = $request->input('search');
 
@@ -27,7 +24,7 @@ class PromotorController extends Controller
             });
         }
 
-          $promotors = $query->orderBy('created_at', 'desc')->paginate($perPage)->appends($request->all());
+        $promotors = $query->orderBy('created_at', 'desc')->paginate(10);
 
         foreach ($promotors as $promotor) {
             if ($promotor->date_of_birth) {
@@ -280,5 +277,11 @@ class PromotorController extends Controller
     {
         $religions = Religion::all();
         return response()->json($religions);
+    }
+
+     public function getPromoters()
+    {
+        $promoters = Promotor::all();
+        return response()->json($promoters);
     }
 }

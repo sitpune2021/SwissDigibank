@@ -18,6 +18,24 @@ return [
             ['title' => 'Director', 'route' => 'director.index'],
         ],
     ],
+     [
+        'title' => 'User Management',
+        'icon' => 'las la-user',
+        'submenu' => [
+            ['title' => 'Permissions / Roles', 'route' => 'CreateRole'],
+            ['title' => 'Users', 'route' => 'ManageUser'],
+        ],
+
+    ],
+
+      [
+        'title' => 'User Management',
+        'icon' => 'las la-user',
+        'submenu' => [
+            ['title' => 'Permissions / Roles', 'route' => 'manage.permission'],
+            ['title' => 'Users', 'route' => 'manage.user'],
+        ],
+    ],
 
     [
         'title' => 'Member Management',
@@ -29,16 +47,7 @@ return [
             ['title' => 'Share Certificates', 'route' => 'share-certificates.index'],
             ['title' => 'Share Transfer History', 'route' => 'share-transfer-histories.index'],
             ['title' => 'Form 15G/15H', 'route' => 'Form 15G and 15H.index'],
-        ],
-    ],
-
-    [
-        'title' => 'User Management',
-        'icon' => 'las la-user',
-        'submenu' => [
-            ['title' => 'Permissions / Roles', 'route' => 'manage.permission'],
-            ['title' => 'Users', 'route' => 'manage.user'],
-        ],
+        ]
     ],
 
     [
@@ -70,6 +79,15 @@ return [
             ['title' => 'Payment Providers', 'route' => 'payment.providers'],
             ['title' => 'Exchange', 'route' => 'payment.exchange'],
             ['title' => 'Make a Payment', 'route' => 'payment.make.payment'],
+        ],
+    ],
+    [
+        'title' => 'HR Management',
+        'icon' => 'las la-user',
+        'submenu' => [
+            ['title' => 'Employees', 'route' => 'ManageEmployee'],
+            ['title' => 'Attendance', 'route' => 'ManageEmployee'],
+            ['title' => 'Salary Disbursment', 'route' => 'ManageEmployee'],
         ],
     ],
 
@@ -127,3 +145,4 @@ return [
     ],
 
 ];
+
