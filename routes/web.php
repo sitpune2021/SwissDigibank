@@ -63,22 +63,22 @@ Route::get('/migrate/menu', function () {
     return 'Icon migration ran successfully on menu!';
 }); */
 
- Route::get('/migrate/member', function () {
+Route::get('/migrate/member', function () {
     Artisan::call('migrate', [
         '--path' => 'database/migrations/2025_07_13_095106_create_members_table.php',
         '--force' => true,
     ]);
-Artisan::call('migrate', [
+    Artisan::call('migrate', [
         '--path' => 'database/migrations/2025_07_13_095810_create_addresses_table.php',
         '--force' => true,
     ]);
 
-Artisan::call('migrate', [
+    Artisan::call('migrate', [
         '--path' => 'database/migrations/2025_07_13_100020_create_kyc_and_nominees_table.php',
         '--force' => true,
     ]);
 
-Artisan::call('migrate', [
+    Artisan::call('migrate', [
         '--path' => 'database/migrations/2025_07_13_111226_create_directors_table.php',
         '--force' => true,
     ]);
@@ -103,13 +103,49 @@ Route::get('/migrate/submenu', function () {
     return 'Sub Menu table migration ran successfully!';
 });
 
-Route::get('/seed/menu', function () {
+Route::get('/seed/BankNameSeeder', function () {
     Artisan::call('db:seed', [
-        '--class' => 'MenuSeeder',
+        '--class' => 'BankNameSeeder',
         '--force' => true,
     ]);
-    return 'MenuSeeder has been run successfully!';
+    return 'Bank Seeder has been run successfully!';
 });
+
+Route::get('/seed/BloodGroupSeeder', function () {
+    Artisan::call('db:seed', [
+        '--class' => 'BloodGroupSeeder',
+        '--force' => true,
+    ]);
+    return 'BloodGroupSeeder has been run successfully!';
+});
+Route::get('/seed/PayableExpenseSeeder', function () {
+    Artisan::call('db:seed', [
+        '--class' => 'PayableExpenseSeeder',
+        '--force' => true,
+    ]);
+    return 'PayableExpenseSeeder has been run successfully!';
+});
+Route::get('/seed/PayableLedgerSeeder', function () {
+    Artisan::call('db:seed', [
+        '--class' => 'PayableLedgerSeeder',
+        '--force' => true,
+    ]);
+    return 'PayableLedgerSeeder has been run successfully!';
+});
+Route::get('/seed/RelationshipSeeder', function () {
+    Artisan::call('db:seed', [
+        '--class' => 'RelationshipSeeder',
+        '--force' => true,
+    ]);
+    return 'RelationshipSeeder has been run successfully!';
+});
+// Route::get('/seed/menu', function () {
+//     Artisan::call('db:seed', [
+//         '--class' => 'MenuSeeder',
+//         '--force' => true,
+//     ]);
+//     return 'MenuSeeder has been run successfully!';
+// });
 
 Route::get('/migrate/shareholdings', function () {
     Artisan::call('migrate', [
@@ -135,6 +171,14 @@ Route::get('/migrate/menus', function () {
     return 'Menu table migration ran successfully!';
 });
 
+Route::get('/migrate/employee', function () {
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2025_07_14_045750_create_employees_table',
+        '--force' => true,
+    ]);
+    return 'Employee table migration ran successfully!';
+});
+
 Route::get('/migrate/blood_group', function () {
     Artisan::call('migrate', [
         '--path' => 'database/migrations/2025_07_14_063616_create_blood_group_table',
@@ -145,7 +189,7 @@ Route::get('/migrate/blood_group', function () {
 
 Route::get('/migrate/bank_name', function () {
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_063750_create_bank_name_table',
+        '--path' => 'database/migrations/2025_07_14_075832_create_banks_name_table',
         '--force' => true,
     ]);
     return 'Bank Name table migration ran successfully!';
@@ -153,18 +197,26 @@ Route::get('/migrate/bank_name', function () {
 
 Route::get('/migrate/relation', function () {
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_063750_create_bank_name_table.php',
+        '--path' => 'database/migrations/2025_07_14_090604_create_relationship_table',
         '--force' => true,
     ]);
     return 'Relation table migration ran successfully!';
 });
 
-Route::get('/migrate/relation', function () {
+Route::get('/migrate/payable/ledger', function () {
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_063750_create_relation_table',
+        '--path' => 'database/migrations/2025_07_14_093548_create_payable_ledgers_table',
         '--force' => true,
     ]);
-    return 'Relation table migration ran successfully!';
+    return 'Payable Ledger table migration ran successfully!';
+});
+
+Route::get('/migrate/expense/ledger', function () {
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/database/migrations/2025_07_14_093834_create_expense_ledgers_table',
+        '--force' => true,
+    ]);
+    return 'Expense ledger table migration ran successfully!';
 });
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -185,7 +237,7 @@ Route::middleware('auth.user')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index1'])->name('index1');
     // Company profile
     Route::get('create-profile', [CompanyController::class, 'create'])->name('create.profile');
-      Route::get('ManageProfile', [CompanyController::class, 'index'])->name('ManageProfile');
+    Route::get('ManageProfile', [CompanyController::class, 'index'])->name('ManageProfile');
     Route::post('add-profile', [CompanyController::class, 'store'])->name('add.profile');
     Route::get('CompanyView', [CompanyController::class, 'show'])->name('company.view');
     Route::get('/company/edit', [CompanyController::class, 'edit'])->name('company.edit');
@@ -203,36 +255,41 @@ Route::middleware('auth.user')->group(function () {
     Route::delete('/branch/{id}/delete', [BranchController::class, 'destroy'])->name('branch.delete');
 
     // Promotors
-   // Route::get('manage-promotor', [PromotorController::class, 'index'])->name('manage.promotor');
- Route::get('ManagePromotor', [PromotorController::class, 'index'])->name('ManagePromotor');
+    // Route::get('manage-promotor', [PromotorController::class, 'index'])->name('manage.promotor');
+    Route::get('ManagePromotor', [PromotorController::class, 'index'])->name('ManagePromotor');
     Route::get('create-promotor', [PromotorController::class, 'create'])->name('create.promotor');
     Route::post('add-promotor', [PromotorController::class, 'store'])->name('add.promotor');
     Route::get('/promotor/{id}/view', [PromotorController::class, 'show'])->name('promotor.view');
     Route::get('/promotor/{id}/edit', [PromotorController::class, 'edit'])->name('promotor.edit');
     Route::post('/promotor/{id}/update', [PromotorController::class, 'update'])->name('promotor.update');
     Route::delete('/promotor/{id}/delete', [PromotorController::class, 'destroy'])->name('promotor.delete');
-     Route::get('/get-promoters', [PromotorController::class, 'getPromoters']);
+    Route::get('/get-promoters', [PromotorController::class, 'getPromoters']);
+    Route::get('/get-relation', [HRController::class, 'getRelations']);
+    Route::get('/get-bank', [HRController::class, 'getBanks']);
+    Route::get('/get-payable-expense', [HRController::class, 'payableExpense']);
+    Route::get('/get-payable-ledger', [HRController::class, 'payableLedger']);
+    Route::get('/get-blood-group', [HRController::class, 'bloodGroup']);
 
     Route::get('/get-branches', [BranchController::class, 'getBranches']);
     Route::get('/get-marital-statuses', [PromotorController::class, 'getMariatalStatuses']);
     Route::get('/get-religion-statuses', [PromotorController::class, 'getReligion']);
 
     // Promoters & Share Holdings
-   // Route::get('manage-shareholding', [ShareHoldingController::class, 'index'])->name('manage.shareholding');
-   Route::get('ManageShareholding', [ShareHoldingController::class, 'index'])->name('manage.shareholding');
+    // Route::get('manage-shareholding', [ShareHoldingController::class, 'index'])->name('manage.shareholding');
+    Route::get('ManageShareholding', [ShareHoldingController::class, 'index'])->name('manage.shareholding');
     Route::get('create-shareholding', [ShareHoldingController::class, 'create'])->name('create.shareholding');
     Route::post('add-shareholding', [ShareHoldingController::class, 'store'])->name('add.shareholding');
-    
 
-        // Directors
-   Route::resource('director', DirectorController::class);
+
+    // Directors
+    Route::resource('director', DirectorController::class);
     Route::get('CreateDirector', [DirectorController::class, 'create'])->name('CreateDirector');
     Route::post('storeDirector', [DirectorController::class, 'store'])->name('storeDirector');
 
-// Member
- Route::resource('member', MemberController::class);
+    // Member
+    Route::resource('member', MemberController::class);
 
-  // Permission & Roles
+    // Permission & Roles
     // Route::get('ManagePermission', [RoleController::class, 'index'])->name('manage.permission');
     Route::get('CreateRole', [RoleController::class, 'create'])->name('CreateRole');
 
@@ -246,7 +303,6 @@ Route::middleware('auth.user')->group(function () {
     Route::get('HR/ManageEmployee', [HRController::class, 'index'])->name('ManageEmployee');
     Route::get('CreateEmployee', [HRController::class, 'create'])->name('CreateEmployee');
     Route::post('AddEmployee', [HRController::class, 'store'])->name('AddEmployee');
-
 });
 
 
@@ -356,5 +412,3 @@ Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
 });
 
 Route::view('/components', 'components')->name('components');
-
-?>

@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     protected $fillable = [
-        'member', 
-        'branch',
+        'member_id',
+        'branch_id',
         'joining_date',
         'gender',
         'dob',
@@ -30,9 +30,15 @@ class Employee extends Model
         'nominee_name',
         'nominee_relation',
         'nominee_address',
+        'blood_group',
+        'nominee_relation',
+        'payable_ledger_id',
+        'expense_ledger_id',
 
         'auto_generate',
-        'payable_ledger',
-        'expense_ledger'
     ];
+    public function members()
+    {
+        return $this->belongsTo(Member::class, 'member_id');
+    }
 }

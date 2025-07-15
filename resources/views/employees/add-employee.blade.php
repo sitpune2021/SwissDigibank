@@ -50,14 +50,9 @@
 
     <div class="box mb-4 xxxl:mb-6">
 
-        <form id="companyForm" action="" method="POST"
-
-            class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        <form id="companyForm" action="{{route('AddEmployee')}}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
 
             @csrf
-
-
-
             <div class="col-span-2 md:col-span-1">
 
                 <label for="member" class="md:text-lg font-medium block mb-4">Link Member Profile
@@ -126,52 +121,27 @@
 
             </div>
 
-
-
             <div class="col-span-2 md:col-span-1">
-
-                <label for="rate" class="md:text-lg font-medium block mb-4">
-
-                    Gender<span class="text-red-500">*</span>
-
+                <label for="gender" class="md:text-lg font-medium block mb-4">
+                    Gender <span class="text-red-500">*</span>
                 </label>
 
-
-
-                <label>
-
-                    <input type="radio" name="male" value="male"
-
-                        {{ old('male') == 'male' ? 'checked' : '' }}>
-
+                <label class="mr-4">
+                    <input type="radio" name="gender" value="male" {{ old('gender') == 'male' ? 'checked' : '' }}>
                     Male
-
                 </label>
-
-
 
                 <label>
-
-                    <input type="radio" name="female" value="female"
-
-                        {{ old('female', 'female') == 'female' ? 'checked' : '' }}>
-
+                    <input type="radio" name="gender" value="female" {{ old('gender') == 'female' ? 'checked' : '' }}>
                     Female
-
                 </label>
-
-
 
                 @error('gender')
-
-                <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
-
+                <span class="text-red-500 text-xs block mt-2">{{ $message }}</span>
                 @enderror
-
             </div>
 
-
-
+            
             <div class="col-span-2 md:col-span-1">
 
                 <label for="dob" class="md:text-lg font-medium block mb-4">Date of Birth<span
@@ -381,13 +351,7 @@
                 @enderror
 
             </div>
-
-
-
             <h4>Bank Info</h4>
-
-
-
             <div class="col-span-2 md:col-span-1">
 
                 <label for="account_holder" class="md:text-lg font-medium block mb-4">Bank A/c Holder's Name</label>
@@ -562,7 +526,7 @@
 
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
-                    <option value="">Select Member</option>
+                    <option value="">Select Accounting Payable Ledger</option>
 
                 </select>
 
@@ -574,8 +538,6 @@
 
             </div>
 
-
-
             <div class="col-span-2 md:col-span-1">
 
                 <label for="expense_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Expense Ledger</label>
@@ -584,7 +546,7 @@
 
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
-                    <option value="">Select Accountine Expense Ledger</option>
+                    <option value="">Select Accounting Expense Ledger</option>
 
                 </select>
 
@@ -670,6 +632,87 @@
             },
             error: function() {
                 alert('Failed to fetch branches.');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ url('/get-relation') }}",
+            type: "GET",
+            success: function(response) {
+                $.each(response, function(key, relation) {
+                    $('#nomineeDropdown').append(`<option value="${relation.id}">${relation.relation}</option>`);
+                });
+            },
+            error: function() {
+                alert('Failed to fetch relations.');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ url('/get-bank') }}",
+            type: "GET",
+            success: function(response) {
+                $.each(response, function(key, bank) {
+                    $('#bankDropdown').append(`<option value="${bank.id}">${bank.name}</option>`);
+                });
+                console.log(response.id);
+            },
+            error: function() {
+                alert('Failed to fetch banks.');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ url('/get-payable-expense') }}",
+            type: "GET",
+            success: function(response) {
+                $.each(response, function(key, expense) {
+                    $('#expenseDropdown').append(`<option value="${expense.id}">${expense.name}</option>`);
+                });
+            },
+            error: function() {
+                alert('Failed to fetch banks.');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ url('/get-payable-ledger') }}",
+            type: "GET",
+            success: function(response) {
+                $.each(response, function(key, ledger) {
+                    $('#payableDropdown').append(`<option value="${ledger.id}">${ledger.name}</option>`);
+                });
+            },
+            error: function() {
+                alert('Failed to fetch banks.');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ url('/get-blood-group') }}",
+            type: "GET",
+            success: function(response) {
+                $.each(response, function(key, blood_group) {
+                    $('#bloodGroupDropdown').append(`<option value="${blood_group.id}">${blood_group.group}</option>`);
+                });
+            },
+            error: function() {
+                alert('Failed to fetch banks.');
             }
         });
     });
