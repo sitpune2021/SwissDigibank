@@ -151,7 +151,7 @@ class PromotorController extends Controller
         $promoter->member_no = $code;
         $promoter->save();
 
-        return redirect()->route('ManagePromotor')->with('success', 'Promoter added successfully!');
+        return redirect()->route('manage.promotor')->with('success', 'Promoter added successfully!');
     }
     public function show($id)
     {
@@ -257,7 +257,7 @@ class PromotorController extends Controller
 
         $promotor->save();
 
-        return redirect()->route('ManagePromotor')->with('success', 'Promotor updated successfully!');
+        return redirect()->route('manage.promotor')->with('success', 'Promotor updated successfully!');
     }
 
     public function destroy($id)
@@ -265,7 +265,7 @@ class PromotorController extends Controller
         $branch = Promotor::findOrFail($id);
         $branch->delete();
 
-        return redirect()->route('ManagePromotor')->with('success', 'Branch deleted successfully.');
+        return redirect()->route('manage.promotor')->with('success', 'Branch deleted successfully.');
     }
     public function getMariatalStatuses()
     {

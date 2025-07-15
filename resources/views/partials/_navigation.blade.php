@@ -256,7 +256,7 @@
       <div class="logo-column">
         <div class="logo-container">
           <div class="logo-inner">
-            <a href="{{ route('dashboard.index1') }}" class="logo-wrapper">
+            <a href="{{ route('index1') }}" class="logo-wrapper">
               <img src="../images/logo-with-text.png" width="174" height="38" class="logo-full" alt="logo" />
               <img src="../images/logo.png" width="37" height="36" class="logo-icon hidden" alt="logo" />
             </a>
@@ -288,7 +288,7 @@
                 </button>
                 <ul class="submenu-hide submenu">
                   <li>
-                    <a href="{{ route('dashboard.index1') }}l" class="submenu-link">
+                    <a href="{{ route('index1') }}l" class="submenu-link">
                       <i class="las la-minus text-xl"></i>
                       <span>Style 01</span>
                     </a>

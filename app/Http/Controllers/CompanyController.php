@@ -139,14 +139,14 @@ class CompanyController extends Controller
     public function show()
     {
         $company = Company::with(['stateData', 'incorporationState'])->where('user_id', 2)
-        ->first();
+            ->first();
         return view('company-profile.view-profile', compact('company'));
     }
 
     public function edit()
     {
         $company = Company::with(['stateData', 'incorporationState'])
-        ->where('user_id', 2)->first();
+            ->where('user_id', 2)->first();
         $states = State::all();
         return view('company-profile.edit-profile', compact('company', 'states'));
     }
@@ -166,14 +166,14 @@ class CompanyController extends Controller
             'pincode' => 'required|numeric',
             'country' => 'required|string',
 
-            'mobile_no' => 'required|string',
-            'landline_no' => 'nullable|string',
+            'mobile_no' => 'required|digits:10',
+            'landline_no' => 'nullable|digits_between:6,15',
             'contact_email' => 'required|email',
 
-            'cin_no' => 'required|string',
-            'pan_no' => 'nullable|string',
-            'tan_no' => 'nullable|string',
-            'gst_no' => 'nullable|string',
+            'cin_no' => 'required|regex:/^[A-Z0-9]{21}$/',
+            'pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
+            'tan_no' => 'nullable|regex:/^[A-Z]{4}[0-9]{5}[A-Z]{1}$/',
+            'gst_no' => 'nullable',
 
             'company_category' => 'required|string',
             'company_class' => 'required|string',
@@ -194,9 +194,10 @@ class CompanyController extends Controller
             'pincode.numeric' => 'Pincode must be a number.',
             'country.required' => 'Country is required.',
             'mobile_no.required' => 'Mobile number is required.',
+            'mobile_no.digits' => 'Mobile number must be exactly 10 digits.',
             'contact_email.required' => 'Contact email is required.',
             'contact_email.email' => 'Please enter a valid email address.',
-            'cin_no.required' => 'CIN number is required.',
+
             'company_category.required' => 'Company category is required.',
             'company_class.required' => 'Company class is required.',
             'incorporation_date.required' => 'Incorporation date is required.',
@@ -206,6 +207,13 @@ class CompanyController extends Controller
             'paid_up_capital.required' => 'Paid up capital is required.',
             'authorized_capital.numeric' => 'Authorized capital must be a number.',
             'paid_up_capital.numeric' => 'Paid up capital must be a number.',
+            'landline_no.digits_between' => 'Landline number must be between 6 to 15 digits.',
+
+            'cin_no.required' => 'CIN number is required.',
+            'cin_no.regex' => 'CIN must be exactly 21 alphanumeric characters.',
+            'pan_no.regex' => 'PAN must be in format: 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F).',
+            'tan_no.regex' => 'TAN must be in format: 4 letters, 5 digits, 1 letter (e.g., ABCD12345E).',
+            'gst_no.regex' => 'GST number must be a valid 12-character GSTIN.',
         ]);
 
         $company = Company::where('user_id', 2)->first();
@@ -243,6 +251,7 @@ class CompanyController extends Controller
         $company->save();
         Log::info("data=" . $company);
         return redirect()->route('company.view')->with('success', 'Company profile updated successfully.');
+        
     }
 
     // public function destroy($id)

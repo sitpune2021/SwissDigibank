@@ -2,7 +2,7 @@
     use App\Models\Menu;
     $menuItems = Menu::with('submenus')->orderBy('id')->get();
 @endphp
-
+  
 <aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
     <div class="sidebar-inner relative">
         <div class="logo-column">

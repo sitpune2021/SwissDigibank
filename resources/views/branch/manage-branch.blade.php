@@ -156,12 +156,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php
-                    $s=0;
-                    @endphp
                     @foreach($branches as $branch)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="py-5 px-6">{{$s=$s+1}}</td>
+                        <td class="py-5 px-6">{{ ($branches->currentPage() - 1) * $branches->perPage() + $loop->iteration }}</td>
                         <td class="py-5 px-6">
                             <div>
                                 <p class="font-medium mb-1">{{ $branch->branch_name }}</p>
@@ -259,7 +256,7 @@
 <script>
     $(document).ready(function() {
         $('#branchTable').DataTable({
-            pageLength: 10, // default
+            pageLength: 10,
             lengthMenu: [10, 25, 50, 100]
         });
     });
