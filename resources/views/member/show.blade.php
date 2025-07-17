@@ -446,7 +446,7 @@
                         Save Director
                     </button>
                     <button class="btn-outline" type="reset"
-                        onclick="window.location.href='{{ route('manage.promotor') }}'">
+                        onclick="window.location.href='{{ route(`ManagePromotor`) }}'">
                         Back
                     </button>
                     <button class="btn-outline" type="reset">

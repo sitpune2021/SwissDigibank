@@ -631,7 +631,7 @@
             <!-- Buttons -->
             <div class="col-span-2 flex gap-4 justify-center mt-6">
                 <button class="btn-primary" type="submit">Save Promotor</button>
-                <button class="btn-outline" type="reset" onclick="window.location.href=`{{ route('ManagePromotor') }}`">Back</button>
+                <button class="btn-outline" type="reset" onclick="window.location.href=`{{ route('manage.promotor') }}`">Back</button>
                 <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">Reset</button>
             </div>
         </form>

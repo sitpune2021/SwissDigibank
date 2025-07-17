@@ -95,6 +95,19 @@
                 </form>
             </div>
         </div>
+        @if (session('success'))
+        <div id="success-alert" style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+            <strong>Success:</strong> {{ session('success') }}
+            <span onclick="document.getElementById('success-alert').style.display='none';" style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div id="error-alert" style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+            <strong>Error:</strong> {{ session('error') }}
+            <span onclick="document.getElementById('error-alert').style.display='none';" style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
+        </div>
+        @endif
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead class="custom-thead">
@@ -106,34 +119,73 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Member No
+                                Promoters
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Name
+                                First Distinctive No.
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Gender</th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Senior CTZ.
+                                Last Distinctive No.
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Enrollment Date
+                                Total Shares Held
                             </div>
                         </th>
                         <th class="text-start !py-5 cursor-pointer">
                             <div class="flex items-center gap-1">
-                                KYC Status
+                                Share Nominal Val.
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Total Val.
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Allotment
                             </div>
                         </th>
                         <th class="text-center !py-5" data-sortable="false">Action</th>
                     </tr>
                 </thead>
-
+                <tbody>
+                    @forelse($share_holdings as $index => $share)
+                    <tr>
+                        <td class="px-6 py-4">{{ $index + 1 }}</td>
+                        <td class="px-6 py-4">{{ $share->promoters->first_name ?? 'N/A' }}</td>
+                        <td class="px-6 py-4">{{ $share->first_share }}</td>
+                        <td class="px-6 py-4">{{ $share->share_no }}</td>
+                        <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>
+                        <td class="px-6 py-4">{{ $share->nominal_value ?? '-' }}</td>
+                        <td class="px-6 py-4">{{ $share->total_share_value ?? '-' }}</td>
+                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td>
+                        <!-- <td class="px-6 py-4 text-center">
+                            <a href="#" class="text-blue-600 hover:underline">View</a>
+                        </td> -->
+                        <td class="py-5 px-6">
+                            <div class="flex justify-center gap-2">
+                                <a href="{{ route('shareholding.view', $share->id) }}"
+                                    class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i
+                                        class="las la-eye"></i></a>
+                                <a href="{{ route('shareholding.edit', $share->id) }}"
+                                    class="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-full transition duration-150"><i
+                                        class="las la-edit"></i>
+                                    </a>
+                            </div>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-500">No shareholding records found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
             </table>
         </div>
     </div>

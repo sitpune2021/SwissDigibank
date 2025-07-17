@@ -38,6 +38,7 @@ class PromotorController extends Controller
     }
     public function create()
     {
+        
         return view('promoters.add-promoter');
     }
     public function store(Request $request)

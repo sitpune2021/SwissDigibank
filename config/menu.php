@@ -5,11 +5,15 @@ return [
         'title' => 'Dashboard',
         'icon' => 'las la-home',
         'route' => 'index1',
+        'position' => '0',
+        'active' => '1'
     ],
 
     [
         'title' => 'Company',
         'icon' => 'las la-piggy-bank',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Profile', 'route' => 'company.view'],
             ['title' => 'Branches', 'route' => 'manage.branch'],
@@ -18,9 +22,11 @@ return [
             ['title' => 'Director', 'route' => 'director.index'],
         ],
     ],
-     [
+    [
         'title' => 'User Management',
         'icon' => 'las la-user',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Permissions / Roles', 'route' => 'CreateRole'],
             ['title' => 'Users', 'route' => 'ManageUser'],
@@ -28,9 +34,11 @@ return [
 
     ],
 
-      [
+    [
         'title' => 'User Management',
         'icon' => 'las la-user',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Permissions / Roles', 'route' => 'manage.permission'],
             ['title' => 'Users', 'route' => 'manage.user'],
@@ -40,6 +48,8 @@ return [
     [
         'title' => 'Member Management',
         'icon' => 'las la-piggy-bank',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Members', 'route' => 'member.index'],
             ['title' => 'Minors', 'route' => 'minor.index'],
@@ -53,6 +63,8 @@ return [
     [
         'title' => 'Accounts',
         'icon' => 'las la-piggy-bank',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Bank Account', 'route' => 'accounts.bank.account'],
             ['title' => 'Account Overview', 'route' => 'accounts.account.overview'],
@@ -64,6 +76,8 @@ return [
     [
         'title' => 'Transaction',
         'icon' => 'las la-exchange-alt',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Style 01', 'route' => 'transaction.style1'],
             ['title' => 'Style 02', 'route' => 'transaction.style2'],
@@ -74,6 +88,8 @@ return [
     [
         'title' => 'Payment',
         'icon' => 'las la-wallet',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Payment Overview', 'route' => 'payment.overview'],
             ['title' => 'Payment Providers', 'route' => 'payment.providers'],
@@ -84,6 +100,8 @@ return [
     [
         'title' => 'HR Management',
         'icon' => 'las la-user',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Employees', 'route' => 'ManageEmployee'],
             ['title' => 'Attendance', 'route' => 'ManageEmployee'],
@@ -94,6 +112,8 @@ return [
     [
         'title' => 'Private Transfers',
         'icon' => 'las la-coins',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Add Contact', 'route' => 'transfer.add.contact'],
             ['title' => 'Transfer Overview', 'route' => 'transfer.overview'],
@@ -105,6 +125,8 @@ return [
     [
         'title' => 'Reports',
         'icon' => 'las la-chart-pie',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Style 01', 'route' => 'reports.style1'],
             ['title' => 'Style 02', 'route' => 'reports.style2'],
@@ -114,6 +136,8 @@ return [
     [
         'title' => 'Settings',
         'icon' => 'las la-cog',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Profile', 'route' => 'settings.profile'],
             ['title' => 'Security', 'route' => 'settings.security'],
@@ -126,6 +150,8 @@ return [
     [
         'title' => 'Authentication',
         'icon' => 'las la-user-circle',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Sign Up', 'route' => 'auth.sign.up'],
             ['title' => 'Sign In', 'route' => 'log.in'],
@@ -137,6 +163,8 @@ return [
     [
         'title' => 'Support',
         'icon' => 'las la-handshake',
+        'position' => '0',
+        'active' => '1',
         'submenu' => [
             ['title' => 'Help Center', 'route' => 'support.help.center'],
             ['title' => 'Privacy Policy', 'route' => 'support.privacy.policy'],
@@ -145,4 +173,3 @@ return [
     ],
 
 ];
-

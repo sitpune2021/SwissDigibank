@@ -23,6 +23,6 @@ class Shareholding extends Model
 
     public function promoters()
     {
-        return $this->belongsTo(User::class, 'promoter');
+        return $this->belongsTo(Promotor::class, 'promoter');
     }
 }
