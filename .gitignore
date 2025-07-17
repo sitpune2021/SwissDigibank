@@ -3,9 +3,10 @@
 /public/build
 /public/hot
 /public/storage
-/storage/*.key
+/storage/*.keymai
 /storage/pail
 /vendor
+/storage
 .env
 .env.backup
 .env.production
