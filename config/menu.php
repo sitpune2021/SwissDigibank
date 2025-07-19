@@ -27,7 +27,6 @@ return [
         ],
 
     ],
-
       [
         'title' => 'User Management',
         'icon' => 'las la-user',
