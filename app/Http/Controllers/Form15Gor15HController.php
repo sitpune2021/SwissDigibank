@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Member;
+
 
 class Form15Gor15HController extends Controller
 {
@@ -19,7 +21,10 @@ class Form15Gor15HController extends Controller
      */
     public function create()
     {
-        return view('Form 15G and 15H.create');
+        $members = Member::all();
+        // return view('Form 15G and 15H.create');
+      return view('Form 15G and 15H.create', compact('members'));
+
     }
 
     /**
@@ -35,6 +40,7 @@ class Form15Gor15HController extends Controller
      */
     public function show(string $id)
     {
+        
         return view('Form 15G and 15H.show');
     }
 

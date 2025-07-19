@@ -331,7 +331,9 @@
                 </button>
             </div>
         </form> --}}
-            <form action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4" id="dynamicForm">
+        <form action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST"
+                class="grid grid-cols-2 gap-4 xxxl:gap-6">
+            {{-- <form action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4" id="dynamicForm"> --}}
                 @csrf
 
                 @foreach ($formFields as $field)

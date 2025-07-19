@@ -93,6 +93,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <h3 class="h2">Add Promoters</h3>
+            <button class="btn-primary"><i class="las la-plus-circle text-base md:text-lg"></i>Open an Account</button>
         </div>
         @if (session('success'))
             <div id="success-alert"
@@ -240,7 +241,7 @@
         });
     });
 </script>
-<script>
+<script>s
     $(document).ready(function() {
         const oldMariatal = $('#oldMariatalStatus').val();
         $.ajax({

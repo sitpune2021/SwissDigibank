@@ -252,19 +252,3 @@
     </div>
 </div>
 @endsection
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#branchTable').DataTable({
-            pageLength: 10,
-            lengthMenu: [10, 25, 50, 100]
-        });
-    });
-</script>
-<script>
-    document.getElementById('transaction-search').addEventListener('input', function() {
-        if (this.value === '') {
-            this.form.submit();
-        }
-    });
-</script>

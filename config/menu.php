@@ -49,17 +49,25 @@ return [
             ['title' => 'Form 15G/15H', 'route' => 'Form 15G and 15H.index'],
         ]
     ],
-
-    [
-        'title' => 'Accounts',
-        'icon' => 'las la-piggy-bank',
+     [
+        'title' => 'Savings/Current AC',
+        'icon' => 'las la-university',
         'submenu' => [
-            ['title' => 'Bank Account', 'route' => 'accounts.bank.account'],
-            ['title' => 'Account Overview', 'route' => 'accounts.account.overview'],
-            ['title' => 'Account Details', 'route' => 'accounts.account.details'],
-            ['title' => 'Deposit Details', 'route' => 'accounts.deposit.detail'],
-        ],
+            ['title' => 'Schemes', 'route' => 'schemes.index'],
+            // ['title' => 'Accounts', 'route' => 'account.index'],
+        ]
     ],
+     
+    // [
+    //     'title' => 'Accounts',
+    //     'icon' => 'las la-piggy-bank',
+    //     // 'submenu' => [
+    //     //     ['title' => 'Bank Account', 'route' => 'accounts.bank.account'],
+    //     //     ['title' => 'Account Overview', 'route' => 'accounts.account.overview'],
+    //     //     ['title' => 'Account Details', 'route' => 'accounts.account.details'],
+    //     //     ['title' => 'Deposit Details', 'route' => 'accounts.deposit.detail'],
+    //     // ],
+    // ],
 
     [
         'title' => 'Transaction',

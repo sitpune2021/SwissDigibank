@@ -67,7 +67,7 @@
                                 @endif
                             </select>
                         @elseif ($type === 'radio')
-                            <div class="flex gap-4">
+                            <div class="flex gap-5">
                                 @foreach ($field['options'] as $optionValue => $optionLabel)
                                     <label class="flex items-center space-x-2">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"

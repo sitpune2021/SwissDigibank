@@ -15,8 +15,8 @@ return [
         [
             'label'         => 'Enrollment Date',
             'name'          => 'enrollment_date',
-            'id'            => 'date2',
-            'type'          => 'date',
+            'id'            => 'date',
+            'type'          => 'text',
             'required'      => true,
         ],
     ],

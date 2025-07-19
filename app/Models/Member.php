@@ -26,5 +26,11 @@ class Member extends Model
     public function kyc(): HasOne
     {
         return $this->hasOne(KycAndNominee::class);
+
     }
+    public function branch()
+    {
+            return $this->belongsTo(Branch::class, 'general_branch');
+    }
+
 }

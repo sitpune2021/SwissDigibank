@@ -15,16 +15,17 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name'=>'Super Admin',
-        //     'fname' => 'Anuradha',
-        //     'lname'=>'Jamdade',
-        //     'email' => 'admin@gmail.com',
-        //     'mobile'=>9503654539,
-        //     'password'=>'123456',
-        //     'role_id'=>1
-        // ]);
+        User::factory()->create([
+            'name'=>'Super Admin',
+            'fname' => 'Anuradha',
+            'lname'=>'Jamdade',
+            'email' => 'admin@gmail.com',
+            'mobile'=>9503654539,
+            'password'=>'123456',
+            'role_id'=>1
+        ]);
         $this->call(MenuSeeder::class);
+        $this->call(StateSeeder::class);
         $this->call(RolePermissionSeeder::class);
     }
 }

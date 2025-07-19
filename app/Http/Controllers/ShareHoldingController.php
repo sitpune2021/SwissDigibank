@@ -14,6 +14,10 @@ class ShareHoldingController extends Controller
     }
     public function create()
     {
-        return view('share-holdings.add-shares');
+         $shareholding = null;
+        $formFields = config('share_form');
+        $route = route('add.shareholding');
+        $method = 'POST';
+        return view('share-holdings.add-shares',compact('formFields','shareholding', 'route', 'method'));
     }
 }

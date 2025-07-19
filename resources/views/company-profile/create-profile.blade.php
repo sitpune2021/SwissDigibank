@@ -19,7 +19,8 @@
     </div>
     @endif
 
-    <div class="box mb-4 xxxl:mb-6">
+    <div class="box p-2 mb-2">
+        
         <form action="{{route('add.profile')}}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
 
@@ -330,55 +331,3 @@
     </div>
 </div>
 @endsection
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    setTimeout(function() {
-        var successAlert = document.getElementById('success-alert');
-        var errorAlert = document.getElementById('error-alert');
-        if (successAlert) successAlert.style.display = 'none';
-        if (errorAlert) errorAlert.style.display = 'none';
-    }, 5000);
-</script>
-
-<script>
-    $(document).ready(function() {
-        $.ajax({
-            url: '/api/states',
-            type: 'GET',
-            dataType: 'json',
-            success: function(states) {
-                let select = $('#stateDropdown');
-                select.empty();
-                select.append('<option value="">Select State</option>');
-
-                $.each(states, function(index, state) {
-                    select.append('<option value="' + state.id + '">' + state.name + '</option>');
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching states:', error);
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $.ajax({
-            url: '/api/states',
-            type: 'GET',
-            dataType: 'json',
-            success: function(states) {
-                let select = $('#incorporation_state');
-                select.empty();
-                select.append('<option value="">Select State</option>');
-
-                $.each(states, function(index, state) {
-                    select.append('<option value="' + state.id + '">' + state.name + '</option>');
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching states:', error);
-            }
-        });
-    });
-</script>

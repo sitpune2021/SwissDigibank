@@ -60,7 +60,7 @@
             <div class="grid grid-cols-12 gap-4 xxxxxl:gap-6">
 
                 @foreach ($companyprofile as $section)
-                    <div class="col-span-12 lg:col-span-6">
+                    <div class="col-span-6 ">
                         <div class="box xxl:p-8 xxxl:p-10 mb-6">
                             <h4 class="h4 bb-dashed mb-4 pb-4 md:mb-6 md:pb-6">{{ $section['heading'] }}</h4>
                             <form class="mt-6 xl:mt-8 grid grid-cols-2 gap-4 xxxxxl:gap-6">
