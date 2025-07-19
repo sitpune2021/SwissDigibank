@@ -1,107 +1,13 @@
 @extends('layout.main')
 
 @section('content')
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
 
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 30px;
-    }
-
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        transition: .4s;
-        border-radius: 30px;
-        text-align: center;
-        line-height: 30px;
-        font-size: 12px;
-        font-weight: bold;
-        color: white;
-    }
-
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 22px;
-        width: 22px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 50%;
-    }
-
-    input:checked+.slider {
-        background-color: #4CAF50;
-    }
-
-    input:checked+.slider:before {
-        transform: translateX(30px);
-    }
-
-    .slider .switch-on,
-    .slider .switch-off {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .slider .switch-on {
-        left: 0;
-    }
-
-    .slider .switch-off {
-        right: 0;
-    }
-</style>
 <div class="main-inner">
     <div class="mb-6 lg:mb-8">
-        <h3 class="h2">Allocate New Shares to Promoter</h3>
-        <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-            <li><a href="{{ url('/manage.shareholding') }}" class="text-blue-600 hover:underline">Promoter Share Holdings</a></li>
-            <li><a class="text-blue-600">New</a></li>
-            <!-- <li class="text-gray-500">Manage Promoters</li> -->
-        </ol>
+        <h3 class="h2">{!! (isset($show) && $show)
+            ? $shareholding->promoters->first_name . ' <small class="text-sm text-gray-500">Share Holding</small>'
+            : (isset($shareholding) ? 'Edit Allocated Shares' : 'Allocate New Shares to Promoter') !!}
+        </h3>
     </div>
 
     @if (session('success'))
@@ -144,17 +50,28 @@
                 @endif
             </div>
 
-            <div class="col-span-2 md:col-span-1">
-                <label for="allotment_date" class="md:text-lg font-medium block mb-4">Allotment Date<span class="text-red-500">*</span></label>
-                <input name="allotment_date" id="date2" placeholder="Select Date"
-                    value="{{ old('allotment_date', isset($shareholding->allotment_date) ? \Carbon\Carbon::parse($shareholding->allotment_date)->toDateString() : now()->toDateString()) }}"
-                    class="w-full text-sm border px-3 py-2 rounded-10" autocomplete="off" @if($isView) disabled @endif>
-                <i
-                    class="las la-calendar absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+            <div class="col-span-2 md:col-span-1 relative">
+                <label for="allotment_date" class="md:text-lg font-medium block mb-4">
+                    Allotment Date <span class="text-red-500">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    name="allotment_date"
+                    id="allotment_date"
+                    placeholder="Select Date"
+                    value="{{ old('allotment_date', isset($shareholding->allotment_date) ? \Carbon\Carbon::parse($shareholding->allotment_date)->format('Y-m-d') : now()->format('Y-m-d')) }}"
+                    class="w-full text-sm bg-gray-100 border border-gray-300 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    @if($isView) disabled @endif
+                    autocomplete="off">
+
+                <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+
                 @error('allotment_date')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
             </div>
+
 
             <div class="col-span-2 md:col-span-1">
                 <label for="first_share" class="md:text-lg font-medium block mb-4">First Distinctive No.<span class="text-red-500">*</span></label>
@@ -223,11 +140,10 @@
                 <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
             </div>
-
+            @if(isset($isAdd) && $isAdd)
             <div class="col-span-2 mt-8 flex flex-col items-center gap-6 w-full">
-
                 <div class="flex items-center justify-center gap-4 w-full max-w-2xl">
-                    <label for="transaction_date" class="w-48 text-sm font-medium text-right">Transaction Date<span class="text-red-500">*</span></label>
+                    <label for="transaction_date" class="col-span-2 md:col-span-1">Transaction Date<span class="text-red-500">*</span></label>
                     <div class="relative w-80 bg-secondary/5 py-2 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10">
                         <input name="transaction_date" id="date"
                             value="{{ old('transaction_date', $shareholding->transaction_date ?? '') }}"
@@ -241,7 +157,7 @@
                 </div>
 
                 <div class="flex items-center justify-center gap-4 w-full max-w-2xl">
-                    <label for="amount" class="w-48 text-sm font-medium text-right">Amount<span class="text-red-500">*</span></label>
+                    <label for="amount" class="col-span-2 md:col-span-1">Amount<span class="text-red-500">*</span></label>
                     <input type="text" name="amount" id="amount"
                         value="{{ old('amount', $shareholding->amount ?? '') }}"
                         class="w-80 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2"
@@ -252,7 +168,7 @@
                 </div>
 
                 <div class="flex items-center justify-center gap-4 w-full max-w-2xl">
-                    <label for="remarks" class="w-48 text-sm font-medium text-right">Remarks (if any)</label>
+                    <label for="remarks" class="col-span-2 md:col-span-1">Remarks (if any)</label>
                     <input type="text" name="remarks" id="remarks"
                         value="{{ old('remarks', $shareholding->remarks ?? '') }}"
                         class="w-80 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2"
@@ -263,7 +179,7 @@
                 </div>
 
                 <div class="flex items-center justify-center gap-4 w-full max-w-2xl">
-                    <label for="pay_mode" class="w-48 text-sm font-medium text-right">Pay Mode<span class="text-red-500">*</span></label>
+                    <label for="pay_mode" class="col-span-2 md:col-span-1">Pay Mode<span class="text-red-500">*</span></label>
                     @php
                     $selectedPayMode = old('pay_mode') ?? ($shareholding->pay_mode ?? '');
                     $isView = isset($show) && $show;
@@ -279,7 +195,7 @@
                     @enderror
                 </div>
             </div>
-
+            @endif
             <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                 @if(empty($isView))
                 <button class="btn-primary" type="submit">
@@ -288,6 +204,11 @@
                 </button>
                 <button class="btn-outline" type="reset">
                     Reset
+                </button>
+                @endif
+                @if((isset($isAdd) && $isAdd) || (isset($show) && $isView))
+                <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('manage.shareholding') }}'">
+                    Back
                 </button>
                 @endif
             </div>

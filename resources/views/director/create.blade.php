@@ -5,7 +5,7 @@
 
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">Add Director</h3>
+            <h3 class="h2">{{isset($director) ? 'Edit - ' . $director->director_name. ' Director'  : 'Add New Director'}}</h3>
         </div>
         @if (session('success'))
             <div id="success-alert"
@@ -49,7 +49,7 @@
                         </label>
                         @if ($type === 'select')
                             <select name="{{ $name }}" id="{{ $id }}"
-                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3"
+                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 >
                                 <option value="">-- Select {{ $label }} --</option>
 

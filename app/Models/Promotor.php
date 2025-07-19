@@ -51,4 +51,8 @@ class Promotor extends Model
     {
         return $this->belongsTo(Religion::class, 'member_religion', 'id');
     }
+    public function Branches()
+    {
+        return $this->belongsTo(Branch::class, 'branch');
+    }
 }

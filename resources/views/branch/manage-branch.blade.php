@@ -1,72 +1,14 @@
 @extends('layout.main')
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        /* Light green background */
-        color: #14532d;
-        /* Dark green text */
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    /* Optional: Dark mode */
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            /* dark green */
-            color: #d1fae5;
-            /* light text */
-        }
-    }
-</style>
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <div class="flex items-center gap-2">
-            <h1 class="text-xl font-semibold">Branches</h1>
-            <a href="{{ route('create.branch') }}"
-                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                <i class="las la-plus text-lg"></i>
-            </a>
-
-            <!-- <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-                <li><a href="{{ url('/manage-branch') }}" class="text-blue-600 hover:underline">Branches</a></li>
-                <li class="text-gray-500">Branches</li>
-            </ol> -->
-
-        </div>
-
-        <!-- <a href="{{ route('create.branch') }}" class="btn-primary">
+        <!-- <div class="flex items-center gap-2"> -->
+        <h2 class="h2">Branches</h2>
+        <a class="btn-primary" href="{{ route('create.branch') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
             Add Branch
-        </a> -->
+        </a>
+        <!-- </div> -->
     </div>
 
     <!-- Latest Transactions -->
@@ -84,31 +26,17 @@
                 <span class="text-sm">entries</span>
             </form>
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <!-- <form
-                    class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
-                    <input type="text" name="search" id="transaction-search" placeholder="Search"
-                        class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
-                    <button type="sumbit"
-                        class="bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
-                        <i class="las la-search text-lg"></i>
-                    </button>
-                </form> -->
-
-                <form method="GET" action="{{ route('manage.branch') }}"
-                    class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
-
-                    <input type="text" name="search" id="transaction-search"
-                        placeholder="Search"
+                <form method="GET" action="{{  route('manage.branch') }}"
+                    class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
+                    <input type="text" id="transaction-search" name="search" placeholder="Search"
                         value="{{ request('search') }}"
-                        class="bg-transparent border-none text-sm text-gray-800 dark:text-white focus:outline-none w-full placeholder:text-gray-400" />
-
+                        class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
                     <button type="submit"
-                        class="w-7 h-7 bg-primary hover:bg-primary/90 text-white rounded-full flex items-center justify-center transition duration-200">
+                        class="w-7 h-7 bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
                         <i class="las la-search text-lg"></i>
                     </button>
-
-                    @if(request('search'))
-                    <a href="{{ route('manage.branch') }}"
+                    @if (request('search'))
+                    <a href="{{  route('manage.branch') }}"
                         class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
                         title="Clear Search">
                         <i class="las la-times text-lg"></i>
@@ -131,25 +59,34 @@
                                 Branch Name
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Branch Code</th>
+                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Branch Code
+                            </div>
+                        </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 City
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[130px] cursor-pointer">
+                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 State
                             </div>
                         </th>
-                        <th class="text-start !py-5 cursor-pointer">
+                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Opening Date
                             </div>
                         </th>
-                        <th class="text-start !py-5 cursor-pointer">
+                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Members
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Active
                             </div>
                         </th>
                         <th class="text-center !py-5" data-sortable="false">Action</th>
@@ -170,16 +107,27 @@
                         <td class="py-5 px-6">
                             {{ $branch->open_date }}
                         </td>
-                        <td class="py-5 px-6">0</td>
-                        <td class="py-5 px-6">
-                            <div class="flex justify-center gap-2">
-                                <a href="{{ route('branch.view', $branch->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
-                                <a href="{{ route('branch.edit', $branch->id) }}" class="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-full transition duration-150"><i class="las la-edit"></i></a>
-                                <!-- <form action="{{ route('branch.delete', $branch->id) }}" method="POST" style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition duration-150" onclick="return confirm('Are you sure?')"><i class="las la-trash-alt"></i></button>
-                                </form> -->
+                        <td class="py-5 px-6">{{ $branch->members_count }}</td>
+                        <td class="py-2">
+                            @if($branch->active == 'Yes')
+                            <span  class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                Yes
+                            </span>
+                            @else
+                            <span
+                                class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                {{$branch->active}}
+                            </span>
+                            @endif
+                        </td>
+                        <td class="py-2 px-6">
+                            <div class="flex justify-center">
+                                @include('partials._vertical-options', [
+                                'id' => base64_encode($branch->id),
+                                'viewRoute' => 'branch.view',
+                                'editRoute' => 'branch.edit'
+                                ])
+
                             </div>
                         </td>
                     </tr>

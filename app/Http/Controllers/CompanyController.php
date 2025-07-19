@@ -147,8 +147,11 @@ class CompanyController extends Controller
     {
         $company = Company::with(['stateData', 'incorporationState'])
             ->where('user_id', 2)->first();
-        $states = State::all();
-        return view('company-profile.edit-profile', compact('company', 'states'));
+
+         $dynamicOptions = [
+            'state' =>State::pluck('name', 'id')
+        ];
+        return view('company-profile.edit-profile', compact('company', 'dynamicOptions'));
     }
 
     public function update(Request $request)

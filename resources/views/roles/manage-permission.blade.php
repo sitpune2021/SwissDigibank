@@ -1,56 +1,11 @@
 @extends('layout.main')
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
 
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        /* Light green background */
-        color: #14532d;
-        /* Dark green text */
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    /* Optional: Dark mode */
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            /* dark green */
-            color: #d1fae5;
-            /* light text */
-        }
-    }
-</style>
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-center gap-2">
-            <h1 class="text-xl font-semibold">Branches</h1>
-            <a href="{{ route('create.branch') }}"
+            <h1 class="text-xl font-semibold">Permisions</h1>
+            <a href="{{ route('CreateRole') }}"
                 class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
                 <i class="las la-plus text-lg"></i>
             </a>
@@ -155,100 +110,10 @@
                         <th class="text-center !py-5" data-sortable="false">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($branches as $branch)
-                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="py-5 px-6">{{ ($branches->currentPage() - 1) * $branches->perPage() + $loop->iteration }}</td>
-                        <td class="py-5 px-6">
-                            <div>
-                                <p class="font-medium mb-1">{{ $branch->branch_name }}</p>
-                            </div>
-                        </td>
-                        <td class="py-5 px-6">{{ $branch->branch_code }}</td>
-                        <td class="py-5 px-6">{{ $branch->city }}</td>
-                        <td class="py-5 px-6">{{ $branch->stateData->name }}</td>
-                        <td class="py-5 px-6">
-                            {{ $branch->open_date }}
-                        </td>
-                        <td class="py-5 px-6">0</td>
-                        <td class="py-5 px-6">
-                            <div class="flex justify-center gap-2">
-                                <a href="{{ route('branch.view', $branch->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
-                                <a href="{{ route('branch.edit', $branch->id) }}" class="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-full transition duration-150"><i class="las la-edit"></i></a>
-                                <!-- <form action="{{ route('branch.delete', $branch->id) }}" method="POST" style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition duration-150" onclick="return confirm('Are you sure?')"><i class="las la-trash-alt"></i></button>
-                                </form> -->
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+              
             </table>
         </div>
-        @if ($branches->lastPage() > 1)
-        <div class="flex col-span-12 gap-4 sm:justify-between justify-center items-center flex-wrap">
-            <ul class="flex gap-2 md:gap-3 flex-wrap md:font-semibold items-center">
-
-                {{-- Previous Page Link --}}
-                @if ($branches->onFirstPage())
-                <li>
-                    <button
-                        class="border md:w-10 md:h-10 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 border-gray-300"
-                        disabled>
-                        <i class="las la-angle-left text-lg"></i>
-                    </button>
-                </li>
-                @else
-                <li>
-                    <a href="{{ $branches->previousPageUrl() }}"
-                        class="hover:bg-primary text-primary rtl:rotate-180 hover:text-n0 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                        <i class="las la-angle-left text-lg"></i>
-                    </a>
-                </li>
-                @endif
-
-                {{-- Page Number Links --}}
-                @for ($i = 1; $i <= $branches->lastPage(); $i++)
-                    @if ($i == $branches->currentPage())
-                    <li>
-                        <button
-                            class="hover:bg-primary text-n0 bg-primary hover:text-n0 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                            {{ $i }}
-                        </button>
-                    </li>
-                    @else
-                    <li>
-                        <a href="{{ $branches->url($i) }}"
-                            class="hover:bg-primary text-primary hover:text-n0 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                            {{ $i }}
-                        </a>
-                    </li>
-                    @endif
-                    @endfor
-
-                    {{-- Next Page Link --}}
-                    @if ($branches->hasMorePages())
-                    <li>
-                        <a href="{{ $branches->nextPageUrl() }}"
-                            class="hover:bg-primary text-primary hover:text-n0 rtl:rotate-180 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                            <i class="las la-angle-right text-lg"></i>
-                        </a>
-                    </li>
-                    @else
-                    <li>
-                        <button
-                            class="border md:w-10 md:h-10 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 border-gray-300"
-                            disabled>
-                            <i class="las la-angle-right text-lg"></i>
-                        </button>
-                    </li>
-                    @endif
-
-            </ul>
-        </div>
-        @endif
+       
     </div>
 </div>
 @endsection

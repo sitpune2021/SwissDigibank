@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Promotor;
 use Illuminate\Http\Request;
 use App\Models\MaritalStatus;
 use App\Models\Religion;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 class PromotorController extends Controller
 {
@@ -38,8 +40,14 @@ class PromotorController extends Controller
     }
     public function create()
     {
-        
-        return view('promoters.add-promoter');
+        $dynamicOptions = [
+            'branches' => Branch::pluck('branch_name', 'id'),
+            'marital_statuses' => MaritalStatus::pluck('status', 'id'),
+            'religions' => Religion::pluck('name', 'id'),
+            // 'religions'
+        ];
+        $route = route('add.promotor');
+        return view('promoters.add-promoter', compact('route','dynamicOptions'));
     }
     public function store(Request $request)
     {
@@ -156,8 +164,9 @@ class PromotorController extends Controller
     }
     public function show($id)
     {
-        $promoter = Promotor::with(['MaritalStatus', 'Religion'])
-            ->findOrFail($id);
+        $decryptedId =  base64_decode($id);
+        $promoter = Promotor::with(['MaritalStatus', 'Religion', 'Branches'])
+            ->findOrFail($decryptedId);
 
         if ($promoter && $promoter->date_of_birth) {
             $dob = Carbon::parse($promoter->date_of_birth);
@@ -174,10 +183,19 @@ class PromotorController extends Controller
     }
     public function edit($id)
     {
+        $decryptedId = base64_decode($id);
         $promoter = Promotor::with(['MaritalStatus', 'Religion'])
-            ->find($id);
-
-        return view('promoters.edit-promoter', compact('promoter'));
+            ->find($decryptedId);
+        $route = route('promotor.update', $decryptedId);
+        $method = 'PUT';
+        $dynamicOptions = [
+            'branches' => Branch::pluck('branch_name', 'id'),
+            'marital_statuses' => MaritalStatus::pluck('status', 'id'),
+            'religions' => Religion::pluck('name', 'id'),
+            // 'religions'
+        ];
+        return view('promoters.add-promoter', compact('route', 'promoter', 'dynamicOptions'));
+        // return view('promoters.add.promotor', compact('promoter'));
     }
     public function update(Request $request, $id)
     {
@@ -280,7 +298,7 @@ class PromotorController extends Controller
         return response()->json($religions);
     }
 
-     public function getPromoters()
+    public function getPromoters()
     {
         $promoters = Promotor::all();
         return response()->json($promoters);
