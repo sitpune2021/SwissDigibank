@@ -45,30 +45,67 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Company Name
+                                Employee Code
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Email</th>
+                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Name</th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Contact
+                                Designation
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                City
+                                Email
                             </div>
                         </th>
                         <th class="text-start !py-5 cursor-pointer">
                             <div class="flex items-center gap-1">
-                                State
+                                Joining Date
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Leaving Date
                             </div>
                         </th>
                         <th class="text-center !py-5" data-sortable="false">Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                    $s=0;
 
+                    @endphp
+                    @foreach($employees as $employee)
+
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <td class="py-5 px-6">{{$s=$s+1}}</td>
+                        <td class="py-5 px-6">
+                            <a href="" class="text-blue-500 hover:underline">
+                                N/A
+                            </a>
+                        </td>
+                        <td class="py-5 px-6">
+                            <div>
+                                <p class="font-medium mb-1"> {{ $employee->name }}</p>
+                            </div>
+                        </td>
+                        <td class="py-5 px-6">{{ $employee->designation }}</td>
+                        <td class="py-5 px-6">{{ $employee->email }}</td>
+                        <td class="py-5 px-6">{{ $employee->joining_date }}</td>
+                        <td class="py-5 px-6">
+                        </td>
+                        <td class="py-5 px-6">
+                            <div class="flex justify-center gap-2">
+                                <a href="{{ route('employee.view', $employee->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
+                                <a href="{{ route('employee.edit', $employee->id) }}" class="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-full transition duration-150"><i class="las la-edit"></i></a>
+                              
+                            </div>
+                        </td>
+
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

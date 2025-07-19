@@ -21,6 +21,8 @@ class MenuSeeder extends Seeder
                 [
                     'icon' => $menuData['icon'] ?? null,
                     'route' => $menuData['route'] ?? null,
+                    'position' => $menuData['position'] ?? null,
+                    'active' => $menuData['active'] ?? null,
                 ]
             );
 

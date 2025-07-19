@@ -23,121 +23,121 @@
         <form action="" method="" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
 
-            <div class="flex items-start gap-4">
-                <label for="company_website" class="w-48 text-sm font-medium">Branch Name<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="company_website" class="md:text-lg font-medium block mb-4">Branch Name<span class="text-red-500">*</span></label>
                 <div class="w-full">
                     <input type="text" name="branch_name" id="branch_name"
-                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         value="{{ $branch->branch_name }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="company_name" class="w-48 text-sm font-medium">Branch Code<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="company_name" class="md:text-lg font-medium block mb-4">Branch Code<span class="text-red-500">*</span></label>
                 <div class="w-full">
                     <input type="text" name="branch_code" id="branch_code"
-                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         value="{{ $branch->branch_code }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="open_date" class="w-48 text-sm font-medium">Open Date<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="open_date" class="md:text-lg font-medium block mb-4">Open Date<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <!-- <div class="relative bg-secondary/5 py-3 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl"> -->
-                        <input name="text" id="date2" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ \Carbon\Carbon::parse($branch->open_date)->format('d-m-Y') }}" autocomplete="off" disabled/>
+                    <!-- <div class="relative bg-secondary/5 py-3 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10"> -->
+                        <input name="text" id="date2" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ \Carbon\Carbon::parse($branch->open_date)->format('d-m-Y') }}" autocomplete="off" disabled/>
                     <!-- </div> -->
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="short_name" class="w-48 text-sm font-medium">IFSC Code<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="short_name" class="md:text-lg font-medium block mb-4">IFSC Code<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input type="text" name="ifsc_code" id="ifsc_code" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->ifsc_code }}" disabled>
+                    <input type="text" name="ifsc_code" id="ifsc_code" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->ifsc_code }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="address_line1" class="w-48 text-sm font-medium mt-2">Address Line 1<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="address_line1" class="md:text-lg font-medium block mb-4">Address Line 1<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input name="address_line1" id="address_line1" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->address_line1 }}" disabled>
+                    <input name="address_line1" id="address_line1" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->address_line1 }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="address_line2" class="w-48 text-sm font-medium">Address Line 2</label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="address_line2" class="md:text-lg font-medium block mb-4">Address Line 2</label>
                 <div class="w-full">
-                    <input type="text" name="address_line2" id="address_line2" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->address_line2 }}" disabled>
+                    <input type="text" name="address_line2" id="address_line2" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->address_line2 }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="city" class="w-48 text-sm font-medium">City<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="city" class="md:text-lg font-medium block mb-4">City<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input type="text" name="city" id="city" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->city }}" disabled>
+                    <input type="text" name="city" id="city" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->city }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="state" class="w-48 text-sm font-medium">State<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="state" class="md:text-lg font-medium block mb-4">State<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                      <input type="text" name="state" id="state" value="{{ $branch->stateData->name }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" disabled>
+                      <input type="text" name="state" id="state" value="{{ $branch->stateData->name }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="pincode" class="w-48 text-sm font-medium">Pincode<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="pincode" class="md:text-lg font-medium block mb-4">Pincode<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input type="text" value="{{ $branch->pincode }}" disabled class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3">
+                    <input type="text" value="{{ $branch->pincode }}" disabled class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="country" class="w-48 text-sm font-medium">Country<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="country" class="md:text-lg font-medium block mb-4">Country<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input type="text" name="country" id="country" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->country }}" disabled>
+                    <input type="text" name="country" id="country" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->country }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="contact_email" class="w-48 text-sm font-medium">Contact Email</label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="contact_email" class="md:text-lg font-medium block mb-4">Contact Email</label>
                 <div class="w-full">
-                    <input type="email" name="contact_email" id="contact_email" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->contact_email }}" disabled>
+                    <input type="email" name="contact_email" id="contact_email" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->contact_email }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="mobile_no" class="w-48 text-sm font-medium">Contact No.</label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="mobile_no" class="md:text-lg font-medium block mb-4">Contact No.</label>
                 <div class="w-full">
-                    <input type="text" name="mobile_no" id="mobile_no" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->mobile_no }}" disabled>
+                    <input type="text" name="mobile_no" id="mobile_no" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->mobile_no }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="landline_no" class="w-48 text-sm font-medium">Landline No.</label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="landline_no" class="md:text-lg font-medium block mb-4">Landline No.</label>
                 <div class="w-full">
-                    <input type="text" name="landline_no" id="landline_no" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->landline_no }}" disabled>
+                    <input type="text" name="landline_no" id="landline_no" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->landline_no }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="gst_no" class="w-48 text-sm font-medium">GST No.</label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="gst_no" class="md:text-lg font-medium block mb-4">GST No.</label>
                 <div class="w-full">
-                    <input type="text" name="gst_no" id="gst_no" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" value="{{ $branch->gst_no }}" disabled>
+                    <input type="text" name="gst_no" id="gst_no" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" value="{{ $branch->gst_no }}" disabled>
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="disable_recharge" class="w-48 text-sm font-medium">Disable Recharge / Bill Payment Service<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="disable_recharge" class="md:text-lg font-medium block mb-4">Disable Recharge / Bill Payment Service<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input type="text" value="{{ ucfirst($branch->disable_recharge) }}" disabled class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3">
+                    <input type="text" value="{{ ucfirst($branch->disable_recharge) }}" disabled class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 </div>
             </div>
 
-            <div class="flex items-start gap-4">
-                <label for="disable_neft" class="w-48 text-sm font-medium">Disable NEFT/ IMPS / WITHIN Transfer Service<span class="text-red-500">*</span></label>
+            <div class="col-span-2 md:col-span-1">
+                <label for="disable_neft" class="md:text-lg font-medium block mb-4">Disable NEFT/ IMPS / WITHIN Transfer Service<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input type="text" value="{{ ucfirst($branch->disable_neft) }}" disabled class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3">
+                    <input type="text" value="{{ ucfirst($branch->disable_neft) }}" disabled class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 </div>
             </div>
 

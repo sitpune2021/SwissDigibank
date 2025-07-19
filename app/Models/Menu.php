@@ -8,7 +8,7 @@ use App\Models\Submenu;
 
 class Menu extends Model
 {
-    protected $fillable = ['title', 'icon', 'route'];
+    protected $fillable = ['title', 'icon', 'route', 'position','active'];
 
     public function submenus(): HasMany
     {

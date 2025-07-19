@@ -217,7 +217,7 @@
                 <button class="btn-primary" type="submit">
                     Update
                 </button>
-                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('manage.branch') }}'">
+                <button class="btn-outline" type="button" onclick="window.location.href=`{{ route('manage.branch') }}`">
                     Back
                 </button>
             </div>

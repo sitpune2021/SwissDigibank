@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Promotor;
 use Illuminate\Http\Request;
 use App\Models\MaritalStatus;
 use App\Models\Religion;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 class PromotorController extends Controller
 {
@@ -38,7 +40,15 @@ class PromotorController extends Controller
     }
     public function create()
     {
-        return view('promoters.add-promoter');
+        $dynamicOptions = [
+            'branches' => Branch::pluck('branch_name', 'id'),
+            'marital_statuses' => MaritalStatus::pluck('status', 'id'),
+            'religions' => Religion::pluck('name', 'id'),
+            // 'religions'
+        ];
+        $route = route('promotor.store');
+        $method = 'POST';
+        return view('promoters.add-promoter', compact('route','dynamicOptions', 'method'));
     }
     public function store(Request $request)
     {
@@ -57,7 +67,6 @@ class PromotorController extends Controller
             'mariatal_status' => 'nullable|string',
             'member_religion' => 'nullable|string',
             'spouse' => 'nullable|string|max:255',
-            'landline_no' => 'nullable|digits_between:6,10',
             'email' => 'nullable|email|max:255',
             'mobile_no' => 'required|digits:10',
 
@@ -79,29 +88,6 @@ class PromotorController extends Controller
             'nomine_address' => 'nullable|string|max:255',
 
             'sms' => 'nullable|boolean',
-        ], [
-            'branch.required' => 'Please select a branch.',
-            'enrollment_date.required' => 'Enrollment date is required.',
-            'title.required' => 'Please select a title.',
-            'gender.required' => 'Gender is required.',
-            'first_name.required' => 'First name cannot be empty.',
-            'middle_name.required' => 'Middle name cannot be empty.',
-            'lastname.required' => 'Last name cannot be empty.',
-            'dob.required' => 'Date of birth is required.',
-            'occupation.required' => 'Please enter occupation.',
-            'father_name.required' => 'Father\'s name is required.',
-            'mother_name.required' => 'Mother\'s name is required.',
-            'mobile_no.required' => 'Mobile number is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'landline_no.digits_between' => 'Landline number must be between 6 and 10 digits.',
-            'mobile_no.required' => 'Mobile number is required.',
-            'mobile_no.digits'   => 'Mobile number must be exactly 10 digits.',
-            'aadhaar_no.digits' => 'Aadhaar number must be exactly 12 digits.',
-
-            'voter_no.max' => 'Voter ID must not exceed 20 characters.',
-            'pan_no.alpha_num' => 'PAN must contain only letters and numbers.',
-            'pan_no.size'      => 'PAN number must be exactly 10 characters.',
-            'ration_no.max'    => 'Ration card number must not exceed 20 characters.',
         ]);
 
         $promoter = new Promotor();
@@ -119,7 +105,6 @@ class PromotorController extends Controller
         $promoter->marital_status = $request->mariatal_status;
         $promoter->member_religion = $request->member_religion;
         $promoter->husband_wife_name = $request->spouse;
-        $promoter->landline_no = $request->landline_no;
         $promoter->email = $request->email;
         $promoter->mobile = $request->mobile_no;
 
@@ -151,12 +136,13 @@ class PromotorController extends Controller
         $promoter->member_no = $code;
         $promoter->save();
 
-        return redirect()->route('manage.promotor')->with('success', 'Promoter added successfully!');
+        return redirect()->route('promotor.index')->with('success', 'Promoter added successfully!');
     }
     public function show($id)
     {
-        $promoter = Promotor::with(['MaritalStatus', 'Religion'])
-            ->findOrFail($id);
+        $decryptedId =  base64_decode($id);
+        $promoter = Promotor::with(['MaritalStatus', 'Religion', 'Branches'])
+            ->findOrFail($decryptedId);
 
         if ($promoter && $promoter->date_of_birth) {
             $dob = Carbon::parse($promoter->date_of_birth);
@@ -173,10 +159,18 @@ class PromotorController extends Controller
     }
     public function edit($id)
     {
+        $decryptedId = base64_decode($id);
         $promoter = Promotor::with(['MaritalStatus', 'Religion'])
-            ->find($id);
-
-        return view('promoters.edit-promoter', compact('promoter'));
+            ->find($decryptedId);
+        $route = route('promotor.update', $decryptedId);
+        $method = 'PUT';
+        $dynamicOptions = [
+            'branches' => Branch::pluck('branch_name', 'id'),
+            'marital_statuses' => MaritalStatus::pluck('status', 'id'),
+            'religions' => Religion::pluck('name', 'id'),
+            // 'religions'
+        ];
+        return view('promoters.add-promoter', compact('route', 'promoter', 'dynamicOptions'));
     }
     public function update(Request $request, $id)
     {
@@ -232,7 +226,6 @@ class PromotorController extends Controller
         $promotor->marital_status = $request->mariatal_status;
         $promotor->member_religion = $request->member_religion;
         $promotor->husband_wife_name = $request->spouse;
-        $promotor->landline_no = $request->landline_no;
         $promotor->email = $request->email;
         $promotor->mobile = $request->mobile_no;
 
@@ -257,7 +250,7 @@ class PromotorController extends Controller
 
         $promotor->save();
 
-        return redirect()->route('manage.promotor')->with('success', 'Promotor updated successfully!');
+        return redirect()->route('promotor.index')->with('success', 'Promotor updated successfully!');
     }
 
     public function destroy($id)
@@ -265,7 +258,7 @@ class PromotorController extends Controller
         $branch = Promotor::findOrFail($id);
         $branch->delete();
 
-        return redirect()->route('manage.promotor')->with('success', 'Branch deleted successfully.');
+        return redirect()->route('promotor.index')->with('success', 'Branch deleted successfully.');
     }
     public function getMariatalStatuses()
     {
@@ -279,7 +272,7 @@ class PromotorController extends Controller
         return response()->json($religions);
     }
 
-     public function getPromoters()
+    public function getPromoters()
     {
         $promoters = Promotor::all();
         return response()->json($promoters);

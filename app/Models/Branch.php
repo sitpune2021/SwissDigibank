@@ -31,4 +31,9 @@ class Branch extends Model
     {
         return $this->belongsTo(State::class, 'state', 'id');
     }
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'general_branch');
+    }
+  
 }
