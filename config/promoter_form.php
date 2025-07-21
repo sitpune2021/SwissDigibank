@@ -15,7 +15,7 @@ return [
         [
             'label'         => 'Enrollment Date',
             'name'          => 'enrollment_date',
-            'id'            => 'date2',
+            'id'            => 'date',
             'type'          => 'text',
             'required'      => true,
         ],
@@ -112,13 +112,6 @@ return [
             'type'          => 'text',
             'required'      => false,
         ],
-        // [
-        //     'label'         => 'Landline No.',
-        //     'name'          => 'landline_no',
-        //     'id'            => 'landline_no',
-        //     'type'          => 'text',
-        //     'required'      => false,
-        // ],
         [
             'label'         => 'Email',
             'name'          => 'email',

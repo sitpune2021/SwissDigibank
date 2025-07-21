@@ -142,7 +142,13 @@ class CompanyController extends Controller
         $userId = Auth::id();
         $company = Company::with(['stateData', 'incorporationState'])->where('user_id',  $userId)
             ->first();
-        return view('company-profile.view-profile', compact('company'));
+           
+         $dynamicOptions = [
+            'state' =>State::pluck('name', 'id')
+        ]; 
+        $show = true;
+        $route = '';
+        return view('company-profile.view-profile', compact('company', 'dynamicOptions', 'show', 'route'));
     }
 
     public function edit()
@@ -154,7 +160,9 @@ class CompanyController extends Controller
         $dynamicOptions = [
             'state' => State::pluck('name', 'id')
         ];
-        return view('company-profile.edit-profile', compact('company', 'dynamicOptions'));
+        $show = false;
+        $route = route('company.update');
+        return view('company-profile.view-profile', compact('company', 'dynamicOptions', 'show', 'route'));
     }
 
     public function update(Request $request)

@@ -25,14 +25,14 @@ return [
             'name' => 'general_advisor_staff',
             'id' => 'advisor_staff',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         [
             'label' => 'Group',
             'name' => 'general_group',
             'id' => 'group',
             'type' => 'select',
-            'required' => true,
+            'required' => false,
             'options' => [
                 'group1' => 'Group 1',
                 'group2' => 'Group 2',
@@ -163,9 +163,9 @@ return [
         [
             'label' => 'Husband/ Wife DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'spouse_dob',
+            'id' => 'date2',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         [
             'label' => 'Mobile No.',
@@ -292,30 +292,31 @@ return [
             'type' => 'text',
             'required' => true,
         ],
-        [
+       
+    ],
+
+    // Permanent Address
+    'member_permanent_address' => [
+         [
             'label' => 'Address',
             'name' => 'member_address_address',
             'id' => 'address',
             'type' => 'text',
             'required' => false,
         ],
-    ],
-
-    // Permanent Address
-    'member_permanent_address' => [
         [
             'label' => 'City',
             'name' => 'member_perm_address_city',
             'id' => 'city',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         [
             'label' => 'State',
             'name' => 'member_perm_address_state',
             'id' => 'state',
             'type' => 'select',
-            'required' => true,
+            'required' => false,
             'dynamic' => true,
             'options_key' => 'states',
         ],
@@ -324,7 +325,7 @@ return [
             'name' => 'member_perm_address_pincode',
             'id' => 'pincode',
             'type' => 'number',
-            'required' => true,
+            'required' => false,
         ],
     ],
 
@@ -335,14 +336,14 @@ return [
             'name' => 'member_gps_location_latitude',
             'id' => 'location_latitude',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         [
             'label' => 'Location Longitude',
             'name' => 'member_gps_location_longitude',
             'id' => 'location_longitude',
             'type' => 'number',
-            'required' => true,
+            'required' => false,
         ],
     ],
 
@@ -509,7 +510,7 @@ return [
             'name' => 'nominee_dob',
             'id' => 'date3',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         [
             'label' => 'Nominee Aadhaar No.',
@@ -594,7 +595,7 @@ return [
             'name' => 'charges_pay_mode',
             'id' => 'pay_mode',
             'type' => 'radio',
-            'required' => true,
+            'required' => false,
             'options' => [
                 'cash' => 'Cash',
                 'online' => 'Online Tr.',

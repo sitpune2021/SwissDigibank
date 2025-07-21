@@ -51,30 +51,51 @@
                     {{ $required ? 'required' : '' }}>
                     <option value="">-- Select {{ $label }} --</option>
 
-                    @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
-                    @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
-                    <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
-                        {{ $optionLabel }}
-                    </option>
-                    @endforeach
-                    @elseif(!empty($field['options']))
-                    @foreach ($field['options'] as $optionValue => $optionLabel)
-                    <option value="{{ $optionValue }}"
-                        {{ $value == $optionValue ? 'selected' : '' }}>
-                        {{ $optionLabel }}
-                    </option>
-                    @endforeach
-                    @endif
-                </select>
-                @elseif ($type === 'radio')
-                <div class="flex gap-4">
-                    @foreach ($field['options'] as $optionValue => $optionLabel)
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
-                            {{ $value == $optionValue ? 'checked' : '' }}>
-                        <span>{{ $optionLabel }}</span>
-                    </label>
-                    @endforeach
+                                @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
+                                    @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
+                                        <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $optionLabel }}
+                                        </option>
+                                    @endforeach
+                                @elseif(!empty($field['options']))
+                                    @foreach ($field['options'] as $optionValue => $optionLabel)
+                                        <option value="{{ $optionValue }}"
+                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $optionLabel }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        @elseif ($type === 'radio')
+                            <div class="flex gap-5">
+                                @foreach ($field['options'] as $optionValue => $optionLabel)
+                                    <label class="flex items-center space-x-2">
+                                        <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
+                                            {{ $value == $optionValue ? 'checked' : '' }}>
+                                        <span>{{ $optionLabel }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @else
+                            <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
+                                value="{{ $value }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="Enter {{ strtolower($label) }}" />
+                        @endif
+
+                        @error($name)
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endforeach
+
+                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+                    <button class="btn-primary" type="submit">
+                        {{ $method === 'PUT' ? 'Update' : 'Save' }} Branch
+                    </button>
+                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+                        Reset
+                    </button>
                 </div>
                 @else
                 <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"

@@ -185,7 +185,7 @@
             <div class="col-span-2 flex gap-4 justify-center mt-6">
                 <button class="btn-primary" type="submit">{{isset($promoter) ? 'Update' : 'Save'}} Promotor</button>
                 <button class="btn-outline" type="reset"
-                    onclick="window.location.href='{{ route('manage.promotor') }}'">Back</button>
+                    onclick="window.location.href='{{ route('promotor.index') }}'">Back</button>
                 <button class="btn-outline" type="reset"
                     onclick="document.getElementById('companyForm').reset();">Reset</button>
             </div>
@@ -193,76 +193,3 @@
     </div>
 </div>
 @endsection
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- <script>
-    setTimeout(function() {
-        var successAlert = document.getElementById('success-alert');
-        var errorAlert = document.getElementById('error-alert');
-        if (successAlert) successAlert.style.display = 'none';
-        if (errorAlert) errorAlert.style.display = 'none';
-    }, 5000);
-</script>
-
-<script>
-    $(document).ready(function() {
-        const oldBranchId = $('#oldState').val();
-        $.ajax({
-            url: "{{ url('/get-branches') }}",
-            type: "GET",
-            success: function(response) {
-                // $('#branchDropdown').append('<option value="">Select Branch</option>');
-                $.each(response, function(key, branch) {
-                    let selected = (branch.id == oldBranchId) ? 'selected' : '';
-                    $('#branchDropdown').append(
-                        `<option value="${branch.id}" ${selected}>${branch.branch_name}</option>`
-                    );
-                });
-            },
-            error: function() {
-                alert('Failed to fetch branches.');
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        const oldMariatal = $('#oldMariatalStatus').val();
-        $.ajax({
-            url: "{{ url('/get-marital-statuses') }}",
-            type: 'GET',
-            success: function(response) {
-                // $('#mariatal_status').append('<option value="">Select Marital Status</option>');
-                $.each(response, function(index, status) {
-                    let selected = (status.id == oldMariatal) ? 'selected' : '';
-                    $('#mariatal_status').append(
-                        `<option value="${status.id}" ${selected}>${status.status}</option>`
-                    );
-                });
-            },
-            error: function() {
-                alert('Failed to load marital statuses.');
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        const oldReligion = $('#oldReligion').val();
-        $.ajax({
-            url: "{{ url('/get-religion-statuses') }}",
-            type: 'GET',
-            success: function(response) {
-                // $('#member_religion').append('<option value="">Select Member Religion</option>');
-                $.each(response, function(index, religion) {
-                    let selected = (religion.id == oldReligion) ? 'selected' : '';
-                    $('#member_religion').append(
-                        `<option value="${religion.id}" ${selected}>${religion.name}</option>`
-                    );
-                });
-            },
-            error: function() {
-                alert('Failed to load marital statuses.');
-            }
-        });
-    });
-</script> -->

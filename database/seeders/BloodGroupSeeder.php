@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\BloodGroup;
 
 class BloodGroupSeeder extends Seeder
 {
@@ -13,15 +14,18 @@ class BloodGroupSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('blood_group')->insert([
-            ['group' => 'A+'],
-            ['group' => 'A-'],
-            ['group' => 'B+'],
-            ['group' => 'B-'],
-            ['group' => 'AB+'],
-            ['group' => 'AB-'],
-            ['group' => 'O+'],
-            ['group' => 'O-'],
-        ]);
+        $bloods = [
+             'A+',
+             'A-',
+             'B+',
+             'B-',
+             'AB+',
+             'AB-',
+             'O+',
+             'O-',
+        ];
+        foreach ($bloods as $blood) {
+            BloodGroup::create(['group' => $blood]);
+        }
     }
 }
