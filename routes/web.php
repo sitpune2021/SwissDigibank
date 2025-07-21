@@ -336,7 +336,8 @@ Route::middleware('auth.user')->group(function () {
     Route::get('CreateUser', [UserController::class, 'create'])->name('CreateUser');
     Route::get('/users/show/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
-    Route::get('/users/update/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::put('/users/update/{id}', [UserController::class, 'update'])->name('user.update');
+    
 
     //HR & Management
     Route::get('HR/ManageEmployee', [HRController::class, 'index'])->name('ManageEmployee');

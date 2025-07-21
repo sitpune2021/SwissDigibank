@@ -22,7 +22,7 @@
     @endif
 
     <div class="box mb-4 xxxl:mb-6">
-        <form id="companyForm" action="{{  isset($user) ? ($show ?? false ? '#' : route('user.update', $user->id)) : route('CreateUser') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        <form id="companyForm" action="{{  isset($user) ? ($show ?? false ? '#' : route('user.update', base64_encode($user->id))) : route('CreateUser') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
             @if(isset($user) && empty($show))
             @method('PUT')
@@ -30,11 +30,11 @@
             @php $isView = !empty($show); @endphp
             <div class="col-span-2 md:col-span-1">
                 <label for="rate" class="md:text-lg font-medium block mb-4">Employee
-                    <select name="employee" id="employeeDropdown" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"  @if($isView) disabled @endif>
+                    <select name="employee" id="employeeDropdown" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
                         <option value="">Select Employee</option>
                         @foreach($employees as $emp)
                         <option value="{{ $emp->id }}" {{old('employee', isset($user) && $user->emp_id == $emp->id? 'selected' : '' )}}>
-                           {{ $emp->name }}
+                            {{ $emp->name }}
                         </option>
                         @endforeach
                     </select>
@@ -107,9 +107,9 @@
 
             <div class="col-span-2 md:col-span-1">
                 <label for="back_date" class="md:text-lg font-medium block mb-4">Back Date Entry Days <span class="text-red-500">*</span></label>
-                <input type="text" name="back_date" id="back_date" 
-                placeholder="Enter Days" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" 
-                value="{{ old('back_date', $user->back_edate_days ?? '0') }}
+                <input type="text" name="back_date" id="back_date"
+                    placeholder="Enter Days" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    value="{{ old('back_date', $user->back_edate_days ?? '0') }}
                 " @if($isView) disabled @endif>
                 @error('back_date')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -134,7 +134,7 @@
                 <select name="branch" id="branchDropdown" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
                     <option value="">Select Branch</option>
                     @foreach($branches as $branch)
-                    <option value="{{ $branch->id }}" {{old('branch', isset($user) && $user->branch_id == $branch->id? 'selected' : '' )}}>{{ $branch->name }}</option>
+                    <option value="{{ $branch->id }}" {{old('branch', isset($user) && $user->branch_id == $branch->id? 'selected' : '' )}}>{{ $branch->branch_name }}</option>
                     @endforeach
                 </select>
                 @error('branch')
@@ -170,14 +170,12 @@
 
             <div class="col-span-2 md:col-span-1">
                 <label for="searchable_account" class="md:text-lg font-medium block mb-4">Searchable Accounts<span class="text-red-500">*</span></label>
-
                 <label><input type="radio" name="searchable_account" value="1" {{ old('searchable_account', '0') == '1' ? 'checked' : '' }} @if($isView) disabled @endif> Yes - All</label>
                 <label><input type="radio" name="searchable_account" value="0" {{ old('searchable_account', '0') == '0' ? 'checked' : '' }} @if($isView) disabled @endif> No - Only Assigned</label>
                 @error('searchable_account')
                 <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
                 @enderror
             </div>
-
 
             <!-- <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                 <button class="btn-primary" type="submit">Save</button>
