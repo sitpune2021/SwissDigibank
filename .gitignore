@@ -2,10 +2,18 @@
 /node_modules
 # /public/build
 /public/hot
+<<<<<<< HEAD
 # /public/storage
 # /storage/*.key
 # /storage/pail
 # /vendor
+=======
+/public/storage
+/storage/*.keymai
+/storage/pail
+/vendor
+/storage
+>>>>>>> faefeb4b6225966920581afd9499c201098f9353
 .env
 .env.backup
 .env.production
