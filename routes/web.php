@@ -293,7 +293,7 @@ Route::middleware('auth.user')->group(function () {
     // Promoters & Share Holdings
     Route::get('manage-shareholding', [ShareHoldingController::class, 'index'])->name('manage.shareholding');
     Route::get('create-shareholding', [ShareHoldingController::class, 'create'])->name('create.shareholding');
-    Route::post('add-shareholding', [ShareHoldingController::class, 'store'])->name('add.shareholding');
+    Route::post('/add-shareholding', [ShareHoldingController::class, 'store'])->name('add.shareholding');
     Route::get('/shareholding/{id}/view', [ShareHoldingController::class, 'show'])->name('shareholding.view');
     Route::get('/shareholding/{id}/edit', [ShareHoldingController::class, 'edit'])->name('shareholding.edit');
     Route::put('/shareholding/{id}/update', [ShareHoldingController::class, 'update'])->name('shareholding.update');

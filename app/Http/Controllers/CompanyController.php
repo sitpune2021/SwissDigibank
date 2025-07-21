@@ -138,20 +138,28 @@ class CompanyController extends Controller
 
     public function show()
     {
-        $company = Company::with(['stateData', 'incorporationState'])->where('user_id', 2)
+        $company = Company::with(['stateData', 'incorporationState'])->where('user_id', 1)
             ->first();
-        return view('company-profile.view-profile', compact('company'));
+           
+         $dynamicOptions = [
+            'state' =>State::pluck('name', 'id')
+        ]; 
+        $show = true;
+        $route = '';
+        return view('company-profile.view-profile', compact('company', 'dynamicOptions', 'show', 'route'));
     }
 
     public function edit()
     {
         $company = Company::with(['stateData', 'incorporationState'])
-            ->where('user_id', 2)->first();
+            ->where('user_id', 1)->first();
 
          $dynamicOptions = [
             'state' =>State::pluck('name', 'id')
         ];
-        return view('company-profile.edit-profile', compact('company', 'dynamicOptions'));
+        $show = false;
+        $route = route('company.update');
+        return view('company-profile.view-profile', compact('company', 'dynamicOptions', 'show', 'route'));
     }
 
     public function update(Request $request)
@@ -219,7 +227,7 @@ class CompanyController extends Controller
             'gst_no.regex' => 'GST number must be a valid 12-character GSTIN.',
         ]);
 
-        $company = Company::where('user_id', 2)->first();
+        $company = Company::where('user_id', 1)->first();
 
         $company->company_website = $request->company_website;
         $company->company_name = $request->company_name;

@@ -105,7 +105,7 @@
                             {{ ($promotors->currentPage() - 1) * $promotors->perPage() + $loop->iteration }}
                         </td>
                         <td class="py-5 px-6">
-                            <a href="{{route('promotor.show', ['id' =>  base64_encode($promotor->id)])}}" class="text-blue-500 hover:underline">
+                            <a href="{{route('promotor.show', base64_encode($promotor->id))}}" class="text-blue-500 hover:underline">
                                 {{ $promotor->member_no }}
                             </a>
                         </td>
