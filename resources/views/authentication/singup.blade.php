@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon" />
     @vite('resources/css/app.scss')
-    <title>SWISS PAYMENTS Digital banking</title>
+    <title>Swiss Payment - Digital Banking</title>
 </head>
 
 <body class="vertical bg-secondary/5 dark:bg-bg3">
@@ -23,7 +23,7 @@
         <img src="{{ asset('assets/images/ellipse2.png') }}"
             class="absolute bottom-6 ltr:left-0 rtl:right-0 ltr:sm:left-32 rtl:sm:right-32" alt="ellipse" />
         <a href="{{ route('index1') }}">
-            <img src="{{ asset('assets/images/logo-with-text.png') }}" alt="logo"
+            <img src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
                 class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" />
         </a>
         <div class="flex items-center justify-center mt-7">

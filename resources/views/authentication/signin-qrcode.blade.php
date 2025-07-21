@@ -22,7 +22,7 @@
         <img src="{{ asset('assets/images/ellipse2.png') }}"
             class="absolute bottom-6 ltr:left-0 rtl:right-0 ltr:sm:left-32 rtl:sm:right-32" alt="ellipse" />
         <a href="{{ route('index1') }}">
-            <img src="{{ asset('assets/images/logo-with-text.png') }}" alt="logo"
+            <img src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
                 class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" />
         </a>
         <div class="flex items-center justify-center mt-7">

@@ -3,7 +3,7 @@
     <div class="topbar-inner flex items-center justify-between">
         <div class="flex grow items-center gap-4 xxl:gap-6">
             <a href="{{ route('index1') }}" class="topbar-logo hidden shrink-0">
-                <img width="174" height="38" src="{{ asset('assets/images/logo-with-text.png') }}" alt="logo"
+                <img width="174" height="38" src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
                     class="logo-full2 hidden lg:block" />
             </a>
              <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0"
@@ -89,7 +89,7 @@
                     <i class="las la-bell text-2xl"></i>
                     <span
                         class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-n0">
-                        2
+                        0
                     </span>
                 </button>
                 <div id="notification"
@@ -104,34 +104,14 @@
                                 alt="img" />
                             <div class="text-sm">
                                 <div class="flex gap-1">
-                                    <span class="font-medium">Benjamin</span>
+                                    <span class="font-medium">Admin</span>
                                     <span>Sent a message</span>
                                 </div>
                                 <span class="text-xs text-n100 dark:text-n50">1 hour ago</span>
                             </div>
                         </div>
-                        <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
-                            <img src="{{ asset('assets/images/user-4.png') }}" width="44" height="40" class="shrink-0 rounded-full"
-                                alt="img" />
-                            <div class="text-sm">
-                                <div class="flex gap-1">
-                                    <span class="font-medium">Benjamin</span>
-                                    <span>Left a Comment</span>
-                                </div>
-                                <span class="text-xs text-n100 dark:text-n50">1 hour ago</span>
-                            </div>
-                        </div>
-                        <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
-                            <img src="{{ asset('assets/images/user-5.png') }}" width="44" height="40" class="shrink-0 rounded-full"
-                                alt="img" />
-                            <div class="text-sm">
-                                <div class="flex gap-1">
-                                    <span class="font-medium">Benjamin</span>
-                                    <span>Sent a message</span>
-                                </div>
-                                <span class="text-xs text-n100 dark:text-n50">2 hour ago</span>
-                            </div>
-                        </div>
+                      
+                     
                         <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
                             <img src="{{ asset('assets/images/user-7.png') }}" width="44" height="40"
                                 class="shrink-0 rounded-full" alt="img" />
@@ -163,7 +143,7 @@
                 <i class="lab la-facebook-messenger"></i>
                 <span
                     class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-n0">
-                    3
+                    0
                 </span>
             </a>
             <!-- language dropdown -->
@@ -201,8 +181,9 @@
                     <div class="flex flex-col items-center border-b p-3 text-center dark:border-n500 lg:p-4">
                         <img src="{{ asset('assets/images/user-big-4.png') }}" width="60" height="60" class="rounded-full"
                             alt="profile img" />
-                        <h6 class="h6 mt-2">William James</h6>
-                        <span class="text-sm">james@mail.com</span>
+                        <h6 class="h6 mt-2">
+                        {{ auth()->user()->name}} </h6>
+                        <span class="text-sm">{{auth()->user()->email}}</span>
                     </div>
                     <ul class="flex w-[250px] flex-col p-4">
                         <li>
