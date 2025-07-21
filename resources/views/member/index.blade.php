@@ -1,35 +1,15 @@
 @extends('layout.main')
 @section('content')
-<div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <!-- <h2 class="h2">Manage Member</h2> -->
-        <div class="flex items-center gap-2">
-            <h1 class="text-xl font-semibold">Member</h1>
-            <a href="{{ route('member.create') }}"
-                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                <i class="las la-plus text-lg"></i>
-            </a>
-        </div>
+    <div class="main-inner">
+         <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
+        <h4 class="h2">Member</h4>
+        <a class="btn-primary" href="{{ route('member.create') }}">
+            <i class=" text-base md:text-lg"></i>
+            Add
+        </a>
     </div>
-    {{-- <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <!-- <h2 class="h2">Manage Promotors</h2> -->
-            <div>
-                <h1 class="text-xl font-semibold">Manage Member</h1>
-                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                    <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-    <li><a href="{{ url('/manage-Member') }}" class="text-blue-600 hover:underline">Member</a></li>
-    <li class="text-gray-500">Manage Member</li>
-    </ol>
-</div>
-<a href="{{ route('member.create') }}" class="btn-primary">
-    <i class="las la-plus-circle text-base md:text-lg"></i>
-    Add Member
-</a>
-</div> --}}
-
-<!-- Latest Transactions -->
-<div class="box col-span-12 lg:col-span-12">
-    <!-- <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
+        <div class="box col-span-12 lg:col-span-12">
+            <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
                 <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
                     <form
                         class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
@@ -128,7 +108,7 @@
 
                     <td class="py-3 px-6">{{ ucfirst($item->member_info_gender) }}</td>
 
-                    <td class="py-3 px-6">{{ $item->general_branch }}</td>
+                    <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
 
                     <td class="py-3 px-6">
                         {{ $item->member_info_first_name }}
@@ -172,27 +152,22 @@
                         {{ $item->member_info_mobile_no }}
                     </td>
 
-                    <td class="py-3 px-6">
-                        <span class="text-xs px-2 py-1 rounded bg-green-100 text-green-700">
-                            Active
-                        </span>
-                    </td>
-
-                    <td class="text-center py-3">
-                        <a href="{{ route('member.show', $item->id) }}"
-                            class="text-blue-600 hover:underline">View</a> |
-                        <a href="{{ route('member.edit', $item->id) }}"
-                            class="text-yellow-600 hover:underline">Edit</a> |
-                        <form action="{{ route('member.destroy', $item->id) }}" method="POST"
-                            class="inline-block" onsubmit="return confirm('Are you sure?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:underline">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
+                                <td class="py-3 px-6">
+                                    <span class="text-xs px-2 py-1 rounded bg-green-100 text-green-700">
+                                        Active
+                                    </span>
+                                </td>
+                                <td class="py-2 px-6">
+                                    <div class="flex justify-center">
+                                        @include('partials._vertical-options', [
+                                            'id' => $item->id,
+                                            'viewRoute' => 'member.show',
+                                            'editRoute' => 'member.edit',
+                                        ])                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
 
         </table>
     </div>

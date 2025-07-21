@@ -167,8 +167,7 @@
                 <!-- ------------------------------------------------------------------------------------------------ -->
 
                 <div class="flex items-start gap-4">
-                    <label for="Advisor/ Staff" class="w-48 text-sm font-medium">Advisor/ Staff:<span
-                            class="text-red-500">*</span></label>
+                    <label for="Advisor/ Staff" class="w-48 text-sm font-medium">Advisor/ Staff</span></label>
                     <div class="w-full">
                         <input type="text" name="Advisor/ Staff" id="Advisor/ Staff"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3"

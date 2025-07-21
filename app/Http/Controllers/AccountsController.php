@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 
 class AccountsController extends Controller
 {
+    
+
     public function bankAccount()
     {
         return view('accounts.bank-account');
-    }
 
+    }    
     public function accountOverview()
     {
         return view('accounts.account-overview');

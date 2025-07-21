@@ -116,13 +116,19 @@
                 </button>
                 @endif
 
-                {{-- Show Back button on all 3 pages: add, edit, view --}}
-                <a href="{{ route('director.index') }}" class="btn-outline">
-                    Back
-                </a>
-            </div>
-
-        </form>
+                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+                    <button class="btn-primary" type="submit">
+                        {{ $method === 'PUT' ? 'Update' : 'Save' }} Director
+                    </button>
+                    <a href="{{ route('director.index') }}" class="btn-outline inline-flex items-center justify-center">
+                        Back
+                    </a>
+                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+                        Reset
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection
