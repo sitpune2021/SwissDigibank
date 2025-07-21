@@ -8,6 +8,7 @@ use App\Models\Address;
 use App\Models\KycAndNominee;
 use App\Models\State;
 use App\Models\Branch;
+use App\Models\Religion;
 
 class MemberController extends Controller
 {
@@ -15,6 +16,7 @@ class MemberController extends Controller
     public function index()
     {
         $members = Member::all();
+        session()->forget('member_id');
         return view('member.index', compact('members'));
     }
 
@@ -23,14 +25,14 @@ class MemberController extends Controller
     {
         $dynamicOptions = [
             'states' =>State::pluck('name', 'id'),
-            'branch' => Branch::pluck('branch_name', 'id')
+            'branch' => Branch::pluck('branch_name', 'id'),
+            'religion' => Religion::pluck('name', 'id')
         ];
         $sections = config('member_form');
         $member = null;
         $route = route('member.store');
         $method = 'POST';
         return view('member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
-       // return view('member.create');
 
     }
 
@@ -171,7 +173,8 @@ class MemberController extends Controller
     {
         $dynamicOptions = [
             'states' =>State::pluck('name', 'id'),
-            'branch' => Branch::pluck('branch_name', 'id')
+            'branch' => Branch::pluck('branch_name', 'id'),
+            'religion' => Religion::pluck('name', 'id')
         ];
         $memberModel = Member::with('address', 'kyc')->findOrFail($id);
         $member = array_merge(
@@ -183,7 +186,10 @@ class MemberController extends Controller
         $sections = config('member_form');
         $show = true;
         $button=true;
-        return view('member.create', compact('sections', 'member', 'show', 'dynamicOptions','button'));
+        $method='PUT';
+        $minor = true;
+        session(['member_id' => $id]);
+        return view('member.create', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
     }
 
     
@@ -191,7 +197,8 @@ class MemberController extends Controller
     {
         $dynamicOptions = [
             'states' =>State::pluck('name', 'id'),
-            'branch' => Branch::pluck('branch_name', 'id')
+            'branch' => Branch::pluck('branch_name', 'id'),
+            'religion' => Religion::pluck('name', 'id')
         ];
         $method = 'PUT';
         $memberModel = Member::with('address', 'kyc')->findOrFail($id);
@@ -203,7 +210,9 @@ class MemberController extends Controller
 
         $sections = config('member_form');
         $route = route('member.update', $id) ;
-        return view('member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
+        session(['member_id' => $id]);
+        $minor = true;
+        return view('member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
     }
  
 

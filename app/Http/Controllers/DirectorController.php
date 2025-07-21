@@ -69,9 +69,6 @@ class DirectorController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $decryptedId = base64_decode($id);
@@ -79,9 +76,7 @@ class DirectorController extends Controller
          return view('director.create', compact('director'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+  
     public function edit(string $id)
     {
         $dynamicOptions = [
@@ -95,9 +90,7 @@ class DirectorController extends Controller
         return view('director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+   
     public function update(Request $request, $id)
     {
         // Find the Director record by id
@@ -139,9 +132,7 @@ class DirectorController extends Controller
         return redirect()->route('director.index')->with('success', 'Director updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         //

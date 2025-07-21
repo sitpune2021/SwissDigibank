@@ -95,6 +95,9 @@
                     <button class="btn-primary" type="submit">
                         {{ $method === 'PUT' ? 'Update' : 'Save' }} Director
                     </button>
+                    <a href="{{ route('director.index') }}" class="btn-outline inline-flex items-center justify-center">
+                        Back
+                    </a>
                     <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
                         Reset
                     </button>

@@ -4,15 +4,15 @@ return
 [
    [
     
-    [
-        'label' => 'Member',
-        'name' => 'member_id',
-        'id' => 'member_id',
-        'type' => 'select', // or 'date' if using a date picker
-        'required' => true,
-          'dynamic'       => true,
-            'options_key'   => 'member',
-    ],
+    // [
+    //     'label' => 'Member',
+    //     'name' => 'member_id',
+    //     'id' => 'member_id',
+    //     'type' => 'select', // or 'date' if using a date picker
+    //     'required' => true,
+    //       'dynamic'       => true,
+    //         'options_key'   => 'member',
+    // ],
 
     [
         'label' => 'Enrollment Date',

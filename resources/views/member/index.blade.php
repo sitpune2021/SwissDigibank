@@ -25,15 +25,13 @@
 </style>
 @section('content')
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <div class="flex items-center gap-2">
-                <h1 class="text-xl font-semibold">Member</h1>
-                <a href="{{ route('member.create') }}"
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                    <i class="las la-plus text-lg"></i>
-                </a>
-            </div>
-        </div>
+         <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
+        <h4 class="h2">Member</h4>
+        <a class="btn-primary" href="{{ route('member.create') }}">
+            <i class=" text-base md:text-lg"></i>
+            Add
+        </a>
+    </div>
         <div class="box col-span-12 lg:col-span-12">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
                 <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">

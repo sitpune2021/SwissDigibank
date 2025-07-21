@@ -25,32 +25,21 @@
 </style>
 @section('content')
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <!-- <h2 class="h2">Manage share-holdings</h2> -->
-            <div class="flex items-center gap-2">
-                <h1 class="text-xl font-semibold">Share holdings</h1>
-                <a href="{{ route('shares-holdings.create') }}"
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                    <i class="las la-plus text-lg"></i>
-                </a>
-            </div>
-        </div>
-
-        {{-- <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <!-- <h2 class="h2">Manage Promotors</h2> -->
-            <div>
-                <h1 class="text-xl font-semibold">Manage Director</h1>
-                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                    <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-                    <li><a href="{{ url('/manage-director') }}" class="text-blue-600 hover:underline">Director</a></li>
-                    <li class="text-gray-500">Manage Director</li>
-                </ol>
-            </div>
-            <a href="{{ route('director.create') }}" class="btn-primary">
-                <i class="las la-plus-circle text-base md:text-lg"></i>
-                Add Director
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
+            <h3 class="h3">Share Holdings</h3>
+            <a class="btn btn-warning btn-sm" title="UN-ALLOTTED SHARE LIST" onclick="block_ui()"
+                href="{{ route('shares-holdings.create') }}">
+                UN ALLOTTED / DUPLICATE SHARE LIST
             </a>
-        </div> --}}
+            <a class="btn btn-warning btn-sm" title="UN-ALLOTTED SHARE LIST" onclick="block_ui()"
+                href="/share-holdings/unallotted">
+                UN ALLOTTED / DUPLICATE SHARE LIST
+            </a>
+            <a class="btn-primary" href="{{ route('shares-holdings.create') }}">
+                <i class=" text-base md:text-lg"></i>
+                Add
+            </a>
+        </div>
 
         <!-- Latest Transactions -->
         <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
