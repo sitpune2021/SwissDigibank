@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974
+class ComposerStaticInit3284c38b25b1f9b1be05593f5fc0ba39
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -517,19 +517,57 @@ class ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974
     public static $classMap = array (
         'App\\Http\\Controllers\\AccountsController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccountsController.php',
         'App\\Http\\Controllers\\AuthenticationController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthenticationController.php',
+        'App\\Http\\Controllers\\BranchController' => __DIR__ . '/../..' . '/app/Http/Controllers/BranchController.php',
         'App\\Http\\Controllers\\CardsController' => __DIR__ . '/../..' . '/app/Http/Controllers/CardsController.php',
+        'App\\Http\\Controllers\\CompanyController' => __DIR__ . '/../..' . '/app/Http/Controllers/CompanyController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
+        'App\\Http\\Controllers\\DirectorController' => __DIR__ . '/../..' . '/app/Http/Controllers/DirectorController.php',
+        'App\\Http\\Controllers\\Form15Gor15HController' => __DIR__ . '/../..' . '/app/Http/Controllers/Form15Gor15HController.php',
+        'App\\Http\\Controllers\\HRController' => __DIR__ . '/../..' . '/app/Http/Controllers/HRController.php',
         'App\\Http\\Controllers\\InvoicingController' => __DIR__ . '/../..' . '/app/Http/Controllers/InvoicingController.php',
+        'App\\Http\\Controllers\\MemberController' => __DIR__ . '/../..' . '/app/Http/Controllers/MemberController.php',
+        'App\\Http\\Controllers\\MinorController' => __DIR__ . '/../..' . '/app/Http/Controllers/MinorController.php',
         'App\\Http\\Controllers\\PaymentController' => __DIR__ . '/../..' . '/app/Http/Controllers/PaymentController.php',
         'App\\Http\\Controllers\\PrivateTransferController' => __DIR__ . '/../..' . '/app/Http/Controllers/PrivateTransferController.php',
+        'App\\Http\\Controllers\\PromotorController' => __DIR__ . '/../..' . '/app/Http/Controllers/PromotorController.php',
         'App\\Http\\Controllers\\ReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/ReportController.php',
+        'App\\Http\\Controllers\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoleController.php',
         'App\\Http\\Controllers\\SettingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/SettingsController.php',
+        'App\\Http\\Controllers\\ShareCertificateController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShareCertificateController.php',
+        'App\\Http\\Controllers\\ShareHoldingController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShareHoldingController.php',
+        'App\\Http\\Controllers\\ShareHoldingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShareHoldingsController.php',
+        'App\\Http\\Controllers\\ShareTrasferHistoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShareTrasferHistoryController.php',
+        'App\\Http\\Controllers\\StateController' => __DIR__ . '/../..' . '/app/Http/Controllers/StateController.php',
         'App\\Http\\Controllers\\SupportController' => __DIR__ . '/../..' . '/app/Http/Controllers/SupportController.php',
         'App\\Http\\Controllers\\TradingController' => __DIR__ . '/../..' . '/app/Http/Controllers/TradingController.php',
         'App\\Http\\Controllers\\TransactionController' => __DIR__ . '/../..' . '/app/Http/Controllers/TransactionController.php',
+        'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
+        'App\\Http\\Middleware\\AuthenticateUser' => __DIR__ . '/../..' . '/app/Http/Middleware/AuthenticateUser.php',
+        'App\\Models\\Address' => __DIR__ . '/../..' . '/app/Models/Address.php',
+        'App\\Models\\Bank' => __DIR__ . '/../..' . '/app/Models/Bank.php',
+        'App\\Models\\BloodGroup' => __DIR__ . '/../..' . '/app/Models/BloodGroup.php',
+        'App\\Models\\Branch' => __DIR__ . '/../..' . '/app/Models/Branch.php',
+        'App\\Models\\Company' => __DIR__ . '/../..' . '/app/Models/Company.php',
+        'App\\Models\\Director' => __DIR__ . '/../..' . '/app/Models/Director.php',
+        'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
+        'App\\Models\\Form15G15H' => __DIR__ . '/../..' . '/app/Models/Form15G15H.php',
+        'App\\Models\\KycAndNominee' => __DIR__ . '/../..' . '/app/Models/KycAndNominee.php',
+        'App\\Models\\MaritalStatus' => __DIR__ . '/../..' . '/app/Models/MaritalStatus.php',
+        'App\\Models\\Member' => __DIR__ . '/../..' . '/app/Models/Member.php',
+        'App\\Models\\Menu' => __DIR__ . '/../..' . '/app/Models/Menu.php',
+        'App\\Models\\PayableExpense' => __DIR__ . '/../..' . '/app/Models/PayableExpense.php',
+        'App\\Models\\PayableLedger' => __DIR__ . '/../..' . '/app/Models/PayableLedger.php',
+        'App\\Models\\Promotor' => __DIR__ . '/../..' . '/app/Models/Promotor.php',
+        'App\\Models\\Relation' => __DIR__ . '/../..' . '/app/Models/Relation.php',
+        'App\\Models\\Religion' => __DIR__ . '/../..' . '/app/Models/Religion.php',
+        'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
+        'App\\Models\\Shareholding' => __DIR__ . '/../..' . '/app/Models/Shareholding.php',
+        'App\\Models\\State' => __DIR__ . '/../..' . '/app/Models/State.php',
+        'App\\Models\\Submenu' => __DIR__ . '/../..' . '/app/Models/Submenu.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
+        'App\\View\\Components\\MyComponent' => __DIR__ . '/../..' . '/app/View/Components/MyComponent.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',
@@ -648,8 +686,16 @@ class ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974
         'Cron\\MinutesField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
+        'Database\\Seeders\\BankNameSeeder' => __DIR__ . '/../..' . '/database/seeders/BankNameSeeder.php',
+        'Database\\Seeders\\BloodGroupSeeder' => __DIR__ . '/../..' . '/database/seeders/BloodGroupSeeder.php',
+        'Database\\Seeders\\CompanySeeder' => __DIR__ . '/../..' . '/database/seeders/CompanySeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
+        'Database\\Seeders\\MenuSeeder' => __DIR__ . '/../..' . '/database/seeders/MenuSeeder.php',
+        'Database\\Seeders\\PayableExpenseSeeder' => __DIR__ . '/../..' . '/database/seeders/PayableExpenseSeeder.php',
+        'Database\\Seeders\\PayableLedgerSeeder' => __DIR__ . '/../..' . '/database/seeders/PayableLedgerSeeder.php',
+        'Database\\Seeders\\RelationshipSeeder' => __DIR__ . '/../..' . '/database/seeders/RelationshipSeeder.php',
         'Database\\Seeders\\RolePermissionSeeder' => __DIR__ . '/../..' . '/database/seeders/RolePermissionSeeder.php',
+        'Database\\Seeders\\StateSeeder' => __DIR__ . '/../..' . '/database/seeders/StateSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
@@ -6531,9 +6577,9 @@ class ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit589cc0f65c3aaa7d4e9024d545bc1974::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit3284c38b25b1f9b1be05593f5fc0ba39::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit3284c38b25b1f9b1be05593f5fc0ba39::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3284c38b25b1f9b1be05593f5fc0ba39::$classMap;
 
         }, null, ClassLoader::class);
     }

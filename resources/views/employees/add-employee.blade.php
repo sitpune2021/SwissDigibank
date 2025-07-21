@@ -40,9 +40,7 @@
             style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
 
     </div>
-
     @endif
-
     <div class="box mb-4 xxxl:mb-6">
         <form id="companyForm" action="{{  isset($employee) ? ($show ?? false ? '#' : route('employee.update', base64_encode($employee->id))) : route('AddEmployee') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
