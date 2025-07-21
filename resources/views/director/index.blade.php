@@ -6,7 +6,7 @@
         <h2 class="h2">Director</h2>
         <a class="btn-primary" href="{{ route('director.create') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
-            Add Director
+            Add
         </a>
     </div>
     <div class="box col-span-12 lg:col-span-6">
@@ -32,10 +32,10 @@
             <li class="text-gray-500">Manage Director</li>
             </ol>
         </div>
-        <a href="{{ route('director.create') }}" class="btn-primary">
+        <!-- <a href="{{ route('director.create') }}" class="btn-primary">
             <i class="las la-plus-circle text-base md:text-lg"></i>
             Add Director
-        </a>
+        </a> -->
     </div> --}}
 
     <!-- Latest Transactions -->
@@ -136,22 +136,12 @@
                 <td class="py-2 px-6">
                     <div class="flex justify-center">
                         @include('partials._vertical-options', [
-                        'id' =>base64_encrypt($director->id),
+                        'id' =>base64_encode($director->id),
                         'viewRoute' => 'director.show',
                         'editRoute' => 'director.edit'
                         ])
                     </div>
                 </td>
-                <!-- <td class="text-center px-6 py-4">
-                    <a href="{{ route('director.edit', $director->id) }}" class="btn btn-primary">Edit</a>
-                        {{-- <form action="{{ route('director.destroy', $director->id) }}" method="POST"
-                             style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger"
-                                onclick="return confirm('Are you sure you want to delete this director?')">Delete</button>
-                            </form> --}}
-                        </td> -->
             </tr>
             @endforeach
         </tbody>

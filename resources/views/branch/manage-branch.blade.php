@@ -6,7 +6,7 @@
         <h2 class="h2">Branches</h2>
         <a class="btn-primary" href="{{ route('create.branch') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
-            Add Branch
+            Add
         </a>
         <!-- </div> -->
     </div>

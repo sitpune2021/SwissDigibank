@@ -154,6 +154,7 @@
         const totalShareHeldInput = document.getElementById('total_share_held');
         const totalValueInput = document.getElementById('total_share_value');
         const shareNominalInput = document.getElementById('share_nominal'); // ✅ Nominal value field
+        const amountInput = document.getElementById('amount');
 
         function calculateSharesAndValue() {
             const first = parseInt(firstShareInput.value) || 0;
@@ -163,12 +164,17 @@
             if (last >= first) {
                 const totalShares = last - first + 1;
                 const totalValue = totalShares * nominal;
+                amountInput.value = totalValue.toFixed(2);
 
                 totalShareHeldInput.value = totalShares;
                 totalValueInput.value = totalValue.toFixed(2);
+
+                console.log(totalValue);
+
             } else {
-                totalShareHeldInput.value = '';
+                totalShareHeldInput.value = 0;
                 totalValueInput.value = '';
+                amountInput.value = '';
             }
         }
 

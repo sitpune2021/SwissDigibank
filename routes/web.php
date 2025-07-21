@@ -30,198 +30,43 @@ use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
+use Exception;
 
 
+Route::get('/dev/run/{action}', function ($action) {
+    try {
+        switch ($action) {
+            case 'clear':
+                Artisan::call('config:clear');
+                Artisan::call('cache:clear');
+                Artisan::call('route:clear');
+                Artisan::call('view:clear');
+                return "Cleared config, cache, route, and view.";
 
+            case 'migrate':
+                Artisan::call('migrate');
+                return "Migration completed successfully!";
 
-Route::get(
-    'clear-cache',
-    function () {
-        Artisan::call('config:clear');
-        Artisan::call('cache:clear');
-        Artisan::call('route:clear');
-        //  Artisan::call('storage:link');
-        return "Cache cleared!";
+            case 'migrate-fresh':
+                Artisan::call('migrate:fresh', ['--seed' => true]);
+                return "Fresh migration and seed completed!";
+
+            case 'seed':
+                Artisan::call('db:seed');
+                return "Database seeding completed!";
+            case 'storage-link':
+                Artisan::call('storage:link');
+                $output = Artisan::output();
+                return "Storage link created!"  . nl2br($output);
+            case 'install':
+                exec('composer install');
+                return "composer install executed!";
+            default:
+                return "Invalid action: $action";
+        }
+    } catch (\Exception $e) {
+        return "Error running action [$action]: " . $e->getMessage();
     }
-);
-
-Route::get('/migrate/menu', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_11_051649_create_menu_table.php',
-        '--force' => true,
-    ]);
-    return 'Menu table migration ran successfully!';
-});
-
-Route::get('/migrate/add_name_designation_column', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_16_043646_add_designation_and_name_to_employees_table.php',
-        '--force' => true,
-    ]);
-    return 'Menu table migration ran successfully!';
-});
-/* Route::get('/migrate/icon', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_11_084635_add_icon_to_menu_table.php',
-        '--force' => true,
-    ]);
-    return 'Icon migration ran successfully on menu!';
-}); */
-
-Route::get('/migrate/member', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_095106_create_members_table.php',
-        '--force' => true,
-    ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_095810_create_addresses_table.php',
-        '--force' => true,
-    ]);
-
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_100020_create_kyc_and_nominees_table.php',
-        '--force' => true,
-    ]);
-
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_111226_create_directors_table.php',
-        '--force' => true,
-    ]);
-
-    return 'Icon migration ran successfully on menu!';
-});
-
-
-Route::get('/migrate/menus', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_072005_create_menus_table',
-        '--force' => true,
-    ]);
-    return 'Menu table migration ran successfully!';
-});
-
-Route::get('/migrate/submenu', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_072039_create_submenus_table.php',
-        '--force' => true,
-    ]);
-    return 'Sub Menu table migration ran successfully!';
-});
-
-Route::get('/seed/BankNameSeeder', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'BankNameSeeder',
-        '--force' => true,
-    ]);
-    return 'Bank Seeder has been run successfully!';
-});
-
-Route::get('/seed/BloodGroupSeeder', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'BloodGroupSeeder',
-        '--force' => true,
-    ]);
-    return 'BloodGroupSeeder has been run successfully!';
-});
-Route::get('/seed/PayableExpenseSeeder', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'PayableExpenseSeeder',
-        '--force' => true,
-    ]);
-    return 'PayableExpenseSeeder has been run successfully!';
-});
-Route::get('/seed/PayableLedgerSeeder', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'PayableLedgerSeeder',
-        '--force' => true,
-    ]);
-    return 'PayableLedgerSeeder has been run successfully!';
-});
-Route::get('/seed/RelationshipSeeder', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'RelationshipSeeder',
-        '--force' => true,
-    ]);
-    return 'RelationshipSeeder has been run successfully!';
-});
-Route::get('/seed/menu', function () {
-    Artisan::call('db:seed', [
-        '--class' => 'MenuSeeder',
-        '--force' => true,
-    ]);
-    return 'MenuSeeder has been run successfully!';
-});
-
-Route::get('/migrate/shareholdings', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_12_173835_create_shareholdings_table.php',
-        '--force' => true,
-    ]);
-    return 'Shareholdings migration ran successfully!';
-});
-
-Route::get('/migrate/directors', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_12_172739_directors_table.php',
-        '--force' => true,
-    ]);
-    return 'Directors migration ran successfully!';
-});
-
-Route::get('/migrate/menus', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_13_072005_create_menus_table',
-        '--force' => true,
-    ]);
-    return 'Menu table migration ran successfully!';
-});
-
-Route::get('/migrate/employee', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_045750_create_employees_table',
-        '--force' => true,
-    ]);
-    return 'Employee table migration ran successfully!';
-});
-
-Route::get('/migrate/blood_group', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_063616_create_blood_group_table',
-        '--force' => true,
-    ]);
-    return 'Blood Group table migration ran successfully!';
-});
-
-Route::get('/migrate/bank_name', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_075832_create_banks_name_table',
-        '--force' => true,
-    ]);
-    return 'Bank Name table migration ran successfully!';
-});
-
-Route::get('/migrate/relation', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_090604_create_relationship_table',
-        '--force' => true,
-    ]);
-    return 'Relation table migration ran successfully!';
-});
-
-Route::get('/migrate/payable/ledger', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2025_07_14_093548_create_payable_ledgers_table',
-        '--force' => true,
-    ]);
-    return 'Payable Ledger table migration ran successfully!';
-});
-
-Route::get('/migrate/expense/ledger', function () {
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/database/migrations/2025_07_14_093834_create_expense_ledgers_table',
-        '--force' => true,
-    ]);
-    return 'Expense ledger table migration ran successfully!';
 });
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -247,7 +92,6 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/company/view', [CompanyController::class, 'show'])->name('company.view');
     Route::get('/company/edit', [CompanyController::class, 'edit'])->name('company.edit');
     Route::post('/company/update', [CompanyController::class, 'update'])->name('company.update');
-    // Route::delete('/company/{id}/delete', [CompanyController::class, 'destroy'])->name('company.delete');
 
     // Branch 
     Route::get('create-branch', [BranchController::class, 'create'])->name('create.branch');
@@ -258,26 +102,6 @@ Route::middleware('auth.user')->group(function () {
     Route::post('/branch/{id}/update', [BranchController::class, 'update'])->name('branch.update');
     Route::delete('/branch/{id}/delete', [BranchController::class, 'destroy'])->name('branch.delete');
 
-
-    // // Branch 
-    // Route::get('create-branch', [BranchController::class, 'create'])->name('create.branch');
-    // //Route::get('manage-branch', [BranchController::class, 'index'])->name('manage.branch');
-    // Route::get('ManageBranch', [BranchController::class, 'index'])->name('manage.branch');
-    // Route::post('add-branch', [BranchController::class, 'store'])->name('add.branch');
-    // Route::get('/branch/{id}/view', [BranchController::class, 'show'])->name('branch.view');
-    // Route::get('/branch/{id}/edit', [BranchController::class, 'edit'])->name('branch.edit');
-    // Route::post('/branch/{id}/update', [BranchController::class, 'update'])->name('branch.update');
-    // Route::delete('/branch/{id}/delete', [BranchController::class, 'destroy'])->name('branch.delete');
-    // Promotors
-    // Route::get('ManagePromotor', [PromotorController::class, 'index'])->name('ManagePromotor');
-
-    // Route::get('manage-promotor', [PromotorController::class, 'index'])->name('manage.promotor');
-    // Route::get('create-promotor', [PromotorController::class, 'create'])->name('create.promotor');
-    // Route::post('add-promotor', [PromotorController::class, 'store'])->name('add.promotor');
-    // Route::get('/promotor/{id}/view', [PromotorController::class, 'show'])->name('promotor.view');
-    // Route::get('/promotor/{id}/edit', [PromotorController::class, 'edit'])->name('promotor.edit');
-    // Route::post('/promotor/{id}/update', [PromotorController::class, 'update'])->name('promotor.update');
-    // Route::delete('/promotor/{id}/delete', [PromotorController::class, 'destroy'])->name('promotor.delete');
     Route::resource('promotor', PromotorController::class);
 
 
@@ -293,7 +117,7 @@ Route::middleware('auth.user')->group(function () {
     // Promoters & Share Holdings
     Route::get('manage-shareholding', [ShareHoldingController::class, 'index'])->name('manage.shareholding');
     Route::get('create-shareholding', [ShareHoldingController::class, 'create'])->name('create.shareholding');
-    Route::post('add-shareholding', [ShareHoldingController::class, 'store'])->name('add.shareholding');
+    Route::post('/add-shareholding', [ShareHoldingController::class, 'store'])->name('add.shareholding');
     Route::get('/shareholding/{id}/view', [ShareHoldingController::class, 'show'])->name('shareholding.view');
     Route::get('/shareholding/{id}/edit', [ShareHoldingController::class, 'edit'])->name('shareholding.edit');
     Route::put('/shareholding/{id}/update', [ShareHoldingController::class, 'update'])->name('shareholding.update');
@@ -336,7 +160,9 @@ Route::middleware('auth.user')->group(function () {
 
     // Route::get('ManageUser', [UserController::class, 'index'])->name('ManageUser');
     Route::get('CreateUser', [UserController::class, 'create'])->name('CreateUser');
-
+    Route::get('/users/show/{id}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
+    Route::get('/users/update/{id}', [UserController::class, 'update'])->name('user.update');
 
     //HR & Management
     Route::get('HR/ManageEmployee', [HRController::class, 'index'])->name('ManageEmployee');
@@ -454,4 +280,3 @@ Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
 });
 
 Route::view('/components', 'components')->name('components');
-

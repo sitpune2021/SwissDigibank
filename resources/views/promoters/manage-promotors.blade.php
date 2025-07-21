@@ -5,7 +5,7 @@
         <h2 class="h2">Promoters</h2>
         <a class="btn-primary" href="{{ route('promotor.create') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
-            Add Promoters
+            Add
         </a>
     </div>
 
@@ -105,7 +105,7 @@
                             {{ ($promotors->currentPage() - 1) * $promotors->perPage() + $loop->iteration }}
                         </td>
                         <td class="py-5 px-6">
-                            <a href="{{route('promotor.show', ['id' =>  base64_encode($promotor->id)])}}" class="text-blue-500 hover:underline">
+                            <a href="{{route('promotor.show', base64_encode($promotor->id))}}" class="text-blue-500 hover:underline">
                                 {{ $promotor->member_no }}
                             </a>
                         </td>

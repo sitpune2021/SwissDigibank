@@ -182,7 +182,6 @@
             </div>
             @endforeach
             @endforeach
-
             <div class="col-span-2 flex gap-4 justify-center mt-6">
                 <button class="btn-primary" type="submit">{{isset($promoter) ? 'Update' : 'Save'}} Promotor</button>
                 <button class="btn-outline" type="reset"

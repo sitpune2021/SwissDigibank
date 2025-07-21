@@ -9,14 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        if (!Schema::hasTable('menus')) {
-            Schema::create('menus', function (Blueprint $table) {
+        if (!Schema::hasTable('roles')) {
+            Schema::create('roles', function (Blueprint $table) {
                 $table->id();
-                $table->string('title')->unique();
-                $table->string('icon')->nullable();
-                $table->string('route')->nullable();
+                $table->string('name');
+                $table->string('guard_name');
                 $table->timestamps();
             });
         }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('roles');
     }
 };
