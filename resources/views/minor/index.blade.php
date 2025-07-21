@@ -25,16 +25,6 @@
 </style>
 @section('content')
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <!-- <h2 class="h2">Manage Minor</h2> -->
-            <div class="flex items-center gap-2">
-                <h1 class="text-xl font-semibold">Minor</h1>
-                <a href="{{ route('minor.create') }}"
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                    <i class="las la-plus text-lg"></i>
-                </a>
-            </div>
-        </div>
         <div class="box col-span-12 lg:col-span-6">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
                 <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
@@ -48,23 +38,6 @@
                     </select>
                     <span class="text-sm">entries</span>
                 </form>
-                {{-- <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <!-- <h2 class="h2">Manage Promotors</h2> -->
-            <div>
-                <h1 class="text-xl font-semibold">Manage Director</h1>
-                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                    <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-                    <li><a href="{{ url('/manage-director') }}" class="text-blue-600 hover:underline">Director</a></li>
-                    <li class="text-gray-500">Manage Director</li>
-                </ol>
-            </div>
-            <a href="{{ route('minor.create') }}" class="btn-primary">
-                <i class="las la-plus-circle text-base md:text-lg"></i>
-                Add Director
-            </a>
-        </div> --}}
-
-                <!-- Latest Transactions -->
                 <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
                     <form method="GET" action="{{ route('minor.index') }}"
                         class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">

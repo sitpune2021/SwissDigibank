@@ -1,7 +1,4 @@
 @extends('layout.main')
-
-
-
 @section('content')
 
 <div class="main-inner">
@@ -139,12 +136,6 @@
             <div class="col-span-2 md:col-span-1">
 
                 <label for="name" class="md:text-lg font-medium block mb-4">Designation</span></label>
-
-                <!-- <input type="text" name="email" value="{{ old('email') }}" id="email"
-
-                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-
-                    placeholder="Enter Email" value=""> -->
 
                 <input type="text" name="designation" id="designation" placeholder="Enter Designation like 'Executive'"
                     value="{{ old('designation', $employee->designation ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>

@@ -102,6 +102,8 @@
                 {{-- @if ($method == 'PUT')
                     @method('PUT')
                 @endif --}}
+                <input name="member_id" id="member_id" type="hidden"
+                                    value="{{ session('member_id')}}" />
                 @foreach ($sections as $sectionName => $fields)
                     {{-- Section Heading --}}
                     @if ($sectionName)
@@ -147,10 +149,7 @@
                                             </option>
                                         @endforeach
                                     @endif
-                                </select>
-
-                                
-
+                                </select>                           
                             @elseif ($type === 'radio')
                                 <div class="flex gap-2">
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
@@ -191,9 +190,9 @@
                             {{ $method === 'PUT' ? 'Update' : 'Save' }} Minor
                         </button>
                     @endif
-                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-                        Cancel
-                    </button>
+                    <a href="{{ route('minor.index') }}" class="btn-outline inline-flex items-center justify-center">
+                        Back
+                    </a>
                 </div>
             </form>
 
