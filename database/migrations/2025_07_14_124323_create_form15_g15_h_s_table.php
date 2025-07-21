@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('form15_g15_h_s', function (Blueprint $table) {
             $table->id();
             $table->string ('member');
-            $table->string ('member');
-
             $table->timestamps();
         });
     }

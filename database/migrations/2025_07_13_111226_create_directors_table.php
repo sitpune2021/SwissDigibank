@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('directors', function (Blueprint $table) {
-            $table->id();
-            $table->string('designation');
-            $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
-            $table->string('director_name');
-            $table->string('din_no');
-            $table->date('appointment_date');
-            $table->date('resignation_date');
-            $table->string('signature'); // path to image file
-            $table->enum('authorized_signatory', ['Yes', 'No'])->default('No');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('directors')) {
+            Schema::create('directors', function (Blueprint $table) {
+                $table->id();
+                $table->string('designation');
+                $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
+                $table->string('director_name');
+                $table->string('din_no');
+                $table->date('appointment_date');
+                $table->date('resignation_date');
+                $table->string('signature'); // path to image file
+                $table->enum('authorized_signatory', ['Yes', 'No'])->default('No');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

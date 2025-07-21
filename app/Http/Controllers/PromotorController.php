@@ -66,7 +66,7 @@ class PromotorController extends Controller
             'mariatal_status' => 'nullable|string',
             'member_religion' => 'nullable|string',
             'spouse' => 'nullable|string|max:255',
-            'landline_no' => 'nullable|digits_between:6,10',
+          //  'landline_no' => 'nullable|digits_between:6,10',
             'email' => 'nullable|email|max:255',
             'mobile_no' => 'required|digits:10',
 
@@ -102,7 +102,7 @@ class PromotorController extends Controller
             'mother_name.required' => 'Mother\'s name is required.',
             'mobile_no.required' => 'Mobile number is required.',
             'email.email' => 'Please enter a valid email address.',
-            'landline_no.digits_between' => 'Landline number must be between 6 and 10 digits.',
+            // 'landline_no.digits_between' => 'Landline number must be between 6 and 10 digits.',
             'mobile_no.required' => 'Mobile number is required.',
             'mobile_no.digits'   => 'Mobile number must be exactly 10 digits.',
             'aadhaar_no.digits' => 'Aadhaar number must be exactly 12 digits.',
@@ -128,7 +128,7 @@ class PromotorController extends Controller
         $promoter->marital_status = $request->mariatal_status;
         $promoter->member_religion = $request->member_religion;
         $promoter->husband_wife_name = $request->spouse;
-        $promoter->landline_no = $request->landline_no;
+        // $promoter->landline_no = $request->landline_no;
         $promoter->email = $request->email;
         $promoter->mobile = $request->mobile_no;
 
@@ -251,7 +251,7 @@ class PromotorController extends Controller
         $promotor->marital_status = $request->mariatal_status;
         $promotor->member_religion = $request->member_religion;
         $promotor->husband_wife_name = $request->spouse;
-        $promotor->landline_no = $request->landline_no;
+        // $promotor->landline_no = $request->landline_no;
         $promotor->email = $request->email;
         $promotor->mobile = $request->mobile_no;
 

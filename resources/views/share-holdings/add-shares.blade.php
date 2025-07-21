@@ -27,6 +27,7 @@
     <div class="box mb-4 xxxl:mb-6">
         <form action="{{  isset($shareholding) ? ($show ?? false ? '#' : route('shareholding.update', $shareholding->id)) : route('add.shareholding') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6 w-full">
             @csrf
+
             @if(isset($shareholding) && empty($show))
             @method('PUT')
             @endif
@@ -58,7 +59,7 @@
                 <input
                     type="date"
                     name="allotment_date"
-                    id="allotment_date"
+                    id="date2"
                     placeholder="Select Date"
                     value="{{ old('allotment_date', isset($shareholding->allotment_date) ? \Carbon\Carbon::parse($shareholding->allotment_date)->format('Y-m-d') : now()->format('Y-m-d')) }}"
                     class="w-full text-sm bg-gray-100 border border-gray-300 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -99,8 +100,8 @@
 
             <div class="col-span-2 md:col-span-1">
                 <label for="share_nominal" class="md:text-lg font-medium block mb-4">Share Nominal Value</label>
+                <!-- <input type="hidden" value="{{ encrypt('10.0') }}" id="share_nominal"> -->
                 <input type="text" name="share_nominal" id="share_nominal"
-                    value="{{ old('share_nominal', $shareholding->share_nominal ?? '') }}"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="10.0" value="{{ old('share_nominal', '10.0') }}" readonly @if($isView) disabled @endif>
                 @error('share_nominal')
@@ -121,7 +122,7 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="total_share_value" class="md:text-lg font-medium block mb-4">Total Share Value<span class="text-red-500">*</span></label>
                 <div class="w-full">
-                    <input name="total_share_value" id="share_nominal"
+                    <input name="total_share_value" id="total_share_value"
                         value="{{ old('total_share_value', $shareholding->total_share_value ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Share Value" @if($isView) disabled @endif>
@@ -134,7 +135,7 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="certificate_no" class="md:text-lg font-medium block mb-4">Certificate No</label>
                 <input type="text" name="certificate_no" id="certificate_no"
-                    value="{{ old('designation', $shareholding->designation ?? '') }}"
+                    value="{{ old('designation', $shareholding->certificate_no ?? '') }}"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" placeholder="2000230233" value="2000230233">
                 @error('lastname')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -145,16 +146,17 @@
                 <div class="flex items-center justify-center gap-4 w-full max-w-2xl">
                     <label for="transaction_date" class="col-span-2 md:col-span-1">Transaction Date<span class="text-red-500">*</span></label>
                     <div class="relative w-80 bg-secondary/5 py-2 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10">
-                        <input name="transaction_date" id="date"
-                            value="{{ old('transaction_date', $shareholding->transaction_date ?? '') }}"
+                        <input type="date" name="transaction_date" id="date"
+                            value="{{ old('transaction_date',  isset($shareholding->transaction_date) ? \Carbon\Carbon::parse($shareholding->transaction_date)->format('Y-m-d') : now()->format('Y-m-d')) }}"
                             class="w-full text-sm bg-transparent border-none px-3 pr-10 py-2"
                             placeholder="Select Date" autocomplete="off" @if($isView) disabled @endif />
-                        <i class="las la-calendar absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                        <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" style="top:30px"></i>
                     </div>
                     @error('transaction_date')
                     <span class="text-red-500 text-xs w-full">{{ $message }}</span>
                     @enderror
                 </div>
+
 
                 <div class="flex items-center justify-center gap-4 w-full max-w-2xl">
                     <label for="amount" class="col-span-2 md:col-span-1">Amount<span class="text-red-500">*</span></label>
@@ -196,7 +198,7 @@
                 </div>
             </div>
             @endif
-            <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
+            <!-- <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                 @if(empty($isView))
                 <button class="btn-primary" type="submit">
                     {{ isset($shareholding) ? 'Update Share' : 'Allocate Share' }}
@@ -208,6 +210,28 @@
                 @endif
                 @if((isset($isAdd) && $isAdd) || (isset($show) && $isView))
                 <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('manage.shareholding') }}'">
+                    Back
+                </button>
+                @endif
+            </div> -->
+            <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
+                {{-- Show Submit button only if not view page --}}
+                @if(empty($isView))
+                <button class="btn-primary" type="submit">
+                    {{ isset($shareholding) ? 'Update Share' : 'Allocate Share' }}
+                </button>
+                @endif
+
+                {{-- Reset button only on Add page --}}
+                @if(!isset($shareholding) && empty($isView))
+                <button class="btn-outline" type="reset">
+                    Reset
+                </button>
+                @endif
+
+                {{-- Back button on Add, Edit, and View pages --}}
+                @if(!empty($isAdd) || isset($shareholding) || !empty($isView))
+                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('manage.shareholding') }}'">
                     Back
                 </button>
                 @endif
@@ -257,6 +281,7 @@
         const totalShareHeldInput = document.getElementById('total_share_held');
         const totalValueInput = document.getElementById('total_share_value');
         const shareNominalInput = document.getElementById('share_nominal'); // ✅ Nominal value field
+        const amountInput = document.getElementById('amount');
 
         function calculateSharesAndValue() {
             const first = parseInt(firstShareInput.value) || 0;
@@ -266,12 +291,17 @@
             if (last >= first) {
                 const totalShares = last - first + 1;
                 const totalValue = totalShares * nominal;
+                amountInput.value = totalValue.toFixed(2);
 
                 totalShareHeldInput.value = totalShares;
                 totalValueInput.value = totalValue.toFixed(2);
+
+                console.log(totalValue);
+
             } else {
-                totalShareHeldInput.value = '';
+                totalShareHeldInput.value = 0;
                 totalValueInput.value = '';
+                amountInput.value = '';
             }
         }
 

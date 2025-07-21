@@ -13,18 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name'=>'Super Admin',
-        //     'fname' => 'Anuradha',
-        //     'lname'=>'Jamdade',
-        //     'email' => 'admin@gmail.com',
-        //     'mobile'=>9503654539,
-        //     'password'=>'123456',
-        //     'role_id'=>1
-        // ]);
+        $this->call(CompanySeeder::class);
+        $this->call(StateSeeder::class);
         $this->call(MenuSeeder::class);
         $this->call(RolePermissionSeeder::class);
+        $this->call(BankNameSeeder::class);
+        $this->call(PayableLedgerSeeder::class);
+        $this->call(PayableExpenseSeeder::class);
+        $this->call(RelationshipSeeder::class);
+        $this->call(BloodGroupSeeder::class);
     }
 }

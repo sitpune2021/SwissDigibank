@@ -17,12 +17,12 @@ return [
             ['title' => 'Profile', 'route' => 'company.view'],
             ['title' => 'Branches', 'route' => 'manage.branch'],
             ['title' => 'Promoters', 'route' => 'manage.promotor'],
-            ['title' => 'Promotor & Share Holdings', 'route' => 'manage.shareholding'],
+            ['title' => 'Promotor Share Holdings', 'route' => 'manage.shareholding'],
             ['title' => 'Director', 'route' => 'director.index'],
         ],
     ],
     [
-        'title' => 'User Management',
+        'title' => 'User',
         'icon' => 'las la-user',
         'position' => '3',
         'active' => '1',
@@ -33,7 +33,7 @@ return [
 
     ],
     [
-        'title' => 'User Management',
+        'title' => 'User',
         'icon' => 'las la-user',
         'position' => '4',
         'active' => '1',
@@ -43,7 +43,7 @@ return [
         ],
     ],
     [
-        'title' => 'Member Management',
+        'title' => 'Member',
         'icon' => 'las la-piggy-bank',
         'position' => '5',
         'active' => '1',

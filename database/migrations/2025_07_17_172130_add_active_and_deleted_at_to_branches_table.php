@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('branches', function (Blueprint $table) {
-            $table->string('active')->nullable()->default('No');
+            $table->string('active')->nullable()->default('Yes');
             $table->date('deleted_at')->nullable();
         });
     }
