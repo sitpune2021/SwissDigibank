@@ -22,7 +22,7 @@ return [
         ],
     ],
     [
-        'title' => 'User Management',
+        'title' => 'User',
         'icon' => 'las la-user',
         'position' => '3',
         'active' => '1',
@@ -32,7 +32,7 @@ return [
         ],
     ],
     [
-        'title' => 'Member Management',
+        'title' => 'Member',
         'icon' => 'las la-piggy-bank',
         'position' => '4',
         'active' => '1',

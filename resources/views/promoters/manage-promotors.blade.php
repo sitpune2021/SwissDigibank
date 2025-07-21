@@ -5,7 +5,7 @@
         <h2 class="h2">Promoters</h2>
         <a class="btn-primary" href="{{ route('promotor.create') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
-            Add Promoters
+            Add
         </a>
     </div>
 

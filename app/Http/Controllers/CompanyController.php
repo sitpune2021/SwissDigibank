@@ -7,6 +7,7 @@ use App\Models\State;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
@@ -138,7 +139,8 @@ class CompanyController extends Controller
 
     public function show()
     {
-        $company = Company::with(['stateData', 'incorporationState'])->where('user_id', 1)
+        $userId = Auth::id();
+        $company = Company::with(['stateData', 'incorporationState'])->where('user_id',  $userId)
             ->first();
            
          $dynamicOptions = [
@@ -151,11 +153,12 @@ class CompanyController extends Controller
 
     public function edit()
     {
+        $userId = Auth::id();
         $company = Company::with(['stateData', 'incorporationState'])
-            ->where('user_id', 1)->first();
+            ->where('user_id',  $userId)->first();
 
-         $dynamicOptions = [
-            'state' =>State::pluck('name', 'id')
+        $dynamicOptions = [
+            'state' => State::pluck('name', 'id')
         ];
         $show = false;
         $route = route('company.update');
@@ -164,6 +167,7 @@ class CompanyController extends Controller
 
     public function update(Request $request)
     {
+        $userId = Auth::id();
         $request->validate([
             'company_website' => 'nullable|string',
             'company_name' => 'required|string|max:255',
@@ -227,7 +231,7 @@ class CompanyController extends Controller
             'gst_no.regex' => 'GST number must be a valid 12-character GSTIN.',
         ]);
 
-        $company = Company::where('user_id', 1)->first();
+        $company = Company::where('user_id',  $userId)->first();
 
         $company->company_website = $request->company_website;
         $company->company_name = $request->company_name;
@@ -262,7 +266,6 @@ class CompanyController extends Controller
         $company->save();
         Log::info("data=" . $company);
         return redirect()->route('company.view')->with('success', 'Company profile updated successfully.');
-        
     }
 
     // public function destroy($id)

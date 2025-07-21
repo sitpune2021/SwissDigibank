@@ -5,7 +5,7 @@
         <h2 class="h2">Promoters Share Holding Details</h2>
         <a class="btn-primary" href="{{ route('create.shareholding') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
-            Add Shareholding
+            Add
         </a>
     </div>
 

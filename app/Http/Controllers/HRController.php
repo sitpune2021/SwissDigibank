@@ -23,10 +23,10 @@ class HRController extends Controller
                $search = $request->input('search');
 
                $query->where(function ($q) use ($search) {
-                    $q->where('member_no', 'like', "%$search%")
-                         ->orWhere('first_name', 'like', "%$search%")
+                    $q->where('member_id', 'like', "%$search%")
+                         ->orWhere('name', 'like', "%$search%")
                          ->orWhere('gender', 'like', "%$search%")
-                         ->orWhere('enrollment_date', 'like', "%$search%");
+                         ->orWhere('joining_date', 'like', "%$search%");
                });
           }
 
@@ -46,15 +46,15 @@ class HRController extends Controller
      {
           $request->validate([
                'member' => 'nullable|integer',
-               'branch' => 'nullable|integer',
+               'branch' => 'required|integer',
                'joining_date' => 'required|date',
                'gender' => 'required|in:male,female',
                'dob' => 'required|date',
-               'mobile_no' => 'required|string',
-               'address' => 'required|string',
+               'mobile_no' => 'required|digits:10',
+               'address' => 'nullable|string',
                'email' => 'nullable|email',
                'name' => 'required',
-               'designation' => 'required'
+               'designation' => 'nullable'
           ]);
 
           try {
@@ -101,31 +101,34 @@ class HRController extends Controller
 
      public function show($id)
      {
-          $employee = Employee::findOrFail($id);
+          $decryptedId = base64_decode($id);
+          $employee = Employee::findOrFail($decryptedId);
           $show = true;
           return view('employees.add-employee', compact('employee', 'show'));
      }
      public function edit($id)
      {
-          $employee = Employee::findOrFail($id);
+          $decryptedId = base64_decode($id);
+          $employee = Employee::findOrFail($decryptedId);
           $route = route('employee.update', $id);
           $method = 'PUT';
           return view('employees.add-employee', compact('employee', 'route', 'method'));
-          // return view('branch.add-branch', compact('branch', 'states'));
      }
      public function update(Request $request, $id)
      {
+          $decryptedId = base64_decode($id);
+
           $request->validate([
                'member' => 'nullable|integer',
-               'branch' => 'nullable|integer',
+               'branch' => 'required|integer',
                'joining_date' => 'required|date',
                'gender' => 'required|in:male,female',
                'dob' => 'required|date',
-               'mobile_no' => 'required|string',
-               'address' => 'required|string',
+               'mobile_no' => 'required|digits:10',
+               'address' => 'nullable|string',
                'email' => 'nullable|email',
                'name' => 'required',
-               'designation' => 'required'
+               'designation' => 'nullable'
           ]);
 
           try {
@@ -135,7 +138,7 @@ class HRController extends Controller
                return back()->withErrors(['dob' => 'Invalid date format. Use DD/MM/YYYY.'])->withInput();
           }
 
-          $employee = Employee::findOrFail($id); 
+          $employee = Employee::findOrFail($decryptedId);
 
           $data['gender'] = $request->gender;
           $data['auto_generate'] = $request->has('auto_generate') ? true : false;

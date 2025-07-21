@@ -1,28 +1,4 @@
 @extends('layout.main')
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-</style>
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
@@ -47,135 +23,136 @@
                         </button>
                     </form>
                 </div>
-            </div>
-            <div class="overflow-x-auto pb-4 lg:pb-6">
-                <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                    <thead>
-                        <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Sr No
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Group
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Member no
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Gender</th>
-                            <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Branch
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Name
-                                </div>
-                            </th>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    F/h name
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Senior ctz
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Enroll date
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Aadhar no
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Pan no
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Kyc status
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Mobile no
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Status
-                                </div>
-                            </th>
-                            <th class="text-center !py-5" data-sortable="false">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($members as $index => $item)
-                            <tr class="border-b dark:border-bg3">
-                                <td class="py-3 px-6">{{ $index + 1 }}</td>
+            </div> -->
+    <x-searchbox :action="route('member.index')" />
+    <div class="overflow-x-auto pb-4 lg:pb-6">
+        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <thead>
+                <tr class="bg-secondary/5 dark:bg-bg3">
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Sr No
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Group
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Member no
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Gender</th>
+                    <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Branch
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Name
+                        </div>
+                    </th>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            F/h name
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Senior ctz
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Enroll date
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Aadhar no
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Pan no
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Kyc status
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Mobile no
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Status
+                        </div>
+                    </th>
+                    <th class="text-center !py-5" data-sortable="false">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($members as $index => $item)
+                <tr class="border-b dark:border-bg3">
+                    <td class="py-3 px-6">{{ $index + 1 }}</td>
 
-                                <td class="py-3 px-6">{{ $item->general_group }}</td>
+                    <td class="py-3 px-6">{{ $item->general_group }}</td>
 
-                                <td class="py-3 px-6">{{ $item->member_info_old_member_no ?? 'N/A' }}</td>
+                    <td class="py-3 px-6">{{ $item->member_info_old_member_no ?? 'N/A' }}</td>
 
-                                <td class="py-3 px-6">{{ ucfirst($item->member_info_gender) }}</td>
+                    <td class="py-3 px-6">{{ ucfirst($item->member_info_gender) }}</td>
 
-                                <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
+                    <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
 
-                                <td class="py-3 px-6">
-                                    {{ $item->member_info_first_name }}
-                                    {{ $item->member_info_middle_name }}
-                                    {{ $item->member_info_last_name }}
-                                </td>
+                    <td class="py-3 px-6">
+                        {{ $item->member_info_first_name }}
+                        {{ $item->member_info_middle_name }}
+                        {{ $item->member_info_last_name }}
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    {{ $item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A') }}
-                                </td>
+                    <td class="py-3 px-6">
+                        {{ $item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A') }}
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    @php
-                                        $age = \Carbon\Carbon::parse($item->member_info_dob)->age;
-                                    @endphp
-                                    {{ $age >= 60 ? 'Yes' : 'No' }}
-                                </td>
+                    <td class="py-3 px-6">
+                        @php
+                        $age = \Carbon\Carbon::parse($item->member_info_dob)->age;
+                        @endphp
+                        {{ $age >= 60 ? 'Yes' : 'No' }}
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d M Y') }}
-                                </td>
+                    <td class="py-3 px-6">
+                        {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d M Y') }}
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    {{ $item->kyc?->member_kyc_aadhaar_no ?? 'N/A' }}
-                                </td>
+                    <td class="py-3 px-6">
+                        {{ $item->kyc?->member_kyc_aadhaar_no ?? 'N/A' }}
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    {{ $item->kyc?->member_kyc_pan_no ?? 'N/A' }}
-                                </td>
+                    <td class="py-3 px-6">
+                        {{ $item->kyc?->member_kyc_pan_no ?? 'N/A' }}
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    @php
-                                        $hasKYC = $item->kyc?->member_kyc_aadhaar_no || $item->kyc?->member_kyc_pan_no;
-                                    @endphp
-                                    <span class="text-sm {{ $hasKYC ? 'text-green-600' : 'text-red-600' }}">
-                                        {{ $hasKYC ? 'Completed' : 'Pending' }}
-                                    </span>
-                                </td>
+                    <td class="py-3 px-6">
+                        @php
+                        $hasKYC = $item->kyc?->member_kyc_aadhaar_no || $item->kyc?->member_kyc_pan_no;
+                        @endphp
+                        <span class="text-sm {{ $hasKYC ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $hasKYC ? 'Completed' : 'Pending' }}
+                        </span>
+                    </td>
 
-                                <td class="py-3 px-6">
-                                    {{ $item->member_info_mobile_no }}
-                                </td>
+                    <td class="py-3 px-6">
+                        {{ $item->member_info_mobile_no }}
+                    </td>
 
                                 <td class="py-3 px-6">
                                     <span class="text-xs px-2 py-1 rounded bg-green-100 text-green-700">
@@ -194,8 +171,8 @@
                         @endforeach
                     </tbody>
 
-                </table>
-            </div>
-        </div>
+        </table>
     </div>
+</div>
+</div>
 @endsection

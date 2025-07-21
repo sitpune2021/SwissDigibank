@@ -67,6 +67,7 @@ class PromotorController extends Controller
             'mariatal_status' => 'nullable|string',
             'member_religion' => 'nullable|string',
             'spouse' => 'nullable|string|max:255',
+          //  'landline_no' => 'nullable|digits_between:6,10',
             'email' => 'nullable|email|max:255',
             'mobile_no' => 'required|digits:10',
 
