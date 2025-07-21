@@ -26,7 +26,7 @@
                     <ul class="menu-ul">
                         @foreach ($menuItems as $item)
                             @php
-                                $isActive = request()->routeIs($item->route ?? '');
+                                $isActive = request()->routeIs($item?->route ?? '');
                                 $submenuActive = $item->submenus->contains(function ($sub) {
                                     return request()->routeIs($sub->route);
                                 });
@@ -63,7 +63,7 @@
                                         @endforeach
                                     </ul>
                                 @else
-                                    <a href="{{ route($item->route) }}"
+                                    <a href="{{ route($item?->route) }}"
                                         class="menu-btn border-n30 bg-n0 dark:!border-n500 dark:bg-bg4 flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
                                         <span class="flex items-center justify-center gap-2">
                                             <span class="menu-icon">

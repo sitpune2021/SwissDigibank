@@ -84,9 +84,7 @@
                         <td class="py-2">{{ $company->contact_email }}</td>
                         <td class="py-2">{{ $company->mobile_no }}</td>
                         <td class="py-2">{{ $company->city }}</td>
-                        <td class="py-2">
-                            {{  $company->stateData->name ?? ''  }}
-                        </td>
+                        <td class="py-2"> {{  $company->stateData->name ?? ''  }}</td>
                         <td class="py-2">
                             <div class="flex justify-center">
                                 <a href="{{ route('company.view', $company->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
@@ -109,6 +107,7 @@
                 </tbody>
             </table>
         </div>
+        {{-- Pagination Control --}}
         @if ($companies->lastPage() > 1)
         <div class="flex col-span-12 gap-4 sm:justify-between justify-center items-center flex-wrap">
             <ul class="flex gap-2 md:gap-3 flex-wrap md:font-semibold items-center">

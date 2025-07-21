@@ -1,7 +1,4 @@
 @extends('layout.main')
-
-
-
 @section('content')
 
 <div class="main-inner">
@@ -43,21 +40,15 @@
             style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
 
     </div>
-
     @endif
-
     <div class="box mb-4 xxxl:mb-6">
-
-        <!-- <form id="companyForm" action="(isset($route) && isset($method)) ? $route : '' " method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6"> -->
-        <form id="companyForm" action="{{  isset($shareholding) ? ($show ?? false ? '#' : route('shareholding.update', $shareholding->id)) : route('AddEmployee') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        <form id="companyForm" action="{{  isset($employee) ? ($show ?? false ? '#' : route('employee.update', base64_encode($employee->id))) : route('AddEmployee') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
             @if(isset($employee) && empty($show))
             @method('PUT')
             @endif
-
             @php $isView = !empty($show); @endphp
             <div class="col-span-2 md:col-span-1">
-
                 <label for="member" class="md:text-lg font-medium block mb-4">Link Member Profile
                     <input type="hidden" id="selectedMemberId" value="{{ isset($employee) ? $employee->member_id : '' }}">
                     @if(isset($isView) && $isView)
@@ -82,7 +73,9 @@
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="branch" class="md:text-lg font-medium block mb-4">Branch</label>
+                <label for="branch" class="md:text-lg font-medium block mb-4">Branch<span
+
+                        class="text-red-500">*</span></label>
 
                 <!-- <select name="branch" id="branchDropdown"
 
@@ -142,12 +135,6 @@
 
                 <label for="name" class="md:text-lg font-medium block mb-4">Designation</span></label>
 
-                <!-- <input type="text" name="email" value="{{ old('email') }}" id="email"
-
-                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-
-                    placeholder="Enter Email" value=""> -->
-
                 <input type="text" name="designation" id="designation" placeholder="Enter Designation like 'Executive'"
                     value="{{ old('designation', $employee->designation ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
 
@@ -162,7 +149,9 @@
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="name" class="md:text-lg font-medium block mb-4">Name</span></label>
+                <label for="name" class="md:text-lg font-medium block mb-4">Name</span><span
+
+                        class="text-red-500">*</span></label>
 
                 <!-- <input type="text" name="email" value="{{ old('email') }}" id="email"
 
@@ -279,7 +268,7 @@
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="address" class="md:text-lg font-medium block mb-4">Address<span class="text-red-500">*</span></label>
+                <label for="address" class="md:text-lg font-medium block mb-4">Address</label>
 
                 <input type="text" name="address" id="address" placeholder="Enter Address"
 
@@ -410,7 +399,7 @@
                 @enderror
 
             </div>
-            <h4>Bank Info</h4>
+            <h4>Bank Info</h4> <br>
             <div class="col-span-2 md:col-span-1">
 
                 <label for="account_holder" class="md:text-lg font-medium block mb-4">Bank A/c Holder's Name</label>
@@ -489,7 +478,7 @@
 
             </div>
 
-            <h4>Nominee Info</h4>
+            <h4>Nominee Info</h4><br>
 
             <div class="col-span-2 md:col-span-1">
 
@@ -553,7 +542,6 @@
                 @enderror
 
             </div>
-
             <br>
 
             <h4>Link With Software Accounting</h4><br>
@@ -585,10 +573,9 @@
 
                 <label for="payable_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Payable Ledger</label>
                 @if(isset($isView) && $isView)
-                <input type="text" value="{{ $employee->payableLedgers->name ?? 'N/A' }}" @if($isView) disabled @endif
+                <input type="text" value="{{ $employee?->payableLedgers?->name ?? 'N/A' }}" @if($isView) disabled @endif
                     class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 @else
-                <!-- <input type="hidden" id="selectedledgerId" value="{{ isset($employee) ? $employee->payableLedgers->name : '' }}"> -->
                 <select name="payable_ledger" id="payableDropdown"
 
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -609,10 +596,9 @@
 
                 <label for="expense_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Expense Ledger</label>
                 @if(isset($isView) && $isView)
-                <input type="text" value="{{ $employee->payableExpenses->name ?? 'N/A' }}" @if($isView) disabled @endif
+                <input type="text" value="{{ $employee->payableExpenses?->name ?? 'N/A' }}" @if($isView) disabled @endif
                     class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 @else
-                <!-- <input type="hidden" id="selectedexpenseId" value="{{ isset($employee) ? $employee->payableExpenses->name : '' }}"> -->
                 <select name="expense_ledger" id="expenseDropdown"
 
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -638,13 +624,14 @@
             {{ isset($employee) ? 'Update Employee' : 'Add Employee' }}
 
         </button>
+        @endif
+        <button class="btn-outline" type="reset"
+            onclick="window.location.href='{{ route('ManageEmployee') }}'">Back</button>
+        @if(!isset($employee))
         <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-
             Reset
-
         </button>
         @endif
-
     </div>
 
     </form>
@@ -829,5 +816,23 @@
                 alert('Failed to fetch banks.');
             }
         });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("auto_generate_checkbox");
+        const ledgerDropdown = document.getElementById("payableDropdown");
+
+        // Function to toggle ledger dropdown based on checkbox state
+        function toggleLedgerDropdown() {
+            if (checkbox.checked) {
+                ledgerDropdown.disabled = true;
+            } else {
+                ledgerDropdown.disabled = false;
+            }
+        }
+        toggleLedgerDropdown();
+
+        checkbox.addEventListener("change", toggleLedgerDropdown);
     });
 </script>

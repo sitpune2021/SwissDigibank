@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Bank;
 
 class BankNameSeeder extends Seeder
 {
@@ -13,60 +14,64 @@ class BankNameSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('banks_name')->insert([
-            ['name' => 'AU Small Finance Bank'],
-            ['name' => 'Allahabad Bank'],
-            ['name' => 'Allahabad U.P Gramin Bank'],
-            ['name' => 'Ambarnath Jai Hind Cooperative Bank Limited'],
-            ['name' => 'Andhra Bank'],
-            ['name' => 'Airtel Payments Bank'],
-            ['name' => 'Andhra Pradesh Grameena Vikas Bank Ltd'],
-            ['name' => 'Ahmedabad District Co-operative Bank Ltd'],
-            ['name' => 'The Ahmedabad Mercantile Co-operative Bank Ltd'],
-            ['name' => 'Andhra Pragathi Grameena Bank'],
-            ['name' => 'Arunachal Pradesh Rural Bank'],
-            ['name' => 'Assam Gramin Vikash Bank'],
-            ['name' => 'Axis Bank'],
-            ['name' => 'Abhyudaya Co-operative Bank Ltd'],
-            ['name' => 'Ambajogai Peoples Co-operative Bank Ltd'],
-            ['name' => 'Almora Urban Co-operative Bank'],
-            ['name' => 'Apna Sahakari Bank Ltd'],
-            ['name' => 'Adv Shamraoji Shinde Satyashodhak Sahakari Bank Limited'],
-            ['name' => 'Bandhan Bank'],
-            ['name' => 'Bangiya Gramin Vikash Bank'],
-            ['name' => 'Bank of Bahrain and Kuwait'],
-            ['name' => 'Bank of Baroda'],
-            ['name' => 'Bank of Baroda - Corporate Banking'],
-            ['name' => 'Bank of Baroda - Retail Banking'],
-            ['name' => 'Bank of India'],
-            ['name' => 'Bank of Maharashtra'],
-            ['name' => 'Baroda Gujarat Gramin Bank'],
-            ['name' => 'Buldana Urban Co-operative Credit Society Ltd'],
-            ['name' => 'Baroda Rajasthan Kshetriya Gramin Bank'],
-            ['name' => 'Baroda UP Gramin Bank'],
-            ['name' => 'Bihar Gramin Bank'],
-            ['name' => 'Bombay Merchantile Bank'],
-            ['name' => 'Canara Bank'],
-            ['name' => 'Capital Small Finance Bank'],
-            ['name' => 'Catholic Syrian Bank Limited'],
-            ['name' => 'Central Bank of India'],
-            ['name' => 'Central Madhya Pradesh Gramin Bank'],
-            ['name' => 'Chaitanya Godavari Grameena Bank'],
-            ['name' => 'Chhattisgarh Rajya Gramin Bank'],
-            ['name' => 'Chungathara Service Co-operative Bank Ltd'],
-            ['name' => 'Citi Bank'],
-            ['name' => 'Coastal Local Area Bank Limited'],
-            ['name' => 'Corporation Bank'],
-            ['name' => 'Cosmos Bank'],
-            ['name' => 'CSB Bank'],
-            ['name' => 'Dakshin Bihar Gramin Bank'],
-            ['name' => 'HSBC Bank'],
-            ['name' => 'Dena Bank'],
-            ['name' => 'Dena Gujarat Gramin Bank'],
-            ['name' => 'Deogiri Nagari Sahakari Bank Ltd'],
-            ['name' => 'Deutsche Bank'],
-            ['name' => 'Development Credit Bank']
+        $banks = [
+             'AU Small Finance Bank',
+             'Allahabad Bank',
+             'Allahabad U.P Gramin Bank',
+             'Ambarnath Jai Hind Cooperative Bank Limited',
+             'Andhra Bank',
+             'Airtel Payments Bank',
+             'Andhra Pradesh Grameena Vikas Bank Ltd',
+             'Ahmedabad District Co-operative Bank Ltd',
+             'The Ahmedabad Mercantile Co-operative Bank Ltd',
+             'Andhra Pragathi Grameena Bank',
+             'Arunachal Pradesh Rural Bank',
+             'Assam Gramin Vikash Bank',
+             'Axis Bank',
+             'Abhyudaya Co-operative Bank Ltd',
+             'Ambajogai Peoples Co-operative Bank Ltd',
+             'Almora Urban Co-operative Bank',
+             'Apna Sahakari Bank Ltd',
+             'Adv Shamraoji Shinde Satyashodhak Sahakari Bank Limited',
+             'Bandhan Bank',
+             'Bangiya Gramin Vikash Bank',
+             'Bank of Bahrain and Kuwait',
+             'Bank of Baroda',
+             'Bank of Baroda - Corporate Banking',
+             'Bank of Baroda - Retail Banking',
+             'Bank of India',
+             'Bank of Maharashtra',
+             'Baroda Gujarat Gramin Bank',
+             'Buldana Urban Co-operative Credit Society Ltd',
+             'Baroda Rajasthan Kshetriya Gramin Bank',
+             'Baroda UP Gramin Bank',
+             'Bihar Gramin Bank',
+             'Bombay Merchantile Bank',
+             'Canara Bank',
+             'Capital Small Finance Bank',
+             'Catholic Syrian Bank Limited',
+             'Central Bank of India',
+             'Central Madhya Pradesh Gramin Bank',
+             'Chaitanya Godavari Grameena Bank',
+             'Chhattisgarh Rajya Gramin Bank',
+             'Chungathara Service Co-operative Bank Ltd',
+             'Citi Bank',
+             'Coastal Local Area Bank Limited',
+             'Corporation Bank',
+             'Cosmos Bank',
+             'CSB Bank',
+             'Dakshin Bihar Gramin Bank',
+             'HSBC Bank',
+             'Dena Bank',
+             'Dena Gujarat Gramin Bank',
+             'Deogiri Nagari Sahakari Bank Ltd',
+             'Deutsche Bank',
+             'Development Credit Bank'
 
-        ]);
+        ];
+
+        foreach ($banks as $bank) {
+            Bank::create(['name' => $bank]);
+        }
     }
 }

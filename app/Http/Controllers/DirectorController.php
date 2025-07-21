@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Director;
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class DirectorController extends Controller
 {
@@ -40,13 +41,13 @@ class DirectorController extends Controller
     {
 
         $data = $request->validate([
-            'designation' => 'required|string|max:255',
-            'member_id' => 'required|string|max:255',
+            'designation' => 'nullable|string|max:255',
+            'member_id' => 'nullable|string|max:255',
             'director_name' => 'required|string|max:255',
             'din_no' => 'required|string|max:50',
             'appointment_date' => 'required|date',
-            'resignation_date' => 'required|date|after_or_equal:appointment_date',
-            'signature' => 'required',  // add file validation
+            'resignation_date' => 'nullable|date|after_or_equal:appointment_date',
+            'signature' => 'nullable',  // add file validation
             'authorized_signatory' => 'required|in:Yes,No',
         ]);
 
@@ -69,19 +70,27 @@ class DirectorController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $decryptedId = base64_decode($id);
-        $director = Director::findOrFail($decryptedId);
-         return view('director.create', compact('director'));
+ $director = Director::findOrFail($decryptedId);
+
+    // Format the appointment_date only if it exists
+    if ($director->appointment_date) {
+        $director->appointment_date = Carbon::parse($director->appointment_date)->format('D M d Y');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+        $dynamicOptions = [
+            'member' =>  Member::pluck('member_info_first_name', 'id')
+        ];
+        $route = '';
+        $formFields = config('director_form');
+        $method = 'GET';
+        $show = true;
+        return view('director.create', compact('director', 'show', 'route', 'method', 'formFields','dynamicOptions'));
+    }
+
+  
     public function edit(string $id)
     {
         $dynamicOptions = [
@@ -90,27 +99,27 @@ class DirectorController extends Controller
         $decryptedId = base64_decode($id);
         $formFields = config('director_form');
         $director = Director::findOrFail($decryptedId);
-        $route = route('director.update', $decryptedId);
+
+        $route = route('director.update', $id);
         $method = 'PUT';
         return view('director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+   
     public function update(Request $request, $id)
     {
         // Find the Director record by id
-        $director = Director::findOrFail($id);
+        $decryptedId = base64_decode($id);
+        $director = Director::findOrFail($decryptedId);
 
         // Validate the request
         $data = $request->validate([
-            'designation' => 'required|string|max:255',
-            'member_id' => 'required|string|max:255',
+            'designation' => 'nullable|string|max:255',
+            'member_id' => 'nullable|string|max:255',
             'director_name' => 'required|string|max:255',
-            'din_no' => 'required|string|max:50',
+            'din_no' => 'required|string|max:8',
             'appointment_date' => 'required|date',
-            'resignation_date' => 'required|date|after_or_equal:appointment_date',
+            'resignation_date' => 'nullable|date|after_or_equal:appointment_date',
             'signature' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',  // file validation with allowed types and max size
             'authorized_signatory' => 'required|in:Yes,No',
         ]);
@@ -139,9 +148,7 @@ class DirectorController extends Controller
         return redirect()->route('director.index')->with('success', 'Director updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         //
