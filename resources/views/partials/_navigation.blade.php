@@ -5,7 +5,7 @@
     <div class="topbar-inner flex items-center justify-between">
       <div class="flex grow items-center gap-4 xxl:gap-6">
         <a href="{{ route('dashboard.index1') }}" class="topbar-logo hidden shrink-0">
-          <img width="174" height="38" src="../images/logo-with-text.png" alt="logo"
+          <img width="174" height="38" src="../images/SBC_Logo.png" alt="logo"
             class="logo-full2 hidden lg:block" />
         </a>
         <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0" id="sidebar-toggle-btn">
@@ -257,7 +257,7 @@
         <div class="logo-container">
           <div class="logo-inner">
             <a href="{{ route('index1') }}" class="logo-wrapper">
-              <img src="../images/logo-with-text.png" width="174" height="38" class="logo-full" alt="logo" />
+              <img src="../images/SBC_Logo.png" width="174" height="38" class="logo-full" alt="logo" />
               <img src="../images/logo.png" width="37" height="36" class="logo-icon hidden" alt="logo" />
             </a>
             <img width="141" height="38" class="logo-text hidden" src="../images/logo-text.png" alt="logo text" />

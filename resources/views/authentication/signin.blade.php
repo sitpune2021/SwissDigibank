@@ -8,7 +8,7 @@
     @vite('resources/css/app.scss')
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-    <title>SWISS PAYMENTS Digital banking</title>
+    <title>Swiss Payment - Digital Banking</title>
 </head>
 
 <body class="vertical bg-secondary/5 dark:bg-bg3">

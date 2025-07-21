@@ -8,7 +8,7 @@
 
     @vite(['resources/css/app.scss'])
 
-    <title>SWISS PAYMENTS Digital banking</title>
+    <title>Swiss Payment - Digital Banking</title>
   
 </head>
 
