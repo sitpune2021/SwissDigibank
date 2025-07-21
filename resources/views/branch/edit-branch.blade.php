@@ -195,7 +195,6 @@
                     @enderror
                 </div>
             </div>
-
             <div class="flex items-start gap-4">
                 <label for="disable_neft" class="w-48 text-sm font-medium">Disable NEFT/ IMPS / WITHIN Transfer Service<span class="text-red-500">*</span></label>
                 <div class="w-full">
@@ -212,12 +211,11 @@
                     @enderror
                 </div>
             </div>
-
             <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                 <button class="btn-primary" type="submit">
                     Update
                 </button>
-                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('manage.branch') }}'">
+                <button class="btn-outline" type="button" onclick="window.location.href=`{{ route('manage.branch') }}`">
                     Back
                 </button>
             </div>

@@ -6,14 +6,14 @@ return [
     "name"=> "designation",
     "id"=> "designation",
     "type"=> "text",
-    "required"=> true
+    "required"=> false
   ],
   [
     "label"=> "Member",
     "name"=> "member_id",
     "id"=> "member",
     "type"=> "select",
-    "required"=> true,
+    "required"=> false,
     'dynamic' => true,
     'options_key' => 'member', // 👈 used to match controller data
   ],
@@ -43,14 +43,14 @@ return [
     "name"=> "resignation_date",
     "id"=> "date2",
     "type"=> "text",
-    "required"=> true
+    "required"=> false
   ],
   [
     "label"=> "Signature",
     "name"=> "signature",
     "id"=> "signature",
     "type"=> "file",
-    "required"=> true,
+    "required"=> false,
     "accept"=> "image/*"
   ],
   [

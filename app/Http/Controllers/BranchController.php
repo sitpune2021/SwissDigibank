@@ -11,7 +11,8 @@ class BranchController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('perPage', 10);
-        $query = Branch::with('stateData')->orderBy('created_at', 'desc');
+        $query = Branch::with(['stateData', 'members'])->withCount('members')
+            ->where('active', 'Yes')->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -32,7 +33,7 @@ class BranchController extends Controller
     public function create()
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id')
+            'states' => State::pluck('name', 'id')
         ];
         $formFields = config('branch_form');
         $branch = null;
@@ -58,7 +59,8 @@ class BranchController extends Controller
                 'gst_no' => 'nullable|string|max:30',
                 'disable_recharge' => 'required|in:yes,no',
                 'disable_neft' => 'required|in:yes,no',
-            ]        );
+            ]
+        );
 
         try {
             Branch::create([
@@ -87,27 +89,30 @@ class BranchController extends Controller
     }
     public function show($id)
     {
-        $branch = Branch::with(['stateData'])->find($id);
+        $decryptedId = base64_decode($id);
+        $branch = Branch::with(['stateData'])->find($decryptedId);
         return view('branch.view-branch', compact('branch'));
     }
     public function edit($id)
     {
-        $branch = Branch::findOrFail($id);
+        $decryptedId = base64_decode($id);
+        $branch = Branch::findOrFail($decryptedId);
         $dynamicOptions = [
             'states' =>  State::pluck('name', 'id')
         ];
         $formFields = config('branch_form');
-        $route = route('branch.update', $id) ;
+        $route = route('branch.update', $id);
         $method = 'PUT';
         return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
         // return view('branch.add-branch', compact('branch', 'states'));
     }
     public function update(Request $request, $id)
     {
+        $decryptedId = base64_decode($id);
         $request->validate(
             [
                 'branch_name' => 'nullable|string|max:255',
-                'branch_code' => 'required|string|max:100|unique:branches,branch_code,' . $id,
+                'branch_code' => 'required|string|max:100|unique:branches,branch_code,' . $decryptedId,
                 'open_date' => 'required|date',
                 'address_line1' => 'required|string|max:255',
                 'city' => 'required|string|max:100',
@@ -143,7 +148,7 @@ class BranchController extends Controller
         );
 
         try {
-            $branch = Branch::findOrFail($id);
+            $branch = Branch::findOrFail($decryptedId);
 
             $branch->update([
                 'branch_name' => $request->branch_name,
@@ -177,7 +182,6 @@ class BranchController extends Controller
 
         return redirect()->route('manage.branch')->with('success', 'Branch deleted successfully.');
     }
-
     public function getBranches()
     {
         $branches = Branch::orderBy('id', 'desc')->get();

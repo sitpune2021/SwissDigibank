@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('directors', function (Blueprint $table) {
             $table->id();
-            $table->string('designation');
-            $table->string('member');
+            $table->string('designation')->nullable();
+            $table->string('member_id')->nullable();
             $table->string('director_name');
             $table->string('din_no');
             $table->date('appointment_date');
-            $table->date('resignation_date');
-            $table->string('signature'); // path to image file
+            $table->date('resignation_date')->nullable();
+            $table->string('signature')->nullable(); // path to image file
             $table->enum('authorized_signatory', ['Yes', 'No'])->default('No');
             $table->timestamps();
         });

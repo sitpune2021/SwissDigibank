@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Promotor;
 
 class Employee extends Model
 {
     protected $fillable = [
+        'name',
+        'designation',
         'member_id',
         'branch_id',
         'joining_date',
@@ -37,8 +40,33 @@ class Employee extends Model
 
         'auto_generate',
     ];
+
     public function members()
     {
-        return $this->belongsTo(Member::class, 'member_id');
+        return $this->belongsTo(Promotor::class, 'member_id');
+    }
+    public function branches()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+    public function payableLedgers()
+    {
+        return $this->belongsTo(PayableLedger::class, 'payable_ledger_id');
+    }
+    public function payableExpenses()
+    {
+        return $this->belongsTo(PayableExpense::class, 'expense_ledger_id');
+    }
+    public function bloodgroups()
+    {
+        return $this->belongsTo(PayableExpense::class, 'blood_group');
+    }
+    public function bankname()
+    {
+        return $this->belongsTo(Bank::class, 'bank_name');
+    }
+     public function nominee_relations()
+    {
+        return $this->belongsTo(Relation::class, 'nominee_relation');
     }
 }

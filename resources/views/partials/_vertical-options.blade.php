@@ -1,23 +1,25 @@
 <div class="relative">
   <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
   <ul class="horiz-option popover-content">
+    @isset($viewRoute)
     <li>
-      <span
-        class="single-option">
+      <a href="{{ route($viewRoute, $id) }}" class="single-option">
+        View
+      </a>
+    </li>
+    @endisset
+    @isset($editRoute)
+    <li>
+      <a href="{{ route($editRoute, $id) }}" class="single-option">
         Edit
-      </span>
+      </a>
     </li>
-    <li>
+    @endisset
+    <!-- <li>
       <span
         class="single-option">
-        Print
+        Delete
       </span>
-    </li>
-    <li>
-      <span
-        class="single-option">
-        Share
-      </span>
-    </li>
+    </li> -->
   </ul>
 </div>

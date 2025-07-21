@@ -48,7 +48,6 @@ return [
             ],
         ],
     ],
-
     'registered_office' => [
         'heading' => 'Registered Office Details',
         'fields' => [
@@ -77,8 +76,11 @@ return [
                 'label' => 'State',
                 'name' => 'state',
                 'id' => 'state',
-                'type' => 'text',
+                'type' => 'select',
                 'required' => true,
+                'dynamic' => true,
+                'options_key' => 'state',
+
             ],
             [
                 'label' => 'Pincode',
@@ -186,5 +188,4 @@ return [
             ],
         ],
     ],
-
 ];
