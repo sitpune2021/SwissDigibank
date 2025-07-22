@@ -52,16 +52,12 @@ return [
         'required' => true,
        
     ],
-
-
         [
             'label'         => 'Interest Payout',
             'name'          => 'interest_payout',
             'id'            => 'interestpayoutDropdown',
             'type'          => 'select',
             'required'      => true,
-            //'dynamic'       => true,
-            //'options_key'   => 'branches',
             'options'     => [
              'monthly'     => 'Monthly',
              'quarterly'   => 'Quarterly',
@@ -84,13 +80,7 @@ return [
         'type'     => 'number',
         'required' => true,
     ],
-        // [
-        //     'label'         => 'Enrollment Date',
-        //     'name'          => 'enrollment_date',
-        //     'id'            => 'date2',
-        //     'type'          => 'date',
-        //     'required'      => true,
-        // ],
+       
     ],
 
     'Service Charges' => [
@@ -119,9 +109,9 @@ return [
     'label'     => 'Service Charges',
     'name'      => 'service_charges',
     'id'        => 'service_charges',
-    'type'      => 'number',  // or 'text' if it's not purely numeric
+    'type'      => 'number',  
     'required'  => false,
-    'default'   => '',        // you can set a default value if needed
+    'default'   => '',        
     'placeholder' => 'Enter Service Charges',
     ],
 
@@ -260,64 +250,7 @@ return [
     ],
 ];
 
-    
-//          'SMS Charges' => [
 
-//        [
-//     'label'    => 'SMS Charges',
-//     'name'     => 'sms_charges',
-//     'id'       => 'sms_charges',
-//     'type'     => 'number',
-//     'required' => false,
-//        ]
-//          ]
-//     [
-//     'label'       => 'Free IFSC Collection per Month',
-//     'name'        => 'free_ifsc_collection_per_month',
-//     'id'          => 'free_ifsc_collection_per_month',
-//     'type'        => 'select',
-//     'required'    => false,
-//     'options'     => [
-//         '0'          => '0 per month',
-//         '1'          => '1 per month',
-//         '5'          => '5 per month',
-//         '10'         => '10 per month',
-//         'unlimited'  => 'Unlimited',
-//     ]
-//     ]
-// ],
 
-//     'FREE IFSC COLLECTION PER MONTH' => [
-        
-//         ['label'=>'Aadhaar No.','name'=>'aadhaar_no','id'=>'aadhaar_no','type'=>'text','required'=>false],
-//         ['label'=>'Voter ID No.','name'=>'voter_no','id'=>'voter_no','type'=>'text','required'=>false],
-//         ['label'=>'PAN No.','name'=>'pan_no','id'=>'pan_no','type'=>'text','required'=>false],
-//         ['label'=>'Ration Card No.','name'=>'ration_no','id'=>'ration_no','type'=>'text','required'=>false],
-//         ['label'=>'Meter No.','name'=>'meter_no','id'=>'meter_no','type'=>'text','required'=>false],
-//         ['label'=>'CI No.','name'=>'ci_no','id'=>'ci_no','type'=>'text','required'=>false],
-//         ['label'=>'CI Relation','name'=>'ci_relation','id'=>'ci_relation','type'=>'text','required'=>false],
-//         ['label'=>'DL No.','name'=>'dl_no','id'=>'dl_no','type'=>'text','required'=>false],
-//     ],
 
-//     'nominee_info' => [
-//         ['label'=>'Nominee Name','name'=>'nomine_name','id'=>'nomine_name','type'=>'text','required'=>false],
-//         ['label'=>'Nominee Relation','name'=>'nomine_relation','id'=>'nomine_relation','type'=>'text','required'=>false],
-//         ['label'=>'Nominee Mobile','name'=>'nomine_mobile','id'=>'nomine_mobile','type'=>'text','required'=>false],
-//         ['label'=>'Nominee Aadhar No.','name'=>'nomine_aadhar','id'=>'nomine_aadhar','type'=>'text','required'=>false],
-//         ['label'=>'Nominee Voter ID No.','name'=>'nomine_voter','id'=>'nomine_voter','type'=>'text','required'=>false],
-//         ['label'=>'Nominee PAN No.','name'=>'nomine_pan','id'=>'nomine_pan','type'=>'text','required'=>false],
-//         ['label'=>'Nominee Address','name'=>'nomine_address','id'=>'nomine_address','type'=>'text','required'=>false],
-//     ],
-
-//     'extra_settings' => [
-//         [
-//             'label'         => 'SMS',
-//             'name'          => 'sms',
-//             'id'            => 'sms',
-//             'type'          => 'checkbox',
-//             'required'      => false,
-//             'default'       => 0,
-//         ],
-//     ],
-// ];
 

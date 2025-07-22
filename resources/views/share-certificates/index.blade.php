@@ -25,22 +25,13 @@
 </style>
 @section('content')
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <!-- <h2 class="h2">Manage Promotors</h2> -->
-            <div>
-                <h1 class="text-xl font-semibold">Manage Share Certificate</h1>
-                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                    <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-                    <li><a href="{{ url('/manage-Share Certificate') }}" class="text-blue-600 hover:underline">Share Certificate</a></li>
-                    <li class="text-gray-500">Manage Share Certificate</li>
-                </ol>
-            </div>
-            <a href="{{ route('share-certificates.create') }}" class="btn-primary">
-                <i class="las la-plus-circle text-base md:text-lg"></i>
-                Add Share Certificate
-            </a>
-        </div>
-
+          <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
+        <h4 class="h2">Manage Share Certificate</h4>
+        <a class="btn-primary" href="{{ route('share-certificates.create') }}">
+            <i class=" text-base md:text-lg"></i>
+            Add
+        </a>
+    </div>
         <!-- Latest Transactions -->
         <div class="box col-span-12 lg:col-span-6">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
