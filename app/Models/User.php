@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 
-
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -64,10 +63,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Employee::class, 'emp_id');
     }
-    public function roles()
-    {
-        return $this->belongsTo(Role::class, 'role_id');
-    }
+    
     public function branches()
     {
         return $this->belongsTo(Branch::class, 'branche_id');

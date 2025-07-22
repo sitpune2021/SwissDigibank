@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Employee;
-use App\Models\Role;
 use Illuminate\Support\Facades\DB; // to use DB facade
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -93,7 +92,8 @@ class UserController extends Controller
         $user = User::with('employees', 'branches', 'roles')->findOrFail($decryptedId);
         $employees = Employee::all();
         $branches = Branch::all();
-        $roles = Role::all();
+        $roles = DB::table('roles')->select('id', 'name')->get();
+
         $show = true;
         return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'show'));
     }
@@ -108,7 +108,7 @@ class UserController extends Controller
         $route = route('user.update', $decryptedId);
         $employees = Employee::all();
         $branches = Branch::all();
-        $roles = Role::all();
+        $roles = DB::table('roles')->select('id', 'name')->get();
         $method = 'PUT';
 
         return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'method', 'route'));
