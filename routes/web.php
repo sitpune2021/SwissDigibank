@@ -30,8 +30,6 @@ use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
-use Exception;
-
 
 Route::get('/dev/run/{action}', function ($action) {
     try {
