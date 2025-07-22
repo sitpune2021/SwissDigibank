@@ -4,7 +4,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <!-- <div class="flex items-center gap-2"> -->
         <h2 class="h2">Branches</h2>
-        <a class="btn-primary" href="{{ route('create.branch') }}">
+        <a class="btn-primary" href="{{ route('branch.create') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
             Add
         </a>
@@ -26,7 +26,7 @@
                 <span class="text-sm">entries</span>
             </form>
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <form method="GET" action="{{  route('manage.branch') }}"
+                <form method="GET" action="{{  route('branch.index') }}"
                     class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
                     <input type="text" id="transaction-search" name="search" placeholder="Search"
                         value="{{ request('search') }}"
@@ -36,7 +36,7 @@
                         <i class="las la-search text-lg"></i>
                     </button>
                     @if (request('search'))
-                    <a href="{{  route('manage.branch') }}"
+                    <a href="{{  route('branch.index') }}"
                         class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
                         title="Clear Search">
                         <i class="las la-times text-lg"></i>
@@ -124,7 +124,7 @@
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => base64_encode($branch->id),
-                                'viewRoute' => 'branch.view',
+                                'viewRoute' => 'branch.show',
                                 'editRoute' => 'branch.edit'
                                 ])
 

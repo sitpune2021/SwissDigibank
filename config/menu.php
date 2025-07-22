@@ -15,7 +15,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'Profile', 'route' => 'company.view'],
-            ['title' => 'Branches', 'route' => 'manage.branch'],
+            ['title' => 'Branches', 'route' => 'branch.index'],
             ['title' => 'Promoters', 'route' => 'promotor.index'],
             ['title' => 'Promotor & Share Holdings', 'route' => 'manage.shareholding'],
             ['title' => 'Director', 'route' => 'director.index'],
