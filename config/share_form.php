@@ -7,7 +7,7 @@ return [
         'name' => 'promoter_id',
         'id' => 'promoter_id',
         'dynamic' => true,
-        'objectKey' => 'promotor'
+        'objectKey' => 'promoter'
     ],
     [
         'label' => 'Allotment Date',

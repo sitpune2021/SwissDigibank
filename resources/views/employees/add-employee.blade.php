@@ -1,4 +1,7 @@
 @extends('layout.main')
+
+
+
 @section('content')
 
 <div class="main-inner">
@@ -40,7 +43,9 @@
             style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
 
     </div>
+
     @endif
+
     <div class="box mb-4 xxxl:mb-6">
         <form id="companyForm" action="{{  isset($employee) ? ($show ?? false ? '#' : route('employee.update', base64_encode($employee->id))) : route('AddEmployee') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
@@ -134,6 +139,12 @@
             <div class="col-span-2 md:col-span-1">
 
                 <label for="name" class="md:text-lg font-medium block mb-4">Designation</span></label>
+
+                <!-- <input type="text" name="email" value="{{ old('email') }}" id="email"
+
+                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+
+                    placeholder="Enter Email" value=""> -->
 
                 <input type="text" name="designation" id="designation" placeholder="Enter Designation like 'Executive'"
                     value="{{ old('designation', $employee->designation ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>

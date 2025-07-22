@@ -8,7 +8,7 @@ return [
             'label' => 'Membership Type',
             'name' => 'membership_type',
             'id' => 'membership_type',
-            'type' => 'select',
+            'type' => 'radio',
             'required' => true,
             'default' => 'nominal',
             'options' => [
@@ -16,24 +16,23 @@ return [
                 'regular' => 'Regular Membership',
             ],
         ],
-    // ],
+    ],
 
-    // // // General Info
-    // ' ' => 
-    // [
+    // General Info
+    'general_info' => [
         [
             'label' => 'Advisor/Staff',
             'name' => 'general_advisor_staff',
             'id' => 'advisor_staff',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'Group',
             'name' => 'general_group',
             'id' => 'group',
             'type' => 'select',
-            'required' => false,
+            'required' => true,
             'options' => [
                 'group1' => 'Group 1',
                 'group2' => 'Group 2',
@@ -58,7 +57,7 @@ return [
     ],
 
     // Member Info
-    'members_info' => [
+    'member_info' => [
         [
             'label' => 'Title',
             'name' => 'member_info_title',
@@ -134,7 +133,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'Old Member No (if any)',
+            'label' => 'Old Member No',
             'name' => 'member_info_old_member_no',
             'id' => 'old_member_no',
             'type' => 'text',
@@ -164,9 +163,9 @@ return [
         [
             'label' => 'Husband/ Wife DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'date3',
+            'id' => 'spouse_dob',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'Mobile No.',
@@ -197,13 +196,11 @@ return [
             ],
         ],
         [
-            'label' => 'Member Religion',
+            'label' => 'Religion',
             'name' => 'member_info_religion',
             'id' => 'religion',
-            'type' => 'select',
+            'type' => 'text',
             'required' => false,
-            'dynamic' => true,
-            'options_key' => 'religion',
         ],
         [
             'label' => 'Email',
@@ -215,7 +212,7 @@ return [
     ],
 
     // Member Address
-    'Members_Correspondence_Address' => [
+    'member_address' => [
         [
             'label' => 'Address Line 1',
             'name' => 'member_address_line_1',
@@ -295,31 +292,30 @@ return [
             'type' => 'text',
             'required' => true,
         ],
-       
-    ],
-
-    // Permanent Address
-    'members_permanent_address' => [
-         [
+        [
             'label' => 'Address',
             'name' => 'member_address_address',
             'id' => 'address',
             'type' => 'text',
             'required' => false,
         ],
+    ],
+
+    // Permanent Address
+    'member_permanent_address' => [
         [
             'label' => 'City',
             'name' => 'member_perm_address_city',
             'id' => 'city',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'State',
             'name' => 'member_perm_address_state',
             'id' => 'state',
             'type' => 'select',
-            'required' => false,
+            'required' => true,
             'dynamic' => true,
             'options_key' => 'states',
         ],
@@ -328,30 +324,30 @@ return [
             'name' => 'member_perm_address_pincode',
             'id' => 'pincode',
             'type' => 'number',
-            'required' => false,
+            'required' => true,
         ],
     ],
 
     // GPS Location
-    'members_address_gps_location' => [
+    'member_address_gps_location' => [
         [
             'label' => 'Location Latitude',
             'name' => 'member_gps_location_latitude',
             'id' => 'location_latitude',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'Location Longitude',
             'name' => 'member_gps_location_longitude',
             'id' => 'location_longitude',
             'type' => 'number',
-            'required' => false,
+            'required' => true,
         ],
     ],
 
     // KYC Info
-    'members_kyc' => [
+    'member_kyc' => [
         [
             'label' => 'Aadhaar No',
             'name' => 'member_kyc_aadhaar_no',
@@ -418,7 +414,7 @@ return [
     ],
 
     // KYC Documents
-    'members_kyc_documents' => [
+    'member_kyc_documents' => [
         [
             'label' => 'Photo',
             'name' => 'member_kyc_photo',
@@ -511,9 +507,9 @@ return [
         [
             'label' => 'Nominee DOB',
             'name' => 'nominee_dob',
-            'id' => 'date4',
+            'id' => 'date3',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'Nominee Aadhaar No.',
@@ -564,12 +560,12 @@ return [
     ],
 
     // Membership Charges
-    'membership_charges_ (if any) ' => [
+    'membership_charges' => [
         [
             'label' => 'Transaction Date',
             'name' => 'charges_transaction_date',
             'id' => 'transaction_date',
-            'type' => 'date5',
+            'type' => 'date4',
             'required' => true,
         ],
         [
@@ -587,7 +583,7 @@ return [
             'required' => true,
         ],
         [
-            'label' => 'Remarks(if any) ',
+            'label' => 'Remarks',
             'name' => 'charges_remarks',
             'id' => 'remarks',
             'type' => 'text',
@@ -598,7 +594,7 @@ return [
             'name' => 'charges_pay_mode',
             'id' => 'pay_mode',
             'type' => 'radio',
-            'required' => false,
+            'required' => true,
             'options' => [
                 'cash' => 'Cash',
                 'online' => 'Online Tr.',

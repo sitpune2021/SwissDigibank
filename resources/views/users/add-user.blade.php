@@ -170,17 +170,13 @@
 
             <div class="col-span-2 md:col-span-1">
                 <label for="searchable_account" class="md:text-lg font-medium block mb-4">Searchable Accounts<span class="text-red-500">*</span></label>
+
                 <label><input type="radio" name="searchable_account" value="1" {{ old('searchable_account', '0') == '1' ? 'checked' : '' }} @if($isView) disabled @endif> Yes - All</label>
                 <label><input type="radio" name="searchable_account" value="0" {{ old('searchable_account', '0') == '0' ? 'checked' : '' }} @if($isView) disabled @endif> No - Only Assigned</label>
                 @error('searchable_account')
                 <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
                 @enderror
             </div>
-
-            <!-- <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                <button class="btn-primary" type="submit">Save</button>
-                <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">Reset</button>
-            </div> -->
             <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                 {{-- Show Submit button only if not view page --}}
                 @if(empty($isView))

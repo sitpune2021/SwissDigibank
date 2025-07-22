@@ -1,6 +1,6 @@
 <div class="relative">
-    <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-    <ul class="horiz-option popover-content">
+  <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+  <ul class="horiz-option popover-content">
     @isset($viewRoute)
     <li>
       <a href="{{ route($viewRoute, $id) }}" class="single-option">

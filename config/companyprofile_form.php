@@ -1,8 +1,8 @@
 <?php
 return [
 
-    'company' => [
-        'heading' => 'Company ',
+    'company_identity' => [
+        'heading' => 'Company Identity',
         'fields' => [
             [
                 'label' => 'Company Website',

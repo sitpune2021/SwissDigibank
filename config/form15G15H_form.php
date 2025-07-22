@@ -1,26 +1,25 @@
 <?php
 
 return [
- $formFields = [
     [
-        'name' => 'member',
         'label' => 'Member',
-        'type' => 'select',
+        'name' => 'member',
+        'id' => 'member',
+        'type' => 'text',
         'required' => true,
-        'dynamic' => true,
-        'options_key' => 'members'
     ],
     [
-        'name' => 'financial_year',
         'label' => 'Financial Year',
-        'type' => 'date',
+        'name' => 'financial_year',
+        'id' => 'date',
+        'type' => 'text', // or 'select' if it's a dropdown
         'required' => true,
     ],
     [
-        'name' => 'form_15_upload',
         'label' => 'Upload Form 15G/15H',
+        'name' => 'form_15g_15h',
+        'id' => 'form_15g_15h',
         'type' => 'file',
         'required' => true,
-    ]
- ]
+    ],
 ];

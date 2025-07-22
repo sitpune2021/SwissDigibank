@@ -16,8 +16,8 @@ return [
         'submenu' => [
             ['title' => 'Profile', 'route' => 'company.view'],
             ['title' => 'Branches', 'route' => 'manage.branch'],
-            ['title' => 'Promoters', 'route' => 'promotor.index'],
-            ['title' => 'Promotor & Share Holdings', 'route' => 'manage.shareholding'],
+            ['title' => 'Promoters', 'route' => 'manage.promotor'],
+            ['title' => 'Promotor Share Holdings', 'route' => 'manage.shareholding'],
             ['title' => 'Director', 'route' => 'director.index'],
         ],
     ],
@@ -27,6 +27,17 @@ return [
         'position' => '3',
         'active' => '1',
         'submenu' => [
+            ['title' => 'Permissions / Roles', 'route' => 'CreateRole'],
+            ['title' => 'Users', 'route' => 'ManageUser'],
+        ],
+
+    ],
+    [
+        'title' => 'User',
+        'icon' => 'las la-user',
+        'position' => '4',
+        'active' => '1',
+        'submenu' => [
             ['title' => 'Permissions / Roles', 'route' => 'manage.permission'],
             ['title' => 'Users', 'route' => 'manage.user'],
         ],
@@ -34,7 +45,7 @@ return [
     [
         'title' => 'Member',
         'icon' => 'las la-piggy-bank',
-        'position' => '4',
+        'position' => '5',
         'active' => '1',
         'submenu' => [
             ['title' => 'Members', 'route' => 'member.index'],
@@ -45,26 +56,6 @@ return [
             ['title' => 'Form 15G/15H', 'route' => 'Form 15G and 15H.index'],
         ]
     ],
-     [
-        'title' => 'Savings/Current AC',
-        'icon' => 'las la-university',
-        'position' => '5',
-        'active' => '1',
-        'submenu' => [
-            ['title' => 'Schemes', 'route' => 'schemes.index'],
-            // ['title' => 'Accounts', 'route' => 'account.index'],
-        ]
-    ],
-     
-    // [
-    //     'title' => 'Accounts',
-    //     'icon' => 'las la-piggy-bank',
-    //     // 'submenu' => [
-    //     //     ['title' => 'Bank Account', 'route' => 'accounts.bank.account'],
-    //     //     ['title' => 'Account Overview', 'route' => 'accounts.account.overview'],
-    //     //     ['title' => 'Account Details', 'route' => 'accounts.account.details'],
-    //     //     ['title' => 'Deposit Details', 'route' => 'accounts.deposit.detail'],
-    //     // ],
     // [
     //     'title' => 'Accounts',
     //     'icon' => 'las la-piggy-bank',

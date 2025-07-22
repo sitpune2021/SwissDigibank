@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shareholding;
-use App\Models\Promotor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\ValidationException;
@@ -31,14 +30,10 @@ class ShareHoldingController extends Controller
     {
         $shareholding = null;
         $route = route('add.shareholding');
-        $formFields = config('share_form');
         $method = 'POST';
         $isAdd = true;
-        $nominal_value=10.00;
-        $dynamicOptions = [
-            'promotor' => Promotor::pluck('title', 'id')
-        ];
-        return view('share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd','nominal_value','formFields','dynamicOptions'));
+        $nominal_value = 10.00;
+        return view('share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd', 'nominal_value'));
     }
     public function store(Request $request)
     {
@@ -96,17 +91,15 @@ class ShareHoldingController extends Controller
         $decryptedId = base64_decode($id);
         $shareholding = Shareholding::findOrFail($decryptedId);
         $show = true;
-        $formFields = config('share_form');
-        return view('share-holdings.add-shares', compact('shareholding', 'show','formFields'));
+        return view('share-holdings.add-shares', compact('shareholding', 'show'));
     }
     public function edit($id)
     {
         $decryptedId = base64_decode($id);
         $shareholding = Shareholding::findOrFail($decryptedId);
         $route = route('shareholding.update', $decryptedId);
-        $formFields = config('share_form');
         $method = 'PUT';
-        return view('share-holdings.add-shares', compact('shareholding', 'route', 'method','formFields'));
+        return view('share-holdings.add-shares', compact('shareholding', 'route', 'method'));
         // return view('branch.add-branch', compact('branch', 'states'));
     }
     public function update(Request $request, $id)

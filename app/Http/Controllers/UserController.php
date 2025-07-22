@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Employee;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB; // to use DB facade
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class UserController extends Controller
             ->get();
 
         $roles = DB::table('roles')->select('id', 'name')->get();
-        $isAdd = true;
+        $isAdd=true;
         // Pass data to view
         return view('users.add-user', compact('employees', 'branches', 'roles','isAdd'));
     }
@@ -92,8 +93,7 @@ class UserController extends Controller
         $user = User::with('employees', 'branches', 'roles')->findOrFail($decryptedId);
         $employees = Employee::all();
         $branches = Branch::all();
-        $roles = DB::table('roles')->select('id', 'name')->get();
-
+        $roles = Role::all();
         $show = true;
         return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'show'));
     }
@@ -108,7 +108,7 @@ class UserController extends Controller
         $route = route('user.update', $decryptedId);
         $employees = Employee::all();
         $branches = Branch::all();
-        $roles = DB::table('roles')->select('id', 'name')->get();
+        $roles = Role::all();
         $method = 'PUT';
 
         return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'method', 'route'));
@@ -157,14 +157,4 @@ class UserController extends Controller
 
         return redirect()->route('manage.user')->with('success', 'User updated successfully!');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    
 }
