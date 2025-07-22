@@ -216,7 +216,7 @@
                 <button class="btn-primary" type="submit">
                     Save Branch
                 </button>
-                <!-- <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('manage.branch') }}'">
+                <!-- <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('branch.index') }}'">
                     Back
                 </button> -->
                 <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">

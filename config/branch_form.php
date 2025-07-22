@@ -27,7 +27,7 @@ return [
         'name' => 'ifsc_code',
         'id' => 'ifsc_code',
         'type' => 'text',
-        'required' => false,
+        'required' => true,
     ],
     [
         'label' => 'Address Line 1',

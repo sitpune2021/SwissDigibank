@@ -92,16 +92,9 @@ Route::middleware('auth.user')->group(function () {
     Route::post('/company/update', [CompanyController::class, 'update'])->name('company.update');
 
     // Branch 
-    Route::get('create-branch', [BranchController::class, 'create'])->name('create.branch');
-    Route::get('manage-branch', [BranchController::class, 'index'])->name('manage.branch');
-    Route::post('add-branch', [BranchController::class, 'store'])->name('add.branch');
-    Route::get('/branch/{id}/view', [BranchController::class, 'show'])->name('branch.view');
-    Route::get('/branch/{id}/edit', [BranchController::class, 'edit'])->name('branch.edit');
-    Route::post('/branch/{id}/update', [BranchController::class, 'update'])->name('branch.update');
-    Route::delete('/branch/{id}/delete', [BranchController::class, 'destroy'])->name('branch.delete');
-
+    Route::resource('branch', BranchController::class);
+    
     Route::resource('promotor', PromotorController::class);
-
 
     Route::get('/get-branches', [BranchController::class, 'getBranches']);
     Route::get('/get-marital-statuses', [PromotorController::class, 'getMariatalStatuses']);
