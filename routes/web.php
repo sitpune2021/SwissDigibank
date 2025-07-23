@@ -96,34 +96,9 @@ Route::middleware('auth.user')->group(function () {
     // Route::delete('/company/{id}/delete', [CompanyController::class, 'destroy'])->name('company.delete');
 
     // Branch 
-    Route::get('create-branch', [BranchController::class, 'create'])->name('create.branch');
-    Route::get('manage-branch', [BranchController::class, 'index'])->name('manage.branch');
-    Route::post('add-branch', [BranchController::class, 'store'])->name('add.branch');
-    Route::get('/branch/{id}/view', [BranchController::class, 'show'])->name('branch.view');
-    Route::get('/branch/{id}/edit', [BranchController::class, 'edit'])->name('branch.edit');
-    Route::post('/branch/{id}/update', [BranchController::class, 'update'])->name('branch.update');
-    Route::delete('/branch/{id}/delete', [BranchController::class, 'destroy'])->name('branch.delete');
-
-
-    // // Branch 
-    // Route::get('create-branch', [BranchController::class, 'create'])->name('create.branch');
-    // //Route::get('manage-branch', [BranchController::class, 'index'])->name('manage.branch');
-    // Route::get('ManageBranch', [BranchController::class, 'index'])->name('manage.branch');
-    // Route::post('add-branch', [BranchController::class, 'store'])->name('add.branch');
-    // Route::get('/branch/{id}/view', [BranchController::class, 'show'])->name('branch.view');
-    // Route::get('/branch/{id}/edit', [BranchController::class, 'edit'])->name('branch.edit');
-    // Route::post('/branch/{id}/update', [BranchController::class, 'update'])->name('branch.update');
-    // Route::delete('/branch/{id}/delete', [BranchController::class, 'destroy'])->name('branch.delete');
-    // Promotors
-    // Route::get('ManagePromotor', [PromotorController::class, 'index'])->name('ManagePromotor');
-
-    Route::get('manage-promotor', [PromotorController::class, 'index'])->name('manage.promotor');
-    Route::get('create-promotor', [PromotorController::class, 'create'])->name('create.promotor');
-    Route::post('add-promotor', [PromotorController::class, 'store'])->name('add.promotor');
-    Route::get('/promotor/{id}/view', [PromotorController::class, 'show'])->name('promotor.view');
-    Route::get('/promotor/{id}/edit', [PromotorController::class, 'edit'])->name('promotor.edit');
-    Route::post('/promotor/{id}/update', [PromotorController::class, 'update'])->name('promotor.update');
-    Route::delete('/promotor/{id}/delete', [PromotorController::class, 'destroy'])->name('promotor.delete');
+    Route::resource('branch', BranchController::class);
+    
+    Route::resource('promotor', PromotorController::class);
 
     Route::get('/get-branches', [BranchController::class, 'getBranches']);
     Route::get('/get-marital-statuses', [PromotorController::class, 'getMariatalStatuses']);

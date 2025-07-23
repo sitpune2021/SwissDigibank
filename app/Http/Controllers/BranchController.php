@@ -37,61 +37,57 @@ class BranchController extends Controller
         ];
         $formFields = config('branch_form');
         $branch = null;
-        $route = route('add.branch');
+        $route = route('branch.store');
         $method = 'POST';
         return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
     }
+
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'branch_name' => 'required|string|max:255',
-                'branch_code' => 'required|string|max:100|unique:branches,branch_code',
-                'open_date' => 'required|date',
-                'address_line1' => 'required|string|max:255',
-                'city' => 'required|string|max:100',
-                'state' => 'required|string|max:100',
-                'pincode' => 'required|numeric',
-                'country' => 'required|string|max:100',
-                'contact_email' => 'required|email',
-                'mobile_no' => 'nullable|string|max:20',
-                'landline_no' => 'nullable|string|max:20',
-                'gst_no' => 'nullable|string|max:30',
-                'disable_recharge' => 'required|in:yes,no',
-                'disable_neft' => 'required|in:yes,no',
-            ]
-        );
+        $request->validate([
+            'branch_name'      => 'required|string|max:255',
+            'branch_code'      => 'required|string|max:100|unique:branches,branch_code',
+            'open_date'        => 'required|date',
+            'address_line1'    => 'required|string|max:255',
+            'address_line2'    => 'nullable|string|max:255',
+            'ifsc_code'        => 'required|string|max:255',
+            'city'             => 'required|string|max:100',
+            'state'            => 'required|integer|exists:states,id',
+            'pincode'          => 'required|numeric|digits_between:4,10',
+            'country'          => 'required|string|max:100',
+            'contact_email'    => 'required|email|max:255',
+            'mobile_no'        => 'nullable|string|max:20',
+            'landline_no'      => 'nullable|string|max:20',
+            'gst_no'           => 'nullable|string|max:30',
+            'disable_recharge' => 'required|in:yes,no',
+            'disable_neft'     => 'required|in:yes,no',
+        ]);
 
         try {
-            Branch::create([
-                'branch_name' => $request->branch_name,
-                'branch_code' => $request->branch_code,
-                'open_date' => date('Y-m-d', strtotime($request->open_date)),
-                'ifsc_code' => $request->ifsc_code,
-                'address_line1' => $request->address_line1,
-                'address_line2' => $request->address_line2,
-                'city' => $request->city,
-                'state' => $request->state,
-                'pincode' => $request->pincode,
-                'country' => $request->country,
-                'contact_email' => $request->contact_email,
-                'mobile_no' => $request->mobile_no,
-                'landline_no' => $request->landline_no,
-                'gst_no' => $request->gst_no,
-                'disable_recharge' => $request->disable_recharge,
-                'disable_neft' => $request->disable_neft,
-            ]);
+            Branch::create($request->all());
 
-            return redirect()->route('manage.branch')->with('success', 'Branch added successfully.');
+            return redirect()->route('branch.index')
+                            ->with('success', 'Branch added successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())->withInput();
+            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
+                        ->withInput();
         }
     }
+
+
     public function show($id)
     {
         $decryptedId = base64_decode($id);
-        $branch = Branch::with(['stateData'])->find($decryptedId);
-        return view('branch.view-branch', compact('branch'));
+        $dynamicOptions = [
+            'states' => State::pluck('name', 'id')
+        ];
+        $formFields = config('branch_form');
+        $branch = Branch::with(['stateData'])->find($decryptedId);;
+        $route = "";
+        $method = 'POST';
+        $show = true;
+        $encryptedId = $id;
+        return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'encryptedId', 'show'));
     }
     public function edit($id)
     {
@@ -104,83 +100,49 @@ class BranchController extends Controller
         $route = route('branch.update', $id);
         $method = 'PUT';
         return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
-        // return view('branch.add-branch', compact('branch', 'states'));
     }
+    
     public function update(Request $request, $id)
     {
         $decryptedId = base64_decode($id);
-        $request->validate(
-            [
-                'branch_name' => 'nullable|string|max:255',
-                'branch_code' => 'required|string|max:100|unique:branches,branch_code,' . $decryptedId,
-                'open_date' => 'required|date',
-                'address_line1' => 'required|string|max:255',
-                'city' => 'required|string|max:100',
-                'state' => 'required|string|max:100',
-                'pincode' => 'required|numeric',
-                'country' => 'required|string|max:100',
-                'contact_email' => 'required|nullable|email',
-                'mobile_no' => 'nullable|string|max:20',
-                'landline_no' => 'nullable|string|max:20',
-                'gst_no' => 'nullable|string|max:30',
-                'disable_recharge' => 'required|in:yes,no',
-                'disable_neft' => 'required|in:yes,no',
-            ],
-            [
-                'branch_code.required' => 'Branch Code is required.',
-                'branch_code.unique' => 'Branch Code already exists.',
-                'open_date.required' => 'Open Date is required.',
-                'open_date.date' => 'Please enter a valid date.',
-                'address_line1.required' => 'Address Line 1 is required.',
-                'city.required' => 'City is required.',
-                'state.required' => 'State is required.',
-                'pincode.required' => 'Pincode is required.',
-                'pincode.numeric' => 'Pincode must be a number.',
-                'country.required' => 'Country is required.',
-                'contact_email.email' => 'Please enter a valid email address.',
-                'contact_email.required' => 'mail is required.',
 
-                'disable_recharge.required' => 'Please select Yes or No for Disable Recharge/Bill Payment Service.',
-                'disable_recharge.in' => 'Invalid option for Disable Recharge.',
-                'disable_neft.required' => 'Please select Yes or No for Disable NEFT/IMPS/WITHIN Transfer Service.',
-                'disable_neft.in' => 'Invalid option for Disable NEFT.',
-            ]
-        );
-
+        $request->validate([
+            'branch_name'      => 'required|string|max:255',
+            'branch_code'      => 'required|string|max:100|unique:branches,branch_code,' . $decryptedId,
+            'open_date'        => 'required|date',
+            'address_line1'    => 'required|string|max:255',
+            'address_line2'    => 'nullable|string|max:255',
+            'ifsc_code'        => 'required|string|max:255',
+            'city'             => 'required|string|max:100',
+            'state'            => 'required|integer|exists:states,id',
+            'pincode'          => 'required|numeric|digits_between:4,10',
+            'country'          => 'required|string|max:100',
+            'contact_email'    => 'required|email|max:255',
+            'mobile_no'        => 'nullable|string|max:20',
+            'landline_no'      => 'nullable|string|max:20',
+            'gst_no'           => 'nullable|string|max:30',
+            'disable_recharge' => 'required|in:yes,no',
+            'disable_neft'     => 'required|in:yes,no',
+        ]);
         try {
             $branch = Branch::findOrFail($decryptedId);
 
-            $branch->update([
-                'branch_name' => $request->branch_name,
-                'branch_code' => $request->branch_code,
-                'open_date' => date('Y-m-d', strtotime($request->open_date)),
-                'ifsc_code' => $request->ifsc_code,
-                'address_line1' => $request->address_line1,
-                'address_line2' => $request->address_line2,
-                'city' => $request->city,
-                'state' => $request->state,
-                'pincode' => $request->pincode,
-                'country' => $request->country,
-                'contact_email' => $request->contact_email,
-                'mobile_no' => $request->mobile_no,
-                'landline_no' => $request->landline_no,
-                'gst_no' => $request->gst_no,
-                'disable_recharge' => $request->disable_recharge,
-                'disable_neft' => $request->disable_neft,
-            ]);
+            $branch->update($request->only($branch->getFillable()));
 
-            return redirect()->route('manage.branch')->with('success', 'Branch updated successfully.');
+            return redirect()->route('branch.index')->with('success', 'Branch updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong! Error: ' . $e->getMessage())->withInput();
         }
+
     }
+
 
     public function destroy($id)
     {
         $branch = Branch::findOrFail($id);
         $branch->delete();
 
-        return redirect()->route('manage.branch')->with('success', 'Branch deleted successfully.');
+        return redirect()->route('branch.index')->with('success', 'Branch deleted successfully.');
     }
     public function getBranches()
     {

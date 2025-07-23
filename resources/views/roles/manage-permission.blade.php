@@ -9,22 +9,9 @@
                 class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
                 <i class="las la-plus text-lg"></i>
             </a>
-
-            <!-- <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-                <li><a href="{{ url('/manage-branch') }}" class="text-blue-600 hover:underline">Branches</a></li>
-                <li class="text-gray-500">Branches</li>
-            </ol> -->
-
         </div>
-
-        <!-- <a href="{{ route('create.branch') }}" class="btn-primary">
-            <i class="las la-plus-circle text-base md:text-lg"></i>
-            Add Branch
-        </a> -->
     </div>
 
-    <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6">
         <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
             <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
@@ -39,17 +26,7 @@
                 <span class="text-sm">entries</span>
             </form>
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <!-- <form
-                    class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
-                    <input type="text" name="search" id="transaction-search" placeholder="Search"
-                        class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
-                    <button type="sumbit"
-                        class="bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
-                        <i class="las la-search text-lg"></i>
-                    </button>
-                </form> -->
-
-                <form method="GET" action="{{ route('manage.branch') }}"
+                <form method="GET" action="{{ route('branch.index') }}"
                     class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
 
                     <input type="text" name="search" id="transaction-search"
@@ -63,7 +40,7 @@
                     </button>
 
                     @if(request('search'))
-                    <a href="{{ route('manage.branch') }}"
+                    <a href="{{ route('branch.index') }}"
                         class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
                         title="Clear Search">
                         <i class="las la-times text-lg"></i>

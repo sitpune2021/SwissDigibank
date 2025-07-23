@@ -27,10 +27,16 @@ class Branch extends Model
         'disable_recharge',
         'disable_neft',
     ];
+
+    protected $casts = [
+        'open_date' => 'date',
+    ];
+
     public function stateData()
     {
         return $this->belongsTo(State::class, 'state', 'id');
     }
+
     public function members()
     {
         return $this->hasMany(Member::class, 'general_branch');
