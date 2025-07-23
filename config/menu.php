@@ -56,6 +56,16 @@ return [
             ['title' => 'Form 15G/15H', 'route' => 'Form 15G and 15H.index'],
         ]
     ],
+    [
+        'title' => 'Savings/Current AC',
+        'icon' => 'las la-university',
+        'position' => '5',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Schemes', 'route' => 'scheme.index'],
+            // ['title' => 'Accounts', 'route' => 'account.index'],
+        ]
+    ],
     // [
     //     'title' => 'Accounts',
     //     'icon' => 'las la-piggy-bank',
