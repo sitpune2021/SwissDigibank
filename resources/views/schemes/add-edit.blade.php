@@ -158,7 +158,6 @@
                     @endforeach
                 </div>
             </div>
-
             @else
             {{-- Your original input rendering logic --}}
 
@@ -260,8 +259,7 @@
                             name="{{ $mode }}_{{ $limit }}"
                             id="{{ $mode }}_{{ $limit }}"
                             class="border rounded px-2 py-1 w-full"
-                            placeholder="{{ strtoupper($mode) }} ≤ ₹{{ $limit }}"
-                            required>
+                            placeholder="{{ strtoupper($mode) }} ≤ ₹{{ $limit }}">
                     </td>
                     @endforeach
                 </tr>
@@ -269,7 +267,58 @@
             </tbody>
         </table>
     </div>
-    {{-- Form Footer Buttons --}}
+
+    <div class="col-span-1 md:col-span-3">
+        @php
+        $selectedAppTypes = old('app_type', $schemes['app_type'] ?? ['Admin', 'Associate']);
+        @endphp
+        <div class="flex flex-wrap gap-4 rounded-10 px-3 md:px-4 py-2">
+            <label class="block text-sm font-medium mb-1">App Type <span class="text-red-500">*</span></label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" name="app_type[]" value="Admin" class="form-checkbox"
+                {{ in_array('Admin', $selectedAppTypes) ? 'checked' : '' }} required>
+                <span>Admin</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" name="app_type[]" value="Associate" class="form-checkbox"
+                 {{ in_array('Associate', $selectedAppTypes) ? 'checked' : '' }}>
+                <span>Associate</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" name="app_type[]" value="Member" class="form-checkbox">
+                <span>Member</span>
+            </label>
+        </div>
+        @error('app_type')
+        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+        @enderror
+    </div>
+    <div class="col-span-1 md:col-span-3">
+        <div class="flex flex-wrap gap-4 rounded-10 px-3 md:px-4 py-2">
+            <label class="block text-sm font-medium mb-2">
+                Scheme Active <span class="text-red-500">*</span>
+            </label>
+            <div class="flex gap-6">
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="scheme_active" value="Yes" required
+                        {{ old('scheme_active', $schemes['scheme_active'] ?? 'No') === 'Yes' ? 'checked' : '' }}
+                        class="">
+                    Yes
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="scheme_active" value="No"
+                        {{ old('scheme_active', $schemes['scheme_active'] ?? 'No') === 'No' ? 'checked' : '' }}
+                        class="">
+                    No
+                </label>
+            </div>
+
+            @error('scheme_active')
+            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+            @enderror
+        </div>
+    </div>
+
     <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
         @if (isset($method))
         <button class="btn-primary" type="submit">
@@ -285,5 +334,5 @@
     </div>
     </form>
 </div>
-</div>
+<!-- </div> -->
 @endsection

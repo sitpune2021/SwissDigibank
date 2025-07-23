@@ -48,7 +48,7 @@ return [
             'label'    => 'Sr. Citizen Add-on Interest Rate (%)',
             'name'     => 'sr_citizen_add_on_interest_rate',
             'id'       => 'sr_citizen_add_on_interest_rate',
-            'type'     => 'number',
+            'type'     => 'decimal',
             'required' => true,
 
         ],
@@ -86,10 +86,10 @@ return [
     'Service Charges' => [
         [
             'label'        => 'Charge Frequency',
-            'name'         => 'charge_frequency',
+            'name'         => 'service_charge_frequency',
             'id'           => 'charge_frequency',
             'type'         => 'select',
-            'required'     => true,
+            'required'     => false,
             'dynamic'      => true,
             'options_key'  => 'charge_frequencies',
             'options'      => [
@@ -120,10 +120,10 @@ return [
     'SMS Charges' => [
         [
             'label'        => 'Charge Frequency',
-            'name'         => 'charge_frequency',
+            'name'         => 'sms_charge_frequency',
             'id'           => 'charge_frequency',
             'type'         => 'select',
-            'required'     => true,
+            'required'     => false,
             'dynamic'      => true,
             'options_key'  => 'charge_frequencies',
             'options'      => [
@@ -156,8 +156,30 @@ return [
             'options'     => [
                 '0'          => '0 per month',
                 '1'          => '1 per month',
+                '2'          => '2 per month',
+                '3'          => '3 per month',
+                '4'          => '4 per month',
                 '5'          => '5 per month',
-                '10'         => '10 per month',
+                '6'          => '6 per month',
+                '7'          => '7 per month',
+                '8'          => '8 per month',
+                '9'          => '9 per month',
+                '10'          => '10 per month',
+                '11'          => '11 per month',
+                '12'         => '12 per month',
+                '13'          => '13 per month',
+                '14'          => '14 per month',
+                '15'          => '15 per month',
+                '16'          => '16 per month',
+                '17'          => '17 per month',
+                '18'          => '18 per month',
+                '19'          => '19 per month',
+                '20'          => '20 per month',
+                '21'          => '21 per month',
+                '22'          => '22 per month',
+                '23'          => '23 per month',
+                '24'          => '24 per month',
+                '25'          => '25 per month',
                 'unlimited'  => 'Unlimited',
             ]
         ]
