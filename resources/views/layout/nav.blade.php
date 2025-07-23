@@ -138,7 +138,7 @@
                 </div>
             </div>
             <!-- Chat Link -->
-            <a href="{{ route('transfer.chat') }}"
+            <a href="#"
                 class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 max-[620px]:hidden md:h-12 md:w-12">
                 <i class="lab la-facebook-messenger"></i>
                 <span
@@ -187,39 +187,12 @@
                     </div>
                     <ul class="flex w-[250px] flex-col p-4">
                         <li>
-                            <a href="{{ route('settings.profile') }}"
+                            <a href="#"
                                 class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
                                 <span>
                                     <i class="las la-user mt-1 text-xl"></i>
                                 </span>
                                 Profile
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('transfer.chat') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-envelope mt-1 text-xl"></i>
-                                </span>
-                                Messages
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('support.help.center') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-life-ring mt-1 text-xl"></i>
-                                </span>
-                                Help
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('settings.security') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-cog mt-1 text-xl"></i>
-                                </span>
-                                Settings
                             </a>
                         </li>
                         <li>

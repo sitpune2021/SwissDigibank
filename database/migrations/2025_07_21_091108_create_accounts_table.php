@@ -21,11 +21,11 @@ return new class extends Migration
 
             // Foreign Keys
             $table->foreignId('member_id')->constrained('members');
-            // $table->foreignId('minor_id')->nullable()->constrained('members');
             $table->unsignedBigInteger('minor_id')->nullable()->default(1);
 
             $table->foreignId('branch_id')->constrained('branches');
-            $table->foreignId('advisor_id')->nullable()->constrained('users'); // Staff or advisor
+           $table->unsignedBigInteger('advisor_id')->nullable();
+
             $table->foreignId('scheme_id')->nullable()->constrained('schemes');
 
             // Account Meta

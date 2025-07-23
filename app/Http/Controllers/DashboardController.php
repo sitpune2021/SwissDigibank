@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Branch;
 
 use Illuminate\Http\Request;
 
@@ -13,26 +14,11 @@ class DashboardController extends Controller
 
     public function index1()
     {
-        return view('dashboard.dashboard');
-    }
+        $branchCount = Branch::count();
 
-    public function index2()
-    {
-        return view('dashboard.index2');
-    }
+        // $branchCount = Branch::where('active', 'Yes')->count();
 
-    public function index3()
-    {
-        return view('dashboard.index3');
-    }
-
-    public function index4()
-    {
-        return view('dashboard.index4');
-    }
-
-    public function index5()
-    {
-        return view('dashboard.index5');
+        
+        return view('dashboard.dashboard', compact('branchCount'));
     }
 }

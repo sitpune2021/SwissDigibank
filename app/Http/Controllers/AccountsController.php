@@ -3,28 +3,73 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Account;
+use App\Models\Branch;
 
 class AccountsController extends Controller
 {
-    
-
-    public function bankAccount()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
     {
-        return view('accounts.bank-account');
+        // $Accounts = Account::orderBy('created_at', 'desc')->paginate(10); // Optional: change to ->get() if no pagination
+        
+        $Accounts = Account::with(['members','users'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-    }    
-    public function accountOverview()
-    {
-        return view('accounts.account-overview');
+  
+
+        return view('accounts.index', compact('Accounts'));
+       
     }
 
-    public function accountDetails()
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        return view('accounts.account-details');
+        //
     }
 
-    public function depositDetail()
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        return view('accounts.deposit-detail');
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }
