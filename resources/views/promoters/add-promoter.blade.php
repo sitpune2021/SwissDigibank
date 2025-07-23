@@ -99,11 +99,14 @@
     <div class="box mb-4 xxxl:mb-6">
         <form id="companyForm" action={{$route}} method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
+            @if ($method == 'PUT')
+                    @method('PUT')
+                @endif
             @php
             $sections = config('promoter_form');           
             @endphp
             @foreach ($sections as $sectionName => $fields)
-            {{-- Section Heading --}}
+            
             @if ($sectionName)
             <div class="col-span-2">
                 <hr class="border-t border-gray-300 mb-4">
@@ -185,7 +188,7 @@
             <div class="col-span-2 flex gap-4 justify-center mt-6">
                 <button class="btn-primary" type="submit">{{isset($promoter) ? 'Update' : 'Save'}} Promotor</button>
                 <button class="btn-outline" type="reset"
-                    onclick="window.location.href='{{ route('manage.promotor') }}'">Back</button>
+                    onclick="window.location.href='{{ route('promotor.index') }}'">Back</button>
                 <button class="btn-outline" type="reset"
                     onclick="document.getElementById('companyForm').reset();">Reset</button>
             </div>

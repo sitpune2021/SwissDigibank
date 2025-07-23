@@ -46,8 +46,9 @@ class PromotorController extends Controller
             'religions' => Religion::pluck('name', 'id'),
             // 'religions'
         ];
-        $route = route('add.promotor');
-        return view('promoters.add-promoter', compact('route','dynamicOptions'));
+        $route = route('promotor.store');
+        $method = "POST";
+        return view('promoters.add-promoter', compact('route','dynamicOptions', 'method'));
     }
     public function store(Request $request)
     {
@@ -160,7 +161,7 @@ class PromotorController extends Controller
         $promoter->member_no = $code;
         $promoter->save();
 
-        return redirect()->route('manage.promotor')->with('success', 'Promoter added successfully!');
+        return redirect()->route('promotor.index')->with('success', 'Promoter added successfully!');
     }
     public function show($id)
     {
@@ -179,7 +180,9 @@ class PromotorController extends Controller
         } else {
             $age = null;
         }
-        return view('promoters.view-promoter', compact('promoter', 'age', 'isSeniorCitizen'));
+        $method = '';
+
+        return view('promoters.view-promoter', compact('promoter', 'age', 'isSeniorCitizen', 'method'));
     }
     public function edit($id)
     {
@@ -194,8 +197,8 @@ class PromotorController extends Controller
             'religions' => Religion::pluck('name', 'id'),
             // 'religions'
         ];
-        return view('promoters.add-promoter', compact('route', 'promoter', 'dynamicOptions'));
-        // return view('promoters.add.promotor', compact('promoter'));
+        return view('promoters.add-promoter', compact('route', 'promoter', 'dynamicOptions','method'));
+        // return view('promoters.promotor.store', compact('promoter'));
     }
     public function update(Request $request, $id)
     {
@@ -276,7 +279,7 @@ class PromotorController extends Controller
 
         $promotor->save();
 
-        return redirect()->route('manage.promotor')->with('success', 'Promotor updated successfully!');
+        return redirect()->route('promotor.index')->with('success', 'Promotor updated successfully!');
     }
 
     public function destroy($id)
@@ -284,7 +287,7 @@ class PromotorController extends Controller
         $branch = Promotor::findOrFail($id);
         $branch->delete();
 
-        return redirect()->route('manage.promotor')->with('success', 'Branch deleted successfully.');
+        return redirect()->route('promotor.index')->with('success', 'Branch deleted successfully.');
     }
     public function getMariatalStatuses()
     {

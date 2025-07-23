@@ -117,7 +117,7 @@
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => $promotor->id,
-                                'viewRoute' => 'promotor.view',
+                                'viewRoute' => 'promotor.show',
                                 'editRoute' => 'promotor.edit'
                                 ])
                             </div>

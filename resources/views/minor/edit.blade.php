@@ -223,7 +223,7 @@
                 <button class="btn-primary" type="submit">
                     Save Promotor
                 </button>
-                <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('manage.promotor') }}'">
+                <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('promotor.index') }}'">
                     Back
                 </button>
                 <button class="btn-outline" type="reset">

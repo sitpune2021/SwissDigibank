@@ -90,7 +90,7 @@
     @endif
 
     <div class="box mb-4 xxxl:mb-6">
-        <form action="{{route('add.promotor')}}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        <form action="{{route('promotor.store')}}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
 
             <div class="flex items-start gap-4">
