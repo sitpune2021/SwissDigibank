@@ -1,6 +1,6 @@
   @foreach ($section['fields'] as $field)
       <div class="col-span-2 md:col-span-1">
-          <label for="{{ $field['id'] }}" class="md:text-lg font-medium block mb-4">
+          <label for="{{ $field['id'] }}" class="md:text-lg font-medium block mb-4 mt-4">
               {{ $field['label'] }}
               @if (!empty($field['required']))
                   <span class="text-red-500">*</span>

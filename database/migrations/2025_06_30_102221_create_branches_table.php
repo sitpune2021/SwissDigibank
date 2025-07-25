@@ -29,6 +29,8 @@ return new class extends Migration
             $table->string('gst_no')->nullable();
             $table->enum('disable_recharge', ['yes', 'no']);
             $table->enum('disable_neft', ['yes', 'no']);
+            $table->string('active')->nullable()->default('Yes');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

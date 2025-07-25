@@ -13,7 +13,7 @@ class Form15Gor15HController extends Controller
      */
     public function index()
     {
-        return view('Form 15G and 15H.index');
+        return view('form-15g-15h.index');
     }
 
     /**
@@ -22,8 +22,8 @@ class Form15Gor15HController extends Controller
     public function create()
     {
         $members = Member::all();
-        // return view('Form 15G and 15H.create');
-      return view('Form 15G and 15H.create', compact('members'));
+        // return view('form-15g-15h.create');
+      return view('form-15g-15h.create', compact('members'));
 
     }
 
@@ -41,7 +41,7 @@ class Form15Gor15HController extends Controller
     public function show(string $id)
     {
         
-        return view('Form 15G and 15H.show');
+        return view('form-15g-15h.show');
     }
 
     /**
@@ -49,7 +49,7 @@ class Form15Gor15HController extends Controller
      */
     public function edit(string $id)
     {
-        return view('Form 15G and 15H.edit');
+        return view('form-15g-15h.edit');
     }
 
     /**

@@ -46,6 +46,9 @@ return new class extends Migration
             $table->string('nominee_pan_no')->nullable();
             $table->text('nominee_address')->nullable();
             $table->boolean('sms')->default(0);
+            $table->string('active')->nullable()->default('No');
+            $table->string('form15g')->nullable()->default('No');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

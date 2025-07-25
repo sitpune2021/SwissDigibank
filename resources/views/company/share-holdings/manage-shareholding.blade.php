@@ -3,7 +3,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">Promoters Share Holding Details</h2>
-        <a class="btn-primary" href="{{ route('create.shareholding') }}">
+        <a class="btn-primary" href="{{ route('shareholding.create') }}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
             Add
         </a>
@@ -25,7 +25,7 @@
                 <span class="text-sm">entries</span>
             </form>
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <form action="{{ route('manage.shareholding') }}"
+                <form action="{{ route('shareholding.index') }}"
                     class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
                     <input type="text" name="search" id="transaction-search" placeholder="Search" value="{{ request('search') }}"
                         class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
@@ -34,7 +34,7 @@
                         <i class="las la-search text-lg"></i>
                     </button>
                     @if (request('search'))
-                    <a href="{{  route('manage.shareholding') }}"
+                    <a href="{{  route('shareholding.index') }}"
                         class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
                         title="Clear Search">
                         <i class="las la-times text-lg"></i>
@@ -118,7 +118,7 @@
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' =>base64_encode($share->id),
-                                'viewRoute' => 'shareholding.view',
+                                'viewRoute' => 'shareholding.show',
                                 'editRoute' => 'shareholding.edit'
                                 ])
                             </div>

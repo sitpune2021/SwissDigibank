@@ -17,6 +17,9 @@ return new class extends Migration
                 $table->string('title')->unique();
                 $table->string('icon')->nullable();
                 $table->string('route')->nullable();
+                $table->string('prefix')->nullable();
+                $table->integer("position")->nullable();
+                $table->integer("active")->nullable();
                 $table->timestamps();
             });
         }

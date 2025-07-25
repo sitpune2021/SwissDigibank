@@ -17,6 +17,7 @@ return [
             'name'          => 'enrollment_date',
             'id'            => 'date',
             'type'          => 'text',
+            'default'       => now()->format('D M d Y'),
             'required'      => true,
         ],
     ],
@@ -62,7 +63,7 @@ return [
         [
             'label'         => 'Date of Birth',
             'name'          => 'dob',
-            'id'            => 'date',
+            'id'            => 'date2',
             'type'          => 'text',
             'required'      => true,
         ],

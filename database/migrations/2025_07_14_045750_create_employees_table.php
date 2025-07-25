@@ -44,6 +44,9 @@ return new class extends Migration
             $table->unsignedBigInteger('payable_ledger_id')->nullable();
             $table->unsignedBigInteger('expense_ledger_id')->nullable();
 
+            $table->string('designation')->nullable();
+            $table->string('name')->nullable();
+
             $table->timestamps();
         });
     }

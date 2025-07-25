@@ -20,9 +20,4 @@ class PrivateTransferController extends Controller
     {
         return view('transfer.make-transfer');
     }
-
-    public function chat()
-    {
-        return view('transfer.chat');
-    }
 }

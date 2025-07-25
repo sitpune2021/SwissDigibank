@@ -36,7 +36,7 @@ class PromotorController extends Controller
                 $promotor->is_senior = 'No';
             }
         }
-        return view('promoters.manage-promotors', compact('promotors'));
+        return view('company.promoters.manage-promotors', compact('promotors'));
     }
     public function create()
     {
@@ -48,7 +48,7 @@ class PromotorController extends Controller
         ];
         $route = route('promotor.store');
         $method = 'POST';
-        return view('promoters.add-promoter', compact('route','dynamicOptions', 'method'));
+        return view('company.promoters.add-promoter', compact('route','dynamicOptions', 'method'));
     }
     public function store(Request $request)
     {
@@ -156,7 +156,7 @@ class PromotorController extends Controller
         } else {
             $age = null;
         }
-        return view('promoters.view-promoter', compact('promoter', 'age', 'isSeniorCitizen'));
+        return view('company.promoters.view-promoter', compact('promoter', 'age', 'isSeniorCitizen'));
     }
     public function edit($id)
     {
@@ -171,7 +171,7 @@ class PromotorController extends Controller
             'religions' => Religion::pluck('name', 'id'),
             // 'religions'
         ];
-        return view('promoters.add-promoter', compact('route', 'promoter', 'dynamicOptions'));
+        return view('company.promoters.add-promoter', compact('route', 'promoter', 'dynamicOptions'));
     }
     public function update(Request $request, $id)
     {

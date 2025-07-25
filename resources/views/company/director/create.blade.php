@@ -2,8 +2,20 @@
 
 @section('content')
     <div class="main-inner">
+
+
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">{{isset($branch) ? 'Edit' : 'Add'}} Branch</h3>
+            <!-- <h3 class="h2">{{ isset($director) ? 'Edit - ' . $director->director_name . ' Director' : 'Add New Director' }}</h3> -->
+            <h3 class="h2">
+                @if (!empty($show))
+                    {{ $director->director_name ?? '' }}
+                @elseif(isset($director))
+                    Edit - {{ $director->director_name }} Director
+                @else
+                    Add New Director
+                @endif
+            </h3>
+
         </div>
         @if (session('success'))
             <div id="success-alert"
@@ -26,9 +38,9 @@
         <div class="box mb-4 xxxl:mb-6">
             <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 @csrf
-                {{-- @if ($method == 'PUT')
+                @if ($method == 'PUT')
                     @method('PUT')
-                @endif --}}
+                @endif
 
                 @foreach ($formFields as $field)
                     @php
@@ -37,7 +49,8 @@
                         $label = $field['label'];
                         $id = $field['id'] ?? $field['name'];
                         $required = $field['required'] ?? false;
-                        $value = old($name, $branch[$name] ?? ($field['default'] ?? ''));
+                        $value = old($name, $director[$name] ?? ($field['default'] ?? ''));
+
                     @endphp
                     <div class="col-span-2 md:col-span-1">
                         <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
@@ -47,13 +60,13 @@
                         </label>
                         @if ($type === 'select')
                             <select name="{{ $name }}" id="{{ $id }}"
-                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                {{ $required ? 'required' : '' }}>
+                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 <option value="">-- Select {{ $label }} --</option>
 
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
                                     @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
-                                        <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
+                                        <option value="{{ $optionValue }}"
+                                            {{ $value == $optionValue ? 'selected' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
@@ -69,7 +82,7 @@
                         @elseif ($type === 'radio')
                             <div class="flex gap-4">
                                 @foreach ($field['options'] as $optionValue => $optionLabel)
-                                    <label class="flex items-center space-x-2">
+                                    <label class="flex items-center space-x-2 gap-2">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
                                             {{ $value == $optionValue ? 'checked' : '' }}>
                                         <span>{{ $optionLabel }}</span>
@@ -82,7 +95,6 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter {{ strtolower($label) }}" />
                         @endif
-
                         @error($name)
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                         @enderror
@@ -90,24 +102,21 @@
                 @endforeach
 
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
-                    <button class="btn-primary" type="submit">
-                        {{ $method === 'PUT' ? 'Update' : 'Save' }} Branch
-                    </button>
-                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-                        Reset
-                    </button>
+                    @if (empty($show))
+                        <button class="btn-primary" type="submit">
+                            {{ $method === 'PUT' ? 'Update' : 'Save' }} Director
+                        </button>
+                    @endif
+
+                    @if ($method !== 'PUT' && empty($show))
+                        <button class="btn-outline" type="reset"
+                            onclick="document.getElementById('companyForm').reset();">
+                            Reset
+                        </button>
+                    @endif
                 </div>
             </form>
-
         </div>
     </div>
+    </div>
 @endsection
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    setTimeout(function() {
-        var successAlert = document.getElementById('success-alert');
-        var errorAlert = document.getElementById('error-alert');
-        if (successAlert) successAlert.style.display = 'none';
-        if (errorAlert) errorAlert.style.display = 'none';
-    }, 5000);
-</script>

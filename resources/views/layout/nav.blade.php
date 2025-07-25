@@ -137,15 +137,6 @@
                     </ul>
                 </div>
             </div>
-            <!-- Chat Link -->
-            <a href="{{ route('transfer.chat') }}"
-                class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 max-[620px]:hidden md:h-12 md:w-12">
-                <i class="lab la-facebook-messenger"></i>
-                <span
-                    class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-n0">
-                    0
-                </span>
-            </a>
             <!-- language dropdown -->
             <div class="relative">
                 <button id="language-btn"
@@ -193,15 +184,6 @@
                                     <i class="las la-user mt-1 text-xl"></i>
                                 </span>
                                 Profile
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('transfer.chat') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-envelope mt-1 text-xl"></i>
-                                </span>
-                                Messages
                             </a>
                         </li>
                         <li>

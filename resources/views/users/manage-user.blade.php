@@ -4,7 +4,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">User</h2>
-        <a class="btn-primary" href="{{route('CreateUser')}}">
+        <a class="btn-primary" href="{{route('users.create')}}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
             Add
         </a>
@@ -83,8 +83,8 @@
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => base64_encode($user->id),
-                                'viewRoute' => 'user.show',
-                                'editRoute' => 'user.edit',
+                                'viewRoute' => 'users.show',
+                                'editRoute' => 'users.edit',
                                 ])
 
                             </div>

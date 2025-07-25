@@ -24,13 +24,13 @@ class ShareHoldingController extends Controller
             });
         }
         $share_holdings = $query->with('promoters')->orderBy('created_at', 'desc')->paginate(10);
-        return view('share-holdings.manage-shareholding', compact('share_holdings'));
+        return view('company.share-holdings.manage-shareholding', compact('share_holdings'));
     }
 
     public function create()
     {
         $shareholding = null;
-        $route = route('add.shareholding');
+        $route = route('shareholding.store');
         $formFields = config('share_form');
         $method = 'POST';
         $isAdd = true;
@@ -38,7 +38,7 @@ class ShareHoldingController extends Controller
         $dynamicOptions = [
             'promotor' => Promotor::pluck('title', 'id')
         ];
-        return view('share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd','nominal_value','formFields','dynamicOptions'));
+        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd','nominal_value','formFields','dynamicOptions'));
     }
     public function store(Request $request)
     {
@@ -88,7 +88,7 @@ class ShareHoldingController extends Controller
 
         $shareholding->save();
 
-        return redirect()->route('manage.shareholding')->with('success', 'Shareholding allocated successfully.');
+        return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
     }
 
     public function show($id)
@@ -97,7 +97,12 @@ class ShareHoldingController extends Controller
         $shareholding = Shareholding::findOrFail($decryptedId);
         $show = true;
         $formFields = config('share_form');
-        return view('share-holdings.add-shares', compact('shareholding', 'show','formFields'));
+        $route = '';
+        $method = '';
+        $dynamicOptions = [
+            'promotor' => Promotor::pluck('title', 'id')
+        ];
+        return view('company.share-holdings.add-shares', compact('shareholding', 'show','formFields','route', 'method', 'dynamicOptions'));
     }
     public function edit($id)
     {
@@ -106,7 +111,7 @@ class ShareHoldingController extends Controller
         $route = route('shareholding.update', $decryptedId);
         $formFields = config('share_form');
         $method = 'PUT';
-        return view('share-holdings.add-shares', compact('shareholding', 'route', 'method','formFields'));
+        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method','formFields'));
         // return view('branch.add-branch', compact('branch', 'states'));
     }
     public function update(Request $request, $id)
@@ -158,6 +163,6 @@ class ShareHoldingController extends Controller
 
         $shareholding->save();
 
-        return redirect()->route('manage.shareholding')->with('success', 'Shareholding allocated successfully.');
+        return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
     }
 }

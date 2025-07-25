@@ -22,7 +22,7 @@
     @endif
 
     <div class="box mb-4 xxxl:mb-6">
-        <form id="companyForm" action="{{  isset($user) ? ($show ?? false ? '#' : route('user.update', base64_encode($user->id))) : route('CreateUser') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        <form id="companyForm" action="{{  isset($user) ? ($show ?? false ? '#' : route('users.update', base64_encode($user->id))) : route('users.store') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
             @if(isset($user) && empty($show))
             @method('PUT')
@@ -198,7 +198,7 @@
 
                 {{-- Back button on Add, Edit, and View pages --}}
                 @if(!empty($isAdd) || isset($user) || !empty($isView))
-                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('manage.user') }}'">
+                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('users.index') }}'">
                     Back
                 </button>
                 @endif

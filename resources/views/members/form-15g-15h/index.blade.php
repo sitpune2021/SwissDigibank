@@ -32,7 +32,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center gap-2">
                 <h1 class="text-xl font-semibold">Form 15G/ 15H</h1>
-                <a href="{{ route('Form 15G and 15H.create') }}"
+                <a href="{{ route('form-15g-15h.create') }}"
                     class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
                     <i class="las la-plus text-lg"></i>
                 </a>

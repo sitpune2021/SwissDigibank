@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('schemes', function (Blueprint $table) {
             $table->id();
-                   $table->string('scheme_name');
+            $table->string('scheme_name');
             $table->string('scheme_code')->unique();
             $table->decimal('min_opening_balance', 12, 2);
             $table->decimal('min_monthly_avg_balance', 12, 2);
@@ -22,6 +22,13 @@ return new class extends Migration
             $table->enum('interest_payout_cycle', ['Monthly', 'Quarterly', 'Half-Yearly', 'Annually']);
             $table->decimal('lock_in_amount', 12, 2);
             $table->decimal('min_monthly_avg_balance_charge', 12, 2);
+            $table->string('charge_frequency')->nullable();
+            $table->decimal('service_charges', 10, 2)->nullable();
+            $table->decimal('sms_charges', 10, 2)->nullable();
+            $table->string('free_ifsc_collection_per_month');
+            $table->string('free_imps_neft_transactions')->nullable();
+            $table->string('free_transfers_per_month')->nullable();
+            $table->decimal('single_transaction_limit', 15, 2)->nullable();
         
             $table->timestamps();
         });

@@ -28,7 +28,7 @@ class BranchController extends Controller
         }
 
         $branches = $query->paginate($perPage)->appends($request->all());
-        return view('branch.manage-branch', compact('branches'));
+        return view('company.branch.manage-branch', compact('branches'));
     }
     public function create()
     {
@@ -39,7 +39,7 @@ class BranchController extends Controller
         $branch = null;
         $route = route('branch.store');
         $method = 'POST';
-        return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
+        return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
     }
 
     public function store(Request $request)
@@ -87,7 +87,7 @@ class BranchController extends Controller
         $method = 'POST';
         $show = true;
         $encryptedId = $id;
-        return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'encryptedId', 'show'));
+        return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'encryptedId', 'show'));
     }
     public function edit($id)
     {
@@ -99,7 +99,7 @@ class BranchController extends Controller
         $formFields = config('branch_form');
         $route = route('branch.update', $id);
         $method = 'PUT';
-        return view('branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
+        return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
     }
     
     public function update(Request $request, $id)

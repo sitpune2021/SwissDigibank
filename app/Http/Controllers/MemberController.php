@@ -17,7 +17,7 @@ class MemberController extends Controller
     {
         $members = Member::all();
         session()->forget('member_id');
-        return view('member.index', compact('members'));
+        return view('members.member.index', compact('members'));
     }
 
     
@@ -32,7 +32,7 @@ class MemberController extends Controller
         $member = null;
         $route = route('member.store');
         $method = 'POST';
-        return view('member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
+        return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
 
     }
 
@@ -189,7 +189,7 @@ class MemberController extends Controller
         $method='PUT';
         $minor = true;
         session(['member_id' => $id]);
-        return view('member.create', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
+        return view('members.member.create', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
     }
 
     
@@ -212,7 +212,7 @@ class MemberController extends Controller
         $route = route('member.update', $id) ;
         session(['member_id' => $id]);
         $minor = true;
-        return view('member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
+        return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
     }
  
 

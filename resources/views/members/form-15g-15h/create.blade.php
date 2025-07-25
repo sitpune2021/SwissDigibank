@@ -95,7 +95,7 @@
         
         <div class="box mb-4 xxxl:mb-6">
 
-            <form action="{{ route('Form 15G and 15H.create') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+            <form action="{{ route('form-15g-15h.create') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 @csrf
                 <div class="flex items-start gap-4 mb-4">
                     <label for="member" class="w-48 text-sm font-medium">
@@ -153,7 +153,7 @@
                     <button class="btn-primary" type="submit">
                         UPLOAD FORM 15G/ 15H
                     </button>
-                  <a href="{{ route('Form 15G and 15H.index') }}" class="btn-outline">
+                  <a href="{{ route('form-15g-15h.index') }}" class="btn-outline">
                        Cancel
                     </a>
                 </div>

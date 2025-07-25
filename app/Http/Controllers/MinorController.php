@@ -15,9 +15,8 @@ class MinorController extends Controller
      */
     public function index()
     {
-    //return view('minor.index');
-      $minors = Minor::all();
-        return view('minor.index', compact('minors'));
+        $minors = Minor::all();
+        return view('members.minor.index', compact('minors'));
     }
 
     /**
@@ -32,7 +31,7 @@ class MinorController extends Controller
         $dynamicOptions = [
             'member' =>Member::pluck('member_info_first_name', 'id')
         ];
-        return view('minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions'));
+        return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions'));
        // return view('member.create');
 
     }
@@ -87,7 +86,7 @@ class MinorController extends Controller
         $sections = config('minor_form');
         $show = true;
         // $button=true;
-        return view('minor.create', compact('sections', 'minor', 'show'));
+        return view('members.minor.create', compact('sections', 'minor', 'show'));
     }
     }
 
@@ -108,7 +107,7 @@ class MinorController extends Controller
 
         $sections = config('minor_form');
         $route = route('minor.update', $id) ;
-        return view('minor.create', compact('sections', 'minor', 'route', 'method'));
+        return view('members.minor.create', compact('sections', 'minor', 'route', 'method'));
     }
     }
 

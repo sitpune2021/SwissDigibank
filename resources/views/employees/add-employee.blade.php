@@ -42,7 +42,7 @@
     </div>
     @endif
     <div class="box mb-4 xxxl:mb-6">
-        <form id="companyForm" action="{{  isset($employee) ? ($show ?? false ? '#' : route('employee.update', base64_encode($employee->id))) : route('AddEmployee') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        <form id="companyForm" action="{{  isset($employee) ? ($show ?? false ? '#' : route('employee.update', base64_encode($employee->id))) : route('employee.store') }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
             @if(isset($employee) && empty($show))
             @method('PUT')
@@ -626,7 +626,7 @@
         </button>
         @endif
         <button class="btn-outline" type="reset"
-            onclick="window.location.href='{{ route('ManageEmployee') }}'">Back</button>
+            onclick="window.location.href='{{ route('employee.index') }}'">Back</button>
         @if(!isset($employee))
         <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
             Reset
