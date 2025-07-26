@@ -14,6 +14,7 @@ class SubMenu extends Model
         'menu_id',
         'title',
         'route',
+        
     ];
 
     public function menu(): BelongsTo
