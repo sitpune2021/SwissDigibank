@@ -100,6 +100,7 @@ Route::get('/dev/run/{action}', function ($action) {
                 return "Cleared config, cache, route, and view.";
 
             case 'migrate':
+                Artisan::call('session:table');
                 Artisan::call('migrate');
                 return "Migration completed successfully!";
 
