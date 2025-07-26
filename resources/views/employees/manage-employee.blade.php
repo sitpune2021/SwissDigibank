@@ -4,7 +4,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">Employees </h2>
-        <a class="btn-primary" href="{{route('CreateEmployee')}}">
+        <a class="btn-primary" href="{{route('employee.create')}}">
             <i class="las la-plus-circle text-base md:text-lg"></i>
             Add
         </a>
@@ -12,7 +12,7 @@
 
     <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6">
-        <x-searchbox :action="route('ManageEmployee')" />
+        <x-searchbox :action="route('employee.index')" />
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>

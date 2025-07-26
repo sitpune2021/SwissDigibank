@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Promotor;
 
 class Shareholding extends Model
 {
     protected $fillable = [
-        'promoter',
+        'promotor_id',
         'allotment_date',
         'first_share',
         'share_no',
@@ -18,11 +20,11 @@ class Shareholding extends Model
         'transaction_date',
         'amount',
         'remarks',
-        'pay_mode',
+        'pay_mode'
     ];
 
-    public function promoters()
+    public function promotor()
     {
-        return $this->belongsTo(Promotor::class, 'promoter');
+        return $this->belongsTo(Promotor::class, 'promotor_id');
     }
 }

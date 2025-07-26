@@ -15,11 +15,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         // $this->call(RolePermissionSeeder::class);
+        // $this->call(MenuSeeder::class);
+        // $this->call(StateSeeder::class);
+        $this->call(CompanySeeder::class);
+
         // $this->call(PayableLedgerSeeder::class);
         // $this->call(PayableExpenseSeeder::class);
-        // $this->call(CompanySeeder::class);
-        $this->call(MenuSeeder::class);
-        // $this->call(StateSeeder::class);
         // $this->call(RelationshipSeeder::class);
         // $this->call(BankNameSeeder::class);
         // $this->call(BloodGroupSeeder::class);

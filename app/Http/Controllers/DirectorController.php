@@ -16,7 +16,7 @@ class DirectorController extends Controller
     public function index()
     {
         $directors = Director::with('member')->get();
-        return view("director.index", compact('directors'));
+        return view('company.director.index', compact('directors'));
     }
 
     /**
@@ -31,7 +31,7 @@ class DirectorController extends Controller
         $branch = null;
         $route = route('director.store');
         $method = 'POST';
-        return view('director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
+        return view('company.director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
     }
 
     /**
@@ -73,12 +73,11 @@ class DirectorController extends Controller
     public function show(string $id)
     {
         $decryptedId = base64_decode($id);
- $director = Director::findOrFail($decryptedId);
-
-    // Format the appointment_date only if it exists
-    if ($director->appointment_date) {
-        $director->appointment_date = Carbon::parse($director->appointment_date)->format('D M d Y');
-    }
+        $director = Director::findOrFail($decryptedId);
+        // Format the appointment_date only if it exists
+        if ($director->appointment_date) {
+            $director->appointment_date = Carbon::parse($director->appointment_date)->format('D M d Y');
+        }
 
         $dynamicOptions = [
             'member' =>  Member::pluck('member_info_first_name', 'id')
@@ -87,7 +86,7 @@ class DirectorController extends Controller
         $formFields = config('director_form');
         $method = 'GET';
         $show = true;
-        return view('director.create', compact('director', 'show', 'route', 'method', 'formFields','dynamicOptions'));
+        return view('company.director.create', compact('director', 'show', 'route', 'method', 'formFields','dynamicOptions'));
     }
 
   
@@ -102,7 +101,7 @@ class DirectorController extends Controller
 
         $route = route('director.update', $id);
         $method = 'PUT';
-        return view('director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
+        return view('company.director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
     }
 
    

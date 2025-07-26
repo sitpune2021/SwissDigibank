@@ -80,7 +80,7 @@ class UserController extends Controller
             'password'            => Hash::make('123456'),
         ]);
 
-        return redirect()->route('manage.user')->with('success', 'User created successfully!');
+        return redirect()->route('users.index')->with('success', 'User created successfully!');
     }
 
     /**
@@ -155,7 +155,7 @@ class UserController extends Controller
             'password'            => Hash::make('123456'),
         ]);
 
-        return redirect()->route('manage.user')->with('success', 'User updated successfully!');
+        return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
 
     /**

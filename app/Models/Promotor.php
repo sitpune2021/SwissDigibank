@@ -3,56 +3,53 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Branch;
+use App\Models\MaritalStatus;
+use App\Models\Religion;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\PromotorKYC;
+use App\Models\PromotorNomine;
 
 class Promotor extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'branch',
-        'enrollment_date',
-        'title',
-        'gender',
-        'first_name',
-        'middle_name',
-        'last_name',
-        'date_of_birth',
-        'occupation',
-        'father_name',
-        'mother_name',
-        'marital_status',
-        'member_religion',
-        'husband_wife_name',
-        'email',
-        'mobile',
-        'aadhaar_no',
-        'voter_id_no',
-        'pan_no',
-        'ration_card_no',
-        'meter_no',
-        'ci_no',
-        'ci_relation',
-        'dl_no',
-        'nominee_name',
-        'nominee_relation',
-        'nominee_mobile_no',
-        'nominee_aadhaar_no',
-        'nominee_voter_id_no',
-        'nominee_pan_no',
-        'nominee_address',
-        'sms',
+        'enrollment_date', 'title', 'gender', 'first_name', 'middle_name', 'last_name',
+        'branch_id', 'date_of_birth', 'occupation', 'father_name', 'mother_name',
+        'marital_statuses_id', 'religions_id', 'husband_wife_name', 'email', 'mobile',
+        'sms', 'folio_no', 'active', 'form15g'
     ];
-    public function MaritalStatus()
+
+    protected $casts = [
+        'sms' => 'boolean',
+        'enrollment_date' => 'date',
+        'date_of_birth' => 'date',
+    ];
+    
+
+    public function branch()
     {
-        return $this->belongsTo(MaritalStatus::class, 'marital_status', 'id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
-    public function Religion()
+
+    public function maritalStatus()
     {
-        return $this->belongsTo(Religion::class, 'member_religion', 'id');
+        return $this->belongsTo(MaritalStatus::class, 'marital_statuses_id');
     }
-    public function Branches()
+
+    public function religion()
     {
-        return $this->belongsTo(Branch::class, 'branch');
+        return $this->belongsTo(Religion::class, 'religions_id');
+    }
+
+    public function kyc()
+    {
+        return $this->hasOne(PromotorKYC::class);
+    }
+
+    public function nominees()
+    {
+        return $this->hasMany(PromotorNomine::class);
     }
 }

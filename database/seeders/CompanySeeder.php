@@ -14,7 +14,7 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         Company::create([
-            'user_id'           => 1, // Assuming a user with ID 1 exists
+            'user_id'           =>   1, // Assuming a user with ID 1 exists
             'company_website'       => 'https://example.com',
             'company_name'          => 'Example Corporation',
             'short_name'            => 'ExCorp',
@@ -23,7 +23,7 @@ class CompanySeeder extends Seeder
             'address_line1'         => '123 Main Street',
             'address_line2'         => 'Suite 400',
             'city'                  => 'Metropolis',
-            'state'                 => 'Metro State',
+            'state'                 => 14,
             'pincode'               => '123456',
             'country'               => 'Freedonia',
 
@@ -39,7 +39,7 @@ class CompanySeeder extends Seeder
             'company_category'      => 'Private',
             'company_class'         => 'Class A',
             'incorporation_date'    => '2020-01-15',
-            'incorporation_state'   => 'Metro State',
+            'incorporation_state'   => 14,
             'incorporation_country' => 'Freedonia',
 
             'authorized_capital'    => '5000000',

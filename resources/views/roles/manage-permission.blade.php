@@ -5,7 +5,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-center gap-2">
             <h1 class="text-xl font-semibold">Permisions</h1>
-            <a href="{{ route('CreateRole') }}"
+            <a href="{{ route('roles.create') }}"
                 class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
                 <i class="las la-plus text-lg"></i>
             </a>

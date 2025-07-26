@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\State;
 
 class Company extends Model
 {
     protected $fillable = [
+        'user_id',
         'company_website',
         'company_name',
         'short_name',
@@ -37,12 +39,14 @@ class Company extends Model
         'authorized_capital',
         'paid_up_capital',
     ];
-    public function stateData()
+
+    public function State()
     {
-        return $this->belongsTo(State::class, 'state', 'id');
+        return $this->belongsTo(State::class, 'state');
     }
+
     public function incorporationState()
     {
-        return $this->belongsTo(State::class, 'incorporation_state', 'id');
+        return $this->belongsTo(State::class, 'incorporation_state');
     }
 }

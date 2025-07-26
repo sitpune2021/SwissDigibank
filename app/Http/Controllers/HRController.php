@@ -38,7 +38,7 @@ class HRController extends Controller
      public function create()
      {
           $employee = null;
-          $route = route('AddEmployee');
+          $route = route('employee.store');
           $method = 'POST';
           return view('employees.add-employee', compact('employee', 'route', 'method'));
      }
@@ -96,7 +96,7 @@ class HRController extends Controller
                'expense_ledger_id' => $request->expense_ledger,
           ]);
 
-          return redirect()->route('ManageEmployee')->with('success', 'Employee added successfully!');
+          return redirect()->route('employee.index')->with('success', 'Employee added successfully!');
      }
 
      public function show($id)
@@ -172,7 +172,7 @@ class HRController extends Controller
                'expense_ledger_id' => $request->expense_ledger,
           ]);
 
-          return redirect()->route('ManageEmployee')->with('success', 'Employee updated successfully!');
+          return redirect()->route('employee.index')->with('success', 'Employee updated successfully!');
      }
 
      public function getRelations()
