@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Menu;
 
 
-class SubMenu extends Model
+class Submenu extends Model
 {
     
     protected $fillable = [
         'menu_id',
         'title',
         'route',
-        
+
     ];
 
     public function menu(): BelongsTo

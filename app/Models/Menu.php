@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\SubMenu;
+use App\Models\Submenu;
 
 class Menu extends Model
 {
@@ -19,6 +19,6 @@ class Menu extends Model
 
     public function submenus(): HasMany
     {
-        return $this->hasMany(SubMenu::class);
+        return $this->hasMany(Submenu::class);
     }
 }
