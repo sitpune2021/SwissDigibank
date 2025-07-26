@@ -549,7 +549,7 @@ class ComposerStaticInit3284c38b25b1f9b1be05593f5fc0ba39
         'App\\Models\\Religion' => __DIR__ . '/../..' . '/app/Models/Religion.php',
         'App\\Models\\Shareholding' => __DIR__ . '/../..' . '/app/Models/Shareholding.php',
         'App\\Models\\State' => __DIR__ . '/../..' . '/app/Models/State.php',
-        'App\\Models\\SubMenu' => __DIR__ . '/../..' . '/app/Models/SubMenu.php',
+        'App\\Models\\Submenu' => __DIR__ . '/../..' . '/app/Models/Submenu.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\View\\Components\\MyComponent' => __DIR__ . '/../..' . '/app/View/Components/MyComponent.php',
