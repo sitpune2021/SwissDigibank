@@ -23,7 +23,7 @@ class ShareHoldingController extends Controller
                     ->orWhere('enrollment_date', 'like', "%$search%");
             });
         }
-        $share_holdings = $query->with('promoters')->orderBy('created_at', 'desc')->paginate(10);
+        $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
         return view('company.share-holdings.manage-shareholding', compact('share_holdings'));
     }
 
@@ -36,14 +36,14 @@ class ShareHoldingController extends Controller
         $isAdd = true;
         $nominal_value=10.00;
         $dynamicOptions = [
-            'promotor' => Promotor::pluck('title', 'id')
+            'promoter' => Promotor::pluck('first_name', 'id')
         ];
         return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd','nominal_value','formFields','dynamicOptions'));
     }
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'promoter'             => 'required|exists:promotors,id',
+            'promotor_id'             => 'required|exists:promotors,id',
             'allotment_date'       => 'required|date',
             'first_share'          => 'required|numeric',
             'share_no'           => 'required|numeric|gt:first_share',
@@ -73,7 +73,7 @@ class ShareHoldingController extends Controller
             ]);
         }
         $shareholding = new Shareholding();
-        $shareholding->promoter        = $validated['promoter'];
+        $shareholding->promotor_id        = $validated['promotor_id'];
         $shareholding->allotment_date      = date('Y-m-d', strtotime($request->allotment_date));
         $shareholding->first_share      = $validated['first_share'];
         $shareholding->share_no       = $validated['share_no'];
@@ -100,7 +100,7 @@ class ShareHoldingController extends Controller
         $route = '';
         $method = '';
         $dynamicOptions = [
-            'promotor' => Promotor::pluck('title', 'id')
+            'promoter' => Promotor::pluck('first_name', 'id')
         ];
         return view('company.share-holdings.add-shares', compact('shareholding', 'show','formFields','route', 'method', 'dynamicOptions'));
     }
@@ -111,13 +111,16 @@ class ShareHoldingController extends Controller
         $route = route('shareholding.update', $decryptedId);
         $formFields = config('share_form');
         $method = 'PUT';
-        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method','formFields'));
+        $dynamicOptions = [
+            'promoter' => Promotor::pluck('first_name', 'id')
+        ];
+        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method','formFields', 'dynamicOptions'));
         // return view('branch.add-branch', compact('branch', 'states'));
     }
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'promoter'             => 'required|exists:promotors,id',
+            'promotor_id'             => 'required|exists:promotors,id',
             'allotment_date'       => 'required|date',
             'first_share'          => 'required|numeric',
             'share_no'           => 'required|numeric|gt:first_share',
@@ -148,7 +151,7 @@ class ShareHoldingController extends Controller
         }
 
         $shareholding = Shareholding::findOrFail($id);
-        $shareholding->promoter        = $validated['promoter'];
+        $shareholding->promotor_id        = $validated['promotor_id'];
         $shareholding->allotment_date      = date('Y-m-d', strtotime($request->allotment_date));
         $shareholding->first_share      = $validated['first_share'];
         $shareholding->share_no       = $validated['share_no'];

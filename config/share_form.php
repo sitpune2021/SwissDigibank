@@ -5,10 +5,10 @@ return [
         'label' => 'Promoter',
         'required' => true,
         'type' => 'select',
-        'name' => 'promoter',
-        'id' => 'promoterDropdown',
+        'name' => 'promotor_id',
+        'id' => 'promotor_id',
         'dynamic' => true,
-        'objectKey' => 'promoter'
+        'options_key' => 'promoter'
     ],
     [
         'label' => 'Allotment Date',

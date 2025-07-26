@@ -16,7 +16,7 @@ class CompanyController extends Controller
     public function index()
     {
        $userId = Auth::id();
-        $company = Company::with(['stateData', 'incorporationState'])->where('user_id',  $userId)
+        $company = Company::with(['State', 'incorporationState'])->where('user_id',  $userId)
             ->first();
          $dynamicOptions = [
             'state' =>State::pluck('name', 'id')

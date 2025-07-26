@@ -4,11 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Submenu;
+use App\Models\SubMenu;
 
 class Menu extends Model
 {
-    protected $fillable = ['title', 'icon', 'route', 'position','active'];
+    protected $fillable = [
+        'title',
+        'icon',
+        'route',
+        'prefix',
+        'position',
+        'active',
+    ];
 
     public function submenus(): HasMany
     {

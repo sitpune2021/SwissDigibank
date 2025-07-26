@@ -11,7 +11,7 @@ class BranchController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('perPage', 10);
-        $query = Branch::with(['stateData', 'members'])->withCount('members')
+        $query = Branch::with(['State'])
             ->where('active', 'Yes')->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
@@ -21,7 +21,7 @@ class BranchController extends Controller
                     ->orWhere('branch_code', 'like', "%$search%")
                     ->orWhere('city', 'like', "%$search%")
                     ->orWhere('open_date', 'like', "%$search%")
-                    ->orWhereHas('stateData', function ($stateQuery) use ($search) {
+                    ->orWhereHas('State', function ($stateQuery) use ($search) {
                         $stateQuery->where('name', 'like', "%$search%");
                     });
             });
@@ -82,7 +82,7 @@ class BranchController extends Controller
             'states' => State::pluck('name', 'id')
         ];
         $formFields = config('branch_form');
-        $branch = Branch::with(['stateData'])->find($decryptedId);;
+        $branch = Branch::with(['State'])->find($decryptedId);;
         $route = "";
         $method = 'POST';
         $show = true;

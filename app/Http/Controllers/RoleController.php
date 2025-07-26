@@ -13,7 +13,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         // $perPage = $request->input('perPage', 10);
-        // $query = Branch::with('stateData')->orderBy('created_at', 'desc');
+        // $query = Branch::with('state')->orderBy('created_at', 'desc');
 
         // if ($request->has('search')) {
         //     $search = $request->input('search');
@@ -22,7 +22,7 @@ class RoleController extends Controller
         //             ->orWhere('branch_code', 'like', "%$search%")
         //             ->orWhere('city', 'like', "%$search%")
         //             ->orWhere('open_date', 'like', "%$search%")
-        //             ->orWhereHas('stateData', function ($stateQuery) use ($search) {
+        //             ->orWhereHas('state', function ($stateQuery) use ($search) {
         //                 $stateQuery->where('name', 'like', "%$search%");
         //             });
         //     });

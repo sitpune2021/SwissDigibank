@@ -4,7 +4,7 @@
     <div class="main-inner">
         <div class="mb-6 lg:mb-8">
             <h3 class="h2">{!! isset($show) && $show
-                ? $shareholding->promoters->first_name . ' <small class="text-sm text-gray-500">Share Holding</small>'
+                ? $shareholding->promotor->first_name . ' <small class="text-sm text-gray-500">Share Holding</small>'
                 : (isset($shareholding)
                     ? 'Edit Allocated Shares'
                     : 'Allocate New Shares to Promoter') !!}
@@ -123,29 +123,6 @@
     }, 5000);
 </script>
 
-<script>
-    $(document).ready(function() {
-        const selectedId = $('#selectedId').val(); // Corrected
-        $.ajax({
-            url: "{{ url('/get-promoters') }}",
-            type: "GET",
-            success: function(response) {
-                let dropdown = $('#promoterDropdown');
-                dropdown.empty();
-                dropdown.append('<option value="">Select Promoter</option>');
-                $.each(response, function(index, member) {
-                    let selected = (selectedId == member.id) ? 'selected' : '';
-                    dropdown.append(
-                        `<option value="${member.id}" ${selected}>${member.member_no} - ${member.first_name}</option>`
-                    );
-                });
-            },
-            error: function() {
-                alert('Failed to fetch promoters.');
-            }
-        });
-    });
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

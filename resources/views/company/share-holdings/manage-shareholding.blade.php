@@ -107,7 +107,7 @@
                     @forelse($share_holdings as $index => $share)
                     <tr>
                         <td class="px-6 py-4">{{ $index + 1 }}</td>
-                        <td class="px-6 py-4">{{ $share->promoters->first_name ?? 'N/A' }}</td>
+                        <td class="px-6 py-4">{{ $share->promotor->first_name ?? 'N/A' }}</td>
                         <td class="px-6 py-4">{{ $share->first_share }}</td>
                         <td class="px-6 py-4">{{ $share->share_no }}</td>
                         <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>

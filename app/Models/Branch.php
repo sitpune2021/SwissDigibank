@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\State;
 
 class Branch extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'branch_name',
         'branch_code',
@@ -32,14 +30,9 @@ class Branch extends Model
         'open_date' => 'date',
     ];
 
-    public function stateData()
+    public function State()
     {
-        return $this->belongsTo(State::class, 'state', 'id');
+        return $this->belongsTo(State::class, 'state');
     }
-
-    public function members()
-    {
-        return $this->hasMany(Member::class, 'general_branch');
-    }
-  
+    
 }

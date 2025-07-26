@@ -103,7 +103,7 @@
                         </td>
                         <td class="py-5 px-6">{{ $branch->branch_code }}</td>
                         <td class="py-5 px-6">{{ $branch->city }}</td>
-                        <td class="py-5 px-6">{{ $branch->stateData->name }}</td>
+                        <td class="py-5 px-6">{{ $branch->State?->name }}</td>
                         <td class="py-5 px-6">
                             {{ $branch->open_date }}
                         </td>

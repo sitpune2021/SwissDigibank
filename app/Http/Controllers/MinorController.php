@@ -77,15 +77,13 @@ class MinorController extends Controller
     {
         {
       
-         $minors = Member::with('address')->findOrFail($id);
-         $minor = array_merge(
-             $minors->toArray(),
-             $minors->address?->toArray() ?? [],
-        );
-
-        $sections = config('minor_form');
-        $show = true;
-        // $button=true;
+         $sections = config('minor_form');
+         $minor = Minor::findOrFail($id);
+        $route ="";
+        $method = 'POST';
+        $dynamicOptions = [
+            'member' =>Member::pluck('member_info_first_name', 'id')
+        ];
         return view('members.minor.create', compact('sections', 'minor', 'show'));
     }
     }
@@ -98,13 +96,7 @@ class MinorController extends Controller
         {
         
         $method = 'PUT';
-        $memberModel = Member::with('address')->findOrFail($id);
-        $minor = array_merge(
-             $memberModel->toArray(),
-            $memberModel->address?->toArray() ?? [],
-
-        );
-
+        $minor = Minor::findOrFail($id);
         $sections = config('minor_form');
         $route = route('minor.update', $id) ;
         return view('members.minor.create', compact('sections', 'minor', 'route', 'method'));

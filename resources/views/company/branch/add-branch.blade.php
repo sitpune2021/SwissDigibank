@@ -53,7 +53,7 @@
                         </label>
                         @if ($type === 'select')
                             <select name="{{ $name }}" id="{{ $id }}"
-                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" {{empty($show) ? '' : 'disabled'}}>
                                 <option value="">-- Select {{ $label }} --</option>
 
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
@@ -76,7 +76,7 @@
                                 @foreach ($field['options'] as $optionValue => $optionLabel)
                                     <label class="flex items-center space-x-2">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'checked' : '' }}>
+                                            {{ $value == $optionValue ? 'checked' : '' }} {{empty($show) ? '' : 'disabled'}}>
                                         <span>{{ $optionLabel }}</span>
                                     </label>
                                 @endforeach
@@ -85,7 +85,7 @@
                             <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                 value="{{ $value }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter {{ strtolower($label) }}" />
+                                placeholder="Enter {{ strtolower($label) }}" {{empty($show) ? '' : 'readonly'}} />
                         @endif
 
                         @error($name)

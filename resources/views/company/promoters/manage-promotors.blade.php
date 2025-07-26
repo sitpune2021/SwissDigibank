@@ -106,7 +106,7 @@
                         </td>
                         <td class="py-5 px-6">
                             <a href="{{route('promotor.show', base64_encode($promotor->id))}}" class="text-blue-500 hover:underline">
-                                {{ $promotor->member_no }}
+                                DEMO-{{ $promotor->folio_no }}
                             </a>
                         </td>
                         <td class="py-5 px-6">
@@ -115,7 +115,6 @@
                             </div>
                         </td>
                         <td class="py-5 px-6">{{ $promotor->gender }}</td>
-                        <!-- <td class="py-5 px-6">{{ $promotor->is_senior }}</td> -->
                         <td class="py-2">
                             @if($promotor->is_senior == 'Yes')
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -128,16 +127,16 @@
                             </span>
                             @endif
                         </td>
-                        <td class="py-5 px-6">{{ $promotor->enrollment_date }}</td>
+                        <td class="py-5 px-6">{{ $promotor->enrollment_date->format('D d M Y') }}</td>
                         <td class="py-2">
-                            @if($promotor->active == 'Yes')
+                            @if($promotor->kyc->kyc_status == 'completed')
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                Yes
+                                {{$promotor->kyc->kyc_status}}
                             </span>
                             @else
                             <span
                                 class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                {{$promotor->active}}
+                                {{$promotor->kyc->kyc_status}}
                             </span>
                             @endif
                         </td>

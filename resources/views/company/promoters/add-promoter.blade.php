@@ -99,6 +99,9 @@
         <div class="box mb-4 xxxl:mb-6">
             <form id="companyForm" action={{ $route }} method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 @csrf
+                @if (isset($method) && $method === 'PUT')
+                    @method('PUT')
+                @endif
                 @php
                     $sections = config('promoter_form');
                 @endphp
@@ -117,10 +120,57 @@
                             $name = $field['name'];
                             $type = $field['type'] ?? 'text';
                             $label = $field['label'];
-                            $id = $field['id'] ?? $field['name'];
+                            $id = $field['id'] ?? $name;
                             $required = $field['required'] ?? false;
-                            $value = old($name, $promoter[$name] ?? ($field['default'] ?? ''));
+
+                            // Extract nominee field name by removing 'nominee_' prefix:
+                            $nomineeField = null;
+                            if (str_starts_with($name, 'nominee_')) {
+                                $nomineeField = substr($name, strlen('nominee_')); // e.g. 'name', 'relation'
+                            }
+
+                            if (
+                                isset($promoter->kyc) &&
+                                in_array($name, [
+                                    'aadhaar_no',
+                                    'voter_id_no',
+                                    'pan_no',
+                                    'ration_card_no',
+                                    'meter_no',
+                                    'ci_no',
+                                    'ci_relation',
+                                    'dl_no',
+                                ])
+                            ) {
+                                $value = old($name, $promoter->kyc->$name ?? ($field['default'] ?? ''));
+                            } elseif (
+                                $nomineeField !== null &&
+                                $promoter->nominees->isNotEmpty() &&
+                                in_array($nomineeField, [
+                                    'name',
+                                    'relation',
+                                    'mobile_no',
+                                    'aadhaar_no',
+                                    'voter_id_no',
+                                    'pan_no',
+                                    'address',
+                                ])
+                            ) {
+                                $firstNominee = $promoter->nominees->first();
+                                $value = old($name, $firstNominee->$nomineeField ?? ($field['default'] ?? ''));
+                            } elseif ($name === 'enrollment_date' || $name === 'date_of_birth') {
+                                $value = old(
+                                    $name,
+                                    $promoter->$name instanceof \Carbon\Carbon
+                                        ? $promoter->$name->format('D d m Y')
+                                        : $promoter->$name ?? ($field['default'] ?? ''),
+                                );
+                            } else {
+                                $value = old($name, $promoter->$name ?? ($field['default'] ?? ''));
+                            }
                         @endphp
+
+
                         <div class="col-span-2 md:col-span-1">
                             <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
                                 {{ $label }} @if ($required)
