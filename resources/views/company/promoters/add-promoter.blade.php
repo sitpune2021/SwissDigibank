@@ -130,7 +130,7 @@
                             }
 
                             if (
-                                isset($promoter->kyc) &&
+                                isset($promoter?->kyc) &&
                                 in_array($name, [
                                     'aadhaar_no',
                                     'voter_id_no',
@@ -142,10 +142,10 @@
                                     'dl_no',
                                 ])
                             ) {
-                                $value = old($name, $promoter->kyc->$name ?? ($field['default'] ?? ''));
+                                $value = old($name, $promoter?->kyc?->$name ?? ($field['default'] ?? ''));
                             } elseif (
                                 $nomineeField !== null &&
-                                $promoter->nominees->isNotEmpty() &&
+                                $promoter?->nominees?->isNotEmpty() &&
                                 in_array($nomineeField, [
                                     'name',
                                     'relation',
@@ -156,17 +156,17 @@
                                     'address',
                                 ])
                             ) {
-                                $firstNominee = $promoter->nominees->first();
-                                $value = old($name, $firstNominee->$nomineeField ?? ($field['default'] ?? ''));
+                                $firstNominee = $promoter?->nominees?->first();
+                                $value = old($name, $firstNominee?->$nomineeField ?? ($field['default'] ?? ''));
                             } elseif ($name === 'enrollment_date' || $name === 'date_of_birth') {
                                 $value = old(
                                     $name,
-                                    $promoter->$name instanceof \Carbon\Carbon
-                                        ? $promoter->$name->format('D d m Y')
-                                        : $promoter->$name ?? ($field['default'] ?? ''),
+                                    $promoter?->$name instanceof \Carbon\Carbon
+                                        ? $promoter?->$name->format('D d m Y')
+                                        : $promoter?->$name ?? ($field['default'] ?? ''),
                                 );
                             } else {
-                                $value = old($name, $promoter->$name ?? ($field['default'] ?? ''));
+                                $value = old($name, $promoter?->$name ?? ($field['default'] ?? ''));
                             }
                         @endphp
 
