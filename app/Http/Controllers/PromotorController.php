@@ -50,7 +50,8 @@ class PromotorController extends Controller
         ];
         $route = route('promotor.store');
         $method = 'POST';
-        return view('company.promoters.add-promoter', compact('route','dynamicOptions', 'method'));
+        $promoter = null;
+        return view('company.promoters.add-promoter', compact('route','dynamicOptions', 'method', 'promoter'));
     }
 
     public function store(Request $request)
