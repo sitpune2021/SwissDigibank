@@ -5,7 +5,7 @@
 /public/storage
 /storage/*.keymai
 /storage/pail
-/vendor
+# /vendor
 /storage
 .env
 .env.backup
