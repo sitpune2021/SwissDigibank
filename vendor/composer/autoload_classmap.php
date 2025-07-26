@@ -40,7 +40,7 @@ return array(
     'App\\Models\\Religion' => $baseDir . '/app/Models/Religion.php',
     'App\\Models\\Shareholding' => $baseDir . '/app/Models/Shareholding.php',
     'App\\Models\\State' => $baseDir . '/app/Models/State.php',
-    'App\\Models\\Submenu' => $baseDir . '/app/Models/Submenu.php',
+    'App\\Models\\SubMenus' => $baseDir . '/app/Models/SubMenus.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\View\\Components\\MyComponent' => $baseDir . '/app/View/Components/MyComponent.php',

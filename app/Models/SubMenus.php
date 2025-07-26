@@ -3,21 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Menu;
 
-
-class Submenu extends Model
+class SubMenus extends Model
 {
-    
     protected $fillable = [
-        'menu_id',
         'title',
         'route',
-
+        'menu_id',
     ];
 
-    public function menu(): BelongsTo
+    public function menu()
     {
         return $this->belongsTo(Menu::class);
     }
