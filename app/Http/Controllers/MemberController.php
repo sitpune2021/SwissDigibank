@@ -44,8 +44,8 @@ class MemberController extends Controller
             'membership_type' => 'required|in:nominal,regular',
 
             // General Info
-            'general_advisor_staff' => 'required|string',
-            'general_group' => 'required|in:group1,group2',
+            'general_advisor_staff' => 'nullable|string',
+            'general_group' => 'nullable|in:group1,group2',
             'general_branch' => 'required|string',
             'general_enrollment_date' => 'required|date',
 
@@ -63,7 +63,7 @@ class MemberController extends Controller
             'member_info_father_name' => 'nullable|string',
             'member_info_mother_name' => 'nullable|string',
             'member_info_spouse_name' => 'nullable|string',
-            'member_info_spouse_dob' => 'required|date',
+            'member_info_spouse_dob' => 'nullable|date',
             'member_info_mobile_no' => 'required|string',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -85,16 +85,16 @@ class MemberController extends Controller
             'member_address_address' => 'nullable|string',
 
             // Permanent Address
-            'member_perm_address_city' => 'required|string',
-            'member_perm_address_state' => 'required|string',
-            'member_perm_address_pincode' => 'required|numeric',
+            'member_perm_address_city' => 'nullable|string',
+            'member_perm_address_state' => 'nullable|string',
+            'member_perm_address_pincode' => 'nullable|numeric',
 
             // GPS Location
-            'member_gps_location_latitude' => 'required|string',
-            'member_gps_location_longitude' => 'required|numeric',
+            'member_gps_location_latitude' => 'nullable|string',
+            'member_gps_location_longitude' => 'nullable|numeric',
 
             // KYC Info
-            'member_kyc_aadhaar_no' => 'nullable|string',
+            'member_kyc_aadhaar_no' => 'required|string',
             'member_kyc_voter_id_no' => 'nullable|string',
             'member_kyc_pan_no' => 'nullable|string',
             'member_kyc_ration_card_no' => 'nullable|string',
@@ -118,7 +118,7 @@ class MemberController extends Controller
             'nominee_relation' => 'nullable|string',
             'nominee_mobile_no' => 'nullable|string',
             'nominee_gender' => 'nullable|in:Male,Female,Other',
-            'nominee_dob' => 'required|date',
+            'nominee_dob' => 'nullable|date',
             'nominee_aadhaar_no' => 'nullable|string',
             'nominee_voter_id_no' => 'nullable|string',
             'nominee_pan_no' => 'nullable|string',
@@ -254,7 +254,7 @@ class MemberController extends Controller
         'member_address_landmark' => 'nullable|string',
         'member_address_city_district' => 'nullable|string',
         'member_address_state' => 'required|string',
-        'member_address_pincode' => 'required|numeric',
+        'member_address_pincode' => 'nullable|numeric',
         'member_address_country' => 'required|string',
         'member_address_address' => 'nullable|string',
         'member_perm_address_city' => 'nullable|string',
@@ -262,9 +262,9 @@ class MemberController extends Controller
         'member_perm_address_pincode' => 'nullable|numeric',
         'member_gps_location_latitude' => 'nullable|string',
         'member_gps_location_longitude' => 'nullable|numeric',
-        'member_kyc_aadhaar_no' => 'nullable|string',
+        'member_kyc_aadhaar_no' => 'required|string',
         'member_kyc_voter_id_no' => 'nullable|string',
-        'member_kyc_pan_no' => 'nullable|string',
+        'member_kyc_pan_no' => 'required|string',
         'member_kyc_ration_card_no' => 'nullable|string',
         'member_kyc_meter_no' => 'nullable|string',
         'member_kyc_ci_no' => 'nullable|string',

@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-            <h4 class="h2">Member</h4>
+            <h4 class="h2">Members</h4>
             <a class="btn-primary" href="{{ route('member.create') }}">
                 <i class=" text-base md:text-lg"></i>
                 Add
