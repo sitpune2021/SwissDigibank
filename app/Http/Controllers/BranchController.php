@@ -47,7 +47,7 @@ class BranchController extends Controller
         $request->validate([
             'branch_name'      => 'required|string|max:255|regex:/^[a-zA-Z].*/',
             'branch_code'      => 'required|string| max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
-            'open_date'        => 'required|date_format:Y-m-d H:i:s',
+            'open_date'        => 'required|date_format:d m Y',
             'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
             'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
             'ifsc_code'        => 'nullable|string|size:11|regex:/^[A-Za-z0-9]+$/',
@@ -109,7 +109,7 @@ class BranchController extends Controller
         $request->validate([
            'branch_name'       => 'required|string|max:255|regex:/^[a-zA-Z].*/',
             'branch_code'      => 'required|string| max:100|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/' . $decryptedId,
-             'open_date'       => 'required|date_format:Y-m-d H:i:s',
+             'open_date'       => 'date_format:d m Y',
             'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
             'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
             'ifsc_code'        => 'nullable|string|size:11|regex:/^[A-Za-z0-9]+$/',
