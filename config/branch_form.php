@@ -27,7 +27,7 @@ return [
         'name' => 'ifsc_code',
         'id' => 'ifsc_code',
         'type' => 'text',
-        'required' => true,
+        'required' => false,
     ],
     [
         'label' => 'Address Line 1',
@@ -49,6 +49,7 @@ return [
         'id' => 'country',
         'type' => 'text',
         'required' => true,
+        'default' => 'India',  // <-- set default value here
     ],
     [
         'label' => 'State',
@@ -78,14 +79,14 @@ return [
         'name' => 'contact_email',
         'id' => 'contact_email',
         'type' => 'email',
-        'required' => true,
+        'required' => false,
     ],
     [
         'label' => 'Contact No.',
         'name' => 'mobile_no',
         'id' => 'mobile_no',
         'type' => 'text',
-        'required' => true,
+        'required' => false,
     ],
     [
         'label' => 'Landline No.',

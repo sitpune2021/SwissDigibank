@@ -357,7 +357,7 @@ return [
             'name' => 'member_kyc_aadhaar_no',
             'id' => 'aadhaar_no',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'Voter ID No',
@@ -371,7 +371,7 @@ return [
             'name' => 'member_kyc_pan_no',
             'id' => 'pan_no',
             'type' => 'text',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'Ration Card No',

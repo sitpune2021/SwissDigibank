@@ -6,7 +6,7 @@
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <!-- <h3 class="h2">{{ isset($director) ? 'Edit - ' . $director->director_name . ' Director' : 'Add New Director' }}</h3> -->
-            <h3 class="h2">
+            <h4 class="h2">
                 @if (!empty($show))
                     {{ $director->director_name ?? '' }}
                 @elseif(isset($director))
@@ -14,7 +14,7 @@
                 @else
                     Add New Director
                 @endif
-            </h3>
+            </h4>
 
         </div>
         @if (session('success'))
@@ -109,6 +109,8 @@
                     @endif
 
                     @if ($method !== 'PUT' && empty($show))
+                     <button class="btn-outline" type="reset"
+                        onclick="window.location.href='{{ route('director.index') }}'">Back</button>
                         <button class="btn-outline" type="reset"
                             onclick="document.getElementById('companyForm').reset();">
                             Reset
