@@ -72,7 +72,7 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'hr-managment'], function () {
             Route::resource('employee', HRController::class);
     });
-    
+
 });
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
