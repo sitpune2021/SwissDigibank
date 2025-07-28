@@ -30,7 +30,7 @@ class SchemesController extends Controller
     {
         $validated = $request->validate([
             'scheme_name'   => 'required|string|max:255',
-            'scheme_code'   => 'required|alpha_num|max:100|unique:tbl_schemes,scheme_code',
+            'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
             'min_opening_balance'   => 'required|numeric|min:0',
             'min_monthly_avg_balance' => 'required|numeric|min:0',
             'annual_int_rate' => 'required|numeric|min:0|max:8',
