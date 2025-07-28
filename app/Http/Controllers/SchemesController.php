@@ -28,6 +28,7 @@ class SchemesController extends Controller
 
     public function store(Request $request)
     {
+        try {
         $validated = $request->validate([
             'scheme_name'   => 'required|string|max:255',
             'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
@@ -110,8 +111,13 @@ class SchemesController extends Controller
             SchemeCharge::create($chargeData);
         }
 
-        return redirect()->route('scheme.index')
+        return redirect()->route('schemes.index')
             ->with('success', 'Schemes created successfully.');
+    }
+             catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
+                        ->withInput();
+        }
     }
 
     
@@ -123,7 +129,7 @@ class SchemesController extends Controller
         $schemes = Scheme::findOrFail($id);
         $route = '';
         $schemeCharges = $schemes->schemeCharges;
-        return view('schemes.add-edit', compact('sections', 'schemes', 'show','method', 'schemeCharges'));
+        return view('schemes.add-edit', compact('sections', 'schemes', 'show','method', 'schemeCharges', 'route'));
     }
 
   
