@@ -39,7 +39,7 @@ return new class extends Migration
         $table->string('nominee_relation')->nullable();
         $table->string('nominee_mobile_no')->nullable();
         $table->string('nominee_gender')->nullable();
-        $table->string('nominee_dob');
+        $table->string('nominee_dob')->nullable();
         $table->string('nominee_aadhaar_no')->nullable();
         $table->string('nominee_voter_id_no')->nullable();
         $table->string('nominee_pan_no')->nullable();

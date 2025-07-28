@@ -16,7 +16,7 @@ return new class extends Migration
             
                 $table->string('membership_type');
                 $table->string('general_advisor_staff');
-                $table->string('general_group');
+                $table->string('general_group')->nullable();
                 $table->unsignedBigInteger('general_branch');
                 $table->string('general_enrollment_date');
 

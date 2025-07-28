@@ -38,8 +38,8 @@ class StateSeeder extends Seeder
             'Tripura',
             'Uttar Pradesh',
             'Uttarakhand',
-            'West Bengal',
-            'OUTSIDE INDIA'
+            'West Bengal'
+            // 'OUTSIDE INDIA'
         ];
 
         foreach ($states as $state) {
