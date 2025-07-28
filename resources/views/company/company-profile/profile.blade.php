@@ -28,12 +28,12 @@
 </style>
 @section('content')
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
             <div class="flex items-center gap-2">
-                <h1 class="text-xl font-semibold">SWISS PAYMENTS-DIGITAL BANKING</h1>
+                <h1 class="text-xl font-semibold" style="font-size:1.7rem ">SWISS PAYMENTS-DIGITAL BANKING</h1>
                 <a href="{{ route('company.edit', $company->id) }}"
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                    <i class="las la-edit text-lg"></i>
+                    class="inline-flex items-center justify-center w-8 h-8 text-white rounded-full bg-primary hover:bg-green-700">
+                    <i class="text-lg las la-edit"></i>
                 </a>
                 <hr class="my-2 border-gray-300" />
             </div>
@@ -60,17 +60,17 @@
             @if (isset($method))
                 @method($method)
             @endif
-            
+
             <div class="grid grid-cols-12 gap-4 xxxxxl:gap-6">
                 @foreach ($companyprofile as $section)
                     <div class="col-span-6 ">
-                        <div class="box xxl:p-8 xxxl:p-10 mb-6">
-                            <h4 class="h4 bb-dashed mb-4 pb-4 md:mb-6 md:pb-6">{{ $section['heading'] }}</h4>
+                        <div class="mb-6 box xxl:p-8 xxxl:p-10">
+                            <h4 class="pb-4 mb-4 h4 bb-dashed md:mb-6 md:pb-6">{{ $section['heading'] }}</h4>
                             @php
                                 $isForm = !isset($show) || !$show;
                             @endphp
                             @if ($isForm)
-                                <section class="mt-6 xl:mt-8 grid grid-cols-2 gap-4 xxxxxl:gap-6">
+                                <section class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                                     @include('company.company-profile.partial.sectionLoop', [
                                         'section' => $section,
                                         'company' => $company,
@@ -78,7 +78,7 @@
                                     ])
                                 </section>
                             @else
-                                <form class="mt-6 xl:mt-8 grid grid-cols-2 gap-4 xxxxxl:gap-6">
+                                <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                                     @include('company.company-profile.partial.sectionLoop', [
                                         'section' => $section,
                                         'company' => $company,
@@ -91,7 +91,7 @@
                     </div>
                 @endforeach
                 @if (!isset($show) || !$show)
-                    <div class="col-span-2 flex gap-4 md:gap-6 mt-2 absolute bottom-0 right-0">
+                    <div class="absolute bottom-0 right-0 flex col-span-2 gap-4 mt-2 md:gap-6">
                         <button class="btn-primary" type="submit">Update</button>
                         <a href="{{ route('company.index' ) }}" class="btn-outline">Cancel</a>
                     </div>
