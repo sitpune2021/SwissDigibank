@@ -58,7 +58,7 @@ class SchemesController extends Controller
             'upi_charge' => 'nullable|numeric|min:0',
         ]);
 
-        $scheme = new Schemes();
+        $scheme = new Scheme();
         $scheme->scheme_name = $validated['scheme_name'];
         $scheme->scheme_code = $validated['scheme_code'];
         $scheme->min_opening_balance = $validated['min_opening_balance'];
@@ -141,7 +141,7 @@ class SchemesController extends Controller
    
     public function update(Request $request, string $id)
     {
-          $scheme = Schemes::with('schemeCharges')->findOrFail($id);
+          $scheme = Scheme::with('schemeCharges')->findOrFail($id);
 
         $validated = $request->validate([
             'scheme_name'                   => 'required|string|max:255',
@@ -209,7 +209,7 @@ class SchemesController extends Controller
             ) {
                 continue;
             }
-            SchemeCharges::updateOrCreate(
+            SchemeCharge::updateOrCreate(
                 [
                     'scheme_id' => $scheme->id,
                     'limit'     => $limit,
