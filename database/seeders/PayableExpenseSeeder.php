@@ -13,7 +13,7 @@ class PayableExpenseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('payable_expenses')->insert([
+        DB::table('expense_ledgers')->insert([
             ['name' => 'Late Payment Charges AC - Late Payment Charges AC (Expense)'],
             ['name' => 'Office Expence  - Office Expence  (Expense)'],
             ['name' => 'Employee Salary - Employee Salary (Expense)'],
