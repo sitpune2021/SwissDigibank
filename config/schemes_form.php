@@ -124,7 +124,7 @@ return [
     'id'           => 'charge_frequency',
     'type'         => 'select',
     'required'     => true,
-    'dynamic'      => true,
+    'dynamic'      => true, 
     'options_key'  => 'charge_frequencies',
     'options'      => [
         ''                     => 'Select Frequency',
