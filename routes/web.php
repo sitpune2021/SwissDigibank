@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
@@ -67,6 +68,9 @@ Route::middleware('auth.user')->group(function () {
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
             Route::resource('schemes', SchemesController::class);
+                Route::resource('accounts', AccountsController::class);
+
+
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {

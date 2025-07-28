@@ -52,6 +52,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'Schemes', 'route' => 'schemes.index'],
+             ['title' => 'Account', 'route' => 'accounts.index'],
         ]
     ],
     // [
