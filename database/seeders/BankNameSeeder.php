@@ -74,4 +74,5 @@ class BankNameSeeder extends Seeder
             Bank::create(['name' => $bank]);
         }
     }
+
 }
