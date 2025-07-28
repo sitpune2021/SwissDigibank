@@ -4,17 +4,10 @@
 <div class="main-inner">
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
         <div class="flex items-center gap-2">
-<<<<<<< HEAD
-            <h1 class="text-xl font-semibold">Permissions</h1>
-            <a href="{{ route('roles.create') }}"
-               class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                <i class="las la-plus text-lg"></i>
-=======
             <h1 class="text-xl font-semibold">Permisions /Roles</h1>
             <a href="{{ route('roles.create') }}"
                 class="inline-flex items-center justify-center w-8 h-8 text-white rounded-full bg-primary hover:bg-green-700">
                 <i class="text-lg las la-plus"></i>
->>>>>>> 11e2a8797a329f1c83bba20411b2d6221781cb33
             </a>
         </div>
     </div>
@@ -23,12 +16,8 @@
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
                 <label for="perPage" class="text-sm">Show</label>
-<<<<<<< HEAD
-                <select name="perPage" id="perPage" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
-=======
                 <select name="perPage" id="perPage" onchange="this.form.submit()"
                     class="px-2 py-1 text-sm border rounded">
->>>>>>> 11e2a8797a329f1c83bba20411b2d6221781cb33
                     <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request('perPage') == 25 ? 'selected' : '' }}>25</option>
                     <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
@@ -36,12 +25,6 @@
                 </select>
                 <span class="text-sm">entries</span>
             </form>
-<<<<<<< HEAD
-=======
-            <div class="flex flex-wrap items-center gap-4 grow sm:justify-end">
-                <form method="GET" action="{{ route('branch.index') }}"
-                    class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
->>>>>>> 11e2a8797a329f1c83bba20411b2d6221781cb33
 
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
                 <form method="GET" action="{{ url()->current() }}" class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
