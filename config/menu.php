@@ -45,15 +45,15 @@ return [
             // ['title' => 'Form 15G/15H', 'route' => 'form-15g-15h.index'],
         ]
     ],
-    //  [
-    //     'title' => 'Savings/Current AC',
-    //     'icon' => 'las la-university',
-    //     'position' => '5',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         ['title' => 'Schemes', 'route' => 'schemes.index'],
-    //     ]
-    // ],
+     [
+        'title' => 'Savings/Current AC',
+        'icon' => 'las la-university',
+        'position' => '5',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Schemes', 'route' => 'schemes.index'],
+        ]
+    ],
     // [
     //     'title' => 'HR Management',
     //     'icon' => 'las la-user',
