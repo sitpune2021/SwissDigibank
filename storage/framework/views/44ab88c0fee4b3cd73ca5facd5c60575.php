@@ -75,7 +75,7 @@
 <?php $__env->startSection('content'); ?>
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2"><?php echo e(isset($promoter) ? 'Edit' : 'Add'); ?> Promoters</h3>
+            <h4 class="h2"><?php echo e(isset($promoter) ? (!empty($show) ? '' : 'Edit') : 'Add'); ?> Promoter</h4>
         </div>
         <?php if(session('success')): ?>
             <div id="success-alert"
@@ -181,7 +181,9 @@
                             </label>
                             <?php if($type === 'select'): ?>
                                 <select name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
-                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    <?php echo e(empty($show) ? '' : 'disabled'); ?>>
+
                                     <option value="">-- Select <?php echo e($label); ?> --</option>
 
                                     <?php if(!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']])): ?>
@@ -208,7 +210,7 @@
                                     <?php $__currentLoopData = $field['options']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $optionValue => $optionLabel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <label class="flex items-center gap-1 cursor-pointer">
                                             <input type="radio" name="<?php echo e($name); ?>" value="<?php echo e($optionValue); ?>"
-                                                <?php echo e($value == $optionValue ? 'checked' : ''); ?>>
+                                                <?php echo e($value == $optionValue ? 'checked' : ''); ?><?php echo e(empty($show) ? '' : 'disabled'); ?>>
                                             <span><?php echo e($optionLabel); ?></span>
                                         </label>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -216,7 +218,7 @@
                             <?php elseif($type === 'checkbox'): ?>
                                 <label class="switch">
                                     <input type="checkbox" name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
-                                        value="1" <?php echo e($value ? 'checked' : ''); ?>>
+                                        value="1" <?php echo e($value ? 'checked' : ''); ?><?php echo e(isset($show) ? 'disabled' : ''); ?>>
                                     <div class="slider round">
                                         <span class="switch-on">ON</span>
                                         <span class="switch-off">OFF</span>
@@ -226,7 +228,7 @@
                                 <input type="<?php echo e($type); ?>" name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
                                     value="<?php echo e($value); ?>"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter <?php echo e(strtolower($label)); ?>" />
+                                    placeholder="Enter <?php echo e(strtolower($label)); ?>"<?php echo e(empty($show) ? '' : 'readonly'); ?> />
                             <?php endif; ?>
 
                             <?php $__errorArgs = [$name];
@@ -242,12 +244,22 @@ unset($__errorArgs, $__bag); ?>
                         </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                <div class="col-span-2 flex gap-4 justify-center mt-6">
-                    <button class="btn-primary" type="submit"><?php echo e(isset($promoter) ? 'Update' : 'Save'); ?> Promotor</button>
-                    <button class="btn-outline" type="reset"
-                        onclick="window.location.href='<?php echo e(route('promotor.index')); ?>'">Back</button>
-                    <button class="btn-outline" type="reset"
-                        onclick="document.getElementById('companyForm').reset();">Reset</button>
+                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+                    <?php if(isset($method)): ?>
+                        <button class="btn-primary" type="submit">
+                            <?php echo e($method === 'PUT' ? 'Update' : 'Save'); ?> Promoter
+                        </button>
+                    <?php endif; ?>
+                    <a href="<?php echo e(route('promotor.index')); ?>" class="btn-outline inline-flex items-center justify-center">
+                        Back
+                    </a>
+                    <?php if(empty($show)): ?>
+                        <button class="btn-outline" type="reset"
+                            onclick="document.getElementById('companyForm').reset();">
+                            Reset
+                        </button>
+                    <?php endif; ?>
+
                 </div>
             </form>
         </div>

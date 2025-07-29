@@ -137,7 +137,7 @@
                             @if ($type === 'select')
                                 <select name="{{ $name }}" id="{{ $id }}"
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
-                                    {{ isset($show) ? 'readonly' : '' }}>
+                                    {{ isset($show) ? 'disabled' : '' }}>
                                     <option value="">-- Select {{ $label }} --</option>
 
                                     @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
@@ -162,7 +162,7 @@
                                         <label class="flex items-center space-x-4 gap-2">
                                             <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
                                                 {{ $value == $optionValue ? 'checked' : '' }}
-                                                {{ isset($show) ? 'readonly' : '' }}>
+                                                {{ isset($show) ? 'disabled' : '' }}>
                                             <span>{{ $optionLabel }}</span>
                                         </label>
                                     @endforeach
@@ -170,7 +170,7 @@
                             @elseif ($type === 'checkbox')
                                 <label class="switch">
                                     <input type="checkbox" name="{{ $name }}" id="{{ $id }}"
-                                        value="1" {{ $value ? 'checked' : '' }} {{ isset($show) ? 'readonly' : '' }}>
+                                        value="1" {{ $value ? 'checked' : '' }} {{ isset($show) ? 'disabled' : '' }}>
                                     <div class="slider round">
                                         <span class="switch-on">ON</span>
                                         <span class="switch-off">OFF</span>
@@ -180,7 +180,7 @@
                                 <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                     value="{{ $value }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'readonly' : '' }} />
+                                    placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'disabled' : '' }} />
                             @endif
 
                             @error($name)

@@ -1,14 +1,24 @@
 <?php $__env->startSection('content'); ?>
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2"><?php echo e(isset($branch) ? (!empty($show) ? 'View' : 'Edit') : 'Add'); ?> Branch</h3>
-            <?php if(isset($show) && $show): ?>
-            <a href="<?php echo e(route('branch.edit', $encryptedId)); ?>"
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                    <i class="las la-edit text-lg"></i>
-                </a>
-            <?php endif; ?>
+        
+
+
+ <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+            <!-- <h3 class="h2"><?php echo e(isset($branch) ? 'Edit - ' . $branch->branch_name . ' Branch' : 'Add New Branch'); ?></h3> -->
+            <h4 class="h2">
+                <?php if(!empty($show)): ?>
+                    <?php echo e($branch->branch_name ?? ''); ?>
+
+                <?php elseif(isset($Branch)): ?>
+                    Edit - <?php echo e($Branch->branch_name); ?> Director
+                <?php else: ?>
+                    Add New Branch
+                <?php endif; ?>
+            </h4>
+
         </div>
+
+
         <?php if(session('success')): ?>
             <div id="success-alert"
                 style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
@@ -18,7 +28,6 @@
                     style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
             </div>
         <?php endif; ?>
-
         <?php if(session('error')): ?>
             <div id="error-alert"
                 style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
@@ -28,7 +37,7 @@
                     style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
             </div>
         <?php endif; ?>
-
+       
         <div class="box mb-4 xxxl:mb-6">
             <form id="companyForm" action="<?php echo e($route); ?>" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 <?php echo csrf_field(); ?>
@@ -76,7 +85,7 @@
                         <?php elseif($type === 'radio'): ?>
                             <div class="flex gap-5">
                                 <?php $__currentLoopData = $field['options']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $optionValue => $optionLabel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <label class="flex items-center space-x-2">
+                                    <label class="flex items-center space-x-2 gap-1">
                                         <input type="radio" name="<?php echo e($name); ?>" value="<?php echo e($optionValue); ?>"
                                             <?php echo e($value == $optionValue ? 'checked' : ''); ?> <?php echo e(empty($show) ? '' : 'disabled'); ?>>
                                         <span><?php echo e($optionLabel); ?></span>

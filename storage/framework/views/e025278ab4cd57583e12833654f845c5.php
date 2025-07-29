@@ -70,18 +70,6 @@
         }
     </style>
     <div class="main-inner">
-        <?php if(isset($minor) && $minor): ?>
-            <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-                <!-- <h2 class="h2">Manage Minor</h2> -->
-                <div class="flex items-center gap-2">
-                    <h1 class="text-xl font-semibold">Minor</h1>
-                    <a href="<?php echo e(route('minor.create')); ?>"
-                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-green-700">
-                        <i class="las la-plus text-lg"></i>
-                    </a>
-                </div>
-            </div>
-        <?php endif; ?>
 
         <?php if(session('success')): ?>
             <div id="success-alert"
@@ -107,27 +95,22 @@
             <form action="<?php echo e(isset($route) && isset($method) ? $route : ''); ?>" method="POST"
                 class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 <?php echo csrf_field(); ?>
-                <?php if($method == 'PUT'): ?>
+                <?php if(isset($method) && $method == 'PUT'): ?>
                     <?php echo method_field('PUT'); ?>
                 <?php endif; ?>
-                <?php $__currentLoopData = $sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sectionName => $fields): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    
-                    <?php if($sectionName): ?>
-                        <div class="col-span-2">
-                            <h3 class="text-xl font-semibold text-center text-gray-800 mb-4 capitalize">
-                                <?php echo e(str_replace('_', ' ', $sectionName)); ?>
 
-                            </h3>
-                        </div>
-                    <?php endif; ?>
-                    <?php $__currentLoopData = $fields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                
+                <input name="member_id" id="member_id" type="hidden"
+                                    value="<?php echo e(session('member_id')); ?>" />
+               
+                    <?php $__currentLoopData = $sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
                             $name = $field['name'];
                             $type = $field['type'] ?? 'text';
                             $label = $field['label'];
                             $id = $field['id'] ?? $field['name'];
                             $required = $field['required'] ?? false;
-                            $value = old($name, $member[$name] ?? ($field['default'] ?? ''));
+                            $value = old($name, $minor[$name] ?? ($field['default'] ?? ''));
                         ?>
                         <div class="col-span-4 md:col-span-1">
                             <label for="<?php echo e($id); ?>" class="md:text-lg font-medium block mb-4">
@@ -138,7 +121,7 @@
                             <?php if($type === 'select'): ?>
                                 <select name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
-                                    <?php echo e(isset($show) ? 'disabled' : ''); ?>>
+                                    <?php echo e(isset($show) ? 'readonly' : ''); ?>>
                                     <option value="">-- Select <?php echo e($label); ?> --</option>
 
                                     <?php if(!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']])): ?>
@@ -158,15 +141,15 @@
                                             </option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     <?php endif; ?>
-                                </select>
+                                </select>                           
                             <?php elseif($type === 'radio'): ?>
-                                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+                                <div class="flex gap-2">
                                     <?php $__currentLoopData = $field['options']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $optionValue => $optionLabel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <label class="flex items-center space-x-4 gap-2">
+                                        <label class="flex items-center space-x-4 class=ml-2 gap-1">
                                             <input type="radio" name="<?php echo e($name); ?>" value="<?php echo e($optionValue); ?>"
                                                 <?php echo e($value == $optionValue ? 'checked' : ''); ?>
 
-                                                <?php echo e(isset($show) ? 'disabled' : ''); ?>>
+                                                <?php echo e(isset($show) ? 'readonly' : ''); ?>>
                                             <span><?php echo e($optionLabel); ?></span>
                                         </label>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -174,7 +157,7 @@
                             <?php elseif($type === 'checkbox'): ?>
                                 <label class="switch">
                                     <input type="checkbox" name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
-                                        value="1" <?php echo e($value ? 'checked' : ''); ?> <?php echo e(isset($show) ? 'disabled' : ''); ?>>
+                                        value="1" <?php echo e($value ? 'checked' : ''); ?> <?php echo e(isset($show) ? 'readonly' : ''); ?>>
                                     <div class="slider round">
                                         <span class="switch-on">ON</span>
                                         <span class="switch-off">OFF</span>
@@ -184,7 +167,7 @@
                                 <input type="<?php echo e($type); ?>" name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
                                     value="<?php echo e($value); ?>"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter <?php echo e(strtolower($label)); ?>" <?php echo e(isset($show) ? 'disabled' : ''); ?> />
+                                    placeholder="Enter <?php echo e(strtolower($label)); ?>" <?php echo e(isset($show) ? 'readonly' : ''); ?> />
                             <?php endif; ?>
 
                             <?php $__errorArgs = [$name];
@@ -199,20 +182,16 @@ endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
+                
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     <?php if(isset($method)): ?>
                         <button class="btn-primary" type="submit">
-                            <?php echo e($method === 'PUT' ? 'Update' : 'Save'); ?> Member
+                            <?php echo e($method === 'PUT' ? 'Update' : 'Save'); ?> Minor
                         </button>
                     <?php endif; ?>
-                    <a href="<?php echo e(route('member.index')); ?>" class="btn-outline inline-flex items-center justify-center">
+                    <a href="<?php echo e(route('minor.index')); ?>" class="btn-outline inline-flex items-center justify-center">
                         Back
                     </a>
-                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-                        Reset
-                    </button>
                 </div>
             </form>
 
@@ -220,4 +199,5 @@ unset($__errorArgs, $__bag); ?>
     </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Office_Work_2025\new_swiss\resources\views/members/member/create.blade.php ENDPATH**/ ?>
+
+<?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Office_Work_2025\new_swiss\resources\views/members/minor/create.blade.php ENDPATH**/ ?>

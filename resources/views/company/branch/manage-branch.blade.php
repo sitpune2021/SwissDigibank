@@ -3,9 +3,9 @@
 <div class="main-inner">
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
         <!-- <div class="flex items-center gap-2"> -->
-        <h2 class="h2">Branches</h2>
+        <h3 class="h2">Branches</h3>
         <a class="btn-primary" href="{{ route('branch.create') }}">
-            <i class="text-base las la-plus-circle md:text-lg"></i>
+            <i class=" md:text-lg"></i>
             Add
         </a>
         <!-- </div> -->
@@ -51,11 +51,6 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Sr No
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center justify-center gap-1">
                                 Branch Name
                             </div>
                         </th>
@@ -80,13 +75,13 @@
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center justify-center gap-1">
+                            <div class="flex items-center justify-center gap-1  text-center">
                                 Members
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center justify-center gap-1">
-                                Active
+                            <div class="   flex items-center justify-center gap-1">
+                               Is Active
                             </div>
                         </th>
                         <th class="text-center justify-center !py-5" data-sortable="false">Action</th>
@@ -95,32 +90,31 @@
                 <tbody>
                     @foreach($branches as $branch)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="px-6 py-5">{{ ($branches->currentPage() - 1) * $branches->perPage() + $loop->iteration }}</td>
-                        <td class="px-6 py-5">
+                        <td class="px-2 py-5 text-center">
                             <div>
-                                <p class="mb-1 font-medium">{{ $branch->branch_name }}</p>
+                                <p class="mb-1 font-medium" >{{ $branch->branch_name }}</p>
                             </div>
                         </td>
-                        <td class="px-6 py-5">{{ $branch->branch_code }}</td>
-                        <td class="px-6 py-5">{{ $branch->city }}</td>
-                        <td class="px-6 py-5">{{ $branch->State?->name }}</td>
-                        <td class="px-6 py-5">
+                        <td class="px-6 py-5 text-center" >{{ $branch->branch_code }}</td>
+                        <td class="px-6 py-5 text-center">{{ $branch->city }}</td>
+                        <td class="px-6 py-5 text-center">{{ $branch->State?->name }}</td>
+                        <td class="px-6 py-5 text-center">
                             {{ $branch->open_date }}
                         </td>
-                        <td class="px-6 py-5">{{ $branch->members_count }}</td>
-                        <td class="py-2">
+                        <td class="px-7 py-5 text-center">{{ $branch->members_count }}</td>
+                        <td class="px-6 py-5  text-center">
                             @if($branch->active == 'Yes')
-                            <span  class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                            <span  class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                 Yes
                             </span>
                             @else
                             <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                 {{$branch->active}}
                             </span>
                             @endif
                         </td>
-                        <td class="px-6 py-2">
+                        <td class="px-6 py-2  text-center">
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => base64_encode($branch->id),
