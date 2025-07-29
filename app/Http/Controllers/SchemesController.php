@@ -28,9 +28,10 @@ class SchemesController extends Controller
 
     public function store(Request $request)
     {
+        try {
         $validated = $request->validate([
             'scheme_name'   => 'required|string|max:255',
-            'scheme_code'   => 'required|alpha_num|max:100|unique:tbl_schemes,scheme_code',
+            'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
             'min_opening_balance'   => 'required|numeric|min:0',
             'min_monthly_avg_balance' => 'required|numeric|min:0',
             'annual_int_rate' => 'required|numeric|min:0|max:8',
@@ -58,7 +59,7 @@ class SchemesController extends Controller
             'upi_charge' => 'nullable|numeric|min:0',
         ]);
 
-        $scheme = new Schemes();
+        $scheme = new Scheme();
         $scheme->scheme_name = $validated['scheme_name'];
         $scheme->scheme_code = $validated['scheme_code'];
         $scheme->min_opening_balance = $validated['min_opening_balance'];
@@ -110,8 +111,13 @@ class SchemesController extends Controller
             SchemeCharge::create($chargeData);
         }
 
-        return redirect()->route('scheme.index')
+        return redirect()->route('schemes.index')
             ->with('success', 'Schemes created successfully.');
+    }
+             catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
+                        ->withInput();
+        }
     }
 
     
@@ -123,7 +129,7 @@ class SchemesController extends Controller
         $schemes = Scheme::findOrFail($id);
         $route = '';
         $schemeCharges = $schemes->schemeCharges;
-        return view('schemes.add-edit', compact('sections', 'schemes', 'show','method', 'schemeCharges'));
+        return view('schemes.add-edit', compact('sections', 'schemes', 'show','method', 'schemeCharges', 'route'));
     }
 
   
@@ -141,7 +147,7 @@ class SchemesController extends Controller
    
     public function update(Request $request, string $id)
     {
-          $scheme = Schemes::with('schemeCharges')->findOrFail($id);
+          $scheme = Scheme::with('schemeCharges')->findOrFail($id);
 
         $validated = $request->validate([
             'scheme_name'                   => 'required|string|max:255',
@@ -209,7 +215,7 @@ class SchemesController extends Controller
             ) {
                 continue;
             }
-            SchemeCharges::updateOrCreate(
+            SchemeCharge::updateOrCreate(
                 [
                     'scheme_id' => $scheme->id,
                     'limit'     => $limit,

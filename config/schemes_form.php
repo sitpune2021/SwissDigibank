@@ -38,7 +38,7 @@ return [
 
     [
         'label'    => 'Annual Interest Rate (%)',
-        'name'     => 'annual_interest_rate',
+        'name'     => 'annual_int_rate',
         'id'       => 'annual_interest_rate',
         'type'     => 'number',
         'required' => true,
@@ -46,7 +46,7 @@ return [
     ],
     [
         'label'    => 'Sr. Citizen Add-on Interest Rate (%)',
-        'name'     => 'sr_citizen_add_on_interest_rate',
+        'name'     => 'sr_citizen_add_on_int_rate',
         'id'       => 'sr_citizen_add_on_interest_rate',
         'type'     => 'number',
         'required' => true,
@@ -54,7 +54,7 @@ return [
     ],
         [
             'label'         => 'Interest Payout',
-            'name'          => 'interest_payout',
+            'name'          => 'interest_pay_cycle',
             'id'            => 'interestpayoutDropdown',
             'type'          => 'select',
             'required'      => true,
@@ -75,8 +75,8 @@ return [
     ],
     [
         'label'    => 'Min. Monthly Avg. Balance Charge',
-        'name'     => 'min_monthly_avg_balance_charge',
-        'id'       => 'min_monthly_avg_balance_charge',
+        'name'     => 'min_monthly_avg_bal_charge',
+        'id'       => 'min_monthly_avg_bal_charge',
         'type'     => 'number',
         'required' => true,
     ],

@@ -401,7 +401,7 @@
         </button>
         @endif
         @if(!empty($isAdd) || isset($schemes) || !empty($show))
-        <a href="{{ route('scheme.index') }}" class="btn-outline inline-flex items-center justify-center">
+        <a href="{{ route('schemes.index') }}" class="btn-outline inline-flex items-center justify-center">
             Back
         </a>
         @endif
