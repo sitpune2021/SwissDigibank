@@ -76,7 +76,7 @@
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">{{ isset($promoter) ? 'Edit' : 'Add' }} Promoters</h3>
+            <h4 class="h2">{{ isset($promoter) ? (!empty($show) ? '' : 'Edit') : 'Add' }} Promoter</h4>
         </div>
         @if (session('success'))
             <div id="success-alert"
@@ -179,7 +179,9 @@
                             </label>
                             @if ($type === 'select')
                                 <select name="{{ $name }}" id="{{ $id }}"
-                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    {{ empty($show) ? '' : 'disabled' }}>
+
                                     <option value="">-- Select {{ $label }} --</option>
 
                                     @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
@@ -204,7 +206,7 @@
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
                                         <label class="flex items-center gap-1 cursor-pointer">
                                             <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
-                                                {{ $value == $optionValue ? 'checked' : '' }}>
+                                                {{ $value == $optionValue ? 'checked' : '' }}{{ empty($show) ? '' : 'disabled' }}>
                                             <span>{{ $optionLabel }}</span>
                                         </label>
                                     @endforeach
@@ -212,7 +214,7 @@
                             @elseif ($type === 'checkbox')
                                 <label class="switch">
                                     <input type="checkbox" name="{{ $name }}" id="{{ $id }}"
-                                        value="1" {{ $value ? 'checked' : '' }}>
+                                        value="1" {{ $value ? 'checked' : '' }}{{ isset($show) ? 'disabled' : '' }}>
                                     <div class="slider round">
                                         <span class="switch-on">ON</span>
                                         <span class="switch-off">OFF</span>
@@ -222,7 +224,7 @@
                                 <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                     value="{{ $value }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter {{ strtolower($label) }}" />
+                                    placeholder="Enter {{ strtolower($label) }}"{{ empty($show) ? '' : 'readonly' }} />
                             @endif
 
                             @error($name)
@@ -231,12 +233,22 @@
                         </div>
                     @endforeach
                 @endforeach
-                <div class="col-span-2 flex gap-4 justify-center mt-6">
-                    <button class="btn-primary" type="submit">{{ isset($promoter) ? 'Update' : 'Save' }} Promotor</button>
-                    <button class="btn-outline" type="reset"
-                        onclick="window.location.href='{{ route('promotor.index') }}'">Back</button>
-                    <button class="btn-outline" type="reset"
-                        onclick="document.getElementById('companyForm').reset();">Reset</button>
+                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+                    @if (isset($method))
+                        <button class="btn-primary" type="submit">
+                            {{ $method === 'PUT' ? 'Update' : 'Save' }} Promoter
+                        </button>
+                    @endif
+                    <a href="{{ route('promotor.index') }}" class="btn-outline inline-flex items-center justify-center">
+                        Back
+                    </a>
+                    @if (empty($show))
+                        <button class="btn-outline" type="reset"
+                            onclick="document.getElementById('companyForm').reset();">
+                            Reset
+                        </button>
+                    @endif
+
                 </div>
             </form>
         </div>

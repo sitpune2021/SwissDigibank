@@ -2,9 +2,9 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h2 class="h2">Promoters Share Holding Details</h2>
+        <h4 class="h2">Promoters Share Holding Details</h4>
         <a class="btn-primary" href="{{ route('shareholding.create') }}">
-            <i class="las la-plus-circle text-base md:text-lg"></i>
+            <i class="md:text-lg"></i>
             Add
         </a>
     </div>

@@ -3,7 +3,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">Promoters</h2>
         <a class="btn-primary" href="<?php echo e(route('promotor.create')); ?>">
-            <i class="las la-plus-circle text-base md:text-lg"></i>
+            <i class="md:text-lg"></i>
             Add
         </a>
     </div>
@@ -133,18 +133,7 @@
                         </td>
                         <td class="py-5 px-6"><?php echo e($promotor->enrollment_date->format('D d M Y')); ?></td>
                         <td class="py-2">
-                            <?php if($promotor->kyc->kyc_status == 'completed'): ?>
-                            <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                <?php echo e($promotor->kyc->kyc_status); ?>
-
-                            </span>
-                            <?php else: ?>
-                            <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                <?php echo e($promotor->kyc->kyc_status); ?>
-
-                            </span>
-                            <?php endif; ?>
+                            
                         </td>
                         <td class="py-2 px-6">
                             <div class="flex justify-center">
