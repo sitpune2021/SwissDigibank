@@ -1,314 +1,270 @@
 @extends('layout.main')
+@section('page-title',
+    isset($member)
+    ? $member->member_info_first_name . ' ' . $member->member_info_last_name
+    : 'Add
+    member')
+
+    @push('script')
+        {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
+        {{-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+    @endpush
 
 @section('content')
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <div class="flex flex-wrap gap-3 mb-3 text-center">
+        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
 
-    <div class="min-h-screen p-4 font-sans text-sm bg-gray-100" x-data>
+        <a class="btn-success rounded-md px-2 py-1 text-white  text-sm bg-green-500 hover:bg-green-600">ALLOCATE SHARES</a>
 
-        <div class="flex flex-wrap justify-center gap-3 mb-3 text-center">
-            <button class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700">View Transactions</button>
-            <button class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700">Deposit Money</button>
-            <button class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700">Withdraw Money</button>
-            <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other
-                Charges</button>
-            <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button>
-            <button class="px-4 py-2 text-base text-white bg-gray-800 rounded hover:bg-gray-900">Print Documents</button>
-            <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button>
+        <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD SHARE
+            AMOUNT</a>
+
+        <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD MEMBERSHIP
+            CHARGES</a>
+
+        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
+
+        <!-- Dropdown -->
+        <div class="relative">
+            <button type="button" class="rounded-md px-2 py-1 text-white  text-sm bg-green-500 hover:bg-green-600"
+                onclick="toggleDropdown()">DEBIT OTHER CHARGES</button>
+            <ul id="dropdown-menu" class="absolute right-0 mt-2 hidden bg-white border rounded shadow-md text-left z-10">
+                <li><a class="block px-4 py-2 hover:bg-gray-100">OTHER CHARGES LIST</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100">DEBIT OTHER CHARGES</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100">CLEAR DUES</a></li>
+            </ul>
         </div>
 
-        <div class="container px-2 mx-auto">
-            <div class="flex flex-col gap-4 md:flex-row">
+        <a title="DOWNLOAD 15G/ 15H"
+            class="btn-default rounded-md px-2 py-1 text-sm text-gray-700 bg-gray-200 hover:bg-gray-300">
+            <i class="fa fa-print"></i> DOWNLOAD 15G/ 15H
+        </a>
 
-                <!-- Left Panel -->
-                <div class="space-y-3 md:w-7/12">
+        <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">
+            <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
+        </a>
 
-                    {{-- Account Info Table --}}
-                    <div class="bg-white rounded shadow">
-                        <table class="w-full text-sm">
-                            <tbody>
-                                <tr class="border-b">
-                                    <th class="w-1/2 p-2 font-medium text-gray-700">Member</th>
-                                    <td class="p-2">DEMO-04411 - varun dhawal</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Created On</th>
-                                    <td class="p-2">Admin App</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Created By</th>
-                                    <td class="p-2">Test Test</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Account No.</th>
-                                    <td class="p-2">SAVING - 01939</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Old Account No.</th>
-                                    <td class="p-2"></td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Scheme Name</th>
-                                    <td class="p-2">it emp kalyan yojana</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Open Date</th>
-                                    <td class="p-2">26/07/2025</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Status</th>
-                                    <td class="p-2">Active</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Lock Balance (A)</th>
-                                    <td class="p-2">0.00</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Hold Balance (B)</th>
-                                    <td class="p-2">0.00</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
-                                    <td class="p-2">1000,000.00</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>
-                                    <td class="p-2">₹0.00</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Combined Balance (A+B+C+D)</th>
-                                    <td class="p-2">1000,000.00</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Penalty Dues</th>
-                                    <td class="p-2">₹0.00</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="p-2 font-medium text-gray-700">Special Account</th>
-                                    <td class="p-2">
-                                        <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">No</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <a class="btn-danger rounded-md px-2 py-1 text-white  text-sm bg-red-500 hover:bg-red-600">REMOVE MEMBER</a>
 
-                    {{-- Allocated Passbook --}}
-                    <div class="bg-white rounded shadow">
-                        <div class="flex items-center justify-between px-3 py-2 bg-green-100 border-b-2 border-green-600">
-                            <span class="font-semibold text-green-700">Allocated Passbook</span>
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">+ PASSBOOK</button>
-                        </div>
-                    </div>
-                    {{-- Documents --}}
-                    <div class="bg-white rounded shadow" x-data="{ open: true }">
-                        <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
-                            @click="open=!open">
-                            <span>DOCUMENTS</span>
-                            <div class="flex items-center gap-2">
-                                <!-- Upload Icon Button -->
-                                <button class="p-1 bg-white rounded hover:bg-gray-200" title="Upload Document">
-                                    <!-- Heroicons Upload Icon -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="2" stroke="currentColor" class="w-4 h-4 text-green-600">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2m-4-4l-4-4m0 0l-4 4m4-4v12" />
-                                    </svg>
-                                </button>
+        <a class="btn-primary rounded-md px-2 py-1 text-white  text-sm bg-indigo-500 hover:bg-indigo-600">
+            <i class="fa fa-print"></i> APPLICATION FORM
+        </a>
 
-                                <!-- Toggle Symbol -->
-                                <span x-text="open ? '−' : '+'"></span>
-                            </div>
-                        </div>
-                        <div x-show="open" class="px-3 py-2 border-t">No Document Found</div>
-                    </div>
+        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHOW AUDIT TRAIL</a>
+    </div>
 
 
-                    {{-- Comments --}}
-                    <div class="bg-white rounded shadow" x-data="{ open: true }">
-                        <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
-                            @click="open=!open">
-                            <span>COMMENTS</span>
-                            <span x-text="open ? '−' : '+'"></span>
-                        </div>
-                        <div x-show="open" class="px-3 py-2 text-center border-t">
-                            No Comment Found
-                            <button class="px-2 py-1 ml-2 text-xs text-white bg-green-600 rounded">ADD COMMENT</button>
-                        </div>
-                    </div>
+    <div class="grid grid-cols-12 gap-4 xxl:gap-6">
+        <!-- Left Panel -->
+        <div class="col-span-12 lg:col-span-6 box overflow-x-hidden">
+            <table class="w-full whitespace-nowrap text-sm">
+                <tbody>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Membership Type</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>REGULAR</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Create on</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>Admin App</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Created by</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>Test Test</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Status</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>ACTIVE</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Branch</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>dhayari</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Advisor/ Staff</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Old Member No</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Enrollment Date</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>29 July 2025</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Name</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>Mr. ashok jagdale</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>DOB</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>17 Jul 1970</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Age</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>55 years</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Senior Citizen</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>No</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Gender</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>Male</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Folio No.</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>4415</span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Father Name</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Mother Name</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Marital Status</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Religion</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Qualification</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Husband/ Wife Name</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Husband/ Wife D.O.B</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Occupation</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Monthly Income</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Collection Time</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span></span></div>
+                        </td>
+                    </tr>
+                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <th class="py-2 px-6">
+                            <div class="flex items-center gap-3"><span>Form 15G/15H Uploaded (FY 2025 - 2026)</span></div>
+                        </th>
+                        <td class="p-2">
+                            <div><span>No</span></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                    {{-- Transaction Info --}}
-                    <div class="bg-white rounded shadow" x-data="{ open: true }">
-                        <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
-                            @click="open=!open">
-                            <span>Transaction Info</span>
-                            <span x-text="open ? '−' : '+'"></span>
-                        </div>
-                        <div x-show="open" class="border-t">
-                            <div class="p-2 text-center">
-                                <button class="px-2 py-1 text-xs text-white bg-teal-500 rounded">VIEW ALL</button>
-                            </div>
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th class="p-2">Date</th>
-                                        <th class="p-2">Type</th>
-                                        <th class="p-2">Payment Mode</th>
-                                        <th class="p-2">Status</th>
-                                        <th class="p-2">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-t">
-                                        <td class="p-2">26/07/2025 11:45</td>
-                                        <td class="p-2">Credit</td>
-                                        <td class="p-2">Cash</td>
-                                        <td class="p-2">Approved</td>
-                                        <td class="p-2">100,000.00</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Panel -->
-                <div class="space-y-3 md:w-5/12">
-
-                    {{-- Settings --}}
-                    <div class="p-3 space-y-2 bg-white rounded shadow">
-                        <h2 class="mb-2 font-semibold text-gray-700">Settings</h2>
-                        <div class="flex justify-between">
-                            <label>SMS</label>
-                            <input type="checkbox" checked>
-                        </div>
-                        <div class="flex justify-between">
-                            <label>Account on Hold</label>
-                            <input type="checkbox">
-                        </div>
-                        <div class="flex justify-between">
-                            <label>Change Account Type to Current</label>
-                            <input type="checkbox">
-                        </div>
-                        <div class="flex justify-between">
-                            <label>Deduct Charges</label>
-                            <input type="checkbox" checked>
-                        </div>
-                    </div>
-
-                    {{-- Branch Info --}}
-                    <div class="bg-white rounded shadow" x-data="{ open: false }">
-                        <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer"
-                            @click="open=!open">
-                            <span>Branch Info</span>
-                            <span x-text="open ? '−' : '+'"></span>
-                        </div>
-                        <div x-show="open" class="border-t">
-                            <table class="w-full text-sm">
-                                <tbody>
-                                    <tr class="border-b">
-                                        <th class="p-2 text-gray-700">Branch</th>
-                                        <td class="p-2">dhayari</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="p-2 text-gray-700">Joint Account</th>
-                                        <td class="p-2">
-                                            <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">No</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    {{-- Sweep-In Settings --}}
-                    <div class="p-3 space-y-3 bg-white rounded shadow">
-                        <h3 class="mb-2 text-lg font-semibold text-gray-700">Sweep-In Settings</h3>
-                        <div>
-                            <label class="mr-2 font-semibold text-gray-700">Sweep-In:</label>
-                            <input type="checkbox">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <label class="font-semibold text-gray-700 w-28">Saving Scheme</label>
-                            <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded">
-                                <option>Select FD Scheme</option>
-                            </select>
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">Update</button>
-                        </div>
-                    </div>
-
-
-                    {{-- Setup & Settings --}}
-                    <div class="p-3 space-y-2 bg-white rounded shadow">
-                        <div class="flex items-center gap-2 mb-2">
-                            <label class="w-32 font-semibold text-gray-700">Member</label>
-                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                                value="DEMO-04411 - varun dhawal">
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
-                        </div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <label class="w-32 font-semibold text-gray-700">Old Account No</label>
-                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                                placeholder="Enter Old Account No">
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
-                        </div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <label class="w-32 font-semibold text-gray-700">Branch</label>
-                            <select class="flex-1 px-2 py-1 border border-gray-300 rounded">
-                                <option>dhayari</option>
-                            </select>
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
-                        </div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <label class="w-32 font-semibold text-gray-700">Open Date</label>
-                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                                value="26-07-2025">
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
-                        </div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <label class="w-32 font-semibold text-gray-700">Advisor/ Staff</label>
-                            <select class="flex-1 px-2 py-1 border border-gray-300 rounded">
-                                <option>Select Advisor/ Staff</option>
-                            </select>
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <label class="w-32 font-semibold text-gray-700">Lock Amount</label>
-                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded" value="0.0">
-                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
-                        </div>
-                    </div>
-
-                    {{-- Nominee Info --}}
-                    <div class="bg-white rounded shadow" x-data="{ open: true }">
-                        <div class="flex items-center justify-between px-3 py-2 font-semibold text-white bg-green-600 cursor-pointer"
-                            @click="open=!open">
-                            <span>Nominee Info</span>
-                            <span x-text="open ? '−' : '+'"></span>
-                        </div>
-                        <div x-show="open" class="border-t">
-                            <table class="w-full text-sm border-collapse">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th class="p-2 text-left border-b">Name</th>
-                                        <th class="p-2 text-left border-b">Relation</th>
-                                        <th class="p-2 text-left border-b">Address</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="p-2 border-t">Sharda</td>
-                                        <td class="p-2 border-t">wife</td>
-                                        <td class="p-2 border-t">mumbai</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
+        <!-- Right Panel -->
+        <div class="col-span-12 lg:col-span-6 box overflow-x-hidden">
         </div>
     </div>
 @endsection

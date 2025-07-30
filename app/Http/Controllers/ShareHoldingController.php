@@ -47,7 +47,7 @@ class ShareHoldingController extends Controller
             'allotment_date'       => 'required|date',
             'first_share'          => 'required|numeric',
             'share_no'           => 'required|numeric|gt:first_share',
-            'share_nominal'        => 'nullable|numeric',
+            'nominal_value'        => 'nullable|numeric',
             'total_share_held'     => 'required|numeric',
             'total_share_value'    => 'required|numeric',
             'certificate_no'       => 'nullable|string|max:50',
@@ -72,22 +72,9 @@ class ShareHoldingController extends Controller
                 'share_no' => ['This share already allocated.'],
             ]);
         }
-        $shareholding = new Shareholding();
-        $shareholding->promotor_id        = $validated['promotor_id'];
-        $shareholding->allotment_date      = date('Y-m-d', strtotime($request->allotment_date));
-        $shareholding->first_share      = $validated['first_share'];
-        $shareholding->share_no       = $validated['share_no'];
-        $shareholding->nominal_value = $validated['share_nominal'];
-        $shareholding->total_share_held    = $validated['total_share_held'];
-        $shareholding->total_share_value   = $validated['total_share_value'];
-        $shareholding->transaction_date    = date('Y-m-d', strtotime($request->transaction_date));
-        $shareholding->amount              = $validated['amount'];
-        $shareholding->pay_mode            = $validated['pay_mode'];
-        $shareholding->remarks             = $validated['remarks'] ?? null;
-        $shareholding->certificate_no      = '2000230233';
-
-        $shareholding->save();
-
+        $data = $request->all();
+        $data['certificate_no'] = '2000230233';
+        Shareholding::create($data);
         return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
     }
 

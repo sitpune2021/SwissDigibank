@@ -1,17 +1,14 @@
 @extends('layout.main')
+@section('page-title', 'Permisions /Roles')
+
+@section('action-button')
+    <a class="btn-primary" href="{{ route('roles.create') }}">
+        <i class=" md:text-lg"></i>
+        Add
+    </a>
+@endsection
 
 @section('content')
-<div class="main-inner">
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <div class="flex items-center gap-2">
-            <h1 class="text-xl font-semibold">Permisions /Roles</h1>
-            <a href="{{ route('roles.create') }}"
-                class="inline-flex items-center justify-center w-8 h-8 text-white rounded-full bg-primary hover:bg-green-700">
-                <i class="text-lg las la-plus"></i>
-            </a>
-        </div>
-    </div>
-
     <div class="col-span-12 box lg:col-span-6">
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
@@ -27,23 +24,22 @@
             </form>
 
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <form method="GET" action="{{ url()->current() }}" class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
-                    <input
-                        type="text"
-                        name="search"
-                        id="transaction-search"
-                        placeholder="Search"
+                <form method="GET" action="{{ url()->current() }}"
+                    class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
+                    <input type="text" name="search" id="transaction-search" placeholder="Search"
                         value="{{ request('search') }}"
-                        class="bg-transparent border-none text-sm text-gray-800 dark:text-white focus:outline-none w-full placeholder:text-gray-400"
-                    />
-                    <button type="submit" class="w-7 h-7 bg-primary hover:bg-primary/90 text-white rounded-full flex items-center justify-center transition duration-200">
+                        class="bg-transparent border-none text-sm text-gray-800 dark:text-white focus:outline-none w-full placeholder:text-gray-400" />
+                    <button type="submit"
+                        class="w-7 h-7 bg-primary hover:bg-primary/90 text-white rounded-full flex items-center justify-center transition duration-200">
                         <i class="las la-search text-lg"></i>
                     </button>
 
-                    @if(request('search'))
-                    <a href="{{ url()->current() }}" class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200" title="Clear Search">
-                        <i class="las la-times text-lg"></i>
-                    </a>
+                    @if (request('search'))
+                        <a href="{{ url()->current() }}"
+                            class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
+                            title="Clear Search">
+                            <i class="las la-times text-lg"></i>
+                        </a>
                     @endif
                 </form>
             </div>
@@ -78,24 +74,23 @@
             </table>
         </div>
     </div>
-</div>
 @endsection
 
-@section('scripts')
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#transactionTable1').DataTable({
-            pageLength: 10,
-            lengthMenu: [10, 25, 50, 100],
-            searching: false // Disable default DataTable search as you have your own search form
+@push('script')
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#transactionTable1').DataTable({
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 100],
+                searching: false // Disable default DataTable search as you have your own search form
+            });
         });
-    });
 
-    document.getElementById('transaction-search').addEventListener('input', function() {
-        if (this.value === '') {
-            this.form.submit();
-        }
-    });
-</script>
-@endsection
+        document.getElementById('transaction-search').addEventListener('input', function() {
+            if (this.value === '') {
+                this.form.submit();
+            }
+        });
+    </script>
+@endpush

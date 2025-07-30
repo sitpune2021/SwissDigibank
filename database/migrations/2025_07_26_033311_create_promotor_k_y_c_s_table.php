@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('promotor_k_y_c_s', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('promotor_id');
-            $table->string('aadhaar_no');
+            $table->string('aadhaar_no')->nullable();
             $table->string('voter_id_no')->nullable();
             $table->string('pan_no')->nullable();
             $table->string('ration_card_no')->nullable();

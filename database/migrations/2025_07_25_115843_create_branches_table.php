@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('branch_name')->nullable();
             $table->string('branch_code')->unique();
             $table->date('open_date');
-            $table->string('ifsc_code');
+            $table->string('ifsc_code')->nullable();
             $table->string('address_line1');
             $table->string('address_line2')->nullable();
             $table->string('city');
