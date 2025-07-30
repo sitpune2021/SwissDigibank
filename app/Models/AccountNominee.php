@@ -13,5 +13,10 @@ class AccountNominee extends Model
         'nominee_address',
         'share_percentage',
     ];
+     public function nominee()
+    {
+        return $this->hasMany(Account::class, 'account_id');
+    }
+ 
 }
 

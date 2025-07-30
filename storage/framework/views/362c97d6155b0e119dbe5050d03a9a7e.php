@@ -78,12 +78,11 @@
     <tbody>
     <?php $__currentLoopData = $Accounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $Account): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-           
 
             
             <td class="text-start py-5 px-6">
                 <?php if($lastAdvisorId !== $Account->advisor_id): ?>
-                    <?php echo e($Account->users->fname . " " . $Account->users->lname ?? '-'); ?>
+                    <?php echo e($Account->users ? $Account->users->fname . ' ' . $Account->users->lname : '-'); ?>
 
                     <?php $lastAdvisorId = $Account->advisor_id; ?>
                 <?php else: ?>
@@ -96,7 +95,8 @@
 
             
             <td class="text-start py-5 px-6">
-                -
+                    <?php echo e($Account->scheme->scheme_name ?? '-'); ?>
+
             </td>
 
             
@@ -109,9 +109,11 @@
 
             
            <td class="text-start py-5 px-6">
-    <?php echo $Account->joint_account == 1 
-        ? '<span class="block text-xs w-28 xxl:w-36 text-center rounded-[30px] dark:border-n500 border border-n30 py-2 bg-primary/10 dark:bg-bg3 text-primary">YES</span>' 
-        : '<span class="block text-xs w-28 xxl:w-36 text-center rounded-[30px] dark:border-n500 border border-n30 py-2 bg-error/10 dark:bg-bg3 text-error">No</span>'; ?>
+            
+           <?php echo $Account->account_holder_type == 'joint' 
+                ? '<span class="block text-xs w-28 xxl:w-36 text-center rounded-[30px] dark:border-n500 border border-n30 py-2 bg-error/10 dark:bg-bg3 text-error">Joint</span>' 
+                : '<span class="block text-xs w-28 xxl:w-36 text-center rounded-[30px] dark:border-n500 border border-n30 py-2 bg-primary/10 dark:bg-bg3 text-primary">single</span>'; ?>
+
 
 </td>
 

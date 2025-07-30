@@ -46,20 +46,14 @@
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    Sr No
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
                                     Group
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    Member no
+                                    Member No
                                 </div>
                             </th>
-                            <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Gender</th>
                             <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     Branch
@@ -117,13 +111,9 @@
                     <tbody>
                         <?php $__currentLoopData = $members; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr class="border-b dark:border-bg3">
-                                <td class="py-3 px-6"><?php echo e($index + 1); ?></td>
-
                                 <td class="py-3 px-6"><?php echo e($item->general_group); ?></td>
 
                                 <td class="py-3 px-6"><?php echo e($item->member_info_old_member_no ?? 'N/A'); ?></td>
-
-                                <td class="py-3 px-6"><?php echo e(ucfirst($item->member_info_gender)); ?></td>
 
                                 <td class="py-3 px-6"><?php echo e($item->branch->branch_name); ?></td>
 

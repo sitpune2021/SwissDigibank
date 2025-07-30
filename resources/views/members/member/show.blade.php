@@ -25,10 +25,6 @@
 
                     {{-- Account Info Table --}}
                     <div class="bg-white rounded shadow">
-                        <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                            <span>Account Info -  {{ $account->account_no }} </span>
-                            <span x-text="open ? '−' : '+'">−</span>
-                        </div>
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr class="border-b">
@@ -180,10 +176,6 @@
                 <div class="space-y-3 md:w-5/12">
 
                     {{-- Settings --}}
-                    <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                            <span>Settings Info</span>
-                            <span x-text="open ? '−' : '+'">−</span>
-                        </div>
                     <div class="p-3 space-y-2 bg-white rounded shadow">
                         <h2 class="mb-2 font-semibold text-gray-700">Settings</h2>
                         <div class="flex justify-between">

@@ -109,7 +109,7 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="minor_id" class="font-medium block mb-4">Minor</label>
                 <select name="minor_id" id="minor_id" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                   <option value=0>-- Select Minor --</option>
+                   <option>-- Select Minor --</option>
                 </select>
             @error('minor_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
@@ -184,9 +184,6 @@
                     class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" >
 
                 @error('amount') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
-
-                <span id="minAmountNote" class="text-xs text-gray-500 block mt-1"></span>
-                    @error('amount') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
             </div>
 
             {{-- Section Heading --}}
@@ -219,35 +216,35 @@
 
     <!-- // Hidden  section-->
             {{-- Joint A/c Member 1 --}}
-            <!-- <div class="col-span-2 md:col-span-1 hidden jointAccountSection1" >
+            <div class="col-span-2 md:col-span-1 hidden jointAccountSection1" >
                 <label for="member_id_one_one" class="font-medium block mb-4">Joint A/c Member 1 <span class="text-red-500"></span></label>
                 <select name="member_id_one" id="member_id_one_main" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" >
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
-                      <option value="{{ $member->id }}" {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
+                      <option value="{{ $member->id }}" {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
                                 {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                         </option>
 
                     @endforeach
                 </select>
                 @error('member_id_one') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
-            </div> -->
+            </div>
             
 
             {{-- Joint A/c Member 2 --}}
-            <!-- <div class="col-span-2 md:col-span-1 hidden jointAccountSection2">
+            <div class="col-span-2 md:col-span-1 hidden jointAccountSection2">
                 <label for="member_id_two" class="font-medium block mb-4">Joint A/c Member 2 <span class="text-red-500"></span></label>
                  <select name="member_id_two" id="member_id_two_main" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" >
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
-                      <option value="{{ $member->id }}" {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
+                      <option value="{{ $member->id }}" {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
                                 {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                         </option>
 
                     @endforeach
                 </select>
                 @error('member_id_two') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
-            </div> -->
+            </div>
 
             {{-- Mode of Operation --}}
             <div class="col-span-2 md:col-span-1 hidden jointAccountSection3" id="mode-operation">
@@ -368,10 +365,12 @@
 
             {{-- Transaction Date --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="transaction_date" class="font-medium block mb-4">Transaction Date</label>
+                <label for="transaction_date" class="font-medium block mb-4"><span class="text-red-500">*</span>Transaction Date</label>
+                
                 <input type="text" name="transaction_date" id="date2"
-                    value="{{ old('transaction_date', $account->transaction_date ?? '') }}"
+                    value="{{ old('transaction_date', date('Y-m-d')) }}"
                     class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+
                     @error('transaction_date') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
             </div>
 
@@ -385,18 +384,28 @@
     </div>
 </div>
 @php
+
     $membersData = $members->mapWithKeys(function($member) 
     {
+      
         return [
             $member->id => [
                 'first_name' => $member->member_info_first_name,
                 'last_name' => $member->member_info_last_name,
                 'mobile' => $member->member_info_mobile_no ?? '',
                 'branch_id' => $member->general_branch,
-                'address' => $member->address
+                'address' => ($member->address)->member_address_line_1 ?? '',
+                'minors' => $member->minors->map(function ($minor) {
+                    return [
+                        'id' => $minor->id,
+                        'first_name' => $minor->first_name,
+                        'last_name' => $minor->last_name,
+                    ];
+                })->toArray(),
             ],
         ];
     })->toArray();
+
 @endphp
 @endsection
 
@@ -415,163 +424,178 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
         const membersData = @json($membersData);
-    $(document).ready(function () 
-    {
+        $(document).ready(function () 
+        {
+                    
+            const schemeMinimums = @json($schemeMinimums);
 
-        
-const schemeMinimums = @json($schemeMinimums);
+            $('#scheme_id').on('change', function () 
+            {
+                const selectedId = $(this).val();
 
-$('#scheme_id').on('change', function () 
-{
-    const selectedId = $(this).val();
+                const minAmount = schemeMinimums[selectedId];
 
-    const minAmount = schemeMinimums[selectedId];
+                if (minAmount) {
+                    $('#minAmountNote').text('Minimum required amount is ₹' + minAmount);
+                } else {
+                    $('#minAmountNote').text('');
+                }
+            });
 
-    if (minAmount) {
-        $('#minAmountNote').text('Minimum required amount is ₹' + minAmount);
-    } else {
-        $('#minAmountNote').text('');
-    }
-});
+            // Trigger on page load if already selected (e.g., in edit mode or after validation error)
+            $('#scheme_id').trigger('change');
 
-// Trigger on page load if already selected (e.g., in edit mode or after validation error)
-$('#scheme_id').trigger('change');
+                    // Autofill when member is selected
+                    $('#member_id_main').on('change', function () 
+                    {
 
-         // Autofill when member is selected
-        $('#member_id_main').on('change', function () {
-            const memberId = $(this).val();
-            const member = membersData[memberId];
+                        const memberId = $(this).val();
+                        const member = membersData[memberId];
+
+                        console.log(member);
+
+                        if (member) 
+                        {
+                            $('#member_name').val(member.first_name + ' ' + member.last_name);
+                            $('#member_mobile').val(member.mobile);
+                            $('#branch_id').val(member.branch_id); // auto-select branch
+                            $('#member_address').val(member.address);
+
+                                const $minorSelect = $('#minor_id');
+                                    $minorSelect.empty().append('<option value="">-- Select Minor --</option>');
+
+                                    if (member?.minors?.length) 
+                                    {
+                                        member.minors.forEach(minor => {
+                                        $minorSelect.append(
+                                        `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`);
+                                    });
+                                }
+
+                            
+                        } else {
+                            $('#member_name').val('');
+                            $('#member_address').val('');
+                            $('#member_mobile').val('');
+                            $('#branch_id').val('');
+                        }
+                    });
+
+                    // Trigger on page load to auto-fill if editing
+                    $('#member_id_main').trigger('change');
+
+                    function toggleFirmName() 
+                    {
+                        var selectedType = $('input[name="account_type"]:checked').val();
+                        if (selectedType === 'saving') 
+                        {
+                                $('#firmNameDiv').hide();
+                        } else if (selectedType === 'current') 
+                        {
+                            $('#firmNameDiv').show();
+                                
+                                $("#firm_d").val("");
+                                $("#member_id_main").val("");
+                                $("#member_name").val("");
+                                $("#member_address").val("");
+                                $("#member_mobile").val("");
+                        }
+                    }
+
+                    // Initial toggle on page load
+                    toggleFirmName();
+
+                    // Toggle on change
+                    $('input[name="account_type"]').on('change', toggleFirmName);
+
+                    // ============================
+
+                    function jointHolderFields() 
+                    {
+                        var selectedType = $('input[name="account_holder_type"]:checked').val();
+
+                        if (selectedType === 'single') 
+                        {
+                                $('.jointAccountSection1').hide();
+                                $('.jointAccountSection2').hide();
+                                $('.jointAccountSection3').hide();
+                        } else if (selectedType === 'joint') 
+                        {
+                        
+                            $('input[name="mode_of_operation"][value="single"]').prop('checked', true);
+
+                            $('.jointAccountSection1').show();
+                            $('.jointAccountSection2').show();
+                            $('.jointAccountSection3').show();
+                                
+                                $("#firm_d").val("");
+                                // $("#member_id_main").val("");
+                                // $("#member_name").val("");
+                                // $("#member_address").val("");
+                                // $("#member_mobile").val("");
+                        }
+                    }
+
+                    // Initial toggle on page load
+                    jointHolderFields();
+
+                    // Toggle on change
+                    $('input[name="account_holder_type"]').on('change', jointHolderFields);
+
+                    // Fade out alerts after 5 seconds
+                    setTimeout(function () {
+                        $('#success-alert').fadeOut();
+                        $('#error-alert').fadeOut();
+                    }, 5000);
 
 
-            if (member) {
-                $('#member_name').val(member.first_name + ' ' + member.last_name);
-                $('#member_mobile').val(member.mobile);
-                 $('#branch_id').val(member.branch_id); // auto-select branch
-                $('#member_address').val(member.address);
 
-                
-            } else {
-                $('#member_name').val('');
-                $('#member_address').val('');
-                $('#member_mobile').val('');
-                 $('#branch_id').val('');
-            }
+
+                    // Toggle nominee details based on radio selection
+                $('input[name="nominee"]').on('change', function () {
+                    if ($(this).val() === 'yes') {
+                        $('#nomineeDetails').removeClass('hidden');
+                    } else {
+                        $('#nomineeDetails').addClass('hidden');
+                        // Optionally clear fields
+                        $('#nomineeDetails').find('input, select, textarea').val('');
+                        $('#additionalNominees').empty();
+                    }
+                });
+
+                // Handle Add More Nominee button
+                $('#addMoreNominee').on('click', function () {
+                    const index = $('#additionalNominees .nominee-block').length;
+
+                    const nomineeBlock = `
+                    <div class="nominee-block border border-gray-300 rounded p-4 mb-4">
+                        <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
+                        <select name="additional_nominee_relation[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3">
+                            <option value="">Select Relation</option>
+                            <option value="father">Father</option>
+                            <option value="mother">Mother</option>
+                            <option value="spouse">Spouse</option>
+                            <option value="child">Child</option>
+                            <!-- Add more as needed -->
+                        </select>
+                        <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="additional_nominee_name[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3" placeholder="Enter Nominee Name">
+                        <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
+                        <textarea name="additional_nominee_address[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Enter Nominee Address"></textarea>
+                        <button type="button" class="removeNominee btn-outline mt-2">Remove</button>
+                    </div>
+                    `;
+
+                    $('#additionalNominees').append(nomineeBlock);
+                });
+
+                // Remove additional nominee block
+                $(document).on('click', '.removeNominee', function () {
+                    $(this).closest('.nominee-block').remove();
+                });
         });
 
-        // Trigger on page load to auto-fill if editing
-        $('#member_id_main').trigger('change');
-
-        function toggleFirmName() 
-        {
-            var selectedType = $('input[name="account_type"]:checked').val();
-            if (selectedType === 'saving') 
-            {
-                    $('#firmNameDiv').hide();
-            } else if (selectedType === 'current') 
-            {
-                $('#firmNameDiv').show();
-                    
-                    $("#firm_d").val("");
-                    $("#member_id_main").val("");
-                    $("#member_name").val("");
-                    $("#member_address").val("");
-                    $("#member_mobile").val("");
-            }
-        }
-
-        // Initial toggle on page load
-        toggleFirmName();
-
-        // Toggle on change
-        $('input[name="account_type"]').on('change', toggleFirmName);
-
-        // ============================
-
-         function jointHolderFields() 
-        {
-            var selectedType = $('input[name="account_holder_type"]:checked').val();
-
-            if (selectedType === 'single') 
-            {
-                    $('.jointAccountSection1').hide();
-                    $('.jointAccountSection2').hide();
-                    $('.jointAccountSection3').hide();
-            } else if (selectedType === 'joint') 
-            {
-               
-                $('input[name="mode_of_operation"][value="single"]').prop('checked', true);
-
-                $('.jointAccountSection1').show();
-                $('.jointAccountSection2').show();
-                $('.jointAccountSection3').show();
-                    
-                    $("#firm_d").val("");
-                    $("#member_id_main").val("");
-                    $("#member_name").val("");
-                    $("#member_address").val("");
-                    $("#member_mobile").val("");
-            }
-        }
-
-        // Initial toggle on page load
-        jointHolderFields();
-
-        // Toggle on change
-        $('input[name="account_holder_type"]').on('change', jointHolderFields);
-
-        // Fade out alerts after 5 seconds
-        setTimeout(function () {
-            $('#success-alert').fadeOut();
-            $('#error-alert').fadeOut();
-        }, 5000);
-
-
-
-
-
-          // Toggle nominee details based on radio selection
-    $('input[name="nominee"]').on('change', function () {
-        if ($(this).val() === 'yes') {
-            $('#nomineeDetails').removeClass('hidden');
-        } else {
-            $('#nomineeDetails').addClass('hidden');
-            // Optionally clear fields
-            $('#nomineeDetails').find('input, select, textarea').val('');
-            $('#additionalNominees').empty();
-        }
-    });
-
-    // Handle Add More Nominee button
-    $('#addMoreNominee').on('click', function () {
-        const index = $('#additionalNominees .nominee-block').length;
-
-        const nomineeBlock = `
-        <div class="nominee-block border border-gray-300 rounded p-4 mb-4">
-            <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
-            <select name="additional_nominee_relation[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3">
-                <option value="">Select Relation</option>
-                <option value="father">Father</option>
-                <option value="mother">Mother</option>
-                <option value="spouse">Spouse</option>
-                <option value="child">Child</option>
-                <!-- Add more as needed -->
-            </select>
-            <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
-            <input type="text" name="additional_nominee_name[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3" placeholder="Enter Nominee Name">
-            <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
-            <textarea name="additional_nominee_address[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Enter Nominee Address"></textarea>
-            <button type="button" class="removeNominee btn-outline mt-2">Remove</button>
-        </div>
-        `;
-
-        $('#additionalNominees').append(nomineeBlock);
-    });
-
-    // Remove additional nominee block
-    $(document).on('click', '.removeNominee', function () {
-        $(this).closest('.nominee-block').remove();
-    });
-    });
+      
 
 
 </script>

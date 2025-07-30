@@ -138,7 +138,7 @@
                             <?php if($type === 'select'): ?>
                                 <select name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
-                                    <?php echo e(isset($show) ? 'readonly' : ''); ?>>
+                                    <?php echo e(isset($show) ? 'disabled' : ''); ?>>
                                     <option value="">-- Select <?php echo e($label); ?> --</option>
 
                                     <?php if(!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']])): ?>
@@ -166,7 +166,7 @@
                                             <input type="radio" name="<?php echo e($name); ?>" value="<?php echo e($optionValue); ?>"
                                                 <?php echo e($value == $optionValue ? 'checked' : ''); ?>
 
-                                                <?php echo e(isset($show) ? 'readonly' : ''); ?>>
+                                                <?php echo e(isset($show) ? 'disabled' : ''); ?>>
                                             <span><?php echo e($optionLabel); ?></span>
                                         </label>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -174,7 +174,7 @@
                             <?php elseif($type === 'checkbox'): ?>
                                 <label class="switch">
                                     <input type="checkbox" name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
-                                        value="1" <?php echo e($value ? 'checked' : ''); ?> <?php echo e(isset($show) ? 'readonly' : ''); ?>>
+                                        value="1" <?php echo e($value ? 'checked' : ''); ?> <?php echo e(isset($show) ? 'disabled' : ''); ?>>
                                     <div class="slider round">
                                         <span class="switch-on">ON</span>
                                         <span class="switch-off">OFF</span>
@@ -184,7 +184,7 @@
                                 <input type="<?php echo e($type); ?>" name="<?php echo e($name); ?>" id="<?php echo e($id); ?>"
                                     value="<?php echo e($value); ?>"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter <?php echo e(strtolower($label)); ?>" <?php echo e(isset($show) ? 'readonly' : ''); ?> />
+                                    placeholder="Enter <?php echo e(strtolower($label)); ?>" <?php echo e(isset($show) ? 'disabled' : ''); ?> />
                             <?php endif; ?>
 
                             <?php $__errorArgs = [$name];

@@ -24,7 +24,7 @@
                     
                     <div class="bg-white rounded shadow">
                         <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                            <span>Account Info</span>
+                            <span>Account Info -  <?php echo e($account->account_no); ?> </span>
                             <span x-text="open ? '−' : '+'">−</span>
                         </div>
                         <table class="w-full text-sm">

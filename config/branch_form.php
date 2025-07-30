@@ -50,7 +50,7 @@ return [
         'id' => 'country',
         'type' => 'text',
         'required' => true,
-        'default' => 'India',  // <-- set default value here
+        'default' => 'India',  
     ],
     [
         'label' => 'State',
@@ -109,7 +109,7 @@ return [
         'id' => 'disable_recharge',
         'type' => 'radio',
         'required' => true,
-        'default' => 'yes', // 👈 Default set to 'no'
+        'default' => 'yes', 
         'options' => [
             'yes' => 'Yes',
             'no' => 'No',
@@ -121,7 +121,7 @@ return [
         'type' => 'radio',
         'id' => 'disable_neft',
         'required' => true,
-        'default' => 'no', // 👈 Default set to 'no'
+        'default' => 'no', 
         'options' => [
             'yes' => 'Yes',
             'no' => 'No',
