@@ -1,1 +1,0 @@
-<?php /**PATH C:\xampp\htdocs\swiss_bank\resources\views\settings\profile.blade.php ENDPATH**/ ?>
