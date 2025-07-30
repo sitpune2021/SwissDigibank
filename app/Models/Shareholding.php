@@ -23,7 +23,7 @@ class Shareholding extends Model
         'pay_mode'
     ];
 
-    public function promotor()
+    public function promotors()
     {
         return $this->belongsTo(Promotor::class, 'promotor_id');
     }

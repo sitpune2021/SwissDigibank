@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.keymai
 /storage/pail
+/storage/framework/views
 /vendor
 .env
 .env.backup

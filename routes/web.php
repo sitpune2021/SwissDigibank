@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\AccountTransactionController;
+use App\Http\Controllers\ApproveController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
@@ -53,30 +55,38 @@ Route::middleware('auth.user')->group(function () {
     });
 
     Route::group(['prefix' => 'user'], function () {
-            Route::resource('roles', RoleController::class);
-            Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('users', UserController::class);
     });
 
     Route::group(['prefix' => 'members'], function () {
-            Route::resource('member', MemberController::class);
-            Route::resource('minor', MinorController::class);
-            // Route::resource('shares-holdings', ShareHoldingsController::class);
-            // Route::resource('share-certificates', controller: ShareCertificateController::class);
-            // Route::resource('share-transfer-histories', ShareTrasferHistoryController::class);
-            // Route::resource('form-15g-15h', Form15Gor15HController::class);
+        Route::resource('member', MemberController::class);
+        Route::resource('minor', MinorController::class);
+        // Route::resource('shares-holdings', ShareHoldingsController::class);
+        // Route::resource('share-certificates', controller: ShareCertificateController::class);
+        // Route::resource('share-transfer-histories', ShareTrasferHistoryController::class);
+        // Route::resource('form-15g-15h', Form15Gor15HController::class);
     });
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
-            Route::resource('schemes', SchemesController::class);
-                Route::resource('accounts', AccountsController::class);
+        Route::resource('schemes', SchemesController::class);
+        Route::resource('accounts', AccountsController::class);
 
+        Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
+        Route::resource('transaction', AccountTransactionController::class);
+        Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
+        Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
+    });
 
+    Route::group(['prefix' => 'approvals'], function () {
+        Route::resource('pending-transaction', ApproveController::class);
+        Route::get('share-transfer-approval/approve-transfer', [ApproveController::class, 'approveTransfer'])->name('share-transfer-approval.approve_transfer');
+        Route::post('/share-transfer/approve', [ApproveController::class, 'approveShareTransfer'])->name('share_transfer.approve');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {
-            Route::resource('employee', HRController::class);
+        Route::resource('employee', HRController::class);
     });
-
 });
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {

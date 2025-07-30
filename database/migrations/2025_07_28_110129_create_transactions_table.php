@@ -36,11 +36,12 @@ return new class extends Migration
             // Approval and remarks
             $table->enum('approve_status', ['approved', 'disapproved', 'pending'])->default('pending');
             $table->string('comment');
+            $table->string('remarks');
 
-             $table->softDeletes();
+            $table->softDeletes();
             // Timestamps
             $table->timestamps(); // created_at and updated_at (nullable)
-           
+
         });
     }
 

@@ -7,7 +7,7 @@
     <div class="min-h-screen p-4 font-sans text-sm bg-gray-100" x-data>
 
         <div class="flex flex-wrap justify-center gap-3 mb-3 text-center">
-            <button class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700">View Transactions</button>
+            <a class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700" href="{{route('account.transaction',base64_encode($account->id))}}">View Transactions</a>
             <button class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700">Deposit Money</button>
             <button class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700">Withdraw Money</button>
             <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other
