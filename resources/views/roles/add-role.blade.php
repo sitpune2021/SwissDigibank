@@ -1,105 +1,15 @@
 @extends('layout.main')
 @php
-use App\Models\Menu;
-$menuItems = Menu::where('active',1)->with('submenus')->orderBy('position')->get();
+    use App\Models\Menu;
+    $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->get();
 @endphp
-<style>
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 30px;
-}
+@section('page-title', '')
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 30px;
-    text-align: center;
-    line-height: 30px;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked+.slider {
-    background-color: #4CAF50;
-}
-
-input:checked+.slider:before {
-    transform: translateX(30px);
-}
-
-.slider .switch-on,
-.slider .switch-off {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.slider .switch-on {
-    left: 0;
-}
-
-.slider .switch-off {
-    right: 0;
-}
-
-.breadcrumb {
-    list-style: none;
-    display: flex;
-    padding: 0;
-    margin-bottom: 1rem;
-    font-size: 14px;
-}
-
-.breadcrumb li+li::before {
-    content: "/";
-    padding: 0 8px;
-    color: #888;
-}
-
-.breadcrumb li a {
-    text-decoration: none;
-    color: #007bff;
-}
-</style>
 @section('content')
-<div class="main-inner">
-    <div class="box mb-4 xxxl:mb-6">
+    <div class="box col-span-12 lg:col-span-6">
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
             <h4 class="h4">Add New Role / Permission</h4>
             <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                <!-- <li><a href="{{ url('/manage-permission') }}" class="text-blue-600 hover:underline">Roles</a></li>
-               <li class="text-gray-500">New</li> -->
             </ol>
             <hr class="my-2 border-gray-300" />
         </div>
@@ -177,7 +87,8 @@ input:checked+.slider:before {
                         </label>
                     </div>
                     <div class="flex items-center relative">
-                        <input type="checkbox" id="no" name="active[]" value="both" class="opacity-0 absolute h-8 w-8">
+                        <input type="checkbox" id="no" name="active[]" value="both"
+                            class="opacity-0 absolute h-8 w-8">
                         <div
                             class="bg-n0 dark:bg-bg4 border border-gray-400 rounded-full w-5 h-5 flex justify-center items-center ltr:mr-2 focus-within:border-primary">
                         </div>
@@ -190,44 +101,31 @@ input:checked+.slider:before {
             </div>
             <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3">
                 <div class="main-inner">
-                    <!-- <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-                  <h2 class="h2">Payment Providers</h2>
-                  
-                  <button class="btn-primary ac-modal-btn">
-                  
-                      <i class="las la-plus-circle text-base md:text-lg"></i>
-                  
-                      Open an Account
-                  
-                  </button>
-                  
-                  </div> -->
-                    <!-- Payment Providers -->
                     <button id="menuToggleBtn" type="button"
                         class="md:hidden flex items-center gap-2 min-w-max py-2 px-3 relative z-[3] rounded-lg bg-primary text-n0 chatbtn">
                         <i class="las la-bars"></i> <span>Menu</span>
                     </button>
                     <div class="grid grid-cols-12 relative gap-4 xxl:gap-6 max-md:mt-3 tabs">
-                        <div id="chat-sidebar" class="max-md:box md:bg-transparent duration-500 max-md:w-[280px] max-md:max-h-[600px]
+                        <div id="chat-sidebar"
+                            class="max-md:box md:bg-transparent duration-500 max-md:w-[280px] max-md:max-h-[600px]
                      max-md:overflow-y-auto max-md:rounded-xl max-md:absolute ltr:max-md:left-0 rtl:max-md:right-0 z-[3] max-md:bg-n0 max-md:dark:bg-bg4
                      max-md:top-0 md:col-span-5 xl:col-span-4 max-md:min-w-[300px] chathide">
                             <div class="md:box sticky top-20">
                                 <ul class="flex flex-col gap-4 lg:gap-6 bb-dashed mb-6 pb-6">
 
                                     @foreach ($menuItems as $key => $item)
-
-                                    <li>
-                                        <button class="provider-btn tab-link active">
-                                            <div>
-                                                <p class="text-base xxl:text-lg font-medium">
-                                                    {{ $item->title }}
-                                                </p>
-                                            </div>
-                                            <span class="icon">
-                                                <i class="{{ $item->icon }}"></i>
-                                            </span>
-                                        </button>
-                                    </li>
+                                        <li>
+                                            <button class="provider-btn tab-link active">
+                                                <div>
+                                                    <p class="text-base xxl:text-lg font-medium">
+                                                        {{ $item->title }}
+                                                    </p>
+                                                </div>
+                                                <span class="icon">
+                                                    <i class="{{ $item->icon }}"></i>
+                                                </span>
+                                            </button>
+                                        </li>
                                     @endforeach
 
                                 </ul>
@@ -235,9 +133,9 @@ input:checked+.slider:before {
                         </div>
                         <div class="col-span-12 md:col-span-7 xl:col-span-8 box xl:p-8">
                             <!-- <div class="flex justify-between items-center gap-2 bb-dashed pb-4 mb-4 lg:mb-6 lg:pb-6">
-                       
-                        @include('partials._horizontal-options')
-                     </div> -->
+                                               
+                                                @include('partials._horizontal-options')
+                                             </div> -->
                             <div class="bb-dashed border-secondary/20 mb-4 pb-4 lg:mb-6 lg:pb-6">
                                 <div>
                                     <!---------------------Dashboard------------------------>
@@ -247,7 +145,8 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="check_all_dashboard" class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    <input type="checkbox" id="check_all_dashboard"
+                                                        class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="check_all"
                                                         class="text-base font-semibold cursor-pointer mb-0">Check
                                                         All</label>
@@ -256,8 +155,8 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="show_sms_bal" name="permissions[dash_show_sms_bal]"
-                                                        value="show_sms_bal"
+                                                    <input type="checkbox" id="show_sms_bal"
+                                                        name="permissions[dash_show_sms_bal]" value="show_sms_bal"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="show_sms_balance_1"
                                                         class="text-base font-semibold cursor-pointer mb-0">Show SMS
@@ -268,28 +167,33 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="show_sms_wallet" name="permissions[dash_show_sms_wallet]"
-                                                        value="show_sms_wallet"
+                                                    <input type="checkbox" id="show_sms_wallet"
+                                                        name="permissions[dash_show_sms_wallet]" value="show_sms_wallet"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="show_sms_balance_1"
-                                                        class="text-base font-semibold cursor-pointer mb-0">Show SMS Wallet Info</label>
+                                                        class="text-base font-semibold cursor-pointer mb-0">Show SMS
+                                                        Wallet Info</label>
                                                 </div>
                                             </div>
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_activate_sms" name="permissions[dash_activate_sms]"
-                                                        value="dash_activate_sms"
+                                                    <input type="checkbox" id="dash_activate_sms"
+                                                        name="permissions[dash_activate_sms]" value="dash_activate_sms"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_activate_sms"
-                                                        class="text-base font-semibold cursor-pointer mb-0">Activate SMS
+                                                        class="text-base font-semibold cursor-pointer mb-0">Activate
+                                                        SMS
                                                         Service</label>
                                                 </div>
                                             </div>
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_mob_recharge" name="permissions[dash_show_mob_recharge]" value="dash_show_mob_recharge" class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    <input type="checkbox" id="dash_show_mob_recharge"
+                                                        name="permissions[dash_show_mob_recharge]"
+                                                        value="dash_show_mob_recharge"
+                                                        class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_mob_recharge"
                                                         class="text-base font-semibold cursor-pointer mb-0">Show Mobile
                                                         Recharge Balance</label>
@@ -298,15 +202,20 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_generate_mob_bill" name="permissions[dash_generate_mob_bill]" value="dash_generate_mob_bill" class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    <input type="checkbox" id="dash_generate_mob_bill"
+                                                        name="permissions[dash_generate_mob_bill]"
+                                                        value="dash_generate_mob_bill"
+                                                        class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_generate_mob_bill"
-                                                        class="text-base font-semibold cursor-pointer mb-0">Generate Mobile / Bill Payment Wallet</label>
+                                                        class="text-base font-semibold cursor-pointer mb-0">Generate
+                                                        Mobile / Bill Payment Wallet</label>
                                                 </div>
                                             </div>
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_verification_bal" name="permissions[dash_show_verification_bal]"
+                                                    <input type="checkbox" id="dash_show_verification_bal"
+                                                        name="permissions[dash_show_verification_bal]"
                                                         value="dash_show_verification_bal"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_verification_bal"
@@ -317,17 +226,20 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_email_token" name="permissions[dash_show_email_token]"
+                                                    <input type="checkbox" id="dash_show_email_token"
+                                                        name="permissions[dash_show_email_token]"
                                                         value="dash_show_email_token"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_email_token"
-                                                        class="text-base font-semibold cursor-pointer mb-0">Show Email Token Balance</label>
+                                                        class="text-base font-semibold cursor-pointer mb-0">Show Email
+                                                        Token Balance</label>
                                                 </div>
                                             </div>
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_cashfree_wallet_bal" name="permissions[dash_show_cashfree_wallet_bal]"
+                                                    <input type="checkbox" id="dash_show_cashfree_wallet_bal"
+                                                        name="permissions[dash_show_cashfree_wallet_bal]"
                                                         value="dash_show_cashfree_wallet_bal"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_cashfree_wallet_bal"
@@ -338,7 +250,8 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_hypto_bal" name="permissions[dash_show_hypto_bal]"
+                                                    <input type="checkbox" id="dash_show_hypto_bal"
+                                                        name="permissions[dash_show_hypto_bal]"
                                                         value="dash_show_hypto_bal"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_hypto_bal"
@@ -349,7 +262,8 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_prepaid_bal" name="permissions[dash_show_prepaid_bal]"
+                                                    <input type="checkbox" id="dash_show_prepaid_bal"
+                                                        name="permissions[dash_show_prepaid_bal]"
                                                         value="dash_show_prepaid_bal"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_prepaid_bal"
@@ -360,7 +274,8 @@ input:checked+.slider:before {
 
                                             <div class="col-span-2 md:col-span-1">
                                                 <div class="flex items-center space-x-2">
-                                                    <input type="checkbox" id="dash_show_debit_bal" name="permissions[dash_show_debit_bal]"
+                                                    <input type="checkbox" id="dash_show_debit_bal"
+                                                        name="permissions[dash_show_debit_bal]"
                                                         value="dash_show_debit_bal"
                                                         class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                     <label for="dash_show_debit_bal"
@@ -369,7 +284,7 @@ input:checked+.slider:before {
                                                 </div>
                                             </div>
 
-                                            
+
 
                                         </div>
 
@@ -397,8 +312,7 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance_1" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance_1"
                                                     class="text-base font-semibold cursor-pointer mb-0">Show Company
                                                     Profile</label>
@@ -409,8 +323,7 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance_1" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance_1"
                                                     class="text-base font-semibold cursor-pointer mb-0">Upload Company
                                                     Logo</label>
@@ -420,8 +333,7 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance_3" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance_3"
                                                     class="text-base font-semibold cursor-pointer mb-0">Edit Company
                                                     Profile</label>
@@ -431,8 +343,7 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance_4" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance_4"
                                                     class="text-base font-semibold cursor-pointer mb-0">Upload Company
                                                     Favicon</label>
@@ -442,8 +353,7 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance_5" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance_5"
                                                     class="text-base font-semibold cursor-pointer mb-0">Upload Company
                                                     Login BG Image</label>
@@ -453,8 +363,7 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Software Theme
                                                     Settings</label>
@@ -463,7 +372,7 @@ input:checked+.slider:before {
 
 
                                     </div>
-                                   
+
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                                         <h4 class="h4">Branches</h4>
@@ -477,63 +386,61 @@ input:checked+.slider:before {
                                                     All</label>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="check_all"
                                                     class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="check_all"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Branch List</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Branch
+                                                    List</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Add New
-                                                Branch</label>
+                                                    Branch</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Show Branch
-                                                Info</label>
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Edit Branch
-                                                Info</label>
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Branch Deposit Cash
-                                                Lock</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Branch Deposit
+                                                    Cash
+                                                    Lock</label>
                                             </div>
                                         </div>
 
                                     </div>
 
-                                    
+
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                                         <h4 class="h4">Promoters</h4>
@@ -551,174 +458,163 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Promoters
-                                                List</label>
+                                                    List</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Add New
-                                                Promoter</label>
+                                                    Promoter</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Show Promoter
-                                                Info</label>
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Edit Promoter
-                                                Info</label>
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Transaction
-                                                List</label>
+                                                    List</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Show Promoter
-                                                Transaction</label>
+                                                    Transaction</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Delete Promoter
-                                                Transaction</label>
+                                                    Transaction</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Upload Promoter
-                                                Documents</label>
+                                                    Documents</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Update/ Remove
-                                                Promoter Documents</label>
+                                                    Promoter Documents</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Edit Promoter
-                                                Contact Info</label>
+                                                    Contact Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Edit Promoter Bank
-                                                Info</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Edit Promoter
+                                                    Bank
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Add Promoter's Share
-                                                Holding Nominees</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Add Promoter's
+                                                    Share
+                                                    Holding Nominees</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Promoter's SMS
-                                                Enable/ Disable</label>
+                                                    Enable/ Disable</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Promoter's Money
-                                                Transfer Enable/ Disable</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Promoter's
+                                                    Money
+                                                    Transfer Enable/ Disable</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Promoter Change KYC
-                                                Status</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Promoter Change
+                                                    KYC
+                                                    Status</label>
                                             </div>
                                         </div>
 
                                     </div>
 
 
-                                    
-                                    
-                                    
+
+
+
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                                         <h4 class="h4">Minors</h4>
@@ -736,20 +632,20 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Add Minor</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Add
+                                                    Minor</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Edit Minor</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Edit
+                                                    Minor</label>
                                             </div>
                                         </div>
                                     </div>
@@ -772,33 +668,32 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Reset Promoter Login
-                                                Password</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Reset Promoter
+                                                    Login
+                                                    Password</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Lock/Unlock Promoter
-                                                Account</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Lock/Unlock
+                                                    Promoter
+                                                    Account</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Reset & Send
-                                                Promoter Login Credentials via SMS</label>
+                                                    Promoter Login Credentials via SMS</label>
                                             </div>
                                         </div>
                                     </div>
@@ -822,52 +717,50 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Promoter Share
-                                                Holdings</label>
+                                                    Holdings</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Allocate New Shares
-                                                to Promoter's</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Allocate New
+                                                    Shares
+                                                    to Promoter's</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Show Promoter Share
-                                                Holding Info</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Show Promoter
+                                                    Share
+                                                    Holding Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-2">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Select/ Update
-                                                Promoter who's Share needs to split for (New Membership
-                                                Registration)</label>
+                                                    Promoter who's Share needs to split for (New Membership
+                                                    Registration)</label>
                                             </div>
                                         </div>
                                     </div>
 
-                                   
-                                    
-                                    
+
+
+
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                                         <h4 class="h4">Directors</h4>
@@ -885,53 +778,49 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Directors
-                                                List</label>
+                                                    List</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Add New
-                                                Director</label>
+                                                    Director</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Show Director
-                                                Info</label>
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Edit Director
-                                                Info</label>
+                                                    Info</label>
                                             </div>
                                         </div>
                                     </div>
 
 
-                                   
-                                    
-                                    
-                                    
+
+
+
+
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                                         <h4 class="h4">Encumbered Deposits</h4>
@@ -949,44 +838,42 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Encumbered Deposits
-                                                List</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Encumbered
+                                                    Deposits
+                                                    List</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Add New Encumbered
-                                                Deposit</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Add New
+                                                    Encumbered
+                                                    Deposit</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Show Encumbered
-                                                Deposit Info</label>
+                                                    Deposit Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Edit Encumbered
-                                                Deposit Info</label>
+                                                    Deposit Info</label>
                                             </div>
                                         </div>
 
@@ -1011,53 +898,51 @@ input:checked+.slider:before {
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Bank Accounts
-                                                List</label>
+                                                    List</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
                                                     class="text-base font-semibold cursor-pointer mb-0">Add New Bank
-                                                Account</label>
+                                                    Account</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Show Bank Account
-                                                Info</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Show Bank
+                                                    Account
+                                                    Info</label>
                                             </div>
                                         </div>
 
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
                                                 <input type="checkbox" id="show_sms_balance" name="permissions[]"
-                                                    value="Thames Water"
-                                                    class="form-checkbox h-5 w-5 text-primary">&nbsp;
+                                                    value="Thames Water" class="form-checkbox h-5 w-5 text-primary">&nbsp;
                                                 <label for="show_sms_balance"
-                                                    class="text-base font-semibold cursor-pointer mb-0">Edit Bank Account
-                                                Info</label>
+                                                    class="text-base font-semibold cursor-pointer mb-0">Edit Bank
+                                                    Account
+                                                    Info</label>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
+
+
+
+
+
+
                                 </div>
 
                                 <!---------------------User Management------------------------>
@@ -1200,63 +1085,48 @@ input:checked+.slider:before {
                     </div>
                 </div>
             </div>
+            <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
+                <button class="btn-primary" type="submit">
+                    Add Role
+                </button>
+                <button class="btn-outline" type="reset">
+                    Cancel
+                </button>
+            </div>
+        </form>
     </div>
-    <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-        <button class="btn-primary" type="submit">
-            Add Role
-        </button>
-        <button class="btn-outline" type="reset">
-            Cancel
-        </button>
-    </div>
-    </form>
-</div>
-</div>
 @endsection
-<script>
-document.getElementById('menuToggleBtn').addEventListener('click', function() {
-    const menu = document.getElementById('mobileMenu');
-    menu.classList.toggle('hidden');
-});
+@push('script')
+    <script>
+        document.getElementById('menuToggleBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
 
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Select all "Check All" checkboxes
-    const checkAllBoxes = document.querySelectorAll('[id^="check_all_"]');
-
-    checkAllBoxes.forEach(checkAll => {
-        checkAll.addEventListener('change', function () {
-            // Find the parent grid div (the section containing the checkboxes)
-            const parentGrid = this.closest('.grid');
-
-            // Select all checkboxes within this grid, excluding the "Check All" checkbox
-            const checkboxes = parentGrid.querySelectorAll('input[type="checkbox"]:not([id^="check_all_"])');
-
-            // Get the section title for generating unique IDs and names
-            const sectionTitle = parentGrid.querySelector('h4')?.textContent.trim().toLowerCase().replace(/\s+/g, '_');
-
-            // Toggle the checked state of all checkboxes and update IDs/names
-            checkboxes.forEach((checkbox, index) => {
-                // Set checked state to match "Check All"
-                checkbox.checked = checkAll.checked;
-
-                // Generate unique ID and name
-                const labelText = checkbox.nextElementSibling?.textContent.trim().toLowerCase().replace(/\s+/g, '_');
-                const uniqueId = `${sectionTitle}_${labelText}_${index + 1}`;
-                const uniqueName = `permissions[${sectionTitle}_${index + 1}]`;
-
-                // Update checkbox attributes
-                checkbox.id = uniqueId;
-                checkbox.name = uniqueName;
-
-                // Update the corresponding label's 'for' attribute
-                const label = checkbox.nextElementSibling;
-                if (label && label.tagName === 'LABEL') {
-                    label.setAttribute('for', uniqueId);
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkAllBoxes = document.querySelectorAll('[id^="check_all_"]');
+            checkAllBoxes.forEach(checkAll => {
+                checkAll.addEventListener('change', function() {
+                    const parentGrid = this.closest('.grid');
+                    const checkboxes = parentGrid.querySelectorAll(
+                        'input[type="checkbox"]:not([id^="check_all_"])');
+                    const sectionTitle = parentGrid.querySelector('h4')?.textContent.trim()
+                        .toLowerCase().replace(/\s+/g, '_');
+                    checkboxes.forEach((checkbox, index) => {
+                        checkbox.checked = checkAll.checked;
+                        const labelText = checkbox.nextElementSibling?.textContent.trim()
+                            .toLowerCase().replace(/\s+/g, '_');
+                        const uniqueId = `${sectionTitle}_${labelText}_${index + 1}`;
+                        const uniqueName = `permissions[${sectionTitle}_${index + 1}]`;
+                        checkbox.id = uniqueId;
+                        checkbox.name = uniqueName;
+                        const label = checkbox.nextElementSibling;
+                        if (label && label.tagName === 'LABEL') {
+                            label.setAttribute('for', uniqueId);
+                        }
+                    });
+                });
             });
         });
-    });
-});
-</script>
+    </script>
+@endpush

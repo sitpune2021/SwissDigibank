@@ -23,6 +23,11 @@ class Shareholding extends Model
         'pay_mode'
     ];
 
+     protected $casts = [
+        'allotment_date' => 'date',
+        'transaction_date' => 'date',
+    ];
+
     public function promotor()
     {
         return $this->belongsTo(Promotor::class, 'promotor_id');

@@ -183,9 +183,6 @@
 
                           ])
 
-                          
-                         
-
                           @error($name)
                               <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                           @enderror

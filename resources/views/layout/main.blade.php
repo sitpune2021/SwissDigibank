@@ -10,5 +10,5 @@
         @yield('content')
     </div>
 </main>
-@stack('script')
 @include('layout.footer')
+@stack('script')

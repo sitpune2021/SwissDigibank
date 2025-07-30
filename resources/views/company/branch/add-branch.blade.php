@@ -1,25 +1,10 @@
 @extends('layout.main')
 
-@section('page-title', 'Branches')
+@section('page-title', isset($branch) ? (!empty($show) ? 'View ' . $branch->branch_name . ' Branch' : 'Edit ' .
+    $branch->branch_name . ' Branch') : 'Add Branch')
 
 @section('content')
-
-    @if (session('success'))
-        <div id="success-alert"
-            style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-            <strong>Success:</strong> {{ session('success') }}
-            <span onclick="document.getElementById('success-alert').style.display='none';"
-                style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
-        </div>
-    @endif
-    @if (session('error'))
-        <div id="error-alert"
-            style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-            <strong>Error:</strong> {{ session('error') }}
-            <span onclick="document.getElementById('error-alert').style.display='none';"
-                style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
-        </div>
-    @endif
+    @include('fields.errormessage')
 
     <div class="box mb-4 xxxl:mb-6">
         <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
@@ -36,6 +21,14 @@
                     $id = $field['id'] ?? $field['name'];
                     $required = $field['required'] ?? false;
                     $value = old($name, $branch[$name] ?? ($field['default'] ?? ''));
+                    if ($name === 'open_date') {
+                        $value = old(
+                            $name,
+                            $branch?->$name instanceof \Carbon\Carbon
+                                ? $branch?->$name->format('D d m Y')
+                                : $branch?->$name ?? ($field['default'] ?? ''),
+                        );
+                    }
                 @endphp
                 <div class="col-span-2 md:col-span-1">
                     @include('fields.label', [
@@ -43,43 +36,16 @@
                         'label' => $label,
                         'required' => $required,
                     ])
-                    @if ($type === 'select')
-                        <select name="{{ $name }}" id="{{ $id }}"
-                            class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            {{ empty($show) ? '' : 'disabled' }}>
-                            <option value="">-- Select {{ $label }} --</option>
-
-                            @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
-                                @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
-                                    <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
-                                        {{ $optionLabel }}
-                                    </option>
-                                @endforeach
-                            @elseif(!empty($field['options']))
-                                @foreach ($field['options'] as $optionValue => $optionLabel)
-                                    <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
-                                        {{ $optionLabel }}
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
-                    @elseif ($type === 'radio')
-                        <div class="flex gap-5">
-                            @foreach ($field['options'] as $optionValue => $optionLabel)
-                                <label class="flex items-center space-x-2 gap-1">
-                                    <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
-                                        {{ $value == $optionValue ? 'checked' : '' }}
-                                        {{ empty($show) ? '' : 'disabled' }}>
-                                    <span>{{ $optionLabel }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    @else
-                        <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
-                            value="{{ $value }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Enter {{ strtolower($label) }}" {{ empty($show) ? '' : 'readonly' }} />
-                    @endif
+                    @include('fields.inputs', [
+                        'id' => $id,
+                        'label' => $label,
+                        'required' => $required,
+                        'type' => $type,
+                        'name' => $name,
+                        'value' => $value,
+                        'readonly' => empty($show) ? '' : 'readonly',
+                        'field' => $field,
+                    ])
 
                     @error($name)
                         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
