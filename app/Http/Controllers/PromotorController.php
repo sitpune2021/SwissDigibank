@@ -60,14 +60,14 @@ class PromotorController extends Controller
 
         $validated = $request->validate([
             // Promotor fields
-            'enrollment_date' => 'required|date',
+            'enrollment_date' => 'required',
             'title' => 'required|string|max:10',
             'gender' => 'required|string|in:Male,Female,Other',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'branch_id' => 'required|exists:branches,id',
-            'date_of_birth' => 'required|date|before:today',
+            'date_of_birth' => 'required|before:today',
             'occupation' => 'nullable|string|max:255',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
