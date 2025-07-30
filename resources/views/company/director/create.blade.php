@@ -54,26 +54,27 @@
                     @endphp
                     <div class="col-span-2 md:col-span-1">
                         <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
-                            {{ $label }} @if ($required)
+                            {{ $label }} @if ($required) {{empty($show) ? '' : 'disabled'}}
                                 <span class="text-red-500">*</span>
                             @endif
                         </label>
-                        @if ($type === 'select')
+                                         @if ($type === 'select')
                             <select name="{{ $name }}" id="{{ $id }}"
-                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                {{ empty($show) ? '' : 'disabled' }}>
+
                                 <option value="">-- Select {{ $label }} --</option>
 
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
                                     @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
-                                        <option value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                        <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
-                                @elseif(!empty($field['options']))
+                                @elseif (!empty($field['options']))
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
                                         <option value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $value == $optionValue ? 'selected' : '' }}{{ empty($show) ? '' : 'disabled' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
@@ -84,7 +85,7 @@
                                 @foreach ($field['options'] as $optionValue => $optionLabel)
                                     <label class="flex items-center space-x-2 gap-2">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'checked' : '' }}>
+                                            {{ $value == $optionValue ? 'checked' : '' }}{{empty($show) ? '' : 'disabled'}}>
                                         <span>{{ $optionLabel }}</span>
                                     </label>
                                 @endforeach
@@ -93,7 +94,7 @@
                             <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                 value="{{ $value }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter {{ strtolower($label) }}" />
+                                placeholder="Enter {{ strtolower($label) }}" {{empty($show) ? '' : 'disabled'}}/>
                         @endif
                         @error($name)
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
@@ -101,21 +102,17 @@
                     </div>
                 @endforeach
 
-                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+              <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     @if (empty($show))
-                        <button class="btn-primary" type="submit">
-                            {{ $method === 'PUT' ? 'Update' : 'Save' }} Director
-                        </button>
+                    <button class="btn-primary" type="submit">
+                        {{ $method === 'PUT' ? 'Update' : 'Save' }} director
+                    </button>
+                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+                        Reset
+                    </button>
                     @endif
-
-                    @if ($method !== 'PUT' && empty($show))
-                     <button class="btn-outline" type="reset"
+                    <button class="btn-outline" type="reset"
                         onclick="window.location.href='{{ route('director.index') }}'">Back</button>
-                        <button class="btn-outline" type="reset"
-                            onclick="document.getElementById('companyForm').reset();">
-                            Reset
-                        </button>
-                    @endif
                 </div>
             </form>
         </div>

@@ -1,25 +1,24 @@
 <?php
 
 return [
-
-    // Step 1: Basic Info
-    [
+// Step 1: Basic Info
+    'basic_info' => [
         [
-            'label'       => 'Branch',
-            'name'        => 'branch_id',
-            'id'          => 'branchDropdown',
-            'type'        => 'select',
-            'required'    => true,
-            'dynamic'     => true,
+            'label' => 'Branch',
+            'name' => 'branch_id',
+            'id' => 'branchDropdown',
+            'type' => 'select',
+            'required' => true,
+            'dynamic' => true,
             'options_key' => 'branches',
         ],
         [
-            'label'   => 'Enrollment Date',
-            'name'    => 'enrollment_date',
-            'id'      => 'date',
-            'type'    => 'text',
+            'label' => 'Enrollment Date',
+            'name' => 'enrollment_date',
+            'id' => 'date',
+            'type' => 'text',
             'default' => now()->format('D M d Y'),
-            'required'=> true,
+            'required' => true,
         ],
     ],
 
@@ -42,10 +41,10 @@ return [
     ],
 
     // Step 3: KYC Info
-    'kyc' => [
-        ['label'=>'Aadhaar No.','name'=>'aadhaar_no','id'=>'aadhaar_no','type'=>'text','required'=>false],
+    'KYC' => [
+        ['label'=>'Aadhaar No.','name'=>'aadhaar_no','id'=>'aadhaar_no','type'=>'text','required'=>true],
         ['label'=>'Voter ID No.','name'=>'voter_id_no','id'=>'voter_id_no','type'=>'text','required'=>false],
-        ['label'=>'PAN No.','name'=>'pan_no','id'=>'pan_no','type'=>'text','required'=>false],
+        ['label'=>'PAN.','name'=>'pan_no','id'=>'pan_no','type'=>'text','required'=>true],
         ['label'=>'Ration Card No.','name'=>'ration_card_no','id'=>'ration_card_no','type'=>'text','required'=>false],
         ['label'=>'Meter No.','name'=>'meter_no','id'=>'meter_no','type'=>'text','required'=>false],
         ['label'=>'CI No.','name'=>'ci_no','id'=>'ci_no','type'=>'text','required'=>false],
@@ -64,15 +63,14 @@ return [
         ['label'=>'Nominee Address','name'=>'nominee_address','id'=>'nominee_address','type'=>'text','required'=>false],
     ],
 
-    // Step 5: Additional Settings
-    'extra_settings' => [
+   'extra_settings' => [
         [
-            'label'     => 'SMS',
-            'name'      => 'sms',
-            'id'        => 'sms',
-            'type'      => 'checkbox',
-            'required'  => false,
-            'default'   => 0,
+            'label' => 'SMS',
+            'name' => 'extra_sms',
+            'id' => 'sms',
+            'type' => 'checkbox',
+            'required' => false,
+            'default' => 0,
         ],
     ],
 

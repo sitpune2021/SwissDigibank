@@ -3,9 +3,9 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <!-- <h2 class="h2">Manage Director</h2> -->
-        <h2 class="h2">Director</h2>
+        <h4 class="h2">Director</h4>
         <a class="btn-primary" href="{{ route('director.create') }}">
-            <i class="las la-plus-circle text-base md:text-lg"></i>
+            <i class=" md:text-lg"></i>
             Add
         </a>
     </div>
@@ -65,17 +65,12 @@
             <tr class="bg-secondary/5 dark:bg-bg3">
                 <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                     <div class="flex items-center gap-1">
-                        Sr No
-                    </div>
-                </th>
-                <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                    <div class="flex items-center gap-1">
                         Designation
                     </div>
                 </th>
                 <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                     <div class="flex items-center gap-1">
-                        Member No
+                        Member
                     </div>
                 </th>
                 <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -112,7 +107,6 @@
         <tbody>
             @foreach ($directors as $index => $director)
             <tr>
-                <td class="px-6 py-4">{{ $index + 1 }}</td> <!-- Sr No -->
                 <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
                 <td class="px-6 py-4">{{ $director->member->id ?? 'N/A' }}</td>
                 <td class="px-6 py-4">{{ $director->member->member_info_first_name ?? 'N/A' }}</td>

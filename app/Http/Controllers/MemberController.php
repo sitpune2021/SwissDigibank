@@ -15,9 +15,10 @@ class MemberController extends Controller
     
     public function index()
     {
-        $members = Member::all();
-        session()->forget('member_id');
+        $members = Member::latest()->get(); 
+         session()->forget('member_id');
         return view('members.member.index', compact('members'));
+
     }
 
     
@@ -47,7 +48,7 @@ class MemberController extends Controller
             'general_advisor_staff' => 'nullable|string',
             'general_group' => 'nullable|in:group1,group2',
             'general_branch' => 'required|string',
-            'general_enrollment_date' => 'required|date',
+            'general_enrollment_date' => 'nullable|date',
 
             // Member Info
             'member_info_title' => 'required|in:md,mr,ms,mrs',
@@ -189,7 +190,7 @@ class MemberController extends Controller
         $method='PUT';
         $minor = true;
         session(['member_id' => $id]);
-        return view('members.member.create', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
+        return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
     }
 
     
@@ -225,7 +226,7 @@ class MemberController extends Controller
         'general_advisor_staff' => 'nullable|string',
         'general_group' => 'nullable|in:group1,group2',
         'general_branch' => 'required|string',
-        'general_enrollment_date' => 'required|date',
+        'general_enrollment_date' => 'nullable|date',
         'member_info_title' => 'required|in:md,mr,ms,mrs',
         'member_info_gender' => 'required|in:male,female,other',
         'member_info_first_name' => 'required|string',

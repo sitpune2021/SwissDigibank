@@ -22,7 +22,7 @@ return [
     // ' ' => 
     // [
         [
-            'label' => 'Advisor/Staff',
+            'label' => 'Advisor/ Staff',
             'name' => 'general_advisor_staff',
             'id' => 'advisor_staff',
             'type' => 'text',
@@ -48,17 +48,19 @@ return [
                'dynamic' => true,
             'options_key' => 'branch',
         ],
-        [
-            'label' => 'Enrollment Date',
-            'name' => 'general_enrollment_date',
-            'id' => 'date',
-            'type' => 'text',
-            'required' => true,
-        ],
+       [
+    'label' => 'Enrollment Date',
+    'name' => 'general_enrollment_date',
+    'id' => 'date',
+    'type' => 'text',
+    'required' => true,
+    'default' => now()->format('D M d Y'), // <- This line
+],
+
     ],
 
     // Member Info
-    'members_info' => [
+    'member_info' => [
         [
             'label' => 'Title',
             'name' => 'member_info_title',
@@ -169,7 +171,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'Mobile No.',
+            'label' => 'Mobile No',
             'name' => 'member_info_mobile_no',
             'id' => 'mobile_no',
             'type' => 'text',
@@ -215,7 +217,7 @@ return [
     ],
 
     // Member Address
-    'Members_Correspondence_Address' => [
+    'Member_Correspondence_Address' => [
         [
             'label' => 'Address Line 1',
             'name' => 'member_address_line_1',
@@ -266,7 +268,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'City / District',
+            'label' => 'City/ District',
             'name' => 'member_address_city_district',
             'id' => 'city_district',
             'type' => 'text',
@@ -299,7 +301,7 @@ return [
     ],
 
     // Permanent Address
-    'members_permanent_address' => [
+    'member_permanent_address' => [
          [
             'label' => 'Address',
             'name' => 'member_address_address',
@@ -333,7 +335,7 @@ return [
     ],
 
     // GPS Location
-    'members_address_gps_location' => [
+    'member_address_gps_location' => [
         [
             'label' => 'Location Latitude',
             'name' => 'member_gps_location_latitude',
@@ -351,7 +353,7 @@ return [
     ],
 
     // KYC Info
-    'members_kyc' => [
+    'member_kyc' => [
         [
             'label' => 'Aadhaar No',
             'name' => 'member_kyc_aadhaar_no',
@@ -367,7 +369,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'Pan No',
+            'label' => 'PAN',
             'name' => 'member_kyc_pan_no',
             'id' => 'pan_no',
             'type' => 'text',
@@ -418,7 +420,7 @@ return [
     ],
 
     // KYC Documents
-    'members_kyc_documents' => [
+    'member_KYC_documents' => [
         [
             'label' => 'Photo',
             'name' => 'member_kyc_photo',
@@ -468,7 +470,7 @@ return [
             'accept' => 'image/*,.pdf',
         ],
         [
-            'label' => 'Pan Number',
+            'label' => 'PAN',
             'name' => 'member_kyc_pan_number',
             'id' => 'pan_number',
             'type' => 'file',
@@ -494,7 +496,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'Nominee Mobile No.',
+            'label' => 'Nominee Mobile No',
             'name' => 'nominee_mobile_no',
             'id' => 'nominee_mobile_no',
             'type' => 'text',
@@ -530,7 +532,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'Nominee Pan No.',
+            'label' => 'Nominee PAN',
             'name' => 'nominee_pan_no',
             'id' => 'nominee_pan_no',
             'type' => 'text',

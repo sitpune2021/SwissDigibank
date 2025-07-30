@@ -145,7 +145,7 @@
                             @elseif ($type === 'radio')
                                 <div class="flex gap-2">
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
-                                        <label class="flex items-center space-x-4 class=ml-2">
+                                        <label class="flex items-center space-x-4 class=ml-2 gap-1">
                                             <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
                                                 {{ $value == $optionValue ? 'checked' : '' }}
                                                 {{ isset($show) ? 'readonly' : '' }}>
