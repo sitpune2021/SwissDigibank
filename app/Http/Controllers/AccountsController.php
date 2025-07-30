@@ -225,9 +225,7 @@ class AccountsController extends Controller
 
         
         $decryptedId = base64_decode($id);
-        $account = Account::with(['minor','members','branch','address','users','transaction','nominee'])->findOrFail($decryptedId); // Only account data
-        
-
+        $account = Account::with(['minor','members','branch','address','users','transaction','nominee','scheme'])->findOrFail($decryptedId); // Only account data
 
         return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId'));
     }
