@@ -65,7 +65,7 @@ class MemberController extends Controller
             'member_info_mother_name' => 'nullable|string',
             'member_info_spouse_name' => 'nullable|string',
             'member_info_spouse_dob' => 'nullable|date',
-            'member_info_mobile_no' => 'required|string',
+            'member_info_mobile_no' => 'required|string|max:10',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
             'member_info_religion' => 'nullable|string',
@@ -97,7 +97,7 @@ class MemberController extends Controller
             // KYC Info
             'member_kyc_aadhaar_no' => 'required|string',
             'member_kyc_voter_id_no' => 'nullable|string',
-            'member_kyc_pan_no' => 'nullable|string',
+            'member_kyc_pan_no' => 'required|string',
             'member_kyc_ration_card_no' => 'nullable|string',
             'member_kyc_meter_no' => 'nullable|string',
             'member_kyc_ci_no' => 'nullable|string',
@@ -122,9 +122,9 @@ class MemberController extends Controller
             'nominee_dob' => 'nullable|date',
             'nominee_aadhaar_no' => 'nullable|string',
             'nominee_voter_id_no' => 'nullable|string',
-            'nominee_pan_no' => 'nullable|string',
+            'nominee_pan_no' => 'required|string',
             'nominee_ration_card_no' => 'nullable|string',
-            'nominee_address' => 'nullable|string',
+            'nominee_address' => 'required|string',
 
             // Extra Settings
             'extra_sms' => 'nullable|boolean',
@@ -241,7 +241,7 @@ class MemberController extends Controller
         'member_info_mother_name' => 'nullable|string',
         'member_info_spouse_name' => 'nullable|string',
         'member_info_spouse_dob' => 'nullable|date',
-        'member_info_mobile_no' => 'required|string',
+        'member_info_mobile_no' => 'required|string|max:10',
         'member_info_collection_time' => 'nullable|string',
         'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         'member_info_religion' => 'nullable|string',
