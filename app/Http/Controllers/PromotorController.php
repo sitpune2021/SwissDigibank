@@ -197,7 +197,8 @@ class PromotorController extends Controller
             'religions' => Religion::pluck('name', 'id'),
         ];
         $show = true;
-        return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'show'));
+        $method = "";
+        return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'show', 'method'));
     }
     
     public function edit($id)

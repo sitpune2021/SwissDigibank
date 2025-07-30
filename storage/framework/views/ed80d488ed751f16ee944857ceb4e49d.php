@@ -1,1 +1,0 @@
-<?php /**PATH C:\xampp\htdocs\swiss_bank\resources\views\share-certificates\edit.blade.php ENDPATH**/ ?>

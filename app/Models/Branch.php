@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\State;
+use App\Models\Member;
 
 class Branch extends Model
 {
@@ -34,5 +35,12 @@ class Branch extends Model
     {
         return $this->belongsTo(State::class, 'state');
     }
+
+    public function Member()
+    {
+        return $this->hasMany(Member::class, 'general_branch');
+    }
+
+
     
 }

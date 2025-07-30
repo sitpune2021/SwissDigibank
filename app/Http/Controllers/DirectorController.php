@@ -51,21 +51,12 @@ class DirectorController extends Controller
             'authorized_signatory' => 'required|in:Yes,No',
         ]);
 
-        // Handle file upload for signature
         if ($request->hasFile('signature')) {
             $data['signature'] = $request->file('signature')->store('signatures', 'public');
         }
-        if ($request->filled('appointment_date')) {
-            $data['appointment_date'] = date('Y-m-d', strtotime($request->input('appointment_date')));
-        }
-        if ($request->filled('resignation_date')) {
-            $data['resignation_date'] = date('Y-m-d', strtotime($request->input('resignation_date')));
-        }
 
-        // Create the Director record
         Director::create($data);
 
-        // Redirect with success message
         return redirect()->route('director.index')->with('success', 'Director created successfully.');
     }
 
