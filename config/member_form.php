@@ -570,8 +570,8 @@ return [
         [
             'label' => 'Transaction Date',
             'name' => 'charges_transaction_date',
-            'id' => 'transaction_date',
-            'type' => 'date5',
+            'id' => 'date5',
+            'type' => 'string',
             'required' => true,
         ],
         [

@@ -36,7 +36,7 @@ return [
         'label' => 'Share Nominal Value',
         'required' => false,
         'type' => 'text',
-        'name' => 'share_nominal',
+        'name' => 'nominal_value',
         'id' => 'share_nominal',
         'readonly' => true,
         'default' => '10.0',

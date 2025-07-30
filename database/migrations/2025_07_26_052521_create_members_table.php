@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             
                 $table->string('membership_type');
-                $table->string('general_advisor_staff');
+                $table->string('general_advisor_staff')->nullable();
                 $table->string('general_group')->nullable();
                 $table->unsignedBigInteger('general_branch');
                 $table->string('general_enrollment_date');
@@ -33,7 +33,7 @@ return new class extends Migration
                 $table->string('member_info_father_name')->nullable();
                 $table->string('member_info_mother_name')->nullable();
                 $table->string('member_info_spouse_name')->nullable();
-                $table->string('member_info_spouse_dob');
+                $table->string('member_info_spouse_dob')->nullable();
                 $table->string('member_info_mobile_no');
                 $table->string('member_info_collection_time')->nullable();
                 $table->string('member_info_marital_status')->nullable();
