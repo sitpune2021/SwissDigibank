@@ -24,4 +24,9 @@ class Transaction extends Model
         'approve_status',
         'comment',
     ];
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'id');
+    }
 }

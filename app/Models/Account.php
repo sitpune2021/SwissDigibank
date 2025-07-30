@@ -62,10 +62,10 @@ class Account extends Model
     }
     public function nominee()
     {
-        return $this->belongsTo(AccountNominee::class, 'id');
+        return $this->hasmany(AccountNominee::class, 'account_id');
     }
      public function transaction()
     {
-        return $this->belongsTo(transaction::class, 'id');
+        return $this->hasmany(transaction::class);
     }
 }
