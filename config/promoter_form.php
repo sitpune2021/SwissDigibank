@@ -2,7 +2,7 @@
 
 return [
 // Step 1: Basic Info
-    'basic_info' => [
+    '' => [
         [
             'label' => 'Branch',
             'name' => 'branch_id',

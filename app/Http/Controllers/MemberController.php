@@ -177,12 +177,12 @@ class MemberController extends Controller
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
-        $memberModel = Member::with('address', 'kyc')->findOrFail($id);
-        $member = array_merge(
-            $memberModel->toArray(),
-            $memberModel->address?->toArray() ?? [],
-            $memberModel->kyc?->toArray() ?? []
-        );
+        $member = Member::with('address', 'kyc')->findOrFail($id);
+        // $member = array_merge(
+        //     $memberModel->toArray(),
+        //     $memberModel->address?->toArray() ?? [],
+        //     $memberModel->kyc?->toArray() ?? []
+        // );
 
         $sections = config('member_form');
         $show = true;

@@ -1,14 +1,14 @@
-
 @include('layout.header')
-<!-- Navigation -->
+@stack('style')
 <section class="topbar-container z-30">
     @include('layout.nav')
-    @include('layout.sidebar' )
+    @include('layout.sidebar')
 </section>
-
-<!-- Main Content -->
 <main class="main-content has-sidebar">
-    @yield('content')
+    <div class="main-inner">
+        @include('layout.breadcrub')
+        @yield('content')
+    </div>
 </main>
-
+@stack('script')
 @include('layout.footer')
