@@ -52,28 +52,28 @@ Route::middleware('auth.user')->group(function () {
     });
 
     Route::group(['prefix' => 'user'], function () {
-            Route::resource('roles', RoleController::class);
-            Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('users', UserController::class);
     });
 
     Route::group(['prefix' => 'members'], function () {
-            Route::resource('member', MemberController::class);
-            Route::resource('minor', MinorController::class);
-            // Route::resource('shares-holdings', ShareHoldingsController::class);
-            Route::resource('share-certificates', controller: ShareCertificateController::class);
-            Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
-            Route::resource('form15g15h', Form15Gor15HController::class);
+        Route::resource('member', MemberController::class);
+        Route::resource('minor', MinorController::class);
+        // Route::resource('shares-holdings', ShareHoldingsController::class);
+        Route::resource('share-certificates', controller: ShareCertificateController::class);
+        Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+        Route::resource('form15g15h', Form15Gor15HController::class);
     });
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
-            Route::resource('schemes', SchemesController::class);
-                Route::resource('accounts', AccountsController::class);
+        Route::resource('schemes', SchemesController::class);
+        Route::resource('accounts', AccountsController::class);
+        Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {
-            Route::resource('employee', HRController::class);
+        Route::resource('employee', HRController::class);
     });
-
 });
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
