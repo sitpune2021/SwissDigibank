@@ -26,15 +26,8 @@
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-            <h3 class="h3">Share Holdings</h3>
-            <a class="btn btn-warning btn-sm" title="UN-ALLOTTED SHARE LIST" onclick="block_ui()"
-                href="{{ route('shares-holdings.create') }}">
-                UN ALLOTTED / DUPLICATE SHARE LIST
-            </a>
-            <a class="btn btn-warning btn-sm" title="UN-ALLOTTED SHARE LIST" onclick="block_ui()"
-                href="/share-holdings/unallotted">
-                UN ALLOTTED / DUPLICATE SHARE LIST
-            </a>
+            <h4 class="h3">Share Holdings</h4>
+
             <a class="btn-primary" href="{{ route('shares-holdings.create') }}">
                 <i class=" text-base md:text-lg"></i>
                 Add
@@ -95,12 +88,66 @@
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">Surrendered</div>
                         </th>
-
         </div>
         </th>
         <th class="text-center !py-5" data-sortable="false">Action</th>
         </tr>
         </thead>
+        <tbody>
+            @foreach ($sharesholdings as $index => $item)
+                <tr class="border-b dark:border-bg3 text-center">
+                    <td class="py-3 px-6 text-left">{{ $item->general_group }}</td>
+
+                    <td class="py-3 px-6 text-left">
+                            {{ $item->member->member_info_old_member_no ?? '' }}
+                        
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ $item->share_range ?? '-' }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ $item->total_shares_held ?? 0 }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ number_format($item->nominal_value ?? 0, 2) }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ number_format($item->total_share_value ?? 0, 2) }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ $item->allotment_date ? \Carbon\Carbon::parse($item->allotment_date)->format('d M Y') : '-' }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ $item->transfer_date ? \Carbon\Carbon::parse($item->transfer_date)->format('d M Y') : '-' }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ $item->certificate_no ?? '-' }}
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ $item->surrendered ? 'Yes' : 'No' }}
+                    </td>
+
+                    <td class="py-2 px-6">
+                        <div class="flex justify-center">
+                            @include('partials._vertical-options', [
+                                'id' => $item->id,
+                                'viewRoute' => 'shares-holdings.show',
+                                'editRoute' => 'shares-holdings.edit',
+                            ])
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+
         </table>
     </div>
     </div>

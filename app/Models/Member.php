@@ -51,6 +51,12 @@ class Member extends Model
     {
         return $this->hasMany(Minor::class, 'member_id', 'id');
     }
+       public function Shareholder()
+    {
+        return $this->hasMany(Shareholder::class,'member_id');
+
+    }
+    
 
     public function accounts()
     {
