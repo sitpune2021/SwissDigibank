@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\AccountTransactionController;
+use App\Http\Controllers\ApproveController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
@@ -11,17 +13,19 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\DepositController;
 use App\Http\Controllers\PromotorController;
 use App\Http\Controllers\ShareHoldingController;
 use App\Http\Controllers\DirectorController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MinorController;
 // use App\Http\Controllers\ShareHoldingsController;
-use App\Http\Controllers\ShareCertificateController;
-use App\Http\Controllers\ShareTrasferHistoryController;
+// use App\Http\Controllers\ShareCertificateController;
+// use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
+use App\Http\Controllers\WithdrawController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -51,29 +55,52 @@ Route::middleware('auth.user')->group(function () {
     });
 
     Route::group(['prefix' => 'user'], function () {
-            Route::resource('roles', RoleController::class);
-            Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('users', UserController::class);
     });
 
     Route::group(['prefix' => 'members'], function () {
             Route::resource('member', MemberController::class);
             Route::resource('minor', MinorController::class);
-            Route::resource('shares-holdings', ShareHoldingsController::class);
-            Route::resource('share-certificates', controller: ShareCertificateController::class);
-            Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+            // Route::resource('shares-holdings', ShareHoldingsController::class);
+            // Route::resource('share-certificates', controller: ShareCertificateController::class);
+            // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
             Route::resource('form15g15h', Form15Gor15HController::class);
     });
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
-            Route::resource('schemes', SchemesController::class);
-                Route::resource('accounts', AccountsController::class);
+        Route::resource('schemes', SchemesController::class);
+        Route::resource('accounts', AccountsController::class);
 
+        Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
+        Route::resource('transaction', AccountTransactionController::class);
+        Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
+        Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
+    });
+
+    Route::group(['prefix' => 'deposits'], function () {
+        Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
+        Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
+    });
+    Route::group(['prefix' => 'withdraws'], function () {
+        Route::get('/withdraw-create', [WithdrawController::class, 'create'])->name('withdraw.create');
+    });
+
+    Route::group(['prefix' => 'approvals'], function () {
+        Route::resource('pending-transaction', ApproveController::class);
+
+        Route::get('share-transfer-approval/approve-transfer', [ApproveController::class, 'approveTransfer'])->name('share-transfer-approval.approve_transfer');
+        Route::post('/share-transfer/approve', [ApproveController::class, 'approveShareTransfer'])->name('share_transfer.approve');
+
+        Route::get('/reverse-transaction/approve', [ApproveController::class, 'approveReverseTransaction'])->name('reverse-transaction.reverse_transaction');
+        Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
+        Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
+        Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {
-            Route::resource('employee', HRController::class);
+        Route::resource('employee', HRController::class);
     });
-
 });
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
