@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\AccountTransactionController;
 use App\Http\Controllers\AuthenticationController;
@@ -18,13 +17,12 @@ use App\Http\Controllers\ShareHoldingController;
 use App\Http\Controllers\DirectorController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MinorController;
-use App\Http\Controllers\ShareHoldingsController;
+// use App\Http\Controllers\ShareHoldingsController;
 use App\Http\Controllers\ShareCertificateController;
 use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
-
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -62,16 +60,14 @@ Route::middleware('auth.user')->group(function () {
             Route::resource('member', MemberController::class);
             Route::resource('minor', MinorController::class);
             // Route::resource('shares-holdings', ShareHoldingsController::class);
-            // Route::resource('share-certificates', controller: ShareCertificateController::class);
-            // Route::resource('share-transfer-histories', ShareTrasferHistoryController::class);
-            // Route::resource('form-15g-15h', Form15Gor15HController::class);
+            Route::resource('share-certificates', controller: ShareCertificateController::class);
+            Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+            Route::resource('form15g15h', Form15Gor15HController::class);
     });
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
             Route::resource('schemes', SchemesController::class);
                 Route::resource('accounts', AccountsController::class);
-                Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
-                Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {

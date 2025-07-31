@@ -32,7 +32,7 @@
                         $value = old(
                             $name,
                             $shareholding?->$name instanceof \Carbon\Carbon
-                                ? $shareholding?->$name->format('D d m Y')
+                                ? $shareholding?->$name->format('D M d Y')
                                 : $shareholding?->$name ?? ($field['default'] ?? ''),
                         );
                     }

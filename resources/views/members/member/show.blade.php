@@ -262,7 +262,7 @@
                 </tbody>
             </table>
         </div>
-
+        
         <!-- Right Panel -->
         <div class="col-span-12 lg:col-span-6 box overflow-x-hidden">
         </div>

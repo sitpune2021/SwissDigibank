@@ -45,8 +45,8 @@ class DirectorController extends Controller
             'member_id' => 'nullable|string|max:255',
             'director_name' => 'required|string|max:255',
             'din_no' => 'required|string|max:50',
-            'appointment_date' => 'required|date',
-            'resignation_date' => 'nullable|date|after_or_equal:appointment_date',
+            'appointment_date' => 'required',
+            'resignation_date' => 'nullable|after_or_equal:appointment_date',
             'signature' => 'nullable',  // add file validation
             'authorized_signatory' => 'required|in:Yes,No',
         ]);
@@ -108,29 +108,16 @@ class DirectorController extends Controller
             'member_id' => 'nullable|string|max:255',
             'director_name' => 'required|string|max:255',
             'din_no' => 'required|string|max:8',
-            'appointment_date' => 'required|date',
-            'resignation_date' => 'nullable|date|after_or_equal:appointment_date',
+            'appointment_date' => 'required',
+            'resignation_date' => 'nullable|after_or_equal:appointment_date',
             'signature' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',  // file validation with allowed types and max size
             'authorized_signatory' => 'required|in:Yes,No',
         ]);
 
-        // Handle file upload for signature if provided
         if ($request->hasFile('signature')) {
-            // Optionally delete old signature file here if needed
-            // Storage::disk('public')->delete($director->signature);
-
             $data['signature'] = $request->file('signature')->store('signatures', 'public');
         } else {
-            // Keep the existing signature path if no new file is uploaded
             $data['signature'] = $director->signature;
-        }
-
-        // Format dates
-        if ($request->filled('appointment_date')) {
-            $data['appointment_date'] = date('Y-m-d', strtotime($request->input('appointment_date')));
-        }
-        if ($request->filled('resignation_date')) {
-            $data['resignation_date'] = date('Y-m-d', strtotime($request->input('resignation_date')));
         }
 
         $director->update($data);

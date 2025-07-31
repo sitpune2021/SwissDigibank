@@ -40,6 +40,10 @@ class Company extends Model
         'paid_up_capital',
     ];
 
+    protected $casts = [
+        'incorporation_date' => 'date',
+    ];
+
     public function State()
     {
         return $this->belongsTo(State::class, 'state');

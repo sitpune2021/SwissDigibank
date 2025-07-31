@@ -48,7 +48,7 @@ class MemberController extends Controller
             'general_advisor_staff' => 'nullable|string',
             'general_group' => 'nullable|in:group1,group2',
             'general_branch' => 'required|string',
-            'general_enrollment_date' => 'nullable|date',
+            'general_enrollment_date' => 'nullable',
 
             // Member Info
             'member_info_title' => 'required|in:md,mr,ms,mrs',
@@ -56,7 +56,7 @@ class MemberController extends Controller
             'member_info_first_name' => 'required|string',
             'member_info_middle_name' => 'nullable|string',
             'member_info_last_name' => 'required|string',
-            'member_info_dob' => 'required|date',
+            'member_info_dob' => 'required',
             'member_info_qualification' => 'nullable|string',
             'member_info_occupation' => 'nullable|string',
             'member_info_monthly_income' => 'nullable|numeric',
@@ -64,7 +64,7 @@ class MemberController extends Controller
             'member_info_father_name' => 'nullable|string',
             'member_info_mother_name' => 'nullable|string',
             'member_info_spouse_name' => 'nullable|string',
-            'member_info_spouse_dob' => 'nullable|date',
+            'member_info_spouse_dob' => 'nullable',
             'member_info_mobile_no' => 'required|string',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -119,7 +119,7 @@ class MemberController extends Controller
             'nominee_relation' => 'nullable|string',
             'nominee_mobile_no' => 'nullable|string',
             'nominee_gender' => 'nullable|in:Male,Female,Other',
-            'nominee_dob' => 'nullable|date',
+            'nominee_dob' => 'nullable',
             'nominee_aadhaar_no' => 'nullable|string',
             'nominee_voter_id_no' => 'nullable|string',
             'nominee_pan_no' => 'nullable|string',
@@ -130,7 +130,7 @@ class MemberController extends Controller
             'extra_sms' => 'nullable|boolean',
 
             // Membership Charges
-            'charges_transaction_date' => 'required|date',
+            'charges_transaction_date' => 'required',
             'charges_membership_fee' => 'nullable|numeric',
             'charges_net_fee' => 'required|numeric',
             'charges_remarks' => 'nullable|string',
@@ -140,28 +140,6 @@ class MemberController extends Controller
         $memberData = $request->only((new Member)->getFillable());
         $addressData = $request->only((new Address)->getFillable());
         $kycData = $request->only((new KycAndNominee)->getFillable());
-
-
-        if ($request->filled('general_enrollment_date')) {
-            $kycData['general_enrollment_date'] = date('Y-m-d', strtotime($request->input('general_enrollment_date')));
-        }
-
-        if ($request->filled('member_info_dob')) {
-            $kycData['member_info_dob'] = date('Y-m-d', strtotime($request->input('member_info_dob')));
-        }
-
-        if ($request->filled('member_info_spouse_dob')) {
-            $kycData['member_info_spouse_dob'] = date('Y-m-d', strtotime($request->input('member_info_spouse_dob')));
-        }
-
-        if ($request->filled('nominee_dob')) {
-            $kycData['nominee_dob'] = date('Y-m-d', strtotime($request->input('nominee_dob')));
-        }
-
-        if ($request->filled('charges_transaction_date')) {
-            $kycData['charges_transaction_date'] = date('Y-m-d', strtotime($request->input('charges_transaction_date')));
-        }
-
 
         $member = Member::create($memberData);
         $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
@@ -226,13 +204,13 @@ class MemberController extends Controller
         'general_advisor_staff' => 'nullable|string',
         'general_group' => 'nullable|in:group1,group2',
         'general_branch' => 'required|string',
-        'general_enrollment_date' => 'nullable|date',
+        'general_enrollment_date' => 'nullable',
         'member_info_title' => 'required|in:md,mr,ms,mrs',
         'member_info_gender' => 'required|in:male,female,other',
         'member_info_first_name' => 'required|string',
         'member_info_middle_name' => 'nullable|string',
         'member_info_last_name' => 'required|string',
-        'member_info_dob' => 'required|date',
+        'member_info_dob' => 'required',
         'member_info_qualification' => 'nullable|string',
         'member_info_occupation' => 'nullable|string',
         'member_info_monthly_income' => 'nullable|numeric',
@@ -240,7 +218,7 @@ class MemberController extends Controller
         'member_info_father_name' => 'nullable|string',
         'member_info_mother_name' => 'nullable|string',
         'member_info_spouse_name' => 'nullable|string',
-        'member_info_spouse_dob' => 'nullable|date',
+        'member_info_spouse_dob' => 'nullable',
         'member_info_mobile_no' => 'required|string',
         'member_info_collection_time' => 'nullable|string',
         'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -283,14 +261,14 @@ class MemberController extends Controller
         'nominee_relation' => 'nullable|string',
         'nominee_mobile_no' => 'nullable|string',
         'nominee_gender' => 'nullable|in:Male,Female,Other',
-        'nominee_dob' => 'nullable|date',
+        'nominee_dob' => 'nullable',
         'nominee_aadhaar_no' => 'nullable|string',
         'nominee_voter_id_no' => 'nullable|string',
         'nominee_pan_no' => 'nullable|string',
         'nominee_ration_card_no' => 'nullable|string',
         'nominee_address' => 'nullable|string',
         'extra_sms' => 'nullable|boolean',
-        'charges_transaction_date' => 'required|date',
+        'charges_transaction_date' => 'required',
         'charges_membership_fee' => 'nullable|numeric',
         'charges_net_fee' => 'required|numeric',
         'charges_remarks' => 'nullable|string',
@@ -301,22 +279,6 @@ class MemberController extends Controller
     $memberData = $request->only((new Member)->getFillable());
     $addressData = $request->only((new Address)->getFillable());
     $kycData = $request->only((new KycAndNominee)->getFillable());
-
-    if ($request->filled('general_enrollment_date')) {
-        $kycData['general_enrollment_date'] = date('Y-m-d', strtotime($request->input('general_enrollment_date')));
-    }
-    if ($request->filled('member_info_dob')) {
-        $kycData['member_info_dob'] = date('Y-m-d', strtotime($request->input('member_info_dob')));
-    }
-    if ($request->filled('member_info_spouse_dob')) {
-        $kycData['member_info_spouse_dob'] = date('Y-m-d', strtotime($request->input('member_info_spouse_dob')));
-    }
-    if ($request->filled('nominee_dob')) {
-        $kycData['nominee_dob'] = date('Y-m-d', strtotime($request->input('nominee_dob')));
-    }
-    if ($request->filled('charges_transaction_date')) {
-        $kycData['charges_transaction_date'] = date('Y-m-d', strtotime($request->input('charges_transaction_date')));
-    }
 
     $member->update($memberData);
     $member->address()->update($addressData);

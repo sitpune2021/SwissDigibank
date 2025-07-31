@@ -76,10 +76,10 @@
     isset($member)
     ? (!empty($show)
     ? 'View ' .
-    $member->first_name .
+    $member['member_info_first_name'] .
     '
     Members'
-    : 'Edit ' . $member->first_name . ' Members')
+    : 'Edit ' . $member['member_info_first_name'] . ' Members')
     : 'Add Members')
 
 @section('content')
@@ -108,6 +108,22 @@
                         $id = $field['id'] ?? $field['name'];
                         $required = $field['required'] ?? false;
                         $value = old($name, $member[$name] ?? ($field['default'] ?? ''));
+
+                        if (
+                            $name === 'general_enrollment_date' ||
+                            $name === 'member_info_dob' ||
+                            $name === 'member_info_spouse_dob' ||
+                            $name === 'nominee_dob' ||
+                            $name === 'charges_transaction_date'
+                        ) {
+                            $value = old(
+                                $name,
+                                isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
+                                    ? $member[$name]->format('D M d Y')
+                                    : $member[$name] ?? ($field['default'] ?? ''),
+                            );
+                        }
+
                     @endphp
                     <div class="col-span-4 md:col-span-1">
                         @include('fields.label', [

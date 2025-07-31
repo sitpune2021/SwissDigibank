@@ -66,6 +66,6 @@ class Account extends Model
     }
      public function transaction()
     {
-        return $this->hasmany(transaction::class);
+        return $this->hasmany(Transaction::class);
     }
 }

@@ -118,7 +118,7 @@
             {{-- Member Name --}}
           <td class="text-start py-5 px-6">
                 @if ($Account->members)
-                    <a href="{{ url('member/' . $Account->members->id . '/edit') }}" class="text-primary hover:underline">
+                    <a href="{{ route('member.show', $Account->members->id) }}" class="text-primary hover:underline">
                         {{ "Member ".$Account->members->id ." - ". $Account->members->member_info_first_name . ' ' . $Account->members->member_info_last_name }}
                     </a>
                 @else
