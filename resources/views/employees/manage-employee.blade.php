@@ -77,7 +77,7 @@
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => base64_encode($employee->id),
-                                'viewRoute' => 'employee.view',
+                                'viewRoute' => 'employee.show',
                                 'editRoute' => 'employee.edit'
                                 ])
 
@@ -85,7 +85,7 @@
                         </td>
                         <!-- <td class="py-5 px-6">
                             <div class="flex justify-center gap-2">
-                                <a href="{{ route('employee.view', $employee->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
+                                <a href="{{ route('employee.show', $employee->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
                                 <a href="{{ route('employee.edit', $employee->id) }}" class="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-full transition duration-150"><i class="las la-edit"></i></a>
                               
                             </div>

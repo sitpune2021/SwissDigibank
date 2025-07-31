@@ -22,12 +22,9 @@ class UserController extends Controller
     }
     public function create()
     {
-        // Fetch employees - only id as both value and label (as you requested)
-        $employees = DB::table('employees')
-            ->select('id', 'name')
-            ->get();
+        $employees =Employee::all() ;
 
-        // Fetch all branches
+      
         $branches = DB::table('branches')
             ->select('id', 'branch_name')  // assuming branches table has 'name' column
             ->get();
@@ -44,12 +41,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'employee'           => 'required|integer',
-            'designation'        => 'required|string|max:100',
+            'employee'           => 'nullable|integer',
+            'designation'        => 'nullable|string|max:100',
             'user_name'          => 'required|string|max:255|unique:users,username',
             'first_name'         => 'required|string|max:255',
             'last_name'          => 'nullable|string|max:255',
-            'email'              => 'nullable|email|max:255|unique:users,email',
+            'email'              => 'required|email|max:255|unique:users,email',
             'mobile_no'          => 'required|string|max:255|unique:users,mobile',
             'back_date'          => 'required|integer|min:0',
             'permission_role'    => 'required|integer|exists:roles,id',
@@ -105,7 +102,7 @@ class UserController extends Controller
     {
         $decryptedId = base64_decode($id);
         $user = User::with('employees', 'branches', 'roles')->findOrFail($decryptedId);
-        $route = route('user.update', $decryptedId);
+        $route = route('users.update', $decryptedId);
         $employees = Employee::all();
         $branches = Branch::all();
         $roles = DB::table('roles')->select('id', 'name')->get();
@@ -123,12 +120,12 @@ class UserController extends Controller
         $user = User::findOrFail($decryptedId);
 
         $validated = $request->validate([
-            'employee'           => 'required|integer',
-            'designation'        => 'required|string|max:100',
-            'user_name'          => 'required|string|max:255|unique:users,username,' . $user->id,
+            'employee'           => 'nullable|integer',
+            'designation'        => 'nullable|string|max:100',
+            'user_name'          => 'required|string|max:255,' . $user->id,
             'first_name'         => 'required|string|max:255',
             'last_name'          => 'nullable|string|max:255',
-            'email'              => 'nullable|email|max:255|unique:users,email,' . $user->id,
+            'email'              => 'required|email|max:255|unique:users,email,' . $user->id,
             'mobile_no'          => 'required|string|max:255|unique:users,mobile,' . $user->id,
             'back_date'          => 'required|integer|min:0',
             'permission_role'    => 'required|integer|exists:roles,id',
