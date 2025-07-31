@@ -263,18 +263,16 @@ class PromotorController extends Controller
 
             $promotor = Promotor::findOrFail($id);
 
-            $enrollment_date = Carbon::createFromFormat('D d m Y', $validated['enrollment_date'])->format('Y-m-d');
-            $date_of_birth = Carbon::createFromFormat('D d m Y', $validated['date_of_birth'])->format('Y-m-d');
             // Update promotor
             $promotor->update([
-                'enrollment_date' => $enrollment_date,
+                'enrollment_date' => $validated['enrollment_date'],
                 'title' => $validated['title'],
                 'gender' => $validated['gender'],
                 'first_name' => $validated['first_name'],
                 'middle_name' => $validated['middle_name'] ?? null,
                 'last_name' => $validated['last_name'],
                 'branch_id' => $validated['branch_id'],
-                'date_of_birth' => $date_of_birth,
+                'date_of_birth' => $validated['date_of_birth'],
                 'occupation' => $validated['occupation'],
                 'father_name' => $validated['father_name'],
                 'mother_name' => $validated['mother_name'],
