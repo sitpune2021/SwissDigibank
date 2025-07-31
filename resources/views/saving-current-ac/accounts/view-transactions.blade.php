@@ -51,21 +51,23 @@
                         <td class="text-start py-5 px-6">{{ $Transaction->accounts->transaction_date ?? '-' }}</td>
 
                         {{-- payment_mode --}}
-                        <td class="text-start py-5 px-6">{{ $Transaction->accounts->payment_mode ?? '-' }}</td>
+                        <td class="text-start py-5 px-6">{{ $Transaction->payment_mode ?? '-' }}</td>
 
                         {{-- Remarks --}}
-                        <td class="text-start py-5 px-6">-</td>
+                        <td class="text-start py-5 px-6">{{ $Transaction->reverse_status == 1 ? ($Transaction->comment ?? '-') : '' }}</td>
 
                         {{-- Status --}}
                         <td class="text-start py-5 px-6">
-                            Approved
+                            {{ $Transaction->approve_status ?? '-' }}
                         </td>
 
                         {{--Debit--}}
-                        <td class="text-start py-5 px-6">-</td>
+                        <td class="text-start py-5 px-6">
+                            {{ $Transaction->transaction_type == 'debit' ? $Transaction->amount : '-' }}
+                        </td>
 
                         {{-- Credit --}}
-                        <td class="text-start py-5 px-6">{{ $Transaction->account->amount_deposit ?? '-' }}</td>
+                        <td class="text-start py-5 px-6">{{ $Transaction->transaction_type == 'credit' ? $Transaction->amount : '-' }}</td>
 
                         {{-- Balance --}}
                         <td class="text-start py-5 px-6">-</td>

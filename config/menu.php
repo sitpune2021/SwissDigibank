@@ -28,7 +28,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'Permissions / Roles', 'route' => 'roles.index'],
-            // ['title' => 'Users', 'route' => 'users.index'],
+            ['title' => 'Users', 'route' => 'users.index'],
         ],
     ],
     [
@@ -63,20 +63,20 @@ return [
         'submenu' => [
             ['title' => 'Pending Transactions', 'route' => 'pending-transaction.index'],
             ['title' => 'Share Transfer/ Allocation', 'route' => 'share-transfer-approval.approve_transfer'],
-            // ['title' => 'Reversed Transactions', 'route' => 'reverse-transaction.index'],
+            ['title' => 'Reversed Transactions', 'route' => 'reverse-transaction.reverse_transaction'],
 
             // ['title' => 'Share Surrender', 'route' => 'share-surrender.index'],
         ]
     ],
-    // [
-    //     'title' => 'HR Management',
-    //     'icon' => 'las la-user',
-    //     'position' => '6',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         ['title' => 'Employees', 'route' => 'employee.index'],
-    //     ],
-    // ],
+    [
+        'title' => 'HR Management',
+        'icon' => 'las la-user',
+        'position' => '6',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Employees', 'route' => 'employee.index'],
+        ],
+    ],
 
 
 

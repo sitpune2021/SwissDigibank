@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ShareTransfer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ApproveController extends Controller
 {
@@ -113,13 +115,70 @@ class ApproveController extends Controller
         return redirect()->back()->with('success', 'Share transfer updated successfully.');
     }
     /**
-     * Store a newly created resource in storage.
+     * Reverse Transaction. - view form called
      */
-    public function store(Request $request)
+    public function reverseTransactionView(Request $request, $id)
     {
-        //
+        $decodedId = base64_decode($id);
+        $transaction = Transaction::findOrFail($decodedId);
+        return view('saving-current-ac.accounts.reverse-transaction', compact('transaction', 'id'));
     }
 
+    public function reverseTransactionApprove(Request $request, $id)
+    {
+        $decodedId = base64_decode($id);
+
+        $validator = Validator::make($request->all(), [
+            'reverse_amount' => 'required|numeric|min:0|max:1000',
+            'remarks'        => 'nullable|string|max:255',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $originalTransaction = Transaction::findOrFail($decodedId);
+
+        $newTransaction = new Transaction();
+        $newTransaction->account_id    = $originalTransaction->account_id;
+        $newTransaction->amount        = $request->input('reverse_amount');
+        $newTransaction->transaction_type = 'debit';
+        $newTransaction->approve_status        = 'pending';
+        $newTransaction->remarks       = $request->input('remarks');
+        // $newTransaction->account_id = $originalTransaction->id;
+        $newTransaction->comment = "Reverse Transaction";
+        $newTransaction->reverse_status = 0;
+        // $newTransaction->account_id    = Auth::id();
+        $newTransaction->save();
+
+        return redirect()->route('transaction.show', base64_encode($originalTransaction->id))
+            ->with('success', 'Please approve reversed transaction.');
+    }
+
+    public function approveReverseTransaction()
+    {
+        $transactions = Transaction::with('accounts.members', 'accounts.branches')->where('approve_status', 'pending')
+            ->where('reverse_status', 0)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('approvals.reverse_transaction', compact('transactions'));
+    }
+    public function approveTransaction($encodedId, Request $request)
+    {
+        $id = base64_decode($encodedId);
+        $transaction = Transaction::findOrFail($id);
+
+        if ($transaction->approve_status !== 'pending' || $transaction->reverse_status != 0) {
+            return redirect()->back()->with('error', 'Invalid transaction status.');
+        }
+        $transaction->transaction_type = 'credit';
+        $transaction->approve_status = $request->input('transaction_status');
+        $transaction->reverse_status = 1;
+        $transaction->save();
+
+        return redirect()->route('reverse-transaction.reverse_transaction')->with('success', 'Transaction approved successfully.');
+    }
     /**
      * Display the specified resource.
      */

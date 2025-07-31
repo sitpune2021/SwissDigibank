@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // ✅ Add this line
+            $table->integer('emp_id')->default(0); // int(11), default 0
+            $table->string('designation', 100)->nullable(); // varchar(100), nullable
+            $table->string('username', 255)->nullable(); // varchar(255), nullable
+            $table->string('name')->nullable(); // ✅ Add this line
             $table->string('fname')->nullable();
             $table->string('lname')->nullable();
             $table->string('email')->unique();
@@ -21,6 +24,11 @@ return new class extends Migration
             $table->string('mobile')->unique();
             $table->integer('role_id');
             $table->string('password');
+            $table->integer('back_edate_days')->nullable(); // int(11), nullable
+            $table->integer('branch_id')->nullable(); // int(11), nullable
+            $table->enum('login_on_holidays', ['1', '0']); // enum, not null
+            $table->enum('searchable_accounts', ['1', '0']); // enum, not null
+            $table->enum('user_active', ['1', '0']); // enum, not null
             $table->rememberToken();
             $table->timestamps();
         });

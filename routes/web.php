@@ -14,6 +14,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\DepositController;
 use App\Http\Controllers\PromotorController;
 use App\Http\Controllers\ShareHoldingController;
 use App\Http\Controllers\DirectorController;
@@ -25,7 +26,7 @@ use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
-
+use App\Http\Controllers\WithdrawController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -78,10 +79,24 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
     });
 
+    Route::group(['prefix' => 'deposits'], function () {
+        Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
+        Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
+    });
+    Route::group(['prefix' => 'withdraws'], function () {
+        Route::get('/withdraw-create', [WithdrawController::class, 'create'])->name('withdraw.create');
+    });
+
     Route::group(['prefix' => 'approvals'], function () {
         Route::resource('pending-transaction', ApproveController::class);
+
         Route::get('share-transfer-approval/approve-transfer', [ApproveController::class, 'approveTransfer'])->name('share-transfer-approval.approve_transfer');
         Route::post('/share-transfer/approve', [ApproveController::class, 'approveShareTransfer'])->name('share_transfer.approve');
+
+        Route::get('/reverse-transaction/approve', [ApproveController::class, 'approveReverseTransaction'])->name('reverse-transaction.reverse_transaction');
+        Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
+        Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
+        Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {

@@ -9,23 +9,34 @@
     <div class="flex items-center justify-between mb-6 lg:mb-8">
         <h2 class="font-bold text-gray-800 h2">Transaction</h2>
     </div>
-
+    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+        <x-alert />
+    </div>
     <!-- Transaction Details Card -->
     <div class="relative bg-white border border-gray-300 rounded-lg shadow-md">
         <!-- Action Icons Top-Right -->
-        <div class="absolute flex gap-2 top-2 right-2">
-            <button class="p-1 text-white bg-green-500 rounded hover:bg-green-600" title="Print">
-                <i class="fas fa-print"></i>
-            </button>
-            <button class="p-1 text-white bg-blue-500 rounded hover:bg-blue-600" title="Download PDF">
-                <i class="fas fa-download"></i>
-            </button>
-            <button class="p-1 text-white bg-red-500 rounded hover:bg-red-600" title="Delete">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </div>
-        <br><br>
+        <div class="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
+            <!-- Member Name -->
+            <span class="text-sm font-semibold text-blue-600"></span>
+            <!-- Icons -->
+            <div class="flex gap-2">
+                <button class="px-2 py-1 text-xs text-white bg-green-500 rounded hover:bg-gray-300" title="Print">
+                    <i class="fas fa-print"></i>
+                </button>
 
+                <a href="{{route('reverse-transaction.view',['id' => base64_encode($transactions->id)])}}"
+                    class="px-2 py-1 text-xs text-black bg-gray-200 rounded hover:bg-gray-300"
+                    title="Reverse Transaction">
+                    <i class="fa fa-recycle"></i>
+                </a>
+
+
+                <button class="px-2 py-1 text-xs text-white bg-red-500 rounded hover:bg-gray-300" title="Delete">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+
+        </div>
         <!-- Transaction Details Table -->
         <table class="w-full text-sm text-left border border-gray-300">
             <tbody>
@@ -51,7 +62,7 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Amount</td>
-                    <td class="px-4 py-2 font-bold text-green-600 border border-gray-300">{{$transactions->accounts->amount_deposit}}</td>
+                    <td class="px-4 py-2 font-bold text-green-600 border border-gray-300">{{$transactions->amount}}</td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Transaction Status</td>
@@ -69,7 +80,7 @@
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Remarks</td>
                     <td class="px-4 py-2 border border-gray-300"></td>
                 </tr>
-                  <tr>
+                <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Created at</td>
                     <td class="px-4 py-2 border border-gray-300">{{$transactions->created_at}}</td>
                 </tr>

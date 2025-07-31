@@ -20,7 +20,8 @@ class Transaction extends Model
         'credited_in',
         'bank_name',
         'cheque_no',
-        'cheque_date'
+        'cheque_date',
+        'reverse_status'
     ];
 
     public function accounts()

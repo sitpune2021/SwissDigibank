@@ -359,6 +359,7 @@ class PromotorController extends Controller
     public function getPromoters()
     {
         $promoters = Promotor::all();
+    
         return response()->json($promoters);
     }
 }
