@@ -26,14 +26,14 @@
                     {{-- Account Info Table --}}
                     <div class="bg-white rounded shadow">
                         <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                            <span>Account Info -  {{ $account->account_no }} </span>
+                            <span>Account Info</span>
                             <span x-text="open ? '−' : '+'">−</span>
                         </div>
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr class="border-b">
                                     <th class="w-1/2 p-2 font-medium text-gray-700">Member</th>
-                        <td class="p-2">{{ ucfirst($account->members->member_info_first_name)." ".ucfirst($account->members->member_info_last_name) }}</td>
+                                    <td class="p-2">DEMO-04411 - varun dhawal</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Created On</th>
@@ -41,27 +41,27 @@
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Created By</th>
-                                    <td class="p-2">Admin</td>
+                                    <td class="p-2">Test Test</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Account No.</th>
-                                    <td class="p-2"> {{ $account->account_no }}</td>
+                                    <td class="p-2">SAVING - 01939</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Old Account No.</th>
-                                    <td class="p-2">-</td>
+                                    <td class="p-2"></td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Scheme Name</th>
-                                    <td class="p-2"> {{ $account->scheme->scheme_name }}</td>
+                                    <td class="p-2">it emp kalyan yojana</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Open Date</th>
-                                    <td class="p-2">{{ $account->open_date }}</td>
+                                    <td class="p-2">26/07/2025</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Status</th>
-                                    <td class="p-2"> Active </td>
+                                    <td class="p-2">Active</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Lock Balance (A)</th>
@@ -73,7 +73,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
-                                    <td class="p-2">{{ $account->amount_deposit }}</td>
+                                    <td class="p-2">1000,000.00</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>
@@ -81,7 +81,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Combined Balance (A+B+C+D)</th>
-                                    <td class="p-2">{{ $account->amount_deposit }}</td>
+                                    <td class="p-2">1000,000.00</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Penalty Dues</th>
@@ -164,16 +164,11 @@
                                 </thead>
                                 <tbody>
                                     <tr class="border-t">
-                                        @foreach($account->transaction as $txn)
-                                        <tr>
-                                            <td class="p-2">{{ $txn->transaction_date }}</td>
-                                            <td class="p-2">{{ $txn->transaction_type }}</td>
-                                            <td class="p-2">{{ $txn->payment_mode }}</td>
-                                            <td class="p-2">{{ $txn->approve_status }}</td>
-                                            <td class="p-2">{{ number_format($txn->amount, 2) }}</td>
-                                        </tr>
-@endforeach
-
+                                        <td class="p-2">26/07/2025 11:45</td>
+                                        <td class="p-2">Credit</td>
+                                        <td class="p-2">Cash</td>
+                                        <td class="p-2">Approved</td>
+                                        <td class="p-2">100,000.00</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -221,12 +216,12 @@
                                 <tbody>
                                     <tr class="border-b">
                                         <th class="p-2 text-gray-700">Branch</th>
-                                        <td class="p-2">{{ $account->branch->branch_name }}</td>
+                                        <td class="p-2">dhayari</td>
                                     </tr>
                                     <tr>
                                         <th class="p-2 text-gray-700">Joint Account</th>
                                         <td class="p-2">
-                                            <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">{{ $account->account_holder_type }}</span>
+                                            <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">No</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -244,7 +239,7 @@
                         <div class="flex items-center gap-2">
                             <label class="font-semibold text-gray-700 w-28">Saving Scheme</label>
                             <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded">
-                                <option>{{ $account->scheme->scheme_name }}</option>
+                                <option>Select FD Scheme</option>
                             </select>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">Update</button>
                         </div>

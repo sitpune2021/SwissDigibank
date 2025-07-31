@@ -21,7 +21,7 @@ class Minor extends Model
 
 public function member()
 {
-    return $this->belongsTo(Member::class);
+    return $this->belongsTo(Member::class, 'member_id', 'id');
 }
 
 
