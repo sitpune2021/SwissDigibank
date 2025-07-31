@@ -16,7 +16,7 @@ use App\Http\Controllers\ShareHoldingController;
 use App\Http\Controllers\DirectorController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MinorController;
-// use App\Http\Controllers\ShareHoldingsController;
+use App\Http\Controllers\ShareholdersController;
 use App\Http\Controllers\ShareCertificateController;
 use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
@@ -58,7 +58,7 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'members'], function () {
             Route::resource('member', MemberController::class);
             Route::resource('minor', MinorController::class);
-            Route::resource('shares-holdings', ShareHoldingsController::class);
+            Route::resource('shares-holdings', ShareholdersController::class);
             Route::resource('share-certificates', controller: ShareCertificateController::class);
             Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
             Route::resource('form15g15h', Form15Gor15HController::class);

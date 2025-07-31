@@ -40,7 +40,11 @@ class Branch extends Model
     {
         return $this->hasMany(Member::class, 'general_branch');
     }
+  public function Shareholder()
+    {
+        return $this->hasMany(Shareholder::class,'general_branch');
 
+    }
 
     
 }

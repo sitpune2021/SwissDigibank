@@ -32,5 +32,11 @@ class Member extends Model
     {
             return $this->belongsTo(Branch::class, 'general_branch');
     }
+       public function Shareholder()
+    {
+        return $this->hasMany(Shareholder::class,'member_id');
+
+    }
+    
 
 }
