@@ -141,28 +141,6 @@ class MemberController extends Controller
         $addressData = $request->only((new Address)->getFillable());
         $kycData = $request->only((new KycAndNominee)->getFillable());
 
-
-        if ($request->filled('general_enrollment_date')) {
-            $kycData['general_enrollment_date'] = date('Y-m-d', strtotime($request->input('general_enrollment_date')));
-        }
-
-        if ($request->filled('member_info_dob')) {
-            $kycData['member_info_dob'] = date('Y-m-d', strtotime($request->input('member_info_dob')));
-        }
-
-        if ($request->filled('member_info_spouse_dob')) {
-            $kycData['member_info_spouse_dob'] = date('Y-m-d', strtotime($request->input('member_info_spouse_dob')));
-        }
-
-        if ($request->filled('nominee_dob')) {
-            $kycData['nominee_dob'] = date('Y-m-d', strtotime($request->input('nominee_dob')));
-        }
-
-        if ($request->filled('charges_transaction_date')) {
-            $kycData['charges_transaction_date'] = date('Y-m-d', strtotime($request->input('charges_transaction_date')));
-        }
-
-
         $member = Member::create($memberData);
         $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
         $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
@@ -301,22 +279,6 @@ class MemberController extends Controller
     $memberData = $request->only((new Member)->getFillable());
     $addressData = $request->only((new Address)->getFillable());
     $kycData = $request->only((new KycAndNominee)->getFillable());
-
-    if ($request->filled('general_enrollment_date')) {
-        $kycData['general_enrollment_date'] = date('Y-m-d', strtotime($request->input('general_enrollment_date')));
-    }
-    if ($request->filled('member_info_dob')) {
-        $kycData['member_info_dob'] = date('Y-m-d', strtotime($request->input('member_info_dob')));
-    }
-    if ($request->filled('member_info_spouse_dob')) {
-        $kycData['member_info_spouse_dob'] = date('Y-m-d', strtotime($request->input('member_info_spouse_dob')));
-    }
-    if ($request->filled('nominee_dob')) {
-        $kycData['nominee_dob'] = date('Y-m-d', strtotime($request->input('nominee_dob')));
-    }
-    if ($request->filled('charges_transaction_date')) {
-        $kycData['charges_transaction_date'] = date('Y-m-d', strtotime($request->input('charges_transaction_date')));
-    }
 
     $member->update($memberData);
     $member->address()->update($addressData);

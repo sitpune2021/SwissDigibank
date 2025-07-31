@@ -1,42 +1,41 @@
-@extends('layout.main')
-@section('page-title', 'Members')
-@section('action-button')
-    <a class="btn-primary" href="{{ route('member.create') }}">
+<?php $__env->startSection('page-title', 'Members'); ?>
+<?php $__env->startSection('action-button'); ?>
+    <a class="btn-primary" href="<?php echo e(route('member.create')); ?>">
         <i class=" md:text-lg"></i>
         Add
     </a>
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
     <div class="box col-span-12 lg:col-span-12">
         <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-            <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
+            <form method="GET" action="<?php echo e(url()->current()); ?>" class="flex items-center gap-2 mb-4">
                 <label for="perPage" class="text-sm">Show</label>
                 <select name="perPage" id="perPage" onchange="this.form.submit()"
                     class="border rounded px-2 py-1 text-sm">
-                    <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('perPage') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
+                    <option value="10" <?php echo e(request('perPage') == 10 ? 'selected' : ''); ?>>10</option>
+                    <option value="25" <?php echo e(request('perPage') == 25 ? 'selected' : ''); ?>>25</option>
+                    <option value="50" <?php echo e(request('perPage') == 50 ? 'selected' : ''); ?>>50</option>
+                    <option value="100" <?php echo e(request('perPage') == 100 ? 'selected' : ''); ?>>100</option>
                 </select>
                 <span class="text-sm">entries</span>
             </form>
             <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <form method="GET" action="{{ route('member.index') }}"
+                <form method="GET" action="<?php echo e(route('member.index')); ?>"
                     class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
                     <input type="text" id="transaction-search" name="search" placeholder="Search"
-                        value="{{ request('search') }}"
+                        value="<?php echo e(request('search')); ?>"
                         class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
                     <button type="submit"
                         class="w-7 h-7 bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
                         <i class="las la-search text-lg"></i>
                     </button>
-                    @if (request('search'))
-                        <a href="{{ route('member.index') }}"
+                    <?php if(request('search')): ?>
+                        <a href="<?php echo e(route('member.index')); ?>"
                             class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
                             title="Clear Search">
                             <i class="las la-times text-lg"></i>
                         </a>
-                    @endif
+                    <?php endif; ?>
                 </form>
             </div>
         </div>
@@ -109,54 +108,64 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($members as $index => $item)
+                    <?php $__currentLoopData = $members; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <tr class="border-b dark:border-bg3">
-                            <td class="py-3 px-6">{{ $item->general_group }}</td>
+                            <td class="py-3 px-6"><?php echo e($item->general_group); ?></td>
 
-                            <td class="py-3 px-6">{{ $item->member_info_old_member_no ?? 'N/A' }}</td>
+                            <td class="py-3 px-6"><?php echo e($item->member_info_old_member_no ?? 'N/A'); ?></td>
 
-                            <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
+                            <td class="py-3 px-6"><?php echo e($item->branch->branch_name); ?></td>
 
                             <td class="py-3 px-6">
-                                {{ $item->member_info_first_name }}
-                                {{ $item->member_info_middle_name }}
-                                {{ $item->member_info_last_name }}
+                                <?php echo e($item->member_info_first_name); ?>
+
+                                <?php echo e($item->member_info_middle_name); ?>
+
+                                <?php echo e($item->member_info_last_name); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ $item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A') }}
+                                <?php echo e($item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A')); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
-                                @php
+                                <?php
                                     $age = \Carbon\Carbon::parse($item->member_info_dob)->age;
-                                @endphp
-                                {{ $age >= 60 ? 'Yes' : 'No' }}
+                                ?>
+                                <?php echo e($age >= 60 ? 'Yes' : 'No'); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d M Y') }}
+                                <?php echo e(\Carbon\Carbon::parse($item->general_enrollment_date)->format('d M Y')); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ $item->kyc?->member_kyc_aadhaar_no ?? 'N/A' }}
+                                <?php echo e($item->kyc?->member_kyc_aadhaar_no ?? 'N/A'); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ $item->kyc?->member_kyc_pan_no ?? 'N/A' }}
+                                <?php echo e($item->kyc?->member_kyc_pan_no ?? 'N/A'); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
-                                @php
+                                <?php
                                     $hasKYC = $item->kyc?->member_kyc_aadhaar_no || $item->kyc?->member_kyc_pan_no;
-                                @endphp
-                                <span class="text-sm {{ $hasKYC ? 'text-green-600' : 'text-red-600' }}">
-                                    {{ $hasKYC ? 'Completed' : 'Pending' }}
+                                ?>
+                                <span class="text-sm <?php echo e($hasKYC ? 'text-green-600' : 'text-red-600'); ?>">
+                                    <?php echo e($hasKYC ? 'Completed' : 'Pending'); ?>
+
                                 </span>
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ $item->member_info_mobile_no }}
+                                <?php echo e($item->member_info_mobile_no); ?>
+
                             </td>
 
                             <td class="py-3 px-6">
@@ -166,16 +175,18 @@
                             </td>
                             <td class="py-2 px-6">
                                 <div class="flex justify-center">
-                                    @include('partials._vertical-options', [
+                                    <?php echo $__env->make('partials._vertical-options', [
                                         'id' => $item->id,
                                         'viewRoute' => 'member.show',
                                         'editRoute' => 'member.edit',
-                                    ]) </div>
+                                    ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </div>
                             </td>
                         </tr>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tbody>
             </table>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Avantika\office_work\Swiss\resources\views/members/member/index.blade.php ENDPATH**/ ?>

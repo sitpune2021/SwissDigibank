@@ -1,16 +1,15 @@
-@extends('layout.main')
-@section('page-title',
+<?php $__env->startSection('page-title',
     isset($member)
     ? $member->member_info_first_name . ' ' . $member->member_info_last_name
     : 'Add
-    member')
+    member'); ?>
 
-    @push('script')
-        {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
-        {{-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
-    @endpush
+    <?php $__env->startPush('script'); ?>
+        
+        
+    <?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="flex flex-wrap gap-3 mb-3 text-center">
         <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
 
@@ -267,4 +266,6 @@
         <div class="col-span-12 lg:col-span-6 box overflow-x-hidden">
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Avantika\office_work\Swiss\resources\views/members/member/show.blade.php ENDPATH**/ ?>
