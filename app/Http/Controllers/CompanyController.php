@@ -61,7 +61,7 @@ class CompanyController extends Controller
             'gst_no' => 'required',
             'company_category' => 'required|string',
             'company_class' => 'required|string',
-            'incorporation_date' => 'required|date',
+            'incorporation_date' => 'required',
             'incorporation_state' => 'required|string',
             'incorporation_country' => 'required|string',
             'authorized_capital' => 'required|numeric',
@@ -69,9 +69,7 @@ class CompanyController extends Controller
         ]);
 
         $company = Company::findOrFail($id);
-        $data = $request->all();
-        $data['incorporation_date'] = Carbon::parse($request->incorporation_date)->format('Y-m-d');
-        $company->update($data);
+        $company->update($$request->all());
         return redirect()->route('company.index')->with('success', 'Company profile updated successfully.');
     }
 }
