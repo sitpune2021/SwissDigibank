@@ -20,8 +20,6 @@ return new class extends Migration
             $table->enum('login_on_holidays', ['1', '0']); // enum, not null
             $table->enum('searchable_accounts', ['1', '0']); // enum, not null
             $table->enum('user_active', ['1', '0']); // enum, not null
-            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
-
         });
     }
 
