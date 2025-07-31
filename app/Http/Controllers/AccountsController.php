@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -15,6 +14,7 @@ use App\Models\SchemeCharge;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Transaction;
+use App\Helpers\AccountsTransactionsHelper;
 
 
 
@@ -212,7 +212,6 @@ class AccountsController extends Controller
     return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
 }
 
-
         
 
     }
@@ -220,14 +219,31 @@ class AccountsController extends Controller
     /**
      * Display the specified resource.
      */
+
+    public function getBalance(Request $request)
+    {
+        $request->validate([
+            'account_id' => 'required|integer|exists:accounts,id',
+        ]);
+
+        $balances = AccountsTransactionsHelper::getAccountBalacec([$request->account_id]);
+
+       return response()->json([
+            'balance' => $balances['total_balance'] ?? 0,
+            'formatted' => '₹' . number_format($balances['total_balance'] ?? 0, 2),
+        ]);
+
+    }
     public function show(string $id)
     {
-
-        
         $decryptedId = base64_decode($id);
-        $account = Account::with(['minor','members','branch','address','users','transaction','nominee','scheme'])->findOrFail($decryptedId); // Only account data
 
-        return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId'));
+        $account = Account::with(['minor', 'members', 'branch', 'address', 'users', 'transaction', 'nominee', 'scheme'])->findOrFail($decryptedId);
+
+        $combined_balace = AccountsTransactionsHelper::getAccountBalacec([$decryptedId]);
+        $combined_balace = $combined_balace['total_balance'] ?? 0;
+
+        return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
     }
 
     /**

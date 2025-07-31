@@ -125,10 +125,18 @@
                     -
                 @endif
             </td>
+            
 
             {{-- show Balance --}}
-            <td class="text-start py-5 px-6">{{ $Account->amount_deposit ?? '-' }}</td>
+            <td class="text-start py-5 px-6">
+                <button class="btn btn-sm btn-primary show-balance-btn" data-account-id="{{ $Account->id }}">
+                    Show Balance
+                </button>
+                <div class="mt-2 balance-output" id="balance-{{ $Account->id }}"></div>
+            </td>
 
+
+            {{-- Balance --}}   
             {{-- Action --}}
             <td class="text-center py-5 px-6">
                 <div class="flex justify-center">
@@ -148,3 +156,41 @@
     </div>
 </div>
 @endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.show-balance-btn').forEach(function(button) {
+        button.addEventListener('click', function () {
+            const accountId = this.getAttribute('data-account-id');
+            const outputDiv = document.getElementById('balance-' + accountId);
+
+            // Toggle display
+            if (outputDiv.style.display === 'block') {
+                outputDiv.style.display = 'none';
+                button.innerText = 'Show Balance';
+                return;
+            }
+
+            fetch("{{ route('ajax.get.account.balance') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ account_id: accountId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                outputDiv.innerText = "Balance: ₹" + parseFloat(data.balance).toFixed(2);
+                outputDiv.style.display = 'block';
+                button.innerText = 'Hide Balance';
+            })
+            .catch(err => {
+                outputDiv.innerText = "Error fetching balance.";
+                outputDiv.style.display = 'block';
+                console.error(err);
+            });
+        });
+    });
+});
+</script>

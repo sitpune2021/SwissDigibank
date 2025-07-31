@@ -7,14 +7,16 @@
     <div class="min-h-screen p-4 font-sans text-sm bg-gray-100" x-data>
 
         <div class="flex flex-wrap justify-center gap-3 mb-3 text-center">
-            <button class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700">View Transactions</button>
+            <a href="{{ route('account.transaction', base64_encode($account->id)) }}" 
+                class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700">
+                View Transactions
+            </a>
             <button class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700">Deposit Money</button>
             <button class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700">Withdraw Money</button>
-            <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other
-                Charges</button>
-            <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button>
-            <button class="px-4 py-2 text-base text-white bg-gray-800 rounded hover:bg-gray-900">Print Documents</button>
-            <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button>
+            <!-- <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other Charges</button> -->
+            <!-- <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button> -->
+            <!-- <button class="px-4 py-2 text-base text-white bg-gray-800 rounded hover:bg-gray-900">Print Documents</button> -->
+            <!-- <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button> -->
         </div>
 
         <div class="container px-2 mx-auto">
@@ -57,7 +59,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Open Date</th>
-                                    <td class="p-2">{{ $account->open_date }}</td>
+                                    <td class="p-2">{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Status</th>
@@ -73,7 +75,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
-                                    <td class="p-2">{{ $account->amount_deposit }}</td>
+                                    <td class="p-2">{{ $combined_balace }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>
@@ -81,8 +83,10 @@
                                 </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Combined Balance (A+B+C+D)</th>
-                                    <td class="p-2">{{ $account->amount_deposit }}</td>
-                                </tr>
+                                        <td class="p-2" style="color: green; font-size: 15px; font-weight: bold;">
+                                            ₹{{ number_format($combined_balace, 2) }}
+                                        </td>
+                                    </tr>
                                 <tr class="border-b">
                                     <th class="p-2 font-medium text-gray-700">Penalty Dues</th>
                                     <td class="p-2">₹0.00</td>
@@ -150,8 +154,11 @@
                         </div>
                         <div x-show="open" class="border-t">
                             <div class="p-2 text-center">
-                                <button class="px-2 py-1 text-xs text-white bg-teal-500 rounded">VIEW ALL</button>
-                            </div>
+    <a href="{{ route('account.transaction', base64_encode($account->id) ) }}"
+       class="px-2 py-1 text-xs text-white bg-teal-500 rounded">
+        VIEW ALL
+    </a>
+</div>
                             <table class="w-full text-sm">
                                 <thead class="bg-gray-100">
                                     <tr>
@@ -190,22 +197,21 @@
                             <span x-text="open ? '−' : '+'">−</span>
                         </div>
                     <div class="p-3 space-y-2 bg-white rounded shadow">
-                        <h2 class="mb-2 font-semibold text-gray-700">Settings</h2>
                         <div class="flex justify-between">
                             <label>SMS</label>
-                            <input type="checkbox" checked>
+                            <input type="checkbox" disabled>
                         </div>
                         <div class="flex justify-between">
                             <label>Account on Hold</label>
-                            <input type="checkbox">
+                            <input type="checkbox" disabled>
                         </div>
                         <div class="flex justify-between">
                             <label>Change Account Type to Current</label>
-                            <input type="checkbox">
+                            <input type="checkbox" disabled>
                         </div>
                         <div class="flex justify-between">
                             <label>Deduct Charges</label>
-                            <input type="checkbox" checked>
+                            <input type="checkbox" disabled>
                         </div>
                     </div>
 
@@ -239,12 +245,14 @@
                         <h3 class="mb-2 text-lg font-semibold text-gray-700">Sweep-In Settings</h3>
                         <div>
                             <label class="mr-2 font-semibold text-gray-700">Sweep-In:</label>
-                            <input type="checkbox">
+                            <input type="checkbox" disabled>
                         </div>
                         <div class="flex items-center gap-2">
                             <label class="font-semibold text-gray-700 w-28">Saving Scheme</label>
-                            <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded">
-                                <option>{{ $account->scheme->scheme_name }}</option>
+                            <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded" disabled>
+                                <option value="{{ $account->scheme->id }}" selected>
+                                    {{ $account->scheme->scheme_name }}
+                                </option>
                             </select>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">Update</button>
                         </div>
@@ -256,38 +264,38 @@
                         <div class="flex items-center gap-2 mb-2">
                             <label class="w-32 font-semibold text-gray-700">Member</label>
                             <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                                value="DEMO-04411 - varun dhawal">
+                                value="{{ $account->members->member_info_first_name.' '.$account->members->member_info_last_name }}" readonly>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
                         <div class="flex items-center gap-2 mb-2">
                             <label class="w-32 font-semibold text-gray-700">Old Account No</label>
-                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
+                            <input type="text"  readonly class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                 placeholder="Enter Old Account No">
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
                         <div class="flex items-center gap-2 mb-2">
                             <label class="w-32 font-semibold text-gray-700">Branch</label>
-                            <select class="flex-1 px-2 py-1 border border-gray-300 rounded">
-                                <option>dhayari</option>
+                            <select class="flex-1 px-2 py-1 border border-gray-300 rounded" disabled>
+                                <option>{{ $account->branch->branch_name }}</option>
                             </select>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
                         <div class="flex items-center gap-2 mb-2">
                             <label class="w-32 font-semibold text-gray-700">Open Date</label>
                             <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                                value="26-07-2025">
+    value="{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}">
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
                         <div class="flex items-center gap-2 mb-2">
                             <label class="w-32 font-semibold text-gray-700">Advisor/ Staff</label>
-                            <select class="flex-1 px-2 py-1 border border-gray-300 rounded">
-                                <option>Select Advisor/ Staff</option>
+                            <select class="flex-1 px-2 py-1 border border-gray-300 rounded" disabled>
+                                <option>{{ $account->users->fname.' '.$account->users->lname }}</option>
                             </select>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
                         <div class="flex items-center gap-2">
                             <label class="w-32 font-semibold text-gray-700">Lock Amount</label>
-                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded" value="0.0">
+                            <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded" value="0.0" readonly>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
                     </div>
