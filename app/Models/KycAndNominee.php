@@ -19,6 +19,10 @@ class KycAndNominee extends Model
         'charges_membership_fee', 'charges_net_fee', 'charges_remarks', 'charges_pay_mode'
     ];
 
+    protected $casts = [
+        'charges_transaction_date' => 'date',
+    ];
+
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
