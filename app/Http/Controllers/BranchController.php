@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\State;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class BranchController extends Controller
 {
@@ -126,10 +127,10 @@ class BranchController extends Controller
             'disable_neft'     => 'required|in:yes,no',
         ]);
         try {
+            $requestData = $request->all();
+            $requestData['open_date'] = Carbon::createFromFormat('D d m Y', $request->open_date)->format('Y-m-d');
             $branch = Branch::findOrFail($decryptedId);
-
-            $branch->update($request->only($branch->getFillable()));
-
+            $branch->update($requestData);
             return redirect()->route('branch.index')->with('success', 'Branch updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong! Error: ' . $e->getMessage())->withInput();
