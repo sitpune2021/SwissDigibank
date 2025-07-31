@@ -35,7 +35,7 @@
                     <li class="text-gray-500">Manage Share Transfer History</li>
                 </ol>
             </div>
-            <a href="{{ route('share-transfer-histories.create') }}" class="btn-primary">
+            <a href="{{ route('share_transfer_histories.create') }}" class="btn-primary">
                 <i class="las la-plus-circle text-base md:text-lg"></i>
                 Add Share Transfer History
             </a>
