@@ -34,7 +34,6 @@ return new class extends Migration
             $table->integer('reverse_status')->nullable();
             $table->string('remarks')->nullable();
             $table->string('payment_rev_rel')->nullable();
-            $table->integer('reverse_status')->nullable();
 
             $table->softDeletes();
             $table->timestamps(); 
