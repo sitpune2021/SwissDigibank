@@ -60,14 +60,14 @@ class PromotorController extends Controller
 
         $validated = $request->validate([
             // Promotor fields
-            'enrollment_date' => 'required|date',
+            'enrollment_date' => 'required',
             'title' => 'required|string|max:10',
             'gender' => 'required|string|in:Male,Female,Other',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'branch_id' => 'required|exists:branches,id',
-            'date_of_birth' => 'required|date|before:today',
+            'date_of_birth' => 'required|before:today',
             'occupation' => 'nullable|string|max:255',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
@@ -263,18 +263,16 @@ class PromotorController extends Controller
 
             $promotor = Promotor::findOrFail($id);
 
-            $enrollment_date = Carbon::createFromFormat('D d m Y', $validated['enrollment_date'])->format('Y-m-d');
-            $date_of_birth = Carbon::createFromFormat('D d m Y', $validated['date_of_birth'])->format('Y-m-d');
             // Update promotor
             $promotor->update([
-                'enrollment_date' => $enrollment_date,
+                'enrollment_date' => $validated['enrollment_date'],
                 'title' => $validated['title'],
                 'gender' => $validated['gender'],
                 'first_name' => $validated['first_name'],
                 'middle_name' => $validated['middle_name'] ?? null,
                 'last_name' => $validated['last_name'],
                 'branch_id' => $validated['branch_id'],
-                'date_of_birth' => $date_of_birth,
+                'date_of_birth' => $validated['date_of_birth'],
                 'occupation' => $validated['occupation'],
                 'father_name' => $validated['father_name'],
                 'mother_name' => $validated['mother_name'],

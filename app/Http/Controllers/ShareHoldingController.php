@@ -44,14 +44,14 @@ class ShareHoldingController extends Controller
     {
         $validated = $request->validate([
             'promotor_id'             => 'required|exists:promotors,id',
-            'allotment_date'       => 'required|date',
+            'allotment_date'       => 'required',
             'first_share'          => 'required|numeric',
             'share_no'           => 'required|numeric|gt:first_share',
             'nominal_value'        => 'nullable|numeric',
             'total_share_held'     => 'required|numeric',
             'total_share_value'    => 'required|numeric',
             'certificate_no'       => 'nullable|string|max:50',
-            'transaction_date'     => 'required|date',
+            'transaction_date'     => 'required',
             'amount'               => 'required|numeric',
             'remarks'              => 'nullable|string|max:255',
             'pay_mode'             => 'required|in:cash,online_tr,cheque,saving_ac',
@@ -108,16 +108,13 @@ class ShareHoldingController extends Controller
     {
         $validated = $request->validate([
             'promotor_id'             => 'required|exists:promotors,id',
-            'allotment_date'       => 'required|date',
+            'allotment_date'       => 'required',
             'first_share'          => 'required|numeric',
             'share_no'           => 'required|numeric|gt:first_share',
             'share_nominal'        => 'nullable|numeric',
             'total_share_held'     => 'required|numeric',
             'total_share_value'    => 'required|numeric',
             'certificate_no'       => 'nullable|string|max:50',
-            //  'transaction_date'     => 'required|date',
-            // 'amount'               => 'required|numeric',
-            //  'remarks'              => 'nullable|string|max:255',
         ]);
 
         $overlap = Shareholding::where('id', '!=', $id)
@@ -138,20 +135,7 @@ class ShareHoldingController extends Controller
         }
 
         $shareholding = Shareholding::findOrFail($id);
-        $shareholding->promotor_id        = $validated['promotor_id'];
-        $shareholding->allotment_date      = date('Y-m-d', strtotime($request->allotment_date));
-        $shareholding->first_share      = $validated['first_share'];
-        $shareholding->share_no       = $validated['share_no'];
-        $shareholding->nominal_value = $validated['share_nominal'];
-        $shareholding->total_share_held    = $validated['total_share_held'];
-        $shareholding->total_share_value   = $validated['total_share_value'];
-        //  $shareholding->transaction_date    = date('Y-m-d', strtotime($request->transaction_date));
-        // $shareholding->amount              = $validated['amount'];
-        //$shareholding->pay_mode            = $validated['pay_mode'];
-        //$shareholding->remarks             = $validated['remarks'] ?? null;
-        $shareholding->certificate_no      = '2000230233';
-
-        $shareholding->save();
+        $shareholding->update($request->all());
 
         return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
     }

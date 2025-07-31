@@ -110,12 +110,12 @@ class MinorController extends Controller
 {
     $data = $request->validate([
             'member_id' => 'required',
-        'enrollment_date' => 'required|date',
+        'enrollment_date' => 'required',
         'title' => 'required|in:md,mr,ms,mrs',
         'gender' => 'required|in:male,female,other',
         'first_name' => 'required|string|max:255',
         'last_name' => 'nullable|string|max:255',
-        'dob' => 'required|date',
+        'dob' => 'required',
         'father_name' => 'required|string|max:255',
         'aadhaar_no' => 'nullable|string|max:20',
         'address' => 'required|string|max:500',
