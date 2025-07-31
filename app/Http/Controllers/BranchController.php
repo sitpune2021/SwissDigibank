@@ -128,7 +128,6 @@ class BranchController extends Controller
         ]);
         try {
             $requestData = $request->all();
-            $requestData['open_date'] = Carbon::createFromFormat('D d m Y', $request->open_date)->format('Y-m-d');
             $branch = Branch::findOrFail($decryptedId);
             $branch->update($requestData);
             return redirect()->route('branch.index')->with('success', 'Branch updated successfully.');

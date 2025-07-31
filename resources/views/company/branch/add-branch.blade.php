@@ -25,7 +25,7 @@
                         $value = old(
                             $name,
                             $branch?->$name instanceof \Carbon\Carbon
-                                ? $branch?->$name->format('D d m Y')
+                                ? $branch?->$name->format('D M d Y')
                                 : $branch?->$name ?? ($field['default'] ?? ''),
                         );
                     }
