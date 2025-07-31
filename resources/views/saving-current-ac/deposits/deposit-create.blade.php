@@ -86,7 +86,7 @@
                     </div>
 
                     <!-- Online Transfer Fields -->
-                    <div class="grid grid-cols-2 col-span-2 gap-6 p-4 border rounded-lg bg-blue-50" x-show="payMode === 'online'">
+                    <!-- <div class="grid grid-cols-2 col-span-2 gap-6 p-4 border rounded-lg bg-blue-50" x-show="payMode === 'online'">
                         <div>
                             <label class="block mb-1 font-semibold text-gray-700">Transfer Date <span class="text-red-500">*</span></label>
                             <input type="date" name="transfer_date"
@@ -122,12 +122,11 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Cheque Fields -->
-                    <div class="grid grid-cols-2 col-span-2 gap-6 p-4 border rounded-lg bg-green-50" x-show="payMode === 'cheque'">
+                    <!-- <div class="grid grid-cols-2 col-span-2 gap-6 p-4 border rounded-lg bg-green-50" x-show="payMode === 'cheque'">
 
-                        <!-- Bank Name as Dropdown -->
                         <div>
                             <label class="block mb-1 font-semibold text-gray-700">Bank Name <span class="text-red-500">*</span></label>
                             <select name="bank_name"
@@ -141,20 +140,19 @@
                             </select>
                         </div>
 
-                        <!-- Cheque Number -->
                         <div>
                             <label class="block mb-1 font-semibold text-gray-700">Cheque Number <span class="text-red-500">*</span></label>
                             <input type="text" name="cheque_number" placeholder="Enter Cheque No"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
                         </div>
 
-                        <!-- Cheque Date -->
                         <div>
                             <label class="block mb-1 font-semibold text-gray-700">Cheque Date <span class="text-red-500">*</span></label>
                             <input type="date" name="cheque_date"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
                         </div>
-                    </div>
+                    </div> -->
+                    
                     <!-- Buttons -->
                     <div class="flex gap-4">
                         <button type="submit" class="btn-primary">Deposit</button>

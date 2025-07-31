@@ -28,12 +28,12 @@ return new class extends Migration
             $table->string('member_address_country');
             $table->string('member_address_address')->nullable();
 
-            $table->string('member_perm_address_city');
-            $table->unsignedBigInteger('member_perm_address_state');
-            $table->integer('member_perm_address_pincode');
+            $table->string('member_perm_address_city')->nullable();
+            $table->unsignedBigInteger('member_perm_address_state')->nullable();
+            $table->integer('member_perm_address_pincode')->nullable();
 
-            $table->string('member_gps_location_latitude');
-            $table->decimal('member_gps_location_longitude', 10, 6);
+            $table->string('member_gps_location_latitude')->nullable();
+            $table->decimal('member_gps_location_longitude', 10, 6)->nullable();
             $table->softDeletes();
             $table->timestamps();
 

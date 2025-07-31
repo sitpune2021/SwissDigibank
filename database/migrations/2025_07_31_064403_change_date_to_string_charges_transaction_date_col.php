@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('addresses', function (Blueprint $table) {
-                        $table->string('member_perm_address_pincode')->nullable()->change();
-
+        Schema::table('kyc_and_nominees', function (Blueprint $table) {
+          $table->string('charges_transaction_date')->change();
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('addresses', function (Blueprint $table) {
-                        $table->string('member_perm_address_pincode')->nullable(false)->change();
-
+        Schema::table('kyc_and_nominees', function (Blueprint $table) {
+            //
         });
     }
 };

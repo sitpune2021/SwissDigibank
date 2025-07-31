@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -9,10 +9,11 @@ class Transaction extends Model
 {
     use SoftDeletes;
     
-    protected $table = "transactions";
     protected $fillable = [
         'account_id',
         'payment_mode',
+        'amount',
+        'transaction_type',
         'transaction_date',
         'transfer_date',
         'utr_number',
@@ -21,7 +22,9 @@ class Transaction extends Model
         'bank_name',
         'cheque_no',
         'cheque_date',
-        'reverse_status'
+        'reverse_status',
+        'approve_status',
+        'comment',
     ];
 
     public function accounts()

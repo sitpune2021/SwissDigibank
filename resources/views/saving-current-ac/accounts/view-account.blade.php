@@ -23,105 +23,11 @@
             <!-- Left Panel -->
             <div class="space-y-3 md:w-7/12">
 
-                {{-- Account Info Table --}}
-                <div class="bg-white rounded shadow">
-                    <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                        <span>Account Info</span>
-                        <span x-text="open ? '−' : '+'">−</span>
-                    </div>
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b">
-                                <th class="w-1/2 p-2 font-medium text-gray-700">Member</th>
-                                <td class="p-2">DEMO-04411 - varun dhawal</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Created On</th>
-                                <td class="p-2">Admin App</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Created By</th>
-                                <td class="p-2">Test Test</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Account No.</th>
-                                <td class="p-2">SAVING - 01939</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Old Account No.</th>
-                                <td class="p-2"></td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Scheme Name</th>
-                                <td class="p-2">it emp kalyan yojana</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Open Date</th>
-                                <td class="p-2">26/07/2025</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Status</th>
-                                <td class="p-2">Active</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Lock Balance (A)</th>
-                                <td class="p-2">0.00</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Hold Balance (B)</th>
-                                <td class="p-2">0.00</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
-                                <td class="p-2">1000,000.00</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>
-                                <td class="p-2">₹0.00</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Combined Balance (A+B+C+D)</th>
-                                <td class="p-2">1000,000.00</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Penalty Dues</th>
-                                <td class="p-2">₹0.00</td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Special Account</th>
-                                <td class="p-2">
-                                    <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">No</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                {{-- Allocated Passbook --}}
-                <div class="bg-white rounded shadow">
-                    <div class="flex items-center justify-between px-3 py-2 bg-green-100 border-b-2 border-green-600">
-                        <span class="font-semibold text-green-700">Allocated Passbook</span>
-                        <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">+ PASSBOOK</button>
-                    </div>
-                </div>
-                {{-- Documents --}}
-                <div class="bg-white rounded shadow" x-data="{ open: true }">
-                    <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
-                        @click="open=!open">
-                        <span>DOCUMENTS</span>
-                        <div class="flex items-center gap-2">
-                            <!-- Upload Icon Button -->
-                            <button class="p-1 bg-white rounded hover:bg-gray-200" title="Upload Document">
-                                <!-- Heroicons Upload Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="2" stroke="currentColor" class="w-4 h-4 text-green-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2m-4-4l-4-4m0 0l-4 4m4-4v12" />
-                                </svg>
-                            </button>
-
-                            <!-- Toggle Symbol -->
-                            <span x-text="open ? '−' : '+'"></span>
+                    {{-- Account Info Table --}}
+                    <div class="bg-white rounded shadow">
+                        <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
+                            <span>Account Info -  {{ $account->account_no }} </span>
+                            <span x-text="open ? '−' : '+'">−</span>
                         </div>
                     </div>
                     <div x-show="open" class="px-3 py-2 border-t">No Document Found</div>
@@ -215,11 +121,63 @@
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr class="border-b">
-                                    <th class="p-2 text-gray-700">Branch</th>
-                                    <td class="p-2">dhayari</td>
+                                    <th class="w-1/2 p-2 font-medium text-gray-700">Member</th>
+                        <td class="p-2">{{ ucfirst($account->members->member_info_first_name)." ".ucfirst($account->members->member_info_last_name) }}</td>
                                 </tr>
-                                <tr>
-                                    <th class="p-2 text-gray-700">Joint Account</th>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Created On</th>
+                                    <td class="p-2">Admin App</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Created By</th>
+                                    <td class="p-2">Admin</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Account No.</th>
+                                    <td class="p-2"> {{ $account->account_no }}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Old Account No.</th>
+                                    <td class="p-2">-</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Scheme Name</th>
+                                    <td class="p-2"> {{ $account->scheme->scheme_name }}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Open Date</th>
+                                    <td class="p-2">{{ $account->open_date }}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Status</th>
+                                    <td class="p-2"> Active </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Lock Balance (A)</th>
+                                    <td class="p-2">0.00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Hold Balance (B)</th>
+                                    <td class="p-2">0.00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
+                                    <td class="p-2">{{ $account->amount_deposit }}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>
+                                    <td class="p-2">₹0.00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Combined Balance (A+B+C+D)</th>
+                                    <td class="p-2">{{ $account->amount_deposit }}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Penalty Dues</th>
+                                    <td class="p-2">₹0.00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="p-2 font-medium text-gray-700">Special Account</th>
                                     <td class="p-2">
                                         <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">No</span>
                                     </td>
@@ -236,12 +194,80 @@
                         <label class="mr-2 font-semibold text-gray-700">Sweep-In:</label>
                         <input type="checkbox">
                     </div>
-                    <div class="flex items-center gap-2">
-                        <label class="font-semibold text-gray-700 w-28">Saving Scheme</label>
-                        <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded">
-                            <option>Select FD Scheme</option>
-                        </select>
-                        <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">Update</button>
+                    {{-- Documents --}}
+                    <div class="bg-white rounded shadow" x-data="{ open: true }">
+                        <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
+                            @click="open=!open">
+                            <span>DOCUMENTS</span>
+                            <div class="flex items-center gap-2">
+                                <!-- Upload Icon Button -->
+                                <button class="p-1 bg-white rounded hover:bg-gray-200" title="Upload Document">
+                                    <!-- Heroicons Upload Icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2" stroke="currentColor" class="w-4 h-4 text-green-600">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2m-4-4l-4-4m0 0l-4 4m4-4v12" />
+                                    </svg>
+                                </button>
+
+                                <!-- Toggle Symbol -->
+                                <span x-text="open ? '−' : '+'"></span>
+                            </div>
+                        </div>
+                        <div x-show="open" class="px-3 py-2 border-t">No Document Found</div>
+                    </div>
+
+
+                    {{-- Comments --}}
+                    <div class="bg-white rounded shadow" x-data="{ open: true }">
+                        <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
+                            @click="open=!open">
+                            <span>COMMENTS</span>
+                            <span x-text="open ? '−' : '+'"></span>
+                        </div>
+                        <div x-show="open" class="px-3 py-2 text-center border-t">
+                            No Comment Found
+                            <button class="px-2 py-1 ml-2 text-xs text-white bg-green-600 rounded">ADD COMMENT</button>
+                        </div>
+                    </div>
+
+                    {{-- Transaction Info --}}
+                    <div class="bg-white rounded shadow" x-data="{ open: true }">
+                        <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
+                            @click="open=!open">
+                            <span>Transaction Info</span>
+                            <span x-text="open ? '−' : '+'"></span>
+                        </div>
+                        <div x-show="open" class="border-t">
+                            <div class="p-2 text-center">
+                                <button class="px-2 py-1 text-xs text-white bg-teal-500 rounded">VIEW ALL</button>
+                            </div>
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="p-2">Date</th>
+                                        <th class="p-2">Type</th>
+                                        <th class="p-2">Payment Mode</th>
+                                        <th class="p-2">Status</th>
+                                        <th class="p-2">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-t">
+                                        @foreach($account->transaction as $txn)
+                                        <tr>
+                                            <td class="p-2">{{ $txn->transaction_date }}</td>
+                                            <td class="p-2">{{ $txn->transaction_type }}</td>
+                                            <td class="p-2">{{ $txn->payment_mode }}</td>
+                                            <td class="p-2">{{ $txn->approve_status }}</td>
+                                            <td class="p-2">{{ number_format($txn->amount, 2) }}</td>
+                                        </tr>
+@endforeach
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -254,18 +280,46 @@
                             value="DEMO-04411 - varun dhawal">
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
-                    <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Old Account No</label>
-                        <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                            placeholder="Enter Old Account No">
-                        <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
+
+                    {{-- Branch Info --}}
+                    <div class="bg-white rounded shadow" x-data="{ open: false }">
+                        <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer"
+                            @click="open=!open">
+                            <span>Branch Info</span>
+                            <span x-text="open ? '−' : '+'"></span>
+                        </div>
+                        <div x-show="open" class="border-t">
+                            <table class="w-full text-sm">
+                                <tbody>
+                                    <tr class="border-b">
+                                        <th class="p-2 text-gray-700">Branch</th>
+                                        <td class="p-2">{{ $account->branch->branch_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="p-2 text-gray-700">Joint Account</th>
+                                        <td class="p-2">
+                                            <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">{{ $account->account_holder_type }}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Branch</label>
-                        <select class="flex-1 px-2 py-1 border border-gray-300 rounded">
-                            <option>dhayari</option>
-                        </select>
-                        <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
+
+                    {{-- Sweep-In Settings --}}
+                    <div class="p-3 space-y-3 bg-white rounded shadow">
+                        <h3 class="mb-2 text-lg font-semibold text-gray-700">Sweep-In Settings</h3>
+                        <div>
+                            <label class="mr-2 font-semibold text-gray-700">Sweep-In:</label>
+                            <input type="checkbox">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="font-semibold text-gray-700 w-28">Saving Scheme</label>
+                            <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded">
+                                <option>{{ $account->scheme->scheme_name }}</option>
+                            </select>
+                            <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">Update</button>
+                        </div>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
                         <label class="w-32 font-semibold text-gray-700">Open Date</label>

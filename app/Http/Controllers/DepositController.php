@@ -36,22 +36,22 @@ class DepositController extends Controller
             'remarks'          => 'nullable|string|max:255',
         ];
 
-        if ($request->pay_mode === 'online') {
-            $rules = array_merge($rules, [
-                'transfer_date'  => 'required|date',
-                'utr_no'         => 'required|string|max:255',
-                'transfer_mode'  => 'required|in:imps,vpa,neft',
-                'credited'       => 'required|in:yes,no',
-            ]);
-        }
+        // if ($request->pay_mode === 'online') {
+        //     $rules = array_merge($rules, [
+        //         'transfer_date'  => 'required|date',
+        //         'utr_no'         => 'required|string|max:255',
+        //         'transfer_mode'  => 'required|in:imps,vpa,neft',
+        //         'credited'       => 'required|in:yes,no',
+        //     ]);
+        // }
 
-        if ($request->pay_mode === 'cheque') {
-            $rules = array_merge($rules, [
-                'bank_name'     => 'required|string|in:SBI,HDFC,ICICI,BOB,PNB',
-                'cheque_number' => 'required|string|max:50',
-                'cheque_date'   => 'required|date',
-            ]);
-        }
+        // if ($request->pay_mode === 'cheque') {
+        //     $rules = array_merge($rules, [
+        //         'bank_name'     => 'required|string|in:SBI,HDFC,ICICI,BOB,PNB',
+        //         'cheque_number' => 'required|string|max:50',
+        //         'cheque_date'   => 'required|date',
+        //     ]);
+        // }
 
         $validated = $request->validate($rules);
 
@@ -65,30 +65,30 @@ class DepositController extends Controller
                 'transaction_date' => \Carbon\Carbon::parse($request->input('transaction_date'))
             ]);
 
-            if ($request->pay_mode === 'online') {
-                DB::table('online_transactions')->insert([
-                    'account_id'     => $account_id,
-                    'amount'         => $request->amount,
-                    'transfer_date'  => $request->transfer_date,
-                    'utr_no'         => $request->utr_no,
-                    'transfer_mode'  => $request->transfer_mode,
-                    'credited'       => $request->credited,
-                    'remarks'        => $request->remarks,
-                    'created_at'     => now(),
-                ]);
-            }
+            // if ($request->pay_mode === 'online') {
+            //     DB::table('online_transactions')->insert([
+            //         'account_id'     => $account_id,
+            //         'amount'         => $request->amount,
+            //         'transfer_date'  => $request->transfer_date,
+            //         'utr_no'         => $request->utr_no,
+            //         'transfer_mode'  => $request->transfer_mode,
+            //         'credited'       => $request->credited,
+            //         'remarks'        => $request->remarks,
+            //         'created_at'     => now(),
+            //     ]);
+            // }
 
-            if ($request->pay_mode === 'cheque') {
-                DB::table('cheque_transactions')->insert([
-                    'account_id'     => $account_id,
-                    'amount'         => $request->amount,
-                    'bank_name'      => $request->bank_name,
-                    'cheque_number'  => $request->cheque_number,
-                    'cheque_date'    => $request->cheque_date,
-                    'remarks'        => $request->remarks,
-                    'created_at'     => now(),
-                ]);
-            }
+            // if ($request->pay_mode === 'cheque') {
+            //     DB::table('cheque_transactions')->insert([
+            //         'account_id'     => $account_id,
+            //         'amount'         => $request->amount,
+            //         'bank_name'      => $request->bank_name,
+            //         'cheque_number'  => $request->cheque_number,
+            //         'cheque_date'    => $request->cheque_date,
+            //         'remarks'        => $request->remarks,
+            //         'created_at'     => now(),
+            //     ]);
+            // }
 
             return redirect()->back()->with('success', 'Amount deposited successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
         } catch (\Exception $e) {
