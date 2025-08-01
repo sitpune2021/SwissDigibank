@@ -57,6 +57,7 @@ class UserController extends Controller
         ]);
         // Save user
         User::create([
+            'name' => $validated['fname'] . ' ' . $validated['lname'] ?? '',
             'emp_id'              => $validated['employee'],
             'designation'         => $validated['designation'],
             'username'            => $validated['user_name'],
@@ -136,6 +137,7 @@ class UserController extends Controller
         ]);
 
         $user->update([
+            'name' => $validated['fname'] . ' ' . $validated['lname'] ?? '',
             'emp_id'              => $validated['employee'],
             'designation'         => $validated['designation'],
             'username'            => $validated['user_name'],
