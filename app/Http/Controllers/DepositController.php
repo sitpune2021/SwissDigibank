@@ -90,9 +90,9 @@ class DepositController extends Controller
             //     ]);
             // }
 
-            return redirect()->back()->with('success', 'Amount deposited successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
+              return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Amount deposited successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Deposit failed: ' . $e->getMessage());
+            return redirect()->route('accounts.show', base64_encode($account_id))->with('error', 'Deposit failed: ' . $e->getMessage());
         }
     }
 

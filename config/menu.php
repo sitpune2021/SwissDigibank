@@ -46,13 +46,13 @@ return [
         ]
     ],
     [
-        'title' => 'Savings/Current AC',
+        'title' => 'Account',
         'icon' => 'las la-university',
         'position' => '5',
         'active' => '1',
         'submenu' => [
             ['title' => 'Schemes', 'route' => 'schemes.index'],
-            ['title' => 'Account', 'route' => 'accounts.index'],
+            ['title' => 'Saving A/c', 'route' => 'accounts.index'],
         ]
     ],
     [
