@@ -54,10 +54,12 @@ class UserController extends Controller
             'login_on_holidays'  => 'required|in:0,1',
             'searchable_account' => 'required|in:0,1',
             'user_active'        => 'required|in:0,1',
+            'name'=>'nullable',
         ]);
+
         // Save user
         User::create([
-            'name' => $validated['fname'] . ' ' . $validated['lname'] ?? '',
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
             'emp_id'              => $validated['employee'],
             'designation'         => $validated['designation'],
             'username'            => $validated['user_name'],
@@ -137,7 +139,7 @@ class UserController extends Controller
         ]);
 
         $user->update([
-            'name' => $validated['fname'] . ' ' . $validated['lname'] ?? '',
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
             'emp_id'              => $validated['employee'],
             'designation'         => $validated['designation'],
             'username'            => $validated['user_name'],

@@ -5,7 +5,7 @@
         <!-- <div class="flex items-center gap-2"> -->
         <h2 class="h2">Saving / Current Accounts</h2>
         <a class="btn-primary" href="{{ route('accounts.create') }}">
-            <i class="las la-plus-circle text-base md:text-lg"></i>
+            <i class="text-base md:text-lg"></i>
             Add
         </a>
         <!-- </div> -->

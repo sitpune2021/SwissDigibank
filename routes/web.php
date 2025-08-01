@@ -82,8 +82,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
         Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
     });
-    Route::group(['prefix' => 'withdraws'], function () {
-        Route::get('/withdraw-create', [WithdrawController::class, 'create'])->name('withdraw.create');
+  Route::group(['prefix' => 'withdraws'], function () {
+        Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
+        Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
     });
 
     Route::group(['prefix' => 'approvals'], function () {

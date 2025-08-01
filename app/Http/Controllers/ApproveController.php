@@ -18,7 +18,7 @@ class ApproveController extends Controller
         $search = $request->input('search');
         $perPage = $request->input('perPage', 10); // default 10 if not passed
 
-        $query = Transaction::with('accounts.members', 'accounts.branches')
+        $query = Transaction::with('accounts.members', 'accounts.branch')
             ->where('approve_status', '!=', 'approved');
 
         if ($search) {
@@ -30,7 +30,7 @@ class ApproveController extends Controller
                     ->orWhereHas('accounts', function ($q2) use ($search) {
                         $q2->where('account_no', 'like', "%{$search}%")
                             ->orWhere('account_type', 'like', "%{$search}%")
-                            ->orWhereHas('branches', function ($q3) use ($search) {
+                            ->orWhereHas('branch', function ($q3) use ($search) {
                                 $q3->where('branch_name', 'like', "%{$search}%");
                             })
                             ->orWhereHas('members', function ($q4) use ($search) {
@@ -157,7 +157,7 @@ class ApproveController extends Controller
 
     public function approveReverseTransaction()
     {
-        $transactions = Transaction::with('accounts.members', 'accounts.branches')->where('approve_status', 'pending')
+        $transactions = Transaction::with('accounts.members', 'accounts.branch')->where('approve_status', 'pending')
             ->where('reverse_status', 0)
             ->orderBy('created_at', 'desc')
             ->paginate(10);

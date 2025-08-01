@@ -9,27 +9,24 @@ use Illuminate\Support\Facades\Storage;
 
 class Form15Gor15HController extends Controller
 {
-    // Show all records
     public function index()
     {
         $form15g15hs = Form15G15H::with('member')->orderBy('created_at', 'desc')->get();
         return view("members.form15g15h.index", compact('form15g15hs'));
     }
 
-    // Show form to create new entry
     public function create()
     {
         $dynamicOptions = [
             'member' => Member::pluck('member_info_first_name', 'id')
         ];
-        $sections = config('form15g15h_form');
+        $sections = config('form15G15H_form');
         $route = route('form15g15h.store');
         $method = 'POST';
 
         return view('members.form15g15h.create', compact('sections', 'route', 'method', 'dynamicOptions'));
     }
 
-    // Store the uploaded form and data
    public function store(Request $request)
 {
     $validated = $request->validate([
@@ -49,7 +46,6 @@ class Form15Gor15HController extends Controller
 }
 
 
-    // Show the details of a record
     public function show(string $id)
     {
         $form15g15h = Form15G15H::findOrFail($id);
@@ -65,7 +61,6 @@ class Form15Gor15HController extends Controller
          return view('members.form15g15h.show', compact('form15g15h'));
     }
 
-    // Edit record
     public function edit(string $id)
     {
         $form15g15h = Form15G15H::findOrFail($id);
@@ -73,7 +68,7 @@ class Form15Gor15HController extends Controller
         $dynamicOptions = [
             'member' => Member::pluck('member_info_first_name', 'id')
         ];
-        $sections = config('form15g15h_form');
+        $sections = config('form15G15H_form');
         $route = route('form15g15h.update', $id);
         $method = 'PUT';
 
@@ -82,7 +77,6 @@ class Form15Gor15HController extends Controller
 
     }
 
-    // Update the record
     public function update(Request $request, string $id)
     {
         $form15g15h = Form15G15H::findOrFail($id);
@@ -94,7 +88,6 @@ class Form15Gor15HController extends Controller
         ]);
 
         if ($request->hasFile('form_15_upload')) {
-            // Delete old file if exists
             if ($form15g15h->form_15_upload) {
                 Storage::disk('public')->delete($form15g15h->form_15_upload);
             }
@@ -102,7 +95,6 @@ class Form15Gor15HController extends Controller
             $path = $request->file('form_15_upload')->store('uploads', 'public');
             $validated['form_15_upload'] = $path;
         }
-
         $form15g15h->update($validated);
 
         return redirect()->route('form15g15h.index')->with('success', 'Form updated successfully!');

@@ -95,7 +95,7 @@
                         @csrf
                         @method('PUT')
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="py-5 px-6">{{ $pending_transaction->accounts?->branches?->branch_name ?? '' }}</td>
+                            <td class="py-5 px-6">{{ $pending_transaction->accounts?->branch?->branch_name ?? '' }}</td>
                             <td class="py-5 px-6"></td>
                             <td class="py-5 px-6">
                                 <a href="#" class="text-blue-600 hover:text-blue-800 underline">{{ $pending_transaction->accounts?->members?->member_info_first_name ?? ''  }}</a>
@@ -112,7 +112,7 @@
                             <td class="py-5 px-6">
                                 {{ $pending_transaction->transaction_date ? \Carbon\Carbon::parse($pending_transaction->transaction_date)->format('d-m-Y') : '' }}
                             </td>
-                            <td class="py-5 px-6">{{ $pending_transaction?->accounts?->amount_deposit ?? '' }}</td>
+                            <td class="py-5 px-6">{{ $pending_transaction->amount ?? '' }}</td>
                             <td class="py-5 px-6">{{ $pending_transaction?->payment_mode ?? ''}}</td>
                             <td class="py-5 px-6">
                                 @if(strtolower($pending_transaction->payment_mode) == 'online')
