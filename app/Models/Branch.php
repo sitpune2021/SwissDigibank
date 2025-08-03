@@ -42,7 +42,7 @@ class Branch extends Model
     }
   public function Shareholder()
     {
-        return $this->hasMany(Shareholder::class,'general_branch');
+        return $this->hasMany(Shareholder::class,'branch_id');
 
     }
 

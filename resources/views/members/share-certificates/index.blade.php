@@ -52,11 +52,6 @@
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Sr No
-                                </div>
-                            </th>
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     Branch
@@ -80,6 +75,24 @@
                             <th class="text-center !py-5" data-sortable="false">Action</th>
                         </tr>
                     </thead>
+                     @foreach ($certificates as $index => $certificate)
+                            <tr class="border-b dark:border-bg3">
+                                <td class="px-6 py-4">{{ $certificate->member->branch->branch_name ?? 'N/A' }}</td>
+                                <td class="px-6 py-4">{{ $certificate->member ?? 'N/A' }}</td> 
+                                <td class="px-6 py-4"> {{ $certificate->member->member_info_first_name ?? 'N/A' }}</td>
+                                <td class="px-6 py-4">{{ $certificate->father_name ?? 'N/A' }}</td> 
+                                <td class="py-2 px-6">
+                                    <div class="flex justify-center">
+                                        @include('partials._vertical-options', [
+                                            'id' => $minor->id,
+                                            'viewRoute' => 'minor.show',
+                                            'editRoute' => 'minor.edit',
+                                        ])
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        @endforeach
                 </table>
             </div>
         </div>

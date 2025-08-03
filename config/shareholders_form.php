@@ -37,28 +37,38 @@ return [
             'name' => 'transfer_date',
             'id' => 'date',
             'type' => 'text',
-            'required' => true
+            'required' => true,
+            'default' => \Carbon\Carbon::now()->format('Y-m-d')  // ✅ आजची तारीख
         ],
+
         [
             'label' => 'Shares',
             'name' => 'shares',
             'id' => 'shares',
-            'type' => 'number',
-            'required' => true
+            'type' => 'text',
+            'required' => true,  
+            'readonly' => true,
+            'default' => '100',
+
         ],
         [
             'label' => 'Face Value',
-            'name' => 'face_value',
+            'name' => 'nominal_value',
             'id' => 'face_value',
-            'type' => 'number',
-            'required' => false
+            'type' => 'text',
+            'readonly' => true,
+            'default' => '10.0',
+            'required' => false,
         ],
+
         [
             'label' => 'Total Consideration',
             'name' => 'total_consideration',
             'id' => 'total_consideration',
-            'type' => 'number',
-            'required' => false
+            'required' => false,
+            'type' => 'text',
+            'readonly' => true,
+            'default' => '1000',
         ],
     ],
 ];

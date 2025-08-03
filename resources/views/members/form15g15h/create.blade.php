@@ -101,7 +101,6 @@
                     @method('PUT')
                 @endif
                 @foreach ($sections ?? [] as $sectionName => $fields)
-                    {{-- Section Heading --}}
                     @if ($sectionName)
                         <div class="col-span-2">
                             <h3 class="text-xl font-semibold text-center text-gray-800 mb-4 capitalize">
@@ -173,7 +172,6 @@
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'disabled' : '' }} />
                             @endif
-
                             @error($name)
                                 <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                             @enderror
@@ -193,16 +191,12 @@
                             </button>
                         </div>
                     @endif
-
-                    {{-- Always show Back button --}}
                     <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                         <a href="{{ route('form15g15h.index') }}"
                             class="btn-outline inline-flex items-center justify-center">
                             Back
                         </a>
                     </div>
-
-
                 </div>
             </form>
         </div>

@@ -98,11 +98,6 @@
                                 Total Val.
                             </div>
                         </th>
-                        <!-- <th class="text-start !py-5 cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Allotment
-                                        </div>
-                                    </th> -->
                         <th class="text-center !py-5" data-sortable="false">Action</th>
                     </tr>
                 </thead>

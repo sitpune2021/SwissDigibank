@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="main-inner">
-     
+
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <h4>Transfer Shares</h4>
         </div>
@@ -24,7 +24,7 @@
         @endif
 
         <div class="box mb-4 xxxl:mb-6">
-            <form action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST"
+            <form id="companyForm" action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST"
                 class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 @csrf
                 @if ($method == 'PUT')
@@ -40,21 +40,27 @@
                             </h3>
                         </div>
                     @endif
-                    @foreach ($fields as $field)             
+                    @foreach ($fields as $field)
                         @php
                             $name = $field['name'];
-                            $type = $field['type'] ??'text';
+                            $type = $field['type'] ?? 'text';
                             $label = $field['label'];
                             $id = $field['id'] ?? $field['name'];
                             $required = $field['required'] ?? false;
                             $value = old($name, $sharesholdings[$name] ?? ($field['default'] ?? ''));
-                        @endphp                        
+                        @endphp
                         <div class="col-span-2 md:col-span-1">
                             <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
                                 {{ $label }} @if ($required)
                                     <span class="text-red-500">*</span>
                                 @endif
                             </label>
+                            @if ($name === 'shares' && isset($memberShareCount) && $memberShareCount >= 10)
+                                <span class="text-red-500 text-xs block mt-1">
+                                    Note: Member already has the required number of shares. No need to transfer more.
+                                </span>
+                            @endif
+
                             @if ($type === 'select')
                                 <select name="{{ $name }}" id="{{ $id }}"
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -78,13 +84,12 @@
                                         @endforeach
                                     @endif
                                 </select>
-                                 @if (!empty($field['create']))
+                                @if (!empty($field['create']))
                                     <a href="{{ route('member.create') }}"
                                         class="text-blue-600 hover:underline text-sm mt-2 inline-block">
                                         Add New Member
                                     </a>
-                                    @endif
-                                                                    
+                                @endif
                             @elseif ($type === 'radio')
                                 <div class="flex gap-5">
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
@@ -118,6 +123,7 @@
                     @endforeach
                 @endforeach
 
+
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     <button class="btn-primary" type="submit">
                         {{ $method === 'PUT' ? 'Update' : 'Save' }} Transfer Share
@@ -129,8 +135,28 @@
                     <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
                         Reset
                     </button>
+
                 </div>
+
             </form>
         </div>
     </div>
 @endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sharesInput = document.getElementById('shares');
+        const faceValueInput = document.getElementById('face_value');
+        const totalInput = document.getElementById('total_consideration');
+
+        function calculateTotal() {
+            const shares = parseFloat(sharesInput.value) || 0;
+            const faceValue = parseFloat(faceValueInput.value) || 0;
+            const total = shares * faceValue;
+            totalInput.value = total.toFixed(2);
+        }
+
+        sharesInput.addEventListener('input', calculateTotal);
+        faceValueInput.addEventListener('input', calculateTotal);
+        calculateTotal(); // Calculate on page load
+    });
+</script>

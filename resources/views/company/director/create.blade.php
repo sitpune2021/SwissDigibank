@@ -1,14 +1,7 @@
 @extends('layout.main')
 
 @section('page-title',
-    isset($shareholding)
-    ? (!empty($show)
-    ? 'View ' .
-    $director->director_name .
-    '
-    Director'
-    : 'Edit ' . $director->director_name . ' Director')
-    : 'Add Director')
+    isset($shareholding)  ? (!empty($show)   ? 'View ' . $director->director_name .'Director' : 'Edit ' . $director->director_name . ' Director') : 'Add Director')
 
 @section('content')
     @include('fields.errormessage')

@@ -1,5 +1,4 @@
 @extends('layout.main')
-
 @push('style')
     <style>
         .switch {
@@ -77,8 +76,7 @@
     ? (!empty($show)
     ? 'View ' .
     $member['member_info_first_name'] .
-    '
-    Members'
+    'Members'
     : 'Edit ' . $member['member_info_first_name'] . ' Members')
     : 'Add Members')
 
@@ -123,7 +121,6 @@
                                     : $member[$name] ?? ($field['default'] ?? ''),
                             );
                         }
-
                     @endphp
                     <div class="col-span-4 md:col-span-1">
                         @include('fields.label', [
@@ -141,7 +138,6 @@
                             'readonly' => empty($show) ? '' : 'readonly',
                             'field' => $field,
                         ])
-
                         @error($name)
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                         @enderror

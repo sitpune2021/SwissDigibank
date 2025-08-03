@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Member;
 
 class ShareCertificateController extends Controller
 {
     public function index()
     {
     
-       $sharecertificates = Shareholders::with('sharecertificate')->get();
+    //    $certificate = Member::with('member')->get();
 
-        return view('share-certificates.index', compact('sharecertificates'));
+        return view('members.share-certificates.index');
     }
  
     public function create()
     {
-       return view('share-certificates.create');
+       return view('members.share-certificates.create');
 
     }
 
@@ -24,8 +25,6 @@ class ShareCertificateController extends Controller
     {
         
     }
-
-    
     public function show(string $id)
     {
         
@@ -33,7 +32,7 @@ class ShareCertificateController extends Controller
 
     public function edit(string $id)
     {
-        //
+        
     }
 
    

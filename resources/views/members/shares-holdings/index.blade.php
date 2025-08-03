@@ -22,6 +22,7 @@
     .breadcrumb li.active {
         color: #555;
     }
+    
 </style>
 @section('content')
     <div class="main-inner">
@@ -96,11 +97,11 @@
         <tbody>
             @foreach ($sharesholdings as $index => $item)
                 <tr class="border-b dark:border-bg3 text-center">
-                    <td class="py-3 px-6 text-left">{{ $item->general_group }}</td>
+                    <td class="py-3 px-6 text-left">{{ $item->member->branch->branch_name ?? 'N/A' }}</td>
 
                     <td class="py-3 px-6 text-left">
-                            {{ $item->member->member_info_old_member_no ?? '' }}
-                        
+                        {{ $item->member->member_info_first_name ?? '' }}
+
                     </td>
 
                     <td class="py-3 px-6 text-left">
@@ -134,7 +135,6 @@
                     <td class="py-3 px-6 text-left">
                         {{ $item->surrendered ? 'Yes' : 'No' }}
                     </td>
-
                     <td class="py-2 px-6">
                         <div class="flex justify-center">
                             @include('partials._vertical-options', [

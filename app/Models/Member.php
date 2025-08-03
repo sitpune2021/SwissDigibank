@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -38,7 +36,6 @@ class Member extends Model
     {
         return $this->hasOne(Address::class);
     }
-
     public function kyc(): HasOne
     {
         return $this->hasOne(KycAndNominee::class);
@@ -56,8 +53,6 @@ class Member extends Model
         return $this->hasMany(Shareholder::class,'member_id');
 
     }
-    
-
     public function accounts()
     {
         return $this->hasMany(Account::class, 'member_id');

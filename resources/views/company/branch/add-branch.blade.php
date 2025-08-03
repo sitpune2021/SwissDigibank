@@ -68,14 +68,3 @@
     </div>
 @endsection
 
-@push('script')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        setTimeout(function() {
-            var successAlert = document.getElementById('success-alert');
-            var errorAlert = document.getElementById('error-alert');
-            if (successAlert) successAlert.style.display = 'none';
-            if (errorAlert) errorAlert.style.display = 'none';
-        }, 5000);
-    </script>
-@endpush

@@ -95,10 +95,9 @@
             @endif
 
             <div class="box mb-4 xxxl:mb-6">
-                <form action="{{ route('share-certificates.create') }}" method="POST"
+                <form action="{{ route('share_certificates.create') }}" method="POST"
                     class="grid grid-cols-2 gap-4 xxxl:gap-6">
                     @csrf
-                    <!----------------------------------------------------------------------------------------- -->
                     <div class="flex items-start gap-4">
                         <label for="dob" class="w-48 text-sm font-medium">Enrollment Date :<span
                                 class="text-red-500">*</span></label>
@@ -117,7 +116,6 @@
                         </div>
                     </div>
 
-                    <!-- ------------------------------------------------------------------------------ -->
 
                     <div class="flex items-start gap-4">
                         <label for="nominal_value" class="w-48 text-sm font-medium">Father's Name:<span
@@ -131,7 +129,6 @@
                             @enderror
                         </div>
                     </div>
-                    <!-- ------------------------------------------------------------------------------ -->
 
                     <div class="flex items-start gap-4">
                         <label for="name" class="w-48 text-sm font-medium">Name:</label>
@@ -144,7 +141,6 @@
                             @enderror
                         </div>
                     </div>
-                    <!-- ------------------------------------------------------------------------------ -->
 
                     <div class="flex items-start gap-4">
                         <label for="dob" class="w-48 text-sm font-medium">Date Of Birth :<span
@@ -163,7 +159,6 @@
                             @enderror
                         </div>
                     </div>
-                    <!-- ------------------------------------------------------------------------------ -->
                     <div class="flex items-start gap-4">
                         <label for="gender" class="w-48 text-sm font-medium">Gender:<span
                                 class="text-red-500">*</span></label>
@@ -180,7 +175,6 @@
                             @enderror
                         </div>
                     </div>
-                    <!-- ------------------------------------------------------------------------------ -->
 
                     <div class="flex items-start gap-4">
                         <label for="aadhaar_no" class="w-48 text-sm font-medium">Aadhaar No:<span
@@ -194,7 +188,6 @@
                             @enderror
                         </div>
                     </div>
-                    <!-- ------------------------------------------------------------------------------ -->
 
                     <div class="flex items-start gap-4">
                         <label for="address" class="w-48 text-sm font-medium">Address:<span
@@ -209,15 +202,11 @@
                         </div>
                     </div>
 
-
-                    <!--------------------------------------------------------------------------------->
-                    <br>
-                    <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                         <button class="btn-primary" type="submit">
-                            Save ShareHolder
+                            Save ShareCertificates
                         </button>
                         <button class="btn-outline" type="reset"
-                            onclick="window.location.href='{{ route('manage.promotor') }}'">
+                            onclick="window.location.href='{{ route('share_certificates.index') }}'">
                             Back
                         </button>
                         <button class="btn-outline" type="reset">
@@ -228,64 +217,4 @@
             </div>
         </div>
     @endsection
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        setTimeout(function() {
-            var successAlert = document.getElementById('success-alert');
-            var errorAlert = document.getElementById('error-alert');
-            if (successAlert) successAlert.style.display = 'none';
-            if (errorAlert) errorAlert.style.display = 'none';
-        }, 5000);
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $.ajax({
-                url: "{{ url('/get-branches') }}",
-                type: "GET",
-                success: function(response) {
-                    $.each(response, function(key, branch) {
-                        $('#branchDropdown').append(
-                            `<option value="${branch.id}">${branch.branch_name}</option>`);
-                    });
-                },
-                error: function() {
-                    alert('Failed to fetch branches.');
-                }
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $.ajax({
-                url: "{{ url('/get-marital-statuses') }}",
-                type: 'GET',
-                success: function(response) {
-                    $.each(response, function(index, status) {
-                        $('#mariatal_status').append(
-                            `<option value="${status.id}">${status.status}</option>`);
-                    });
-                },
-                error: function() {
-                    alert('Failed to load marital statuses.');
-                }
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $.ajax({
-                url: "{{ url('/get-religion-statuses') }}",
-                type: 'GET',
-                success: function(response) {
-                    $.each(response, function(index, status) {
-                        $('#member_religion').append(
-                            `<option value="${status.id}">${status.name}</option>`);
-                    });
-                },
-                error: function() {
-                    alert('Failed to load marital statuses.');
-                }
-            });
-        });
-    </script>
+
