@@ -15,16 +15,32 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(10); // Optional: change to ->get() if no pagination
+        $query = User::query();
+
+        // Check if there's a search input
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            // Add conditions for fields you want to search in
+            $query->where(function ($q) use ($search) {
+                $q->where('fname', 'like', "%{$search}%")
+                    ->orWhere('lname', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(fname, ' ', lname) LIKE ?", ["%{$search}%"])
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('mobile', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(10);
         return view('users.manage-user', compact('users'));
     }
     public function create()
     {
-        $employees =Employee::all() ;
+        $employees = Employee::all();
 
-      
+
         $branches = DB::table('branches')
             ->select('id', 'branch_name')  // assuming branches table has 'name' column
             ->get();
@@ -32,7 +48,7 @@ class UserController extends Controller
         $roles = DB::table('roles')->select('id', 'name')->get();
         $isAdd = true;
         // Pass data to view
-        return view('users.add-user', compact('employees', 'branches', 'roles','isAdd'));
+        return view('users.add-user', compact('employees', 'branches', 'roles', 'isAdd'));
     }
 
     /**
@@ -54,7 +70,7 @@ class UserController extends Controller
             'login_on_holidays'  => 'required|in:0,1',
             'searchable_account' => 'required|in:0,1',
             'user_active'        => 'required|in:0,1',
-            'name'=>'nullable',
+            'name' => 'nullable',
         ]);
 
         // Save user
@@ -166,6 +182,4 @@ class UserController extends Controller
     {
         //
     }
-
-    
 }

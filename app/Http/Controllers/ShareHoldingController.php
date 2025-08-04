@@ -17,11 +17,17 @@ class ShareHoldingController extends Controller
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
-                $q->where('member_no', 'like', "%$search%")
-                    ->orWhere('first_name', 'like', "%$search%")
-                    ->orWhere('gender', 'like', "%$search%")
-                    ->orWhere('enrollment_date', 'like', "%$search%");
-            });
+                // Search in shareholding table fields
+                $q->where('first_share', 'like', "%$search%")
+                    ->orWhere('share_no', 'like', "%$search%")
+                    ->orWhere('total_share_held', 'like', "%$search%")
+                    ->orWhere('nominal_value', 'like', "%$search%")
+                    ->orWhere('total_share_value', 'like', "%$search%");
+            })
+                ->orWhereHas('promotor', function ($q) use ($search) {
+                    // Search in related promoter table
+                    $q->where('first_name', 'like', "%$search%");
+                });
         }
         $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
         return view('company.share-holdings.manage-shareholding', compact('share_holdings'));
@@ -34,11 +40,11 @@ class ShareHoldingController extends Controller
         $formFields = config('share_form');
         $method = 'POST';
         $isAdd = true;
-        $nominal_value=10.00;
+        $nominal_value = 10.00;
         $dynamicOptions = [
             'promoter' => Promotor::pluck('first_name', 'id')
         ];
-        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd','nominal_value','formFields','dynamicOptions'));
+        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd', 'nominal_value', 'formFields', 'dynamicOptions'));
     }
     public function store(Request $request)
     {
@@ -89,7 +95,7 @@ class ShareHoldingController extends Controller
         $dynamicOptions = [
             'promoter' => Promotor::pluck('first_name', 'id')
         ];
-        return view('company.share-holdings.add-shares', compact('shareholding', 'show','formFields','route', 'method', 'dynamicOptions'));
+        return view('company.share-holdings.add-shares', compact('shareholding', 'show', 'formFields', 'route', 'method', 'dynamicOptions'));
     }
     public function edit($id)
     {
@@ -101,7 +107,7 @@ class ShareHoldingController extends Controller
         $dynamicOptions = [
             'promoter' => Promotor::pluck('first_name', 'id')
         ];
-        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method','formFields', 'dynamicOptions'));
+        return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'formFields', 'dynamicOptions'));
         // return view('branch.add-branch', compact('branch', 'states'));
     }
     public function update(Request $request, $id)

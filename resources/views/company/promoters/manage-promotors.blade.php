@@ -41,23 +41,9 @@
             </form>
         </div>
     </div>
-    @if (session('success'))
-    <div id="success-alert"
-        style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-        <strong>Success:</strong> {{ session('success') }}
-        <span onclick="document.getElementById('success-alert').style.display='none';"
-            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
+    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+        <x-alert />
     </div>
-    @endif
-
-    @if (session('error'))
-    <div id="error-alert"
-        style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-        <strong>Error:</strong> {{ session('error') }}
-        <span onclick="document.getElementById('error-alert').style.display='none';"
-            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
-    </div>
-    @endif
     <div class="overflow-x-auto pb-4 lg:pb-6">
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
             <thead class="custom-thead">
@@ -105,17 +91,17 @@
                     <td class="py-5 px-6">
                         <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
                             class="text-blue-500 hover:underline">
-                            DEMO-{{ $promotor->folio_no }}
+                            DEMO-{{ $promotor->folio_no ?? ''}}
                         </a>
                     </td>
                     <td class="py-5 px-6">
                         <div>
-                            <p class="font-medium mb-1">{{ $promotor->first_name }}</p>
+                            <p class="font-medium mb-1">{{ $promotor->first_name ?? ''}}</p>
                         </div>
                     </td>
-                    <td class="py-5 px-6">{{ $promotor->gender }}</td>
+                    <td class="py-5 px-6">{{ $promotor->gender ?? '' }}</td>
                     <td class="py-2">
-                        @if ($promotor->is_senior == 'Yes')
+                        @if (($promotor->is_senior ?? '') === 'Yes')
                         <span
                             class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                             Yes
@@ -123,11 +109,11 @@
                         @else
                         <span
                             class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
-                            {{ $promotor->is_senior }}
+                            {{ $promotor->is_senior?? 'No'}}
                         </span>
                         @endif
                     </td>
-                    <td class="py-5 px-6">{{ $promotor->enrollment_date->format('D d M Y') }}</td>
+                    <td class="py-5 px-6">{{ $promotor->enrollment_date->format('d/m/Y') ?? '' }}</td>
                     <td class="py-2">
                         @if (optional($promotor->kyc)->kyc_status == 'completed')
                         <span
@@ -195,7 +181,6 @@
                 </li>
                 @endif
                 @endfor
-
                 {{-- Next Page Link --}}
                 @if ($promotors->hasMorePages())
                 <li>

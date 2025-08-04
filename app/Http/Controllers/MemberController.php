@@ -9,23 +9,54 @@ use App\Models\KycAndNominee;
 use App\Models\State;
 use App\Models\Branch;
 use App\Models\Religion;
+use Carbon\Carbon;
 
 class MemberController extends Controller
 {
-    
-    public function index()
-    {
-        $members = Member::latest()->get(); 
-         session()->forget('member_id');
-        return view('members.member.index', compact('members'));
 
+    public function index(Request $request)
+    {
+        $query = Member::with(['branch', 'kyc']); 
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            $dateSearch = null;
+            try {
+                $date = \Carbon\Carbon::createFromFormat('d/m/Y', $search);
+                $dateSearch = $date->format('Y-m-d');
+            } catch (\Exception $e) {
+            }
+
+            $query->where(function ($q) use ($search, $dateSearch) {
+                $q->where('member_info_old_member_no', 'like', "%{$search}%")
+                    ->orWhere('general_group', 'like', "%{$search}%")
+                    ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                    ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                    ->orWhere('member_info_last_name', 'like', "%{$search}%")
+                    ->orWhere('member_info_mobile_no', 'like', "%{$search}%");
+
+                if ($dateSearch) {
+                    $q->orWhereDate('general_enrollment_date', $dateSearch);
+                }
+
+                $q->orWhereHas('kyc', function ($kq) use ($search) {
+                    $kq->where('member_kyc_aadhaar_no', 'like', "%{$search}%")
+                        ->orWhere('member_kyc_pan_no', 'like', "%{$search}%");
+                });
+            });
+        }
+
+         $members = $query->latest()->paginate(10); 
+
+        session()->forget('member_id');
+        return view('members.member.index', compact('members'));
     }
 
-    
     public function create()
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id'),
+            'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
@@ -34,10 +65,9 @@ class MemberController extends Controller
         $route = route('member.store');
         $method = 'POST';
         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
-
     }
 
-  
+
     public function store(Request $request)
     {
         $request->validate([
@@ -137,6 +167,14 @@ class MemberController extends Controller
             'charges_pay_mode' => 'required|in:cash,online,cheque',
         ]);
 
+        $request->merge([
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
+        ]);
+
         $memberData = $request->only((new Member)->getFillable());
         $addressData = $request->only((new Address)->getFillable());
         $kycData = $request->only((new KycAndNominee)->getFillable());
@@ -147,11 +185,11 @@ class MemberController extends Controller
         return redirect()->route('member.index')->with('success', 'Member created successfully.');
     }
 
-    
+
     public function show(string $id)
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id'),
+            'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
@@ -164,18 +202,18 @@ class MemberController extends Controller
 
         $sections = config('member_form');
         $show = true;
-        $button=true;
-        $method='PUT';
+        $button = true;
+        $method = 'PUT';
         $minor = true;
         session(['member_id' => $id]);
-        return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
+        return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions', 'button', 'minor', 'method'));
     }
 
-    
- public function edit(string $id)
+
+    public function edit(string $id)
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id'),
+            'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
@@ -188,104 +226,112 @@ class MemberController extends Controller
         );
 
         $sections = config('member_form');
-        $route = route('member.update', $id) ;
+        $route = route('member.update', $id);
         session(['member_id' => $id]);
         $minor = true;
         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
     }
- 
 
-   
+
+
     public function update(Request $request, string $id)
-{
-    $request->validate([
-        // (Same validation rules as in store)
-        'membership_type' => 'required|in:nominal,regular',
-        'general_advisor_staff' => 'nullable|string',
-        'general_group' => 'nullable|in:group1,group2',
-        'general_branch' => 'required|string',
-        'general_enrollment_date' => 'nullable',
-        'member_info_title' => 'required|in:md,mr,ms,mrs',
-        'member_info_gender' => 'required|in:male,female,other',
-        'member_info_first_name' => 'required|string',
-        'member_info_middle_name' => 'nullable|string',
-        'member_info_last_name' => 'required|string',
-        'member_info_dob' => 'required',
-        'member_info_qualification' => 'nullable|string',
-        'member_info_occupation' => 'nullable|string',
-        'member_info_monthly_income' => 'nullable|numeric',
-        'member_info_old_member_no' => 'nullable|string',
-        'member_info_father_name' => 'nullable|string',
-        'member_info_mother_name' => 'nullable|string',
-        'member_info_spouse_name' => 'nullable|string',
-        'member_info_spouse_dob' => 'nullable',
-        'member_info_mobile_no' => 'required|string',
-        'member_info_collection_time' => 'nullable|string',
-        'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
-        'member_info_religion' => 'nullable|string',
-        'member_info_email' => 'nullable|email',
-        'member_address_line_1' => 'nullable|string',
-        'member_address_line_2' => 'nullable|string',
-        'member_address_para' => 'nullable|string',
-        'member_address_ward' => 'nullable|string',
-        'member_address_panchayat' => 'nullable|string',
-        'member_address_area' => 'nullable|string',
-        'member_address_landmark' => 'nullable|string',
-        'member_address_city_district' => 'nullable|string',
-        'member_address_state' => 'required|string',
-        'member_address_pincode' => 'nullable|numeric',
-        'member_address_country' => 'required|string',
-        'member_address_address' => 'nullable|string',
-        'member_perm_address_city' => 'nullable|string',
-        'member_perm_address_state' => 'nullable|string',
-        'member_perm_address_pincode' => 'nullable|numeric',
-        'member_gps_location_latitude' => 'nullable|string',
-        'member_gps_location_longitude' => 'nullable|numeric',
-        'member_kyc_aadhaar_no' => 'required|string',
-        'member_kyc_voter_id_no' => 'nullable|string',
-        'member_kyc_pan_no' => 'required|string',
-        'member_kyc_ration_card_no' => 'nullable|string',
-        'member_kyc_meter_no' => 'nullable|string',
-        'member_kyc_ci_no' => 'nullable|string',
-        'member_kyc_ci_relation' => 'nullable|string',
-        'member_kyc_dl_no' => 'nullable|string',
-        'member_kyc_passport_no' => 'nullable|string',
-        'member_kyc_photo' => 'nullable|file|image',
-        'member_kyc_signature' => 'nullable|file|image',
-        'member_kyc_id_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_id_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_address_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_address_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'nominee_name' => 'nullable|string',
-        'nominee_relation' => 'nullable|string',
-        'nominee_mobile_no' => 'nullable|string',
-        'nominee_gender' => 'nullable|in:Male,Female,Other',
-        'nominee_dob' => 'nullable',
-        'nominee_aadhaar_no' => 'nullable|string',
-        'nominee_voter_id_no' => 'nullable|string',
-        'nominee_pan_no' => 'nullable|string',
-        'nominee_ration_card_no' => 'nullable|string',
-        'nominee_address' => 'nullable|string',
-        'extra_sms' => 'nullable|boolean',
-        'charges_transaction_date' => 'required',
-        'charges_membership_fee' => 'nullable|numeric',
-        'charges_net_fee' => 'required|numeric',
-        'charges_remarks' => 'nullable|string',
-        'charges_pay_mode' => 'nullable|in:cash,online,cheque',
-    ]);
+    {
+        $request->validate([
+            // (Same validation rules as in store)
+            'membership_type' => 'required|in:nominal,regular',
+            'general_advisor_staff' => 'nullable|string',
+            'general_group' => 'nullable|in:group1,group2',
+            'general_branch' => 'required|string',
+            'general_enrollment_date' => 'nullable',
+            'member_info_title' => 'required|in:md,mr,ms,mrs',
+            'member_info_gender' => 'required|in:male,female,other',
+            'member_info_first_name' => 'required|string',
+            'member_info_middle_name' => 'nullable|string',
+            'member_info_last_name' => 'required|string',
+            'member_info_dob' => 'required',
+            'member_info_qualification' => 'nullable|string',
+            'member_info_occupation' => 'nullable|string',
+            'member_info_monthly_income' => 'nullable|numeric',
+            'member_info_old_member_no' => 'nullable|string',
+            'member_info_father_name' => 'nullable|string',
+            'member_info_mother_name' => 'nullable|string',
+            'member_info_spouse_name' => 'nullable|string',
+            'member_info_spouse_dob' => 'nullable',
+            'member_info_mobile_no' => 'required|string',
+            'member_info_collection_time' => 'nullable|string',
+            'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
+            'member_info_religion' => 'nullable|string',
+            'member_info_email' => 'nullable|email',
+            'member_address_line_1' => 'nullable|string',
+            'member_address_line_2' => 'nullable|string',
+            'member_address_para' => 'nullable|string',
+            'member_address_ward' => 'nullable|string',
+            'member_address_panchayat' => 'nullable|string',
+            'member_address_area' => 'nullable|string',
+            'member_address_landmark' => 'nullable|string',
+            'member_address_city_district' => 'nullable|string',
+            'member_address_state' => 'required|string',
+            'member_address_pincode' => 'nullable|numeric',
+            'member_address_country' => 'required|string',
+            'member_address_address' => 'nullable|string',
+            'member_perm_address_city' => 'nullable|string',
+            'member_perm_address_state' => 'nullable|string',
+            'member_perm_address_pincode' => 'nullable|numeric',
+            'member_gps_location_latitude' => 'nullable|string',
+            'member_gps_location_longitude' => 'nullable|numeric',
+            'member_kyc_aadhaar_no' => 'required|string',
+            'member_kyc_voter_id_no' => 'nullable|string',
+            'member_kyc_pan_no' => 'required|string',
+            'member_kyc_ration_card_no' => 'nullable|string',
+            'member_kyc_meter_no' => 'nullable|string',
+            'member_kyc_ci_no' => 'nullable|string',
+            'member_kyc_ci_relation' => 'nullable|string',
+            'member_kyc_dl_no' => 'nullable|string',
+            'member_kyc_passport_no' => 'nullable|string',
+            'member_kyc_photo' => 'nullable|file|image',
+            'member_kyc_signature' => 'nullable|file|image',
+            'member_kyc_id_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_id_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_address_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_address_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'nominee_name' => 'nullable|string',
+            'nominee_relation' => 'nullable|string',
+            'nominee_mobile_no' => 'nullable|string',
+            'nominee_gender' => 'nullable|in:Male,Female,Other',
+            'nominee_dob' => 'nullable',
+            'nominee_aadhaar_no' => 'nullable|string',
+            'nominee_voter_id_no' => 'nullable|string',
+            'nominee_pan_no' => 'nullable|string',
+            'nominee_ration_card_no' => 'nullable|string',
+            'nominee_address' => 'nullable|string',
+            'extra_sms' => 'nullable|boolean',
+            'charges_transaction_date' => 'required',
+            'charges_membership_fee' => 'nullable|numeric',
+            'charges_net_fee' => 'required|numeric',
+            'charges_remarks' => 'nullable|string',
+            'charges_pay_mode' => 'nullable|in:cash,online,cheque',
+        ]);
 
-    $member = Member::findOrFail($id);
-    $memberData = $request->only((new Member)->getFillable());
-    $addressData = $request->only((new Address)->getFillable());
-    $kycData = $request->only((new KycAndNominee)->getFillable());
+        $request->merge([
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
+        ]);
 
-    $member->update($memberData);
-    $member->address()->update($addressData);
-    $member->kyc()->update($kycData);
+        $member = Member::findOrFail($id);
+        $memberData = $request->only((new Member)->getFillable());
+        $addressData = $request->only((new Address)->getFillable());
+        $kycData = $request->only((new KycAndNominee)->getFillable());
 
-    return redirect()->route('member.index')->with('success', 'Member updated successfully.');
-}
+        $member->update($memberData);
+        $member->address()->update($addressData);
+        $member->kyc()->update($kycData);
+
+        return redirect()->route('member.index')->with('success', 'Member updated successfully.');
+    }
 
     public function destroy(string $id)
     {

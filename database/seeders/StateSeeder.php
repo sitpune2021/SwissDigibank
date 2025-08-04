@@ -38,7 +38,16 @@ class StateSeeder extends Seeder
             'Tripura',
             'Uttar Pradesh',
             'Uttarakhand',
-            'West Bengal'
+            'West Bengal',
+            // Union Territories
+            'Andaman and Nicobar Islands',
+            'Chandigarh',
+            'Dadra and Nagar Haveli and Daman and Diu',
+            'Delhi',
+            'Jammu and Kashmir',
+            'Ladakh',
+            'Lakshadweep',
+            'Puducherry',
             // 'OUTSIDE INDIA'
         ];
 
