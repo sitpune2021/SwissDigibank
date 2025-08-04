@@ -154,8 +154,8 @@ return [
             [
                 'label' => 'Incorporation Date',
                 'name' => 'incorporation_date',
-                'id' => 'incorporation_date',
-                'type' => 'date',
+                'id' => 'date2',
+                'type' => 'text',
                 'required' => false,
             ],
             [

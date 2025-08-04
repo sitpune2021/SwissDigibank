@@ -48,11 +48,11 @@
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
             <thead class="custom-thead">
                 <tr class="bg-secondary/5 dark:bg-bg3">
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                    <!-- <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             Sr No
                         </div>
-                    </th>
+                    </th> -->
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             Member No
@@ -85,9 +85,9 @@
             <tbody>
                 @foreach ($promotors as $promotor)
                 <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                    <td class="py-5 px-6">
+                    <!-- <td class="py-5 px-6">
                         {{ ($promotors->currentPage() - 1) * $promotors->perPage() + $loop->iteration }}
-                    </td>
+                    </td> -->
                     <td class="py-5 px-6">
                         <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
                             class="text-blue-500 hover:underline">

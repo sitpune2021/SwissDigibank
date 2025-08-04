@@ -128,7 +128,7 @@ class SchemesController extends Controller
             }
 
             return redirect()->route('schemes.index')
-                ->with('success', 'Schemes created successfully.');
+                ->with('success', 'Scheme added successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
                 ->withInput();

@@ -22,11 +22,6 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Sr No
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
                                 Employee Code
                             </div>
                         </th>
@@ -60,7 +55,6 @@
                     @endphp
                     @foreach($employees as $employee)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="py-5 px-6">{{$s=$s+1}}</td>
                         <td class="py-5 px-6">
                             <a href="" class="text-blue-500 hover:underline">
                                 N/A

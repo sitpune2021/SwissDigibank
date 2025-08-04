@@ -55,7 +55,7 @@ class CompanyController extends Controller
             'mobile_no' => 'required|digits:10',
             'landline_no' => 'required|digits_between:6,15',
             'contact_email' => 'required|email',
-            'cin_no' => 'required|regex:/^[A-Z0-9]{21}$/',
+            'cin_no' => 'required|regex:/^[LU]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/',
             'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'tan_no' => 'required|regex:/^[A-Z]{4}[0-9]{5}[A-Z]{1}$/',
             'gst_no' => 'required',
@@ -69,7 +69,7 @@ class CompanyController extends Controller
         ]);
 
         $company = Company::findOrFail($id);
-        $company->update($$request->all());
+        $company->update($request->all());
         return redirect()->route('company.index')->with('success', 'Company profile updated successfully.');
     }
 }

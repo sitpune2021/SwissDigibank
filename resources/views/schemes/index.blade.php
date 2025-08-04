@@ -19,7 +19,6 @@
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead class="custom-thead">
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-2 px-3">Sr No</th>
                         <th class="text-start !py-2 px-3">Code</th>
                         <th class="text-start !py-2 px-3">Scheme Name</th>
                         <th class="text-start !py-2 px-3">Min. Amt. To Open A/c</th>
@@ -32,7 +31,6 @@
                 <tbody>
                     @foreach ($schemes as $scheme)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="py-5 px-6">{{ $loop->iteration }}</td>
                         <td class="py-5 px-6">{{ $scheme->scheme_code }}</td>
                         <td class="py-5 px-6">{{ $scheme->scheme_name }}</td>
                         <td class="py-5 px-6">{{ $scheme->min_opening_balance, 2 }}</td>
