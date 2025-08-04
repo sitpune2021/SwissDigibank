@@ -128,5 +128,6 @@
             </tbody>
         </table>
     </div>
+    <x-pagination :paginator="$directors" />
 </div>
 @endsection

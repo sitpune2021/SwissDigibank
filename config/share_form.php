@@ -42,14 +42,14 @@ return [
         'default' => '10.0',
     ],
     [
-        'label' => 'Total Share Held',
+        'label' => 'Total Shares Held',
         'required' => false,
         'type' => 'text',
         'name' => 'total_share_held',
         'id' => 'total_share_held',
     ],
     [
-        'label' => 'Total Share Value',
+        'label' => 'Total Shares Value',
         'required' => true,
         'type' => 'text',
         'name' => 'total_share_value',

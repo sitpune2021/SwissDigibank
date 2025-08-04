@@ -22,11 +22,6 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Sr No
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
                                 User Name
                             </div>
                         </th>
@@ -52,7 +47,6 @@
                 <tbody>
                     @forelse ($users as $index => $user)
                     <tr>
-                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
                         <td class="px-6 py-4">{{ $user->fname . ' ' . $user->lname ?? 'N/A' }}</td>
                         <td class="px-6 py-4">{{ $user->email }}</td>
                         <td class="px-6 py-4">{{ $user->mobile ?? 'N/A' }}</td>

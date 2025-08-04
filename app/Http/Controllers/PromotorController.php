@@ -85,8 +85,8 @@ class PromotorController extends Controller
             'sms' => 'boolean',
 
             // KYC fields
-            'aadhaar_no' => 'required|digits:12',
-            'voter_id_no' => 'nullable|string|max:20',
+            'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
             'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'ration_card_no' => 'nullable|string|max:20',
             'meter_no' => 'nullable|string|max:20',
@@ -98,8 +98,8 @@ class PromotorController extends Controller
             'nominee_name' => 'nullable|string|max:255',
             'nominee_relation' => 'nullable|string|max:100',
             'nominee_mobile_no' => 'nullable|digits:10',
-            'nominee_aadhaar_no' => 'nullable|digits:12',
-            'nominee_voter_id_no' => 'nullable|string|max:20',
+            'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'nominee_voter_id_no' => 'nullable||regex:/^[A-Z]{3}[0-9]{7}$/',
             'nominee_pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'nominee_address' => 'nullable|string|max:500',
         ]);
@@ -247,8 +247,8 @@ class PromotorController extends Controller
             'sms' => 'boolean',
 
             // KYC fields
-            'aadhaar_no' => 'required|digits:12',
-            'voter_id_no' => 'nullable|string|max:20',
+            'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
             'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'ration_card_no' => 'nullable|string|max:20',
             'meter_no' => 'nullable|string|max:20',
@@ -260,8 +260,8 @@ class PromotorController extends Controller
             'nominee_name' => 'nullable|string|max:255',
             'nominee_relation' => 'nullable|string|max:100',
             'nominee_mobile_no' => 'nullable|digits:10',
-            'nominee_aadhaar_no' => 'nullable|digits:12',
-            'nominee_voter_id_no' => 'nullable|string|max:20',
+            'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'nominee_voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
             'nominee_pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'nominee_address' => 'nullable|string|max:500',
         ]);

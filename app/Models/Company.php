@@ -40,9 +40,9 @@ class Company extends Model
         'paid_up_capital',
     ];
 
-    protected $casts = [
-        'incorporation_date' => 'date',
-    ];
+    // protected $casts = [
+    //     'incorporation_date' => 'date',
+    // ];
 
     public function State()
     {

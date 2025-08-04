@@ -51,11 +51,6 @@
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Sr No
-                        </div>
-                    </th>
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">
                             Promoters
                         </div>
                     </th>
@@ -84,18 +79,12 @@
                             Total Val.
                         </div>
                     </th>
-                    <!-- <th class="text-start !py-5 cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Allotment
-                                        </div>
-                                    </th> -->
                     <th class="text-center !py-5" data-sortable="false">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($share_holdings as $index => $share)
                 <tr>
-                    <td class="px-6 py-4">{{ $index + 1 }}</td>
                     <td class="px-6 py-4">{{ $share->promotor->first_name ?? 'N/A' }}</td>
                     <td class="px-6 py-4">{{ $share->first_share }}</td>
                     <td class="px-6 py-4">{{ $share->share_no }}</td>
