@@ -11,42 +11,10 @@
     </div>
 
     <div class="box col-span-12 lg:col-span-6">
-        <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-            <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
-                <label for="perPage" class="text-sm">Show</label>
-                <select name="perPage" id="perPage" onchange="this.form.submit()"
-                    class="border rounded px-2 py-1 text-sm">
-                    <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('perPage') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
-                </select>
-                <span class="text-sm">entries</span>
-            </form>
-
-            <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-                <form method="GET" action="{{ route('schemes.index') }}"
-                    class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-full px-4 py-1 min-w-[200px] xl:max-w-[319px]">
-
-                    <input type="text" name="search" placeholder="Search" value="{{ request('search') }}"
-                        class="bg-transparent border-none text-sm text-gray-800 dark:text-white focus:outline-none w-full placeholder:text-gray-400" />
-
-                    <button type="submit"
-                        class="w-7 h-7 bg-primary hover:bg-primary/90 text-white rounded-full flex items-center justify-center transition duration-200">
-                        <i class="las la-search text-lg"></i>
-                    </button>
-
-                    @if (request('search'))
-                    <a href="{{ route('schemes.index') }}"
-                        class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
-                        title="Clear Search">
-                        <i class="las la-times text-lg"></i>
-                    </a>
-                    @endif
-                </form>
-            </div>
+        <x-searchbox />
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+            <x-alert />
         </div>
-
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead class="custom-thead">
@@ -81,7 +49,7 @@
                             @else
                             <span
                                 class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
-                               No
+                                No
                             </span>
                             @endif
                         </td>
@@ -100,5 +68,6 @@
             </table>
         </div>
     </div>
+    <x-pagination :paginator="$schemes" />
 </div>
 @endsection

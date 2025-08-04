@@ -12,7 +12,10 @@
 
     <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6">
-        <x-searchbox :action="route('employee.index')" />
+        <x-searchbox />
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+            <x-alert />
+        </div>
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
@@ -97,5 +100,6 @@
             </table>
         </div>
     </div>
+    <x-pagination :paginator="$employees" />
 </div>
 @endsection
