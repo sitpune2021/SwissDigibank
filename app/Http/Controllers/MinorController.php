@@ -15,35 +15,39 @@ class MinorController extends Controller
      */
     public function index()
     {
-        $minors = Minor::all();
+        $minors = Minor::latest()->get(); 
         return view('members.minor.index', compact('minors'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $sections = config('minor_form');
-         $minor = null;
-        $route = route('minor.store');
-        $method = 'POST';
-        $dynamicOptions = [
-            'member' =>Member::pluck('member_info_first_name', 'id')
-        ];
-        return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions'));
-       // return view('member.create');
+  public function create(Request $request)
+{
+    $memberId = $request->member_id ?? session('member_id');
 
+    // Ensure member exists
+    if (!$memberId || !Member::find($memberId)) {
+        return redirect()->back()->with('error', 'Invalid Member ID');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Store member_id in session
+    session(['member_id' => $memberId]);
+    $member_id = $request->member_id;
+
+    $sections = config('minor_form');
+    $minor = null;
+    $route = route('minor.store');
+    $method = 'POST';
+    $dynamicOptions = [
+        'member' => Member::pluck('member_info_first_name', 'id')
+    ];
+
+    return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions'));
+}
+
     public function store(Request $request)
     {
         // Validate the request
     $data = $request->validate([
-    'member_id' => 'required',
+        'member_id' => 'required',
         'enrollment_date' => 'required',
         'title' => 'required|in:md,mr,ms,mrs',
         'gender' => 'required|in:male,female,other',
@@ -64,15 +68,10 @@ class MinorController extends Controller
     Minor::create($data); // Replace with your actual model
 
     // Redirect with success message
-    return redirect()->route('minor.index') // change route as per your routes
+    return redirect()->route('member.show', $data['member_id']) // change route as per your routes
                      ->with('success', 'Minor created successfully.');
 
-
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         {
@@ -84,7 +83,7 @@ class MinorController extends Controller
         $dynamicOptions = [
             'member' =>Member::pluck('member_info_first_name', 'id')
         ];
-        return view('members.minor.create', compact('sections', 'minor', 'show'));
+        return view('members.minor.create', compact('sections', 'minor'));
     }
     }
 

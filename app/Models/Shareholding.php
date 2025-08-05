@@ -18,7 +18,8 @@ class Shareholding extends Model
         'transaction_date',
         'amount',
         'remarks',
-        'pay_mode' 
+        'pay_mode' ,
+        'is_transfer'
     ];
 
      protected $casts = [
@@ -35,5 +36,16 @@ class Shareholding extends Model
         return $this->hasMany(Shareholder::class,'shareholding_id');
 
     }
+      public function sharecertificate()
+    {
+        return $this->hasMany(ShareCertificate::class,'shareholding_id');
+
+    }
+     public function Shareholders()
+    {
+        return $this->hasMany(Shareholders::class,'shareholding_id');
+
+    }
+
     
 }

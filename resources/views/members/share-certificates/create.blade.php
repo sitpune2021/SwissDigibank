@@ -95,7 +95,7 @@
             @endif
 
             <div class="box mb-4 xxxl:mb-6">
-                <form action="{{ route('share_certificates.create') }}" method="POST"
+                <form action="{{ route('share-certificates.create') }}" method="POST"
                     class="grid grid-cols-2 gap-4 xxxl:gap-6">
                     @csrf
                     <div class="flex items-start gap-4">
@@ -206,7 +206,7 @@
                             Save ShareCertificates
                         </button>
                         <button class="btn-outline" type="reset"
-                            onclick="window.location.href='{{ route('share_certificates.index') }}'">
+                            onclick="window.location.href='{{ route('share-certificates.index') }}'">
                             Back
                         </button>
                         <button class="btn-outline" type="reset">

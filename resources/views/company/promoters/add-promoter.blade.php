@@ -163,7 +163,6 @@
                           }
                       @endphp
 
-
                       <div class="col-span-2 md:col-span-1">
                           @include('fields.label', [
                               'id' => $id,

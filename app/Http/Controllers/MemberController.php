@@ -36,8 +36,6 @@ class MemberController extends Controller
         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
 
     }
-
-  
     public function store(Request $request)
     {
         $request->validate([
@@ -56,7 +54,7 @@ class MemberController extends Controller
             'member_info_first_name' => 'required|string',
             'member_info_middle_name' => 'nullable|string',
             'member_info_last_name' => 'required|string',
-            'member_info_dob' => 'required',
+            'member_info_dob'        => 'required|date|before_or_equal:today',
             'member_info_qualification' => 'nullable|string',
             'member_info_occupation' => 'nullable|string',
             'member_info_monthly_income' => 'nullable|numeric',
@@ -64,7 +62,7 @@ class MemberController extends Controller
             'member_info_father_name' => 'nullable|string',
             'member_info_mother_name' => 'nullable|string',
             'member_info_spouse_name' => 'nullable|string',
-            'member_info_spouse_dob' => 'nullable',
+            'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
             'member_info_mobile_no' => 'required|string',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -97,7 +95,7 @@ class MemberController extends Controller
             // KYC Info
             'member_kyc_aadhaar_no' => 'required|string',
             'member_kyc_voter_id_no' => 'nullable|string',
-            'member_kyc_pan_no' => 'nullable|string',
+            'member_kyc_pan_no' => 'nullable|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
             'member_kyc_ration_card_no' => 'nullable|string',
             'member_kyc_meter_no' => 'nullable|string',
             'member_kyc_ci_no' => 'nullable|string',
@@ -156,19 +154,15 @@ class MemberController extends Controller
             'religion' => Religion::pluck('name', 'id')
         ];
         $member = Member::with('address', 'kyc')->findOrFail($id);
-        // $member = array_merge(
-        //     $memberModel->toArray(),
-        //     $memberModel->address?->toArray() ?? [],
-        //     $memberModel->kyc?->toArray() ?? []
-        // );
-
         $sections = config('member_form');
         $show = true;
         $button=true;
         $method='PUT';
         $minor = true;
         session(['member_id' => $id]);
-        return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
+        $member = Member::with('minors')->findOrFail($id);
+
+         return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
     }
 
     
@@ -210,7 +204,7 @@ class MemberController extends Controller
         'member_info_first_name' => 'required|string',
         'member_info_middle_name' => 'nullable|string',
         'member_info_last_name' => 'required|string',
-        'member_info_dob' => 'required',
+        'member_info_dob' => 'required|date|before_or_equal:today',
         'member_info_qualification' => 'nullable|string',
         'member_info_occupation' => 'nullable|string',
         'member_info_monthly_income' => 'nullable|numeric',
@@ -218,7 +212,7 @@ class MemberController extends Controller
         'member_info_father_name' => 'nullable|string',
         'member_info_mother_name' => 'nullable|string',
         'member_info_spouse_name' => 'nullable|string',
-        'member_info_spouse_dob' => 'nullable',
+        'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
         'member_info_mobile_no' => 'required|string',
         'member_info_collection_time' => 'nullable|string',
         'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -243,7 +237,7 @@ class MemberController extends Controller
         'member_gps_location_longitude' => 'nullable|numeric',
         'member_kyc_aadhaar_no' => 'required|string',
         'member_kyc_voter_id_no' => 'nullable|string',
-        'member_kyc_pan_no' => 'required|string',
+        'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
         'member_kyc_ration_card_no' => 'nullable|string',
         'member_kyc_meter_no' => 'nullable|string',
         'member_kyc_ci_no' => 'nullable|string',
@@ -291,4 +285,38 @@ class MemberController extends Controller
     {
         //
     }
+public function updateContact(Request $request, $id)
+{
+    $request->validate([
+        'member_info_mobile_no' => 'required|string|max:15',
+        'member_info_email' => 'required|email|max:255',
+    ]);
+
+    $member = Member::findOrFail($id);
+
+    $member->update([
+        'member_info_mobile_no' => $request->member_info_mobile_no,
+        'member_info_email' => $request->member_info_email,
+    ]);
+
+    return back()->with('success', 'Contact info updated successfully!');
+}
+
+public function updateAddress(Request $request, $id)
+{
+    $request->validate([
+        'member_address_line_1' => 'required|string|max:255',
+        // validate other fields as needed
+    ]);
+
+    $member = Member::findOrFail($id);
+    $member->address->update([
+        'member_address_line_1' => $request->member_address_line_1,
+        // update other fields
+    ]);
+
+    return back()->with('success', 'Address updated successfully!');
+}
+
+
 }

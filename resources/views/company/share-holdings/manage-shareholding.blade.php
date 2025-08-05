@@ -131,6 +131,39 @@
             </table>
         </div>
     </div>
+
+    <div class="box mt-4">
+        @php
+            $field = [
+                'dynamic' => true,
+                'options_key' => 'promoter',
+            ];
+            $name = 'is_transfer'; // Define this for the @error directive
+        @endphp
+        <form action="{{ route('shareholding.transfer') }}" method="POST">
+            @csrf
+            @include('fields.label', [
+                'id' => 'transfer',
+                'label' => 'Promoter',
+                'required' => true,
+            ])
+
+            @include('fields.inputs', [
+                'id' => 'transfer',
+                'label' => 'Promoter',
+                'required' => true,
+                'type' => 'select',
+                'name' => $name,
+                'value' => $transfoer->id,
+                'field' => $field,
+            ])
+
+            @error($name)
+                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+            @enderror
+            <button class="btn-primary" type="submit"> UPDATE </button>
+        </form>
+    </div>
 @endsection
 
 @push('script')

@@ -105,9 +105,8 @@
                     </td>
 
                     <td class="py-3 px-6 text-left">
-                        {{ $item->share_range ?? '-' }}
+                        {{ $item->share->share_no ?? 'N/A' }}
                     </td>
-
                     <td class="py-3 px-6 text-left">
                         {{ $item->total_shares_held ?? 0 }}
                     </td>

@@ -31,11 +31,15 @@ class Shareholders extends Model
     }
    public function branch()
 {
-    return $this->belongsTo(Branch::class, 'branch_id'); // or correct foreign key if different
+    return $this->belongsTo(Branch::class, 'branch_id'); 
 }
 
       public function shareholding()
     {
          return $this->belongsTo(Shareholding::class, 'shareholding_id');
     }
+//      public function shareholding()
+//     {
+//          return $this->belongsTo(Shareholding::class, 'shareholding_id');
+//     }
 }

@@ -28,7 +28,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'Permissions / Roles', 'route' => 'roles.index'],
-            // ['title' => 'Users', 'route' => 'users.index'],
+            ['title' => 'Users', 'route' => 'users.index'],
         ],
     ],
     [
@@ -40,30 +40,43 @@ return [
             ['title' => 'Members', 'route' => 'member.index'],
             ['title' => 'Minors', 'route' => 'minor.index'],
            ['title' => 'Share Holding', 'route' => 'shares-holdings.index'],
-             ['title' => 'Share Certificates', 'route' => 'share_certificates.index'],
-            // ['title' => 'Share Transfer History', 'route' => 'share_transfer_histories.index'],
+            ['title' => 'Share Certificates', 'route' => 'share-certificates.index'],
+            ['title' => 'Share Transfer History', 'route' => 'share_transfer_histories.index'],
             ['title' => 'Form 15G/15H', 'route' => 'form15g15h.index'],
         ]
     ],
-     [
-        'title' => 'Savings/Current AC',
+    [
+        'title' => 'Account',
         'icon' => 'las la-university',
         'position' => '5',
         'active' => '1',
         'submenu' => [
             ['title' => 'Schemes', 'route' => 'schemes.index'],
-             ['title' => 'Account', 'route' => 'accounts.index'],
+            ['title' => 'Saving A/c', 'route' => 'accounts.index'],
         ]
     ],
-    // [
-    //     'title' => 'HR Management',
-    //     'icon' => 'las la-user',
-    //     'position' => '6',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         ['title' => 'Employees', 'route' => 'employee.index'],
-    //     ],
-    // ],
+    [
+        'title' => 'Approvals',
+        'icon' => 'las la-university',
+        'position' => '5',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Pending Transactions', 'route' => 'pending-transaction.index'],
+            ['title' => 'Share Transfer/ Allocation', 'route' => 'share-transfer-approval.approve_transfer'],
+            ['title' => 'Reversed Transactions', 'route' => 'reverse-transaction.reverse_transaction'],
+
+            // ['title' => 'Share Surrender', 'route' => 'share-surrender.index'],
+        ]
+    ],
+    [
+        'title' => 'HR Management',
+        'icon' => 'las la-user',
+        'position' => '6',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Employees', 'route' => 'employee.index'],
+        ],
+    ],
 
 
 

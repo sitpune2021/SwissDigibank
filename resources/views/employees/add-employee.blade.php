@@ -643,9 +643,6 @@
 @endsection
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-
 <script>
     setTimeout(function() {
 
@@ -673,7 +670,7 @@
                 $.each(response, function(index, member) {
                     let selected = (selectedId == member.id) ? 'selected' : '';
                     dropdown.append(
-                        `<option value="${member.id}" ${selected}>${member.member_no} - ${member.first_name}</option>`
+                        `<option value="${member.id}" ${selected}> ${member.first_name}</option>`
                     );
                 });
             },

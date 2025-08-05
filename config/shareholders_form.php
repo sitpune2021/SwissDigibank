@@ -8,6 +8,7 @@ return [
             'id' => 'transferor',
             'type' => 'text',
             'required' => true,
+            'dynamic' => true,
         ],
         [
         'label' => 'Member',

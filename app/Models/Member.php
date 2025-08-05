@@ -62,4 +62,7 @@ class Member extends Model
     {
         return $this->belongsToMany(Scheme::class, 'account_scheme', 'member_id', 'scheme_id');
     }
+     public function ShareCertificate(){
+        return $this->hasMany(ShareCertificate::class,'member_id');
+    }
 }

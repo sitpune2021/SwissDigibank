@@ -21,14 +21,21 @@
 
             <!-- Icons -->
             <div class="flex gap-2">
-                <button class="px-2 py-1 text-xs text-white bg-green-500 rounded hover:bg-gray-300" title="Print">
-                    <i class="fas fa-pencil"></i>
-                </button>
-                <button class="px-2 py-1 text-xs text-white bg-red-500 rounded hover:bg-gray-300" title="Delete">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </div>
 
+                <a href="{{ route('form15g15h.edit', $form15g15h->id) }}"
+                    class="class="btn btn-default btn-xs title="Print">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </a>
+                <form action="{{ route('form15g15h.destroy', $form15g15h->id) }}" method="POST"
+                    onsubmit="return confirm('Are you sure to delete Form 15G/ 15H?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="class="btn btn-danger btn-xs
+                        title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Remaining Transaction Details Table -->
@@ -38,19 +45,19 @@
                     <td class="px-4 py-2 font-semibold border-b bg-gray-50">Member</td>
                     <td class="px-4 py-2 border-b">
                         {{ $form15g15h->member->member_info_first_name }}
-                        {{ $form15g15h->member->member_info_last_name }}
-                    </td>
-                </tr> --}}
+            {{ $form15g15h->member->member_info_last_name }}
+            </td>
+            </tr> --}}
                 <tr>
                     <td class="px-4 py-2 font-semibold border-b bg-gray-50">Member</td>
-                      <td class="px-4 py-2 border-b">
-                <a href="{{ route('member.show', $form15g15h->member->id) }}" class="text-blue-600 underline">
-                    {{ $form15g15h->member->member_info_first_name }}
-                    {{ $form15g15h->member->member_info_last_name }}
-                </a>
-                </td>
+                    <td class="px-4 py-2 border-b">
+                        <a href="{{ route('member.show', $form15g15h->member->id) }}" class="text-blue-600 underline">
+                            {{ $form15g15h->member->member_info_first_name }}
+                            {{ $form15g15h->member->member_info_last_name }}
+                        </a>
+                    </td>
                 </tr>
-                
+
                 <tr>
                     <td class="px-4 py-2 font-semibold border-b bg-gray-50">Financial Year</td>
                     <td class="px-4 py-2 border-b"> {{ $form15g15h->financial_year }}
@@ -67,8 +74,6 @@
 
                 <tr>
                     <td class="px-4 py-2 font-semibold border-b bg-gray-50">Form 15G/ 15H</td>
-
-
                     <td class="px-4 py-2 border-b">
                         @if (!empty($form15g15h['form_15_upload']))
                             @php
@@ -77,8 +82,8 @@
                             <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer"
                                 class="text-blue-600 underline"> View
                             </a>
+                        @endif
                     </td>
-                    @endif
                 </tr>
             </tbody>
         </table>

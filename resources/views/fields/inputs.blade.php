@@ -1,15 +1,15 @@
 @if ($type === 'textarea')
     <textarea id="{{ $id }}" name="{{ $name }}" rows="4"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 resize-none"
-        placeholder="Enter {{ strtolower($label) }}" {{ $disabled }}>{{ $value }}</textarea>
+        placeholder="Enter {{ strtolower($label) }}" >{{ $value }}</textarea>
 @elseif ($type === 'date')
     <input type="date" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        value="{{ $value }}" {{ $disabled }} />
+        value="{{ $value }}"  />
 @elseif ($type === 'number')
     <input type="number" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}" {{ $disabled }} />
+        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"  />
 @elseif ($type === 'select')
     <select name="{{ $name }}" id="{{ $id }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -66,5 +66,5 @@
 @else
     <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}" {{ $disabled }} />
+        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"  />
 @endif

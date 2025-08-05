@@ -48,6 +48,13 @@
                             $id = $field['id'] ?? $field['name'];
                             $required = $field['required'] ?? false;
                             $value = old($name, $sharesholdings[$name] ?? ($field['default'] ?? ''));
+                            if (
+                            $name === 'transferor' 
+                        ) {
+                                                        $value = old($name, $sharesholdings[$name] ?? ($field['dynamic'] ? $Promotor->first_name :  ''));
+
+                        }
+
                         @endphp
                         <div class="col-span-2 md:col-span-1">
                             <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
@@ -122,7 +129,6 @@
                         </div>
                     @endforeach
                 @endforeach
-
 
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     <button class="btn-primary" type="submit">

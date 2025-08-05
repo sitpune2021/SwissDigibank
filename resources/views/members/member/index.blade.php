@@ -49,11 +49,11 @@
                                 Group
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        {{-- <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Member No
                             </div>
-                        </th>
+                        </th> --}}
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Branch
@@ -113,7 +113,7 @@
                         <tr class="border-b dark:border-bg3">
                             <td class="py-3 px-6">{{ $item->general_group }}</td>
 
-                            <td class="py-3 px-6">{{ $item->member_info_old_member_no ?? 'N/A' }}</td>
+                            {{-- <td class="py-3 px-6">{{ $item->member_info_old_member_no ?? 'N/A' }}</td> --}}
 
                             <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
 

@@ -11,21 +11,24 @@ class Form15Gor15HController extends Controller
 {
     public function index()
     {
-        $form15g15hs = Form15G15H::with('member')->orderBy('created_at', 'desc')->get();
+        $form15g15hs = Form15G15H::latest()->get(); 
         return view("members.form15g15h.index", compact('form15g15hs'));
     }
 
-    public function create()
-    {
-        $dynamicOptions = [
-            'member' => Member::pluck('member_info_first_name', 'id')
-        ];
-        $sections = config('form15g15h_form');
-        $route = route('form15g15h.store');
-        $method = 'POST';
+   public function create()
+{
+    $dynamicOptions = [
+        'member' => Member::pluck('member_info_first_name', 'id'),
+        'financial_year' => $this->generateFinancialYears()
+    ];
 
-        return view('members.form15g15h.create', compact('sections', 'route', 'method', 'dynamicOptions'));
-    }
+    $sections = config('form15g15h_form');
+    $route = route('form15g15h.store');
+    $method = 'POST';
+
+    return view('members.form15g15h.create', compact('sections', 'route', 'method', 'dynamicOptions'));
+}
+
 
    public function store(Request $request)
 {
@@ -62,20 +65,21 @@ class Form15Gor15HController extends Controller
     }
 
     public function edit(string $id)
-    {
-        $form15g15h = Form15G15H::findOrFail($id);
+{
+    $form15g15h = Form15G15H::findOrFail($id);
 
-        $dynamicOptions = [
-            'member' => Member::pluck('member_info_first_name', 'id')
-        ];
-        $sections = config('form15g15h_form');
-        $route = route('form15g15h.update', $id);
-        $method = 'PUT';
+    $dynamicOptions = [
+        'member' => Member::pluck('member_info_first_name', 'id'),
+        'financial_year' => $this->generateFinancialYears()
+    ];
 
-        // return view('form15g15h.create', compact('form15g15h', 'sections', 'route', 'method', 'dynamicOptions'));
-        return view('members.form15g15h.create', compact('form15g15h', 'sections', 'route', 'method', 'dynamicOptions'));
+    $sections = config('form15g15h_form');
+    $route = route('form15g15h.update', $id);
+    $method = 'PUT';
 
-    }
+    return view('members.form15g15h.create', compact('form15g15h', 'sections', 'route', 'method', 'dynamicOptions'));
+}
+
 
     public function update(Request $request, string $id)
     {
@@ -95,7 +99,6 @@ class Form15Gor15HController extends Controller
             $path = $request->file('form_15_upload')->store('uploads', 'public');
             $validated['form_15_upload'] = $path;
         }
-
         $form15g15h->update($validated);
 
         return redirect()->route('form15g15h.index')->with('success', 'Form updated successfully!');
@@ -114,4 +117,20 @@ class Form15Gor15HController extends Controller
 
         return redirect()->route('form15g15h.index')->with('success', 'Form deleted successfully!');
     }
+    private function generateFinancialYears($years = 9)
+{
+    $options = [];
+    $currentYear = now()->year;
+
+    for ($i = 0; $i < $years; $i++) {
+        $start = $currentYear - $i;
+        $end = $start + 1;
+        $label = "FY {$start} - {$end}";
+        $value = "FY {$start}-{$end}";
+        $options[$label] = $value;
+    }
+
+    return $options;
+}
+
 }

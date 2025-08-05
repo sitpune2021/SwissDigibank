@@ -6,6 +6,8 @@ use App\Models\Shareholders;
 use App\Models\Member;
 use App\Models\Branch;
 use App\Models\Shareholding;
+use App\Models\Promotor;
+
 
 class ShareholdersController extends Controller
 {
@@ -17,16 +19,18 @@ class ShareholdersController extends Controller
 
     public function create(Request $request)
     {
+
+        $transfoer = Promotor::where('is_transfer', true)->first();
         $dynamicOptions = [
             'member' => Member::pluck('member_info_first_name', 'id'),
-             'branches' => Branch::pluck('branch_name', 'id')
+             'branches' => Branch::pluck('branch_name', 'id'),
         ];
         $sections = config('shareholders_form');
         $sharesholdings = null;
         $route = route('shares-holdings.store');
         $method = 'POST';
         $nominal_value=10.00;
-
+         
     // ✅ Add this to calculate existing shares
     $memberId = $request->input('member_id') ?? old('member_id');
     $memberShareCount = 0;
@@ -34,9 +38,9 @@ class ShareholdersController extends Controller
     if ($memberId) {
         $memberShareCount = Shareholders::where('member_id', $memberId)->sum('shares');
     }
+    $Promotor = Promotor::where('is_transfer', true)->select('id', 'first_name')->first();
 
-
-        return view('members.shares-holdings.create', compact('sections','nominal_value', 'sharesholdings', 'route', 'memberShareCount','method', 'dynamicOptions'));
+        return view('members.shares-holdings.create', compact('sections','nominal_value', 'sharesholdings', 'route', 'memberShareCount','transfoer','method', 'dynamicOptions', 'Promotor'));
     }
 
     public function store(Request $request)
@@ -77,8 +81,6 @@ class ShareholdersController extends Controller
         $show = true;
         $method = 'PUT';
         // $route = null;
-        
-
         return view('shares-holdings.create', compact('sections', 'sharesholdings', 'show', 'route', 'method', 'dynamicOptions'));
     }
 
@@ -117,8 +119,6 @@ class ShareholdersController extends Controller
          // ✅ Auto-calculate total_consideration if not provided
             if (empty($data['total_consideration'])) {
                 $data['total_consideration'] = $data['shares'] * $data['face_value'];
-                dd($data);
-
     }
 
         $sharesholdings = Shareholders::findOrFail($decryptedId);
