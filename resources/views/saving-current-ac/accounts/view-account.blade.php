@@ -289,7 +289,7 @@
                         <div class="flex items-center gap-2 mb-2">
                             <label class="w-32 font-semibold text-gray-700">Advisor/ Staff</label>
                             <select class="flex-1 px-2 py-1 border border-gray-300 rounded" disabled>
-                                <option>    {{ $account->users ? $account->users?->fname.' '.$account->users->?lname : '-' }}</option>
+                                <option>    {{ isset($account->users) ? $account->users->fname.' '.$account->users->lname : '-' }}</option>
                             </select>
                             <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                         </div>
