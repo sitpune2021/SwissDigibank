@@ -217,6 +217,7 @@ class AccountsController extends Controller
     public function show(string $id)
     {
 
+       
         $decryptedId = base64_decode($id);
         $account = Account::with(['minor','members','branch','address','users','transaction','nominee','scheme'])->findOrFail($decryptedId); // Only account data
 

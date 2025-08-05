@@ -12,16 +12,14 @@
 
     <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6">
-        <x-searchbox :action="route('employee.index')" />
+        <x-searchbox />
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+            <x-alert />
+        </div>
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                Sr No
-                            </div>
-                        </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Employee Code
@@ -57,7 +55,6 @@
                     @endphp
                     @foreach($employees as $employee)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="py-5 px-6">{{$s=$s+1}}</td>
                         <td class="py-5 px-6">
                             <a href="" class="text-blue-500 hover:underline">
                                 N/A
@@ -97,5 +94,6 @@
             </table>
         </div>
     </div>
+    <x-pagination :paginator="$employees" />
 </div>
 @endsection

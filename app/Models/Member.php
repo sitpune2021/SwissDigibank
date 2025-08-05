@@ -31,6 +31,9 @@ class Member extends Model
         'member_info_religion',
         'member_info_email'
     ];
+    //   protected $casts = [
+    //     'general_enrollment_date' => 'date',
+    // ];
 
     public function address(): HasOne
     {

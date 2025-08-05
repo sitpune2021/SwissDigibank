@@ -25,6 +25,7 @@ class HRController extends Controller
                $query->where(function ($q) use ($search) {
                     $q->where('member_id', 'like', "%$search%")
                          ->orWhere('name', 'like', "%$search%")
+                         ->orWhere('designation', 'like', "%$search%")
                          ->orWhere('gender', 'like', "%$search%")
                          ->orWhere('joining_date', 'like', "%$search%");
                });
@@ -45,7 +46,7 @@ class HRController extends Controller
      public function store(Request $request)
      {
           $request->validate([
-               'member' => 'nullable|integer',
+               'member' => 'nullable|integer|exists:members,id',
                'branch' => 'required|integer',
                'joining_date' => 'required|date',
                'gender' => 'required|in:male,female',

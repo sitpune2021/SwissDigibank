@@ -9,23 +9,54 @@ use App\Models\KycAndNominee;
 use App\Models\State;
 use App\Models\Branch;
 use App\Models\Religion;
+use Carbon\Carbon;
 
 class MemberController extends Controller
 {
-    
-    public function index()
-    {
-        $members = Member::latest()->get(); 
-         session()->forget('member_id');
-        return view('members.member.index', compact('members'));
 
+    public function index(Request $request)
+    {
+        $query = Member::with(['branch', 'kyc']); 
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            $dateSearch = null;
+            try {
+                $date = \Carbon\Carbon::createFromFormat('d/m/Y', $search);
+                $dateSearch = $date->format('Y-m-d');
+            } catch (\Exception $e) {
+            }
+
+            $query->where(function ($q) use ($search, $dateSearch) {
+                $q->where('member_info_old_member_no', 'like', "%{$search}%")
+                    ->orWhere('general_group', 'like', "%{$search}%")
+                    ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                    ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                    ->orWhere('member_info_last_name', 'like', "%{$search}%")
+                    ->orWhere('member_info_mobile_no', 'like', "%{$search}%");
+
+                if ($dateSearch) {
+                    $q->orWhereDate('general_enrollment_date', $dateSearch);
+                }
+
+                $q->orWhereHas('kyc', function ($kq) use ($search) {
+                    $kq->where('member_kyc_aadhaar_no', 'like', "%{$search}%")
+                        ->orWhere('member_kyc_pan_no', 'like', "%{$search}%");
+                });
+            });
+        }
+
+         $members = $query->latest()->paginate(10); 
+
+        session()->forget('member_id');
+        return view('members.member.index', compact('members'));
     }
 
-    
     public function create()
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id'),
+            'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
@@ -34,7 +65,6 @@ class MemberController extends Controller
         $route = route('member.store');
         $method = 'POST';
         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
-
     }
     public function store(Request $request)
     {
@@ -135,6 +165,14 @@ class MemberController extends Controller
             'charges_pay_mode' => 'required|in:cash,online,cheque',
         ]);
 
+        $request->merge([
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
+        ]);
+
         $memberData = $request->only((new Member)->getFillable());
         $addressData = $request->only((new Address)->getFillable());
         $kycData = $request->only((new KycAndNominee)->getFillable());
@@ -145,19 +183,19 @@ class MemberController extends Controller
         return redirect()->route('member.index')->with('success', 'Member created successfully.');
     }
 
-    
+
     public function show(string $id)
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id'),
+            'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
         $member = Member::with('address', 'kyc')->findOrFail($id);
         $sections = config('member_form');
         $show = true;
-        $button=true;
-        $method='PUT';
+        $button = true;
+        $method = 'PUT';
         $minor = true;
         session(['member_id' => $id]);
         $member = Member::with('minors')->findOrFail($id);
@@ -165,11 +203,11 @@ class MemberController extends Controller
          return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
     }
 
-    
- public function edit(string $id)
+
+    public function edit(string $id)
     {
         $dynamicOptions = [
-            'states' =>State::pluck('name', 'id'),
+            'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
         ];
@@ -182,14 +220,14 @@ class MemberController extends Controller
         );
 
         $sections = config('member_form');
-        $route = route('member.update', $id) ;
+        $route = route('member.update', $id);
         session(['member_id' => $id]);
         $minor = true;
         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
     }
- 
 
-   
+
+
     public function update(Request $request, string $id)
 {
     $request->validate([
@@ -269,17 +307,25 @@ class MemberController extends Controller
         'charges_pay_mode' => 'nullable|in:cash,online,cheque',
     ]);
 
-    $member = Member::findOrFail($id);
-    $memberData = $request->only((new Member)->getFillable());
-    $addressData = $request->only((new Address)->getFillable());
-    $kycData = $request->only((new KycAndNominee)->getFillable());
+        $request->merge([
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
+        ]);
 
-    $member->update($memberData);
-    $member->address()->update($addressData);
-    $member->kyc()->update($kycData);
+        $member = Member::findOrFail($id);
+        $memberData = $request->only((new Member)->getFillable());
+        $addressData = $request->only((new Address)->getFillable());
+        $kycData = $request->only((new KycAndNominee)->getFillable());
 
-    return redirect()->route('member.index')->with('success', 'Member updated successfully.');
-}
+        $member->update($memberData);
+        $member->address()->update($addressData);
+        $member->kyc()->update($kycData);
+
+        return redirect()->route('member.index')->with('success', 'Member updated successfully.');
+    }
 
     public function destroy(string $id)
     {

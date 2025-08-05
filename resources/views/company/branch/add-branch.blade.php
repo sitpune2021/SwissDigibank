@@ -21,6 +21,7 @@
                     $id = $field['id'] ?? $field['name'];
                     $required = $field['required'] ?? false;
                     $value = old($name, $branch[$name] ?? ($field['default'] ?? ''));
+                    
                     if ($name === 'open_date') {
                         $value = old(
                             $name,
@@ -46,7 +47,6 @@
                         'readonly' => empty($show) ? '' : 'readonly',
                         'field' => $field,
                     ])
-
                     @error($name)
                         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                     @enderror
