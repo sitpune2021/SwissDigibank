@@ -7,7 +7,8 @@
     <div class="min-h-screen p-4 font-sans text-sm bg-gray-100" x-data>
 
         <div class="flex flex-wrap justify-center gap-3 mb-3 text-center">
-            <a href="{{ route('account.transaction', base64_encode($account->id)) }}" 
+           
+            <a href="" 
                 class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700">
                 View Transactions
             </a>
@@ -154,7 +155,7 @@
                         </div>
                         <div x-show="open" class="border-t">
                             <div class="p-2 text-center">
-    <a href="{{ route('account.transaction', base64_encode($account->id) ) }}"
+    <a href=""
        class="px-2 py-1 text-xs text-white bg-teal-500 rounded">
         VIEW ALL
     </a>

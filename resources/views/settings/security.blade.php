@@ -1,6 +1,7 @@
 @extends('layout.main')
 
 @section('content')
+
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <h2 class="h2">Security</h2>
@@ -10,13 +11,16 @@
             </button>
         </div>
 
+            <input type="hidden" name="_method" value="PUT">
         <div class="flex flex-col gap-4 xxl:gap-6">
             <!-- Change Password -->
             <div class="box xl:p-8 xxl:p-10">
                 <h4 class="h4 bb-dashed pb-4 mb-4 md:mb-6 md:pb-6">
                     Change Password
                 </h4>
-                <form class="mt-6 xl:mt-8 grid grid-cols-2 gap-4 xxxl:gap-6">
+    <form action="{{ route('settings.update-password') }}" method="POST" class="mt-6 xl:mt-8 grid grid-cols-2 gap-4 xxxl:gap-6 w-full">
+                @csrf
+               
                     <div class="col-span-2 md:col-span-1">
                         <label for="email" class="md:text-lg font-medium block mb-4">
                             Old Password
@@ -24,14 +28,18 @@
                         <div
                             class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3 relative">
                             <input type="password" class="w-11/12 text-sm bg-transparent p-0 border-none"
-                                placeholder="Old Password" id="password1" required />
+                                placeholder="Old Password" id="old_password" name="old_password" required />
                             <span class="absolute eye-icon ltr:right-5 rtl:left-5 top-1/2 -translate-y-1/2 cursor-pointer"
                                 id="password1-btn">
                                 <i class="las la-eye" style="display: none;"></i>
                                 <i class="las la-eye-slash"></i>
                             </span>
+
                         </div>
+                            @error('old_password') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                     </div>
+                    <div class="col-span-2 md:col-span-1"></div>
+                    
                     <div class="col-span-2 md:col-span-1">
                         <label for="email" class="md:text-lg font-medium block mb-4">
                             New Password
@@ -39,28 +47,33 @@
                         <div
                             class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3 relative">
                             <input type="password" class="w-11/12 text-sm bg-transparent p-0 border-none"
-                                placeholder="Old Password" id="password2" required />
+                                placeholder="New Password" id="new_password" name="new_password" required />
                             <span class="absolute eye-icon ltr:right-5 rtl:left-5 top-1/2 -translate-y-1/2 cursor-pointer"
                                 id="password2-btn">
                                 <i class="las la-eye" style="display: none;"></i>
                                 <i class="las la-eye-slash"></i>
                             </span>
+
                         </div>
+                                @error('new_password') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-2 md:col-span-1">
                         <label for="email" class="md:text-lg font-medium block mb-4">
                             Confirm Password
                         </label>
                         <div
                             class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3 relative">
                             <input type="password" class="w-11/12 text-sm bg-transparent p-0 border-none"
-                                placeholder="Old Password" id="password3" required />
+                                placeholder="Confirm Password" id="new_password_confirmation" name="new_password_confirmation" required />
                             <span class="absolute eye-icon ltr:right-5 rtl:left-5 top-1/2 -translate-y-1/2 cursor-pointer"
                                 id="password3-btn">
                                 <i class="las la-eye" style="display: none;"></i>
                                 <i class="las la-eye-slash"></i>
                             </span>
+
                         </div>
+                            @error('new_password_confirmation') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div class="col-span-2">
                         <p class="font-medium text-lg mb-4">
@@ -207,5 +220,6 @@
                 </div>
             </div>
         </div>
-    </div>
+</form>
+    
 @endsection
