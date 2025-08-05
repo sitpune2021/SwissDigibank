@@ -194,7 +194,6 @@
                         </div>
                     @endif
 
-                    {{-- Always show Back button --}}
                     <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                         <a href="{{ route('form15g15h.index') }}"
                             class="btn-outline inline-flex items-center justify-center">

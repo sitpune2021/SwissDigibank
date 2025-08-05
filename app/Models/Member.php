@@ -33,6 +33,9 @@ class Member extends Model
         'member_info_religion',
         'member_info_email'
     ];
+    //   protected $casts = [
+    //     'general_enrollment_date' => 'date',
+    // ];
 
     public function address(): HasOne
     {
@@ -51,6 +54,12 @@ class Member extends Model
     {
         return $this->hasMany(Minor::class, 'member_id', 'id');
     }
+       public function Shareholder()
+    {
+        return $this->hasMany(Shareholder::class,'member_id');
+
+    }
+    
 
     public function accounts()
     {

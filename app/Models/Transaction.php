@@ -3,11 +3,12 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
-    use HasFactory;
-
+    use SoftDeletes;
+    
     protected $fillable = [
         'account_id',
         'payment_mode',
@@ -21,12 +22,14 @@ class Transaction extends Model
         'bank_name',
         'cheque_no',
         'cheque_date',
+        'reverse_status',
         'approve_status',
         'comment',
+        'remarks'
     ];
 
-    public function account()
+    public function accounts()
     {
-        return $this->belongsTo(Account::class, 'id');
+        return $this->belongsTo(Account::class, 'account_id');
     }
 }

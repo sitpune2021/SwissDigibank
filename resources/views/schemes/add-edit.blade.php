@@ -392,7 +392,7 @@
     <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
         @if (isset($method) && empty($show))
         <button class="btn-primary" type="submit">
-            {{ $method === 'PUT' ? 'Update' : 'Save' }} Schemes
+            {{ $method === 'PUT' ? 'Update' : 'Save' }} Scheme
         </button>
         @endif
         @if(!isset($schemes) && empty($show))

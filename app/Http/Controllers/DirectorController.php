@@ -13,9 +13,34 @@ class DirectorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $directors = Director::with('member')->get();
+        $query = Director::with('member');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+
+            $query->where(function ($q) use ($search) {
+                $q->where('designation', 'like', "%$search%")
+                    ->orWhere('director_name', 'like', "%$search%")
+                    ->orWhere('din_no', 'like', "%$search%")
+                    ->orWhere('authorized_signatory', 'like', "%$search%");
+
+                // Attempt to parse search as date (d/m/Y)
+                try {
+                    $date = \Carbon\Carbon::createFromFormat('d/m/Y', $search)->format('Y-m-d');
+                    $q->orWhereDate('appointment_date', $date)
+                        ->orWhereDate('resignation_date', $date);
+                } catch (\Exception $e) {
+                    // Ignore if not a valid date
+                }
+            })
+                ->orWhereHas('member', function ($q) use ($search) {
+                    $q->where('id', 'like', "%$search%");
+                });
+        }
+
+        $directors = $query->orderBy('created_at', 'desc')->paginate(10);
         return view('company.director.index', compact('directors'));
     }
 
@@ -77,10 +102,10 @@ class DirectorController extends Controller
         $formFields = config('director_form');
         $method = 'GET';
         $show = true;
-        return view('company.director.create', compact('director', 'show', 'route', 'method', 'formFields','dynamicOptions'));
+        return view('company.director.create', compact('director', 'show', 'route', 'method', 'formFields', 'dynamicOptions'));
     }
 
-  
+
     public function edit(string $id)
     {
         $dynamicOptions = [
@@ -95,7 +120,7 @@ class DirectorController extends Controller
         return view('company.director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
     }
 
-   
+
     public function update(Request $request, $id)
     {
         // Find the Director record by id
@@ -125,7 +150,7 @@ class DirectorController extends Controller
         return redirect()->route('director.index')->with('success', 'Director updated successfully.');
     }
 
-    
+
     public function destroy(string $id)
     {
         //

@@ -5,23 +5,21 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">Employees </h2>
         <a class="btn-primary" href="{{route('employee.create')}}">
-            <i class="las la-plus-circle text-base md:text-lg"></i>
+            <i class="text-base md:text-lg"></i>
             Add
         </a>
     </div>
 
     <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6">
-        <x-searchbox :action="route('employee.index')" />
+        <x-searchbox />
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+            <x-alert />
+        </div>
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                Sr No
-                            </div>
-                        </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Employee Code
@@ -57,7 +55,6 @@
                     @endphp
                     @foreach($employees as $employee)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        <td class="py-5 px-6">{{$s=$s+1}}</td>
                         <td class="py-5 px-6">
                             <a href="" class="text-blue-500 hover:underline">
                                 N/A
@@ -77,7 +74,7 @@
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => base64_encode($employee->id),
-                                'viewRoute' => 'employee.view',
+                                'viewRoute' => 'employee.show',
                                 'editRoute' => 'employee.edit'
                                 ])
 
@@ -85,7 +82,7 @@
                         </td>
                         <!-- <td class="py-5 px-6">
                             <div class="flex justify-center gap-2">
-                                <a href="{{ route('employee.view', $employee->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
+                                <a href="{{ route('employee.show', $employee->id) }}" class="border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-full transition duration-150"><i class="las la-eye"></i></a>
                                 <a href="{{ route('employee.edit', $employee->id) }}" class="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-full transition duration-150"><i class="las la-edit"></i></a>
                               
                             </div>
@@ -97,5 +94,6 @@
             </table>
         </div>
     </div>
+    <x-pagination :paginator="$employees" />
 </div>
 @endsection

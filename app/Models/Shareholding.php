@@ -20,7 +20,7 @@ class Shareholding extends Model
         'transaction_date',
         'amount',
         'remarks',
-        'pay_mode'
+        'pay_mode' 
     ];
 
      protected $casts = [
@@ -32,4 +32,10 @@ class Shareholding extends Model
     {
         return $this->belongsTo(Promotor::class, 'promotor_id');
     }
+      public function Shareholder()
+    {
+        return $this->hasMany(Shareholder::class,'shareholding_id');
+
+    }
+    
 }

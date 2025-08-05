@@ -21,10 +21,15 @@ class PromotorController extends Controller
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
-                $q->where('member_no', 'like', "%$search%")
-                    ->orWhere('first_name', 'like', "%$search%")
-                    ->orWhere('gender', 'like', "%$search%")
-                    ->orWhere('enrollment_date', 'like', "%$search%");
+                $q->Where('first_name', 'like', "%$search%")
+                    ->orWhere('gender', 'like', "%$search%");
+                // ->orWhere('enrollment_date', 'like', "%$search%");
+                try {
+                    $date = Carbon::createFromFormat('d/m/Y', $search)->format('Y-m-d');
+                    $q->orWhereDate('enrollment_date', $date);
+                } catch (\Exception $e) {
+                    // Do nothing if not a valid date
+                }
             });
         }
 
@@ -40,6 +45,7 @@ class PromotorController extends Controller
         }
         return view('company.promoters.manage-promotors', compact('promotors'));
     }
+
     public function create()
     {
         $dynamicOptions = [
@@ -51,12 +57,12 @@ class PromotorController extends Controller
         $route = route('promotor.store');
         $method = 'POST';
         $promoter = null;
-        return view('company.promoters.add-promoter', compact('route','dynamicOptions', 'method', 'promoter'));
+        return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter'));
     }
 
     public function store(Request $request)
     {
-            // dd($request->all()); 
+        // dd($request->all()); 
 
         $validated = $request->validate([
             // Promotor fields
@@ -79,8 +85,8 @@ class PromotorController extends Controller
             'sms' => 'boolean',
 
             // KYC fields
-            'aadhaar_no' => 'required|digits:12',
-            'voter_id_no' => 'nullable|string|max:20',
+            'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
             'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'ration_card_no' => 'nullable|string|max:20',
             'meter_no' => 'nullable|string|max:20',
@@ -92,12 +98,12 @@ class PromotorController extends Controller
             'nominee_name' => 'nullable|string|max:255',
             'nominee_relation' => 'nullable|string|max:100',
             'nominee_mobile_no' => 'nullable|digits:10',
-            'nominee_aadhaar_no' => 'nullable|digits:12',
-            'nominee_voter_id_no' => 'nullable|string|max:20',
+            'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'nominee_voter_id_no' => 'nullable||regex:/^[A-Z]{3}[0-9]{7}$/',
             'nominee_pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'nominee_address' => 'nullable|string|max:500',
         ]);
-// dd($validated);
+        // dd($validated);
         try {
             \DB::beginTransaction();
 
@@ -132,14 +138,16 @@ class PromotorController extends Controller
 
             // Store KYC
             // Create PromotorKYC only if at least one field is present
-            if (!empty($validated['aadhaar_no']) ||
+            if (
+                !empty($validated['aadhaar_no']) ||
                 !empty($validated['voter_id_no']) ||
                 !empty($validated['pan_no']) ||
                 !empty($validated['ration_card_no']) ||
                 !empty($validated['meter_no']) ||
                 !empty($validated['ci_no']) ||
                 !empty($validated['ci_relation']) ||
-                !empty($validated['dl_no'])) {
+                !empty($validated['dl_no'])
+            ) {
 
                 PromotorKYC::create([
                     'promotor_id' => $promotor->id,
@@ -156,13 +164,15 @@ class PromotorController extends Controller
             }
 
             // Create PromotorNomine only if at least one field is present
-            if (!empty($validated['nominee_name']) ||
+            if (
+                !empty($validated['nominee_name']) ||
                 !empty($validated['nominee_relation']) ||
                 !empty($validated['nominee_mobile_no']) ||
                 !empty($validated['nominee_aadhaar_no']) ||
                 !empty($validated['nominee_voter_id_no']) ||
                 !empty($validated['nominee_pan_no']) ||
-                !empty($validated['nominee_address'])) {
+                !empty($validated['nominee_address'])
+            ) {
 
                 PromotorNomine::create([
                     'promotor_id' => $promotor->id,
@@ -177,8 +187,7 @@ class PromotorController extends Controller
             }
 
             \DB::commit();
-            return redirect()->route('promotor.index')->with('success', 'Promotor, KYC, and Nominee created successfully');
-
+            return redirect()->route('promotor.index')->with('success', 'Promotor created successfully');
         } catch (\Exception $e) {
             dd($e);
             \DB::rollBack();
@@ -200,7 +209,7 @@ class PromotorController extends Controller
         $method = "";
         return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'show', 'method'));
     }
-    
+
     public function edit($id)
     {
         $decryptedId =  base64_decode($id);
@@ -238,8 +247,8 @@ class PromotorController extends Controller
             'sms' => 'boolean',
 
             // KYC fields
-            'aadhaar_no' => 'required|digits:12',
-            'voter_id_no' => 'nullable|string|max:20',
+            'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
             'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'ration_card_no' => 'nullable|string|max:20',
             'meter_no' => 'nullable|string|max:20',
@@ -251,8 +260,8 @@ class PromotorController extends Controller
             'nominee_name' => 'nullable|string|max:255',
             'nominee_relation' => 'nullable|string|max:100',
             'nominee_mobile_no' => 'nullable|digits:10',
-            'nominee_aadhaar_no' => 'nullable|digits:12',
-            'nominee_voter_id_no' => 'nullable|string|max:20',
+            'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'nominee_voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
             'nominee_pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
             'nominee_address' => 'nullable|string|max:500',
         ]);
@@ -326,8 +335,7 @@ class PromotorController extends Controller
 
             \DB::commit();
 
-            return redirect()->route('promotor.index')->with('success', 'Promotor, KYC, and Nominee updated successfully');
-
+            return redirect()->route('promotor.index')->with('success', 'Promotor updated successfully');
         } catch (\Exception $e) {
             dd($e);
             \DB::rollBack();

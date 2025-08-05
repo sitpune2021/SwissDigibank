@@ -15,11 +15,19 @@
       </a>
     </li>
     @endisset
-    <!-- <li>
-      <span
-        class="single-option">
+     @isset($printRoute)
+    <a href="{{ route($printRoute, $id) }}" target="_blank" class="single-option">
+      Print
+    </a>
+    @endisset
+    @isset($deleteRoute)
+    <form action="{{ route($deleteRoute, $id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+      @csrf
+      @method('DELETE')
+      <button type="submit" class="single-option">
         Delete
-      </span>
-    </li> -->
+      </button>
+    </form>
+    @endisset
   </ul>
 </div>
