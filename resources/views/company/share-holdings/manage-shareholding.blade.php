@@ -104,7 +104,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10" class="text-center py-4 text-gray-500">No shareholding records found.</td>
+                    <td colspan="10" class="text-center py-4 text-gray-500">No records found.</td>
                 </tr>
                 @endforelse
             </tbody>

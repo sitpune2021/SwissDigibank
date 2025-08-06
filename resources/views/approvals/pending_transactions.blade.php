@@ -57,23 +57,23 @@
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Pay. Mode
+                                Pay.<br> Mode
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Bank A/C
+                                Bank <br>A/C
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Chq Clearing Date
+                                Chq<br>Clearing <br>Date
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex  items-center gap-1">
-                                Payment
-                                Rev./ Rel.
+                                Payment<br>
+                                Rev/Rel
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -90,7 +90,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($pending_transactions as $pending_transaction)
+                    @forelse ($pending_transactions as $pending_transaction)
                     <form action="{{ route('pending-transaction.update', $pending_transaction->id) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -167,7 +167,11 @@
                             </td>
                         </tr>
                     </form>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-500">No record found.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

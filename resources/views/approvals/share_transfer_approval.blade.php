@@ -55,7 +55,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($share_transfers as $share_transfer)
+                    @forelse($share_transfers as $share_transfer)
                     <form action="{{ route('share_transfer.approve', $share_transfer->id) }}" method="POST">
                         @csrf
                         <input type="hidden" name="share_transfer_id" value="{{ $share_transfer->id }}">
@@ -86,7 +86,11 @@
                             </td>
                     </form>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-500">No record found.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
