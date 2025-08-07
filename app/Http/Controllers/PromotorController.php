@@ -11,6 +11,7 @@ use App\Models\MaritalStatus;
 use App\Models\Religion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class PromotorController extends Controller
 {
@@ -105,7 +106,7 @@ class PromotorController extends Controller
         ]);
         // dd($validated);
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             // Store promotor
             $promotor = Promotor::create([
@@ -186,11 +187,11 @@ class PromotorController extends Controller
                 ]);
             }
 
-            \DB::commit();
+            DB::commit();
             return redirect()->route('promotor.index')->with('success', 'Promotor created successfully');
         } catch (\Exception $e) {
-            dd($e);
-            \DB::rollBack();
+
+            DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'An error occurred while creating the promotor. Please try again.']);
         }
     }
@@ -267,7 +268,7 @@ class PromotorController extends Controller
         ]);
 
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
 
             $promotor = Promotor::findOrFail($id);
@@ -333,12 +334,12 @@ class PromotorController extends Controller
                 $promotor->nominees()->create($nomineeData);
             }
 
-            \DB::commit();
+            DB::commit();
 
             return redirect()->route('promotor.index')->with('success', 'Promotor updated successfully');
         } catch (\Exception $e) {
-            dd($e);
-            \DB::rollBack();
+
+            DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'An error occurred while updating the promotor. Please try again.']);
         }
     }
@@ -368,4 +369,6 @@ class PromotorController extends Controller
         $promoters = Promotor::all();
         return response()->json($promoters);
     }
+
+   
 }

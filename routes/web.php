@@ -25,6 +25,7 @@ use App\Http\Controllers\MinorController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
+use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -60,17 +61,32 @@ Route::middleware('auth.user')->group(function () {
     });
 
     Route::group(['prefix' => 'members'], function () {
-            Route::resource('member', MemberController::class);
-            Route::resource('minor', MinorController::class);
-            // Route::resource('shares-holdings', ShareHoldingsController::class);
-            // Route::resource('share-certificates', controller: ShareCertificateController::class);
-            // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
-            Route::resource('form15g15h', Form15Gor15HController::class);
+        Route::resource('member', MemberController::class);
+        Route::resource('minor', MinorController::class);
+        Route::resource('shares-transfer', ShareTransferController::class);
+
+        Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
+        Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+        Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+
+        // Route::resource('shares-holdings', ShareHoldingsController::class);
+        // Route::resource('share-certificates', controller: ShareCertificateController::class);
+        // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+        Route::resource('form15g15h', Form15Gor15HController::class);
     });
+
+    Route::get('/get-member-shares/{id}', function ($id) {
+        $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no'); 
+        return response()->json(['shares' => $shares]);
+    });
+
+    Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
+
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
         Route::resource('schemes', SchemesController::class);
         Route::resource('accounts', AccountsController::class);
+        Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
 
         Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
         Route::resource('transaction', AccountTransactionController::class);
@@ -82,7 +98,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
         Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
     });
-  Route::group(['prefix' => 'withdraws'], function () {
+    Route::group(['prefix' => 'withdraws'], function () {
         Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
         Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
     });
@@ -110,6 +126,7 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
     Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
     Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
+    Route::post('/update-password', [SettingsController::class, 'updatePassword'])->name('update-password');
 });
 
 Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
