@@ -79,6 +79,7 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'saving-current-ac'], function () {
         Route::resource('schemes', SchemesController::class);
         Route::resource('accounts', AccountsController::class);
+        Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
 
         Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
         Route::resource('transaction', AccountTransactionController::class);
@@ -113,13 +114,14 @@ Route::middleware('auth.user')->group(function () {
     });
 });
 
-Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
-    Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
-    Route::get('/security', [SettingsController::class, 'security'])->name('security');
-    Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
-    Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
-    Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
-});
+    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+        Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
+        Route::get('/security', [SettingsController::class, 'security'])->name('security');
+        Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
+        Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
+        Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
+        Route::post('/update-password', [SettingsController::class, 'updatePassword'])->name('update-password');
+    });
 
 Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
     Route::get('/help-center', [SupportController::class, 'helpCenter'])->name('help.center');

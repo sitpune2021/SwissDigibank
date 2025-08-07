@@ -312,7 +312,7 @@
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <td class="px-6 py-2">
                                 <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/paypal.png') }}" width="32" height="32"
+                                    <img src="{{ asset('assets/images/visa.png') }}" width="32" height="32"
                                         class="rounded-full" alt="payment medium icon" />
                                     <div>
                                         <p class="mb-1 font-medium">Hooli INV-79820</p>
@@ -323,114 +323,11 @@
                             <td class="px-6 py-2">Paypal</td>
                             <td class="px-6 py-2">$1,121,212</td>
                         </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/paypal.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">Initech INV-24792</p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Paypal</td>
-                            <td class="px-6 py-2">$8,921,212</td>
-                        </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/paypal.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">
-                                            Bluth Company INV-84732
-                                        </p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Paypal</td>
-                            <td class="px-6 py-2">$2,141,212</td>
-                        </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/paypal.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">Salaries</p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Paypal</td>
-                            <td class="px-6 py-2">$2,521,212</td>
-                        </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/visa.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">
-                                            Massive Dynamic INV-90874
-                                        </p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Visa</td>
-                            <td class="px-6 py-2">$554,100</td>
-                        </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/payoneer.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">
-                                            Jack Collingwood Card reload
-                                        </p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Payoneer</td>
-                            <td class="px-6 py-2">$1,420,012</td>
-                        </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/payoneer.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">
-                                            DOGE Yearly Return Invest.
-                                        </p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Payoneer</td>
-                            <td class="px-6 py-2">$782,332</td>
-                        </tr>
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-6 py-2">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('assets/images/paypal.png') }}" width="32" height="32"
-                                        class="rounded-full" alt="payment medium icon" />
-                                    <div>
-                                        <p class="mb-1 font-medium">
-                                            Globex Corporation INV-24398
-                                        </p>
-                                        <span class="text-xs">11 Aug, 24. 10:36 am</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-2">Paypal</td>
-                            <td class="px-6 py-2">$8,521,212</td>
-                        </tr>
+                        
+                        
+                        
+                       
+                       
                         <!-- Add more rows for the remaining data items -->
                     </tbody>
                 </table>
