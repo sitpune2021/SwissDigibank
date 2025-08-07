@@ -149,8 +149,7 @@
             </table>
         </div>
     </div>
-
-    <div class="box mt-4">
+     <div class="box mt-4">
         @php
             $field = [
                 'dynamic' => true,
@@ -172,7 +171,7 @@
                 'required' => true,
                 'type' => 'select',
                 'name' => $name,
-                'value' => $transfoer->id,
+                'value' => isset($transfoer) ? $transfoer->id : '',
                 'field' => $field,
             ])
 
@@ -182,6 +181,7 @@
             <button class="btn-primary" type="submit"> UPDATE </button>
         </form>
     </div>
+   
 @endsection
 
 @push('script')

@@ -508,7 +508,7 @@ return [
             'id' => 'nominee_gender',
             'type' => 'radio',
             'required' => false,
-            'options' => ['Male', 'Female', 'Other'],
+            'options' => ["Male"=> 'Male', "Female"=> 'Female', "Other" =>'Other'],
         ],
         [
             'label' => 'Nominee DOB',
