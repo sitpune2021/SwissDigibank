@@ -155,7 +155,7 @@
                               $value = old(
                                   $name,
                                   $promoter?->$name instanceof \Carbon\Carbon
-                                      ? $promoter?->$name->format('D M d Y')
+                                      ? $promoter?->$name->format('d m Y')
                                       : $promoter?->$name ?? ($field['default'] ?? ''),
                               );
                           } else {

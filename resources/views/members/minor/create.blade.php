@@ -96,13 +96,14 @@
                 class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 @csrf
                 @if (isset($method) && $method == 'PUT')
-                    @method('PUT')
+                 @method('PUT')
                 @endif
-
-                {{-- @if ($method == 'PUT')
-                    @method('PUT')
-                @endif --}}
-                <input name="member_id" id="member_id" type="hidden" value="{{ session('member_id') }}" />
+                @php 
+                    $add_id = request()->query('promoter_id') !== null ? request()->query('promoter_id') : request()->query('member_id');                
+                @endphp
+                <input name="type" id="type" type="text" value="{{$type }}" hidden />
+                <input name="id" id="id" type="hidden" value="{{ $add_id }}" />
+                <input name="id" id="id" type="hidden" value="{{ $add_id }}" />
 
                 @foreach ($sections as $field)
                     @php
@@ -122,7 +123,7 @@
                         @if ($type === 'select')
                             <select name="{{ $name }}" id="{{ $id }}"
                                 class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
-                                {{ isset($show) ? 'readonly' : '' }}>
+                                {{ isset($show) ? 'disabled' : '' }}>
                                 <option value="">-- Select {{ $label }} --</option>
 
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
@@ -147,7 +148,7 @@
                                     <label class="flex items-center space-x-4 class=ml-2 gap-1">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
                                             {{ $value == $optionValue ? 'checked' : '' }}
-                                            {{ isset($show) ? 'readonly' : '' }}>
+                                            {{ isset($show) ? 'disabled' : '' }}>
                                         <span>{{ $optionLabel }}</span>
                                     </label>
                                 @endforeach
@@ -155,7 +156,7 @@
                         @elseif ($type === 'checkbox')
                             <label class="switch">
                                 <input type="checkbox" name="{{ $name }}" id="{{ $id }}" value="1"
-                                    {{ $value ? 'checked' : '' }} {{ isset($show) ? 'readonly' : '' }}>
+                                    {{ $value ? 'checked' : '' }} {{ isset($show) ? 'disabled' : '' }}>
                                 <div class="slider round">
                                     <span class="switch-on">ON</span>
                                     <span class="switch-off">OFF</span>
@@ -165,7 +166,7 @@
                             <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                 value="{{ $value }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'readonly' : '' }} />
+                                placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'disabled' : '' }} />
                         @endif
 
                         @error($name)
@@ -191,3 +192,19 @@
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleRadios = document.querySelectorAll('input[name="title"]');
+            const genderSelect = document.getElementById('gender');
+
+            titleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'mr') {
+                        genderSelect.value = 'male';
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

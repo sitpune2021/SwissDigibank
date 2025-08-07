@@ -98,11 +98,21 @@
             @foreach ($sharesholdings as $index => $item)
                 <tr class="border-b dark:border-bg3 text-center">
                     <td class="py-3 px-6 text-left">{{ $item->member->branch->branch_name ?? 'N/A' }}</td>
-
+{{-- 
                     <td class="py-3 px-6 text-left">
                         {{ $item->member->member_info_first_name ?? '' }}
 
-                    </td>
+                    </td> --}}
+                       <td class="px-6 py-4">
+                                    @if ($item->member)
+                                        <a href="{{ route('member.show', $item->member->id) }}"
+                                            class="text-primary hover:underline">
+                                          DEMO-{{ $item->member->member_info_first_name ?? 'N/A' }}
+                                        </a>
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
 
                     <td class="py-3 px-6 text-left">
                         {{ $item->share->share_no ?? 'N/A' }}

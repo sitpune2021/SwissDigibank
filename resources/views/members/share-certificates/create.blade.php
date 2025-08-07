@@ -98,6 +98,7 @@
                 <form action="{{ route('share-certificates.create') }}" method="POST"
                     class="grid grid-cols-2 gap-4 xxxl:gap-6">
                     @csrf
+
                     <div class="flex items-start gap-4">
                         <label for="dob" class="w-48 text-sm font-medium">Enrollment Date :<span
                                 class="text-red-500">*</span></label>
@@ -115,6 +116,7 @@
                             @enderror
                         </div>
                     </div>
+                   
 
 
                     <div class="flex items-start gap-4">
@@ -202,19 +204,30 @@
                         </div>
                     </div>
 
-                        <button class="btn-primary" type="submit">
-                            Save ShareCertificates
-                        </button>
-                        <button class="btn-outline" type="reset"
-                            onclick="window.location.href='{{ route('share-certificates.index') }}'">
-                            Back
-                        </button>
-                        <button class="btn-outline" type="reset">
-                            Reset
-                        </button>
-                    </div>
-                </form>
+                    <button class="btn-primary" type="submit">
+                        Save ShareCertificates
+                    </button>
+                    <button class="btn-outline" type="reset"
+                        onclick="window.location.href='{{ route('share-certificates.index') }}'">
+                        Back
+                    </button>
+                    <button class="btn-outline" type="reset">
+                        Reset
+                    </button>
             </div>
+            </form>
         </div>
-    @endsection
+    </div>
+@endsection
+<script>
+    const titleRadios = document.querySelectorAll('input[name="title"]');
+    const genderMale = document.getElementById('gender_male');
 
+    titleRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'mr') {
+                genderMale.checked = true;
+            }
+        });
+    });
+</script>

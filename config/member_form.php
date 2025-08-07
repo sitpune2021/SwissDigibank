@@ -10,7 +10,7 @@ return [
             'id' => 'membership_type',
             'type' => 'select',
             'required' => true,
-            'default' => 'nominal',
+            'default' => 'regular',
             'options' => [
                 'nominal' => 'Nominal Membership',
                 'regular' => 'Regular Membership',
@@ -54,7 +54,7 @@ return [
     'id' => 'date',
     'type' => 'text',
     'required' => true,
-    'default' => now()->format('D M d Y'), // <- This line
+    'default' => now()->format('d-m-Y'), // <- This line
 ],
 
     ],

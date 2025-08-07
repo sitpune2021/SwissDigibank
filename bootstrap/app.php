@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'auth.user' => \App\Http\Middleware\AuthenticateUser::class,
         ]);
+            // $middleware->push(\App\Http\Middleware\CheckCustomHeader::class);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

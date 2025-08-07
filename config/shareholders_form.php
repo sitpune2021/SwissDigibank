@@ -9,6 +9,7 @@ return [
             'type' => 'text',
             'required' => true,
             'dynamic' => true,
+             'readonly' => true,
         ],
         [
         'label' => 'Member',

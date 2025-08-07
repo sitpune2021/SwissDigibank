@@ -11,11 +11,17 @@ class Form15G15H extends Model
         'member_id',
         'financial_year',
         'form_15_upload',
+        'promotor_id',
     ];
 
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+     public function promotor()
+    {
+        return $this->belongsTo(Promotor::class, 'promotor_id');
+    }
+    
 
 }

@@ -207,7 +207,8 @@ class PromotorController extends Controller
         ];
         $show = true;
         $method = "";
-        return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'show', 'method'));
+        
+        return view('company.promoters.show', compact('promoter', 'dynamicOptions', 'route', 'show', 'method'));
     }
 
     public function edit($id)
@@ -342,7 +343,6 @@ class PromotorController extends Controller
             return redirect()->back()->withErrors(['error' => 'An error occurred while updating the promotor. Please try again.']);
         }
     }
-
 
     public function destroy($id)
     {

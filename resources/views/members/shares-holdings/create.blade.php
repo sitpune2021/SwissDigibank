@@ -166,3 +166,9 @@
         calculateTotal(); // Calculate on page load
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('transferor').readOnly  = true;
+    });
+</script>
+

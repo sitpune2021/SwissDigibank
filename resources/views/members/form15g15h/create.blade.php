@@ -100,6 +100,12 @@
                 @if ($method == 'PUT')
                     @method('PUT')
                 @endif
+                @php $type=request()->query('type');
+                    $add_id = request()->query('promoter_id') !== null ? request()->query('promoter_id') : request()->query('member_id');                
+                @endphp
+                <input name="type" id="type" type="text" value="{{$type }}" hidden />
+                <input name="id" id="id" type="hidden" value="{{ $add_id }}" />
+                
                 @foreach ($sections ?? [] as $sectionName => $fields)
                     @if ($sectionName)
                         <div class="col-span-2">

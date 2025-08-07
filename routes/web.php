@@ -26,6 +26,8 @@ use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
 use App\Http\Controllers\WithdrawController;
+// use App\Http\Middleware\CheckCustomHeader;
+
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -66,7 +68,9 @@ Route::middleware('auth.user')->group(function () {
 
     Route::group(['prefix' => 'members'], function () {
             Route::resource('member', MemberController::class);
+            Route::put('/member-r/{id}', [MemberController::class, 'updateMobileAndEmail'])->name('member.updateMobileAndEmail');
             Route::resource('minor', MinorController::class);
+            Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.create');
             Route::resource('shares-holdings', ShareholdersController::class);
             Route::resource('share-certificates', controller: ShareCertificateController::class);
             Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
@@ -159,3 +163,12 @@ Route::get('/dev/run/{action}', function ($action) {
         return "Error running action [$action]: " . $e->getMessage();
     }
 });
+
+// middleware
+// Route::get('/dashboard', function () {
+//     return 'dashboard';
+// })->middleware(CheckCustomHeader::class);
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware('auth.user');

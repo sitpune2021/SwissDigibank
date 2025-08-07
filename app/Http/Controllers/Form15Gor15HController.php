@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Form15G15H;
+use App\Models\Promotor;
+
 use Illuminate\Support\Facades\Storage;
 
 class Form15Gor15HController extends Controller
@@ -19,6 +21,7 @@ class Form15Gor15HController extends Controller
 {
     $dynamicOptions = [
         'member' => Member::pluck('member_info_first_name', 'id'),
+        'promoter' => Promotor::pluck('first_name', 'id'),
         'financial_year' => $this->generateFinancialYears()
     ];
 
@@ -28,12 +31,11 @@ class Form15Gor15HController extends Controller
 
     return view('members.form15g15h.create', compact('sections', 'route', 'method', 'dynamicOptions'));
 }
-
-
    public function store(Request $request)
 {
     $validated = $request->validate([
         'member_id' => 'required|exists:members,id',
+         'promotor_id' => 'required|exists:promotors,id',
         'financial_year' => 'required|string|max:20',
         'form_15_upload' => 'required|file|mimes:pdf,jpg,png|max:2048',
     ]);
@@ -70,6 +72,7 @@ class Form15Gor15HController extends Controller
 
     $dynamicOptions = [
         'member' => Member::pluck('member_info_first_name', 'id'),
+        'promotor' => Promotor::pluck('first_name', 'id'),
         'financial_year' => $this->generateFinancialYears()
     ];
 
@@ -88,6 +91,8 @@ class Form15Gor15HController extends Controller
         $validated = $request->validate([
             'member_id' => 'required|exists:members,id',
             'financial_year' => 'required|string|max:20',
+            'promotor_id' => 'required|exists:promotors,id',
+
             'form_15_upload' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
         ]);
 

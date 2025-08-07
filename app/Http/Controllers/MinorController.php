@@ -1,18 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 
 use App\Models\Minor;
 use App\Models\Member;
 
-
 class MinorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $minors = Minor::latest()->get(); 
@@ -22,15 +17,12 @@ class MinorController extends Controller
   public function create(Request $request)
 {
     $memberId = $request->member_id ?? session('member_id');
+    $type = $request->type ?? session('type');
 
-    // Ensure member exists
     if (!$memberId || !Member::find($memberId)) {
         return redirect()->back()->with('error', 'Invalid Member ID');
     }
 
-    // Store member_id in session
-    session(['member_id' => $memberId]);
-    $member_id = $request->member_id;
 
     $sections = config('minor_form');
     $minor = null;
@@ -40,42 +32,55 @@ class MinorController extends Controller
         'member' => Member::pluck('member_info_first_name', 'id')
     ];
 
-    return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions'));
+    return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions', 'type'));
 }
 
     public function store(Request $request)
     {
-        // Validate the request
-    $data = $request->validate([
-        'member_id' => 'required',
-        'enrollment_date' => 'required',
-        'title' => 'required|in:md,mr,ms,mrs',
-        'gender' => 'required|in:male,female,other',
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'nullable|string|max:255',
-        'dob' => 'required',
-        'father_name' => 'required|string|max:255',
-        'aadhaar_no' => 'nullable|string|max:20',
-        'address' => 'required|string|max:500',
-    ]);
+        $data = $request->validate([
+            'type' => 'required|in:member,promoter',
+            'enrollment_date' => 'required|date|before_or_equal:today',
+            'title' => 'required|in:md,mr,ms,mrs',
+            'gender' => 'required|in:male,female,other',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'dob' => 'required|date|before_or_equal:today',
+            'father_name' => 'required|string|max:255',
+            'aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'address' => 'required|string|max:500',
+        ]);
+
+        // Assign member_id or promotors_id based on type
+        if ($data['type'] === 'member') {
+            $data['member_id'] = $data['id'];
+            $data['promotor_id'] = null; // or unset($data['promotors_id']);
+        } else {
+            $data['promotor_id'] = $data['id'];
+            $data['member_id'] = null;  // or unset($data['member_id']);
+        }
+        // Format the dates to Y-m-d for database
+        $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
+        $data['dob'] = date('Y-m-d', strtotime($data['dob']));
+
+        // Create the Minor record
+        Minor::create($data);
+
+        unset($data['id']); // Remove 'id' key since you mapped it
 
 
-    // Format the date fields if necessary
-    $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
-    $data['dob'] = date('Y-m-d', strtotime($data['dob']));
-
-    // Store the student or form data
-    Minor::create($data); // Replace with your actual model
-
-    // Redirect with success message
-    return redirect()->route('member.show', $data['member_id']) // change route as per your routes
-                     ->with('success', 'Minor created successfully.');
-
+        // Redirect to the appropriate member or promoter show page based on type
+        if ($data['type'] === 'member') {
+            return redirect()->route('member.show', $data['member_id'])
+                ->with('success', 'Minor created successfully.');
+        } else {
+            return redirect()->route('promoter.show', $data['promotors_id'])
+                ->with('success', 'Minor created successfully.');
+        }
     }
+
     public function show(string $id)
     {
         {
-      
          $sections = config('minor_form');
          $minor = Minor::findOrFail($id);
         $route ="";
@@ -86,14 +91,9 @@ class MinorController extends Controller
         return view('members.minor.create', compact('sections', 'minor'));
     }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         {
-        
         $method = 'PUT';
         $minor = Minor::findOrFail($id);
         $sections = config('minor_form');
@@ -101,28 +101,27 @@ class MinorController extends Controller
         return view('members.minor.create', compact('sections', 'minor', 'route', 'method'));
     }
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
 {
     $data = $request->validate([
-            'member_id' => 'required',
-        'enrollment_date' => 'required',
+        'enrollment_date' => 'required|date|before_or_equal:today',
         'title' => 'required|in:md,mr,ms,mrs',
         'gender' => 'required|in:male,female,other',
         'first_name' => 'required|string|max:255',
         'last_name' => 'nullable|string|max:255',
-        'dob' => 'required',
+        'dob' => 'required|date|before_or_equal:today',
         'father_name' => 'required|string|max:255',
-        'aadhaar_no' => 'nullable|string|max:20',
+        'aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
         'address' => 'required|string|max:500',
+        'member_id' => 'nullable|exists:members,id',
+        'promoter_id' => 'nullable|exists:promotors,id',
     ]);
-
+    if (!$data['member_id'] && !$data['promoter_id']) {
+    return back()->withErrors(['relation' => 'Either member_id or promoter_id is required.']);
+}
     // Format dates
-    $data['dob'] = date('Y-m-d', strtotime($data['dob']));
-    $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
+    $data['dob'] = date('d-m-Y', strtotime($data['dob']));
+    $data['enrollment_date'] = date('d-m-Y', strtotime($data['enrollment_date']));
 
     // Find the minor
     $minor = Minor::findOrFail($id);
@@ -130,14 +129,13 @@ class MinorController extends Controller
     // Update minor
     $minor->update($data);
 
-    return redirect()->route('minor.index')
-        ->with('success', 'Minor updated successfully.');
+        if ($data['member_id']) {
+    return redirect()->route('member.show', $data['member_id'])->with('success', 'Minor created successfully.');
+} elseif ($data['promoter_id']) {
+    return redirect()->route('promoter.show', $data['promoter_id'])->with('success', 'Minor created successfully.');
 }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
+}
     public function destroy(string $id)
     {
         

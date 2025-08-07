@@ -95,7 +95,17 @@
                 @foreach ($directors as $index => $director)
                 <tr>
                     <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
-                    <td class="px-6 py-4">{{ $director->member->id ?? 'N/A' }}</td>
+                    {{-- <td class="px-6 py-4">{{ $director->member->member_info_first_name ?? 'N/A' }}</td> --}}
+                     <td class="py-3 px-6">
+                            @if ($director->member)
+                            <a href="{{ route('member.show', $director->member->id) }}"
+                                class="text-primary hover:underline">
+                                DEMO-{{ $director->member->member_info_first_name }}
+                            </a>
+                            @else
+                            N/A
+                            @endif
+                        </td>
                     <td class="px-6 py-4">{{ $director->director_name ?? 'N/A' }}</td>
                     <td class="px-6 py-4">{{ $director->din_no }}</td>
                     <td class="px-6 py-4">{{ $director->appointment_date?->format('d/m/Y') ?? 'N/A' }}</td>

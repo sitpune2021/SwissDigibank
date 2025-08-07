@@ -68,6 +68,8 @@ class MemberController extends Controller
     }
     public function store(Request $request)
     {
+        
+
         $request->validate([
             // Membership Type
             'membership_type' => 'required|in:nominal,regular',
@@ -93,7 +95,7 @@ class MemberController extends Controller
             'member_info_mother_name' => 'nullable|string',
             'member_info_spouse_name' => 'nullable|string',
             'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
-            'member_info_mobile_no' => 'required|string',
+            'member_info_mobile_no' => 'required|string|max:10',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
             'member_info_religion' => 'nullable|string',
@@ -123,9 +125,9 @@ class MemberController extends Controller
             'member_gps_location_longitude' => 'nullable|numeric',
 
             // KYC Info
-            'member_kyc_aadhaar_no' => 'required|string',
+            'member_kyc_aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
             'member_kyc_voter_id_no' => 'nullable|string',
-            'member_kyc_pan_no' => 'nullable|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+            'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
             'member_kyc_ration_card_no' => 'nullable|string',
             'member_kyc_meter_no' => 'nullable|string',
             'member_kyc_ci_no' => 'nullable|string',
@@ -147,7 +149,7 @@ class MemberController extends Controller
             'nominee_relation' => 'nullable|string',
             'nominee_mobile_no' => 'nullable|string',
             'nominee_gender' => 'nullable|in:Male,Female,Other',
-            'nominee_dob' => 'nullable',
+            'nominee_dob' => 'nullable|date|before_or_equal:today',
             'nominee_aadhaar_no' => 'nullable|string',
             'nominee_voter_id_no' => 'nullable|string',
             'nominee_pan_no' => 'nullable|string',
@@ -158,7 +160,7 @@ class MemberController extends Controller
             'extra_sms' => 'nullable|boolean',
 
             // Membership Charges
-            'charges_transaction_date' => 'required',
+            'charges_transaction_date' => 'required|date|before_or_equal:today',
             'charges_membership_fee' => 'nullable|numeric',
             'charges_net_fee' => 'required|numeric',
             'charges_remarks' => 'nullable|string',
@@ -166,11 +168,11 @@ class MemberController extends Controller
         ]);
 
         $request->merge([
-            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
-            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
-            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
-            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
-            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('d-m-Y') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('d-m-Y') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('d-m-Y') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('d-m-Y') : null,
         ]);
 
         $memberData = $request->only((new Member)->getFillable());
@@ -190,15 +192,16 @@ class MemberController extends Controller
             'states' => State::pluck('name', 'id'),
             'branch' => Branch::pluck('branch_name', 'id'),
             'religion' => Religion::pluck('name', 'id')
+
         ];
-        $member = Member::with('address', 'kyc')->findOrFail($id);
+        $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
         $sections = config('member_form');
         $show = true;
         $button = true;
         $method = 'PUT';
         $minor = true;
         session(['member_id' => $id]);
-        $member = Member::with('minors')->findOrFail($id);
+        session(['type' => "member"]);
 
          return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
     }
@@ -251,7 +254,7 @@ class MemberController extends Controller
         'member_info_mother_name' => 'nullable|string',
         'member_info_spouse_name' => 'nullable|string',
         'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
-        'member_info_mobile_no' => 'required|string',
+        'member_info_mobile_no' => 'required|string|max:10',
         'member_info_collection_time' => 'nullable|string',
         'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         'member_info_religion' => 'nullable|string',
@@ -293,14 +296,14 @@ class MemberController extends Controller
         'nominee_relation' => 'nullable|string',
         'nominee_mobile_no' => 'nullable|string',
         'nominee_gender' => 'nullable|in:Male,Female,Other',
-        'nominee_dob' => 'nullable',
-        'nominee_aadhaar_no' => 'nullable|string',
+        'nominee_dob' => 'nullable|date|before_or_equal:today',
+        'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
         'nominee_voter_id_no' => 'nullable|string',
         'nominee_pan_no' => 'nullable|string',
         'nominee_ration_card_no' => 'nullable|string',
         'nominee_address' => 'nullable|string',
         'extra_sms' => 'nullable|boolean',
-        'charges_transaction_date' => 'required',
+        'charges_transaction_date' => 'required|date|before_or_equal:today',
         'charges_membership_fee' => 'nullable|numeric',
         'charges_net_fee' => 'required|numeric',
         'charges_remarks' => 'nullable|string',
@@ -308,11 +311,11 @@ class MemberController extends Controller
     ]);
 
         $request->merge([
-            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
-            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
-            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
-            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
-            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('d-m-Y') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('d-m-Y') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('d-m-Y') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('d-m-Y') : null,
         ]);
 
         $member = Member::findOrFail($id);
@@ -331,37 +334,59 @@ class MemberController extends Controller
     {
         //
     }
-public function updateContact(Request $request, $id)
+    
+public function updateMobileAndEmail(Request $request, $id)
 {
     $request->validate([
-        'member_info_mobile_no' => 'required|string|max:15',
-        'member_info_email' => 'required|email|max:255',
+        'member_info_mobile_no' => 'required|string|max:20',
+        'member_info_email' => 'nullable|email|max:255',
     ]);
 
     $member = Member::findOrFail($id);
-
     $member->update([
         'member_info_mobile_no' => $request->member_info_mobile_no,
         'member_info_email' => $request->member_info_email,
     ]);
 
-    return back()->with('success', 'Contact info updated successfully!');
+    return redirect()->back()->with('success', 'Details updated successfully!');
 }
-
-public function updateAddress(Request $request, $id)
+public function createMinor(Request $request)
 {
-    $request->validate([
-        'member_address_line_1' => 'required|string|max:255',
-        // validate other fields as needed
+    $memberId = $request->input('member_id'); // e.g. 4
+    $type = $request->input('type'); // e.g. 'promoter' or 'member'
+
+    $parentMember = Member::findOrFail($memberId);
+
+    // Check type validity
+    if ($type !== 'promoter') {
+        return redirect()->back()->with('error', 'Minor can only be added under a promoter.');
+    }
+
+    return view('members.minor.create', compact('parentMember'));
+}
+public function storeMinor(Request $request)
+{
+   
+
+    $validated = $request->validate([
+        'name' => 'required|string',
+        'parent_id' => 'required|exists:members,id',
     ]);
 
-    $member = Member::findOrFail($id);
-    $member->address->update([
-        'member_address_line_1' => $request->member_address_line_1,
-        // update other fields
-    ]);
+    $parent = Member::findOrFail($validated['parent_id']);
 
-    return back()->with('success', 'Address updated successfully!');
+    // Ensure parent is promoter
+    if ($parent->type !== 'promoter') {
+        return redirect()->back()->with('error', 'Minor must be added under a promoter.');
+    }
+
+    $minor = new Member();
+    $minor->name = $validated['name'];
+    $minor->type = 'minor';
+    $minor->parent_id = $parent->id;
+    $minor->save();
+
+    return redirect()->route('members.index')->with('success', 'Minor member added under promoter.');
 }
 
 
