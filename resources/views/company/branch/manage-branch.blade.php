@@ -87,7 +87,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($branches as $branch)
+                @forelse ($branches as $branch)
                 <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                     <td class="px-2 py-5 text-center">
                         <div>
@@ -125,7 +125,11 @@
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="10" class="text-center py-4 text-gray-500">No record found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

@@ -14,7 +14,10 @@ class ShareTransfer extends Model
       'transfer_date',
       'shares',
       'face_value',
-      'total_consideration'
+      'total_consideration',
+      'from_share_no',
+      'to_share_no',
+      'certificate_number'
    ];
 
    public function shareholdings()
@@ -25,5 +28,9 @@ class ShareTransfer extends Model
    public function members()
    {
       return $this->belongsTo(Member::class, 'member_id');
+   }
+   public function promotor()
+   {
+      return $this->belongsTo(Promotor::class, 'promotor_id');
    }
 }

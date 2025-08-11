@@ -16,7 +16,7 @@ class MemberController extends Controller
 
     public function index(Request $request)
     {
-        $query = Member::with(['branch', 'kyc']); 
+        $query = Member::with(['branch', 'kyc']);
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -47,7 +47,7 @@ class MemberController extends Controller
             });
         }
 
-         $members = $query->latest()->paginate(10); 
+        $members = $query->latest()->paginate(10);
 
         session()->forget('member_id');
         return view('members.member.index', compact('members'));
@@ -336,5 +336,11 @@ class MemberController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getMembers()
+    {
+        $members = Member::select('id', 'member_info_first_name')->get();
+        return response()->json($members);
     }
 }

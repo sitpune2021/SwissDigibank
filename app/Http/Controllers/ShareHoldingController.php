@@ -30,7 +30,8 @@ class ShareHoldingController extends Controller
                 });
         }
         $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
-        return view('company.share-holdings.manage-shareholding', compact('share_holdings'));
+         $promoters = Promotor::all();
+        return view('company.share-holdings.manage-shareholding', compact('share_holdings','promoters'));
     }
 
     public function create()
