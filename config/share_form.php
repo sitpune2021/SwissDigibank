@@ -39,7 +39,7 @@ return [
         'name' => 'nominal_value',
         'id' => 'share_nominal',
         'readonly' => true,
-        'default' => '10.0',
+        'default' => '100.0',
     ],
     [
         'label' => 'Total Shares Held',

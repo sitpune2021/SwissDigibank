@@ -18,7 +18,7 @@ class Promotor extends Model
         'enrollment_date', 'title', 'gender', 'first_name', 'middle_name', 'last_name',
         'branch_id', 'date_of_birth', 'occupation', 'father_name', 'mother_name',
         'marital_statuses_id', 'religions_id', 'husband_wife_name', 'email', 'mobile',
-        'sms', 'folio_no', 'active', 'form15g'
+        'sms', 'folio_no', 'active', 'form15g','is_transfer'
     ];
 
     protected $casts = [

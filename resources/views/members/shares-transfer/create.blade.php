@@ -28,7 +28,6 @@
     <div class="box mb-4 xxxl:mb-6">
         <form action="" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6 w-full">
             @csrf
-
             @if(isset($shareholding) && empty($show))
             @method('PUT')
             @endif
@@ -39,7 +38,8 @@
                 <input type="text" name="transferor" id="transferor"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
 
-                    placeholder="Transferor" value="{{ $promoter->promotor->first_name }}" readonly>
+                    placeholder="Transferor" value="{{ $promoter->promotor?->first_name ?? '' }}" readonly>
+                <input type="hidden" name="transferor_id" value="{{ $promoter->promotor?->id ?? '' }}">
                 @error('transferor')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
@@ -47,33 +47,30 @@
 
             <div class="col-span-2 md:col-span-1">
                 <label for="" class="md:text-lg font-medium block mb-4">Member<span class="text-red-500">*</span></label>
-                <input type="hidden" id="selectedId" value="{{ isset($shareholding) ? $shareholding->promoter : '' }}">
-                @if(isset($isView) && $isView)
-                {{-- View Mode: Just display the member name --}}
-                <input type="text" value="{{ $shareholding->promoters->first_name ?? 'N/A' }}" @if($isView) disabled @endif
-                    class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                @else
+                <!-- <input type="hidden" id="selectedId" value="{{ isset($shareholding) ? $shareholding->promoter : '' }}"> -->
+                <input type="hidden" id="selectedId" name="selected_member_id" value="">
                 <select name="member_id" id="promoterDropdown"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                    <option value="">Select Promoter</option>
+                    <option value="">Select Member</option>
                 </select>
                 @error('promoter')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
-                @endif
+
                 <div id="memberSharesInfo" class="mt-2 text-sm"></div>
                 <a href="{{route('member.create')}}" style="color: blue; font-size: 13px;">Add New Member</a>
             </div>
-            
+
             <div class="col-span-2 md:col-span-1">
-                <label for="business_type" class="md:text-lg font-medium block mb-4">Business Type</label>
-                <select name="business_type" id=""
+                <label for="business_type" class="md:text-lg font-medium block mb-4">Business Type<span class="text-red-500">*</span></label>
+                <select name="business_type" id="business_type"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     <option value="">Select Business Type</option>
                     <option value="FD">FD / MIS</option>
                     <option value="RD">RD / DD</option>
                     <option value="Saving">Saving</option>
                     <option value="Loan">Loan</option>
+                    <option value="Shares">Shares</option>
                 </select>
                 @error('business_type')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -86,7 +83,7 @@
                 </label>
 
                 <input
-                    type="date"
+                    type="text"
                     name="allotment_date"
                     id="date2"
                     placeholder="Select Date"
@@ -105,7 +102,7 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="share_no" class="md:text-lg font-medium block mb-4">Shares<span class="text-red-500">*</span></label>
                 <input name="share_no" id="share_no"
-                    value="100"
+                    value="0"
                     class=" w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="Enter Last Share No" @if($isView) disabled @endif>
 
@@ -118,7 +115,7 @@
                 <label for="share_nominal" class="md:text-lg font-medium block mb-4">Face Value</label>
                 <input type="text" name="share_nominal" id="share_nominal"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="10.0" value="{{ old('share_nominal', '10.0') }}" readonly @if($isView) disabled @endif>
+                    placeholder="100.0" value="{{ old('share_nominal', '100.0') }}" readonly @if($isView) disabled @endif>
                 @error('share_nominal')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
                 @enderror
@@ -163,9 +160,9 @@
                 <button class="btn-primary" type="submit">
                     Transfer Share
                 </button>
-                <button class="btn-outline" type="button" onclick="window.location.href=''">
+                <a href="{{ route('shares-transfer.index') }}" class="btn-outline inline-flex items-center justify-center">
                     Back
-                </button>
+                </a>
             </div>
         </form>
     </div>
@@ -181,77 +178,217 @@
     }, 5000);
 </script>
 
-<script>
-$(document).ready(function() {
-    const selectedId = $('#selectedId').val();
-    const dropdown = $('#promoterDropdown');
-    const sharesInput = $('#share_no');
-    const faceValueInput = $('#share_nominal');
-    const totalConsiderationInput = $('#total_consideration');
-    const infoBox = $('#memberSharesInfo');
+<!-- ---------------- -->
 
-    function calculateTotal() {
-        let shares = parseFloat(sharesInput.val()) || 0;
-        let faceValue = parseFloat(faceValueInput.val()) || 0;
-        let total = shares * faceValue;
-        totalConsiderationInput.val(total.toFixed(2));
-    }
+<!-- <script>
+    $(document).ready(function() {
+        const selectedId = $('#selectedId').val();
+        const dropdown = $('#promoterDropdown');
+        const businessTypeDropdown = $('#business_type');
 
-    // Load promoters
-    $.ajax({
-        url: "{{ url('/get-promoters') }}",
-        type: "GET",
-        success: function(response) {
-            dropdown.empty().append('<option value="">Select Promoter</option>');
-            $.each(response, function(index, member) {
-                let selected = (selectedId == member.id) ? 'selected' : '';
-                dropdown.append(`<option value="${member.id}" ${selected}>${member.first_name}</option>`);
-            });
+        const sharesInput = $('#share_no');
+        const faceValueInput = $('#share_nominal');
+        const totalConsiderationInput = $('#total_consideration');
 
-            if (selectedId) dropdown.trigger('change');
-        },
-        error: function() {
-            alert('Failed to fetch promoters.');
-        }
-    });
+        const infoBox = $('#memberSharesInfo');
 
-    // On promoter change
-    dropdown.on('change', function() {
-        let promoterId = $(this).val();
+        let businessTypeSelected = false;
 
-        if (!promoterId) {
-            infoBox.text('');
-            sharesInput.val('');
-            totalConsiderationInput.val('');
-            return;
+        function calculateTotal() {
+            if (!businessTypeSelected) {
+                totalConsiderationInput.val("0.00");
+                return;
+            }
+            let shares = parseFloat(sharesInput.val()) || 0;
+            let faceValue = parseFloat(faceValueInput.val()) || 0;
+            let total = shares * faceValue;
+            totalConsiderationInput.val(total.toFixed(2));
         }
 
         $.ajax({
-            url: `/get-promoter-shares/${promoterId}`,
+            url: "{{ url('/get-members') }}",
             type: "GET",
-            success: function(data) {
-                let currentShares = parseInt(data.shares) || 0;
-                infoBox.html(`This member currently has <b>${currentShares}</b> shares.`);
-
-                if (currentShares < 100) {
-                    sharesInput.val(100 - currentShares);
-                } else {
-                    sharesInput.val(0);
+            success: function(response) {
+                dropdown.empty().append('<option value="">Select Member</option>');
+                $.each(response, function(index, member) {
+                    let selected = (selectedId == member.id) ? 'selected' : '';
+                    dropdown.append(`<option value="${member.id}" ${selected}>${member.member_info_first_name}</option>`);
+                });
+                if (selectedId) {
+                    dropdown.val(selectedId).trigger('change');
                 }
-
-                // Calculate total consideration right after setting shares
-                calculateTotal();
             },
             error: function() {
-                infoBox.text('Unable to fetch share info.');
-                sharesInput.val('');
-                totalConsiderationInput.val('');
+                alert('Failed to fetch members.');
             }
         });
-    });
 
-    // Also recalculate if shares or face value are changed manually
-    sharesInput.on('input', calculateTotal);
-    faceValueInput.on('input', calculateTotal);
-});
+        dropdown.on('change', function() {
+            let memberId = $(this).val();
+
+            if (!memberId) {
+                infoBox.text('');
+                calculateTotal();
+                return;
+            }
+
+            $.ajax({
+                url: `/get-promoter-shares/${memberId}`,
+                type: "GET",
+                success: function(data) {
+                    let currentShares = parseInt(data.shares) || 0;
+                    infoBox.html(`This member currently has <b>${currentShares}</b> shares.`);
+                    calculateTotal();
+                },
+                error: function() {
+                    infoBox.text('Unable to fetch share info.');
+                    calculateTotal();
+                }
+            });
+        });
+
+        businessTypeDropdown.on('change', function() {
+            businessTypeSelected = !!$(this).val();
+            calculateTotal();
+        });
+
+        sharesInput.on('input', calculateTotal);
+        faceValueInput.on('input', calculateTotal);
+
+        totalConsiderationInput.val("0.00");
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const businessTypeSelect = document.getElementById("business_type");
+        let shareField = document.getElementById('share_no');
+
+        function updateShareField() {
+            
+            if (businessTypeSelect.value === 'Saving') {
+                shareField.value = 1;
+            } else if (businessTypeSelect.value === 'FD') {
+                shareField.value = 10;
+            } else if (businessTypeSelect.value === 'RD') {
+                shareField.value = 1;
+            } else if (businessTypeSelect.value === 'Loan') {
+                shareField.value = 1;
+            } else if (businessTypeSelect.value === 'Shares') {
+           
+                const remaining = 100 - (parseInt(currentShares, 10) || 0);
+                sharesInput.val(remaining > 0 ? remaining : 0);
+
+                alert(remainingShares);
+            } else {
+                shareField.value = 0;
+            }
+        }
+        updateShareField();
+        businessTypeSelect.addEventListener('change', updateShareField);
+    });
+</script> -->
+
+<script>
+    $(document).ready(function() {
+        const selectedId = $('#selectedId').val();
+        const dropdown = $('#promoterDropdown');
+        const businessTypeDropdown = $('#business_type');
+
+        const sharesInput = $('#share_no');
+        const faceValueInput = $('#share_nominal');
+        const totalConsiderationInput = $('#total_consideration');
+
+        const infoBox = $('#memberSharesInfo');
+
+        let businessTypeSelected = false;
+        let currentShares = 0; // ✅ global variable
+
+        function calculateTotal() {
+            if (!businessTypeSelected) {
+                totalConsiderationInput.val("0.00");
+                return;
+            }
+            let shares = parseFloat(sharesInput.val()) || 0;
+            let faceValue = parseFloat(faceValueInput.val()) || 0;
+            let total = shares * faceValue;
+            totalConsiderationInput.val(total.toFixed(2));
+        }
+
+        // Fetch member list
+        $.ajax({
+            url: "{{ url('/get-members') }}",
+            type: "GET",
+            success: function(response) {
+                dropdown.empty().append('<option value="">Select Member</option>');
+                $.each(response, function(index, member) {
+                    let selected = (selectedId == member.id) ? 'selected' : '';
+                    dropdown.append(`<option value="${member.id}" ${selected}>${member.member_info_first_name}</option>`);
+                });
+                if (selectedId) {
+                    dropdown.val(selectedId).trigger('change');
+                }
+            },
+            error: function() {
+                alert('Failed to fetch members.');
+            }
+        });
+
+        // On member change
+        dropdown.on('change', function() {
+            let memberId = $(this).val();
+
+            if (!memberId) {
+                infoBox.text('');
+                currentShares = 0; // reset
+                sharesInput.val(0);
+                calculateTotal();
+                return;
+            }
+
+            $.ajax({
+                url: `/get-promoter-shares/${memberId}`,
+                type: "GET",
+                success: function(data) {
+                    currentShares = parseInt(data.shares) || 0; // ✅ store globally
+                    infoBox.html(`This member currently has <b>${currentShares}</b> shares.`);
+                    sharesInput.val(0); // keep at 0 until business type changes
+                    calculateTotal();
+                },
+                error: function() {
+                    infoBox.text('Unable to fetch share info.');
+                    currentShares = 0;
+                    sharesInput.val(0);
+                    calculateTotal();
+                }
+            });
+        });
+
+        // On business type change
+        businessTypeDropdown.on('change', function() {
+            businessTypeSelected = !!$(this).val();
+
+            if (this.value === 'Saving') {
+                sharesInput.val(1);
+            } else if (this.value === 'FD') {
+                sharesInput.val(10);
+            } else if (this.value === 'RD') {
+                sharesInput.val(1);
+            } else if (this.value === 'Loan') {
+                sharesInput.val(1);
+            } else if (this.value === 'Shares') {
+                let remaining = 100 - currentShares; // ✅ use global
+                sharesInput.val(remaining > 0 ? remaining : 0);
+            } else {
+                sharesInput.val(0);
+            }
+
+            calculateTotal();
+        });
+
+        sharesInput.on('input', calculateTotal);
+        faceValueInput.on('input', calculateTotal);
+
+        totalConsiderationInput.val("0.00");
+    });
 </script>

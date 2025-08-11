@@ -7,6 +7,7 @@ use App\Models\Promotor;
 use App\Models\Shareholding;
 use App\Models\ShareTransfer;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ShareTransferController extends Controller
 {
@@ -15,32 +16,37 @@ class ShareTransferController extends Controller
      */
     public function index()
     {
-        return view('members.shares-transfer.index');
+        $shareholdings = ShareTransfer::with('promotor', 'members')
+            ->where('status', 'approved')
+            ->orderBy('id', 'desc')->paginate(10);
+        return view('members.shares-transfer.index', compact('shareholdings'));
     }
-
 
     public function selectForShareSplit(Request $request)
     {
-        $request->validate([
-            'split_share' => 'required|exists:promotors,id',
-        ]);
+        $decryptedId = $request->input('split_share');
 
-        session(['split_promoter_id' => $request->split_share]);
-        return redirect()
-            ->route('shareholding.index')
-            ->with('success', 'Promoter selected successfully for share splitting.');
-        // return redirect()->route('shareholding.transfer.form');
+        DB::transaction(function () use ($decryptedId) {
+            Promotor::query()->update(['is_transfer' => 0]);
+
+            $shareholding = Promotor::findOrFail($decryptedId);
+
+            $shareholding->update(['is_transfer' => 1]);
+        });
+
+        return redirect()->route('shareholding.index')
+            ->with('success', 'Shareholding updated. Only one marked as transferred.');
     }
 
-    public function transferForm(Request $request)
+    public function transferForm()
     {
-        $promoterId = session('split_promoter_id');
+        $promoterId = Promotor::where('is_transfer', 1)->value('id');
 
         if (!$promoterId) {
             return redirect()->route('shareholding.index')->with('error', 'Please select a promoter first.');
         }
 
-        $promoter = Shareholding::with('promotor')->findOrFail($promoterId);
+        $promoter = Shareholding::with('promotor')->where('promotor_id', $promoterId)->first();
 
         return view('members.shares-transfer.create', [
             'promoter' => $promoter
@@ -49,95 +55,58 @@ class ShareTransferController extends Controller
 
     public function getPromoterShares($id)
     {
-        $shares = Shareholding::where('promotor_id', $id)->sum('share_no');
+        $shares = ShareTransfer::where('member_id', $id)->sum('shares');
         return response()->json(['shares' => $shares]);
     }
 
-    public function allocateShares(Request $request)
-    {
-
-        $request->validate([
-            'from_promoter_id' => 'required|exists:promoters,id',
-            'shares' => 'required|array',
-        ]);
-
-        $fromPromoter = Promotor::findOrFail($request->from_promoter_id);
-
-        $totalToDeduct = array_sum($request->shares);
-
-        if ($totalToDeduct > $fromPromoter->shares) {
-            return back()->with('error', 'Not enough shares to allocate.');
-        }
-
-        // Deduct shares from original promoter
-        $fromPromoter->shares -= $totalToDeduct;
-        $fromPromoter->save();
-
-        // Add shares to selected promoters
-        foreach ($request->shares as $promoterId => $shareCount) {
-            if ($shareCount > 0) {
-                $toPromoter = Promotor::find($promoterId);
-                $toPromoter->shares += $shareCount;
-                $toPromoter->save();
-            }
-        }
-
-        return redirect()->route('promoter.list')->with('success', 'Shares allocated successfully.');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-       
         $validated = $request->validate([
-            'transferor'          => 'required',
-            'member_id'           => 'required|exists:shareholdings,promotor_id|different:transferor',
-            'business_type'       => 'nullable|string|max:255',
-            'allotment_date'      => 'required|date',
-            'share_no'            => 'required|integer|min:1',
-            'share_nominal'       => 'required|numeric|min:0',
-            'total_consideration' => 'required|numeric|min:0',
+            'transferor_id'          => 'required',
+            'member_id'              => 'required',
+            'business_type'          => 'required',
+            'allotment_date'         => 'required|date',
+            'share_no'               => 'required|integer|min:1',
+            'share_nominal'          => 'required|numeric|min:0',
+            'total_consideration'    => 'required|numeric|min:0',
         ]);
 
         try {
             DB::transaction(function () use ($validated) {
-                $transferor = Shareholding::where('promoter_id', $validated['transferor'])->lockForUpdate()->first();
-                $transferee = Shareholding::where('promoter_id', $validated['member_id'])->lockForUpdate()->first();
+                $transferorId = $validated['transferor_id'];
+                $newShares = $validated['share_no'];
 
-                if (!$transferor || !$transferee) {
-                    throw new \Exception("Invalid member details.");
+                $promoterTotalShares = Shareholding::where('id', $transferorId)->value('total_share_held');
+
+                if (!$promoterTotalShares || $promoterTotalShares <= 0) {
+                    throw new \Exception('Promoter does not have any shares.');
                 }
 
-                if ($transferor->shares < $validated['share_no']) {
-                    throw new \Exception("Transferor does not have enough shares.");
+                $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
+                    ->max('to_share_no');
+
+
+                $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
+                $toShareNo = ($fromShareNo + $newShares) - 1;
+
+                if ($toShareNo > $promoterTotalShares) {
+                    throw new \Exception("Not enough shares left to allocate. Last available share no: {$promoterTotalShares}");
                 }
-
-                if ($transferee->shares + $validated['share_no'] > 100) {
-                    throw new \Exception("Transferee cannot hold more than 100 shares.");
-                }
-
-                $transferor->shares -= $validated['share_no'];
-                $transferor->save();
-
-
-                $transferee->shares += $validated['share_no'];
-                $transferee->save();
 
                 ShareTransfer::create([
-                    'transferor_id'      => $validated['transferor'],
-                    'member_id'          => $validated['member_id'],
-                    'business_type'      => $validated['business_type'],
-                    'transfer_date'      => $validated['allotment_date'],
-                    'shares'             => $validated['share_no'],
-                    'face_value'         => $validated['share_nominal'],
+                    'transferor_id'       => $transferorId,
+                    'member_id'           => $validated['member_id'],
+                    'business_type'       => $validated['business_type'],
+                    'transfer_date'       => $validated['allotment_date'],
+                    'shares'              => $newShares,
+                    'face_value'          => $validated['share_nominal'],
                     'total_consideration' => $validated['total_consideration'],
-                    'status'             => 'pending',
+                    'from_share_no'       => $fromShareNo,
+                    'to_share_no'         => $toShareNo,
                 ]);
             });
 
-            return redirect()->route('shares-transfer.index')->with('success', 'Share transfer completed successfully.');
+            return redirect()->route('shares-transfer.index')->with('success', 'Share transfer successfully added. Please approve it.');
         } catch (\Exception $e) {
             return redirect()->route('shares-transfer.index')->with('error', $e->getMessage());
         }
@@ -145,7 +114,33 @@ class ShareTransferController extends Controller
 
     public function show(string $id)
     {
-        //
+        $shareholding = ShareTransfer::with('promotor', 'members')->findOrFail($id);
+        return view('members.shares-transfer.view', compact('shareholding'));
+    }
+
+    public function print($id)
+    {
+        $shareholding = ShareTransfer::with('promotor', 'members')->findOrFail($id);
+
+        $headers = [
+            'title' => 'SHARE CERTIFICATE',
+            'customer_id'           => 'CUSTOMER ID',
+            'date'                  => 'DATE',
+            'customer_name'         => 'MEMBER',
+            'share_allotment_date'     => 'SHARE ALLOTMENT DATE',
+            'share_range'          => 'SHARE RANGE',
+            'total_shares'               => 'TOTAL SHARES',
+            'nominal_value'                  => 'NOMINAL VALUE',
+            'total_value'                 => 'TOTAL VALUE',
+            'date_of_transfer'    => 'DATE OF TRANSFER',
+            'share_certificate_no'  => 'SHARE CERTIFICATE NUMBER',
+            'is_surrendered'            => 'IS SURRENDERED',
+            // 'terms_conditions'      => 'TERMS AND CONDITIONS'
+        ];
+
+        // return view('members.shares-transfer.share-certificate', compact('shareholding','headers'));
+        $pdf = Pdf::loadView('members.shares-transfer.share-certificate', compact('shareholding', 'headers'));
+        return $pdf->download('share-certificate-' . $shareholding->id . '.pdf');
     }
 
     /**
