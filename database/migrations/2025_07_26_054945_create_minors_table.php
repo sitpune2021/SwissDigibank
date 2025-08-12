@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('minors', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('member_id'); // Or wherever you want
+            $table->unsignedBigInteger('member_id')->nullable(); // Or wherever you want
+            $table->unsignedBigInteger('promotor_id')->nullable();
             $table->date('enrollment_date');
             $table->enum('title', ['md', 'mr', 'ms', 'mrs']);
             $table->enum('gender', ['male', 'female', 'other']);
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->string('aadhaar_no', 20)->nullable();
             $table->string('address', 500);
             $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('promotor_id')->references('id')->on('promotors')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

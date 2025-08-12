@@ -89,7 +89,7 @@
                                 <a href="" class="text-blue-600 hover:text-blue-800 underline">View</a>
                             </td>
                             <td class="py-5 px-6">
-                                {{ $transaction->transaction_date ? \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') : '' }}
+                                {{ $transaction->transaction_date ? \Carbon\Carbon::parse($transaction->transaction_date)->format('D M d Y') : '' }}
                             </td>
                             <td class="py-5 px-6">{{ $transaction?->accounts?->amount ?? '' }}</td>
                             <td class="py-5 px-6">{{ $transaction?->payment_mode ?? ''}}</td>

@@ -101,6 +101,7 @@
                 @php
                     $promoterId = request()->query('promotor_id');
                     $memberId = request()->query('member_id');
+                    $type = request()->query('type');
                 @endphp
 
                 {{-- <input name="type" id="type" type="hidden" value="{{ $type }}" hidden /> --}}

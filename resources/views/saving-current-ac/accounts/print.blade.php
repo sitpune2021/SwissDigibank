@@ -39,7 +39,7 @@
         </div>
 
         <p><strong>ID:</strong> {{ $transaction->id }}</p>
-        <p><strong>Date:</strong> {{ $transaction->created_at->format('d-m-Y') }}</p>
+        <p><strong>Date:</strong> {{ $transaction->created_at->format('D M d Y') }}</p>
         <p><strong>Amount:</strong> ₹{{ $transaction->amount }}</p>
         <p><strong>Status:</strong> {{ ucfirst($transaction->status) }}</p>
 

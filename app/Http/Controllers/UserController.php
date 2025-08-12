@@ -75,7 +75,7 @@ class UserController extends Controller
 
         // Save user
         User::create([
-            'name' => $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
+            'name' =>                $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
             'emp_id'              => $validated['employee'],
             'designation'         => $validated['designation'],
             'username'            => $validated['user_name'],

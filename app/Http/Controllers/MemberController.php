@@ -159,11 +159,11 @@ class MemberController extends Controller
         ]);
 
         $request->merge([
-            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
-            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('d-m-Y') : null,
-            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('d-m-Y') : null,
-            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('d-m-Y') : null,
-            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('d-m-Y') : null,
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('D M d Y') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('D M d Y') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('D M d Y') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('D M d Y') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('D M d Y') : null,
         ]);
 
         $memberData = $request->only((new Member)->getFillable());
@@ -349,11 +349,11 @@ class MemberController extends Controller
         ]);
 
         $request->merge([
-            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
-            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('d-m-Y') : null,
-            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('d-m-Y') : null,
-            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('d-m-Y') : null,
-            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('d-m-Y') : null,
+            'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('D M d Y') : null,
+            'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('D M d Y') : null,
+            'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('D M d Y') : null,
+            'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('D M d Y') : null,
+            'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('D M d Y') : null,
         ]);
 
         $member = Member::findOrFail($id);
