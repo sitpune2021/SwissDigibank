@@ -36,7 +36,6 @@ class Promotor extends Model
         'active',
         'form15g',
         'is_transfer'
-
     ];
 
     protected $casts = [

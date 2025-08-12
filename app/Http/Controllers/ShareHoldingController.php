@@ -6,6 +6,7 @@ use App\Models\Shareholding;
 use App\Models\Promotor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ShareHoldingController extends Controller
@@ -30,18 +31,16 @@ class ShareHoldingController extends Controller
                 });
         }
         $dynamicOptions = [
-    'promoter' => Promotor::select('id', 'folio_no', 'first_name')
-        ->get()
-        ->mapWithKeys(function ($item) {
-            return [$item->id => 'DEMO-' .$item->folio_no . " - ". $item->first_name];
-        }),
-];
+            'promoter' => Promotor::select('id', 'folio_no', 'first_name')
+                ->get()
+                ->mapWithKeys(function ($item) {
+                    return [$item->id => 'DEMO-' . $item->folio_no . " - " . $item->first_name];
+                }),
+        ];
 
         $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
-
-         $promoters = Promotor::all();
-        return view('company.share-holdings.manage-shareholding', compact('share_holdings','promoters'));
-
+        $transfoer = Promotor::where('is_transfer', true)->first();
+        return view('company.share-holdings.manage-shareholding', compact('share_holdings', 'dynamicOptions', 'transfoer'));
     }
 
     public function create()
@@ -157,11 +156,11 @@ class ShareHoldingController extends Controller
         return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
     }
 
-   public function IsTransforror(Request $request)
+    public function IsTransforror(Request $request)
     {
         $decryptedId = $request->input('is_transfer'); // assuming field name is 'is_transfer'
 
-        \DB::transaction(function () use ($decryptedId) {
+        DB::transaction(function () use ($decryptedId) {
             Promotor::query()->update(['is_transfer' => false]);
 
             $shareholding = Promotor::findOrFail($decryptedId);
@@ -171,6 +170,4 @@ class ShareHoldingController extends Controller
         return redirect()->route('shareholding.index')
             ->with('success', 'Shareholding updated. Only one marked as transferred.');
     }
-
-
 }

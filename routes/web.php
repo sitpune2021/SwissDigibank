@@ -94,11 +94,6 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
         Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
         Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
-        // Route::get('/shares-transfer/{id}/download', [ShareTransferController::class, 'downloadPdf'])->name('shares-transfer.download');
-
-        // Route::resource('shares-holdings', ShareHoldingsController::class);
-        // Route::resource('share-certificates', controller: ShareCertificateController::class);
-        // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
         Route::resource('form15g15h', Form15Gor15HController::class);
     });
 
@@ -199,12 +194,3 @@ Route::get('/dev/run/{action}', function ($action) {
         return "Error running action [$action]: " . $e->getMessage();
     }
 });
-
-// middleware
-// Route::get('/dashboard', function () {
-//     return 'dashboard';
-// })->middleware(CheckCustomHeader::class);
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware('auth.user');
