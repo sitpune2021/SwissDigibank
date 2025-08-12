@@ -353,6 +353,7 @@ class MemberController extends Controller
         //
     }
 
+
     public function createMinor(Request $request)
     {
         $memberId = $request->input('member_id'); // e.g. 4
@@ -390,6 +391,7 @@ class MemberController extends Controller
 
         return redirect()->route('members.index')->with('success', 'Minor member added under promoter.');
     }
+
     public function addressedit(string $id)
     {
         $dynamicOptions = [
@@ -479,9 +481,12 @@ class MemberController extends Controller
         return redirect()->route('member.index')->with('success', 'Member updated successfully.');
     }
     
+
     public function getMembers()
     {
         $members = Member::select('id', 'member_info_first_name')->get();
         return response()->json($members);
+
     }
+    
 }

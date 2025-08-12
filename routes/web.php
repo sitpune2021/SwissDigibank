@@ -88,6 +88,23 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
         Route::resource('form15g15h', Form15Gor15HController::class);
     });
+        Route::resource('shares-transfer', ShareTransferController::class);
+        Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
+
+        Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
+        Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+        Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+        Route::resource('form15g15h', Form15Gor15HController::class);
+    });
+
+    Route::get('/get-member-shares/{id}', function ($id) {
+        $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no');
+        return response()->json(['shares' => $shares]);
+    });
+
+    Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
+
+
     Route::group(['prefix' => 'saving-current-ac'], function () {
         Route::resource('schemes', SchemesController::class);
         Route::resource('accounts', AccountsController::class);
@@ -118,12 +135,13 @@ Route::middleware('auth.user')->group(function () {
         Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
         Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
         Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
+        Route::get('approveAccounts', [ApproveController::class, 'approveAccounts'])->name('approveAccounts');
+        Route::post('/approvals/updateAccountStatus/{id}', [ApproveController::class, 'updateAccountStatus'])->name('transactions.updateAccountStatus');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {
         Route::resource('employee', HRController::class);
     });
-});
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
@@ -176,12 +194,3 @@ Route::get('/dev/run/{action}', function ($action) {
         return "Error running action [$action]: " . $e->getMessage();
     }
 });
-
-// middleware
-// Route::get('/dashboard', function () {
-//     return 'dashboard';
-// })->middleware(CheckCustomHeader::class);
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware('auth.user');
