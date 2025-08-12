@@ -125,7 +125,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
         Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
     });
-
     Route::group(['prefix' => 'withdraws'], function () {
         Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
         Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
@@ -141,12 +140,13 @@ Route::middleware('auth.user')->group(function () {
         Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
         Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
         Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
+        Route::get('approveAccounts', [ApproveController::class, 'approveAccounts'])->name('approveAccounts');
+        Route::post('/approvals/updateAccountStatus/{id}', [ApproveController::class, 'updateAccountStatus'])->name('transactions.updateAccountStatus');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {
         Route::resource('employee', HRController::class);
     });
-});
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');

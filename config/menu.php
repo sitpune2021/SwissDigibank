@@ -57,6 +57,16 @@ return [
             ['title' => 'Saving A/c', 'route' => 'accounts.index'],
         ]
     ],
+     [
+        'title' => 'FD/ MIS Accounts',
+        'icon' => 'las la-university',
+        'position' => '5',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
+            ['title' => 'FD Account', 'route' => 'fd-accounts.index'],
+        ]
+    ],
     [
         'title' => 'Approvals',
         'icon' => 'las la-university',
@@ -66,6 +76,7 @@ return [
             ['title' => 'Pending Transactions', 'route' => 'pending-transaction.index'],
             ['title' => 'Share Transfer/ Allocation', 'route' => 'share-transfer-approval.approve_transfer'],
             ['title' => 'Reversed Transactions', 'route' => 'reverse-transaction.reverse_transaction'],
+            ['title' => 'Account Approvals', 'route' => 'approveAccounts'],
 
             // ['title' => 'Share Surrender', 'route' => 'share-surrender.index'],
         ]

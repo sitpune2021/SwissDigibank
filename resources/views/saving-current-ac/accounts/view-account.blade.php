@@ -7,14 +7,18 @@
 <div class="min-h-screen p-4 font-sans text-sm bg-gray-100" x-data>
 
     <div class="flex flex-wrap justify-center gap-3 mb-3 text-center">
-        <a class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700" href="{{route('account.transaction',base64_encode($account->id))}}">View Transactions</a>
+        <a href="{{ route('account.transaction', base64_encode($account->id)) }}"
+            class="px-4 py-2 text-base text-white bg-blue-600 rounded hover:bg-blue-700">
+            View Transactions
+        </a>
         <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('deposit.create',base64_encode($account->id))}}">Deposit Money</a>
         <a class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700" href="{{route('withdraw.create',base64_encode($account->id))}}">Withdraw Money</a>
-        <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other
-            Charges</button>
-        <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button>
-        <button class="px-4 py-2 text-base text-white bg-gray-800 rounded hover:bg-gray-900">Print Documents</button>
-        <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button>
+        <!-- <button class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700">Deposit Money</button>
+        <button class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700">Withdraw Money</button> -->
+        <!-- <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other Charges</button> -->
+        <!-- <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button> -->
+        <!-- <button class="px-4 py-2 text-base text-white bg-gray-800 rounded hover:bg-gray-900">Print Documents</button> -->
+        <!-- <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button> -->
     </div>
 
     <div class="container px-2 mx-auto">
@@ -312,13 +316,29 @@
                                     <th class="p-2 text-left border-b">Name</th>
                                     <th class="p-2 text-left border-b">Relation</th>
                                     <th class="p-2 text-left border-b">Address</th>
+                                    <th class="p-2 text-left border-b">Percentage</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="p-2 border-t">Sharda</td>
-                                    <td class="p-2 border-t">wife</td>
-                                    <td class="p-2 border-t">mumbai</td>
+                                    @php
+                                    $totalNominees = count($account->nominee ?? []);
+                                    $percentage = $totalNominees > 0 ? (100 / $totalNominees) : 0;
+                                    $i=1;
+                                    @endphp
+
+                                    @foreach ($account->nominee as $nominee)
+
+                                <tr>
+                                    <td class="p-2 border-t">{{$i }}</td>
+                                    <td class="p-2 border-t">{{ $nominee->nominee_name }}</td>
+                                    <td class="p-2 border-t">{{ $nominee->nominee_relation }}</td>
+                                    <td class="p-2 border-t">{{ $nominee->nominee_address }}</td>
+                                    <td class="p-2 border-t">{{ $percentage   }}%</td>
+                                </tr>
+                                @php $i++; @endphp
+
+                                @endforeach
                                 </tr>
                             </tbody>
                         </table>

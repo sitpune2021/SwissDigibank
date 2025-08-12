@@ -42,6 +42,10 @@ return new class extends Migration
             $table->dateTime('transaction_date');
             $table->enum('payment_mode', ['cash', 'online', 'cheque']);
 
+             //  Approve Status Field
+            $table->enum('approve_status', ['0', '1','2'])->default('0');
+            $table->string('remarks')->nullable();
+
             // Timestamps
             $table->softDeletes();
             $table->timestamps();
