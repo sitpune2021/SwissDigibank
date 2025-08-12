@@ -39,9 +39,11 @@ return [
         'submenu' => [
             ['title' => 'Members', 'route' => 'member.index'],
             ['title' => 'Minors', 'route' => 'minor.index'],
-            // ['title' => 'Share Holding', 'route' => 'shares-holdings.index'],
+
+            ['title' => 'Share Holding', 'route' => 'shares-transfer.index'],
             // ['title' => 'Share Certificates', 'route' => 'share-certificates.index'],
             // ['title' => 'Share Transfer History', 'route' => 'share_transfer_histories.index'],
+
             ['title' => 'Form 15G/15H', 'route' => 'form15g15h.index'],
         ]
     ],

@@ -1,22 +1,21 @@
 @if ($type === 'textarea')
     <textarea id="{{ $id }}" name="{{ $name }}" rows="4"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 resize-none"
-        placeholder="Enter {{ strtolower($label) }}" {{ $readonly }}>{{ $value }}</textarea>
+        placeholder="Enter {{ strtolower($label) }}" >{{ $value }}</textarea>
 @elseif ($type === 'date')
     <input type="date" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        value="{{ $value }}" {{ $readonly }} />
+        value="{{ $value }}"  />
 @elseif ($type === 'number')
     <input type="number" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}" {{ $readonly }} />
+        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"  />
 @elseif ($type === 'select')
     <select name="{{ $name }}" id="{{ $id }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
         {{ empty($show) ? '' : 'disabled' }}>
 
         <option value="">-- Select {{ $label }} --</option>
-
         @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
             @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
                 <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>
@@ -66,5 +65,5 @@
 @else
     <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}" {{ $readonly }} />
+        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"  />
 @endif

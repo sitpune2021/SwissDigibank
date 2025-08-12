@@ -29,8 +29,19 @@ class ShareHoldingController extends Controller
                     $q->where('first_name', 'like', "%$search%");
                 });
         }
+        $dynamicOptions = [
+    'promoter' => Promotor::select('id', 'folio_no', 'first_name')
+        ->get()
+        ->mapWithKeys(function ($item) {
+            return [$item->id => 'DEMO-' .$item->folio_no . " - ". $item->first_name];
+        }),
+];
+
         $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
-        return view('company.share-holdings.manage-shareholding', compact('share_holdings'));
+
+         $promoters = Promotor::all();
+        return view('company.share-holdings.manage-shareholding', compact('share_holdings','promoters'));
+
     }
 
     public function create()
@@ -145,4 +156,21 @@ class ShareHoldingController extends Controller
 
         return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
     }
+
+   public function IsTransforror(Request $request)
+    {
+        $decryptedId = $request->input('is_transfer'); // assuming field name is 'is_transfer'
+
+        \DB::transaction(function () use ($decryptedId) {
+            Promotor::query()->update(['is_transfer' => false]);
+
+            $shareholding = Promotor::findOrFail($decryptedId);
+            $shareholding->update(['is_transfer' => true]);
+        });
+
+        return redirect()->route('shareholding.index')
+            ->with('success', 'Shareholding updated. Only one marked as transferred.');
+    }
+
+
 }

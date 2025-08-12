@@ -56,7 +56,7 @@ class BranchController extends Controller
             'state'            => 'required|integer|exists:states,id',
             'pincode'          => 'required|numeric|digits:6',
             'country'          => 'required|string|max:10|in:India',
-            'contact_email'    => 'nullable|email|max:255',
+            'contact_email'    => 'nullable|email|max:255|regex:/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/',
             'mobile_no'        => 'nullable|digits:10|regex:/^[6-9]\d{9}$/',
             'landline_no'      => 'nullable|string|max:10',
             'gst_no'           => 'nullable|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/',
@@ -68,10 +68,10 @@ class BranchController extends Controller
             Branch::create($request->all());
 
             return redirect()->route('branch.index')
-                            ->with('success', 'Branch added successfully.');
+                ->with('success', 'Branch added successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
-                        ->withInput();
+                ->withInput();
         }
     }
 
@@ -102,15 +102,15 @@ class BranchController extends Controller
         $method = 'PUT';
         return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
     }
-    
+
     public function update(Request $request, $id)
     {
         //  dd($request->all());
         $decryptedId = base64_decode($id);
 
         $request->validate([
-           'branch_name'       => 'required|string|max:255',
-           'branch_code' => 'required|string|max:100|regex:/^[a-zA-Z][a-zA-Z0-9]*$/|unique:branches,branch_code,' . $decryptedId,
+            'branch_name'       => 'required|string|max:255',
+            'branch_code' => 'required|string|max:100|regex:/^[a-zA-Z][a-zA-Z0-9]*$/|unique:branches,branch_code,' . $decryptedId,
             'open_date'       => 'required',
             'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
             'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
@@ -119,10 +119,10 @@ class BranchController extends Controller
             'state'            => 'required|integer|exists:states,id',
             'pincode'          => 'required|numeric|digits_between:4,10',
             'country'          => 'required|string|max:10',
-            'contact_email'    => 'nullable|email|max:255',
-            'mobile_no'        => 'nullable|string|max:10',
+            'contact_email'    => 'nullable|email|max:255|regex:/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/',
+            'mobile_no'        => 'nullable|digits:10|regex:/^[6-9]\d{9}$/',
             'landline_no'      => 'nullable|string|max:10',
-            'gst_no'           => 'nullable|string|max:15',
+            'gst_no'           => 'nullable|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/',
             'disable_recharge' => 'required|in:yes,no',
             'disable_neft'     => 'required|in:yes,no',
         ]);
@@ -134,7 +134,6 @@ class BranchController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong! Error: ' . $e->getMessage())->withInput();
         }
-
     }
 
 

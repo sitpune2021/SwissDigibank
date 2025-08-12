@@ -100,8 +100,29 @@
                 @if ($method == 'PUT')
                     @method('PUT')
                 @endif
+                @php
+                    $promoterId = request()->query('promoter_id');
+                    $memberId = request()->query('member_id');
+                @endphp
+
+                <input name="type" id="type" type="hidden" value="{{ $type }}" hidden />
+                @php
+                    $add_id =
+                        request()->query('promoter_id') !== null
+                            ? request()->query('promoter_id')
+                            : request()->query('member_id');
+
+                @endphp
+                <input name="type" id="type" type="text" value="{{ $type }}" hidden />
+                {{-- <input name="id" id="id" type="hidden" value="{{ $add_id }}" /> --}}
+                @if ($type === 'promoter')
+                    <input type="hidden" name="promotor_id" value="{{ $add_id }}">
+                @elseif ($type === 'member')
+                    <input type="hidden" name="member_id" value="{{ $add_id }}">
+                @endif
+
+
                 @foreach ($sections ?? [] as $sectionName => $fields)
-                    {{-- Section Heading --}}
                     @if ($sectionName)
                         <div class="col-span-2">
                             <h3 class="text-xl font-semibold text-center text-gray-800 mb-4 capitalize">
@@ -173,7 +194,6 @@
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'disabled' : '' }} />
                             @endif
-
                             @error($name)
                                 <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                             @enderror
@@ -200,10 +220,23 @@
                             Back
                         </a>
                     </div>
-
-
                 </div>
             </form>
         </div>
     </div>
 @endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let today = new Date().toISOString().split('T')[0];
+        document.getElementById('date2').setAttribute('max', today);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let today = new Date().toISOString().split('T')[0];
+        flatpickr("#date2", {
+            maxDate: today,
+            dateFormat: "Y-m-d"
+        });
+    });
+</script>

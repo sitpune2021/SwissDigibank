@@ -29,22 +29,11 @@
             <!-- <h2 class="h2">Manage Promotors</h2> -->
             <div>
                 <h1 class="text-xl font-semibold">Manage Share Transfer History</h1>
-                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                    <li><a href="{{ url('/dashboard') }}" class="text-blue-600 hover:underline">Dashboard</a></li>
-                    <li><a href="{{ url('/manage-Share Transfer History') }}" class="text-blue-600 hover:underline">Share Transfer History</a></li>
-                    <li class="text-gray-500">Manage Share Transfer History</li>
-                </ol>
             </div>
-            <a href="{{ route('share_transfer_histories.create') }}" class="btn-primary">
-                <i class="las la-plus-circle text-base md:text-lg"></i>
-                Add Share Transfer History
-            </a>
-        </div>
-
         <!-- Latest Transactions -->
         <div class="box col-span-12 lg:col-span-6">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-                <!-- <h4 class="h4">Share Transfer History</h4> -->
+                <!-- <h4 clas-s="h4">Share Transfer History</h4> -->
                 <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
                     <form
                         class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
@@ -61,11 +50,6 @@
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Sr No
-                                </div>
-                            </th>
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     Branch

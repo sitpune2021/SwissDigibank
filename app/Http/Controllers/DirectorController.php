@@ -68,9 +68,9 @@ class DirectorController extends Controller
         $data = $request->validate([
             'designation' => 'nullable|string|max:255',
             'member_id' => 'nullable|string|max:255',
-            'director_name' => 'required|string|max:255',
+            'director_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
             'din_no' => 'required|string|max:50',
-            'appointment_date' => 'required',
+            'appointment_date' => 'required|date|before_or_equal:today',
             'resignation_date' => 'nullable|after_or_equal:appointment_date',
             'signature' => 'nullable',  // add file validation
             'authorized_signatory' => 'required|in:Yes,No',

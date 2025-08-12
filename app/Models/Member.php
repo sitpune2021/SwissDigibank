@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -14,6 +12,7 @@ class Member extends Model
         'general_branch',
         'general_enrollment_date',
         'member_info_title',
+        'folio_no',
         'member_info_gender',
         'member_info_first_name',
         'member_info_middle_name',
@@ -41,7 +40,6 @@ class Member extends Model
     {
         return $this->hasOne(Address::class);
     }
-
     public function kyc(): HasOne
     {
         return $this->hasOne(KycAndNominee::class);
@@ -56,18 +54,23 @@ class Member extends Model
     }
        public function Shareholder()
     {
-        return $this->hasMany(Shareholder::class,'member_id');
+        return $this->hasMany(Shareholders::class,'member_id');
 
     }
-    
-
     public function accounts()
     {
         return $this->hasMany(Account::class, 'member_id');
     }
-
     public function schemes()
     {
         return $this->belongsToMany(Scheme::class, 'account_scheme', 'member_id', 'scheme_id');
+    }
+     public function ShareCertificate()
+     {
+        return $this->hasMany(ShareCertificate::class,'member_id');
+    }
+     public function form15G15H()
+    {
+        return $this->hasMany(Form15G15H::class, 'member_id');
     }
 }

@@ -25,13 +25,13 @@
 </style>
 @section('content')
     <div class="main-inner">
-          <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-        <h4 class="h2">Manage Share Certificate</h4>
-        <a class="btn-primary" href="{{ route('share-certificates.create') }}">
-            <i class=" text-base md:text-lg"></i>
-            Add
-        </a>
-    </div>
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
+            <h4 class="h2">Manage Share Certificate</h4>
+            {{-- <a class="btn-primary" href="{{ route('share-certificates.create') }}">
+                <i class=" text-base md:text-lg"></i>
+                Add
+            </a> --}}
+        </div>
         <!-- Latest Transactions -->
         <div class="box col-span-12 lg:col-span-6">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
@@ -52,11 +52,6 @@
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Sr No
-                                </div>
-                            </th>
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     Branch
@@ -75,11 +70,21 @@
                             <th class="text-start !py-5 px-6 min-w-[150px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     Certificate No.
-                                </div>                              
+                                </div>
                             </th>
                             <th class="text-center !py-5" data-sortable="false">Action</th>
                         </tr>
                     </thead>
+                    @foreach ($certificates as $index => $certificate)
+                        <tr>
+                            <td>{{ $certificate->branch->branch_name ?? 'N/A' }}</td>
+                            <td>{{ $certificate->member->branch->member_info_first_name ?? 'N/A' }}</td>
+                            <td>{{ $certificate->share_range }}</td>
+                            <td>{{ $certificate->certificate_no }}</td>
+                            <td>Action buttons here</td>
+                        </tr>
+                    @endforeach
+
                 </table>
             </div>
         </div>

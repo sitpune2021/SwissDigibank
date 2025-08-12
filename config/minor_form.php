@@ -8,6 +8,7 @@ return
         'id' => 'date',
         'type' => 'text', // or 'date' if using a date picker
         'required' => true,
+        'default' => now()->format('d-m-Y'),
     ],
     [
         'label' => 'Title',
@@ -57,6 +58,7 @@ return
         'type' => 'text', // or 'date'
         'required' => true,
         'placeholder' => 'DD/MM/YYYY',
+        'default' => now()->format('d-m-Y'),
     ],
     [
         'label' => 'Father Name',
