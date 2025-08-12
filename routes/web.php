@@ -59,6 +59,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/company/promotor/{id}/documents', [PromotorController::class, 'documentShow'])->name('promotor.document');
         Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
         Route::resource('shareholding', ShareHoldingController::class);
+        
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
             ->name('shareholding.transfer'); // ✅ semicolon added here
 
