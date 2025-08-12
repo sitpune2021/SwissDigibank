@@ -157,12 +157,13 @@ class ApproveController extends Controller
 
         return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
     }
+
     public function approveShareTransfer(Request $request)
     {
         $validated = $request->validate([
             'share_transfer_id' => 'required|exists:share_transfer,id',
             'status'            => 'required|in:approved,not approve',
-            'remarks'           => 'required|string|max:255',
+            'remarks'           => 'nullable|string|max:255',
         ]);
 
         $transfer = ShareTransfer::find($validated['share_transfer_id']);
