@@ -81,3 +81,4 @@ $branch->branch_name . ' Branch') : 'Add Branch')
     }, 5000);
 </script>
 @endpush
+

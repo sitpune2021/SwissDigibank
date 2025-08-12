@@ -10,7 +10,7 @@ class Shareholders extends Model
         'transferor',
         'member_id', 
         'shareholding_id ',
-        'branch_name',
+        'branch_id',
         'business_type',
         'transfer_date',
         'shares',
@@ -29,12 +29,17 @@ class Shareholders extends Model
     {
          return $this->belongsTo(Member::class,'member_id');
     }
-    public function branches()
-    {
-         return $this->belongsTo(Branch::class, 'branch_name');
-    }
+   public function branch()
+{
+    return $this->belongsTo(Branch::class, 'branch_id'); 
+}
+
       public function shareholding()
     {
          return $this->belongsTo(Shareholding::class, 'shareholding_id');
     }
+//      public function shareholding()
+//     {
+//          return $this->belongsTo(Shareholding::class, 'shareholding_id');
+//     }
 }

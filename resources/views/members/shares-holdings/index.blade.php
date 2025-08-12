@@ -22,6 +22,7 @@
     .breadcrumb li.active {
         color: #555;
     }
+    
 </style>
 @section('content')
     <div class="main-inner">
@@ -33,7 +34,6 @@
                 Add
             </a>
         </div>
-
         <!-- Latest Transactions -->
         <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
             <form method="GET" action="{{ route('shares-holdings.index') }}"
@@ -96,17 +96,21 @@
         <tbody>
             @foreach ($sharesholdings as $index => $item)
                 <tr class="border-b dark:border-bg3 text-center">
-                    <td class="py-3 px-6 text-left">{{ $item->general_group }}</td>
+                    <td class="py-3 px-6 text-left">{{ $item->member->branch->branch_name ?? 'N/A' }}</td>
+                       <td class="px-6 py-4">
+                                    @if ($item->member)
+                                        <a href="{{ route('member.show', $item->member->id) }}"
+                                            class="text-primary hover:underline">
+                                          DEMO-{{ $item->member->member_info_first_name ?? 'N/A' }}
+                                        </a>
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
 
                     <td class="py-3 px-6 text-left">
-                            {{ $item->member->member_info_old_member_no ?? '' }}
-                        
+                        {{ $item->share->share_no ?? 'N/A' }}
                     </td>
-
-                    <td class="py-3 px-6 text-left">
-                        {{ $item->share_range ?? '-' }}
-                    </td>
-
                     <td class="py-3 px-6 text-left">
                         {{ $item->total_shares_held ?? 0 }}
                     </td>
@@ -134,7 +138,6 @@
                     <td class="py-3 px-6 text-left">
                         {{ $item->surrendered ? 'Yes' : 'No' }}
                     </td>
-
                     <td class="py-2 px-6">
                         <div class="flex justify-center">
                             @include('partials._vertical-options', [

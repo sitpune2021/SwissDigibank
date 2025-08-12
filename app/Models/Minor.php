@@ -13,6 +13,7 @@ class Minor extends Model
     'gender',
     'first_name',
     'last_name',
+    'promotor_id',
     'dob',
     'father_name',
     'aadhaar_no',
@@ -23,6 +24,10 @@ public function member()
 {
     return $this->belongsTo(Member::class, 'member_id', 'id');
 }
+public function promotor()
+    {
+        return $this->belongsTo(Promotor::class, 'promotor_id');
+    }
 
 
 

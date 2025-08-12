@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Bank;
 use App\Models\BloodGroup;
 use App\Models\Employee;

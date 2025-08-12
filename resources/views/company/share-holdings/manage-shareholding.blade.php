@@ -40,8 +40,148 @@
                 </a>
                 @endif
             </form>
+            <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
+                <form action="{{ route('shareholding.index') }}"
+                    class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
+                    <input type="text" name="search" id="transaction-search" placeholder="Search"
+                        value="{{ request('search') }}"
+                        class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
+                    <button
+                        class="bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
+                        <i class="las la-search text-lg"></i>
+                    </button>
+                    @if (request('search'))
+                        <a href="{{ route('shareholding.index') }}"
+                            class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
+                            title="Clear Search">
+                            <i class="las la-times text-lg"></i>
+                        </a>
+                    @endif
+                </form>
+            </div>
+        </div>
+        @if (session('success'))
+            <div id="success-alert"
+                style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+                <strong>Success:</strong> {{ session('success') }}
+                <span onclick="document.getElementById('success-alert').style.display='none';"
+                    style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div id="error-alert"
+                style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+                <strong>Error:</strong> {{ session('error') }}
+                <span onclick="document.getElementById('error-alert').style.display='none';"
+                    style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
+            </div>
+        @endif
+        <div class="overflow-x-auto pb-4 lg:pb-6">
+            <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+                <thead class="custom-thead">
+                    <tr class="bg-secondary/5 dark:bg-bg3">
+                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Sr No
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Promoters
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                First Distinctive No.
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Last Distinctive No.
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 min-w-[130px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Total Shares Held
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Share Nominal Val.
+                            </div>
+                        </th>
+                        <th class="text-start !py-5 cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                Total Val.
+                            </div>
+                        </th>
+                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($share_holdings as $index => $share)
+                        <tr>
+                            <td class="px-6 py-4">{{ $index + 1 }}</td>
+                            <td class="px-6 py-4">{{ $share->promotor->first_name ?? 'N/A' }}</td>
+                            <td class="px-6 py-4">{{ $share->first_share }}</td>
+                            <td class="px-6 py-4">{{ $share->share_no }}</td>
+                            <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>
+                            <td class="px-6 py-4">{{ $share->nominal_value ?? '-' }}</td>
+                            <td class="px-6 py-4">{{ $share->total_share_value ?? '-' }}</td>
+                            <!-- <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td> -->
+                            <td class="py-2 px-6">
+                                <div class="flex justify-center">
+                                    @include('partials._vertical-options', [
+                                        'id' => base64_encode($share->id),
+                                        'viewRoute' => 'shareholding.show',
+                                        'editRoute' => 'shareholding.edit',
+                                    ])
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="10" class="text-center py-4 text-gray-500">No shareholding records found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+     <div class="box mt-4">
+        @php
+            $field = [
+                'dynamic' => true,
+                'options_key' => 'promoter',
+            ];
+            $name = 'is_transfer'; // Define this for the @error directive
+        @endphp
+        <form action="{{ route('shareholding.transfer') }}" method="POST">
+            @csrf
+            @include('fields.label', [
+                'id' => 'transfer',
+                'label' => 'Promoter',
+                'required' => true,
+            ])
+
+            @include('fields.inputs', [
+                'id' => 'transfer',
+                'label' => 'Promoter',
+                'required' => true,
+                'type' => 'select',
+                'name' => $name,
+                'value' => isset($transfoer) ? $transfoer->id : '',
+                'field' => $field,
+            ])
+
+            @error($name)
+                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+            @enderror
+            <button class="btn-primary" type="submit"> UPDATE </button>
+        </form>
+    </div>
+   
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>

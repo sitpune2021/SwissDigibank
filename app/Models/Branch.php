@@ -42,9 +42,13 @@ class Branch extends Model
     }
   public function Shareholder()
     {
-        return $this->hasMany(Shareholder::class,'general_branch');
+        return $this->hasMany(Shareholder::class,'branch_id');
 
     }
+    public function ShareCertificate(){
+        return $this->hasMany(ShareCertificate::class,'branch_id');
+    }
+        
 
     
 }

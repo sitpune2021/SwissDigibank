@@ -11,19 +11,16 @@ return [
         'dynamic' => true,
         'options_key' => 'member'
     ],
-    [
-        'name' => 'financial_year',
-        'label' => 'Financial Year',
-         'type' => 'select',
-        'required' => true,
-        'options' => [
-       'FY 2025 - 2026' => 'FY 2025-2026',
-        'FY 2024 - 2025' => 'FY 2024-2025',
-        'FY 2023 - 2024' => 'FY 2023-2024',
-        'FY 2022 - 2023' => 'FY 2022-2023',
-        'FY 2021 - 2022' => 'FY 2021-2022',
-    ],
-    ],
+  [
+    'name' => 'financial_year',
+    'label' => 'Financial Year',
+    'type' => 'select',
+    'required' => true,
+    'dynamic' => true, // ← Tells Blade to use dynamicOptions
+    'options_key' => 'financial_year', // ← Must match the key sent from controller
+],
+
+
     [
         'name' => 'form_15_upload',
         'label' => 'Upload Form 15G/15H',

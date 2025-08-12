@@ -155,14 +155,13 @@
                               $value = old(
                                   $name,
                                   $promoter?->$name instanceof \Carbon\Carbon
-                                      ? $promoter?->$name->format('D M d Y')
+                                      ? $promoter?->$name->format('d m Y')
                                       : $promoter?->$name ?? ($field['default'] ?? ''),
                               );
                           } else {
                               $value = old($name, $promoter?->$name ?? ($field['default'] ?? ''));
                           }
                       @endphp
-
 
                       <div class="col-span-2 md:col-span-1">
                           @include('fields.label', [

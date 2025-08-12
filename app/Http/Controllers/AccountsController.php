@@ -236,6 +236,7 @@ class AccountsController extends Controller
     }
     public function show(string $id)
     {
+
        
         $decryptedId = base64_decode($id);
 
@@ -247,27 +248,17 @@ class AccountsController extends Controller
         return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
-        //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+   
     public function destroy(string $id)
     {
-        //
     }
 }

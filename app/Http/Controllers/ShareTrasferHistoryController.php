@@ -11,7 +11,7 @@ class ShareTrasferHistoryController extends Controller
      */
     public function index()
     {
-        return view('share-transfer-histories.index');
+        return view('members.share-transfer-histories.index');
     }
 
     /**

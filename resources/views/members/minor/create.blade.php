@@ -98,82 +98,93 @@
                 @if (isset($method) && $method == 'PUT')
                     @method('PUT')
                 @endif
+                @php
+                    $promoterId = request()->query('promotor_id');
+                    $memberId = request()->query('member_id');
+                @endphp
 
-                {{-- @if ($method == 'PUT')
-                    @method('PUT')
-                @endif --}}
-                <input name="member_id" id="member_id" type="hidden"
-                                    value="{{ session('member_id')}}" />
-               
-                    @foreach ($sections as $field)
-                        @php
-                            $name = $field['name'];
-                            $type = $field['type'] ?? 'text';
-                            $label = $field['label'];
-                            $id = $field['id'] ?? $field['name'];
-                            $required = $field['required'] ?? false;
-                            $value = old($name, $minor[$name] ?? ($field['default'] ?? ''));
-                        @endphp
-                        <div class="col-span-4 md:col-span-1">
-                            <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
-                                {{ $label }} @if ($required)
-                                    <span class="text-red-500">*</span>
-                                @endif
-                            </label>
-                            @if ($type === 'select')
-                                <select name="{{ $name }}" id="{{ $id }}"
-                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
-                                    {{ isset($show) ? 'readonly' : '' }}>
-                                    <option value="">-- Select {{ $label }} --</option>
+                {{-- <input name="type" id="type" type="hidden" value="{{ $type }}" hidden /> --}}
+                <input type="text" name="type" value="{{ strtolower($type) }}" hidden />
+                @php
+                    $add_id =
+                        request()->query('promotor_id') !== null ?  $promoterId :  $memberId;
+                @endphp
+                <input type="hidden" name="type" value="{{ $type }}" />
+                @if ($type === 'member')
+                    <input type="text" name="member_id" value="{{ $add_id }}" hidden />
+                @elseif ($type === 'promotor')
+                    <input type="text" name="promotor_id" value="{{ $add_id }}" hidden/>
+                @endif
 
-                                    @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
-                                        @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
-                                            <option value="{{ $optionValue }}"
-                                                {{ $value == $optionValue ? 'selected' : '' }}>
-                                                {{ $optionLabel }}
-                                            </option>
-                                        @endforeach
-                                    @elseif(!empty($field['options']))
-                                        @foreach ($field['options'] as $optionValue => $optionLabel)
-                                            <option value="{{ $optionValue }}"
-                                                {{ $value == $optionValue ? 'selected' : '' }}>
-                                                {{ $optionLabel }}
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>                           
-                            @elseif ($type === 'radio')
-                                <div class="flex gap-2">
-                                    @foreach ($field['options'] as $optionValue => $optionLabel)
-                                        <label class="flex items-center space-x-4 class=ml-2 gap-1">
-                                            <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
-                                                {{ $value == $optionValue ? 'checked' : '' }}
-                                                {{ isset($show) ? 'readonly' : '' }}>
-                                            <span>{{ $optionLabel }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            @elseif ($type === 'checkbox')
-                                <label class="switch">
-                                    <input type="checkbox" name="{{ $name }}" id="{{ $id }}"
-                                        value="1" {{ $value ? 'checked' : '' }} {{ isset($show) ? 'readonly' : '' }}>
-                                    <div class="slider round">
-                                        <span class="switch-on">ON</span>
-                                        <span class="switch-off">OFF</span>
-                                    </div>
-                                </label>
-                            @else
-                                <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
-                                    value="{{ $value }}"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'readonly' : '' }} />
+                @foreach ($sections as $field)
+                    @php
+                        $name = $field['name'];
+                        $type = $field['type'] ?? 'text';
+                        $label = $field['label'];
+                        $id = $field['id'] ?? $field['name'];
+                        $required = $field['required'] ?? false;
+                        $value = old($name, $minor[$name] ?? ($field['default'] ?? ''));
+                    @endphp
+                    <div class="col-span-4 md:col-span-1">
+                        <label for="{{ $id }}" class="md:text-lg font-medium block mb-4">
+                            {{ $label }} @if ($required)
+                                <span class="text-red-500">*</span>
                             @endif
+                        </label>
+                        @if ($type === 'select')
+                            <select name="{{ $name }}" id="{{ $id }}"
+                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
+                                {{ isset($show) ? 'disabled' : '' }}>
+                                <option value="">-- Select {{ $label }} --</option>
 
-                            @error($name)
-                                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endforeach
+                                @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
+                                    @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
+                                        <option value="{{ $optionValue }}"
+                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $optionLabel }}
+                                        </option>
+                                    @endforeach
+                                @elseif(!empty($field['options']))
+                                    @foreach ($field['options'] as $optionValue => $optionLabel)
+                                        <option value="{{ $optionValue }}"
+                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $optionLabel }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        @elseif ($type === 'radio')
+                            <div class="flex gap-2">
+                                @foreach ($field['options'] as $optionValue => $optionLabel)
+                                    <label class="flex items-center space-x-4 class=ml-2 gap-1">
+                                        <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
+                                            {{ $value == $optionValue ? 'checked' : '' }}
+                                            {{ isset($show) ? 'disabled' : '' }}>
+                                        <span>{{ $optionLabel }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @elseif ($type === 'checkbox')
+                            <label class="switch">
+                                <input type="checkbox" name="{{ $name }}" id="{{ $id }}" value="1"
+                                    {{ $value ? 'checked' : '' }} {{ isset($show) ? 'disabled' : '' }}>
+                                <div class="slider round">
+                                    <span class="switch-on">ON</span>
+                                    <span class="switch-off">OFF</span>
+                                </div>
+                            </label>
+                        @else
+                            <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
+                                value="{{ $value }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'disabled' : '' }} />
+                        @endif
+
+                        @error($name)
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endforeach
                 {{-- member  --}}
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     @if (isset($method))
@@ -181,13 +192,30 @@
                             {{ $method === 'PUT' ? 'Update' : 'Save' }} Minor
                         </button>
                     @endif
-                    <a href="{{ route('minor.index') }}" class="btn-outline inline-flex items-center justify-center">
+                    <a href="{{ route('member.show', session('member_id')) }}"
+                        class="btn-outline inline-flex items-center justify-center">
                         Back
                     </a>
+
                 </div>
             </form>
 
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleRadios = document.querySelectorAll('input[name="title"]');
+            const genderSelect = document.getElementById('gender');
 
+            titleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'mr') {
+                        genderSelect.value = 'male';
+                    }
+                });
+            });
+        });
+    </script>
+@endpush
