@@ -13,7 +13,7 @@ return [
             'default' => 'regular',
             'options' => [
                 'nominal' => 'Nominal Membership',
-                'Regular' => 'Regular Membership',
+                'regular' => 'Regular Membership',
             ],
         ],
 

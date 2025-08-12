@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Address;
@@ -79,7 +81,7 @@ class MemberController extends Controller
             'general_enrollment_date' => 'nullable',
 
             // Member Info
-            'member_info_title' => 'required|in:md,mr,ms,mrs',
+            'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
             'member_info_gender' => 'required|in:male,female,other',
             'member_info_first_name' => 'required|string',
             'member_info_middle_name' => 'nullable|string',
@@ -264,7 +266,7 @@ class MemberController extends Controller
             'general_group' => 'nullable|in:group1,group2',
             'general_branch' => 'required|string',
             'general_enrollment_date' => 'nullable',
-            'member_info_title' => 'required|in:md,mr,ms,mrs',
+            'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
             'member_info_gender' => 'required|in:male,female,other',
             'member_info_first_name' => 'required|string',
             'member_info_middle_name' => 'nullable|string',
@@ -480,13 +482,11 @@ class MemberController extends Controller
 
         return redirect()->route('member.index')->with('success', 'Member updated successfully.');
     }
-    
+
 
     public function getMembers()
     {
         $members = Member::select('id', 'member_info_first_name')->get();
         return response()->json($members);
-
     }
-    
 }
