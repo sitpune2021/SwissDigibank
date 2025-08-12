@@ -16,7 +16,7 @@ return [
                 'Regular' => 'Regular Membership',
             ],
         ],
-       
+
         [
             'label' => 'Advisor/ Staff',
             'name' => 'general_advisor_staff',

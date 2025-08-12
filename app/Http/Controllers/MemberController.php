@@ -72,7 +72,6 @@ class MemberController extends Controller
         $request->validate([
             // Membership Type
             'membership_type' => 'required|in:nominal,regular',
-
             // General Info
             'general_advisor_staff' => 'nullable|string',
             'general_group' => 'nullable|in:group1,group2',
@@ -133,15 +132,6 @@ class MemberController extends Controller
             'member_kyc_ci_relation' => 'nullable|string',
             'member_kyc_dl_no' => 'nullable|string',
             'member_kyc_passport_no' => 'nullable|string',
-
-            // KYC Documents
-            'member_kyc_photo' => 'nullable|file|image',
-            'member_kyc_signature' => 'nullable|file|image',
-            'member_kyc_id_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_id_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_address_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_address_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
 
             // Nominee Info
             'nominee_name' => 'nullable|string',
@@ -319,12 +309,6 @@ class MemberController extends Controller
             'member_kyc_ci_relation' => 'nullable|string',
             'member_kyc_dl_no' => 'nullable|string',
             'member_kyc_passport_no' => 'nullable|string',
-            'member_kyc_photo' => 'nullable|file|image',
-            'member_kyc_signature' => 'nullable|file|image',
-            'member_kyc_id_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_id_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_address_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'member_kyc_address_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
             'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
             'nominee_name' => 'nullable|string',
             'nominee_relation' => 'nullable|string',
@@ -383,6 +367,7 @@ class MemberController extends Controller
 
         return view('members.minor.create', compact('parentMember'));
     }
+
     public function storeMinor(Request $request)
     {
 
@@ -493,6 +478,7 @@ class MemberController extends Controller
 
         return redirect()->route('member.index')->with('success', 'Member updated successfully.');
     }
+    
     public function getMembers()
     {
         $members = Member::select('id', 'member_info_first_name')->get();
