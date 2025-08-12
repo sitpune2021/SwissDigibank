@@ -92,7 +92,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($directors as $index => $director)
+                @forelse ($directors as $index => $director)
                 <tr>
                     <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
                     {{-- <td class="px-6 py-4">{{ $director->member->member_info_first_name ?? 'N/A' }}</td> --}}
@@ -134,7 +134,11 @@
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="10" class="text-center py-4 text-gray-500">No record found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

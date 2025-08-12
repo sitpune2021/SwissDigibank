@@ -185,7 +185,6 @@ class PromotorController extends Controller
             DB::commit();
             return redirect()->route('promotor.index')->with('success', 'Promotor created successfully');
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'An error occurred while creating the promotor. Please try again.']);
         }
@@ -337,7 +336,6 @@ class PromotorController extends Controller
 
             return redirect()->route('promotor.index')->with('success', 'Promotor updated successfully');
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'An error occurred while updating the promotor. Please try again.']);
         }

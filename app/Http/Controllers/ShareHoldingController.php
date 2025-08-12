@@ -6,6 +6,7 @@ use App\Models\Shareholding;
 use App\Models\Promotor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ShareHoldingController extends Controller
@@ -159,7 +160,7 @@ class ShareHoldingController extends Controller
     {
         $decryptedId = $request->input('is_transfer'); // assuming field name is 'is_transfer'
 
-        \DB::transaction(function () use ($decryptedId) {
+        DB::transaction(function () use ($decryptedId) {
             Promotor::query()->update(['is_transfer' => false]);
 
             $shareholding = Promotor::findOrFail($decryptedId);

@@ -493,4 +493,9 @@ class MemberController extends Controller
 
         return redirect()->route('member.index')->with('success', 'Member updated successfully.');
     }
+    public function getMembers()
+    {
+        $members = Member::select('id', 'member_info_first_name')->get();
+        return response()->json($members);
+    }
 }

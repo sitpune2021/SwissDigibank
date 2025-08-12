@@ -189,7 +189,7 @@
                   @endforeach
               @endforeach
               <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
-                  @if (isset($method))
+                  @if (empty($show))
                       <button class="btn-primary" type="submit">
                           {{ $method === 'PUT' ? 'Update' : 'Save' }} Promoter
                       </button>
@@ -197,7 +197,7 @@
                   <a href="{{ route('promotor.index') }}" class="btn-outline inline-flex items-center justify-center">
                       Back
                   </a>
-                  @if (empty($show))
+                  @if ($method === 'POST')
                       <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
                           Reset
                       </button>

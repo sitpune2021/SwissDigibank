@@ -181,7 +181,100 @@
             <button class="btn-primary" type="submit"> UPDATE </button>
         </form>
     </div>
-   
+    <div class="overflow-x-auto pb-4 lg:pb-6">
+        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <thead class="custom-thead">
+                <tr class="bg-secondary/5 dark:bg-bg3">
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Promoters
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            First Distinctive No.
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Last Distinctive No.
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 min-w-[130px] cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Total Shares Held
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Share Nominal Val.
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 cursor-pointer">
+                        <div class="flex items-center gap-1">
+                            Total Val.
+                        </div>
+                    </th>
+                    <th class="text-center !py-5" data-sortable="false">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($share_holdings as $index => $share)
+                <tr>
+                    <td class="px-6 py-4">{{ $share->promotor->first_name ?? 'N/A' }}</td>
+                    <td class="px-6 py-4">{{ $share->first_share }}</td>
+                    <td class="px-6 py-4">{{ $share->share_no }}</td>
+                    <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>
+                    <td class="px-6 py-4">{{ $share->nominal_value ?? '-' }}</td>
+                    <td class="px-6 py-4">{{ $share->total_share_value ?? '-' }}</td>
+                    <!-- <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td> -->
+                    <td class="py-2 px-6">
+                        <div class="flex justify-center">
+                            @include('partials._vertical-options', [
+                            'id' => base64_encode($share->id),
+                            'viewRoute' => 'shareholding.show',
+                            'editRoute' => 'shareholding.edit',
+                            ])
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="10" class="text-center py-4 text-gray-500">No records found.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    <x-pagination :paginator="$share_holdings"/>
+</div>
+<br>
+<div class="flex items-center justify-center gap-4 xxl:gap-6">
+    <div class="col-span-12 lg:col-span-7 xxl:col-span-8">
+        <div class="box xl:p-8">
+            <h4 class="h4 bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
+                Select Promoter who's Shares need to split for New Membership Registrations
+            </h4>
+            <form method="POST" action="{{ route('promoter.select.split') }}" class="flex items-center justify-center gap-4 xl:gap-6">
+                @csrf
+                <div class="col-span-2 md:col-span-1">
+                    <label for="name" class="md:text-lg font-medium block mb-4">
+                        Promoter who's shares need to be split
+                    </label>
+                    <select name="split_share" class="nc-select full rounded-10">
+                        <option value="">-- Select Promoter --</option>
+                        @foreach($promoters as $promoter)
+                        <option value="{{ $promoter->id }}">{{ $promoter->first_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <button class="btn-primary px-6">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')

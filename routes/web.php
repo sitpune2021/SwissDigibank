@@ -25,6 +25,7 @@ use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
+use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
@@ -47,6 +48,7 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/get-payable-ledger', [HRController::class, 'payableLedger']);
     Route::get('/get-blood-group', [HRController::class, 'bloodGroup']);
     Route::get('/get-promoters', [PromotorController::class, 'getPromoters']);
+    Route::get('/get-members', [MemberController::class, 'getMembers']);
 
     Route::group(['prefix' => 'company'], function () {
         Route::resource('company', CompanyController::class);
@@ -101,7 +103,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
         Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
     });
-
     Route::group(['prefix' => 'withdraws'], function () {
         Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
         Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
