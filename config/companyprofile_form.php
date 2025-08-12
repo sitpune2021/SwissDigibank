@@ -162,8 +162,10 @@ return [
                 'label' => 'Incorporation State',
                 'name' => 'incorporation_state',
                 'id' => 'incorporation_state',
-                'type' => 'text',
+                'type' => 'select',
                 'required' => false,
+                'dynamic' => true,
+                'options_key' => 'state',
             ],
             [
                 'label' => 'Incorporation Country',
