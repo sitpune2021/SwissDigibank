@@ -230,7 +230,7 @@
                                 <div class="flex items-center gap-3"><span>Religion</span></div>
                             </th>
                             <td class="p-2">
-                                <div><span>{{ $member->member_info_religion }}</span></div>
+                                <div><span>{{ $member->member_info_religion?->name?? 'N/A'}}</span></div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
