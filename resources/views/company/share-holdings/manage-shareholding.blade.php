@@ -90,7 +90,7 @@
                     <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $share->nominal_value ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $share->total_share_value ?? '-' }}</td>
-                    <!-- <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td> -->
+                    <!-- <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('D M d Y') }}</td> -->
                     <td class="py-2 px-6">
                         <div class="flex justify-center">
                             @include('partials._vertical-options', [

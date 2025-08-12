@@ -48,7 +48,7 @@ return new class extends Migration
 
         // Extra
         $table->boolean('extra_sms')->default(false);
-        $table->date('charges_transaction_date');
+        $table->string('charges_transaction_date');
         $table->decimal('charges_membership_fee', 10, 2)->nullable();
         $table->decimal('charges_net_fee', 10, 2);
         $table->string('charges_remarks')->nullable();

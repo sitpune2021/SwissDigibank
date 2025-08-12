@@ -50,7 +50,7 @@ return [
             'id' => 'date',
             'type' => 'text',
             'required' => true,
-            'default' => now()->format('d-m-Y'), // <- This line
+            'default' => now()->format('D M d Y'), // <- This line
         ],
 
     ],

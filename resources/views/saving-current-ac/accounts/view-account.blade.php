@@ -61,7 +61,7 @@
                             </tr>
                             <tr class="border-b">
                                 <th class="p-2 font-medium text-gray-700">Open Date</th>
-                                <td class="p-2">{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}</td>
+                                <td class="p-2">{{ \Carbon\Carbon::parse($account->open_date)->format('D M d Y') }}</td>
                             </tr>
                             <tr class="border-b">
                                 <th class="p-2 font-medium text-gray-700">Status</th>
@@ -285,7 +285,7 @@
                     <div class="flex items-center gap-2 mb-2">
                         <label class="w-32 font-semibold text-gray-700">Open Date</label>
                         <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
-                            value="{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}">
+                            value="{{ \Carbon\Carbon::parse($account->open_date)->format('D M d Y') }}">
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
                     <div class="flex items-center gap-2 mb-2">

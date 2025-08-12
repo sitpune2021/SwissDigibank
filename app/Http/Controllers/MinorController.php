@@ -136,8 +136,8 @@ class MinorController extends Controller
             return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
         }
         // Format dates
-        $data['dob'] = date('d-m-Y', strtotime($data['dob']));
-        $data['enrollment_date'] = date('d-m-Y', strtotime($data['enrollment_date']));
+        $data['dob'] = date('D M d Y', strtotime($data['dob']));
+        $data['enrollment_date'] = date('D M d Y', strtotime($data['enrollment_date']));
 
         // Find the minor
         $minor = Minor::findOrFail($id);

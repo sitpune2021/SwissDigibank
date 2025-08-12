@@ -110,7 +110,7 @@
                                 <a href="" class="text-blue-600 hover:text-blue-800 underline">View</a>
                             </td>
                             <td class="py-5 px-6">
-                                {{ $pending_transaction->transaction_date ? \Carbon\Carbon::parse($pending_transaction->transaction_date)->format('d-m-Y') : '' }}
+                                {{ $pending_transaction->transaction_date ? \Carbon\Carbon::parse($pending_transaction->transaction_date)->format('D M d Y') : '' }}
                             </td>
                             <td class="py-5 px-6">{{ $pending_transaction->amount ?? '' }}</td>
                             <td class="py-5 px-6">{{ $pending_transaction?->payment_mode ?? ''}}</td>
