@@ -7,6 +7,8 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Account;
+
 
 class ApproveController extends Controller
 {
@@ -78,6 +80,63 @@ class ApproveController extends Controller
     /**
      * Show transfer allocaction
      */
+
+    public function updateAccountStatus(Request $request, $id)
+    {
+        // Validate the input
+            $validated = $request->validate([
+                'transaction_status' => 'required|in:0,1,2',
+                'remarks' => 'nullable|string|max:255',
+            ]);
+
+        // Find the account by ID
+            $account = Account::findOrFail($id);
+
+        // Update the values
+            $account->approve_status = $validated['transaction_status'];
+            $account->remarks = $validated['remarks'];
+            $account->save();
+
+        // Redirect or return response
+            return redirect()->back()->with('success', 'Account status updated successfully.');
+
+    }
+
+    
+    public function approveAccounts(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 10);
+
+    $query = Account::with(['members', 'branch']) // Add other relationships as needed
+        ->whereIn('account_type', ['SAVING', 'CURRENT','RD', 'FD', 'MIS']) // Filter by account types
+        ->where('approve_status', '0'); // Show only pending approval accounts
+
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('account_no', 'like', "%{$search}%")
+              ->orWhere('firm_name', 'like', "%{$search}%")
+              ->orWhere('amount_deposit', 'like', "%{$search}%")
+              ->orWhere('payment_mode', 'like', "%{$search}%")
+              ->orWhere('account_holder_type', 'like', "%{$search}%")
+              ->orWhere('mode_of_operation', 'like', "%{$search}%")
+              ->orWhereHas('branch', function ($q2) use ($search) {
+                  $q2->where('branch_name', 'like', "%{$search}%");
+              })
+              ->orWhereHas('members', function ($q3) use ($search) {
+                  $q3->where('member_info_first_name', 'like', "%{$search}%")
+                     ->orWhere('member_info_last_name', 'like', "%{$search}%");
+              });
+        });
+    }
+
+    $pending_transactions = $query->orderBy('created_at', 'desc')
+                      ->paginate($perPage)
+                      ->appends($request->all());
+
+   return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
+    }
+
     public function approveTransfer(Request $request)
     {
         $search = $request->input('search');

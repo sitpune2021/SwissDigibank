@@ -60,12 +60,12 @@ Route::middleware('auth.user')->group(function () {
     });
 
     Route::group(['prefix' => 'members'], function () {
-            Route::resource('member', MemberController::class);
-            Route::resource('minor', MinorController::class);
-            // Route::resource('shares-holdings', ShareHoldingsController::class);
-            // Route::resource('share-certificates', controller: ShareCertificateController::class);
-            // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
-            Route::resource('form15g15h', Form15Gor15HController::class);
+        Route::resource('member', MemberController::class);
+        Route::resource('minor', MinorController::class);
+        // Route::resource('shares-holdings', ShareHoldingsController::class);
+        // Route::resource('share-certificates', controller: ShareCertificateController::class);
+        // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+        Route::resource('form15g15h', Form15Gor15HController::class);
     });
 
     Route::group(['prefix' => 'saving-current-ac'], function () {
@@ -83,7 +83,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
         Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
     });
-  Route::group(['prefix' => 'withdraws'], function () {
+    Route::group(['prefix' => 'withdraws'], function () {
         Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
         Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
     });
@@ -98,6 +98,8 @@ Route::middleware('auth.user')->group(function () {
         Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
         Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
         Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
+        Route::get('approveAccounts', [ApproveController::class, 'approveAccounts'])->name('approveAccounts');
+        Route::post('/approvals/updateAccountStatus/{id}', [ApproveController::class, 'updateAccountStatus'])->name('transactions.updateAccountStatus');
     });
 
     Route::group(['prefix' => 'hr-managment'], function () {
@@ -105,14 +107,14 @@ Route::middleware('auth.user')->group(function () {
     });
 });
 
-    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
-        Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
-        Route::get('/security', [SettingsController::class, 'security'])->name('security');
-        Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
-        Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
-        Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
-        Route::post('/update-password', [SettingsController::class, 'updatePassword'])->name('update-password');
-    });
+Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+    Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
+    Route::get('/security', [SettingsController::class, 'security'])->name('security');
+    Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
+    Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
+    Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
+    Route::post('/update-password', [SettingsController::class, 'updatePassword'])->name('update-password');
+});
 
 Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
     Route::get('/help-center', [SupportController::class, 'helpCenter'])->name('help.center');
