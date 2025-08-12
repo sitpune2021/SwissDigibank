@@ -27,7 +27,7 @@ class SchemesController extends Controller
             });
         }
 
-        $schemes = $query->paginate(10);
+        $schemes = $query->orderBy('id', 'desc')->paginate(10);
         return view('schemes.index', compact('schemes'));
     }
 
@@ -44,7 +44,7 @@ class SchemesController extends Controller
 
     public function store(Request $request)
     {
-        try {
+        // try {
             $validated = $request->validate([
                 'scheme_name'   => 'required|string|max:255',
                 'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
@@ -100,6 +100,7 @@ class SchemesController extends Controller
             $scheme->app_type_member    = $validated['app_type_member'] ?? 0;
 
             $scheme->active = $request->active;
+
             $scheme->save();
 
             $charges = [];
@@ -129,10 +130,10 @@ class SchemesController extends Controller
 
             return redirect()->route('schemes.index')
                 ->with('success', 'Scheme added successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
-                ->withInput();
-        }
+        // } catch (\Exception $e) {
+        //     return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
+        //         ->withInput();
+        // }
     }
 
 

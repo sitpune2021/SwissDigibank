@@ -82,7 +82,7 @@ class ApproveController extends Controller
     {
         $search = $request->input('search');
 
-        $share_transfers = ShareTransfer::with('shareholdings.promotors.branch', 'members')
+        $share_transfers = ShareTransfer::with('shareholdings.promotor.branch', 'members')
             ->where('status', '!=', 'approved')
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
@@ -109,6 +109,13 @@ class ApproveController extends Controller
         $transfer = ShareTransfer::find($validated['share_transfer_id']);
         $transfer->status = $validated['status'];
         $transfer->remarks = $validated['remarks'];
+
+        if ($validated['status'] === 'approved') {
+
+            $transfer->certificate_number = $transfer->id;
+        } else {
+            $transfer->certificate_number = null;
+        }
 
         $transfer->save();
 

@@ -69,7 +69,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($transactions as $transaction)
+                    @forelse ($transactions as $transaction)
                     <form action="{{ route('reverse-transaction.approve', base64_encode($transaction->id)) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -115,7 +115,11 @@
                             </td>
                         </tr>
                     </form>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-500">No record found.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

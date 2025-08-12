@@ -38,8 +38,10 @@ class ShareHoldingController extends Controller
 ];
 
         $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
-        $transfoer = Promotor::where('is_transfer', true)->first();
-        return view('company.share-holdings.manage-shareholding', compact('share_holdings', 'dynamicOptions', 'transfoer'));
+
+         $promoters = Promotor::all();
+        return view('company.share-holdings.manage-shareholding', compact('share_holdings','promoters'));
+
     }
 
     public function create()

@@ -25,6 +25,7 @@ use App\Http\Controllers\ShareTrasferHistoryController;
 use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
+use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
@@ -47,6 +48,7 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/get-payable-ledger', [HRController::class, 'payableLedger']);
     Route::get('/get-blood-group', [HRController::class, 'bloodGroup']);
     Route::get('/get-promoters', [PromotorController::class, 'getPromoters']);
+    Route::get('/get-members', [MemberController::class, 'getMembers']);
 
     Route::group(['prefix' => 'company'], function () {
         Route::resource('company', CompanyController::class);
@@ -86,6 +88,28 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
         Route::resource('form15g15h', Form15Gor15HController::class);
     });
+        Route::resource('shares-transfer', ShareTransferController::class);
+        Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
+
+        Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
+        Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+        Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+        // Route::get('/shares-transfer/{id}/download', [ShareTransferController::class, 'downloadPdf'])->name('shares-transfer.download');
+
+        // Route::resource('shares-holdings', ShareHoldingsController::class);
+        // Route::resource('share-certificates', controller: ShareCertificateController::class);
+        // Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+        Route::resource('form15g15h', Form15Gor15HController::class);
+    });
+
+    Route::get('/get-member-shares/{id}', function ($id) {
+        $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no');
+        return response()->json(['shares' => $shares]);
+    });
+
+    Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
+
+
     Route::group(['prefix' => 'saving-current-ac'], function () {
         Route::resource('schemes', SchemesController::class);
         Route::resource('accounts', AccountsController::class);
