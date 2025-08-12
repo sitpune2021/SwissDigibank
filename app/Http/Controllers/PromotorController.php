@@ -18,6 +18,7 @@ class PromotorController extends Controller
 {
     public function index(Request $request)
     {
+        // return abort(404);
         $query = Promotor::query();
         if ($request->has('search')) {
             $search = $request->input('search');
