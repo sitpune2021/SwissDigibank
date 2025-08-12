@@ -133,7 +133,9 @@
                             <td class="p-2">
                                 <div>
                                     <span>
-                                        {{ $member->member_info_title .  ' ' . $member->member_info_first_name .
+                                        {{ $member->member_info_title .
+                                            ' ' .
+                                            $member->member_info_first_name .
                                             ($member->member_info_middle_name ? ' ' . $member->member_info_middle_name : '') .
                                             ' ' .
                                             $member->member_info_last_name }}
@@ -172,12 +174,12 @@
                             <td class="p-2">
                                 @if ($age >= 60)
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-1 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-19">
                                         Yes
                                     </span>
                                 @else
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-red-200 py-2 text-center text-xs text-red-600 dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-1 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-19">
                                         No
                                     </span>
                                 @endif
@@ -230,7 +232,7 @@
                                 <div class="flex items-center gap-3"><span>Religion</span></div>
                             </th>
                             <td class="p-2">
-                                <div><span>{{ $member->member_info_religion?->name?? 'N/A'}}</span></div>
+                                <div><span>{{ $member->member_info_religion?->name ?? 'N/A' }}</span></div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
@@ -455,35 +457,64 @@
                         <tbody>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
-                                <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span>--------</span>
+                                <td class="flex items-center justify-between px-6 py-2 text-start">
+                                    <a target="_blank" href="{{ asset($member->photo) }}"
+                                        class="text-blue-600 hover:underline">Show</a>
                                 </td>
                             </tr>
+
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
-                                <td class="px-6 py-2"text-start></td>
+                                <td class="flex items-center justify-between px-6 py-2"text-start>
+                                    <span> <a target="_blank" {{-- href="https://nidhi-stag.s3.amazonaws.com/uploads/company/1/members/39/documents/photo/fm.php" --}}
+                                            class="text-blue-600 hover:underline">Show</a>
+                                    </span>
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Id Proof (Passport)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span></span>
+                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                            class="text-blue-600 hover:underline">Show</a>
+
+                                    </span>
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Id Proof Back (Aadhar Card)</th>
-                                <td class="px-6 py-2"text-start></td>
+                                <td class="flex items-center justify-between px-6 py-2"text-start>
+                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                            class="text-blue-600 hover:underline">Show</a>
+
+                                    </span>
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport) </th>
-                                <td class="px-6 py-2"text-start></td>
+                                <td class="flex items-center justify-between px-6 py-2"text-start>
+                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                            class="text-blue-600 hover:underline">Show</a>
+
+                                    </span>
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card) </th>
-                                <td class="px-6 py-2"text-start></td>
+                                <td class="flex items-center justify-between px-6 py-2"text-start>
+                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                            class="text-blue-600 hover:underline">Show</a>
+
+                                    </span>
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Pan Number (Pan)</th>
-                                <td class="px-6 py-2"text-start></td>
+                                <td class="flex items-center justify-between px-6 py-2"text-start>
+                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                            class="text-blue-600 hover:underline">Show</a>
+
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

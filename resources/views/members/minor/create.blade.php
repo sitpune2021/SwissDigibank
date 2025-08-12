@@ -106,16 +106,14 @@
                 {{-- <input name="type" id="type" type="hidden" value="{{ $type }}" hidden /> --}}
                 <input type="text" name="type" value="{{ strtolower($type) }}" hidden />
                 @php
-                    $add_id =
-                        request()->query('promotor_id') !== null ?  $promoterId :  $memberId;
+                    $add_id = request()->query('promotor_id') !== null ? $promoterId : $memberId;
                 @endphp
                 <input type="hidden" name="type" value="{{ $type }}" />
                 @if ($type === 'member')
                     <input type="text" name="member_id" value="{{ $add_id }}" hidden />
                 @elseif ($type === 'promotor')
-                    <input type="text" name="promotor_id" value="{{ $add_id }}" hidden/>
+                    <input type="text" name="promotor_id" value="{{ $add_id }}" hidden />
                 @endif
-
                 @foreach ($sections as $field)
                     @php
                         $name = $field['name'];
@@ -134,7 +132,7 @@
                         @if ($type === 'select')
                             <select name="{{ $name }}" id="{{ $id }}"
                                 class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
-                                {{ isset($show) ? 'disabled' : '' }}>
+                                {{ isset($show) ? 'readonly' : '' }}>
                                 <option value="">-- Select {{ $label }} --</option>
 
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
@@ -196,7 +194,6 @@
                         class="btn-outline inline-flex items-center justify-center">
                         Back
                     </a>
-
                 </div>
             </form>
 

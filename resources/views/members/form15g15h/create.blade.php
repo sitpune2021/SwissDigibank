@@ -121,7 +121,6 @@
                     <input type="hidden" name="member_id" value="{{ $add_id }}">
                 @endif
 
-
                 @foreach ($sections ?? [] as $sectionName => $fields)
                     @if ($sectionName)
                         <div class="col-span-2">

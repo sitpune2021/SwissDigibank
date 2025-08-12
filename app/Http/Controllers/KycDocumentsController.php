@@ -40,9 +40,9 @@ class KycDocumentsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'documents' => 'required|array',
-            'documents.*.file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'documents.*.category' => 'required|string',
+            'documents' => 'nullable|array',
+            'documents.*.file' => 'nullable|file|max:2048',
+            'documents.*.category' => 'nullable|string',
             'documents.*.type' => 'nullable|string',
             'member_id' => 'nullable|exists:members,id',
             'promoter_id' => 'nullable|exists:promoters,id',

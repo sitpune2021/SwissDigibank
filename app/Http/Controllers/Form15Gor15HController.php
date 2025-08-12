@@ -7,8 +7,6 @@ use App\Models\Member;
 use App\Models\Form15G15H;
 use App\Models\Promotor;
 use Illuminate\Support\Facades\Validator;
-
-
 use Illuminate\Support\Facades\Storage;
 
 class Form15Gor15HController extends Controller
@@ -16,17 +14,13 @@ class Form15Gor15HController extends Controller
     public function index()
     {
         $form15g15hs = Form15G15H::latest()->get();
-        return view("members.form15g15h.index", compact('form15g15hs'));
+        return view('members.form15g15h.index', compact('form15g15hs'));
     }
 
     public function create(Request $request)
     {
         $memberId = $request->member_id ?? session('member_id');
         $type = $request->type ?? session('type');
-
-        if (!$memberId || !Member::find($memberId)) {
-            return redirect()->back()->with('error', 'Invalid Member ID');
-        }
 
         $dynamicOptions = [
             'member' => Member::pluck('member_info_first_name', 'id'),
@@ -38,7 +32,15 @@ class Form15Gor15HController extends Controller
         $route = route('form15g15h.store');
         $method = 'POST';
 
-        return view('members.form15g15h.create', compact('sections', 'route', 'method', 'dynamicOptions', 'memberId', 'type'));
+
+        return view('members.form15g15h.create', compact(
+            'sections',
+            'route',
+            'method',
+            'dynamicOptions',
+            'memberId',
+            'type'
+        ));
     }
 
     public function store(Request $request)
@@ -58,10 +60,11 @@ class Form15Gor15HController extends Controller
 
         $validated = $validator->validated();
 
-        // Fix key name to match DB column exactly:
+        // Fixing data fields
         $validated['member_id'] = $type === 'member' ? $request->member_id : null;
         $validated['promotor_id'] = $type === 'promoter' ? $request->promotor_id : null;
 
+        // File upload
         if ($request->hasFile('form_15_upload')) {
             $path = $request->file('form_15_upload')->store('uploads', 'public');
             $validated['form_15_upload'] = $path;
@@ -69,26 +72,19 @@ class Form15Gor15HController extends Controller
 
         Form15G15H::create($validated);
 
-
-        // Conditional redirect after form submission
+        // Conditional redirect
         if ($type === 'member') {
-            $memberId = $validated['member_id'];
-            return redirect()->route('member.show', $memberId)
+            return redirect()->route('member.show', $validated['member_id'])
                 ->with('success', 'Form 15G/15H submitted successfully.');
         } else {
-            $promoterId = $validated['promotor_id'];
-            return redirect()->route('promotor.show', base64_encode($promoterId))
+            return redirect()->route('promotor.show', base64_encode($validated['promotor_id']))
                 ->with('success', 'Form 15G/15H submitted successfully.');
         }
     }
 
-
-
-
     public function show(string $id)
     {
         $form15g15h = Form15G15H::findOrFail($id);
-
         return view('members.form15g15h.show', compact('form15g15h'));
     }
 
@@ -98,15 +94,23 @@ class Form15Gor15HController extends Controller
 
         $dynamicOptions = [
             'member' => Member::pluck('member_info_first_name', 'id'),
-            'promotor' => Promotor::pluck('first_name', 'id'),
+            'promoter' => Promotor::pluck('first_name', 'id'),
             'financial_year' => $this->generateFinancialYears()
         ];
 
         $sections = config('form15g15h_form');
         $route = route('form15g15h.update', $id);
         $method = 'PUT';
+        $type = $form15g15h->member_id ? 'member' : 'promoter';
 
-        return view('members.form15g15h.create', compact('form15g15h', 'sections', 'route', 'method', 'dynamicOptions'));
+        return view('members.form15g15h.create', compact(
+            'form15g15h',
+            'sections',
+            'route',
+            'method',
+            'type',
+            'dynamicOptions'
+        ));
     }
 
     public function update(Request $request, string $id)
@@ -114,30 +118,30 @@ class Form15Gor15HController extends Controller
         $form15g15h = Form15G15H::findOrFail($id);
 
         $validated = $request->validate([
-            'member_id' => 'required|exists:members,id',
             'financial_year' => 'required|string|max:20',
-            'promotor_id' => 'required|exists:promotors,id',
-
+            'member_id' => 'nullable|exists:members,id',
+            'promotor_id' => 'nullable|exists:promotors,id',
             'form_15_upload' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
         ]);
-        if (!$validated['member_id'] && !$validated['promoter_id']) {
-            return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
+
+        // At least one of member_id or promotor_id is required
+        if (!$validated['member_id'] && !$validated['promotor_id']) {
+            return back()->withErrors(['relation' => 'Either member or promoter must be selected.'])->withInput();
         }
 
         if ($request->hasFile('form_15_upload')) {
             if ($form15g15h->form_15_upload) {
                 Storage::disk('public')->delete($form15g15h->form_15_upload);
             }
-
             $path = $request->file('form_15_upload')->store('uploads', 'public');
             $validated['form_15_upload'] = $path;
         }
+
         $form15g15h->update($validated);
 
         return redirect()->route('form15g15h.index')->with('success', 'Form updated successfully!');
     }
 
-    // Delete record
     public function destroy(string $id)
     {
         $form = Form15G15H::findOrFail($id);
@@ -145,10 +149,12 @@ class Form15Gor15HController extends Controller
         if ($form->form_15_upload) {
             Storage::disk('public')->delete($form->form_15_upload);
         }
+
         $form->delete();
 
         return redirect()->route('form15g15h.index')->with('success', 'Form deleted successfully!');
     }
+
     private function generateFinancialYears($years = 9)
     {
         $options = [];
@@ -159,8 +165,9 @@ class Form15Gor15HController extends Controller
             $end = $start + 1;
             $label = "FY {$start} - {$end}";
             $value = "FY {$start}-{$end}";
-            $options[$label] = $value;
+            $options[$value] = $label;
         }
+
         return $options;
     }
 }
