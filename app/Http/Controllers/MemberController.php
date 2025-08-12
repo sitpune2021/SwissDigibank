@@ -83,17 +83,17 @@ class MemberController extends Controller
             // Member Info
             'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
             'member_info_gender' => 'required|in:male,female,other',
-            'member_info_first_name' => 'required|string',
-            'member_info_middle_name' => 'nullable|string',
-            'member_info_last_name' => 'required|string',
+            'member_info_first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
             'member_info_dob'        => 'required|date|before_or_equal:today',
-            'member_info_qualification' => 'nullable|string',
-            'member_info_occupation' => 'nullable|string',
+            'member_info_qualification' => 'nullable|string|regex:/^[A-Za-z]+$/',
+            'member_info_occupation' => 'nullable|string|regex:/^[A-Za-z]+$/',
             'member_info_monthly_income' => 'nullable|numeric',
             'member_info_old_member_no' => 'nullable|string',
-            'member_info_father_name' => 'nullable|string',
-            'member_info_mother_name' => 'nullable|string',
-            'member_info_spouse_name' => 'nullable|string',
+            'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
             'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
             'member_info_mobile_no' => 'required|string|max:10',
             'member_info_collection_time' => 'nullable|string',
@@ -136,7 +136,7 @@ class MemberController extends Controller
             'member_kyc_passport_no' => 'nullable|string',
 
             // Nominee Info
-            'nominee_name' => 'nullable|string',
+            'nominee_name' => 'nullable|string|regex:/^[A-Za-z]+$/',
             'nominee_relation' => 'nullable|string',
             'nominee_mobile_no' => 'nullable|string',
             'nominee_gender' => 'nullable|in:Male,Female,Other',
@@ -262,29 +262,35 @@ class MemberController extends Controller
         $request->validate([
             // (Same validation rules as in store)
             'membership_type' => 'required|in:nominal,regular',
+
+            // General Info
             'general_advisor_staff' => 'nullable|string',
             'general_group' => 'nullable|in:group1,group2',
             'general_branch' => 'required|string',
             'general_enrollment_date' => 'nullable',
+
+            // Member Info
             'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
             'member_info_gender' => 'required|in:male,female,other',
-            'member_info_first_name' => 'required|string',
-            'member_info_middle_name' => 'nullable|string',
-            'member_info_last_name' => 'required|string',
+            'member_info_first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
             'member_info_dob' => 'required|date|before_or_equal:today',
-            'member_info_qualification' => 'nullable|string',
-            'member_info_occupation' => 'nullable|string',
+            'member_info_qualification' => 'nullable|string|regex:/^[A-Za-z]+$/',
+            'member_info_occupation' => 'nullable|string|regex:/^[A-Za-z]+$/',
             'member_info_monthly_income' => 'nullable|numeric',
             'member_info_old_member_no' => 'nullable|string',
-            'member_info_father_name' => 'nullable|string',
-            'member_info_mother_name' => 'nullable|string',
-            'member_info_spouse_name' => 'nullable|string',
+            'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
             'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
             'member_info_mobile_no' => 'required|string|max:10',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
             'member_info_religion' => 'nullable|string',
             'member_info_email' => 'nullable|email',
+
+            // Member Address
             'member_address_line_1' => 'nullable|string',
             'member_address_line_2' => 'nullable|string',
             'member_address_para' => 'nullable|string',
@@ -297,11 +303,17 @@ class MemberController extends Controller
             'member_address_pincode' => 'nullable|numeric',
             'member_address_country' => 'required|string',
             'member_address_address' => 'nullable|string',
+
+            // Permanent Address
             'member_perm_address_city' => 'nullable|string',
             'member_perm_address_state' => 'nullable|string',
             'member_perm_address_pincode' => 'nullable|numeric',
+
+            // GPS Location
             'member_gps_location_latitude' => 'nullable|string',
             'member_gps_location_longitude' => 'nullable|numeric',
+
+            // KYC Info
             'member_kyc_aadhaar_no' => 'required|string',
             'member_kyc_voter_id_no' => 'nullable|string',
             'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
@@ -312,7 +324,9 @@ class MemberController extends Controller
             'member_kyc_dl_no' => 'nullable|string',
             'member_kyc_passport_no' => 'nullable|string',
             'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-            'nominee_name' => 'nullable|string',
+
+            // Nominee Info
+            'nominee_name' => 'nullable|string|regex:/^[A-Za-z]+$/',
             'nominee_relation' => 'nullable|string',
             'nominee_mobile_no' => 'nullable|string',
             'nominee_gender' => 'nullable|in:Male,Female,Other',
@@ -322,7 +336,11 @@ class MemberController extends Controller
             'nominee_pan_no' => 'nullable|string',
             'nominee_ration_card_no' => 'nullable|string',
             'nominee_address' => 'nullable|string',
+
+            // Extra Settings
             'extra_sms' => 'nullable|boolean',
+
+            // Membership Charges
             'charges_transaction_date' => 'required|date|before_or_equal:today',
             'charges_membership_fee' => 'nullable|numeric',
             'charges_net_fee' => 'required|numeric',
