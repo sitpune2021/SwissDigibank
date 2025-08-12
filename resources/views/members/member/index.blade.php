@@ -135,7 +135,18 @@
                                     @php
                                         $age = \Carbon\Carbon::parse($item->member_info_dob)->age;
                                     @endphp
-                                    {{ $age >= 60 ? 'Yes' : 'No' }}
+
+                                    @if ($age >= 60)
+                                        <span
+                                            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                            Yes
+                                        </span>
+                                    @else
+                                        <span
+                                           class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                            No
+                                        </span>
+                                    @endif
                                 </td>
 
                                 <td class="py-3 px-6">
@@ -164,7 +175,7 @@
                                 </td>
 
                                 <td class="py-3 px-6">
-                                    <span class="text-xs px-2 py-1 rounded bg-green-100 text-green-700">
+                                    <span class="text-sm px-2 py-1 rounded bg-green-100 text-green-700">
                                         Active
                                     </span>
                                 </td>

@@ -54,14 +54,13 @@ class Member extends Model
     }
        public function Shareholder()
     {
-        return $this->hasMany(Shareholder::class,'member_id');
+        return $this->hasMany(Shareholders::class,'member_id');
 
     }
     public function accounts()
     {
         return $this->hasMany(Account::class, 'member_id');
     }
-
     public function schemes()
     {
         return $this->belongsToMany(Scheme::class, 'account_scheme', 'member_id', 'scheme_id');

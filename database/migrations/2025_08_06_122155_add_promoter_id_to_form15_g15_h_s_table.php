@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::table('form15_g15_h_s', function (Blueprint $table) {
             $table->unsignedBigInteger('promotor_id')->after('member_id')->nullable();
-$table->foreign('promotor_id')->references('id')->on('promotors')->onDelete('set null');
+            $table->foreign('promotor_id')->references('id')->on('promotors')->onDelete('set null');
         });
     }
 

@@ -13,14 +13,10 @@ return [
             'default' => 'regular',
             'options' => [
                 'nominal' => 'Nominal Membership',
-                'regular' => 'Regular Membership',
+                'Regular' => 'Regular Membership',
             ],
         ],
-    // ],
-
-    // // // General Info
-    // ' ' => 
-    // [
+       
         [
             'label' => 'Advisor/ Staff',
             'name' => 'general_advisor_staff',
@@ -45,21 +41,20 @@ return [
             'id' => 'branch',
             'type' => 'select',
             'required' => true,
-               'dynamic' => true,
+            'dynamic' => true,
             'options_key' => 'branch',
         ],
-       [
-    'label' => 'Enrollment Date',
-    'name' => 'general_enrollment_date',
-    'id' => 'date',
-    'type' => 'text',
-    'required' => true,
-    'default' => now()->format('d-m-Y'), // <- This line
-],
+        [
+            'label' => 'Enrollment Date',
+            'name' => 'general_enrollment_date',
+            'id' => 'date',
+            'type' => 'text',
+            'required' => true,
+            'default' => now()->format('d-m-Y'), // <- This line
+        ],
 
     ],
 
-    // Member Info
     'member_info' => [
         [
             'label' => 'Title',
@@ -68,10 +63,10 @@ return [
             'type' => 'radio',
             'required' => true,
             'options' => [
-                'md' => 'Md.',
-                'mr' => 'Mr.',
-                'ms' => 'Ms.',
-                'mrs' => 'Mrs.',
+                'Md' => 'Md.',
+                'Mr' => 'Mr.',
+                'Ms' => 'Ms.',
+                'Mrs' => 'Mrs.',
             ],
         ],
         [
@@ -297,12 +292,12 @@ return [
             'type' => 'text',
             'required' => true,
         ],
-       
+
     ],
 
     // Permanent Address
     'member_permanent_address' => [
-         [
+        [
             'label' => 'Address',
             'name' => 'member_address_address',
             'id' => 'address',
@@ -508,7 +503,7 @@ return [
             'id' => 'nominee_gender',
             'type' => 'radio',
             'required' => false,
-            'options' => ["Male"=> 'Male', "Female"=> 'Female', "Other" =>'Other'],
+            'options' => ["Male" => 'Male', "Female" => 'Female', "Other" => 'Other'],
         ],
         [
             'label' => 'Nominee DOB',

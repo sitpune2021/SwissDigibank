@@ -34,7 +34,6 @@
                 Add
             </a>
         </div>
-
         <!-- Latest Transactions -->
         <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
             <form method="GET" action="{{ route('shares-holdings.index') }}"
@@ -98,11 +97,6 @@
             @foreach ($sharesholdings as $index => $item)
                 <tr class="border-b dark:border-bg3 text-center">
                     <td class="py-3 px-6 text-left">{{ $item->member->branch->branch_name ?? 'N/A' }}</td>
-{{-- 
-                    <td class="py-3 px-6 text-left">
-                        {{ $item->member->member_info_first_name ?? '' }}
-
-                    </td> --}}
                        <td class="px-6 py-4">
                                     @if ($item->member)
                                         <a href="{{ route('member.show', $item->member->id) }}"

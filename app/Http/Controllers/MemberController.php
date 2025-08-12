@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Address;
@@ -9,14 +7,17 @@ use App\Models\KycAndNominee;
 use App\Models\State;
 use App\Models\Branch;
 use App\Models\Religion;
+use App\Models\KycDocument;
 use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
+
 
 class MemberController extends Controller
 {
 
     public function index(Request $request)
     {
-        $query = Member::with(['branch', 'kyc']); 
+        $query = Member::with(['branch', 'kyc']);
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -47,7 +48,7 @@ class MemberController extends Controller
             });
         }
 
-         $members = $query->latest()->paginate(10); 
+        $members = $query->latest()->paginate(10);
 
         session()->forget('member_id');
         return view('members.member.index', compact('members'));
@@ -68,8 +69,6 @@ class MemberController extends Controller
     }
     public function store(Request $request)
     {
-        
-
         $request->validate([
             // Membership Type
             'membership_type' => 'required|in:nominal,regular',
@@ -185,7 +184,6 @@ class MemberController extends Controller
         return redirect()->route('member.index')->with('success', 'Member created successfully.');
     }
 
-
     public function show(string $id)
     {
         $dynamicOptions = [
@@ -203,9 +201,47 @@ class MemberController extends Controller
         session(['member_id' => $id]);
         session(['type' => "member"]);
 
-         return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions','button', 'minor','method'));
+        return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions', 'button', 'minor', 'method'));
     }
 
+    public function documentShow(string $id)
+    {
+        $route = route('member.documentupdate', $id);
+        $method = 'POST';
+        $documents = KycDocument::where('member_id', $id)->get()->keyBy('document_category');
+        // dd($documents);
+        return view('members.member.kycDocumentAdd', compact('route', 'method', 'id', 'documents'));
+    }
+
+    public function documentUpdate(Request $request)
+    {
+        $request->validate([
+            'documents' => 'required|array',
+            'documents.*.file' => 'required',
+            'documents.*.category' => 'required|string',
+            'documents.*.type' => 'nullable|string',
+            'member_id' => 'nullable'
+        ]);
+
+        foreach ($request->documents as $doc) {
+            if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
+                $path = $doc['file']->storeAs('documents', 'public');
+                KycDocument::updateOrCreate(
+                    [
+                        'member_id' => $request->member_id,
+                        'document_category' => $doc['category'],
+                        'document_type' => $doc['type'] ?? null,
+                    ],
+                    [
+                        'file_path' => $path,
+                        'type' => 'member',
+                    ]
+                );
+            }
+        }
+
+        return redirect()->route('member.index')->with('success', 'Member updated successfully.');
+    }
 
     public function edit(string $id)
     {
@@ -229,86 +265,84 @@ class MemberController extends Controller
         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
     }
 
-
-
     public function update(Request $request, string $id)
-{
-    $request->validate([
-        // (Same validation rules as in store)
-        'membership_type' => 'required|in:nominal,regular',
-        'general_advisor_staff' => 'nullable|string',
-        'general_group' => 'nullable|in:group1,group2',
-        'general_branch' => 'required|string',
-        'general_enrollment_date' => 'nullable',
-        'member_info_title' => 'required|in:md,mr,ms,mrs',
-        'member_info_gender' => 'required|in:male,female,other',
-        'member_info_first_name' => 'required|string',
-        'member_info_middle_name' => 'nullable|string',
-        'member_info_last_name' => 'required|string',
-        'member_info_dob' => 'required|date|before_or_equal:today',
-        'member_info_qualification' => 'nullable|string',
-        'member_info_occupation' => 'nullable|string',
-        'member_info_monthly_income' => 'nullable|numeric',
-        'member_info_old_member_no' => 'nullable|string',
-        'member_info_father_name' => 'nullable|string',
-        'member_info_mother_name' => 'nullable|string',
-        'member_info_spouse_name' => 'nullable|string',
-        'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
-        'member_info_mobile_no' => 'required|string|max:10',
-        'member_info_collection_time' => 'nullable|string',
-        'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
-        'member_info_religion' => 'nullable|string',
-        'member_info_email' => 'nullable|email',
-        'member_address_line_1' => 'nullable|string',
-        'member_address_line_2' => 'nullable|string',
-        'member_address_para' => 'nullable|string',
-        'member_address_ward' => 'nullable|string',
-        'member_address_panchayat' => 'nullable|string',
-        'member_address_area' => 'nullable|string',
-        'member_address_landmark' => 'nullable|string',
-        'member_address_city_district' => 'nullable|string',
-        'member_address_state' => 'required|string',
-        'member_address_pincode' => 'nullable|numeric',
-        'member_address_country' => 'required|string',
-        'member_address_address' => 'nullable|string',
-        'member_perm_address_city' => 'nullable|string',
-        'member_perm_address_state' => 'nullable|string',
-        'member_perm_address_pincode' => 'nullable|numeric',
-        'member_gps_location_latitude' => 'nullable|string',
-        'member_gps_location_longitude' => 'nullable|numeric',
-        'member_kyc_aadhaar_no' => 'required|string',
-        'member_kyc_voter_id_no' => 'nullable|string',
-        'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
-        'member_kyc_ration_card_no' => 'nullable|string',
-        'member_kyc_meter_no' => 'nullable|string',
-        'member_kyc_ci_no' => 'nullable|string',
-        'member_kyc_ci_relation' => 'nullable|string',
-        'member_kyc_dl_no' => 'nullable|string',
-        'member_kyc_passport_no' => 'nullable|string',
-        'member_kyc_photo' => 'nullable|file|image',
-        'member_kyc_signature' => 'nullable|file|image',
-        'member_kyc_id_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_id_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_address_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_address_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-        'nominee_name' => 'nullable|string',
-        'nominee_relation' => 'nullable|string',
-        'nominee_mobile_no' => 'nullable|string',
-        'nominee_gender' => 'nullable|in:Male,Female,Other',
-        'nominee_dob' => 'nullable|date|before_or_equal:today',
-        'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-        'nominee_voter_id_no' => 'nullable|string',
-        'nominee_pan_no' => 'nullable|string',
-        'nominee_ration_card_no' => 'nullable|string',
-        'nominee_address' => 'nullable|string',
-        'extra_sms' => 'nullable|boolean',
-        'charges_transaction_date' => 'required|date|before_or_equal:today',
-        'charges_membership_fee' => 'nullable|numeric',
-        'charges_net_fee' => 'required|numeric',
-        'charges_remarks' => 'nullable|string',
-        'charges_pay_mode' => 'nullable|in:cash,online,cheque',
-    ]);
+    {
+        $request->validate([
+            // (Same validation rules as in store)
+            'membership_type' => 'required|in:nominal,regular',
+            'general_advisor_staff' => 'nullable|string',
+            'general_group' => 'nullable|in:group1,group2',
+            'general_branch' => 'required|string',
+            'general_enrollment_date' => 'nullable',
+            'member_info_title' => 'required|in:md,mr,ms,mrs',
+            'member_info_gender' => 'required|in:male,female,other',
+            'member_info_first_name' => 'required|string',
+            'member_info_middle_name' => 'nullable|string',
+            'member_info_last_name' => 'required|string',
+            'member_info_dob' => 'required|date|before_or_equal:today',
+            'member_info_qualification' => 'nullable|string',
+            'member_info_occupation' => 'nullable|string',
+            'member_info_monthly_income' => 'nullable|numeric',
+            'member_info_old_member_no' => 'nullable|string',
+            'member_info_father_name' => 'nullable|string',
+            'member_info_mother_name' => 'nullable|string',
+            'member_info_spouse_name' => 'nullable|string',
+            'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
+            'member_info_mobile_no' => 'required|string|max:10',
+            'member_info_collection_time' => 'nullable|string',
+            'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
+            'member_info_religion' => 'nullable|string',
+            'member_info_email' => 'nullable|email',
+            'member_address_line_1' => 'nullable|string',
+            'member_address_line_2' => 'nullable|string',
+            'member_address_para' => 'nullable|string',
+            'member_address_ward' => 'nullable|string',
+            'member_address_panchayat' => 'nullable|string',
+            'member_address_area' => 'nullable|string',
+            'member_address_landmark' => 'nullable|string',
+            'member_address_city_district' => 'nullable|string',
+            'member_address_state' => 'required|string',
+            'member_address_pincode' => 'nullable|numeric',
+            'member_address_country' => 'required|string',
+            'member_address_address' => 'nullable|string',
+            'member_perm_address_city' => 'nullable|string',
+            'member_perm_address_state' => 'nullable|string',
+            'member_perm_address_pincode' => 'nullable|numeric',
+            'member_gps_location_latitude' => 'nullable|string',
+            'member_gps_location_longitude' => 'nullable|numeric',
+            'member_kyc_aadhaar_no' => 'required|string',
+            'member_kyc_voter_id_no' => 'nullable|string',
+            'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+            'member_kyc_ration_card_no' => 'nullable|string',
+            'member_kyc_meter_no' => 'nullable|string',
+            'member_kyc_ci_no' => 'nullable|string',
+            'member_kyc_ci_relation' => 'nullable|string',
+            'member_kyc_dl_no' => 'nullable|string',
+            'member_kyc_passport_no' => 'nullable|string',
+            'member_kyc_photo' => 'nullable|file|image',
+            'member_kyc_signature' => 'nullable|file|image',
+            'member_kyc_id_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_id_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_address_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_address_proof_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
+            'nominee_name' => 'nullable|string',
+            'nominee_relation' => 'nullable|string',
+            'nominee_mobile_no' => 'nullable|string',
+            'nominee_gender' => 'nullable|in:Male,Female,Other',
+            'nominee_dob' => 'nullable|date|before_or_equal:today',
+            'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'nominee_voter_id_no' => 'nullable|string',
+            'nominee_pan_no' => 'nullable|string',
+            'nominee_ration_card_no' => 'nullable|string',
+            'nominee_address' => 'nullable|string',
+            'extra_sms' => 'nullable|boolean',
+            'charges_transaction_date' => 'required|date|before_or_equal:today',
+            'charges_membership_fee' => 'nullable|numeric',
+            'charges_net_fee' => 'required|numeric',
+            'charges_remarks' => 'nullable|string',
+            'charges_pay_mode' => 'nullable|in:cash,online,cheque',
+        ]);
 
         $request->merge([
             'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
@@ -334,60 +368,129 @@ class MemberController extends Controller
     {
         //
     }
-    
-public function updateMobileAndEmail(Request $request, $id)
-{
-    $request->validate([
-        'member_info_mobile_no' => 'required|string|max:20',
-        'member_info_email' => 'nullable|email|max:255',
-    ]);
 
-    $member = Member::findOrFail($id);
-    $member->update([
-        'member_info_mobile_no' => $request->member_info_mobile_no,
-        'member_info_email' => $request->member_info_email,
-    ]);
+    public function createMinor(Request $request)
+    {
+        $memberId = $request->input('member_id'); // e.g. 4
+        $type = $request->input('type'); // e.g. 'promoter' or 'member'
 
-    return redirect()->back()->with('success', 'Details updated successfully!');
-}
-public function createMinor(Request $request)
-{
-    $memberId = $request->input('member_id'); // e.g. 4
-    $type = $request->input('type'); // e.g. 'promoter' or 'member'
+        $parentMember = Member::findOrFail($memberId);
 
-    $parentMember = Member::findOrFail($memberId);
+        // Check type validity
+        if ($type !== 'promoter') {
+            return redirect()->back()->with('error', 'Minor can only be added under a promoter.');
+        }
 
-    // Check type validity
-    if ($type !== 'promoter') {
-        return redirect()->back()->with('error', 'Minor can only be added under a promoter.');
+        return view('members.minor.create', compact('parentMember'));
+    }
+    public function storeMinor(Request $request)
+    {
+
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'parent_id' => 'required|exists:members,id',
+        ]);
+
+        $parent = Member::findOrFail($validated['parent_id']);
+
+        if ($parent->type !== 'promoter') {
+            return redirect()->back()->with('error', 'Minor must be added under a promoter.');
+        }
+
+        $minor = new Member();
+        $minor->name = $validated['name'];
+        $minor->type = 'minor';
+        $minor->parent_id = $parent->id;
+        $minor->save();
+
+        return redirect()->route('members.index')->with('success', 'Minor member added under promoter.');
+    }
+    public function addressedit(string $id)
+    {
+        $dynamicOptions = [
+            'states' => State::pluck('name', 'id'),
+            'branch' => Branch::pluck('branch_name', 'id'),
+            'religion' => Religion::pluck('name', 'id'),
+        ];
+
+        $method = 'PUT';
+        $memberModel = Member::with('address', 'kyc')->findOrFail($id);
+
+        $member = array_merge(
+            $memberModel->toArray(),
+            $memberModel->address?->toArray() ?? [],
+            $memberModel->kyc?->toArray() ?? []
+        );
+
+        $sections = config('address_form');
+        $route = route('member.address.update', $id); // Corrected route name
+        session(['member_id' => $id]);
+
+        return view('members.member.address', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
     }
 
-    return view('members.minor.create', compact('parentMember'));
-}
-public function storeMinor(Request $request)
-{
-   
+    public function addressupdate(Request $request, string $id)
+    {
+        $request->validate([
+            'member_address_line_1' => 'nullable|string',
+            'member_address_line_2' => 'nullable|string',
+            'member_address_para' => 'nullable|string',
+            'member_address_ward' => 'nullable|string',
+            'member_address_panchayat' => 'nullable|string',
+            'member_address_area' => 'nullable|string',
+            'member_address_landmark' => 'nullable|string',
+            'member_address_city_district' => 'nullable|string',
+            'member_address_state' => 'required|string',
+            'member_address_pincode' => 'nullable|numeric',
+            'member_address_country' => 'required|string',
+            'member_address_address' => 'nullable|string',
+            'member_perm_address_city' => 'nullable|string',
+            'member_perm_address_state' => 'nullable|string',
+            'member_perm_address_pincode' => 'nullable|numeric',
+            'member_gps_location_latitude' => 'nullable|string',
+            'member_gps_location_longitude' => 'nullable|numeric',
+        ]);
 
-    $validated = $request->validate([
-        'name' => 'required|string',
-        'parent_id' => 'required|exists:members,id',
-    ]);
+        $member = Member::findOrFail($id);
+        $addressData = $request->only((new Address)->getFillable());
 
-    $parent = Member::findOrFail($validated['parent_id']);
+        // Ensure the address is correctly created or updated for the specific member
+        $member->address()->updateOrCreate(
+            ['member_id' => $member->id],  // Where condition
+            $addressData                  // Data to update or insert
+        );
 
-    // Ensure parent is promoter
-    if ($parent->type !== 'promoter') {
-        return redirect()->back()->with('error', 'Minor must be added under a promoter.');
+        return redirect()->route('member.index')->with('success', 'Member address updated successfully.');
     }
 
-    $minor = new Member();
-    $minor->name = $validated['name'];
-    $minor->type = 'minor';
-    $minor->parent_id = $parent->id;
-    $minor->save();
+    public function editmobile(string $id)
+    {
+        $method = 'PUT';
+        $memberModel = Member::with('address', 'kyc')->findOrFail($id);
+        $member = array_merge(
+            $memberModel->toArray(),
+            $memberModel->address?->toArray() ?? [],
+            $memberModel->kyc?->toArray() ?? []
+        );
 
-    return redirect()->route('members.index')->with('success', 'Minor member added under promoter.');
-}
+        $sections = config('mobile_form');
+        $route = route('member.updatemobile', $id);
+        session(['member_id' => $id]);
+        return view('members.member.mobile', compact('sections', 'member', 'route', 'method'));
+    }
 
+    public function updatemobile(Request $request, string $id)
+    {
+        $request->validate([
+            'member_info_mobile_no' => 'required|string|max:10',
+            'member_info_email' => 'nullable|email',
+        ]);
 
+        $member = Member::findOrFail($id);
+        $memberData = $request->only((new Member)->getFillable());
+
+        $member->update($memberData);
+
+        return redirect()->route('member.index')->with('success', 'Member updated successfully.');
+    }
 }

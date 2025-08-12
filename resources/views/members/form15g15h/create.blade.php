@@ -100,12 +100,28 @@
                 @if ($method == 'PUT')
                     @method('PUT')
                 @endif
-                @php $type=request()->query('type');
-                    $add_id = request()->query('promoter_id') !== null ? request()->query('promoter_id') : request()->query('member_id');                
+                @php
+                    $promoterId = request()->query('promoter_id');
+                    $memberId = request()->query('member_id');
                 @endphp
-                <input name="type" id="type" type="text" value="{{$type }}" hidden />
-                <input name="id" id="id" type="hidden" value="{{ $add_id }}" />
-                
+
+                <input name="type" id="type" type="hidden" value="{{ $type }}" hidden />
+                @php
+                    $add_id =
+                        request()->query('promoter_id') !== null
+                            ? request()->query('promoter_id')
+                            : request()->query('member_id');
+
+                @endphp
+                <input name="type" id="type" type="text" value="{{ $type }}" hidden />
+                {{-- <input name="id" id="id" type="hidden" value="{{ $add_id }}" /> --}}
+                @if ($type === 'promoter')
+                    <input type="hidden" name="promotor_id" value="{{ $add_id }}">
+                @elseif ($type === 'member')
+                    <input type="hidden" name="member_id" value="{{ $add_id }}">
+                @endif
+
+
                 @foreach ($sections ?? [] as $sectionName => $fields)
                     @if ($sectionName)
                         <div class="col-span-2">
@@ -210,13 +226,13 @@
     </div>
 @endsection
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         let today = new Date().toISOString().split('T')[0];
         document.getElementById('date2').setAttribute('max', today);
     });
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         let today = new Date().toISOString().split('T')[0];
         flatpickr("#date2", {
             maxDate: today,
@@ -224,5 +240,3 @@
         });
     });
 </script>
-
-

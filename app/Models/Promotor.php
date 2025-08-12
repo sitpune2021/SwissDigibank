@@ -15,27 +15,27 @@ class Promotor extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'enrollment_date', 
-        'title', 
-        'gender', 
-        'first_name', 
-        'middle_name', 
+        'enrollment_date',
+        'title',
+        'gender',
+        'first_name',
+        'middle_name',
         'last_name',
-        'branch_id', 
-        'date_of_birth', 
-        'occupation', 
-        'father_name', 
+        'branch_id',
+        'date_of_birth',
+        'occupation',
+        'father_name',
         'mother_name',
         'marital_statuses_id',
-         'religions_id', 
-         'husband_wife_name', 
-         'email',
-          'mobile',
-        'sms', 
-        'folio_no', 
-        'active', 
+        'religions_id',
+        'husband_wife_name',
+        'email',
+        'mobile',
+        'sms',
+        'folio_no',
+        'active',
         'form15g',
-         'is_transfer'
+        'is_transfer'
     ];
 
     protected $casts = [
@@ -43,7 +43,7 @@ class Promotor extends Model
         'enrollment_date' => 'date',
         'date_of_birth' => 'date',
     ];
-    
+
 
     public function branch()
     {
@@ -69,12 +69,12 @@ class Promotor extends Model
     {
         return $this->hasMany(PromotorNomine::class);
     }
-     public function minor()
+    public function minor()
     {
-        return $this->hasMany(Minor::class,'promotor_id');
+        return $this->hasMany(Minor::class, 'promotor_id');
     }
-     public function form15G15H()
+    public function form15G15H()
     {
-        return $this->hasMany(Form15G15H::class,'promotor_id');
+        return $this->hasMany(Form15G15H::class, 'promotor_id');
     }
 }

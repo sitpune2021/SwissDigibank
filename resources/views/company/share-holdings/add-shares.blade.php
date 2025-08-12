@@ -71,7 +71,6 @@
                     onclick="window.location.href='{{ route('shareholding.index') }}'">Back</button>
             </div>
         </form>
-
     </div>
 @endsection
 

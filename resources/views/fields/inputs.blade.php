@@ -16,7 +16,6 @@
         {{ empty($show) ? '' : 'disabled' }}>
 
         <option value="">-- Select {{ $label }} --</option>
-
         @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
             @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
                 <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}>

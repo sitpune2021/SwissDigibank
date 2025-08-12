@@ -26,6 +26,7 @@ use App\Http\Controllers\Form15Gor15HController;
 use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
 use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
 
 
@@ -47,19 +48,20 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/get-blood-group', [HRController::class, 'bloodGroup']);
     Route::get('/get-promoters', [PromotorController::class, 'getPromoters']);
 
-
     Route::group(['prefix' => 'company'], function () {
-    Route::resource('company', CompanyController::class);
-    Route::resource('branch', BranchController::class);
-    Route::resource('promotor', PromotorController::class);
-    Route::resource('shareholding', ShareHoldingController::class);
+        Route::resource('company', CompanyController::class);
+        Route::resource('branch', BranchController::class);
+        Route::resource('promotor', PromotorController::class);
+         Route::get('/promotor/{id}/address', [PromotorController::class, 'addressedit'])->name('promotor.address');
+        Route::put('/promotor/{id}/address', [PromotorController::class, 'addressupdate'])->name('promotor.address.update');
+        Route::get('/company/promotor/{id}/documents', [PromotorController::class, 'documentShow'])->name('promotor.document');
+        Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
+        Route::resource('shareholding', ShareHoldingController::class);
+        Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
+            ->name('shareholding.transfer'); // ✅ semicolon added here
 
-    Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
-        ->name('shareholding.transfer'); // ✅ semicolon added here
-
-    Route::resource('director', DirectorController::class);
-});
-
+        Route::resource('director', DirectorController::class);
+    });
 
     Route::group(['prefix' => 'user'], function () {
         Route::resource('roles', RoleController::class);
@@ -67,14 +69,22 @@ Route::middleware('auth.user')->group(function () {
     });
 
     Route::group(['prefix' => 'members'], function () {
-            Route::resource('member', MemberController::class);
-            Route::put('/member-r/{id}', [MemberController::class, 'updateMobileAndEmail'])->name('member.updateMobileAndEmail');
-            Route::resource('minor', MinorController::class);
-            Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.create');
-            Route::resource('shares-holdings', ShareholdersController::class);
-            Route::resource('share-certificates', controller: ShareCertificateController::class);
-            Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
-            Route::resource('form15g15h', Form15Gor15HController::class);
+        Route::resource('member', MemberController::class);
+        Route::resource('minor', MinorController::class);
+        Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
+        Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
+        Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');
+        Route::put('/members/{id}/address', [MemberController::class, 'addressupdate'])->name('member.address.update');
+        Route::get('/member/{id}/mobile', [MemberController::class, 'editmobile'])->name('member.mobile');
+        Route::put('/member/{id}/mobile', [MemberController::class, 'updatemobile'])->name('member.updatemobile');
+        // Route::get('/member/{id}/showmobile', [MemberController::class, 'showmobile'])->name('member.showmobile');
+
+
+        Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
+        Route::resource('shares-holdings', ShareholdersController::class);
+        Route::resource('share-certificates', controller: ShareCertificateController::class);
+        Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+        Route::resource('form15g15h', Form15Gor15HController::class);
     });
     Route::group(['prefix' => 'saving-current-ac'], function () {
         Route::resource('schemes', SchemesController::class);
@@ -91,7 +101,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
         Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
     });
-    
+
     Route::group(['prefix' => 'withdraws'], function () {
         Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
         Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
@@ -114,14 +124,14 @@ Route::middleware('auth.user')->group(function () {
     });
 });
 
-    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
-        Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
-        Route::get('/security', [SettingsController::class, 'security'])->name('security');
-        Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
-        Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
-        Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
-        Route::post('/update-password', [SettingsController::class, 'updatePassword'])->name('update-password');
-    });
+Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+    Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
+    Route::get('/security', [SettingsController::class, 'security'])->name('security');
+    Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
+    Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
+    Route::get('/payment-limit', [SettingsController::class, 'paymentLimit'])->name('payment.limit');
+    Route::post('/update-password', [SettingsController::class, 'updatePassword'])->name('update-password');
+});
 
 Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
     Route::get('/help-center', [SupportController::class, 'helpCenter'])->name('help.center');

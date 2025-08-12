@@ -96,14 +96,25 @@
                 class="grid grid-cols-2 gap-4 xxxl:gap-6">
                 @csrf
                 @if (isset($method) && $method == 'PUT')
-                 @method('PUT')
+                    @method('PUT')
                 @endif
-                @php 
-                    $add_id = request()->query('promoter_id') !== null ? request()->query('promoter_id') : request()->query('member_id');                
+                @php
+                    $promoterId = request()->query('promotor_id');
+                    $memberId = request()->query('member_id');
                 @endphp
-                <input name="type" id="type" type="text" value="{{$type }}" hidden />
-                <input name="id" id="id" type="hidden" value="{{ $add_id }}" />
-                <input name="id" id="id" type="hidden" value="{{ $add_id }}" />
+
+                {{-- <input name="type" id="type" type="hidden" value="{{ $type }}" hidden /> --}}
+                <input type="text" name="type" value="{{ strtolower($type) }}" hidden />
+                @php
+                    $add_id =
+                        request()->query('promotor_id') !== null ?  $promoterId :  $memberId;
+                @endphp
+                <input type="hidden" name="type" value="{{ $type }}" />
+                @if ($type === 'member')
+                    <input type="text" name="member_id" value="{{ $add_id }}" hidden />
+                @elseif ($type === 'promotor')
+                    <input type="text" name="promotor_id" value="{{ $add_id }}" hidden/>
+                @endif
 
                 @foreach ($sections as $field)
                     @php

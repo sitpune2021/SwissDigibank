@@ -48,11 +48,9 @@
                             $id = $field['id'] ?? $field['name'];
                             $required = $field['required'] ?? false;
                             $value = old($name, $sharesholdings[$name] ?? ($field['default'] ?? ''));
-                            if (
-                            $name === 'transferor' 
-                        ) {
-                                                        $value = old($name, $sharesholdings[$name] ?? ($field['dynamic'] ? $Promotor->first_name :  ''));
-
+                            if ( $name === 'transferor' ) 
+                            {
+                          $value = old($name, $sharesholdings[$name] ?? ($field['dynamic'] ? $Promotor->first_name :  ''));
                         }
 
                         @endphp

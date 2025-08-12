@@ -84,7 +84,7 @@
     @include('fields.errormessage')
     <div class="box mb-4 xxxl:mb-6">
         <form action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST"
-            class="grid grid-cols-2 gap-4 xxxl:gap-6" enctype="multipart/form-data">
+            class="grid grid-cols-2 gap-4 xxxl:gap-6">
             @csrf
             @if ($method == 'PUT')
                 @method('PUT')

@@ -37,7 +37,7 @@
             <i class="fa fa-print"></i> DOWNLOAD 15G/ 15H
         </a>
 
-        <a href="{{ isset($member) ? route('form15g15h.create',['member_id' => $member->id, 'type' => 'member']) : '#'}}"
+        <a href="{{ isset($member) ? route('form15g15h.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
             class="btn-warning rounded-md px-2 py-1 text-white text-sm bg-yellow-500 hover:bg-yellow-600">
             <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
         </a>
@@ -59,8 +59,10 @@
                             <th class="py-2 px-6">
                                 <div class="flex items-center gap-3"><span>Membership Type</span></div>
                             </th>
-                            <td class="p-2">
-                                <div><span>{{ $member->membership_type }}</span></div>
+                            <td
+                                class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-9">
+
+                                <div><span class=" text-sm">{{ $member->membership_type }}</span></div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
@@ -83,16 +85,20 @@
                             <th class="py-2 px-6">
                                 <div class="flex items-center gap-3"><span>Status</span></div>
                             </th>
-                            <td class="p-2">
-                                <div><span>ACTIVE</span></div>
+                            <td>
+                                <span
+                                    class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-1 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-19">
+                                    ACTIVE
+                                </span>
                             </td>
                         </tr>
+
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
                                 <div class="flex items-center gap-3"><span>Branch</span></div>
                             </th>
                             <td class="p-2">
-                                <div><span>{{ $member->general_branch }}</span></div>
+                                <div><span>{{ $member->branch->branch_name }}</span></div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
@@ -120,11 +126,19 @@
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+
                             <th class="py-2 px-6">
                                 <div class="flex items-center gap-3"><span>Name</span></div>
                             </th>
                             <td class="p-2">
-                                <div><span>{{ $member->member_info_first_name }}</span></div>
+                                <div>
+                                    <span>
+                                        {{ $member->member_info_title .  ' ' . $member->member_info_first_name .
+                                            ($member->member_info_middle_name ? ' ' . $member->member_info_middle_name : '') .
+                                            ' ' .
+                                            $member->member_info_last_name }}
+                                    </span>
+                                </div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
@@ -140,16 +154,36 @@
                                 <div class="flex items-center gap-3"><span>Age</span></div>
                             </th>
                             <td class="p-2">
-                                <div><span></span></div>
+                                <div>
+                                    <span>{{ \Carbon\Carbon::parse($member->member_info_dob)->age }} years</span>
+                                </div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
                                 <div class="flex items-center gap-3"><span>Senior Citizen</span></div>
                             </th>
+
+                            @php
+                                $dob = \Carbon\Carbon::parse($member->member_info_dob);
+                                $age = $dob->age;
+                            @endphp
+
                             <td class="p-2">
-                                <div><span>No</span></div>
+                                @if ($age >= 60)
+                                    <span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        Yes
+                                    </span>
+                                @else
+                                    <span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-red-200 py-2 text-center text-xs text-red-600 dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        No
+                                    </span>
+                                @endif
                             </td>
+
+
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
@@ -407,7 +441,10 @@
                     @click="open = !open">
                     <span class="font-semibold uppercase">Documents</span>
                     <div class="flex gap-2 space-x-2">
-                        <i class="cursor-pointer fa fa-pencil"></i>
+                        {{-- <i class="cursor-pointer fa fa-pencil"></i> --}}
+                        <a href="{{ route('member.document', $member->id) }}">
+                            <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
+                        </a>
                         <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                     </div>
                 </div>
@@ -417,53 +454,161 @@
                     <table class="w-full text-sm">
                         <tbody>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">Name</th>
+                                <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
                                     <span>--------</span>
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">DOB</th>
+                                <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
                                 <td class="px-6 py-2"text-start></td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">Gender</th>
+                                <th class="px-6 py-2 font-semibold text-start">Id Proof (Passport)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
                                     <span></span>
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">Relation</th>
+                                <th class="px-6 py-2 font-semibold text-start">Id Proof Back (Aadhar Card)</th>
                                 <td class="px-6 py-2"text-start></td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
+                                <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport) </th>
                                 <td class="px-6 py-2"text-start></td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">CI No.</th>
+                                <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card) </th>
                                 <td class="px-6 py-2"text-start></td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
-                                <td class="px-6 py-2"text-start></td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">DL No</th>
-                                <td class="px-6 py-2"text-start></td>
-                            </tr>
-                            <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
-                                <td class="px-6 py-2"text-start></td>
-                            </tr>
-                            <tr>
-                                <th class="px-6 py-2 font-semibold text-start">CKYC Updated At</th>
+                                <th class="px-6 py-2 font-semibold text-start">Pan Number (Pan)</th>
                                 <td class="px-6 py-2"text-start></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+            <!-- MY GUARANTOR SHIP -->
+            <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                    @click="open = !open">
+                    <span class="font-semibold uppercase">Joint Accounts</span>
+                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                </div>
+
+                <!-- Content -->
+                <div x-show="open" x-transition class="bg-white">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="border-b">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold">Account Type</th>
+                                <th class="px-4 py-2 font-semibold">Account No.</th>
+                                <th class="px-4 py-2 font-semibold">Open Date</th>
+                                <th class="px-4 py-2 font-semibold">Status</th>
+                                <th class="px-4 py-2 font-semibold">State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MY GUARANTOR SHIP -->
+            <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                    @click="open = !open">
+                    <span class="font-semibold uppercase">Co Applications Loan</span>
+                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                </div>
+
+                <!-- Content -->
+                <div x-show="open" x-transition class="bg-white">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="border-b">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold">Account Type</th>
+                                <th class="px-4 py-2 font-semibold">Account No.</th>
+                                <th class="px-4 py-2 font-semibold">Open Date</th>
+                                <th class="px-4 py-2 font-semibold">Status</th>
+                                <th class="px-4 py-2 font-semibold">State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MY GUARANTOR SHIP -->
+            <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                    @click="open = !open">
+                    <span class="font-semibold uppercase">My Guarantor Ship</span>
+                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                </div>
+
+                <!-- Content -->
+                <div x-show="open" x-transition class="bg-white">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="border-b">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold">Account Type</th>
+                                <th class="px-4 py-2 font-semibold">Account No.</th>
+                                <th class="px-4 py-2 font-semibold">Open Date</th>
+                                <th class="px-4 py-2 font-semibold">Status</th>
+                                <th class="px-4 py-2 font-semibold">State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- COMMENTS -->
+            <div x-data="{ open: true }" class="mt-4 border rounded shadow">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-600 rounded-t cursor-pointer"
+                    @click="open = !open">
+                    <span class="font-semibold uppercase">Comments</span>
+                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                </div>
+
+                <!-- Content -->
+                <div x-show="open" x-transition class="p-4 bg-white">
+                    <p class="mb-4 text-sm text-gray-700">No Comment Found</p>
+                    <button class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">
+                        ADD COMMENT
+                    </button>
+                </div>
+            </div>
+
         </div>
         <!-- Right Panel -->
         <div class="col-span-12 lg:col-span-6" x-data="{
@@ -520,7 +665,67 @@
                         </div>
                     </div>
                 </div>
+                <!-- Settings Section -->
+                <div class="mt-4 overflow-hidden border rounded shadow">
+                    <div class="h-1 bg-red-500"></div>
+                    <div class="px-4 py-2 font-semibold uppercase bg-white border-b">Settings</div>
+                    <div class="p-4 space-y-4 bg-white">
+                        <div class="flex items-center justify-between">
+                            <span>Internet Banking / Mob App Enabled</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Money Transfer</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Account Locked</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>SMS</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
+                        </div>
+                    </div>
+                </div>
+                {{-- Internet Banking section --}}
+                <div class="mt-4 bg-white border rounded shadow-sm">
 
+                    <div class="h-1 rounded-t" style="background: #2b9bd6;"></div>
+
+                    <!-- Header -->
+                    <div class="px-4 py-3 bg-white border-b">
+                        <h3 class="text-sm font-medium tracking-wide text-gray-700">INTERNET BANKING USERNAME</h3>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="flex items-center justify-between px-6 py-4">
+                        <!-- Left label -->
+                        <div class="flex-1">
+                            <div class="text-xs font-semibold text-gray-700 uppercase">USERNAME</div>
+                        </div>
+
+                        <!-- Center username -->
+                        <div class="flex-1 text-center">
+                            <span class="text-sm text-gray-700">demo04421</span>
+                        </div>
+
+                        <!-- Right small action buttons -->
+                        <div class="flex justify-end flex-1 gap-2">
+                            <button type="button"
+                                class="flex items-center justify-center w-8 h-8 text-gray-600 bg-white border rounded hover:bg-gray-50"
+                                title="Reset username">
+                                <i class="fa fa-undo"></i>
+                            </button>
+
+                            <button type="button"
+                                class="flex items-center justify-center w-8 h-8 text-gray-600 bg-white border rounded hover:bg-gray-50"
+                                title="Send username">
+                                <i class="fa fa-share-square-o"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div x-data="{
                     showMobile: false,
                     editing: false
@@ -529,56 +734,25 @@
                     <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t">
                         <span class="font-semibold uppercase">Mobile & Email Details</span>
                         <div class="flex gap-2">
-                            <i class="cursor-pointer fa fa-pencil" @click="editing = !editing"></i>
+                            <a href="{{ route('member.mobile', $member->id) }}">
+                                <i class="cursor-pointer fa fa-pencil" @click="editing = !editing"></i>
+                            </a>
                             <i class="cursor-pointer fa" :class="showMobile ? 'fa-minus' : 'fa-plus'"
                                 @click="showMobile = !showMobile"></i>
                         </div>
                     </div>
-
-                    <!-- Details or Edit Form -->
-                    <div class="p-4 bg-white text-sm" x-show="showMobile" x-transition>
-
-                        <!-- Display Mode -->
-                        <div x-show="!editing">
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Mobile No</span>
-                                <span>{{ $member->member_info_mobile_no }}</span>
-                            </div>
-                            <div class="flex justify-between py-2">
-                                <span class="font-medium">Email</span>
-                                <span>{{ $member->member_info_email }}</span>
-                            </div>
+                    <div class="p-4 text-sm bg-white" x-show="showMobile" x-transition>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="font-medium">Mobile No</span>
+                            <span>{{ $member->member_info_mobile_no }}</span>
                         </div>
-
-                        <!-- Edit Mode -->
-                        <div x-show="editing">
-                            <form method="POST" action="{{ route('member.updateMobileAndEmail', $member->id) }}">
-                                @csrf
-                                @method('PUT')
-
-                                <div class="py-2">
-                                    <label class="block font-medium">Mobile No</label>
-                                    <input type="text" name="member_info_mobile_no"
-                                        value="{{ $member->member_info_mobile_no }}"
-                                        class="w-full border px-2 py-1 rounded">
-                                </div>
-
-                                <div class="py-2">
-                                    <label class="block font-medium">Email</label>
-                                    <input type="email" name="member_info_email"
-                                        value="{{ $member->member_info_email }}" class="w-full border px-2 py-1 rounded">
-                                </div>
-                                <div class="mt-4 flex justify-end gap-2">
-                                    <button type="button" @click="editing = false"
-                                        class="px-3 py-1 border rounded">Cancel</button>
-                                    <button type="submit"
-                                        class="px-3 py-1 bg-green-500 text-white rounded">Update</button>
-                                </div>
-                            </form>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="font-medium">Email</span>
+                            <span>{{ $member->member_info_email }}</span>
                         </div>
                     </div>
-                </div>
 
+                </div>
                 <div class="mt-4 bg-white border rounded shadow">
                     <div class="h-1 bg-green-500"></div>
                     <!-- Header -->
@@ -588,43 +762,125 @@
                         </span>
                         <!-- Redirect to create page -->
                         <a href="{{ isset($member) ? route('minor.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
-                            class="px-2 py-1 text-xs border rounded bg-gray-100 hover:bg-gray-200">
+                            class="px-4 py-1 text-sm text-white bg-green-500 rounded-r hover:bg-green-600">
                             + Minor
                         </a>
                     </div>
-                </div>
-
-                <!-- Table for minors -->
-                <div class="p-4">
-                    <table class="w-full text-sm text-left">
-                        <thead>
-                            <tr class="border px-4 py-2">
-                                <th class="font-semibold  px-4 py-2 text-start">NAME</th>
-                                <th class="font-semibold text-gray-ft-600  px-4 py-2 text-start">DOB</th>
-                                <th class="font-semibold text-gray-ft-600  py-8 text-left">ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($member->minors as $minor)
-                                <tr>
-                                    <td class="border  px-4 py-2">{{ $minor->first_name }}
-                                        {{ $minor->last_name }}</td>
-                                    <td class="border  px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($minor->dob)->format('d/m/Y') }}</td>
-                                    <td class="border  px-4 py-2">
-                                        <a href="{{ route('minor.show', $minor->id) }}" title="View"
-                                            class="text-green-600 hover:underline mr-2">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <a href="{{ route('minor.edit', $minor->id) }}" title="Edit"
-                                            class="text-green-600 hover:underline">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                    </td>
+                    <!-- Table for minors -->
+                    <div class="p-4">
+                        <table class="w-full text-sm text-left">
+                            <thead>
+                                <tr class="border px-4 py-2">
+                                    <th class="font-semibold  px-4 py-2 text-start">NAME</th>
+                                    <th class="font-semibold text-gray-ft-600  px-4 py-2 text-start">DOB</th>
+                                    <th class="font-semibold text-gray-ft-600  py-8 text-left">ACTIONS</th>
                                 </tr>
-                            @endforeach
+                            </thead>
+                            <tbody>
+                                @foreach ($member->minors as $minor)
+                                    <tr>
+                                        <td class="border  px-4 py-2">{{ $minor->first_name }}
+                                            {{ $minor->last_name }}</td>
+                                        <td class="border  px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($minor->dob)->format('d/m/Y') }}</td>
+                                        <td class="border  px-4 py-2">
+                                            <a href="{{ route('minor.show', $minor->id) }}" title="View"
+                                                class="text-green-600 hover:underline mr-2">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="{{ route('minor.edit', $minor->id) }}" title="Edit"
+                                                class="text-green-600 hover:underline">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{-- Share Holdings section - table format --}}
+            <div class="mt-4 bg-white border rounded shadow-sm">
+
+                <!-- Top red border -->
+                <div class="h-1 rounded-t" style="background:red;"></div>
+
+                <!-- Header -->
+                <div class="px-4 py-3 bg-white border-b">
+                    <h6 class="font-medium tracking-wide text-gray-700 text-md">
+                        SHARE HOLDING DETAILS
+                    </h6>
+                </div>
+                <!-- Table Body -->
+                <div class="px-6 py-4">
+                    <table class="w-full border-collapse">
+                        <tbody>
+                            <tr>
+                                <th class="px-4 py-2 text-xs font-semibold text-left text-gray-700 uppercase">
+                                    No. of Shares
+                                </th>
+                                <td class="px-4 py-2 text-sm text-center text-gray-700">
+                                    0
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <!-- ADDRESS & CONTACT INFO -->
+            <div class="mt-4 border rounded shadow">
+                <div class="flex items-center justify-between px-4 py-2 text-white rounded-t"
+                    style="background-color:#3c8dbc;">
+                    <span class="font-semibold uppercase">Address & Contact Info</span>
+                    <div class="flex gap-2">
+                        <a href="{{ route('member.address', $member->id) }}">
+                            <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
+                        </a>
+                        <i :class="showAddress ? 'fa fa-minus' : 'fa fa-plus'" @click="showAddress = !showAddress"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 space-y-4 text-sm bg-white" x-show="showAddress" x-transition>
+                <h5 class="mb-2 font-semibold text-center">Correspondence Address</h5>
+                <div class="flex justify-between py-2 border-b">
+                    <span class="font-medium">Address</span>
+                    <span>{{ $member->address->member_address_line_1 }}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b">
+                    <span class="font-medium">Para/ Ward/ Panchayat/ Area</span>
+                    <span>
+                        {{ $member->address->member_address_para }}/
+                        {{ $member->address->member_address_ward }}/
+                        {{ $member->address->member_address_panchayat }}/
+                        {{ $member->address->member_address_area }}
+                    </span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span class="font-medium">Landmark</span>
+                    <span>{{ $member->address->member_address_landmark }}</span>
+                </div>
+
+                <h5 class="mb-2 font-semibold text-center">Permanent Address</h5>
+                <div class="flex justify-between py-2 border-b">
+                    <span class="font-medium">Address</span>
+                    <span>{{ $member->address->member_address_address }}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b">
+                    <span class="font-medium">City / District</span>
+                    <span>{{ $member->address->member_perm_address_city }}/
+                        {{ $member->address->member_address_city_district }}
+                    </span>
+                </div>
+                <div class="flex justify-between py-2 border-b">
+                    <span class="font-medium">State</span>
+                    <span>{{ $member->address->member_perm_address_state }}</span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span class="font-medium">GPS Lat/ Log</span>
+                    <span>{{ $member->address->member_gps_location_latitude }}
+                        {{ $member->address->member_gps_location_latitude }}
+                    </span>
                 </div>
             </div>
             <!-- BANK DETAILS -->
@@ -646,72 +902,48 @@
                         <span class="font-medium">IFSC Code</span>
                         <span>{{ $member->branch->ifsc_code }}</span>
                     </div>
-                    {{-- <div class="flex justify-between py-2 border-b">
-                            <span class="font-medium">Account Type</span>
-                            <span>{{ $member->accounts->account_type }}</span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="font-medium">Account No.</span>
-                            <span>{{ $member->accounts->account_no }}</span>
-                        </div> --}}
-                </div>
-            </div>
-            <!-- ADDRESS & CONTACT INFO -->
-            <div class="mt-4 border rounded shadow">
-                <div class="flex items-center justify-between px-4 py-2 text-white rounded-t"
-                    style="background-color:#3c8dbc;">
-                    <span class="font-semibold uppercase">Address & Contact Info</span>
-                    <div class="flex gap-2">
-                        <i class="cursor-pointer fa fa-pencil"></i>
-                        <i class="cursor-pointer fa" :class="showAddress ? 'fa-minus' : 'fa-plus'"
-                            @click="showAddress = !showAddress"></i>
-                    </div>
-                </div>
-                <div class="p-4 space-y-4 text-sm bg-white" x-show="showAddress" x-transition>
-                    <h5 class="mb-2 font-semibold text-center">Correspondence Address</h5>
                     <div class="flex justify-between py-2 border-b">
-                        <span class="font-medium">Address</span>
-                        <span>{{ $member->address->member_address_line_1 }}</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b">
-                        <span class="font-medium">Para/ Ward/ Panchayat/ Area</span>
-                        <span>
-                            {{ $member->address->member_address_para }}/
-                            {{ $member->address->member_address_ward }}/
-                            {{ $member->address->member_address_panchayat }}/
-                            {{ $member->address->member_address_area }}
-                        </span>
+                        <span class="font-medium">Account Type</span>
+                        {{-- <span>{{ $member->accounts->account_type }}</span> --}}
                     </div>
                     <div class="flex justify-between py-2">
-                        <span class="font-medium">Landmark</span>
-                        <span>{{ $member->address->member_address_landmark }}</span>
-                    </div>
-
-                    <h5 class="mb-2 font-semibold text-center">Permanent Address</h5>
-                    <div class="flex justify-between py-2 border-b">
-                        <span class="font-medium">Address</span>
-                        <span>{{ $member->address->member_address_address }}</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b">
-                        <span class="font-medium">City / District</span>
-                        <span>{{ $member->address->member_perm_address_city }}
-                            {{ $member->address->member_address_city_district }}
-                        </span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b">
-                        <span class="font-medium">State</span>
-                        <span>{{ $member->address->member_perm_address_state }}</span>
-                    </div>
-                    <div class="flex justify-between py-2">
-                        <span class="font-medium">GPS Lat/ Log</span>
-                        <span>{{ $member->address->member_gps_location_latitude }}
-                            {{ $member->address->member_gps_location_latitude }}
-                        </span>
+                        <span class="font-medium">Account No.</span>
+                        {{-- <span>{{ $member->accounts->account_no }}</span> --}}
                     </div>
                 </div>
             </div>
 
+            <!-- MEMBER ACCOUNTS -->
+            <div class="mt-4 bg-green-500 border rounded shadow">
+                <div class="px-4 py-2 font-semibold text-white uppercase bg-green-600 rounded-t">
+                    Member Accounts
+                </div>
+                <div class="flex bg-white border-b">
+                    <button
+                        class="px-4 py-2 text-sm font-semibold text-green-600 bg-white border border-b-0 border-gray-300 rounded-tl">
+                        Active Account
+                    </button>
+                    <button
+                        class="px-4 py-2 text-sm font-semibold text-gray-500 border border-b-0 border-gray-300 hover:text-green-600">
+                        Closed Account
+                    </button>
+                </div>
+                <div class="bg-white">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="border-b">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold">Account Type</th>
+                                <th class="px-4 py-2 font-semibold">Account No.</th>
+                                <th class="px-4 py-2 font-semibold">Open Date</th>
+                                <th class="px-4 py-2 font-semibold">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+    </div>
     </div>
     </div>
 @endsection
