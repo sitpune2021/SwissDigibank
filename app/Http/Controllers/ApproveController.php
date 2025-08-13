@@ -17,38 +17,44 @@ class ApproveController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $perPage = $request->input('perPage', 10); // default 10 if not passed
+        try {
+            $search = $request->input('search');
+            $perPage = $request->input('perPage', 10); // default 10 if not passed
 
-        $query = Transaction::with('accounts.members', 'accounts.branch')
-            ->where('approve_status', '!=', 'approved');
+            $query = Transaction::with('accounts.members', 'accounts.branch')
+                ->where('approve_status', '!=', 'approved');
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('payment_mode', 'like', "%{$search}%")
-                    ->orWhere('transaction_type', 'like', "%{$search}%")
-                    ->orWhere('bank_name', 'like', "%{$search}%")
-                    ->orWhere('amount', 'like', "%{$search}%")
-                    ->orWhereHas('accounts', function ($q2) use ($search) {
-                        $q2->where('account_no', 'like', "%{$search}%")
-                            ->orWhere('account_type', 'like', "%{$search}%")
-                            ->orWhereHas('branch', function ($q3) use ($search) {
-                                $q3->where('branch_name', 'like', "%{$search}%");
-                            })
-                            ->orWhereHas('members', function ($q4) use ($search) {
-                                $q4->where('member_info_first_name', 'like', "%{$search}%")
-                                    ->orWhere('member_info_last_name', 'like', "%{$search}%");
-                            });
-                    });
-            });
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('payment_mode', 'like', "%{$search}%")
+                        ->orWhere('transaction_type', 'like', "%{$search}%")
+                        ->orWhere('bank_name', 'like', "%{$search}%")
+                        ->orWhere('amount', 'like', "%{$search}%")
+                        ->orWhereHas('accounts', function ($q2) use ($search) {
+                            $q2->where('account_no', 'like', "%{$search}%")
+                                ->orWhere('account_type', 'like', "%{$search}%")
+                                ->orWhereHas('branch', function ($q3) use ($search) {
+                                    $q3->where('branch_name', 'like', "%{$search}%");
+                                })
+                                ->orWhereHas('members', function ($q4) use ($search) {
+                                    $q4->where('member_info_first_name', 'like', "%{$search}%")
+                                        ->orWhere('member_info_last_name', 'like', "%{$search}%");
+                                });
+                        });
+                });
+            }
+
+            $pending_transactions = $query
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage)
+                ->appends($request->all()); // preserve search & perPage on pagination links
+
+            return view('approvals.pending_transactions', compact('pending_transactions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-
-        $pending_transactions = $query
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage)
-            ->appends($request->all()); // preserve search & perPage on pagination links
-
-        return view('approvals.pending_transactions', compact('pending_transactions'));
     }
 
     /**
@@ -73,8 +79,10 @@ class ApproveController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Failed to update transaction.');
             }
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error updating transaction: ' . $e->getMessage());
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
     }
     /**
@@ -84,167 +92,214 @@ class ApproveController extends Controller
     public function updateAccountStatus(Request $request, $id)
     {
         // Validate the input
+        try {
             $validated = $request->validate([
                 'transaction_status' => 'required|in:0,1,2',
                 'remarks' => 'nullable|string|max:255',
             ]);
 
-        // Find the account by ID
+            // Find the account by ID
             $account = Account::findOrFail($id);
 
-        // Update the values
+            // Update the values
             $account->approve_status = $validated['transaction_status'];
             $account->remarks = $validated['remarks'];
             $account->save();
 
-        // Redirect or return response
+            // Redirect or return response
             return redirect()->back()->with('success', 'Account status updated successfully.');
-
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
-    
+
     public function approveAccounts(Request $request)
     {
-        $search = $request->input('search');
-        $perPage = $request->input('perPage', 10);
+        try {
+            $search = $request->input('search');
+            $perPage = $request->input('perPage', 10);
 
-    $query = Account::with(['members', 'branch']) // Add other relationships as needed
-        ->whereIn('account_type', ['SAVING', 'CURRENT','RD', 'FD', 'MIS']) // Filter by account types
-        ->where('approve_status', '0'); // Show only pending approval accounts
+            $query = Account::with(['members', 'branch']) // Add other relationships as needed
+                ->whereIn('account_type', ['SAVING', 'CURRENT', 'RD', 'FD', 'MIS']) // Filter by account types
+                ->where('approve_status', '0'); // Show only pending approval accounts
 
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('account_no', 'like', "%{$search}%")
-              ->orWhere('firm_name', 'like', "%{$search}%")
-              ->orWhere('amount_deposit', 'like', "%{$search}%")
-              ->orWhere('payment_mode', 'like', "%{$search}%")
-              ->orWhere('account_holder_type', 'like', "%{$search}%")
-              ->orWhere('mode_of_operation', 'like', "%{$search}%")
-              ->orWhereHas('branch', function ($q2) use ($search) {
-                  $q2->where('branch_name', 'like', "%{$search}%");
-              })
-              ->orWhereHas('members', function ($q3) use ($search) {
-                  $q3->where('member_info_first_name', 'like', "%{$search}%")
-                     ->orWhere('member_info_last_name', 'like', "%{$search}%");
-              });
-        });
-    }
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('account_no', 'like', "%{$search}%")
+                        ->orWhere('firm_name', 'like', "%{$search}%")
+                        ->orWhere('amount_deposit', 'like', "%{$search}%")
+                        ->orWhere('payment_mode', 'like', "%{$search}%")
+                        ->orWhere('account_holder_type', 'like', "%{$search}%")
+                        ->orWhere('mode_of_operation', 'like', "%{$search}%")
+                        ->orWhereHas('branch', function ($q2) use ($search) {
+                            $q2->where('branch_name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('members', function ($q3) use ($search) {
+                            $q3->where('member_info_first_name', 'like', "%{$search}%")
+                                ->orWhere('member_info_last_name', 'like', "%{$search}%");
+                        });
+                });
+            }
 
-    $pending_transactions = $query->orderBy('created_at', 'desc')
-                      ->paginate($perPage)
-                      ->appends($request->all());
+            $pending_transactions = $query->orderBy('created_at', 'desc')
+                ->paginate($perPage)
+                ->appends($request->all());
 
-   return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
+            return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     public function approveTransfer(Request $request)
     {
-        $search = $request->input('search');
+        try {
+            $search = $request->input('search');
 
-        $share_transfers = ShareTransfer::with('shareholdings.promotor.branch', 'members')
-            ->where('status', '!=', 'approved')
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    // Search inside 'members' relationship
-                    $q->whereHas('members', function ($q2) use ($search) {
-                        $q2->where('member_info_first_name', 'like', "%$search%");
-                    })
-                        ->orWhere('business_type', 'like', "%$search%")
-                        ->orWhere('shares', 'like', "%$search%");
-                });
-            })
-            ->paginate(10); // 10 records per page
+            $share_transfers = ShareTransfer::with('shareholdings.promotor.branch', 'members')
+                ->where('status', '!=', 'approved')
+                ->when($search, function ($query, $search) {
+                    $query->where(function ($q) use ($search) {
+                        // Search inside 'members' relationship
+                        $q->whereHas('members', function ($q2) use ($search) {
+                            $q2->where('member_info_first_name', 'like', "%$search%");
+                        })
+                            ->orWhere('business_type', 'like', "%$search%")
+                            ->orWhere('shares', 'like', "%$search%");
+                    });
+                })
+                ->paginate(10); // 10 records per page
 
-        return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
+            return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     public function approveShareTransfer(Request $request)
     {
-        $validated = $request->validate([
-            'share_transfer_id' => 'required|exists:share_transfer,id',
-            'status'            => 'required|in:approved,not approve',
-            'remarks'           => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'share_transfer_id' => 'required|exists:share_transfer,id',
+                'status'            => 'required|in:approved,not approve',
+                'remarks'           => 'nullable|string|max:255',
+            ]);
 
-        $transfer = ShareTransfer::find($validated['share_transfer_id']);
-        $transfer->status = $validated['status'];
-        $transfer->remarks = $validated['remarks'];
+            $transfer = ShareTransfer::find($validated['share_transfer_id']);
+            $transfer->status = $validated['status'];
+            $transfer->remarks = $validated['remarks'];
 
-        if ($validated['status'] === 'approved') {
+            if ($validated['status'] === 'approved') {
 
-            $transfer->certificate_number = $transfer->id;
-        } else {
-            $transfer->certificate_number = null;
+                $transfer->certificate_number = $transfer->id;
+            } else {
+                $transfer->certificate_number = null;
+            }
+
+            $transfer->save();
+
+            return redirect()->back()->with('success', 'Share transfer updated successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-
-        $transfer->save();
-
-        return redirect()->back()->with('success', 'Share transfer updated successfully.');
     }
     /**
      * Reverse Transaction. - view form called
      */
     public function reverseTransactionView(Request $request, $id)
     {
-        $decodedId = base64_decode($id);
-        $transaction = Transaction::findOrFail($decodedId);
-        return view('saving-current-ac.accounts.reverse-transaction', compact('transaction', 'id'));
+        try {
+            $decodedId = base64_decode($id);
+            $transaction = Transaction::findOrFail($decodedId);
+            return view('saving-current-ac.accounts.reverse-transaction', compact('transaction', 'id'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     public function reverseTransactionApprove(Request $request, $id)
     {
-        $decodedId = base64_decode($id);
+        try {
+            $decodedId = base64_decode($id);
 
-        $validator = Validator::make($request->all(), [
-            'reverse_amount' => 'required|numeric|min:0|max:1000',
-            'remarks'        => 'nullable|string|max:255',
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            $validator = Validator::make($request->all(), [
+                'reverse_amount' => 'required|numeric|min:0|max:1000',
+                'remarks'        => 'nullable|string|max:255',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+            $originalTransaction = Transaction::findOrFail($decodedId);
+
+            $newTransaction = new Transaction();
+            $newTransaction->account_id    = $originalTransaction->account_id;
+            $newTransaction->amount        = $request->input('reverse_amount');
+            $newTransaction->transaction_type = 'debit';
+            $newTransaction->approve_status        = 'pending';
+            $newTransaction->remarks       = $request->input('remarks');
+            // $newTransaction->account_id = $originalTransaction->id;
+            $newTransaction->comment = "Reverse Transaction";
+            $newTransaction->reverse_status = 0;
+            // $newTransaction->account_id    = Auth::id();
+            $newTransaction->save();
+
+            return redirect()->route('transaction.show', base64_encode($originalTransaction->id))
+                ->with('success', 'Please approve reversed transaction.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-        $originalTransaction = Transaction::findOrFail($decodedId);
-
-        $newTransaction = new Transaction();
-        $newTransaction->account_id    = $originalTransaction->account_id;
-        $newTransaction->amount        = $request->input('reverse_amount');
-        $newTransaction->transaction_type = 'debit';
-        $newTransaction->approve_status        = 'pending';
-        $newTransaction->remarks       = $request->input('remarks');
-        // $newTransaction->account_id = $originalTransaction->id;
-        $newTransaction->comment = "Reverse Transaction";
-        $newTransaction->reverse_status = 0;
-        // $newTransaction->account_id    = Auth::id();
-        $newTransaction->save();
-
-        return redirect()->route('transaction.show', base64_encode($originalTransaction->id))
-            ->with('success', 'Please approve reversed transaction.');
     }
 
     public function approveReverseTransaction()
     {
-        $transactions = Transaction::with('accounts.members', 'accounts.branch')->where('approve_status', 'pending')
-            ->where('reverse_status', 0)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        try {
+            $transactions = Transaction::with('accounts.members', 'accounts.branch')->where('approve_status', 'pending')
+                ->where('reverse_status', 0)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-        return view('approvals.reverse_transaction', compact('transactions'));
+            return view('approvals.reverse_transaction', compact('transactions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
     public function approveTransaction($encodedId, Request $request)
     {
-        $id = base64_decode($encodedId);
-        $transaction = Transaction::findOrFail($id);
+        try {
+            $id = base64_decode($encodedId);
+            $transaction = Transaction::findOrFail($id);
 
-        if ($transaction->approve_status !== 'pending' || $transaction->reverse_status != 0) {
-            return redirect()->back()->with('error', 'Invalid transaction status.');
+            if ($transaction->approve_status !== 'pending' || $transaction->reverse_status != 0) {
+                return redirect()->back()->with('error', 'Invalid transaction status.');
+            }
+            $transaction->transaction_type = 'credit';
+            $transaction->approve_status = $request->input('transaction_status');
+            $transaction->reverse_status = 1;
+            $transaction->save();
+
+            return redirect()->route('reverse-transaction.reverse_transaction')->with('success', 'Transaction approved successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-        $transaction->transaction_type = 'credit';
-        $transaction->approve_status = $request->input('transaction_status');
-        $transaction->reverse_status = 1;
-        $transaction->save();
-
-        return redirect()->route('reverse-transaction.reverse_transaction')->with('success', 'Transaction approved successfully.');
     }
     /**
      * Display the specified resource.

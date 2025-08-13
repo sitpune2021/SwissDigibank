@@ -17,8 +17,14 @@ class WithdrawController extends Controller
      */
     public function create($encodedId)
     {
-        $id = base64_decode($encodedId);
-        return view('saving-current-ac.withdraws.withdraw-create', compact('id'));
+        try {
+            $id = base64_decode($encodedId);
+            return view('saving-current-ac.withdraws.withdraw-create', compact('id'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     /**
@@ -26,26 +32,32 @@ class WithdrawController extends Controller
      */
     public function store(Request $request, $encodedId)
     {
-        $account_id = (int)base64_decode($encodedId);
-
-        $rules = [
-            'amount'           => 'required|numeric|min:1',
-            'transaction_date' => 'required|date',
-            'pay_mode'         => 'required|in:cash,online,cheque',
-            'remarks'          => 'nullable|string|max:255',
-        ];
-        $validated = $request->validate($rules);
-
         try {
-            $balance = AccountsTransactionsHelper::withdrow($account_id, (int)$request->amount, [
-                'payment_mode'     => $request->pay_mode,
-                'comment'          => $request->remarks,
-                'transaction_date' => \Carbon\Carbon::parse($request->input('transaction_date'))
-            ]);
+            $account_id = (int)base64_decode($encodedId);
 
-            return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Amount withdraw successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
-        } catch (\Exception $e) {
-            return redirect()->route('accounts.show', base64_encode($account_id))->with('error', 'Withdraw failed: ' . $e->getMessage());
+            $rules = [
+                'amount'           => 'required|numeric|min:1',
+                'transaction_date' => 'required|date',
+                'pay_mode'         => 'required|in:cash,online,cheque',
+                'remarks'          => 'nullable|string|max:255',
+            ];
+            $validated = $request->validate($rules);
+
+            try {
+                $balance = AccountsTransactionsHelper::withdrow($account_id, (int)$request->amount, [
+                    'payment_mode'     => $request->pay_mode,
+                    'comment'          => $request->remarks,
+                    'transaction_date' => \Carbon\Carbon::parse($request->input('transaction_date'))
+                ]);
+
+                return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Amount withdraw successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
+            } catch (\Exception $e) {
+                return redirect()->route('accounts.show', base64_encode($account_id))->with('error', 'Withdraw failed: ' . $e->getMessage());
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
     }
 

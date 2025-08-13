@@ -20,32 +20,38 @@ class SettingsController extends Controller
         return view('settings.security');
     }
 
-   public function updatePassword(Request $request)
-{
-    $request->validate([
-        'old_password' => ['required'],
-        'new_password' => [
-            'required',
-            'min:8',
-            'confirmed', // This checks new_password_confirmation
-            'regex:/[a-z]/',         // at least one lowercase
-            'regex:/[A-Z]/',         // at least one uppercase
-            'regex:/[0-9]/',         // at least one digit
-            'regex:/[@$!%*#?&]/',    // at least one special character
-        ],
-    ]);
+    public function updatePassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'old_password' => ['required'],
+                'new_password' => [
+                    'required',
+                    'min:8',
+                    'confirmed', // This checks new_password_confirmation
+                    'regex:/[a-z]/',         // at least one lowercase
+                    'regex:/[A-Z]/',         // at least one uppercase
+                    'regex:/[0-9]/',         // at least one digit
+                    'regex:/[@$!%*#?&]/',    // at least one special character
+                ],
+            ]);
 
-    $user = Auth::user(); 
+            $user = Auth::user();
 
-    if (!Hash::check($request->old_password, $user->password)) {
-        return back()->withErrors(['old_password' => 'Old password is incorrect.']);
+            if (!Hash::check($request->old_password, $user->password)) {
+                return back()->withErrors(['old_password' => 'Old password is incorrect.']);
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return back()->with('success', 'Password updated successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
-
-    $user->password = Hash::make($request->new_password);
-    $user->save();
-
-    return back()->with('success', 'Password updated successfully.');
-}
 
 
     public function socialNetwork()
