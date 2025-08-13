@@ -105,7 +105,6 @@ Route::middleware('auth.user')->group(function () {
 
     Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
 
-
     Route::group(['prefix' => 'saving-current-ac'], function () {
         Route::resource('schemes', SchemesController::class);
         Route::resource('accounts', AccountsController::class);

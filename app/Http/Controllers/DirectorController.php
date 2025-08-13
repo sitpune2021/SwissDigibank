@@ -15,33 +15,39 @@ class DirectorController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Director::with('member');
+        try {
+            $query = Director::with('member');
 
-        if ($request->has('search')) {
-            $search = $request->input('search');
+            if ($request->has('search')) {
+                $search = $request->input('search');
 
-            $query->where(function ($q) use ($search) {
-                $q->where('designation', 'like', "%$search%")
-                    ->orWhere('director_name', 'like', "%$search%")
-                    ->orWhere('din_no', 'like', "%$search%")
-                    ->orWhere('authorized_signatory', 'like', "%$search%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('designation', 'like', "%$search%")
+                        ->orWhere('director_name', 'like', "%$search%")
+                        ->orWhere('din_no', 'like', "%$search%")
+                        ->orWhere('authorized_signatory', 'like', "%$search%");
 
-                // Attempt to parse search as date (d/m/Y)
-                try {
-                    $date = \Carbon\Carbon::createFromFormat('d/m/Y', $search)->format('Y-m-d');
-                    $q->orWhereDate('appointment_date', $date)
-                        ->orWhereDate('resignation_date', $date);
-                } catch (\Exception $e) {
-                    // Ignore if not a valid date
-                }
-            })
-                ->orWhereHas('member', function ($q) use ($search) {
-                    $q->where('id', 'like', "%$search%");
-                });
+                    // Attempt to parse search as date (d/m/Y)
+                    try {
+                        $date = \Carbon\Carbon::createFromFormat('d/m/Y', $search)->format('Y-m-d');
+                        $q->orWhereDate('appointment_date', $date)
+                            ->orWhereDate('resignation_date', $date);
+                    } catch (\Exception $e) {
+                        // Ignore if not a valid date
+                    }
+                })
+                    ->orWhereHas('member', function ($q) use ($search) {
+                        $q->where('id', 'like', "%$search%");
+                    });
+            }
+
+            $directors = $query->orderBy('created_at', 'desc')->paginate(10);
+            return view('company.director.index', compact('directors'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-
-        $directors = $query->orderBy('created_at', 'desc')->paginate(10);
-        return view('company.director.index', compact('directors'));
     }
 
     /**
@@ -49,14 +55,20 @@ class DirectorController extends Controller
      */
     public function create()
     {
-        $dynamicOptions = [
-            'member' =>  Member::pluck('member_info_first_name', 'id')
-        ];
-        $formFields = config('director_form');
-        $branch = null;
-        $route = route('director.store');
-        $method = 'POST';
-        return view('company.director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
+        try {
+            $dynamicOptions = [
+                'member' =>  Member::pluck('member_info_first_name', 'id')
+            ];
+            $formFields = config('director_form');
+            $branch = null;
+            $route = route('director.store');
+            $method = 'POST';
+            return view('company.director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     /**
@@ -64,90 +76,113 @@ class DirectorController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            $data = $request->validate([
+                'designation' => 'nullable|string|max:255',
+                'member_id' => 'nullable|string|max:255',
+                'director_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
+                'din_no' => 'required|string|max:50',
+                'appointment_date' => 'required|date|before_or_equal:today',
+                'resignation_date' => 'nullable|after_or_equal:appointment_date',
+                'signature' => 'nullable',  // add file validation
+                'authorized_signatory' => 'required|in:Yes,No',
+            ]);
 
-        $data = $request->validate([
-            'designation' => 'nullable|string|max:255',
-            'member_id' => 'nullable|string|max:255',
-            'director_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
-            'din_no' => 'required|string|max:50',
-            'appointment_date' => 'required|date|before_or_equal:today',
-            'resignation_date' => 'nullable|after_or_equal:appointment_date',
-            'signature' => 'nullable',  // add file validation
-            'authorized_signatory' => 'required|in:Yes,No',
-        ]);
+            if ($request->hasFile('signature')) {
+                $data['signature'] = $request->file('signature')->store('signatures', 'public');
+            }
 
-        if ($request->hasFile('signature')) {
-            $data['signature'] = $request->file('signature')->store('signatures', 'public');
+            Director::create($data);
+
+            return redirect()->route('director.index')->with('success', 'Director created successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-
-        Director::create($data);
-
-        return redirect()->route('director.index')->with('success', 'Director created successfully.');
     }
 
 
     public function show(string $id)
     {
-        $decryptedId = base64_decode($id);
-        $director = Director::findOrFail($decryptedId);
-        // Format the appointment_date only if it exists
-        if ($director->appointment_date) {
-            $director->appointment_date = Carbon::parse($director->appointment_date)->format('D M d Y');
-        }
+        try {
+            $decryptedId = base64_decode($id);
+            $director = Director::findOrFail($decryptedId);
+            // Format the appointment_date only if it exists
+            if ($director->appointment_date) {
+                $director->appointment_date = Carbon::parse($director->appointment_date)->format('D M d Y');
+            }
 
-        $dynamicOptions = [
-            'member' =>  Member::pluck('member_info_first_name', 'id')
-        ];
-        $route = '';
-        $formFields = config('director_form');
-        $method = 'GET';
-        $show = true;
-        return view('company.director.create', compact('director', 'show', 'route', 'method', 'formFields', 'dynamicOptions'));
+            $dynamicOptions = [
+                'member' =>  Member::pluck('member_info_first_name', 'id')
+            ];
+            $route = '';
+            $formFields = config('director_form');
+            $method = 'GET';
+            $show = true;
+            return view('company.director.create', compact('director', 'show', 'route', 'method', 'formFields', 'dynamicOptions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
 
     public function edit(string $id)
     {
-        $dynamicOptions = [
-            'member' =>  Member::pluck('member_info_first_name', 'id')
-        ];
-        $decryptedId = base64_decode($id);
-        $formFields = config('director_form');
-        $director = Director::findOrFail($decryptedId);
+        try {
+            $dynamicOptions = [
+                'member' =>  Member::pluck('member_info_first_name', 'id')
+            ];
+            $decryptedId = base64_decode($id);
+            $formFields = config('director_form');
+            $director = Director::findOrFail($decryptedId);
 
-        $route = route('director.update', $id);
-        $method = 'PUT';
-        return view('company.director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
+            $route = route('director.update', $id);
+            $method = 'PUT';
+            return view('company.director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
 
     public function update(Request $request, $id)
     {
         // Find the Director record by id
-        $decryptedId = base64_decode($id);
-        $director = Director::findOrFail($decryptedId);
+        try {
+            $decryptedId = base64_decode($id);
+            $director = Director::findOrFail($decryptedId);
 
-        // Validate the request
-        $data = $request->validate([
-            'designation' => 'nullable|string|max:255',
-            'member_id' => 'nullable|string|max:255',
-            'director_name' => 'required|string|max:255',
-            'din_no' => 'required|string|max:8',
-            'appointment_date' => 'required',
-            'resignation_date' => 'nullable|after_or_equal:appointment_date',
-            'signature' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',  // file validation with allowed types and max size
-            'authorized_signatory' => 'required|in:Yes,No',
-        ]);
+            // Validate the request
+            $data = $request->validate([
+                'designation' => 'nullable|string|max:255',
+                'member_id' => 'nullable|string|max:255',
+                'director_name' => 'required|string|max:255',
+                'din_no' => 'required|string|max:8',
+                'appointment_date' => 'required',
+                'resignation_date' => 'nullable|after_or_equal:appointment_date',
+                'signature' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',  // file validation with allowed types and max size
+                'authorized_signatory' => 'required|in:Yes,No',
+            ]);
 
-        if ($request->hasFile('signature')) {
-            $data['signature'] = $request->file('signature')->store('signatures', 'public');
-        } else {
-            $data['signature'] = $director->signature;
+            if ($request->hasFile('signature')) {
+                $data['signature'] = $request->file('signature')->store('signatures', 'public');
+            } else {
+                $data['signature'] = $director->signature;
+            }
+
+            $director->update($data);
+
+            return redirect()->route('director.index')->with('success', 'Director updated successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-
-        $director->update($data);
-
-        return redirect()->route('director.index')->with('success', 'Director updated successfully.');
     }
 
 

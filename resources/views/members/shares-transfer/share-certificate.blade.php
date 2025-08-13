@@ -1,152 +1,280 @@
+     @php
+     function numberToWords($num) {
+     $ones = [
+     0 => 'zero', 1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four',
+     5 => 'five', 6 => 'six', 7 => 'seven', 8 => 'eight', 9 => 'nine',
+     10 => 'ten', 11 => 'eleven', 12 => 'twelve', 13 => 'thirteen',
+     14 => 'fourteen', 15 => 'fifteen', 16 => 'sixteen',
+     17 => 'seventeen', 18 => 'eighteen', 19 => 'nineteen'
+     ];
+     $tens = [
+     0 => '', 2 => 'twenty', 3 => 'thirty', 4 => 'forty',
+     5 => 'fifty', 6 => 'sixty', 7 => 'seventy',
+     8 => 'eighty', 9 => 'ninety'
+     ];
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+     if ($num < 20) {
+         return ucfirst($ones[$num]);
+         } elseif ($num < 100) {
+         return ucfirst($tens[intval($num / 10)] . ($num % 10 ? '-' . $ones[$num % 10] : '' ));
+         } elseif ($num < 1000) {
+         return ucfirst($ones[intval($num / 100)] . ' hundred' . ($num % 100 ? ' ' . numberToWords($num % 100) : '' ));
+         } elseif ($num < 100000) {
+         return ucfirst(numberToWords(intval($num / 1000)) . ' thousand' . ($num % 1000 ? ' ' . numberToWords($num % 1000) : '' ));
+         }
 
-<div class="flex items-center justify-center min-h-screen py-10 bg-orange-500">
+         return (string) $num;
+         }
 
-    <div class="w-full max-w-3xl rounded-lg">
+         $sharesInWords=numberToWords((int) $shareholding->shares);
 
-        <div class="max-w-3xl mx-auto overflow-hidden bg-white shadow-lg">
+         @endphp
 
-            <div class="flex items-center justify-between px-4 py-2 text-dark" style="background-color:#DCDCDC; ">
-                <h1 class="text-lg font-bold">{{ $headers['title'] }}</h1>
-                <img src="{{ asset('assets/images/SBC_LOGO.png') }}" alt="SBC Logo" class="h-10">
-            </div>
+         <!DOCTYPE html>
+         <html lang="en">
 
-            <div class="p-6 text-sm border-b border-gray-300">
-                <table class="w-full border-collapse">
-                    <tbody>
-                        <tr class="text-xs">
-                            <td class="pr-2 font-semibold">{{ $headers['customer_id'] }}</td>
-                            <td class="pr-4">:</td>
-                            <td class="pr-10">{{ $shareholding->customer_id }}</td>
+         <head>
+             <meta charset="UTF-8">
+             <title>Share Certificate</title>
+             <style>
+                 @page {
+                     size: A4;
+                     margin: 20mm;
+                 }
 
-                            <td class="pr-2 font-semibold">{{ $headers['date'] }}</td>
-                            <td class="pr-4">:</td>
-                            <td>{{ \Carbon\Carbon::now()->format('d/m/Y') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['customer_name'] }}</td>
-                            <td>:</td>
-                            <td>{{ $shareholding->members->member_info_first_name }}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['share_allotment_date'] }}</td>
-                            <td>:</td>
-                            <td>{{ \Carbon\Carbon::parse($shareholding->created_at)->format('d/m/Y')}}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['share_range'] }}</td>
-                            <td>:</td>
-                            <td>{{ $shareholding->from_share_no }} - {{ $shareholding->to_share_no }}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['total_shares'] }}</td>
-                            <td>:</td>
-                            <td>{{ $shareholding->shares }}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['nominal_value'] }}</td>
-                            <td>:</td>
-                            <td>{{ $shareholding->face_value }}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['total_value'] }}</td>
-                            <td>:</td>
-                            <td>{{ $shareholding->total_consideration }}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">{{ $headers['date_of_transfer'] }}</td>
-                            <td>:</td>
-                            <td>{{ \Carbon\Carbon::parse($shareholding->transfer_date)->format('d/m/Y')}}</td>
-                        <tr>
-                            <td class="font-bold">TERMS AND CONDITIONS</td>
-                            <td>:</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                 body {
+                     font-family: Arial, sans-serif;
+                     margin: 0;
 
-            <!-- Footer -->
-            <div class="flex gap-4 px-4 py-2 text-sm font-bold text-dark bg-orange-500"
-                style="background-color:#DCDCDC; ">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-            </div>
+                     background: #f4f8f9;
+                 }
 
-        </div>
-        <div class="max-w-3xl mx-auto mt-4 font-sans bg-white shadow-lg">
+                 .container {
+                     width: 600px;
+                     margin: auto;
+                     padding: 20px 20px;
+                     box-sizing: border-box;
+                     background: white;
 
-            <div class="flex items-center justify-between px-4 py-2 text-dark " style="background-color:#DCDCDC;">
-                <div class="text-lg font-bold">{{ $headers['title'] }}</div>
-                <img src="{{ asset('assets/images/SBC_LOGO.png') }}" alt="SBC Logo" class="h-10">
-            </div>
+                 }
 
-            <div class="p-4">
-                <h6 class="mb-2 font-semibold">CONDITIONS -</h6>
-                <ol class="pl-5 space-y-1 text-sm leading-relaxed list-decimal">
-                    <li>This is a Term Deposit Advice and no lien can be marked on this document.</li>
-                    <li>Tax deduction at source may be applicable as per Income Tax rules.</li>
-                    <li>Non-submission of PAN by depositor(s) may attract higher rate of TDS, as applicable.</li>
-                    <li>In case of Form 15 G / H being submitted to the Bank, PAN number mentioned on form should match
-                        with Bank records.</li>
-                    <li>In case of premature withdrawal, interest will be paid at the rate prevailing on the date of
-                        receipt from the tenure deposit or at the contracted rate, whichever is lower post deducting
-                        applicable penal charge for premature withdrawal.</li>
-                    <li>Repayment / renewal instructions of deposit shall be effected as per the maturity instructions
-                        recorded with the Bank at the time of booking Term Deposit.</li>
-                    <li>In absence of maturity instructions, the Term Deposit will be renewed automatically without
-                        notice.</li>
-                    <li>Any liability to the Bank for the same tenure and at the interest rate prevailing on the date of
-                        renewal.</li>
-                    <li>Any change of maturity instructions need to be intimated to the Bank minimum 7 days prior to the
-                        maturity of the deposit.</li>
-                    <li>Any communications to the Bank should consist of the Term Deposit number or customer id.</li>
-                    <li>Any change of address should be communicated to the Bank along with address proof document for
-                        the new address.</li>
-                    <li>The calculation of interest is basis 365 days in a year for deposits booked in a non-leap year
-                        and 366 days in a leap year.</li>
-                    <li>This Term Deposit is governed by the terms and conditions of the Bank.</li>
-                </ol>
-            </div>
+                 .header {
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: flex-start;
+                     padding-bottom: 5px;
+                 }
 
-            <!-- Footer Info -->
-            <div class="p-2 text-xs text-center border-t border-gray-300">
-                Any discrepancy in this advice should be brought to the notice of SBC Global Branch immediately.
-            </div>
+                 .header-left {
+                     font-size: 15px;
+                     line-height: 1.4;
+                 }
 
-            <!-- Contact Section -->
-            <div class="flex flex-wrap items-center justify-around gap-3 p-3 text-xs text-center bg-gray-100">
-                <div>
-                    <strong>Call us at</strong><br>1800 202 6261
-                </div>
-                <div>
-                    <strong>Website</strong><br>
-                    <a href="https://www.sbcglobal.co.in" target="_blank"
-                        class="text-black no-underline">www.sbcglobal.co.in</a>
-                </div>
-                <div>
-                    <strong>Support</strong><br>
-                    <a href="mailto:customercare@sbcglobal.co.in"
-                        class="text-black no-underline">customercare@sbcglobal.co.in</a>
-                </div>
-                <div>
-                    <strong>Write to us</strong><br>Reg. Office Address
-                </div>
-                <div>
-                    <strong>Follow us on</strong><br>Facebook / Twitter / LinkedIn
-                </div>
-            </div>
+                 .header-left h1 {
+                     color: #004f9e;
+                     font-size: 20px;
+                     margin: 0;
+                     font-weight: bold;
+                     line-height: 1.3;
+                 }
 
-            <!-- Address Bar -->
-            <div class="px-3 py-1 text-xs text-center text-dark bg-orange-500" style="background-color:#DCDCDC;">
-                HEAD OFFICE - SBC Global Tower, 2nd Floor Chandabai Plot, Near Bus Stand Shegaon, 444203 TQ. Shegaon,
-                Dist Buldhana, Maharashtra
-            </div>
-        </div>
-    </div>
-</div>
+                 .header-left .reg {
+                     color: red;
+                     font-weight: bold;
+                     margin-top: 2px;
+                 }
+
+                 .header-hr {
+                     border: none;
+                     border-top: 2px solid red;
+                     margin: 6px 0 10px;
+                     width: 100%;
+                 }
+
+                 .logo img {
+                     height: 80px;
+                 }
+
+                 .form-title {
+                     text-align: center;
+                     font-weight: bold;
+                     margin-top: 15px;
+                 }
+
+                 .share-title {
+                     text-align: center;
+                     font-weight: bold;
+                     margin-top: 5px;
+                 }
+
+                 .subtitle {
+                     font-size: 15px;
+                     text-align: center;
+                     font-style: italic;
+                     font-weight: bold;
+                     margin: 5px 0 15px;
+                 }
+
+                 p {
+                     font-size: 15px;
+                     text-align: justify;
+                     line-height: 1.5;
+                 }
+
+                 .box {
+                     border: 1px solid black;
+                     padding: 10px;
+                     font-size: 15px;
+                     margin-top: 8px;
+                 }
+
+                 .row {
+                     display: flex;
+                     justify-content: space-between;
+                     margin-top: 8px;
+                     border: 1px solid black;
+                     padding: 10px;
+                 }
+
+                 .row div {
+                     width: 48%;
+                     font-size: 15px;
+                 }
+             </style>
+         </head>
+
+         <body>
+
+             <div class="container">
+                 <div class="header">
+                     <div class="header-left">
+                         <h1>SHRI SAMARTH NAGRI SAHKARI<br>PAT SANSTHA LIMITED</h1>
+                         <div class="reg">Reg No: 969/03-04</div>
+                         <hr class="header-hr">
+                         SHEGAON SHEGAON Maharashtra - 110012<br>
+                         Tel : 9922870805, 0724-2991230<br>
+                         Email : sbcglobalbank@gmail.com
+                     </div>
+                     <div class="logo">
+                         <img src="data:image/png;base64,PUT-YOUR-LOGO-BASE64-HERE" alt="Logo">
+                     </div>
+                 </div>
+
+                 <div class="form-title">Form No. SH - 1</div>
+                 <div class="share-title">SHARE CERTIFICATE</div>
+                 <div class="subtitle">[Pursuant to sub-section (3) of section 46 of the Companies Act, 2013 and rule 5(2) of the Companies (Share Capital and Debentures) Rules 2014]</div>
+
+                 <p>This is to certify that the person(s) named in this Certificate is/are the Registered Holder(s) of the within mentioned share(s) bearing the distinctive number(s) herein specified in the above named Company subject to the Memorandum and Articles of Association of the Company and the amount endorsed herein has been paid up on each such share.</p>
+
+                 <div class="box">
+                     EQUITY SHARES EACH OF RUPEES 10/- (TEN ONLY) (Nominal value)<br>
+                     AMOUNT PAID-UP PER SHARE RUPEES 10/- (TEN ONLY)
+                 </div>
+
+                 <div class="row">
+                     <div>
+                         <b>Reg. Folio No:</b> 2<br>
+                         <b>Name(s) of the Holder(s):</b>{{ $shareholding->members->member_info_first_name }}<br>
+
+                         <b>No. of Shares Held:</b> {{ $sharesInWords }} (in words) {{ $shareholding->shares }} (in figures)<br>
+                         <b>Distinctive No (s):</b> From {{ $shareholding->from_share_no }} to {{ $shareholding->to_share_no }} (Both inclusive)
+                     </div>
+                     <div style="text-align: right;">
+                         <b>Certificate No:</b> {{ $shareholding->certificate_number }}
+                     </div>
+                 </div>
+
+                 <p>Given under the common seal of the Company on {{ \Carbon\Carbon::now()->format('d/m/Y') }}<br><br>
+
+
+                     1. Secretary/ any other Authorised person :</p>
+                 <br><br><br><br><br>
+             </div>
+
+
+             <!-- Start Second Page -->
+             <div class="container" style="page-break-before: always;">
+                 <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                     <thead>
+                         <tr>
+                             <th colspan="6" style="border:1px solid #000; font-weight:bold; padding:10px;">
+                                 MEMORANDUM OF TRANSFERS
+                             </th>
+                         </tr>
+                         <tr>
+                             <th style="border:1px solid #000; padding:10px;">Name of Transferor</th>
+                             <th style="border:1px solid #000; padding:10px;">Name of Transferee</th>
+                             <th style="border:1px solid #000; padding:10px;">Reg. Ledger Folio No. of Transferee</th>
+                             <th style="border:1px solid #000; padding:10px;">Number of Shares</th>
+                             <th style="border:1px solid #000; padding:10px;">Date of Transfer</th>
+                             <th style="border:1px solid #000; padding:10px;">Signature of Authorised Signatory</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         <tr>
+                             <td style="border:1px solid #000; padding:10px; text-align:left;">{{ $shareholding->shareholdings?->promotor?->first_name ?? '' }}</td>
+                             <td style="border:1px solid #000; padding:10px; text-align:left;">{{ $shareholding?->members?->member_info_first_name??'' }}</td>
+                             <td style="border:1px solid #000; padding:10px;">6426</td>
+                             <td style="border:1px solid #000; padding:10px;">{{ $shareholding?->shares??'' }}</td>
+                             <td style="border:1px solid #000; padding:10px;">{{ $shareholding?->transfer_date??'' }}</td>
+                             <td style="border:1px solid #000; padding:10px;"></td>
+                         </tr>
+                         <!-- Empty rows for future entries -->
+                         <tr>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                         </tr>
+                         <tr>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                         </tr>
+                         <tr>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                         </tr>
+                         <tr>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                         </tr>
+                         <tr>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                         </tr>
+                         <tr>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                             <td style="border:1px solid #000; padding:40px;"></td>
+                         </tr>
+                     </tbody>
+                 </table>
+
+                 <div style="font-size:12px; font-style:italic; margin-top:4px;">
+                     Note: No transfer of the Share(s) comprised in the Certificate can be registered unless accompanied by this Certificate
+                 </div>
+                 <br><br><br><br><br><br><br><br>
+             </div>
+         </body>
+         </html>

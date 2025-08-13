@@ -14,17 +14,24 @@ class AccountTransactionController extends Controller
 
     // view transaction
 
-    public function index($id=null)
+    public function index($id = null)
     {
-        $Transactions = Transaction::with(['accounts'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        try {
+            $Transactions = Transaction::with(['accounts'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-        return view('saving-current-ac.accounts.view-transactions', compact('Transactions'));
+            return view('saving-current-ac.accounts.view-transactions', compact('Transactions'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     public function downloadCsvExample()
     {
+
         $headers = [
             'Branch Name',
             'Agent Name',
@@ -132,10 +139,16 @@ class AccountTransactionController extends Controller
 
     public function show(string $id)
     {
-        $decryptedId = base64_decode($id);
-        $transactions = Transaction::with('accounts')->findOrFail($decryptedId);
+        try {
+            $decryptedId = base64_decode($id);
+            $transactions = Transaction::with('accounts')->findOrFail($decryptedId);
 
-        return view('saving-current-ac.accounts.single-transaction', compact('transactions', 'decryptedId'));
+            return view('saving-current-ac.accounts.single-transaction', compact('transactions', 'decryptedId'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     /**
@@ -168,10 +181,16 @@ class AccountTransactionController extends Controller
 
     public function print($id)
     {
-        $id = base64_decode($id);
-        $transaction = Transaction::findOrFail($id);
+        try {
+            $id = base64_decode($id);
+            $transaction = Transaction::findOrFail($id);
 
-        // Generate print view (Blade or PDF)
-        return view('saving-current-ac.accounts.print', compact('transaction'));
+            // Generate print view (Blade or PDF)
+            return view('saving-current-ac.accounts.print', compact('transaction'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 }
