@@ -11,40 +11,51 @@ class SchemesController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Scheme::query();
+        try {
+            $query = Scheme::query();
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
+            if ($request->has('search') && $request->search != '') {
+                $search = $request->search;
 
-            $query->where(function ($q) use ($search) {
-                $q->where('scheme_code', 'like', "%{$search}%")
-                    ->orWhere('scheme_name', 'like', "%{$search}%")
-                    ->orWhere('min_opening_balance', 'like', "%{$search}%")
-                    ->orWhere('min_monthly_avg_balance', 'like', "%{$search}%")
-                    ->orWhere('lock_in_amount', 'like', "%{$search}%")
-                    ->orWhere('annual_int_rate', 'like', "%{$search}%")
-                    ->orWhere('interest_pay_cycle', 'like', "%{$search}%");
-            });
+                $query->where(function ($q) use ($search) {
+                    $q->where('scheme_code', 'like', "%{$search}%")
+                        ->orWhere('scheme_name', 'like', "%{$search}%")
+                        ->orWhere('min_opening_balance', 'like', "%{$search}%")
+                        ->orWhere('min_monthly_avg_balance', 'like', "%{$search}%")
+                        ->orWhere('lock_in_amount', 'like', "%{$search}%")
+                        ->orWhere('annual_int_rate', 'like', "%{$search}%")
+                        ->orWhere('interest_pay_cycle', 'like', "%{$search}%");
+                });
+            }
+
+            $schemes = $query->orderBy('id', 'desc')->paginate(10);
+            return view('schemes.index', compact('schemes'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
         }
-
-        $schemes = $query->orderBy('id', 'desc')->paginate(10);
-        return view('schemes.index', compact('schemes'));
     }
 
     public function create()
     {
-
-        $sections = config('schemes_form');
-        $schemes = null;
-        $route = route('schemes.store');
-        $method = 'POST';
-        $schemeCharges = collect();
-        return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
+        try {
+            $sections = config('schemes_form');
+            $schemes = null;
+            $route = route('schemes.store');
+            $method = 'POST';
+            $schemeCharges = collect();
+            return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     public function store(Request $request)
     {
-        // try {
+        try {
             $validated = $request->validate([
                 'scheme_name'   => 'required|string|max:255',
                 'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
@@ -130,121 +141,140 @@ class SchemesController extends Controller
 
             return redirect()->route('schemes.index')
                 ->with('success', 'Scheme added successfully.');
-        // } catch (\Exception $e) {
-        //     return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
-        //         ->withInput();
-        // }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
 
     public function show(string $id)
     {
-        $sections = config('schemes_form');
-        $show = true;
-        $method = 'GET';
-        $schemes = Scheme::findOrFail($id);
-        $route = '';
-        $schemeCharges = $schemes->schemeCharges;
-        return view('schemes.add-edit', compact('sections', 'schemes', 'show', 'method', 'schemeCharges', 'route'));
+        try {
+            $sections = config('schemes_form');
+            $show = true;
+            $method = 'GET';
+            $schemes = Scheme::findOrFail($id);
+            $route = '';
+            $schemeCharges = $schemes->schemeCharges;
+            return view('schemes.add-edit', compact('sections', 'schemes', 'show', 'method', 'schemeCharges', 'route'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
 
     public function edit(string $id)
     {
-        $sections = config('schemes_form');
-        $schemes = Scheme::findOrFail($id);
-        $route = route('schemes.update', $id);
-        $method = 'PUT';
-        $schemeCharges = $schemes->schemeCharges;
+        try {
+            $sections = config('schemes_form');
+            $schemes = Scheme::findOrFail($id);
+            $route = route('schemes.update', $id);
+            $method = 'PUT';
+            $schemeCharges = $schemes->schemeCharges;
 
-        return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
+            return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
 
     public function update(Request $request, string $id)
     {
-        $scheme = Scheme::with('schemeCharges')->findOrFail($id);
+        try {
+            $scheme = Scheme::with('schemeCharges')->findOrFail($id);
 
-        $validated = $request->validate([
-            'scheme_name'                   => 'required|string|max:255',
-            'scheme_code'                   => 'required|alpha_num|max:100',
-            'min_opening_balance'          => 'required|numeric|min:0',
-            'min_monthly_avg_balance'      => 'required|numeric|min:0',
-            'annual_int_rate'              => 'required|numeric|min:0|max:8',
-            'sr_citizen_add_on_int_rate'   => 'required|numeric|min:0|max:5|decimal:2',
-            'interest_pay_cycle'           => 'required|string|max:50',
-            'lock_in_amount'               => 'required|numeric|min:0',
-            'min_monthly_avg_bal_charge'   => 'required|numeric|min:0',
-            'service_charge_freq'          => 'nullable',
-            'service_charges'              => 'nullable|numeric|min:0',
-            'sms_charge_freq'              => 'nullable',
-            'sms_charges'                  => 'nullable|numeric|min:0',
-            'free_ifsc_collect_per_month'  => 'nullable|numeric|min:0',
-            'free_imps_neft_transactions'  => 'nullable|numeric|min:0',
-            'single_transaction_limit'     => 'nullable|numeric|min:0',
-            'imps_neft_daily_limit'        => 'nullable|numeric|min:0',
-            'imps_neft_weekly_limit'       => 'nullable|numeric|min:0',
-            'imps_neft_monthly_limit'      => 'nullable|numeric|min:0',
-            'app_type'                     => 'required|in:1,0',
-            'app_type_associate'           => 'required|in:1,0',
-            'app_type_member'              => 'required|in:1,0',
-            'active'                       => 'required|in:1,0',
-        ]);
+            $validated = $request->validate([
+                'scheme_name'                   => 'required|string|max:255',
+                'scheme_code'                   => 'required|alpha_num|max:100',
+                'min_opening_balance'          => 'required|numeric|min:0',
+                'min_monthly_avg_balance'      => 'required|numeric|min:0',
+                'annual_int_rate'              => 'required|numeric|min:0|max:8',
+                'sr_citizen_add_on_int_rate'   => 'required|numeric|min:0|max:5|decimal:2',
+                'interest_pay_cycle'           => 'required|string|max:50',
+                'lock_in_amount'               => 'required|numeric|min:0',
+                'min_monthly_avg_bal_charge'   => 'required|numeric|min:0',
+                'service_charge_freq'          => 'nullable',
+                'service_charges'              => 'nullable|numeric|min:0',
+                'sms_charge_freq'              => 'nullable',
+                'sms_charges'                  => 'nullable|numeric|min:0',
+                'free_ifsc_collect_per_month'  => 'nullable|numeric|min:0',
+                'free_imps_neft_transactions'  => 'nullable|numeric|min:0',
+                'single_transaction_limit'     => 'nullable|numeric|min:0',
+                'imps_neft_daily_limit'        => 'nullable|numeric|min:0',
+                'imps_neft_weekly_limit'       => 'nullable|numeric|min:0',
+                'imps_neft_monthly_limit'      => 'nullable|numeric|min:0',
+                'app_type'                     => 'required|in:1,0',
+                'app_type_associate'           => 'required|in:1,0',
+                'app_type_member'              => 'required|in:1,0',
+                'active'                       => 'required|in:1,0',
+            ]);
 
-        $scheme->update([
-            'scheme_name'                   => $validated['scheme_name'],
-            'scheme_code'                   => $validated['scheme_code'],
-            'min_opening_balance'          => $validated['min_opening_balance'],
-            'min_monthly_avg_balance'      => $validated['min_monthly_avg_balance'],
-            'annual_int_rate'              => $validated['annual_int_rate'],
-            'sr_citizen_add_on_int_rate'   => $validated['sr_citizen_add_on_int_rate'],
-            'interest_pay_cycle'           => $validated['interest_pay_cycle'],
-            'lock_in_amount'               => $validated['lock_in_amount'],
-            'min_monthly_avg_bal_charge'   => $validated['min_monthly_avg_bal_charge'],
-            'service_charge_freq'          => $validated['service_charge_freq'] ?? null,
-            'service_charges'              => $validated['service_charges'],
-            'sms_charge_freq'              => $validated['sms_charge_freq'] ?? null,
-            'sms_charges'                  => $validated['sms_charges'],
-            'free_ifsc_collect_per_month'  => $validated['free_ifsc_collect_per_month'] ?? null,
-            'free_imps_neft_transactions'  => $validated['free_imps_neft_transactions'] ?? null,
-            'single_transaction_limit'     => $validated['single_transaction_limit'] ?? null,
-            'imps_neft_daily_limit'        => $validated['imps_neft_daily_limit'] ?? null,
-            'imps_neft_weekly_limit'       => $validated['imps_neft_weekly_limit'] ?? null,
-            'imps_neft_monthly_limit'      => $validated['imps_neft_monthly_limit'] ?? null,
-            'app_type'                     => $validated['app_type']  ?? 0,
-            'app_type_associate'           => $validated['app_type_associate'] ?? 0,
-            'app_type_member'              => $validated['app_type_member']  ?? 0,
-            'active'                       => $validated['active'],
-        ]);
+            $scheme->update([
+                'scheme_name'                   => $validated['scheme_name'],
+                'scheme_code'                   => $validated['scheme_code'],
+                'min_opening_balance'          => $validated['min_opening_balance'],
+                'min_monthly_avg_balance'      => $validated['min_monthly_avg_balance'],
+                'annual_int_rate'              => $validated['annual_int_rate'],
+                'sr_citizen_add_on_int_rate'   => $validated['sr_citizen_add_on_int_rate'],
+                'interest_pay_cycle'           => $validated['interest_pay_cycle'],
+                'lock_in_amount'               => $validated['lock_in_amount'],
+                'min_monthly_avg_bal_charge'   => $validated['min_monthly_avg_bal_charge'],
+                'service_charge_freq'          => $validated['service_charge_freq'] ?? null,
+                'service_charges'              => $validated['service_charges'],
+                'sms_charge_freq'              => $validated['sms_charge_freq'] ?? null,
+                'sms_charges'                  => $validated['sms_charges'],
+                'free_ifsc_collect_per_month'  => $validated['free_ifsc_collect_per_month'] ?? null,
+                'free_imps_neft_transactions'  => $validated['free_imps_neft_transactions'] ?? null,
+                'single_transaction_limit'     => $validated['single_transaction_limit'] ?? null,
+                'imps_neft_daily_limit'        => $validated['imps_neft_daily_limit'] ?? null,
+                'imps_neft_weekly_limit'       => $validated['imps_neft_weekly_limit'] ?? null,
+                'imps_neft_monthly_limit'      => $validated['imps_neft_monthly_limit'] ?? null,
+                'app_type'                     => $validated['app_type']  ?? 0,
+                'app_type_associate'           => $validated['app_type_associate'] ?? 0,
+                'app_type_member'              => $validated['app_type_member']  ?? 0,
+                'active'                       => $validated['active'],
+            ]);
 
-        $limits = [1000, 2500, 5000, 10000, 17500, 25000, 37500, 50000, 75000, 100000, 150000, 200000, 300000, 400000, 500000, 1000000];
+            $limits = [1000, 2500, 5000, 10000, 17500, 25000, 37500, 50000, 75000, 100000, 150000, 200000, 300000, 400000, 500000, 1000000];
 
-        foreach ($limits as $limit) {
-            $imps = $request->input("IMPS_Charges_$limit");
-            $neft = $request->input("NEFT_Charges_$limit");
-            $upi  = $request->input("UPI_Charges_$limit");
+            foreach ($limits as $limit) {
+                $imps = $request->input("IMPS_Charges_$limit");
+                $neft = $request->input("NEFT_Charges_$limit");
+                $upi  = $request->input("UPI_Charges_$limit");
 
-            if (
-                (is_null($imps) || floatval($imps) == 0) &&
-                (is_null($neft) || floatval($neft) == 0) &&
-                (is_null($upi) || floatval($upi) == 0)
-            ) {
-                continue;
+                if (
+                    (is_null($imps) || floatval($imps) == 0) &&
+                    (is_null($neft) || floatval($neft) == 0) &&
+                    (is_null($upi) || floatval($upi) == 0)
+                ) {
+                    continue;
+                }
+                SchemeCharge::updateOrCreate(
+                    [
+                        'scheme_id' => $scheme->id,
+                        'limit'     => $limit,
+                    ],
+                    [
+                        'imps_charge' => $imps ?? 0,
+                        'neft_charge' => $neft ?? 0,
+                        'upi_charge'  => $upi ?? 0,
+                    ]
+                );
             }
-            SchemeCharge::updateOrCreate(
-                [
-                    'scheme_id' => $scheme->id,
-                    'limit'     => $limit,
-                ],
-                [
-                    'imps_charge' => $imps ?? 0,
-                    'neft_charge' => $neft ?? 0,
-                    'upi_charge'  => $upi ?? 0,
-                ]
-            );
-        }
 
-        return redirect()->route('schemes.index')->with('success', 'Scheme updated successfully.');
+            return redirect()->route('schemes.index')->with('success', 'Scheme updated successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            abort(500);
+        }
     }
 
     public function destroy(string $id) {}

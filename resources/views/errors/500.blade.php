@@ -55,9 +55,7 @@
             {{ $exception->getStatusCode() ?? 'Error' }}
         </div>
         <div class="error-message">
-            @if($exception->getStatusCode() == 404)
-                Oops! The page you are looking for was not found.
-            @elseif($exception->getStatusCode() == 500)
+            @if($exception->getStatusCode() == 500)
                 Sorry! Something went wrong on our server.
             @else
                 An unexpected error occurred. Please try again later.
