@@ -92,8 +92,8 @@ class BranchController extends Controller
     }
     public function edit($id)
     {
-        $decryptedId = base64_decode($id);
-        $branch = Branch::findOrFail($decryptedId);
+        // $decryptedId = base64_decode($id);
+        $branch = Branch::findOrFail($id);
         $dynamicOptions = [
             'states' =>  State::pluck('name', 'id')
         ];

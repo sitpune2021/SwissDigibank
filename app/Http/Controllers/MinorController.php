@@ -106,50 +106,44 @@ class MinorController extends Controller
         return view('members.minor.create', compact('sections', 'type', 'minor'));
     }
     public function edit(string $id)
-    { {
-            $method = 'PUT';
-            $minor = Minor::findOrFail($id);
-            $sections = config('minor_form');
-            $route = route('minor.update', $id);
-            $type = 'edit';
+{
+    $method = 'PUT';
+    $minor = Minor::findOrFail($id);
+    $sections = config('minor_form');
+    $route = route('minor.update', $id);
+    $type = 'edit';
+    // Assuming $minor has a relationship or column 'member_id'
+    $memberId = $minor->member_id;
 
-            return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method'));
-        }
-    }
+    return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId'));
+}
+
     public function update(Request $request, string $id)
     {
+        // dd($request);
+            $type = $request->type;
+
         $data = $request->validate([
             'enrollment_date' => 'required|date|before_or_equal:today',
-            'title' => 'required|in:md,mr,ms,mrs',
-            'gender' => 'required|in:male,female,other',
-            'first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-            'last_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-            'dob' => 'required|date|before_or_equal:today',
-            'father_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-            'aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-            'address' => 'required|string|max:500',
-            'member_id' => 'required_if:type,member|nullable|exists:members,id',
-            'promotor_id' => 'required_if:type,promoter|nullable|exists:promotors,id',
-
+            'title'           => 'required|in:md,mr,ms,mrs',
+            'gender'          => 'required|in:male,female,other',
+            'first_name'      => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'last_name'       => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'dob'             => 'required|date|before_or_equal:today',
+            'father_name'     => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'aadhaar_no'      => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'address'         => 'required|string|max:500',
         ]);
-        if (!($data['member_id'] ?? null) && !($data['promotor_id'] ?? null)) {
-            return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
-        }
         // Format dates
-        $data['dob'] = date('D M d Y', strtotime($data['dob']));
-        $data['enrollment_date'] = date('D M d Y', strtotime($data['enrollment_date']));
-
+        $data['dob'] = date('Y-m-d', strtotime($data['dob']));
+        $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
         // Find the minor
         $minor = Minor::findOrFail($id);
-
         // Update minor
         $minor->update($data);
+        $minors = Minor::latest()->get();
+        return view('members.minor.index', compact('minors'));
 
-        if ($data['member_id']) {
-            return redirect()->route('member.show', $data['member_id'])->with('success', 'Minor created successfully.');
-        } elseif ($data['promotor_id']) {
-            return redirect()->route('promoter.show', $data['promotor_id'])->with('success', 'Minor created successfully.');
-        }
     }
     public function destroy(string $id) {}
 }

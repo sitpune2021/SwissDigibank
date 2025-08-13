@@ -458,62 +458,58 @@
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
                                 <td class="flex items-center justify-between px-6 py-2 text-start">
-                                    <a target="_blank" href="{{ asset($member->photo) }}"
-                                        class="text-blue-600 hover:underline">Show</a>
+                                    {{-- <a target="_blank" href="{{ asset($member->photo) }}"
+                                        class="text-blue-600 hover:underline">Show</a> --}}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span> <a target="_blank" {{-- href="https://nidhi-stag.s3.amazonaws.com/uploads/company/1/members/39/documents/photo/fm.php" --}}
+                                    {{-- <span> <a target="_blank" href="https://nidhi-stag.s3.amazonaws.com/uploads/company/1/members/39/documents/photo/fm.php"
                                             class="text-blue-600 hover:underline">Show</a>
-                                    </span>
+                                    </span> --}}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Id Proof (Passport)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                    {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
                                             class="text-blue-600 hover:underline">Show</a>
 
-                                    </span>
+                                    </span> --}}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Id Proof Back (Aadhar Card)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                    {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
                                             class="text-blue-600 hover:underline">Show</a>
-
-                                    </span>
+                                    </span> --}}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport) </th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                    {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
                                             class="text-blue-600 hover:underline">Show</a>
-
-                                    </span>
+                                    </span> --}}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card) </th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                    {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
                                             class="text-blue-600 hover:underline">Show</a>
-
-                                    </span>
+                                    </span> --}}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Pan Number (Pan)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span> <a target="_blank" href="{{ asset($member->photo) }}"
+                                    {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
                                             class="text-blue-600 hover:underline">Show</a>
-
-                                    </span>
+                                    </span> --}}
                                 </td>
                             </tr>
                         </tbody>
@@ -649,10 +645,9 @@
             showMember: true
         }">
 
-
-            <div class="p-4 space-y-6">
+            <div class="p-9 space-y-6">
                 <!-- Top 2 Cards -->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-4 gap-4">
                     <!-- Total Deposits -->
                     <div class="flex items-center overflow-hidden bg-white rounded shadow">
                         <div class="flex items-center justify-center w-20 h-20 bg-green-500">
@@ -792,11 +787,15 @@
                             {{ isset($member) ? $member->member_info_first_name . ' ' . $member->member_info_last_name : 'Add member' }}
                         </span>
                         <!-- Redirect to create page -->
+                                               <div class="px-4 py-3 bg-white border-b">
+
                         <a href="{{ isset($member) ? route('minor.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
                             class="px-4 py-1 text-sm text-white bg-green-500 rounded-r hover:bg-green-600">
                             + Minor
                         </a>
                     </div>
+                                    </div>
+
                     <!-- Table for minors -->
                     <div class="p-4">
                         <table class="w-full text-sm text-left">
@@ -831,20 +830,15 @@
                     </div>
                 </div>
             </div>
-            {{-- Share Holdings section - table format --}}
             <div class="mt-4 bg-white border rounded shadow-sm">
-
-                <!-- Top red border -->
                 <div class="h-1 rounded-t" style="background:red;"></div>
-
-                <!-- Header -->
                 <div class="px-4 py-3 bg-white border-b">
                     <h6 class="font-medium tracking-wide text-gray-700 text-md">
                         SHARE HOLDING DETAILS
                     </h6>
                 </div>
                 <!-- Table Body -->
-                <div class="px-6 py-4">
+                <div class="px-8 py-4">
                     <table class="w-full border-collapse">
                         <tbody>
                             <tr>

@@ -343,7 +343,7 @@
                             <tr class="border-b">
                                 <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
                                 <td class="flex items-center justify-between px-6 py-2"text-start>
-                                    <span>--------</span>
+                                    <span></span>
                                 </td>
                             </tr>
                             <tr class="border-b">
