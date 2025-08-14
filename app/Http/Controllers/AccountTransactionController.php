@@ -24,9 +24,7 @@ class AccountTransactionController extends Controller
             return view('saving-current-ac.accounts.view-transactions', compact('Transactions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function downloadCsvExample()
@@ -146,9 +144,7 @@ class AccountTransactionController extends Controller
             return view('saving-current-ac.accounts.single-transaction', compact('transactions', 'decryptedId'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -189,8 +185,6 @@ class AccountTransactionController extends Controller
             return view('saving-current-ac.accounts.print', compact('transaction'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 }

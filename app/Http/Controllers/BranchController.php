@@ -33,9 +33,7 @@ class BranchController extends Controller
             return view('company.branch.manage-branch', compact('branches'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404); // Only if resource is missing
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function create()
@@ -51,9 +49,7 @@ class BranchController extends Controller
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404); // Only if resource is missing
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -89,9 +85,7 @@ class BranchController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404); // Only if resource is missing
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -111,9 +105,7 @@ class BranchController extends Controller
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'encryptedId', 'show'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function edit($id)
     {
@@ -129,9 +121,7 @@ class BranchController extends Controller
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function update(Request $request, $id)
@@ -168,9 +158,7 @@ class BranchController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -188,8 +176,6 @@ class BranchController extends Controller
             return response()->json($branches);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 }

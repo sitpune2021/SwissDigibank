@@ -32,9 +32,7 @@ class SchemesController extends Controller
             return view('schemes.index', compact('schemes'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function create()
@@ -48,9 +46,7 @@ class SchemesController extends Controller
             return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -143,9 +139,7 @@ class SchemesController extends Controller
                 ->with('success', 'Scheme added successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -161,8 +155,6 @@ class SchemesController extends Controller
             return view('schemes.add-edit', compact('sections', 'schemes', 'show', 'method', 'schemeCharges', 'route'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -179,9 +171,7 @@ class SchemesController extends Controller
             return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -272,9 +262,7 @@ class SchemesController extends Controller
             return redirect()->route('schemes.index')->with('success', 'Scheme updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function destroy(string $id) {}

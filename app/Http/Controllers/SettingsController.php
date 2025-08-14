@@ -48,9 +48,7 @@ class SettingsController extends Controller
             return back()->with('success', 'Password updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 

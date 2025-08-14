@@ -83,7 +83,7 @@
                 @foreach ($shareholdings as $shareholding)
                 <tr>
                     <td class="px-6 py-5">{{ $shareholding->members->branch->branch_name ?? '-' }}</td>
-                    <td class="px-6 py-5">{{ $shareholding->shareholdings->promotor->first_name ?? '-' }}</td>
+                    <td class="px-6 py-5">{{ $shareholding->promotor->first_name ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->members->member_info_first_name ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->from_share_no.'-'. $shareholding->to_share_no ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->shares ?? '-' }}</td>

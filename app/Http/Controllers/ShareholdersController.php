@@ -19,9 +19,7 @@ class ShareholdersController extends Controller
             return view('members.shares-holdings.index', compact('sharesholdings'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function create(Request $request)
@@ -50,9 +48,7 @@ class ShareholdersController extends Controller
             return view('members.shares-holdings.create', compact('sections', 'nominal_value', 'sharesholdings', 'route', 'memberShareCount', 'transfoer', 'method', 'dynamicOptions', 'Promotor'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -81,9 +77,7 @@ class ShareholdersController extends Controller
             return redirect()->route('shares-holdings.index')->with('success', 'Shares holding recorded successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function show(string $id)
@@ -103,9 +97,7 @@ class ShareholdersController extends Controller
             return view('shares-holdings.create', compact('sections', 'sharesholdings', 'show', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function edit(string $id)
@@ -126,9 +118,7 @@ class ShareholdersController extends Controller
             return view('shares-holdings.create', compact('sections', 'sharesholdings', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function update(Request $request, string $id)
@@ -158,9 +148,7 @@ class ShareholdersController extends Controller
             return redirect()->route('shares-holdings.index')->with('success', 'Shareholding updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function destroy(string $id)
@@ -174,8 +162,6 @@ class ShareholdersController extends Controller
             return redirect()->route('shares-holdings.index')->with('success', 'Shareholding deleted successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 }

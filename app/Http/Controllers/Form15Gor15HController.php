@@ -18,9 +18,7 @@ class Form15Gor15HController extends Controller
             return view('members.form15g15h.index', compact('form15g15hs'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function create(Request $request)
@@ -53,9 +51,7 @@ class Form15Gor15HController extends Controller
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -98,7 +94,7 @@ class Form15Gor15HController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        }
+        } 
     }
 
     public function show(string $id)
@@ -108,9 +104,7 @@ class Form15Gor15HController extends Controller
             return view('members.form15g15h.show', compact('form15g15h'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function edit(string $id)
@@ -143,7 +137,7 @@ class Form15Gor15HController extends Controller
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        }
+        } 
     }
 
     public function update(Request $request, string $id)
@@ -176,9 +170,7 @@ class Form15Gor15HController extends Controller
             return redirect()->route('form15g15h.index')->with('success', 'Form updated successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function destroy(string $id)
@@ -211,8 +203,6 @@ class Form15Gor15HController extends Controller
             return $options;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 }

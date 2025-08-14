@@ -661,7 +661,7 @@
     $(document).ready(function() {
         const selectedId = $('#selectedMemberId').val();
         $.ajax({
-            url: "{{ url('/get-promoters') }}",
+            url: "{{ url('/get-members') }}",
             type: 'GET',
             success: function(response) {
                 let dropdown = $('#memberDropdown');

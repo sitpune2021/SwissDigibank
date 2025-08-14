@@ -16,8 +16,6 @@ class MinorController extends Controller
             return view('members.minor.index', compact('minors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -43,9 +41,7 @@ class MinorController extends Controller
             return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions', 'type'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -107,9 +103,7 @@ class MinorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function show(string $id)
     {
@@ -125,26 +119,26 @@ class MinorController extends Controller
             return view('members.minor.create', compact('sections', 'type', 'minor'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function edit(string $id)
-{
-    $method = 'PUT';
-    $minor = Minor::findOrFail($id);
-    $sections = config('minor_form');
-    $route = route('minor.update', $id);
-    $type = 'edit';
-    // Assuming $minor has a relationship or column 'member_id'
-    $memberId = $minor->member_id;
+    {
+        $method = 'PUT';
+        $minor = Minor::findOrFail($id);
+        $sections = config('minor_form');
+        $route = route('minor.update', $id);
+        $type = 'edit';
+        // Assuming $minor has a relationship or column 'member_id'
+        $memberId = $minor->member_id;
 
-    return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId'));
-}
+        return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId'));
+        
+    }
 
     public function update(Request $request, string $id)
     {
         // dd($request);
+        try {
             $type = $request->type;
 
         $data = $request->validate([
@@ -158,6 +152,10 @@ class MinorController extends Controller
             'aadhaar_no'      => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
             'address'         => 'required|string|max:500',
         ]);
+        if (!($data['member_id'] ?? null) && !($data['promotor_id'] ?? null)) {
+                return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
+            }
+
         // Format dates
         $data['dob'] = date('Y-m-d', strtotime($data['dob']));
         $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
@@ -165,9 +163,15 @@ class MinorController extends Controller
         $minor = Minor::findOrFail($id);
         // Update minor
         $minor->update($data);
-        $minors = Minor::latest()->get();
-        return view('members.minor.index', compact('minors'));
+        if ($data['member_id']) {
+                return redirect()->route('member.show', $data['member_id'])->with('success', 'Minor created successfully.');
+            } elseif ($data['promotor_id']) {
+                return redirect()->route('promoter.show', $data['promotor_id'])->with('success', 'Minor created successfully.');
+            }
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } 
     }
     public function destroy(string $id) {}
 }

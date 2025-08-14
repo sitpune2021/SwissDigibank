@@ -38,9 +38,7 @@ class UserController extends Controller
             return view('users.manage-user', compact('users'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function create()
     {
@@ -58,9 +56,7 @@ class UserController extends Controller
             return view('users.add-user', compact('employees', 'branches', 'roles', 'isAdd'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -112,9 +108,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('success', 'User created successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -133,9 +127,7 @@ class UserController extends Controller
             return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'show'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -155,9 +147,7 @@ class UserController extends Controller
             return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'method', 'route'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -206,9 +196,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('success', 'User updated successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
