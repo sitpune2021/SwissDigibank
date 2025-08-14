@@ -37,9 +37,7 @@ class KycDocumentsController extends Controller
             return view('members.member.kycDocumentAdd', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -79,9 +77,7 @@ class KycDocumentsController extends Controller
             return response()->json(['message' => 'Documents uploaded successfully']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -105,9 +101,7 @@ class KycDocumentsController extends Controller
             return view('members.member.kycDocumentAdd', compact('sections', 'member', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function update(Request $request, string $id) {}

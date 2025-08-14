@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Models\Promotor;
 use App\Models\Shareholding;
@@ -23,8 +24,6 @@ class ShareTransferController extends Controller
             return view('members.shares-transfer.index', compact('shareholdings'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -45,14 +44,15 @@ class ShareTransferController extends Controller
                 ->with('success', 'Shareholding updated. Only one marked as transferred.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
-    public function transferForm()
+    public function transferForm($memberId = null)
     {
+
         try {
+            $members = Member::pluck('member_info_first_name', 'id');
+
             $promoterId = Promotor::where('is_transfer', 1)->value('id');
 
             if (!$promoterId) {
@@ -61,13 +61,15 @@ class ShareTransferController extends Controller
 
             $promoter = Shareholding::with('promotor')->where('promotor_id', $promoterId)->first();
 
+            $selectedMember = $memberId ? Member::find($memberId) : null;
+
             return view('members.shares-transfer.create', [
-                'promoter' => $promoter
+                'promoter' => $promoter,
+                'members'         => $members,
+                'selectedMember'  => $selectedMember
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -78,12 +80,67 @@ class ShareTransferController extends Controller
             return response()->json(['shares' => $shares]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
-    public function store(Request $request)
+    // public function store(Request $request,$memberId = null)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'transferor_id'          => 'required',
+    //             'member_id'              => 'required',
+    //             'business_type'          => 'required',
+    //             'allotment_date'         => 'required|date',
+    //             'share_no'               => 'required|integer|min:1',
+    //             'share_nominal'          => 'required|numeric|min:0',
+    //             'total_consideration'    => 'required|numeric|min:0',
+    //         ]);
+
+    //         try {
+    //             DB::transaction(function () use ($validated) {
+    //                 $transferorId = $validated['transferor_id'];
+    //                 $newShares = $validated['share_no'];
+
+    //                 $promoterTotalShares = Shareholding::where('id', $transferorId)->value('total_share_held');
+
+    //                 if (!$promoterTotalShares || $promoterTotalShares <= 0) {
+    //                     throw new \Exception('Promoter does not have any shares.');
+    //                 }
+
+    //                 $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
+    //                     ->max('to_share_no');
+
+
+    //                 $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
+    //                 $toShareNo = ($fromShareNo + $newShares) - 1;
+
+    //                 if ($toShareNo > $promoterTotalShares) {
+    //                     throw new \Exception("Not enough shares left to allocate. Last available share no: {$promoterTotalShares}");
+    //                 }
+
+    //                 ShareTransfer::create([
+    //                     'transferor_id'       => $transferorId,
+    //                     'member_id'           => $validated['member_id'],
+    //                     'business_type'       => $validated['business_type'],
+    //                     'transfer_date'       => $validated['allotment_date'],
+    //                     'shares'              => $newShares,
+    //                     'face_value'          => $validated['share_nominal'],
+    //                     'total_consideration' => $validated['total_consideration'],
+    //                     'from_share_no'       => $fromShareNo,
+    //                     'to_share_no'         => $toShareNo,
+    //                 ]);
+    //             });
+
+    //             return redirect()->route('shares-transfer.index')->with('success', 'Share transfer successfully added. Please approve it.');
+    //         } catch (\Exception $e) {
+    //             return redirect()->route('shares-transfer.index')->with('error', $e->getMessage());
+    //         }
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     } 
+    // }
+
+    public function store(Request $request, $memberId = null)
     {
         try {
             $validated = $request->validate([
@@ -97,6 +154,12 @@ class ShareTransferController extends Controller
             ]);
 
             try {
+                // ✅ Check if member exists in DB before proceeding
+                $memberExists = Member::where('id', $validated['member_id'])->exists();
+                if (!$memberExists) {
+                    return redirect()->route('shares-transfer.index')->with('error', 'Selected member does not exist.');
+                }
+
                 DB::transaction(function () use ($validated) {
                     $transferorId = $validated['transferor_id'];
                     $newShares = $validated['share_no'];
@@ -109,7 +172,6 @@ class ShareTransferController extends Controller
 
                     $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
                         ->max('to_share_no');
-
 
                     $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
                     $toShareNo = ($fromShareNo + $newShares) - 1;
@@ -137,10 +199,9 @@ class ShareTransferController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
+
 
     public function show(string $id)
     {
@@ -149,8 +210,6 @@ class ShareTransferController extends Controller
             return view('members.shares-transfer.view', compact('shareholding'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -180,8 +239,6 @@ class ShareTransferController extends Controller
             return $pdf->download('share-certificate-' . $shareholding->id . '.pdf');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 

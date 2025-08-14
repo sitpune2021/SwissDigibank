@@ -51,7 +51,17 @@
                 <input type="hidden" id="selectedId" name="selected_member_id" value="">
                 <select name="member_id" id="promoterDropdown"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <!-- <option value="">Select Member</option> -->
+<?php
+
+?>
+                    @if($selectedMember)
+                    <option value="{{ $selectedMember->id }}" selected>
+                        {{ $selectedMember->member_info_first_name }}
+                    </option>
+                    @else
                     <option value="">Select Member</option>
+                    @endif
                 </select>
                 @error('promoter')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -178,10 +188,9 @@
     }, 5000);
 </script>
 
-<!-- ---------------- -->
-
-<!-- <script>
-    $(document).ready(function() {
+<script>
+    $(document).ready(function() 
+    {
         const selectedId = $('#selectedId').val();
         const dropdown = $('#promoterDropdown');
         const businessTypeDropdown = $('#business_type');
@@ -193,6 +202,7 @@
         const infoBox = $('#memberSharesInfo');
 
         let businessTypeSelected = false;
+        let currentShares = 0; // 
 
         function calculateTotal() {
             if (!businessTypeSelected) {
@@ -205,121 +215,13 @@
             totalConsiderationInput.val(total.toFixed(2));
         }
 
-        $.ajax({
-            url: "{{ url('/get-members') }}",
-            type: "GET",
-            success: function(response) {
-                dropdown.empty().append('<option value="">Select Member</option>');
-                $.each(response, function(index, member) {
-                    let selected = (selectedId == member.id) ? 'selected' : '';
-                    dropdown.append(`<option value="${member.id}" ${selected}>${member.member_info_first_name}</option>`);
-                });
-                if (selectedId) {
-                    dropdown.val(selectedId).trigger('change');
-                }
-            },
-            error: function() {
-                alert('Failed to fetch members.');
-            }
-        });
-
-        dropdown.on('change', function() {
-            let memberId = $(this).val();
-
-            if (!memberId) {
-                infoBox.text('');
-                calculateTotal();
-                return;
-            }
-
-            $.ajax({
-                url: `/get-promoter-shares/${memberId}`,
-                type: "GET",
-                success: function(data) {
-                    let currentShares = parseInt(data.shares) || 0;
-                    infoBox.html(`This member currently has <b>${currentShares}</b> shares.`);
-                    calculateTotal();
-                },
-                error: function() {
-                    infoBox.text('Unable to fetch share info.');
-                    calculateTotal();
-                }
-            });
-        });
-
-        businessTypeDropdown.on('change', function() {
-            businessTypeSelected = !!$(this).val();
-            calculateTotal();
-        });
-
-        sharesInput.on('input', calculateTotal);
-        faceValueInput.on('input', calculateTotal);
-
-        totalConsiderationInput.val("0.00");
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const businessTypeSelect = document.getElementById("business_type");
-        let shareField = document.getElementById('share_no');
-
-        function updateShareField() {
-            
-            if (businessTypeSelect.value === 'Saving') {
-                shareField.value = 1;
-            } else if (businessTypeSelect.value === 'FD') {
-                shareField.value = 10;
-            } else if (businessTypeSelect.value === 'RD') {
-                shareField.value = 1;
-            } else if (businessTypeSelect.value === 'Loan') {
-                shareField.value = 1;
-            } else if (businessTypeSelect.value === 'Shares') {
-           
-                const remaining = 100 - (parseInt(currentShares, 10) || 0);
-                sharesInput.val(remaining > 0 ? remaining : 0);
-
-                alert(remainingShares);
-            } else {
-                shareField.value = 0;
-            }
-        }
-        updateShareField();
-        businessTypeSelect.addEventListener('change', updateShareField);
-    });
-</script> -->
-
-<script>
-    $(document).ready(function() {
-        const selectedId = $('#selectedId').val();
-        const dropdown = $('#promoterDropdown');
-        const businessTypeDropdown = $('#business_type');
-
-        const sharesInput = $('#share_no');
-        const faceValueInput = $('#share_nominal');
-        const totalConsiderationInput = $('#total_consideration');
-
-        const infoBox = $('#memberSharesInfo');
-
-        let businessTypeSelected = false;
-        let currentShares = 0; // ✅ global variable
-
-        function calculateTotal() {
-            if (!businessTypeSelected) {
-                totalConsiderationInput.val("0.00");
-                return;
-            }
-            let shares = parseFloat(sharesInput.val()) || 0;
-            let faceValue = parseFloat(faceValueInput.val()) || 0;
-            let total = shares * faceValue;
-            totalConsiderationInput.val(total.toFixed(2));
-        }
 
         // Fetch member list
         $.ajax({
             url: "{{ url('/get-members') }}",
             type: "GET",
             success: function(response) {
+                console.log(response);
                 dropdown.empty().append('<option value="">Select Member</option>');
                 $.each(response, function(index, member) {
                     let selected = (selectedId == member.id) ? 'selected' : '';
@@ -334,13 +236,12 @@
             }
         });
 
-        // On member change
         dropdown.on('change', function() {
             let memberId = $(this).val();
 
             if (!memberId) {
                 infoBox.text('');
-                currentShares = 0; // reset
+                currentShares = 0;
                 sharesInput.val(0);
                 calculateTotal();
                 return;
@@ -350,9 +251,9 @@
                 url: `/get-promoter-shares/${memberId}`,
                 type: "GET",
                 success: function(data) {
-                    currentShares = parseInt(data.shares) || 0; // ✅ store globally
+                    currentShares = parseInt(data.shares) || 0; 
                     infoBox.html(`This member currently has <b>${currentShares}</b> shares.`);
-                    sharesInput.val(0); // keep at 0 until business type changes
+                    sharesInput.val(0); 
                     calculateTotal();
                 },
                 error: function() {

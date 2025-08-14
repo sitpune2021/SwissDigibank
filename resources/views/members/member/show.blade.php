@@ -14,7 +14,7 @@ member')
 <div class="flex flex-wrap gap-3 mb-3 text-center">
     <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
 
-    <a href="{{ route('shares-holdings.create') }}"
+    <a href="{{ route('shareholding.transfer.form', $member->id) }}"
         class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
         ALLOCATE SHARES
     </a>
@@ -565,7 +565,7 @@ member')
                 @click="open = !open">
                 <span class="font-semibold uppercase">Co Applications Loan</span>
                 <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-            </div>
+            </div> 
 
             <!-- Content -->
             <div x-show="open" x-transition class="bg-white">

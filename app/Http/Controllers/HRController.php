@@ -37,9 +37,7 @@ class HRController extends Controller
                return view('employees.manage-employee', compact('employees'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
 
      public function create()
@@ -51,9 +49,7 @@ class HRController extends Controller
                return view('employees.add-employee', compact('employee', 'route', 'method'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
      public function store(Request $request)
      {
@@ -113,9 +109,7 @@ class HRController extends Controller
                return redirect()->route('employee.index')->with('success', 'Employee added successfully!');
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
 
      public function show($id)
@@ -127,9 +121,7 @@ class HRController extends Controller
                return view('employees.add-employee', compact('employee', 'show'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
      public function edit($id)
      {
@@ -141,9 +133,7 @@ class HRController extends Controller
                return view('employees.add-employee', compact('employee', 'route', 'method'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
      public function update(Request $request, $id)
      {
@@ -207,9 +197,7 @@ class HRController extends Controller
                return redirect()->route('employee.index')->with('success', 'Employee updated successfully!');
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
 
      public function getRelations()
@@ -219,8 +207,6 @@ class HRController extends Controller
                return response()->json($relations);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
           }
      }
      public function getBanks()
@@ -230,8 +216,6 @@ class HRController extends Controller
                return response()->json($banks);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
           }
      }
      public function payableExpense()
@@ -241,9 +225,7 @@ class HRController extends Controller
                return response()->json($expenses);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
      public function payableLedger()
      {
@@ -252,9 +234,7 @@ class HRController extends Controller
                return response()->json($ledgers);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
      public function bloodGroup()
      {
@@ -263,8 +243,6 @@ class HRController extends Controller
                return response()->json($blood_groups);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } catch (\Throwable $e) {
-               abort(500);
-          }
+          } 
      }
 }

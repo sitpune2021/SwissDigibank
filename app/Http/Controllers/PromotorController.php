@@ -51,9 +51,7 @@ class PromotorController extends Controller
             return view('company.promoters.manage-promotors', compact('promotors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function create()
@@ -70,8 +68,6 @@ class PromotorController extends Controller
             return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -205,8 +201,6 @@ class PromotorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -230,9 +224,7 @@ class PromotorController extends Controller
             return view('company.promoters.show', compact('promoter', 'dynamicOptions', 'route', 'show', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function edit($id)
@@ -250,9 +242,7 @@ class PromotorController extends Controller
             return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function update(Request $request, $id)
@@ -374,9 +364,7 @@ class PromotorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function destroy($id)
@@ -388,9 +376,7 @@ class PromotorController extends Controller
             return redirect()->route('promotor.index')->with('success', 'Branch deleted successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function getMariatalStatuses()
     {
@@ -399,9 +385,7 @@ class PromotorController extends Controller
             return response()->json($statuses);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function getReligion()
@@ -411,9 +395,7 @@ class PromotorController extends Controller
             return response()->json($religions);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function getPromoters()
@@ -423,9 +405,7 @@ class PromotorController extends Controller
             return response()->json($promoters);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function documentShow(string $id)
@@ -437,9 +417,7 @@ class PromotorController extends Controller
             return view('company.promoters.kycDocumentAdd', compact('route', 'method', 'id', 'documents'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function documentUpdate(Request $request)
@@ -472,9 +450,7 @@ class PromotorController extends Controller
             return redirect()->route('promotor.index')->with('success', 'Documents updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function addressedit($id)
     {
@@ -491,9 +467,7 @@ class PromotorController extends Controller
             return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function addressupdate(Request $request, $id)
@@ -616,8 +590,6 @@ class PromotorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 }

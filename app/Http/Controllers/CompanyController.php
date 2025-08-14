@@ -27,9 +27,7 @@ class CompanyController extends Controller
             return view('company.company-profile.profile', compact('company', 'dynamicOptions', 'show', 'route'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function edit($id)
@@ -45,9 +43,7 @@ class CompanyController extends Controller
             return view('company.company-profile.profile', compact('company', 'dynamicOptions', 'show', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function update(Request $request, $id)
@@ -86,8 +82,6 @@ class CompanyController extends Controller
             return redirect()->route('company.index')->with('success', 'Company profile updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 }
