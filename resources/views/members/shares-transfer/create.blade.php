@@ -52,16 +52,19 @@
                 <select name="member_id" id="promoterDropdown"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     <!-- <option value="">Select Member</option> -->
-<?php
-
-?>
-                    @if($selectedMember)
-                    <option value="{{ $selectedMember->id }}" selected>
+                    
+                        @if($selectedMember)
+                        <option value="{{ $selectedMember->id }}" selected>
                         {{ $selectedMember->member_info_first_name }}
-                    </option>
-                    @else
-                    <option value="">Select Member</option>
-                    @endif
+                        </option>
+                        @else
+                        <option value="">Select Member</option>
+                        @foreach($members as $key => $mem)
+                        <option value="{{ $key }}">
+                        {{ $mem }}
+                        </option>
+                        @endforeach
+                        @endif
                 </select>
                 @error('promoter')
                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -189,8 +192,7 @@
 </script>
 
 <script>
-    $(document).ready(function() 
-    {
+    $(document).ready(function() {
         const selectedId = $('#selectedId').val();
         const dropdown = $('#promoterDropdown');
         const businessTypeDropdown = $('#business_type');
@@ -216,25 +218,7 @@
         }
 
 
-        // Fetch member list
-        $.ajax({
-            url: "{{ url('/get-members') }}",
-            type: "GET",
-            success: function(response) {
-                console.log(response);
-                dropdown.empty().append('<option value="">Select Member</option>');
-                $.each(response, function(index, member) {
-                    let selected = (selectedId == member.id) ? 'selected' : '';
-                    dropdown.append(`<option value="${member.id}" ${selected}>${member.member_info_first_name}</option>`);
-                });
-                if (selectedId) {
-                    dropdown.val(selectedId).trigger('change');
-                }
-            },
-            error: function() {
-                alert('Failed to fetch members.');
-            }
-        });
+
 
         dropdown.on('change', function() {
             let memberId = $(this).val();
@@ -251,9 +235,9 @@
                 url: `/get-promoter-shares/${memberId}`,
                 type: "GET",
                 success: function(data) {
-                    currentShares = parseInt(data.shares) || 0; 
+                    currentShares = parseInt(data.shares) || 0;
                     infoBox.html(`This member currently has <b>${currentShares}</b> shares.`);
-                    sharesInput.val(0); 
+                    sharesInput.val(0);
                     calculateTotal();
                 },
                 error: function() {

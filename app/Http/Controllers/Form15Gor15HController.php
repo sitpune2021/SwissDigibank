@@ -33,9 +33,12 @@ class Form15Gor15HController extends Controller
                 'financial_year' => $this->generateFinancialYears()
             ];
 
-            $sections = config('form15G15H_form');
-            $route = route('form15g15h.store');
-            $method = 'POST';
+        $sections = config('form15G15H_form');
+        $route = route('form15g15h.store');
+        $method = 'POST';
+           
+           
+           
 
 
             return view('members.form15g15h.create', compact(
@@ -115,6 +118,10 @@ class Form15Gor15HController extends Controller
                 'financial_year' => $this->generateFinancialYears()
             ];
 
+        
+       
+       
+        
             $sections = config('form15G15H_form');
             $route = route('form15g15h.update', $id);
             $method = 'PUT';

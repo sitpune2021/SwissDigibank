@@ -101,24 +101,19 @@
                     @method('PUT')
                 @endif
                 @php
+                    $type = request()->query('type');
                     $promoterId = request()->query('promoter_id');
                     $memberId = request()->query('member_id');
                 @endphp
 
-                <input name="type" id="type" type="hidden" value="{{ $type }}" hidden />
-                @php
-                    $add_id =
-                        request()->query('promoter_id') !== null
-                            ? request()->query('promoter_id')
-                            : request()->query('member_id');
+                <input name="type" id="type" type="hidden" value="{{ $type }}" />
 
-                @endphp
-                <input name="type" id="type" type="text" value="{{ $type }}" hidden />
-                {{-- <input name="id" id="id" type="hidden" value="{{ $add_id }}" /> --}}
-                @if ($type === 'promoter')
-                    <input type="hidden" name="promotor_id" value="{{ $add_id }}">
-                @elseif ($type === 'member')
-                    <input type="hidden" name="member_id" value="{{ $add_id }}">
+                @if ($type === 'promoter' && $promoterId)
+                    <input type="hidden" name="promotor_id" value="{{ $promoterId }}">
+                @endif
+
+                @if ($type === 'member' && $memberId)
+                    <input type="hidden" name="member_id" value="{{ $memberId }}">
                 @endif
 
                 @foreach ($sections ?? [] as $sectionName => $fields)

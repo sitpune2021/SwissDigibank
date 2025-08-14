@@ -105,24 +105,24 @@
 
                                 <td class="px-6 py-4">{{ $minor->member->branch->branch_name ?? 'N/A' }}</td>
 
-                                <td class="px-6 py-4">{{ $minor->first_name ?? 'N/A' }}</td> 
-                            
-                                     <td class="px-6 py-4">
+                                <td class="px-6 py-4">{{ $minor->first_name ?? 'N/A' }}</td>
+
+                                <td class="px-6 py-4">
                                     @if ($minor->member)
                                         <a href="{{ route('member.show', $minor->member->id) }}"
                                             class="text-primary hover:underline">
-                                          DEMO-{{ $minor->member->member_info_first_name ?? 'N/A' }}
+                                            DEMO-{{ $minor->member->member_info_first_name ?? 'N/A' }}
                                         </a>
                                     @else
                                         N/A
                                     @endif
                                 </td>
 
-                                <td class="px-6 py-4">{{ $minor->father_name ?? 'N/A' }}</td> 
+                                <td class="px-6 py-4">{{ $minor->father_name ?? 'N/A' }}</td>
 
                                 <td class="px-6 py-4">
                                     {{ $minor->enrollment_date }}
-                                </td> 
+                                </td>
                                 <td class="py-2 px-6">
                                     <div class="flex justify-center">
                                         @include('partials._vertical-options', [

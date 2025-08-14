@@ -53,7 +53,7 @@
                     <input type="hidden" id="selectedMemberId" value="{{ isset($employee) ? $employee->member_id : '' }}">
                     @if(isset($isView) && $isView)
                     {{-- View Mode: Just display the member name --}}
-                    <input type="text" value="{{ $employee->members->first_name ?? 'N/A' }}" @if($isView) disabled @endif
+                    <input type="text" value="{{ $employee->members->member_info_first_name ?? 'N/A' }}" @if($isView) disabled @endif
                         class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     @else
 
@@ -610,7 +610,6 @@
                 @error('expense_ledger')
 
                 <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
-
                 @enderror
                 @endif
             </div>
@@ -619,10 +618,8 @@
     <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
         @if(empty($isView))
         <button class="btn-primary" type="submit">
-
             <!-- Save Employee -->
             {{ isset($employee) ? 'Update Employee' : 'Add Employee' }}
-
         </button>
         @endif
         <button class="btn-outline" type="reset"
@@ -633,7 +630,6 @@
         </button>
         @endif
     </div>
-
     </form>
 
 </div>
@@ -667,10 +663,12 @@
                 let dropdown = $('#memberDropdown');
                 dropdown.empty();
                 dropdown.append('<option value="">Select Member</option>');
+                
                 $.each(response, function(index, member) {
+                    console.log(member);
                     let selected = (selectedId == member.id) ? 'selected' : '';
                     dropdown.append(
-                        `<option value="${member.id}" ${selected}> ${member.first_name}</option>`
+                        `<option value="${member.id}" ${selected}> ${member.member_info_first_name}</option>`
                     );
                 });
             },
@@ -741,7 +739,7 @@
                 $.each(response, function(key, bank) {
                     $('#bankDropdown').append(`<option value="${bank.id}">${bank.name}</option>`);
                 });
-                console.log(response.id);
+                // console.log(response.id);
             },
             error: function() {
                 alert('Failed to fetch banks.');
@@ -776,8 +774,8 @@
                 let dropdown = $('#payableDropdown');
                 dropdown.empty();
                 dropdown.append('<option value="">Select Accounting Payable Ledger</option>');
-                console.log("Selected ID:", selectedledgerId);
-                console.log(response);
+                // console.log("Selected ID:", selectedledgerId);
+                // console.log(response);
 
                 $.each(response, function(key, ledger) {
                     // let selected = (selectedledgerId == ledger.id) ? 'selected' : '';

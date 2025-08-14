@@ -139,14 +139,14 @@
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
                                     @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
                                         <option value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $value == $optionValue ? 'selected' : '' }} {{ !empty($readonly) ? 'readonly' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
                                 @elseif(!empty($field['options']))
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
                                         <option value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'selected' : '' }}>
+                                            {{ $value == $optionValue ? 'selected' : '' }} {{ !empty($readonly) ? 'readonly' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
@@ -158,7 +158,7 @@
                                     <label class="flex items-center space-x-4 class=ml-2 gap-1">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
                                             {{ $value == $optionValue ? 'checked' : '' }}
-                                            {{ isset($show) ? 'disabled' : '' }}>
+                                            {{ isset($readonly) ? 'disabled' : '' }}>
                                         <span>{{ $optionLabel }}</span>
                                     </label>
                                 @endforeach
@@ -166,7 +166,7 @@
                         @elseif ($type === 'checkbox')
                             <label class="switch">
                                 <input type="checkbox" name="{{ $name }}" id="{{ $id }}" value="1"
-                                    {{ $value ? 'checked' : '' }} {{ isset($show) ? 'disabled' : '' }}>
+                                    {{ $value ? 'checked' : '' }} {{ isset($readonly) ? 'disabled' : '' }}>
                                 <div class="slider round">
                                     <span class="switch-on">ON</span>
                                     <span class="switch-off">OFF</span>
@@ -176,7 +176,7 @@
                             <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                 value="{{ $value }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter {{ strtolower($label) }}" {{ isset($show) ? 'disabled' : '' }} />
+                                placeholder="Enter {{ strtolower($label) }}" {{ !empty($readonly) ? 'readonly' : '' }} />
                         @endif
 
                         @error($name)
@@ -191,13 +191,8 @@
                             {{ $method === 'PUT' ? 'Update' : 'Save' }} Minor
                         </button>
                     @endif
-                    <a href="{{ route('member.show', session('member_id')) }}"
-                        class="btn-outline inline-flex items-center justify-center">
-                        Back
-                    </a>
                 </div>
             </form>
-
         </div>
     </div>
 @endsection

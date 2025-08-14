@@ -51,6 +51,7 @@ class HRController extends Controller
                abort(404);
           } 
      }
+     
      public function store(Request $request)
      {
           try {

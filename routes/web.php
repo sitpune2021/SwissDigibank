@@ -29,7 +29,7 @@ use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
-
+use App\Http\Controllers\CalculatorController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
