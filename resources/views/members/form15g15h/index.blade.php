@@ -31,10 +31,6 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
             <h4 class="h2">Form 15G/ 15H</h4>
-            <a class="btn-primary" href="{{ route('form15g15h.create') }}">
-                <i class=" text-base md:text-lg"></i>
-                Add
-            </a>
         </div>
         <div class="box col-span-12 lg:col-span-6">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
