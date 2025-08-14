@@ -23,9 +23,7 @@ class DepositController extends Controller
             return view('saving-current-ac.deposits.deposit-create', compact('id'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -103,9 +101,7 @@ class DepositController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 

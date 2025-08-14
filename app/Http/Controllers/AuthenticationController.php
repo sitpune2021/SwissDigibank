@@ -55,9 +55,7 @@ class AuthenticationController extends Controller
             ], 201);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
 
         // return redirect()->route('/')->with('success', 'Registration successful!');
     }
@@ -88,9 +86,7 @@ class AuthenticationController extends Controller
             return redirect()->back()->with('error', 'Invalid email or password.')->withInput();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function logout(Request $request)
@@ -102,9 +98,7 @@ class AuthenticationController extends Controller
             return redirect()->route('sign.in');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function resetPassword(Request $request)
@@ -136,9 +130,7 @@ class AuthenticationController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function signInQrcode()

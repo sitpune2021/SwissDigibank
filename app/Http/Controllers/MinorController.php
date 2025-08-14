@@ -16,8 +16,6 @@ class MinorController extends Controller
             return view('members.minor.index', compact('minors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -43,9 +41,7 @@ class MinorController extends Controller
             return view('members.minor.create', compact('sections', 'minor', 'route', 'method', 'dynamicOptions', 'type'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     public function store(Request $request)
@@ -107,9 +103,7 @@ class MinorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function show(string $id)
     {
@@ -125,9 +119,7 @@ class MinorController extends Controller
             return view('members.minor.create', compact('sections', 'type', 'minor'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function edit(string $id)
 {
@@ -141,6 +133,7 @@ class MinorController extends Controller
 
     return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId'));
 }
+
 
     public function update(Request $request, string $id)
     {

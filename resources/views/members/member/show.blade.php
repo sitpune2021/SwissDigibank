@@ -8,50 +8,33 @@
     member')
 
 @section('content')
-    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-        <x-alert />
+<div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+    <x-alert />
+</div>
+<div class="flex flex-wrap gap-3 mb-3 text-center">
+    <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
+
+    <a href="{{ route('shareholding.transfer.form', $member->id) }}"
+        class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
+        ALLOCATE SHARES
+    </a>
+
+    <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD SHARE
+        AMOUNT</a>
+
+    <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
+
+    <!-- Dropdown -->
+    <div class="relative">
+        <button type="button" class="rounded-md px-2 py-1 text-white  text-sm bg-green-500 hover:bg-green-600"
+            onclick="toggleDropdown()">DEBIT OTHER CHARGES</button>
+        <ul id="dropdown-menu" class="absolute right-0 mt-2 hidden bg-white border rounded shadow-md text-left z-10">
+            <li><a class="block px-4 py-2 hover:bg-gray-100">OTHER CHARGES LIST</a></li>
+            <li><a class="block px-4 py-2 hover:bg-gray-100">DEBIT OTHER CHARGES</a></li>
+            <li><a class="block px-4 py-2 hover:bg-gray-100">CLEAR DUES</a></li>
+        </ul>
     </div>
-    <div class="flex flex-wrap gap-3 mb-3 text-center">
-        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
-
-        <a href="{{ route('shares-holdings.create') }}"
-            class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
-            ALLOCATE SHARES
-        </a>
-
-        <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD SHARE
-            AMOUNT</a>
-
-        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
-
-        <!-- Dropdown -->
-        <div class="relative">
-            <button type="button" class="rounded-md px-2 py-1 text-white  text-sm bg-green-500 hover:bg-green-600"
-                onclick="toggleDropdown()">DEBIT OTHER CHARGES</button>
-            <ul id="dropdown-menu" class="absolute right-0 mt-2 hidden bg-white border rounded shadow-md text-left z-10">
-                <li><a class="block px-4 py-2 hover:bg-gray-100">OTHER CHARGES LIST</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100">DEBIT OTHER CHARGES</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100">CLEAR DUES</a></li>
-            </ul>
-        </div>
-
-        <a title="DOWNLOAD 15G/ 15H"
-            class="btn-default rounded-md px-2 py-1 text-sm text-gray-700 bg-gray-200 hover:bg-gray-300">
-            <i class="fa fa-print"></i> DOWNLOAD 15G/ 15H
-        </a>
-
-        <a href="{{ isset($member) ? route('form15g15h.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
-            class="btn-warning rounded-md px-2 py-1 text-white text-sm bg-yellow-500 hover:bg-yellow-600">
-            <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
-        </a>
-        <a class="btn-danger rounded-md px-2 py-1 text-white  text-sm bg-red-500 hover:bg-red-600">REMOVE MEMBER</a>
-
-        <a class="btn-primary rounded-md px-2 py-1 text-white  text-sm bg-indigo-500 hover:bg-indigo-600">
-            <i class="fa fa-print"></i> APPLICATION FORM
-        </a>
-
-        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHOW AUDIT TRAIL</a>
-    </div>
+    
     <div class="grid grid-cols-12 gap-4 xxl:gap-6">
         <div class="col-span-12 lg:col-span-6 overflow-x-hidden">
             <div class="col-span-12 box overflow-x-hidden">

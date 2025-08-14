@@ -31,6 +31,6 @@ class ShareTransfer extends Model
    }
    public function promotor()
    {
-      return $this->belongsTo(Promotor::class, 'promotor_id');
+      return $this->belongsTo(Promotor::class, 'transferor_id');
    }
 }

@@ -45,9 +45,7 @@ class DirectorController extends Controller
             return view('company.director.index', compact('directors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -66,8 +64,6 @@ class DirectorController extends Controller
             return view('company.director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -97,9 +93,7 @@ class DirectorController extends Controller
             return redirect()->route('director.index')->with('success', 'Director created successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -123,8 +117,6 @@ class DirectorController extends Controller
             return view('company.director.create', compact('director', 'show', 'route', 'method', 'formFields', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
         }
     }
 
@@ -144,9 +136,7 @@ class DirectorController extends Controller
             return view('company.director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -180,9 +170,7 @@ class DirectorController extends Controller
             return redirect()->route('director.index')->with('success', 'Director updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
