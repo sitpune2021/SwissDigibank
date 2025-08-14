@@ -192,7 +192,9 @@
                             <td class="p-2">
                                 <div>
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">{{ $promoter->form15G15H->first()?->form_15_upload ? 'Yes' : 'No' }}</span>
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        {{ $promoter->form15G15H->count() >= 1 ? 'Yes' : 'No' }}
+                                    </span>
                                 </div>
                             </td>
                         </tr>
