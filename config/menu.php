@@ -55,16 +55,16 @@ return [
             ['title' => 'Saving A/c', 'route' => 'accounts.index'],
         ]
     ],
-    //  [
-    //     'title' => 'FD/ MIS Accounts',
-    //     'icon' => 'las la-university',
-    //     'position' => '5',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
-    //         ['title' => 'FD Account', 'route' => 'fd-accounts.index'],
-    //     ]
-    // ],
+     [
+        'title' => 'FD/ MIS Accounts',
+        'icon' => 'las la-university',
+        'position' => '7',
+        'active' => '1',
+        'submenu' => [
+            // ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
+            ['title' => 'Calculator', 'route' => 'calculator.index'],
+        ]
+    ],
     [
         'title' => 'Approvals',
         'icon' => 'las la-university',

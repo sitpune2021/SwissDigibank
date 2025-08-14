@@ -29,7 +29,7 @@ use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
-
+use App\Http\Controllers\CalculatorController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -97,6 +97,7 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
         Route::resource('form15g15h', Form15Gor15HController::class);
     });
+    Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');
 
     Route::get('/get-member-shares/{id}', function ($id) {
         $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no');
