@@ -89,22 +89,15 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
         Route::resource('form15g15h', Form15Gor15HController::class);
     });
-
-        Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
-        Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
-        Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
-        Route::resource('form15g15h', Form15Gor15HController::class);
-    });
     Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');
     Route::resource('shares-transfer', ShareTransferController::class);
     // Route::get('shares-transfer', [ShareTransferController::class, 'transferForm'])->name('shares-transfer.transferForm');
     Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
-
-    Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
-    Route::get('/share/allocate/{id?}', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
-    Route::post('/share/allocate/{id?}', [ShareTransferController::class, 'store'])->name('shares.allocate');
-    Route::resource('form15g15h', Form15Gor15HController::class);
-});
+        Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
+            Route::get('/share/allocate/{id?}', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+            Route::post('/share/allocate/{id?}', [ShareTransferController::class, 'store'])->name('shares.allocate');
+        Route::resource('form15g15h', Form15Gor15HController::class);
+    });
 
 Route::get('/get-member-shares/{id}', function ($id) {
     $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no');
