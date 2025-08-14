@@ -80,7 +80,10 @@
                                             DEMO-{{ $item->member->member_info_first_name }}
                                         </a>
                                     @else
-                                        N/A
+                                        <a href="{{ route('promotor.show',  base64_encode($item->promotor->id)) }}"
+                                            class="text-primary hover:underline">
+                                            DEMO-{{ $item->promotor->first_name }}
+                                        </a>
                                     @endif
                                 </td>
 
