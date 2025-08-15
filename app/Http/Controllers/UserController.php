@@ -166,7 +166,7 @@ class UserController extends Controller
                 'first_name'         => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'last_name'          => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'email'              => 'required|email|max:255|unique:users,email,' . $user->id,
-                'mobile_no'          => 'requiredstring|max:10,' . $user->id,
+                'mobile_no'          => 'required|string|max:10,' . $user->id,
                 'back_date'          => 'required|integer|min:0',
                 'permission_role'    => 'required|integer|exists:roles,id',
                 'branch'             => 'required|integer|exists:branches,id',
