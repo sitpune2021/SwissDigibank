@@ -6,7 +6,7 @@
 /storage/*.keymai
 /storage/pail
 /storage/framework/views
-/vendor
+# /vendor
 .env
 .env.backup
 .env.production
