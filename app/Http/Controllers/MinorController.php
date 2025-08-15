@@ -130,10 +130,10 @@ class MinorController extends Controller
         $type = 'edit';
         // Assuming $minor has a relationship or column 'member_id'
         $memberId = $minor->member_id;
-
         return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId'));
         
     }
+
 
     public function update(Request $request, string $id)
     {
@@ -171,7 +171,9 @@ class MinorController extends Controller
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
-    public function destroy(string $id) {}
+    public function destroy(string $id) {
+
+    }
 }

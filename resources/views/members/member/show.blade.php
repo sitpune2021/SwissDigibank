@@ -75,6 +75,7 @@
 
         <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHOW AUDIT TRAIL</a>
     </div>
+    
     <div class="grid grid-cols-12 gap-4 xxl:gap-6">
         <div class="col-span-12 lg:col-span-6 overflow-x-hidden">
             <div class="col-span-12 box overflow-x-hidden">
@@ -801,129 +802,6 @@
         </div>
         <!-- Right Panel -->
         <div class="col-span-12 lg:col-span-6" x-data="{
-        <!-- MY GUARANTOR SHIP -->
-        <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
-                @click="open = !open">
-                <span class="font-semibold uppercase">Joint Accounts</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-            </div>
-
-            <!-- Content -->
-            <div x-show="open" x-transition class="bg-white">
-                <table class="w-full text-sm text-left border-collapse">
-                    <thead class="border-b">
-                        <tr>
-                            <th class="px-4 py-2 font-semibold">Account Type</th>
-                            <th class="px-4 py-2 font-semibold">Account No.</th>
-                            <th class="px-4 py-2 font-semibold">Open Date</th>
-                            <th class="px-4 py-2 font-semibold">Status</th>
-                            <th class="px-4 py-2 font-semibold">State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- MY GUARANTOR SHIP -->
-        <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
-                @click="open = !open">
-                <span class="font-semibold uppercase">Co Applications Loan</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-            </div> 
-
-            <!-- Content -->
-            <div x-show="open" x-transition class="bg-white">
-                <table class="w-full text-sm text-left border-collapse">
-                    <thead class="border-b">
-                        <tr>
-                            <th class="px-4 py-2 font-semibold">Account Type</th>
-                            <th class="px-4 py-2 font-semibold">Account No.</th>
-                            <th class="px-4 py-2 font-semibold">Open Date</th>
-                            <th class="px-4 py-2 font-semibold">Status</th>
-                            <th class="px-4 py-2 font-semibold">State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- MY GUARANTOR SHIP -->
-        <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
-                @click="open = !open">
-                <span class="font-semibold uppercase">My Guarantor Ship</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-            </div>
-
-            <!-- Content -->
-            <div x-show="open" x-transition class="bg-white">
-                <table class="w-full text-sm text-left border-collapse">
-                    <thead class="border-b">
-                        <tr>
-                            <th class="px-4 py-2 font-semibold">Account Type</th>
-                            <th class="px-4 py-2 font-semibold">Account No.</th>
-                            <th class="px-4 py-2 font-semibold">Open Date</th>
-                            <th class="px-4 py-2 font-semibold">Status</th>
-                            <th class="px-4 py-2 font-semibold">State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                            <td class="px-4 py-2">-</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- COMMENTS -->
-        <div x-data="{ open: true }" class="mt-4 border rounded shadow">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-600 rounded-t cursor-pointer"
-                @click="open = !open">
-                <span class="font-semibold uppercase">Comments</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-            </div>
-
-            <!-- Content -->
-            <div x-show="open" x-transition class="p-4 bg-white">
-                <p class="mb-4 text-sm text-gray-700">No Comment Found</p>
-                <button class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">
-                    ADD COMMENT
-                </button>
-            </div>
-        </div>
-
-    </div>
-    <!-- Right Panel -->
-    <div class="col-span-12 lg:col-span-6" x-data="{
             showMobile: true,
             showAddress: true,
             showBank: true,
