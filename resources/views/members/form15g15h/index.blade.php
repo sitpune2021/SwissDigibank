@@ -72,7 +72,6 @@
                     <tbody>
                         @foreach ($form15g15hs as $index => $item)
                             <tr class="border-b dark:border-bg3">
-
                                 <td class="py-3 px-6">
                                     @if ($item->member)
                                         <a href="{{ route('member.show', $item->member->id) }}"
@@ -86,11 +85,9 @@
                                         </a>
                                     @endif
                                 </td>
-
                                 <td class="py-3 px-6">
                                     {{ $item->financial_year }}
                                 </td>
-
                                 <td class="py-2 px-6">
                                     <div class="flex justify-center">
                                         @include('partials._vertical-options', [

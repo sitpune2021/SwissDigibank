@@ -82,7 +82,6 @@
           </style>
       @endpush
 
-
   @section('content')
       @include('fields.errormessage')
 

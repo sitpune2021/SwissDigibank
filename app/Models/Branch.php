@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\State;
 use App\Models\Member;
+use App\Models\Shareholders;
 
 class Branch extends Model
 {
@@ -42,7 +43,7 @@ class Branch extends Model
     }
   public function Shareholder()
     {
-        return $this->hasMany(Shareholder::class,'branch_id');
+        return $this->hasMany(Shareholders::class,'branch_id');
 
     }
     public function ShareCertificate(){

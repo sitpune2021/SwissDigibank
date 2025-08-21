@@ -169,6 +169,7 @@ class MemberController extends Controller
                 'charges_net_fee' => 'required|numeric',
                 'charges_remarks' => 'nullable|string',
                 'charges_pay_mode' => 'required|in:cash,online,cheque',
+                 'folio_no' => 34,
             ]);
 
             $request->merge([
@@ -389,6 +390,7 @@ class MemberController extends Controller
                 'charges_net_fee' => 'required|numeric',
                 'charges_remarks' => 'nullable|string',
                 'charges_pay_mode' => 'nullable|in:cash,online,cheque',
+                 'folio_no' => 34,
             ]);
 
             $request->merge([

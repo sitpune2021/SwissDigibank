@@ -43,10 +43,7 @@ return new class extends Migration
             $table->foreign('religions_id')->references('id')->on('religions')->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('promotors');

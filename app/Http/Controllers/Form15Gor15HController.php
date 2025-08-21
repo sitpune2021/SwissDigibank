@@ -35,12 +35,12 @@ class Form15Gor15HController extends Controller
                 'financial_year' => $this->generateFinancialYears()
             ];
 
-        $sections = config('form15G15H_form');
-        $route = route('form15g15h.store');
-        $method = 'POST';
-           
-           
-           
+            $sections = config('form15G15H_form');
+            $route = route('form15g15h.store');
+            $method = 'POST';
+
+
+
 
 
             return view('members.form15g15h.create', compact(
@@ -124,10 +124,6 @@ class Form15Gor15HController extends Controller
                 'financial_year' => $this->generateFinancialYears()
             ];
 
-        
-       
-       
-        
             $sections = config('form15G15H_form');
             $route = route('form15g15h.update', $id);
             $method = 'PUT';
@@ -214,5 +210,39 @@ class Form15Gor15HController extends Controller
         } catch (\Throwable $e) {
             abort(500);
         }
+    }
+    public function download($member_id)
+    {
+        $form = Form15G15H::where('member_id', $member_id)->latest()->first();
+
+        if (!$form || !$form->form_15_upload) {
+            return redirect()->back()->with('error', 'File not found.');
+        }
+
+        $filePath = $form->form_15_upload;
+
+        if (Storage::disk('public')->exists($filePath)) {
+            $fullPath = Storage::disk('public')->path($filePath);
+            return response()->download($fullPath);
+        }
+
+        return redirect()->back()->with('error', 'File not found.');
+    }
+    public function downloadByPromoter($promoter_id)
+    {
+        $form = Form15G15H::where('promotor_id', $promoter_id)->latest()->first();
+
+        if (!$form || !$form->form_15_upload) {
+            return redirect()->back()->with('error', 'File not found.');
+        }
+
+        $filePath = $form->form_15_upload;
+
+        if (Storage::disk('public')->exists($filePath)) {
+            $fullPath = Storage::disk('public')->path($filePath);
+            return response()->download($fullPath);
+        }
+
+        return redirect()->back()->with('error', 'File not found.');
     }
 }

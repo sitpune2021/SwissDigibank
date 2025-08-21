@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -52,10 +54,9 @@ class Member extends Model
     {
         return $this->hasMany(Minor::class, 'member_id', 'id');
     }
-       public function Shareholder()
+    public function Shareholder()
     {
-        return $this->hasMany(Shareholders::class,'member_id');
-
+        return $this->hasMany(Shareholders::class, 'member_id');
     }
     public function accounts()
     {
@@ -65,11 +66,11 @@ class Member extends Model
     {
         return $this->belongsToMany(Scheme::class, 'account_scheme', 'member_id', 'scheme_id');
     }
-     public function ShareCertificate()
-     {
-        return $this->hasMany(ShareCertificate::class,'member_id');
+    public function ShareCertificate()
+    {
+        return $this->hasMany(ShareCertificate::class, 'member_id');
     }
-     public function form15G15H()
+    public function form15G15H()
     {
         return $this->hasMany(Form15G15H::class, 'member_id');
     }

@@ -30,6 +30,9 @@ use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\FdCalculatorController;
+
+
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -54,15 +57,13 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
         Route::resource('promotor', PromotorController::class);
-         Route::get('/promotor/{id}/address', [PromotorController::class, 'addressedit'])->name('promotor.address');
+        Route::get('/promotor/{id}/address', [PromotorController::class, 'addressedit'])->name('promotor.address');
         Route::put('/promotor/{id}/address', [PromotorController::class, 'addressupdate'])->name('promotor.address.update');
         Route::get('/company/promotor/{id}/documents', [PromotorController::class, 'documentShow'])->name('promotor.document');
         Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
         Route::resource('shareholding', ShareHoldingController::class);
-        
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
             ->name('shareholding.transfer'); // ✅ semicolon added here
-
         Route::resource('director', DirectorController::class);
     });
 
@@ -70,6 +71,22 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('users', UserController::class);
     });
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
+        Route::get('/calculator/create', [CalculatorController::class, 'create'])->name('calculator.create');
+        Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
+    });
+
+    // Route::get('/fd-calculator', function () {
+    //     return view('fd-calculator');
+    // });
+
+    // Route::post('/fd-calculate', [FdCalculatorController::class, 'calculate']);
+
+    // routes/web.php
+Route::post('/calculate-fd', [CalculatorController::class, 'calculate']);
+
 
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
@@ -80,69 +97,67 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/members/{id}/address', [MemberController::class, 'addressupdate'])->name('member.address.update');
         Route::get('/member/{id}/mobile', [MemberController::class, 'editmobile'])->name('member.mobile');
         Route::put('/member/{id}/mobile', [MemberController::class, 'updatemobile'])->name('member.updatemobile');
-        // Route::get('/member/{id}/showmobile', [MemberController::class, 'showmobile'])->name('member.showmobile');
-
-
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
         Route::resource('form15g15h', Form15Gor15HController::class);
+        Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
+        Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
     });
-        Route::resource('shares-transfer', ShareTransferController::class);
-        Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
+    Route::resource('shares-transfer', ShareTransferController::class);
+    Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
 
-        Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
-        Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
-        Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
-        Route::resource('form15g15h', Form15Gor15HController::class);
-    });
-    Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');
+    Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
+    Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+    Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+    Route::resource('form15g15h', Form15Gor15HController::class);
+});
 
-    Route::get('/get-member-shares/{id}', function ($id) {
-        $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no');
-        return response()->json(['shares' => $shares]);
-    });
+Route::get('/get-member-shares/{id}', function ($id) {
+    $shares = \App\Models\Shareholding::where('promotor_id', $id)->sum('share_no');
+    return response()->json(['shares' => $shares]);
+});
 
-    Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
+Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
 
-    Route::group(['prefix' => 'saving-current-ac'], function () {
-        Route::resource('schemes', SchemesController::class);
-        Route::resource('accounts', AccountsController::class);
-        Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
+Route::group(['prefix' => 'saving-current-ac'], function () {
+    Route::resource('schemes', SchemesController::class);
+    Route::resource('accounts', AccountsController::class);
+    Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
 
-        Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
-        Route::resource('transaction', AccountTransactionController::class);
-        Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
-        Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
-    });
+    Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
+    Route::resource('transaction', AccountTransactionController::class);
+    Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
+    Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
+});
 
-    Route::group(['prefix' => 'deposits'], function () {
-        Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
-        Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
-    });
-    Route::group(['prefix' => 'withdraws'], function () {
-        Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
-        Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
-    });
+Route::group(['prefix' => 'deposits'], function () {
+    Route::get('/deposit-create/{id}', [DepositController::class, 'create'])->name('deposit.create');
+    Route::post('/deposit-money/{id}', [DepositController::class, 'store'])->name('deposit.money');
+});
+Route::group(['prefix' => 'withdraws'], function () {
+    Route::get('/withdraw-create/{id}', [WithdrawController::class, 'create'])->name('withdraw.create');
+    Route::post('/withdraw-money/{id}', [WithdrawController::class, 'store'])->name('withdraw.money');
+});
 
-    Route::group(['prefix' => 'approvals'], function () {
-        Route::resource('pending-transaction', ApproveController::class);
+Route::group(['prefix' => 'approvals'], function () {
+    Route::resource('pending-transaction', ApproveController::class);
 
-        Route::get('share-transfer-approval/approve-transfer', [ApproveController::class, 'approveTransfer'])->name('share-transfer-approval.approve_transfer');
-        Route::post('/share-transfer/approve', [ApproveController::class, 'approveShareTransfer'])->name('share_transfer.approve');
+    Route::get('share-transfer-approval/approve-transfer', [ApproveController::class, 'approveTransfer'])->name('share-transfer-approval.approve_transfer');
+    Route::post('/share-transfer/approve', [ApproveController::class, 'approveShareTransfer'])->name('share_transfer.approve');
 
-        Route::get('/reverse-transaction/approve', [ApproveController::class, 'approveReverseTransaction'])->name('reverse-transaction.reverse_transaction');
-        Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
-        Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
-        Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
-        Route::get('approveAccounts', [ApproveController::class, 'approveAccounts'])->name('approveAccounts');
-        Route::post('/approvals/updateAccountStatus/{id}', [ApproveController::class, 'updateAccountStatus'])->name('transactions.updateAccountStatus');
-    });
+    Route::get('/reverse-transaction/approve', [ApproveController::class, 'approveReverseTransaction'])->name('reverse-transaction.reverse_transaction');
+    Route::get('approvals/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionView'])->name('reverse-transaction.view');
+    Route::post('/reverse-transactions/{id}', [ApproveController::class, 'reverseTransactionApprove'])->name('reverse-transaction');
+    Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
+    Route::get('approveAccounts', [ApproveController::class, 'approveAccounts'])->name('approveAccounts');
+    Route::post('/approvals/updateAccountStatus/{id}', [ApproveController::class, 'updateAccountStatus'])->name('transactions.updateAccountStatus');
+});
 
-    Route::group(['prefix' => 'hr-managment'], function () {
-        Route::resource('employee', HRController::class);
-    });
+Route::group(['prefix' => 'hr-managment'], function () {
+    Route::resource('employee', HRController::class);
+});
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
@@ -157,6 +172,10 @@ Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
     Route::get('/help-center', [SupportController::class, 'helpCenter'])->name('help.center');
     Route::get('/privacy-policy', [SupportController::class, 'privacyPolicy'])->name('privacy.policy');
     Route::get('/contact-us', [SupportController::class, 'contactUs'])->name('contact.us');
+});
+Route::prefix('fd_account/calculator')->name('calculator.')->group(function () {
+    Route::get('/create', [CalculatorController::class, 'create'])->name('create');
+    Route::post('/store', [CalculatorController::class, 'store'])->name('store');
 });
 
 Route::get('/dev/run/{action}', function ($action) {

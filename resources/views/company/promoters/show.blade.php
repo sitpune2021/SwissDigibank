@@ -11,9 +11,10 @@
 
         <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
 
-        <a title="DOWNLOAD 15G/ 15H"
+        <a href="{{ isset($promoter) ? route('form15g15h.download.promoter', $promoter->id) : '#' }}"
+            title="DOWNLOAD 15G/ 15H"
             class="btn-default rounded-md px-2 py-1 text-sm text-gray-700 bg-gray-200 hover:bg-gray-300">
-            <i class="fa fa-print"></i> DOWNLOAD 15G/ 15H
+            <i class="fa fa-download"></i> DOWNLOAD 15G/15H
         </a>
 
         <a href="{{ isset($promoter) ? route('form15g15h.create', ['promoter_id' => $promoter->id, 'type' => 'promoter']) : '#' }}"
