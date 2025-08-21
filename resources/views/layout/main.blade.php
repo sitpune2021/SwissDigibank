@@ -6,7 +6,9 @@
 </section>
 <main class="main-content has-sidebar">
     <div class="main-inner">
-        @include('layout.breadcrub')
+        @hasSection('page-title')
+            @include('layout.breadcrub')
+        @endif
         @yield('content')
     </div>
 </main>

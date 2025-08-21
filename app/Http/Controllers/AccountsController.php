@@ -33,9 +33,7 @@ class AccountsController extends Controller
             return view('saving-current-ac.accounts.index', compact('Accounts'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -79,9 +77,7 @@ class AccountsController extends Controller
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 
@@ -217,9 +213,7 @@ class AccountsController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
     /**
@@ -241,9 +235,7 @@ class AccountsController extends Controller
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
     public function show(string $id)
     {
@@ -259,9 +251,7 @@ class AccountsController extends Controller
             return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
+        } 
     }
 
 

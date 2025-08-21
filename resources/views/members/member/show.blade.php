@@ -14,7 +14,7 @@
     <div class="flex flex-wrap gap-3 mb-3 text-center">
         <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
 
-        <a href="{{ route('shares-holdings.create') }}"
+        <a href="{{ route('shareholding.transfer.form', $member->id) }}"
             class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
             ALLOCATE SHARES
         </a>
@@ -456,46 +456,46 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc->member_kyc_aadhaar_no }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_aadhaar_no??'' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Voter ID No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{ $member->kyc->member_kyc_voter_id_no }}</td>
+                                        {{ $member->kyc?->member_kyc_voter_id_no??'' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc->member_kyc_pan_no }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_pan_no??'' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc->member_kyc_ration_card_no }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_ration_card_no??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
-                                    <td class="px-6 py-2">{{ $member->kyc->member_kyc_meter_no }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ??''}}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CI No.</th>
-                                    <td class="px-6 py-2">{{ $member->kyc->member_kyc_ci_no }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no??'' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
-                                    <td class="px-6 py-2">{{ $member->kyc->member_kyc_ci_relation }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation??'' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">DL No</th>
-                                    <td class="px-6 py-2">{{ $member->kyc->member_kyc_dl_no }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no??'' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
-                                    {{-- <td class="px-6 py-2">{{$member->kyc->member_kyc_ci_no}}</td> --}}
+                                    {{-- <td class="px-6 py-2">{{$member->kyc?->member_kyc_ci_no??''}}</td> --}}
                                 </tr>
                                 <tr>
                                     <th class="px-6 py-2 font-semibold text-start">CKYC Updated At</th>
@@ -519,57 +519,57 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Name</th>
                                     <td class="flex items-center justify-between px-6 py-2">
-                                        <span>{{ $member->kyc->nominee_name }}</span>
+                                        <span>{{ $member->kyc?->nominee_name??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">DOB</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc->nominee_dob }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Gender</th>
                                     <td class="flex items-center justify-between px-6 py-2">
-                                        <span>{{ $member->kyc->nominee_gender }}</span>
+                                        <span>{{ $member->kyc?->nominee_gender??'' }}</span>
 
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Relation</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc->nominee_relation }}</span>
+                                        <span>{{ $member->kyc?->nominee_relation??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Mobile No.</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc->nominee_mobile_no }}</span>
+                                        <span>{{ $member->kyc?->nominee_mobile_no??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc->nominee_aadhaar_no }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Voter ID No. </th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc->nominee_voter_id_no }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc->nominee_pan_no }}</span>
+                                        <span>{{ $member->kyc?->nominee_pan_no ??''}}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Address</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc->nominee_address }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address??'' }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc->nominee_ration_card_no }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no??'' }}</span>
                                     </td>
                                 </tr>
                             </tbody>

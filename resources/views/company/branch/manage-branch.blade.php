@@ -90,13 +90,13 @@
                             <td class="px-2 py-5 text-center">
                                 <div>
                                     <a href="{{ route('branch.show', $branch->id) }}" class="text-primary hover:underline">
-                                        <p class="mb-1 font-medium">DEMO-{{ $branch->branch_name }}</p>
+                                        <p class="mb-1 font-medium">DEMO-{{ $branch?->branch_name??'' }}</p>
                                     </a>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 text-center">{{ $branch->branch_code }}</td>
-                            <td class="px-6 py-5 text-center">{{ $branch->city }}</td>
-                            <td class="px-6 py-5 text-center">{{ $branch->State?->name }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch?->branch_code??'' }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch?->city??'' }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch->State?->name??'' }}</td>
                             <td class="px-6 py-5 text-center">
                                 {{ $branch->open_date->format('D M d Y') }}
                             </td>

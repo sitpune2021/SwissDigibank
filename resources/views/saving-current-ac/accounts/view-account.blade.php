@@ -3,6 +3,9 @@
 @section('content')
 <script src="https://cdn.tailwindcss.com"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+    <x-alert />
+</div>
 
 <div class="min-h-screen p-4 font-sans text-sm bg-gray-100" x-data>
 

@@ -378,7 +378,7 @@
             <div class="col-span-2 flex gap-4 mt-4">
                 <button class="btn-primary" type="submit">{{ $method === 'PUT' ? 'Update' : 'Open' }} Account</button>
                 <button class="btn-outline" type="reset">Reset</button>
-                <button class="btn-outline" type="button" onclick="">Back</button>
+                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('accounts.index') }}'">Back</button>
             </div>
         </form>
     </div>
