@@ -30,6 +30,8 @@ use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\FDController;
+use App\Http\Controllers\MDSController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -116,6 +118,13 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('transaction', AccountTransactionController::class);
     Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
     Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
+});
+
+Route::group(['prefix' => 'fd-mis-schemes'], function () {
+    Route::resource('fd-mis-schemes', FDController::class);
+});
+Route::group(['prefix' => 'mds-rds-dds'], function () {
+    Route::resource('mds-rds-dds', MDSController::class);
 });
 
 Route::group(['prefix' => 'deposits'], function () {
