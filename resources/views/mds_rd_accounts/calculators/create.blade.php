@@ -241,44 +241,9 @@
 
         </div>
     </div>
+@endsection
 
-    <script>
-        document.getElementById("calculateBtn").addEventListener("click", function(e) {
-            e.preventDefault();
-
-            let amount = parseFloat(document.getElementById("amount").value) || 0;
-            let interestRate = parseFloat(document.getElementById("interestRate").value) || 0;
-            let tenure = parseFloat(document.getElementById("tenureNumber").value) || 0;
-            let bonusType = document.getElementById("bonusSelect").value;
-            let bonusValue = parseFloat(document.getElementById("bonusInput").value) || 0;
-
-            // Total Deposit
-            let totalDeposit = amount * tenure;
-
-            // ✅ Simple Interest Calculation (like NIDHI)
-            let timeInYears = tenure / 365;
-            let interestEarned = (totalDeposit * interestRate * timeInYears) / 100;
-
-            // Bonus calculation
-            let bonus = 0;
-            if (bonusType === "(%)") {
-                bonus = (totalDeposit * bonusValue) / 100;
-            } else if (bonusType === "FIXED") {
-                bonus = bonusValue;
-            }
-
-            // Final maturity amount
-            let maturity = totalDeposit + interestEarned + bonus;
-
-            // ✅ Show output
-            document.querySelector("#resultSection").classList.remove("hidden");
-            let rows = document.querySelectorAll("#resultSection tbody tr td:nth-child(2)");
-            rows[0].innerText = totalDeposit.toFixed(2);
-            rows[1].innerText = interestEarned.toFixed(2);
-            rows[2].innerText = bonus.toFixed(2);
-            rows[3].innerText = maturity.toFixed(2);
-        });
-    </script>
+@push('script')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const dateInput = document.getElementById("date2");
@@ -374,48 +339,361 @@
             resultSection.classList.remove('hidden'); // Show the hidden div
         });
     </script>
-    <script>
-        function calculateRDMaturity(userDeposit, userTenureDays, userInterestRate, userBonusRate) {
-            const dailyDeposit = userDeposit; // User input daily deposit
-            const tenureDays = userTenureDays; // User input tenure in days
-            const annualInterestRate = userInterestRate / 100; // Convert % to decimal
-            const bonusRate = userBonusRate / 100; // Convert % to decimal
-            const compoundingMonthsPerYear = 12;
-            const monthlyRate = annualInterestRate / compoundingMonthsPerYear;
 
-            let totalDeposit = 0;
-            let totalInterest = 0;
+    {{-- <script>
+        // ----- helpers -----
+        function toNum(v) {
+            if (typeof v === "number") return v;
+            if (typeof v === "string") {
+                const n = parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, ""));
+                return isNaN(n) ? 0 : n;
+            }
+            return 0;
+        }
 
-            for (let day = 0; day < tenureDays; day++) {
-                const daysRemaining = tenureDays - day;
-                const monthsRemaining = daysRemaining / 30; // Approximate months remaining
-                const interest = dailyDeposit * (Math.pow(1 + monthlyRate, monthsRemaining) - 1);
+        function formatINR(n) {
+            return n.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
 
-                totalInterest += interest;
-                totalDeposit += dailyDeposit;
+        // ----- core logic -----
+        function calcRD({
+            amount,
+            frequency,
+            tenureUnit,
+            tenureValue,
+            interestRate,
+            bonusRate
+        }) {
+            const amt = toNum(amount);
+            const freq = (frequency || "DAILY").toUpperCase().trim();
+            const unit = (tenureUnit || "DAYS").toUpperCase().trim();
+            const tVal = parseInt(toNum(tenureValue)) || 0;
+            const rate = toNum(interestRate) || 0;
+            const bonusPct = toNum(bonusRate) || 0;
+
+            // convert tenure to days
+            const unitMap = {
+                DAYS: 1,
+                WEEKS: 7,
+                MONTHS: 30,
+                YEARS: 365
+            };
+            const days = (unitMap[unit] || 1) * tVal;
+
+            // number of installments
+            let deposits = 0;
+            if (freq === "DAILY") deposits = days;
+            else if (freq === "WEEKLY") deposits = Math.floor(days / 7);
+            else if (freq === "MONTHLY") deposits = Math.floor(days / 30);
+            else if (freq === "YEARLY") deposits = Math.floor(days / 365);
+
+            const totalDeposit = amt * deposits;
+
+            // ----- interest logic -----
+            let interestEarned = 0;
+            let interestSteps = ""; // 👉 explanation store करायला
+
+            if (days >=365  && rate > 0) {
+                const years = days / 365;
+
+                if (days < 365) {
+                    // 👉 tenure < 1 year → pro-rata simple interest
+                    interestEarned = (totalDeposit * rate * days) / (100 * 365);
+                    interestSteps = `SI = (P × R × Days) / (100 × 365)
+                    = (${formatINR(totalDeposit)} × ${rate}% × ${days}) / (100 × 365)
+                    = ${formatINR(interestEarned)}`;
+                } else {
+                    // 👉 tenure >= 1 year → compounding approx
+                    interestEarned = totalDeposit * (rate / 100) * (years / 2);
+                    interestSteps = `Interest = P × R × (Years / 2)
+                = ${formatINR(totalDeposit)} × ${rate}% × (${years.toFixed(2)}/2)
+                = ${formatINR(interestEarned)}`;
+                }
             }
 
-            const bonus = totalDeposit * bonusRate;
-            const maturity = totalDeposit + totalInterest + bonus;
+            const bonus = totalDeposit * (bonusPct / 100);
+            const maturity = totalDeposit + interestEarned + bonus;
+
 
             return {
-                totalDeposit: totalDeposit.toFixed(2),
-                interestEarned: totalInterest.toFixed(2),
-                bonus: bonus.toFixed(2),
-                maturityAmount: maturity.toFixed(2)
+                totalDeposit,
+                interestEarned,
+                bonus,
+                maturity
             };
         }
 
-        // Example usage (replace with user inputs dynamically)
-        const userInput = {
-            deposit: 2000,
-            tenureDays: 30,
-            interestRate: 10, // in percent
-            bonusRate: 10 // in percent
-        };
+        // ----- DOM wrapper -----
+        document.getElementById("calculateBtn").addEventListener("click", () => {
+            const out = calcRD({
+                amount: document.getElementById("amount").value,
+                frequency: document.getElementById("frequency").value,
+                tenureUnit: document.getElementById("tenure_type").value,
+                tenureValue: document.getElementById("tenureNumber").value,
+                interestRate: document.getElementById("interestRate").value,
+                bonusRate: document.getElementById("bonusInput").value
+            });
 
-        const result = calculateRDMaturity(userInput.deposit, userInput.tenureDays, userInput.interestRate, userInput
-            .bonusRate);
-        console.log(result);
+            document.querySelector("#resultSection tr:nth-child(1) td:nth-child(2)").textContent = formatINR(out
+                .totalDeposit);
+            document.querySelector("#resultSection tr:nth-child(2) td:nth-child(2)").textContent = formatINR(out
+                .interestEarned);
+            document.querySelector("#resultSection tr:nth-child(3) td:nth-child(2)").textContent = formatINR(out
+                .bonus);
+            document.querySelector("#resultSection tr:nth-child(4) td:nth-child(2)").textContent = formatINR(out
+                .maturity);
+
+            document.getElementById("resultSection").classList.remove("hidden");
+        });
+    </script> --}}
+    {{-- <script>
+        // ----- helpers -----
+        function toNum(v) {
+            if (typeof v === "number") return v;
+            if (typeof v === "string") {
+                const n = parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, ""));
+                return isNaN(n) ? 0 : n;
+            }
+            return 0;
+        }
+
+        function formatINR(n) {
+            return n.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // ----- core logic -----
+        function calcRD({
+            amount,
+            frequency,
+            tenureUnit,
+            tenureValue,
+            interestRate,
+            compInterval,
+            bonusRate
+        }) {
+            const amt = toNum(amount);
+            const freq = (frequency || "DAILY").toUpperCase().trim();
+            const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
+            const tVal = parseInt(toNum(tenureValue)) || 0;
+            const rate = toNum(interestRate) || 0;
+            const bonusPct = toNum(bonusRate) || 0;
+            const comp = (compInterval || "MONTHLY").toUpperCase().trim();
+
+            // ---- Tenure to months ----
+            const unitMap = {
+                DAYS: tVal / 30,
+                WEEKS: tVal / 4,
+                MONTHS: tVal,
+                YEARS: tVal * 12
+            };
+            const months = unitMap[unit] || 0;
+
+            // ---- Frequency to number of deposits ----
+            let deposits = 0;
+            if (freq === "DAILY") deposits = months * 30;
+            else if (freq === "WEEKLY") deposits = months * 4;
+            else if (freq === "BI_WEEKLY") deposits = months * 2;
+            else if (freq === "MONTHLY") deposits = months;
+            else if (freq === "QUARTERLY") deposits = months / 3;
+            else if (freq === "HALF-YEARLY") deposits = months / 6;
+            else if (freq === "YEARLY") deposits = months / 12;
+
+            deposits = Math.floor(deposits);
+
+            const totalDeposit = amt * deposits;
+
+            // ---- Compounding period factor ----
+            let compMonths = 1;
+            if (comp === "MONTHLY") compMonths = 1;
+            else if (comp === "QUARTERLY") compMonths = 3;
+            else if (comp === "HALF-YEARLY") compMonths = 6;
+            else if (comp === "YEARLY") compMonths = 12;
+
+            const r = rate / 100;
+
+            // ---- Interest Calculation (recurring deposits with compounding) ----
+            let maturity = 0;
+            for (let i = 1; i <= deposits; i++) {
+                // months left after each deposit
+                let monthsLeft = months - (i - 1) * (12 / (12 / (months / deposits)));
+                let n = Math.floor(monthsLeft / compMonths);
+                let effRate = Math.pow(1 + r / (12 / compMonths), n);
+                maturity += amt * effRate;
+            }
+
+            const interestEarned = maturity - totalDeposit;
+            const bonus = totalDeposit * (bonusPct / 100);
+            const maturityFinal = maturity + bonus;
+
+            return {
+                totalDeposit,
+                interestEarned,
+                bonus,
+                maturity: maturityFinal
+            };
+        }
+
+        // ----- DOM wrapper -----
+        document.getElementById("calculateBtn").addEventListener("click", () => {
+            const out = calcRD({
+                amount: document.getElementById("amount").value,
+                frequency: document.getElementById("frequency").value,
+                tenureUnit: document.getElementById("tenure_type").value,
+                tenureValue: document.getElementById("tenureNumber").value,
+                interestRate: document.getElementById("interestRate").value,
+                compInterval: document.getElementById("compInterval").value,
+                bonusRate: document.getElementById("bonusInput").value
+            });
+
+            document.querySelector("#resultSection tr:nth-child(1) td:nth-child(2)").textContent = formatINR(out
+                .totalDeposit);
+            document.querySelector("#resultSection tr:nth-child(2) td:nth-child(2)").textContent = formatINR(out
+                .interestEarned);
+            document.querySelector("#resultSection tr:nth-child(3) td:nth-child(2)").textContent = formatINR(out
+                .bonus);
+            document.querySelector("#resultSection tr:nth-child(4) td:nth-child(2)").textContent = formatINR(out
+                .maturity);
+
+            document.getElementById("resultSection").classList.remove("hidden");
+        });
+    </script> --}}
+    <script>
+        // ----- helpers -----
+        function toNum(v) {
+            if (typeof v === "number") return v;
+            if (typeof v === "string") {
+                const n = parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, ""));
+                return isNaN(n) ? 0 : n;
+            }
+            return 0;
+        }
+
+        function formatINR(n) {
+            return n.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // ----- core logic -----
+        function calcRD({
+            amount,
+            frequency,
+            tenureUnit,
+            tenureValue,
+            interestRate,
+            compInterval,
+            bonusRate
+        }) {
+            const amt = toNum(amount);
+            const freq = (frequency || "DAILY").toUpperCase().trim();
+            const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
+            const tVal = parseInt(toNum(tenureValue)) || 0;
+            const rate = toNum(interestRate) || 0;
+            const bonusPct = toNum(bonusRate) || 0;
+            const comp = (compInterval || "MONTHLY").toUpperCase().trim();
+
+            // ---- deposits calculation ----
+            let deposits = 0;
+            if (freq === "DAILY") {
+                if (unit === "DAYS") deposits = tVal;
+                else if (unit === "WEEKS") deposits = tVal * 7;
+                else if (unit === "MONTHS") deposits = tVal * 30;
+                else if (unit === "YEARS") deposits = tVal * 365;
+            } else if (freq === "WEEKLY") {
+                if (unit === "DAYS") deposits = tVal;
+                else if (unit === "WEEKS") deposits = tVal;
+                else if (unit === "MONTHS") deposits = tVal * 4;
+                else if (unit === "YEARS") deposits = tVal * 52;
+
+            } else if (freq === "BI_WEEKLY") {
+                if (unit === "DAYS") deposits = Math.floor(tVal / 14);
+                else if (unit === "WEEKS") deposits = Math.floor(tVal / 2);
+                else if (unit === "MONTHS") deposits = tVal * 2;
+                else if (unit === "YEARS") deposits = tVal * 26;
+            } else if (freq === "MONTHLY") {
+                if (unit === "DAYS") deposits = Math.floor(tVal / 30);
+                else if (unit === "WEEKS") deposits = Math.floor(tVal / 4);
+                else if (unit === "MONTHS") deposits = tVal;
+                else if (unit === "YEARS") deposits = tVal * 12;
+            } else if (freq === "QUARTERLY") {
+                if (unit === "MONTHS") deposits = Math.floor(tVal / 3);
+                else if (unit === "YEARS") deposits = tVal * 4;
+            } else if (freq === "HALF-YEARLY") {
+                if (unit === "MONTHS") deposits = Math.floor(tVal / 6);
+                else if (unit === "YEARS") deposits = tVal * 2;
+            } else if (freq === "YEARLY") {
+                if (unit === "MONTHS") deposits = Math.floor(tVal / 12);
+                else if (unit === "YEARS") deposits = tVal;
+            }
+
+            const totalDeposit = amt * deposits;
+
+            // ---- compounding months ----
+            let compMonths = 1;
+            if (comp === "MONTHLY") compMonths = 1;
+            else if (comp === "QUARTERLY") compMonths = 3;
+            else if (comp === "HALF-YEARLY") compMonths = 6;
+            else if (comp === "YEARLY") compMonths = 12;
+
+            const r = rate / 100;
+
+            // ---- Interest Calculation ----
+            // total tenure in months
+            let months = 0;
+            if (unit === "DAYS") months = tVal / 30;
+            else if (unit === "WEEKS") months = (tVal * 7) / 30; 
+            else if (unit === "MONTHS") months = tVal;
+            else if (unit === "YEARS") months = tVal * 12;
+
+            let maturity = 0;
+            for (let i = 1; i <= deposits; i++) {
+                let monthsLeft = months - (i - 1) * (months / deposits);
+                let n = Math.floor(monthsLeft / compMonths);
+                let effRate = Math.pow(1 + r / (12 / compMonths), n);
+                maturity += amt * effRate;
+            }
+
+            const interestEarned = maturity - totalDeposit;
+            const bonus = totalDeposit * (bonusPct / 100);
+            const maturityFinal = maturity + bonus;
+
+            return {
+                totalDeposit,
+                interestEarned,
+                bonus,
+                maturity: maturityFinal
+            };
+        }
+
+            // ----- DOM wrapper -----
+            document.getElementById("calculateBtn").addEventListener("click", () => {
+                const out = calcRD({
+                    amount: document.getElementById("amount").value,
+                    frequency: document.getElementById("frequency").value,
+                    tenureUnit: document.getElementById("tenure_type").value,
+                    tenureValue: document.getElementById("tenureNumber").value,
+                    interestRate: document.getElementById("interestRate").value,
+                    compInterval: document.getElementById("compInterval").value,
+                    bonusRate: document.getElementById("bonusInput").value
+                });
+
+                document.querySelector("#resultSection tr:nth-child(1) td:nth-child(2)").textContent = formatINR(out
+                    .totalDeposit);
+                document.querySelector("#resultSection tr:nth-child(2) td:nth-child(2)").textContent = formatINR(out
+                    .interestEarned);
+                document.querySelector("#resultSection tr:nth-child(3) td:nth-child(2)").textContent = formatINR(out
+                    .bonus);
+                document.querySelector("#resultSection tr:nth-child(4) td:nth-child(2)").textContent = formatINR(out
+                    .maturity);
+
+                document.getElementById("resultSection").classList.remove("hidden");
+            });
     </script>
-@endsection
+@endpush
