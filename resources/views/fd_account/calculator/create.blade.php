@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('page-title', 'FD/ MIS Calculator')
 
 @section('content')
     <div class="main-inner">
@@ -23,72 +24,43 @@
         @endif
 
         <div class="box mb-4 xxxl:mb-6">
-            <form id="companyForm" action="{{ route('calculator.store') }}" method="POST"
-                class="grid grid-cols-2 gap-4 xxxl:gap-6">
-                @csrf
+            <form id="companyForm" class="grid grid-cols-2 gap-4 xxxl:gap-6"
+                onsubmit="event.preventDefault(); calculateFD();">
+
                 {{-- Open Date --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="open_date" class="md:text-lg font-medium block mb-4">
-                        Open Date <span class="text-red-500">*</span>
-                    </label>
-                    <input type="date" name="open_date" id="date"
-                        value="{{ old('open_date', \Carbon\Carbon::today()->toDateString()) }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                    @error('open_date')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
+                    <label for="open_date" class="md:text-lg font-medium block mb-4">Open Date <span
+                            class="text-red-500">*</span></label>
+                    <input type="date" name="open_date" id="open_date"
+                        value="{{ \Carbon\Carbon::today()->toDateString() }}"
+                        class="w-full text-sm border rounded px-3 py-2">
                 </div>
 
                 {{-- Amount --}}
                 <div class="col-span-2 md:col-span-1">
                     <label for="amount" class="md:text-lg font-medium block mb-4">Amount ( ₹ ) <span
                             class="text-red-500">*</span></label>
-                    <input type="number" name="amount" id="amount" value="{{ old('amount') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter amount" oninput="updateAmountInWords()">
+                    <input type="number" name="amount" id="amount" class="w-full text-sm border rounded px-3 py-2"
+                        placeholder="Enter amount" oninput="calculateFD()">
                     <div id="amount-in-words" class="text-xs text-red-500 mt-1"></div>
-                    @error('amount')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
                 </div>
 
                 {{-- Interest Payout Type --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="interest_payout_type" class="md:text-lg font-medium block mb-4">
-                        Interest Payout Type <span class="text-red-500">*</span>
-                    </label>
+                    <label for="interest_payout_type" class="md:text-lg font-medium block mb-4">Interest Payout Type <span
+                            class="text-red-500">*</span></label>
                     <select name="interest_payout_type" id="interest_payout_type"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="" disabled {{ old('interest_payout_type') ? '' : 'selected' }}>Select Interest
-                            Payout Cycle</option>
-                        <optgroup label="Cumulative (Paid at Maturity)">
-                            <option value="cumulative_yearly"
-                                {{ old('interest_payout_type') == 'cumulative_yearly' ? 'selected' : '' }}>Cumulative Yearly
-                            </option>
-                            <option value="cumulative_half_yearly"
-                                {{ old('interest_payout_type') == 'cumulative_half_yearly' ? 'selected' : '' }}>Cumulative
-                                Half Yearly</option>
-                            <option value="cumulative_quarterly"
-                                {{ old('interest_payout_type') == 'cumulative_quarterly' ? 'selected' : '' }}>Cumulative
-                                Quarterly</option>
-                            <option value="cumulative_monthly"
-                                {{ old('interest_payout_type') == 'cumulative_monthly' ? 'selected' : '' }}>Cumulative
-                                Monthly</option>
-                        </optgroup>
-                        <optgroup label="Periodic Payout (Paid during tenure)">
-                            <option value="monthly" {{ old('interest_payout_type') == 'monthly' ? 'selected' : '' }}>
-                                Monthly</option>
-                            <option value="quarterly" {{ old('interest_payout_type') == 'quarterly' ? 'selected' : '' }}>
-                                Quarterly</option>
-                            <option value="half_yearly"
-                                {{ old('interest_payout_type') == 'half_yearly' ? 'selected' : '' }}>Half Yearly</option>
-                            <option value="yearly" {{ old('interest_payout_type') == 'yearly' ? 'selected' : '' }}>Yearly
-                            </option>
-                        </optgroup>
+                        class="w-full text-sm border rounded px-3 py-2" onchange="calculateFD()">
+                        <option value="">Select Interest Payout Cycle</option>
+                        <option value="CUMULATIVE_YEARLY">Cumulative Yearly</option>
+                        <option value="CUMULATIVE_HALF_YEARLY">Cumulative Half Yearly</option>
+                        <option value="CUMULATIVE_QUARTERLY">Cumulative Quarterly</option>
+                        <option value="CUMULATIVE_MONTHLY">Cumulative Monthly</option>
+                        <option value="MONTHLY">Monthly</option>
+                        <option value="QUARTERLY">Quarterly</option>
+                        <option value="HALF_YEARLY">Half Yearly</option>
+                        <option value="YEARLY">Yearly</option>
                     </select>
-                    @error('interest_payout_type')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
                 </div>
 
                 {{-- Annual Interest Rate --}}
@@ -96,236 +68,212 @@
                     <label for="annual_interest_rate" class="md:text-lg font-medium block mb-4">Annual Interest Rate (%)
                         <span class="text-red-500">*</span></label>
                     <input type="number" step="0.01" name="annual_interest_rate" id="annual_interest_rate"
-                        value="{{ old('annual_interest_rate') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Annual Interest Rate (%)">
-                    @error('annual_interest_rate')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
+                        class="w-full text-sm border rounded px-3 py-2" placeholder="Enter Rate" oninput="calculateFD()">
                 </div>
 
+                {{-- Tenure --}}
                 <div class="col-span-2 md:col-span-1">
                     <label class="md:text-lg font-medium block mb-4">Tenure Period <span
                             class="text-red-500">*</span></label>
                     <div class="flex gap-3">
-                        <input type="number" name="tenure_year" placeholder="Year" value="{{ old('tenure_year') }}"
-                            class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-1 py-1 md:py-3"
-                            oninput="calculateTenure()">
-                        <input type="number" name="tenure_month" placeholder="Month" value="{{ old('tenure_month') }}"
-                            class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-1 py-1 md:py-3"
-                            oninput="calculateTenure()">
-                        <input type="number" name="tenure_day" placeholder="Days" value="{{ old('tenure_day') }}"
-                            class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-1 py-1 md:py-3"
-                            oninput="calculateTenure()">
+                        <input type="number" id="tenure_year" placeholder="Year"
+                            class="w-1/3 text-sm border rounded px-2 py-1" oninput="calculateFD()">
+                        <input type="number" id="tenure_month" placeholder="Month"
+                            class="w-1/3 text-sm border rounded px-2 py-1" oninput="calculateFD()">
+                        <input type="number" id="tenure_day" placeholder="Days"
+                            class="w-1/3 text-sm border rounded px-2 py-1" oninput="calculateFD()">
                     </div>
-                    @if ($errors->has('tenure_year') || $errors->has('tenure_month') || $errors->has('tenure_day'))
-                        <span class="text-red-500 text-xs">Please enter a valid tenure (year/month/day).</span>
-                    @endif
                 </div>
 
                 {{-- Bonus --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="bonus" class="md:text-lg font-medium block mb-4">Bonus <span
-                            class="text-red-500">*</span></label>
+                    <label for="bonus" class="md:text-lg font-medium block mb-4">Bonus</label>
                     <div class="flex gap-3 items-center">
-                        <select name="bonus_type" id="bonus_type"
-                            class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 py-2 md:py-3">
-                            <option value="%" {{ old('bonus_type') == '%' ? 'selected' : '' }}>(%)</option>
-                            <option value="fixed" {{ old('bonus_type') == 'fixed' ? 'selected' : '' }}>FIXED</option>
+                        <select id="bonus_type" class="w-1/3 text-sm border rounded px-2 py-1" onchange="calculateFD()">
+                            <option value="%">%</option>
+                            <option value="fixed">Fixed</option>
                         </select>
-
-                        <div class="relative w-full">
-                            <input type="number" step="0.01" name="bonus" id="bonus"
-                                value="{{ old('bonus') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 pr-10"
-                                placeholder="Enter Bonus">
-                            <i class="fa fa-info-circle text-gray-500 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
-                                onclick="document.getElementById('bonusModal').classList.remove('hidden')"
-                                title="Bonus Information"></i>
-                        </div>
+                        <input type="number" id="bonus" step="0.01" placeholder="Bonus"
+                            class="w-full text-sm border rounded px-2 py-1" oninput="calculateFD()">
                     </div>
-
-                    @error('bonus')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
                 </div>
 
                 {{-- TDS Deduction --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">TDS Deduction <span
-                            class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-6">
-                        <label class="inline-flex items-center">
-                            <input type="radio" name="tds_deduction" value="1"
-                                {{ old('tds_deduction') === '1' ? 'checked' : '' }}
-                                class="form-radio text-primary focus:ring-primary" />
-                            <span class="ml-2 text-sm">Yes</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="radio" name="tds_deduction" value="0"
-                                {{ old('tds_deduction', '0') === '0' ? 'checked' : '' }}
-                                class="form-radio text-primary focus:ring-primary" />
-                            <span class="ml-2 text-sm">No</span>
-                        </label>
+                    <label class="md:text-lg font-medium block mb-4">TDS Deduction</label>
+                    <div class="flex gap-4">
+                        <label><input type="radio" name="tds_deduction" value="1" onchange="calculateFD()">
+                            Yes</label>
+                        <label><input type="radio" name="tds_deduction" value="0" checked
+                                onchange="calculateFD()">
+                            No</label>
                     </div>
-                    @error('tds_deduction')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
                 </div>
 
-                {{-- Senior Citizen --}}
-                <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">Senior Citizen <span
-                            class="text-red-500">*</span></label>
-                    <div class="flex items-center">
-                        <input type="hidden" name="is_senior_citizen" value="0">
-                        <input type="checkbox" name="is_senior_citizen" id="is_senior_citizen" value="1"
-                            {{ old('is_senior_citizen') == '1' ? 'checked' : '' }}
-                            class="form-checkbox text-primary focus:ring-primary" />
-                        <label for="is_senior_citizen" class="ml-2 text-sm">Yes</label>
-                    </div>
-                    @error('is_senior_citizen')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                {{-- Submit Button --}}
-                <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                    <button class="btn-primary" type="submit">Calculate</button>
+                {{-- Submit --}}
+                <div class="col-span-2 mt-4">
+                    <button type="submit" class="btn-primary px-4 py-2 bg-blue-600 text-white rounded">Calculate</button>
                 </div>
             </form>
+            <div id="summary" class="mt-8 hidden p-4 border rounded bg-white shadow"></div>
+            <div id="result" class="mt-4 p-4 border rounded"></div>
+            <div id="output"></div>
 
-            <div x-data="{ activeTab: 'tab_result' }" class="col-xs-12">
-                <div class="bg-white rounded-lg shadow-md">
-                    <ul class="flex border-b">
-                        <!-- Final Payment Tab -->
-                        <li :class="{ 'border-b-2 border-blue-500': activeTab === 'tab_result' }" class="cursor-pointer">
-                            <a @click="activeTab = 'tab_result'"
-                                class="px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-500">FINAL PAYMENT</a>
-                        </li>
-                        <!-- 1 Year Tab -->
-                        <li :class="{ 'border-b-2 border-blue-500': activeTab === 'tab_0' }" class="cursor-pointer">
-                            <a @click="activeTab = 'tab_0'"
-                                class="px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-500">1 Year</a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content mt-4">
-                        <!-- FINAL PAYMENT TAB -->
-                        <div x-show="activeTab === 'tab_result'">
-                            @if (session('fdStatement'))
-                                @php
-                                    $fd = session('fdStatement');
-
-                                    function formatINR($amount)
-                                    {
-                                        return 'INR ' .
-                                            (floor($amount) == $amount
-                                                ? number_format($amount, 0)
-                                                : number_format($amount, 2));
-                                    }
-                                @endphp
-                                <!-- Full Width Table -->
-                                <table class="min-w-full table-auto bg-lgrey text-gray-600">
-                                    <tbody>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">Principal Amount (A)</td>
-                                            <td class="px-6 py-3 text-right">{{ formatINR($fd->principal_amount) }}</td>
-                                        </tr>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">Interest Earned (B)</td>
-                                            <td class="px-6 py-3 text-right">{{ formatINR($fd->interest_earned) }}</td>
-                                        </tr>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">TDS Deducted (C)</td>
-                                            <td class="px-6 py-3 text-right">{{ formatINR($fd->tds_deducted) }}</td>
-                                        </tr>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">Net Interest Earned (D = B - C)</td>
-                                            <td class="px-6 py-3 text-right">{{ formatINR($fd->net_interest_earned) }}
-                                            </td>
-                                        </tr>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">Maturity Bonus Amount (E)</td>
-                                            <td class="px-6 py-3 text-right">INR
-                                                {{ number_format(session('fdStatement')->maturity_bonus_amount, 2) }}
-                                            </td>
-                                        </tr>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">Maturity Amount (A + D + E)</td>
-                                            <td class="px-6 py-3 text-right ">
-                                                {{ formatINR($fd->maturity_amount) }}</td>
-                                        </tr>
-                                        <tr class="border-t">
-                                            <td class="px-6 py-3 font-semibold">Maturity Date</td>
-                                            <td class="px-6 py-3 text-right">
-                                                {{ \Carbon\Carbon::parse($fd->maturity_date)->format('d/m/Y') }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            @endif
-                        </div>
-
-                        <!-- 1 YEAR TAB -->
-                        <div x-show="activeTab === 'tab_0'">
-                            @if (session('interestPeriods'))
-                                @php
-                                    $interestPeriods = session('interestPeriods');
-                                @endphp
-
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full  text-center">
-                                        <thead class="" style="background-color:#3c8dbc; color:white;">
-                                            <tr>
-                                                <th class="px-4 py-2 font-semibold">PERIOD</th>
-                                                <th class="px-4 py-2 font-semibold">DAYS</th>
-                                                <th class="px-4 py-2 font-semibold">PRINCIPAL</th>
-                                                <th class="px-4 py-2 font-semibold">INTEREST (A)</th>
-                                                <th class="px-4 py-2 font-semibold">TDS (B)</th>
-                                                <th class="px-4 py-2 font-semibold">NET INTEREST (A - B)</th>
-                                                <th class="px-4 py-2 font-semibold">NET INTEREST on DUE DATE</th>
-                                                <th class="px-4 py-2 font-semibold">PRINCIPAL AT EOY</th>
-                                                <th class="px-4 py-2 font-semibold">DUE BY</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($interestPeriods as $period)
-                                                <tr class="border-t">
-                                                    <td class="px-4 py-2">
-                                                        {{ \Carbon\Carbon::parse($period['period_from'])->format('d/m/Y') }}
-                                                        -
-                                                        {{ \Carbon\Carbon::parse($period['period_to'])->format('d/m/Y') }}
-                                                    </td>
-                                                    <td class="px-4 py-2">{{ $period['days'] }}</td>
-                                                    <td class="px-4 py-2">{{ number_format($period['principal'], 2) }}
-                                                    </td>
-                                                    <td class="px-4 py-2">{{ number_format($period['interest'], 2) }}</td>
-                                                    <td class="px-4 py-2">{{ number_format($period['tds'], 2) }}</td>
-                                                    <td class="px-4 py-2">{{ number_format($period['net_interest'], 2) }}
-                                                    </td>
-                                                    <td class="px-4 py-2">
-                                                        {{ isset($period['cumulative_net_interest']) ? number_format($period['cumulative_net_interest'], 2) : '-' }}
-                                                    </td>
-                                                    <td class="px-4 py-2">
-                                                        {{ isset($period['principal_at_eoy']) ? number_format($period['principal_at_eoy'], 2) : '-' }}
-                                                    </td>
-                                                    <td class="px-4 py-2">
-                                                        {{ isset($period['due_by']) ? \Carbon\Carbon::parse($period['due_by'])->format('d/m/Y') : '-' }}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="schedule" class="mt-8 hidden p-4 border rounded bg-white shadow"></div>
         </div>
+    </div>
+    </div>
+    </div>
     </div>
 @endsection
 
+@push('script')
+    <script>
+        function calculateFD() {
+            const amount = parseFloat(document.getElementById("amount").value) || 0;
+            const annualRate = parseFloat(document.getElementById("annual_interest_rate").value) || 0;
+            const openDate = new Date(document.getElementById("open_date").value);
+            const tenureYears = parseInt(document.getElementById("tenure_year").value) || 0;
+            const tenureMonths = parseInt(document.getElementById("tenure_month").value) || 0;
+            const tenureDays = parseInt(document.getElementById("tenure_day").value) || 0;
+            const bonusType = document.getElementById("bonus_type").value;
+            const bonusValue = parseFloat(document.getElementById("bonus").value) || 0;
+            const tds = document.querySelector("input[name='tds_deduction']:checked").value === "1";
+
+            // maturity date
+            let maturityDate = new Date(openDate);
+            maturityDate.setFullYear(maturityDate.getFullYear() + tenureYears);
+            maturityDate.setMonth(maturityDate.getMonth() + tenureMonths);
+            maturityDate.setDate(maturityDate.getDate() + tenureDays);
+
+            // interest earned (simple interest for now)
+            const totalMonths = tenureYears * 12 + tenureMonths + tenureDays / 30;
+            const interestEarned = (amount * annualRate * (totalMonths / 12)) / 100;
+
+            // TDS
+            const tdsDeducted = tds ? interestEarned * 0.1 : 0; // 10% TDS
+            const netInterest = interestEarned - tdsDeducted;
+
+            // bonus
+            let bonusAmt = 0;
+            if (bonusType === "%") {
+                bonusAmt = (amount * bonusValue) / 100;
+            } else {
+                bonusAmt = bonusValue;
+            }
+
+            // maturity
+            const maturityAmount = amount + netInterest + bonusAmt;
+            // summary
+            const summaryHtml = `
+        <h3 class="text-lg font-semibold mb-2">Maturity Summary</h3>
+        <table class="table-auto border w-full text-sm">
+            <tr><td>Principal Amount (A)</td><td>₹ ${amount.toFixed(2)}</td></tr>
+            <tr><td>Interest Earned (B)</td><td>₹ ${interestEarned.toFixed(2)}</td></tr>
+            <tr><td>TDS Deducted (C)</td><td>₹ ${tdsDeducted.toFixed(2)}</td></tr>
+            <tr><td>Net Interest Earned (D = B - C)</td><td>₹ ${netInterest.toFixed(2)}</td></tr>
+            <tr><td>Maturity Bonus Amount (E)</td><td>₹ ${bonusAmt.toFixed(2)}</td></tr>
+            <tr><td><b>Maturity Amount (A + D + E)</b></td><td><b>₹ ${maturityAmount.toFixed(2)}</b></td></tr>
+            <tr><td>Maturity Date</td><td>${maturityDate.toLocaleDateString()}</td></tr>
+        </table>
+    `;
+
+            // -------- Financial Year–wise Schedule --------
+            let schedulerHtml = `
+<h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
+<table class="table-auto border w-full text-sm">
+    <thead>
+        <tr>
+            <th class="border px-2 py-1">Period</th>
+            <th class="border px-2 py-1">Days</th>
+            <th class="border px-2 py-1">Principal (A)</th>
+            <th class="border px-2 py-1">Interest</th>
+            <th class="border px-2 py-1">TDS (B)</th>
+            <th class="border px-2 py-1">Net Interest (A - B)</th>
+            <th class="border px-2 py-1">Net Interest on Due Date</th>
+            <th class="border px-2 py-1">Principal EOY</th>
+            <th class="border px-2 py-1">Due By</th>
+        </tr>
+    </thead>
+    <tbody>
+`;
+
+            let start = new Date(openDate);
+            let end = new Date(maturityDate);
+            let principalEOY = amount;
+            let cumulativeNetInterest = 0;
+
+            // Loop until maturity
+            while (start < end) {
+                // 1st period: StartDate → 31st March (same FY)
+                let fyEnd = new Date(start.getFullYear() + (start.getMonth() >= 3 ? 1 : 0), 2, 31);
+                if (fyEnd > end) fyEnd = new Date(end); // don’t cross maturity
+
+                let days1 = Math.floor((fyEnd - start) / (1000 * 60 * 60 * 24)) + 1;
+                let interest1 = (principalEOY * annualRate * (days1 / 365)) / 100;
+                let tds1 = tds ? interest1 * 0.1 : 0;
+                let net1 = interest1 - tds1;
+                cumulativeNetInterest += net1;
+
+                schedulerHtml += `
+        <tr>
+            <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
+            <td class="border px-2 py-1">${days1}</td>
+            <td class="border px-2 py-1">${principalEOY}</td>
+            <td class="border px-2 py-1">${interest1.toFixed(0)}</td>
+            <td class="border px-2 py-1">${tds1.toFixed(1)}</td>
+            <td class="border px-2 py-1">${net1.toFixed(0)}</td>
+            <td class="border px-2 py-1"></td>
+            <td class="border px-2 py-1"></td>
+            <td class="border px-2 py-1"></td>
+        </tr>
+    `;
+
+                // 2nd period: 1st April → Next Anniversary Date (or Maturity)
+                let nextAnniv = new Date(openDate);
+                nextAnniv.setFullYear(nextAnniv.getFullYear() + 1);
+                let secondEnd = (nextAnniv < end) ? nextAnniv : end;
+
+                let fyStart = new Date(fyEnd);
+                fyStart.setDate(fyStart.getDate() + 1);
+
+                if (fyStart <= secondEnd) {
+                    let days2 = Math.floor((secondEnd - fyStart) / (1000 * 60 * 60 * 24)) + 1;
+                    let interest2 = (principalEOY * annualRate * (days2 / 365)) / 100;
+                    let tds2 = tds ? interest2 * 0.1 : 0;
+                    let net2 = interest2 - tds2;
+                    cumulativeNetInterest += net2;
+
+                    schedulerHtml += `
+            <tr>
+                <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
+                <td class="border px-2 py-1">${days2}</td>
+                <td class="border px-2 py-1">${principalEOY}</td>
+                <td class="border px-2 py-1">${interest2.toFixed(0)}</td>
+                <td class="border px-2 py-1">${tds2.toFixed(1)}</td>
+                <td class="border px-2 py-1">${net2.toFixed(0)}</td>
+                <td class="border px-2 py-1">${cumulativeNetInterest.toFixed(0)}</td>
+                <td class="border px-2 py-1">${principalEOY}</td>
+                <td class="border px-2 py-1">${secondEnd.toLocaleDateString()}</td>
+            </tr>
+        `;
+                    start = new Date(secondEnd);
+                    start.setDate(start.getDate() + 1);
+                } else {
+                    break;
+                }
+            }
+
+            schedulerHtml += "</tbody></table>";
+
+            // render
+            document.getElementById("output").innerHTML =
+                "<div class='mb-6'>" + summaryHtml + "</div>" +
+                "<div>" + schedulerHtml + "</div>";
+        }
+    </script>
+@endpush
+{{-- 
 <script>
     function numberToWords(n) {
         const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
@@ -356,9 +304,6 @@
     }
     document.getElementById('amount').addEventListener('input', updateAmountInWords);
 </script>
-
-
-
 <script>
     function showBonusInfo() {
         document.getElementById('bonusModal').classList.remove('hidden');
@@ -377,7 +322,6 @@
         }
     }, 5000);
 </script>
-
 <script>
     // JavaScript for dynamically switching tabs
     document.querySelectorAll('a[data-toggle="tab"]').forEach(tab => {
@@ -392,10 +336,4 @@
             }
         });
     });
-</script>
-
-
-
-
-
-
+</script> --}}
