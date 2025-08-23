@@ -8,7 +8,7 @@
     ' .
     $member['member_info_first_name'] .
     ' Members')
-    : 'Add Members')
+    : '')
 
 @section('content')
     @include('fields.errormessage')
@@ -320,18 +320,13 @@
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (isset($method))
                     <button class="btn-primary" type="submit">
-                        {{ $method === 'PUT' ? 'Update' : 'Save' }} Member
+                        {{ $method === 'PUT' ? 'Update' : 'Upload' }} 
                     </button>
                 @endif
                 <a href="{{ route('member.index') }}" class="btn-outline inline-flex items-center justify-center">
                     Back
                 </a>
-                <button class="btn-outline" type="reset">
-                    Reset
-                </button>
             </div>
         </form>
-
-
     </div>
 @endsection

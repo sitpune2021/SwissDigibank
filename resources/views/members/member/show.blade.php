@@ -456,42 +456,42 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc?->member_kyc_aadhaar_no??'' }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_aadhaar_no ?? '' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Voter ID No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{ $member->kyc?->member_kyc_voter_id_no??'' }}</td>
+                                        {{ $member->kyc?->member_kyc_voter_id_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc?->member_kyc_pan_no??'' }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_pan_no ?? '' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc?->member_kyc_ration_card_no??'' }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_ration_card_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ??''}}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CI No.</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no??'' }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation??'' }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">DL No</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no??'' }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
@@ -519,57 +519,57 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Name</th>
                                     <td class="flex items-center justify-between px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_name??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_name ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">DOB</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Gender</th>
                                     <td class="flex items-center justify-between px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_gender??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_gender ?? '' }}</span>
 
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Relation</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_relation??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_relation ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Mobile No.</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_mobile_no??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_mobile_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Voter ID No. </th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_pan_no ??''}}</span>
+                                        <span>{{ $member->kyc?->nominee_pan_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Address</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no ?? '' }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -593,63 +593,103 @@
 
                     <!-- Content -->
                     <div x-show="open" x-transition class="bg-white">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-sm border">
                             <tbody>
+                                {{-- Photo --}}
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
-                                    <td class="flex items-center justify-between px-6 py-2 text-start">
-                                        {{-- <a target="_blank" href="{{ asset($member->photo) }}"
-                                        class="text-blue-600 hover:underline">Show</a> --}}
+                                    <td class="px-6 py-2 text-start">
+                                        @php $photo = $documents->where('document_category', 'photo')->first(); @endphp
+                                        @if ($photo && $photo->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $photo->file_path) }}','Photo')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
 
+                                {{-- Signature --}}
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="https://nidhi-stag.s3.amazonaws.com/uploads/company/1/members/39/documents/photo/fm.php"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <td class="px-6 py-2 text-start">
+                                        @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
+                                        @if ($signature && $signature->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $signature->file_path) }}','Signature')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
-                                <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Id Proof (Passport)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
 
-                                    </span> --}}
+                                {{-- ID Proof --}}
+                                <tr class="border-b">
+                                    <th class="px-6 py-2 font-semibold text-start">ID Proof (Passport)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $idProof = $documents->where('document_category', 'id_proof')->first(); @endphp
+                                        @if ($idProof && $idProof->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $idProof->file_path) }}','ID Proof')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- ID Proof Back --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Id Proof Back (Aadhar Card)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">ID Proof Back (Aadhar Card)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $idProofBack = $documents->where('document_category', 'id_proof_back')->first(); @endphp
+                                        @if ($idProofBack && $idProofBack->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $idProofBack->file_path) }}','ID Proof Back')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- Address Proof --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport) </th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $addressProof = $documents->where('document_category', 'address_proof')->first(); @endphp
+                                        @if ($addressProof && $addressProof->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $addressProof->file_path) }}','Address Proof')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- Address Proof Back --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card) </th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $addressProofBack = $documents->where('document_category', 'address_proof_back')->first(); @endphp
+                                        @if ($addressProofBack && $addressProofBack->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $addressProofBack->file_path) }}','Address Proof Back')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- PAN --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Pan Number (Pan)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $pan = $documents->where('document_category', 'pan')->first(); @endphp
+                                        @if ($pan && $pan->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $pan->file_path) }}','PAN')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -1121,3 +1161,77 @@
         </div>
     </div>
 @endsection
+<!-- Document Preview Modal -->
+<div id="docModal"
+     class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl relative max-w-[90vw] max-h-[90vh]">
+        
+        <!-- Close Button -->
+        <button type="button" onclick="closeDocModal()"
+            class="absolute -right-3 -top-3 w-8 h-8 rounded-full bg-white shadow
+                   text-gray-700 hover:text-red-600 text-xl leading-none">
+            &times;
+        </button>
+
+        <div class="p-3">
+            <h3 id="docTitle" class="font-semibold mb-2"></h3>
+
+            <div id="docContainer"
+                 class="w-[80vw] h-[75vh] flex items-center justify-center">
+                 
+                <!-- Image Preview (Smaller Thumbnail Size) -->
+                <img id="docImg" src="" alt="Document Image"
+                     class="max-h-[200px] max-w-[200px] hidden border rounded shadow-md hover:scale-125 transition-transform duration-300">
+                
+                <!-- PDF Preview -->
+                <iframe id="docPdf" src=""
+                        class="w-full h-full hidden" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+    function previewDoc(url, title) {
+        const modal = document.getElementById('docModal');
+        document.getElementById('docTitle').innerText = title || '';
+
+        const isPdf = url.toLowerCase().includes('.pdf');
+        const img = document.getElementById('docImg');
+        const pdf = document.getElementById('docPdf');
+
+        if (isPdf) {
+            pdf.src = url;
+            pdf.classList.remove('hidden');
+            img.classList.add('hidden');
+        } else {
+            img.src = url;
+            img.classList.remove('hidden');
+            pdf.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeDocModal() {
+        const modal = document.getElementById('docModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.getElementById('docImg').src = '';
+        document.getElementById('docPdf').src = '';
+    }
+
+    // Close modal by clicking on overlay
+    document.getElementById('docModal').addEventListener('click', (e) => {
+        if (e.target.id === 'docModal') closeDocModal();
+    });
+
+    // Close modal on Escape key press
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDocModal();
+    });
+</script>
+
+

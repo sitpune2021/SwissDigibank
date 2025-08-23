@@ -77,26 +77,29 @@
                             class="text-red-500">*</span></label>
                     <div class="flex gap-3">
                         <input type="number" id="tenure_year" placeholder="Year"
-                            class="w-1/3 text-sm border rounded px-2 py-1" oninput="calculateFD()">
+                            class="w-1/2 text-sm border rounded px-1 py-1" oninput="calculateFD()">
                         <input type="number" id="tenure_month" placeholder="Month"
-                            class="w-1/3 text-sm border rounded px-2 py-1" oninput="calculateFD()">
+                            class="w-1/2 text-sm border rounded px-1 py-1" oninput="calculateFD()">
                         <input type="number" id="tenure_day" placeholder="Days"
-                            class="w-1/3 text-sm border rounded px-2 py-1" oninput="calculateFD()">
+                            class="w-1/2 text-sm border rounded px-1 py-1" oninput="calculateFD()">
                     </div>
                 </div>
 
                 {{-- Bonus --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="bonus" class="md:text-lg font-medium block mb-4">Bonus</label>
+                    <label for="bonus" class="md:text-lg font-medium block mb-4">Bonus <span
+                            class="text-red-500">*</span></label>
                     <div class="flex gap-3 items-center">
-                        <select id="bonus_type" class="w-1/3 text-sm border rounded px-2 py-1" onchange="calculateFD()">
+                        <select id="bonus_type" class="w-1/3 text-sm border rounded px-2 py-1" onchange="calculateFD()"
+                            required>
                             <option value="%">%</option>
                             <option value="fixed">Fixed</option>
                         </select>
                         <input type="number" id="bonus" step="0.01" placeholder="Bonus"
-                            class="w-full text-sm border rounded px-2 py-1" oninput="calculateFD()">
+                            class="w-full text-sm border rounded px-2 py-1" oninput="calculateFD()" required>
                     </div>
                 </div>
+
 
                 {{-- TDS Deduction --}}
                 <div class="col-span-2 md:col-span-1">
@@ -109,6 +112,17 @@
                             No</label>
                     </div>
                 </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-4">
+                        <span>Senior Citizen <span class="text-red-500">*</span></span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="senior_citizen" required class="w-4 h-4">
+                        <label for="senior_citizen" class="text-sm">Yes</label>
+                    </div>
+                </div>
+
 
                 {{-- Submit --}}
                 <div class="col-span-2 mt-4">
@@ -139,6 +153,7 @@
             const bonusType = document.getElementById("bonus_type").value;
             const bonusValue = parseFloat(document.getElementById("bonus").value) || 0;
             const tds = document.querySelector("input[name='tds_deduction']:checked").value === "1";
+            const payoutType = document.getElementById("interest_payout_type").value;
 
             // maturity date
             let maturityDate = new Date(openDate);
@@ -180,28 +195,56 @@
 
             // -------- Financial Year–wise Schedule --------
             let schedulerHtml = `
-<h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
-<table class="table-auto border w-full text-sm">
-    <thead>
-        <tr>
-            <th class="border px-2 py-1">Period</th>
-            <th class="border px-2 py-1">Days</th>
-            <th class="border px-2 py-1">Principal (A)</th>
-            <th class="border px-2 py-1">Interest</th>
-            <th class="border px-2 py-1">TDS (B)</th>
-            <th class="border px-2 py-1">Net Interest (A - B)</th>
-            <th class="border px-2 py-1">Net Interest on Due Date</th>
-            <th class="border px-2 py-1">Principal EOY</th>
-            <th class="border px-2 py-1">Due By</th>
-        </tr>
-    </thead>
-    <tbody>
-`;
+    <h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
+    <table class="table-auto border w-full text-sm">
+        <thead>
+            <tr>
+                <th class="border px-2 py-1">Period</th>
+                <th class="border px-2 py-1">Days</th>
+                <th class="border px-2 py-1">Principal (A)</th>
+                <th class="border px-2 py-1">Interest</th>
+                <th class="border px-2 py-1">TDS (B)</th>
+                <th class="border px-2 py-1">Net Interest (A - B)</th>
+                <th class="border px-2 py-1">Net Interest on Due Date</th>
+                <th class="border px-2 py-1">Principal EOY</th>
+                <th class="border px-2 py-1">Due By</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
 
             let start = new Date(openDate);
             let end = new Date(maturityDate);
             let principalEOY = amount;
             let cumulativeNetInterest = 0;
+
+            // helper: get next payout date based on payout type
+            function getNextPayoutDate(date, maturityDate, payoutType) {
+                let next = new Date(date);
+                switch (payoutType) {
+                    case "CUMULATIVE_YEARLY":
+                    case "YEARLY":
+                        next.setFullYear(next.getFullYear() + 1);
+                        break;
+                    case "CUMULATIVE_HALF_YEARLY":
+                    case "HALF_YEARLY":
+                        next.setMonth(next.getMonth() + 6);
+                        break;
+                    case "CUMULATIVE_QUARTERLY":
+                    case "QUARTERLY":
+                        next.setMonth(next.getMonth() + 3);
+                        break;
+                    case "CUMULATIVE_MONTHLY":
+                    case "MONTHLY":
+                        next.setMonth(next.getMonth() + 1);
+                        break;
+                    default:
+                        next.setFullYear(next.getFullYear() + 1); // fallback yearly
+                }
+                // don’t cross maturity
+                if (next > maturityDate) return new Date(maturityDate);
+                return next;
+            }
 
             // Loop until maturity
             while (start < end) {
@@ -216,26 +259,23 @@
                 cumulativeNetInterest += net1;
 
                 schedulerHtml += `
-        <tr>
-            <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
-            <td class="border px-2 py-1">${days1}</td>
-            <td class="border px-2 py-1">${principalEOY}</td>
-            <td class="border px-2 py-1">${interest1.toFixed(0)}</td>
-            <td class="border px-2 py-1">${tds1.toFixed(1)}</td>
-            <td class="border px-2 py-1">${net1.toFixed(0)}</td>
-            <td class="border px-2 py-1"></td>
-            <td class="border px-2 py-1"></td>
-            <td class="border px-2 py-1"></td>
-        </tr>
-    `;
+            <tr>
+                <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
+                <td class="border px-2 py-1">${days1}</td>
+                <td class="border px-2 py-1">${principalEOY}</td>
+                <td class="border px-2 py-1">${interest1.toFixed(0)}</td>
+                <td class="border px-2 py-1">${tds1.toFixed(1)}</td>
+                <td class="border px-2 py-1">${net1.toFixed(0)}</td>
+                <td class="border px-2 py-1"></td>
+                <td class="border px-2 py-1"></td>
+                <td class="border px-2 py-1"></td>
+            </tr>
+        `;
 
-                // 2nd period: 1st April → Next Anniversary Date (or Maturity)
-                let nextAnniv = new Date(openDate);
-                nextAnniv.setFullYear(nextAnniv.getFullYear() + 1);
-                let secondEnd = (nextAnniv < end) ? nextAnniv : end;
-
-                let fyStart = new Date(fyEnd);
+                // 2nd part: FY start → Next payout (depends on payoutType)
+                let fyStart = new Date(start);
                 fyStart.setDate(fyStart.getDate() + 1);
+                let secondEnd = getNextPayoutDate(fyStart, end, payoutType);
 
                 if (fyStart <= secondEnd) {
                     let days2 = Math.floor((secondEnd - fyStart) / (1000 * 60 * 60 * 24)) + 1;
@@ -243,20 +283,22 @@
                     let tds2 = tds ? interest2 * 0.1 : 0;
                     let net2 = interest2 - tds2;
                     cumulativeNetInterest += net2;
+                    let dueDate = new Date(secondEnd);
+                    dueDate.setDate(dueDate.getDate() + 1);
 
                     schedulerHtml += `
-            <tr>
-                <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
-                <td class="border px-2 py-1">${days2}</td>
-                <td class="border px-2 py-1">${principalEOY}</td>
-                <td class="border px-2 py-1">${interest2.toFixed(0)}</td>
-                <td class="border px-2 py-1">${tds2.toFixed(1)}</td>
-                <td class="border px-2 py-1">${net2.toFixed(0)}</td>
-                <td class="border px-2 py-1">${cumulativeNetInterest.toFixed(0)}</td>
-                <td class="border px-2 py-1">${principalEOY}</td>
-                <td class="border px-2 py-1">${secondEnd.toLocaleDateString()}</td>
-            </tr>
-        `;
+                <tr>
+                    <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
+                    <td class="border px-2 py-1">${days2}</td>
+                    <td class="border px-2 py-1">${principalEOY}</td>
+                    <td class="border px-2 py-1">${interest2.toFixed(0)}</td>
+                    <td class="border px-2 py-1">${tds2.toFixed(1)}</td>
+                    <td class="border px-2 py-1">${net2.toFixed(0)}</td>
+                    <td class="border px-2 py-1">${cumulativeNetInterest.toFixed(0)}</td>
+                    <td class="border px-2 py-1">${principalEOY}</td>
+                    <td class="border px-2 py-1">${dueDate.toLocaleDateString()}</td>
+                </tr>
+            `;
                     start = new Date(secondEnd);
                     start.setDate(start.getDate() + 1);
                 } else {
@@ -271,6 +313,37 @@
                 "<div class='mb-6'>" + summaryHtml + "</div>" +
                 "<div>" + schedulerHtml + "</div>";
         }
+    </script>
+
+    <script>
+        function numberToWords(n) {
+            const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+                "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+            ];
+            const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+            if (n < 20) return a[n];
+            if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+            if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + (n % 100 ? numberToWords(n % 100) : "");
+            if (n < 100000) return numberToWords(Math.floor(n / 1000)) + " Thousand " + (n % 1000 ? numberToWords(n %
+                1000) : "");
+            if (n < 10000000) return numberToWords(Math.floor(n / 100000)) + " Lakh " + (n % 100000 ? numberToWords(n %
+                100000) : "");
+            return numberToWords(Math.floor(n / 10000000)) + " Crore " + (n % 10000000 ? numberToWords(n % 10000000) : "");
+        }
+
+        function updateAmountInWords() {
+            const amountInput = document.getElementById('amount');
+            const amountInWordsDiv = document.getElementById('amount-in-words');
+
+            const amount = parseInt(amountInput.value, 10);
+            if (!isNaN(amount) && amount >= 0) {
+                amountInWordsDiv.textContent = numberToWords(amount);
+            } else {
+                amountInWordsDiv.textContent = '';
+            }
+        }
+        document.getElementById('amount').addEventListener('input', updateAmountInWords);
     </script>
 @endpush
 {{-- 

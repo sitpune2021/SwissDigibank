@@ -29,8 +29,8 @@ class CalculatorController extends Controller
             'tenure' => 'required|numeric|min:1',
             'tenure_type' => 'required|in:Months,Years',
             'interest_payout' => 'required',
-            'bonus_type' => 'nullable|in:%,Fixed',
-            'bonus_amount' => 'nullable|numeric|min:0',
+            'bonus_type' => 'required|in:%,Fixed',
+            'bonus_amount' => 'required|numeric|min:0',
         ]);
 
         $principal = $validated['principal'];

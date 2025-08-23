@@ -51,7 +51,7 @@ class PromotorController extends Controller
             return view('company.promoters.manage-promotors', compact('promotors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function create()
@@ -207,26 +207,33 @@ class PromotorController extends Controller
     public function show($id)
     {
         try {
-            $decryptedId =  base64_decode($id);
-            // $promoter = Promotor::findOrFail($decryptedId);
+            $decryptedId = base64_decode($id);
+
+            if (!$decryptedId || !is_numeric($decryptedId)) {
+                abort(404, 'Invalid promoter ID.');
+            }
 
             $promoter = Promotor::with('minor')->findOrFail($decryptedId);
 
-            $route = "";
+            $documents = KycDocument::where('promoter_id', $decryptedId)->get()->keyBy('document_category');
+
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
                 'marital_statuses' => MaritalStatus::pluck('status', 'id'),
                 'religions' => Religion::pluck('name', 'id'),
             ];
-            $show = true;
-            $method = "";
 
-            return view('company.promoters.show', compact('promoter', 'dynamicOptions', 'route', 'show', 'method'));
+            $route = "";
+            $method = "";
+            $show = true;
+
+            return view('company.promoters.show', compact('promoter', 'documents', 'dynamicOptions', 'route', 'show', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        } catch (\Exception $e) {
+            abort(404);
+        }
     }
-
     public function edit($id)
     {
         try {
@@ -242,14 +249,13 @@ class PromotorController extends Controller
             return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function update(Request $request, $id)
     {
         try {
             $validated = $request->validate([
-                // Promotor fields (same validation as store)
                 'enrollment_date' => 'required|date|before_or_equal:today',
                 'title' => 'required|string|max:10',
                 'gender' => 'required|string|in:Male,Female,Other',
@@ -364,7 +370,7 @@ class PromotorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function destroy($id)
@@ -376,7 +382,7 @@ class PromotorController extends Controller
             return redirect()->route('promotor.index')->with('success', 'Branch deleted successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function getMariatalStatuses()
     {
@@ -385,7 +391,7 @@ class PromotorController extends Controller
             return response()->json($statuses);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function getReligion()
@@ -395,7 +401,7 @@ class PromotorController extends Controller
             return response()->json($religions);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function getPromoters()
@@ -405,7 +411,7 @@ class PromotorController extends Controller
             return response()->json($promoters);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function documentShow(string $id)
@@ -417,7 +423,7 @@ class PromotorController extends Controller
             return view('company.promoters.kycDocumentAdd', compact('route', 'method', 'id', 'documents'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function documentUpdate(Request $request)
@@ -425,7 +431,7 @@ class PromotorController extends Controller
         try {
             $request->validate([
                 'documents' => 'required|array',
-                'documents.*.file' => 'required',
+                'documents.*.file' => 'required|file',
                 'documents.*.category' => 'required|string',
                 'documents.*.type' => 'nullable|string',
                 'member_id' => 'nullable'
@@ -433,7 +439,7 @@ class PromotorController extends Controller
 
             foreach ($request->documents as $doc) {
                 if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
-                    $path = $doc['file']->storeAs('documents', 'public');
+                    $path = $doc['file']->store('documents', 'public');
                     KycDocument::updateOrCreate(
                         [
                             'member_id' => $request->member_id,
@@ -447,10 +453,11 @@ class PromotorController extends Controller
                     );
                 }
             }
+
             return redirect()->route('promotor.index')->with('success', 'Documents updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function addressedit($id)
     {
@@ -467,7 +474,7 @@ class PromotorController extends Controller
             return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function addressupdate(Request $request, $id)
@@ -590,6 +597,6 @@ class PromotorController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 }

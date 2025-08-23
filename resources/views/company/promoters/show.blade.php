@@ -355,47 +355,110 @@
 
                     <!-- Content -->
                     <div x-show="open" x-transition class="bg-white">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-sm border">
                             <tbody>
+                                {{-- Photo --}}
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span></span>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $photo = $documents->where('document_category', 'photo')->first(); @endphp
+                                        @if ($photo && $photo->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $photo->file_path) }}','Photo')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- Signature --}}
+                                @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
-                                    <td class="px-6 py-2"text-start></td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Id Proof (Passport)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span></span>
+                                    <td class="px-6 py-2 text-start">
+                                        @if ($signature && $signature->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . addslashes($signature->file_path)) }}','Signature')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- ID Proof --}}
+                                @php $idProof = $documents->where('document_category', 'id_proof')->first(); @endphp
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Id Proof Back (Aadhar Card)</th>
-                                    <td class="px-6 py-2"text-start></td>
+                                    <th class="px-6 py-2 font-semibold text-start">ID Proof (Passport)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @if ($idProof && $idProof->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . addslashes($idProof->file_path)) }}','ID Proof')">
+                                                View
+                                            </button>
+                                        @endif
+                                    </td>
                                 </tr>
+
+                                {{-- ID Proof Back --}}
+                                @php $idProofBack = $documents->where('document_category', 'id_proof_back')->first(); @endphp
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport) </th>
-                                    <td class="px-6 py-2"text-start></td>
+                                    <th class="px-6 py-2 font-semibold text-start">ID Proof Back (Aadhar Card)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @if ($idProofBack && $idProofBack->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . addslashes($idProofBack->file_path)) }}','ID Proof Back')">
+                                                View
+                                            </button>
+                                        @endif
+                                    </td>
                                 </tr>
+
+                                {{-- Address Proof --}}
+                                @php $addressProof = $documents->where('document_category', 'address_proof')->first(); @endphp
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card) </th>
-                                    <td class="px-6 py-2"text-start></td>
+                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @if ($addressProof && $addressProof->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . addslashes($addressProof->file_path)) }}','Address Proof')">
+                                                View
+                                            </button>
+                                        @endif
+                                    </td>
                                 </tr>
+
+                                {{-- Address Proof Back --}}
+                                @php $addressProofBack = $documents->where('document_category', 'address_proof_back')->first(); @endphp
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Pan Number (Pan)</th>
-                                    <td class="px-6 py-2"text-start></td>
+                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @if ($addressProofBack && $addressProofBack->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . addslashes($addressProofBack->file_path)) }}','Address Proof Back')">
+                                                View
+                                            </button>
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                {{-- PAN --}}
+                                @php $pan = $documents->where('document_category', 'pan')->first(); @endphp
+                                <tr class="border-b">
+                                    <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @if ($pan && $pan->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . addslashes($pan->file_path)) }}','PAN')">
+                                                View
+                                            </button>
+                                        @endif
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
-
 
             <!-- Right Panel -->
             <div class="col-span-12 lg:col-span-6" x-data="{
@@ -970,3 +1033,44 @@
                 </div>
             </div>
         @endsection
+        <!-- Modal HTML -->
+        <div id="docPreviewModal"
+            class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                <button onclick="closePreview()"
+                    class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                    <!-- Document will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- JS Script -->
+        <script>
+            function previewDoc(fileUrl, title) {
+                const modal = document.getElementById("docPreviewModal");
+                const content = document.getElementById("docContent");
+                const docTitle = document.getElementById("docTitle");
+
+                docTitle.textContent = title;
+                content.innerHTML = "";
+
+                const ext = fileUrl.split('.').pop().toLowerCase();
+
+                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                    content.innerHTML = `<img src="${fileUrl}" alt="${title}" class="max-w-full max-h-[60vh] mx-auto" />`;
+                } else if (ext === 'pdf') {
+                    content.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[70vh]" frameborder="0"></iframe>`;
+                } else {
+                    content.innerHTML =
+                        `<p>Cannot preview this file. <a href="${fileUrl}" target="_blank" class="text-blue-600 underline">Download</a></p>`;
+                }
+
+                modal.classList.remove("hidden");
+            }
+
+            function closePreview() {
+                document.getElementById("docPreviewModal").classList.add("hidden");
+            }
+        </script>

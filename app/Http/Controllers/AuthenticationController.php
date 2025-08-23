@@ -62,6 +62,7 @@ class AuthenticationController extends Controller
     public function login(Request $request)
     {
         try {
+          
             $credentials = $request->validate(
                 [
                     'email' => 'required|email|exists:users,email',
@@ -75,7 +76,7 @@ class AuthenticationController extends Controller
                     'password.min' => 'Password must be at least 6 characters.',
                 ]
             );
-            
+             
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
 

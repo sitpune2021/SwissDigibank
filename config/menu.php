@@ -88,7 +88,15 @@ return [
             ['title' => 'Employees', 'route' => 'employee.index'],
         ],
     ],
-
-
+      [
+        'title' => 'MDS/RD/DDS Accounts',
+        'icon' => 'las la-university',
+        'position' => '8',
+        'active' => '1',
+        'submenu' => [
+            // ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
+            ['title' => 'Calculator', 'route' => 'rd-calculator.create'],
+        ]
+    ],
 
 ];

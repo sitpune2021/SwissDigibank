@@ -31,6 +31,8 @@ use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\FdCalculatorController;
+use App\Http\Controllers\RDCalculatorController;
+
 
 
 
@@ -78,14 +80,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
     });
 
-    // Route::get('/fd-calculator', function () {
-    //     return view('fd-calculator');
-    // });
+    Route::resource('rd-calculator', RDCalculatorController::class)
+        ->only(['index', 'create', 'store']);
 
-    // Route::post('/fd-calculate', [FdCalculatorController::class, 'calculate']);
-
-    // routes/web.php
-Route::post('/calculate-fd', [CalculatorController::class, 'calculate']);
 
 
     Route::group(['prefix' => 'members'], function () {

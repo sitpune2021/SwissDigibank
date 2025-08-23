@@ -29,7 +29,7 @@ return new class extends Migration {
             $table->boolean('is_due_date_row')->default(false);
             $table->string('note', 255)->nullable();
             $table->timestamps();
-            $table->index(['maturity_statement_id', 'period_from', 'period_to']);
+            $table->index(['maturity_statement_id', 'period_from', 'period_to'], 'fd_ip_maturity_period_index');
         });
     }
     public function down(): void
