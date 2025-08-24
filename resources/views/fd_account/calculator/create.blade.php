@@ -180,37 +180,37 @@
             const maturityAmount = amount + netInterest + bonusAmt;
             // summary
             const summaryHtml = `
-        <h3 class="text-lg font-semibold mb-2">Maturity Summary</h3>
-        <table class="table-auto border w-full text-sm">
-            <tr><td>Principal Amount (A)</td><td>₹ ${amount.toFixed(2)}</td></tr>
-            <tr><td>Interest Earned (B)</td><td>₹ ${interestEarned.toFixed(2)}</td></tr>
-            <tr><td>TDS Deducted (C)</td><td>₹ ${tdsDeducted.toFixed(2)}</td></tr>
-            <tr><td>Net Interest Earned (D = B - C)</td><td>₹ ${netInterest.toFixed(2)}</td></tr>
-            <tr><td>Maturity Bonus Amount (E)</td><td>₹ ${bonusAmt.toFixed(2)}</td></tr>
-            <tr><td><b>Maturity Amount (A + D + E)</b></td><td><b>₹ ${maturityAmount.toFixed(2)}</b></td></tr>
-            <tr><td>Maturity Date</td><td>${maturityDate.toLocaleDateString()}</td></tr>
-        </table>
-    `;
+                <h3 class="text-lg font-semibold mb-2">Maturity Summary</h3>
+                <table class="table-auto border w-full text-sm">
+                    <tr><td>Principal Amount (A)</td><td>₹ ${amount.toFixed(2)}</td></tr>
+                    <tr><td>Interest Earned (B)</td><td>₹ ${interestEarned.toFixed(2)}</td></tr>
+                    <tr><td>TDS Deducted (C)</td><td>₹ ${tdsDeducted.toFixed(2)}</td></tr>
+                    <tr><td>Net Interest Earned (D = B - C)</td><td>₹ ${netInterest.toFixed(2)}</td></tr>
+                    <tr><td>Maturity Bonus Amount (E)</td><td>₹ ${bonusAmt.toFixed(2)}</td></tr>
+                    <tr><td><b>Maturity Amount (A + D + E)</b></td><td><b>₹ ${maturityAmount.toFixed(2)}</b></td></tr>
+                    <tr><td>Maturity Date</td><td>${maturityDate.toLocaleDateString()}</td></tr>
+                </table>
+            `;
  
             // -------- Financial Year–wise Schedule --------
             let schedulerHtml = `
-    <h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
-    <table class="table-auto border w-full text-sm">
-        <thead>
-            <tr>
-                <th class="border px-2 py-1">Period</th>
-                <th class="border px-2 py-1">Days</th>
-                <th class="border px-2 py-1">Principal (A)</th>
-                <th class="border px-2 py-1">Interest</th>
-                <th class="border px-2 py-1">TDS (B)</th>
-                <th class="border px-2 py-1">Net Interest (A - B)</th>
-                <th class="border px-2 py-1">Net Interest on Due Date</th>
-                <th class="border px-2 py-1">Principal EOY</th>
-                <th class="border px-2 py-1">Due By</th>
-            </tr>
-        </thead>
-        <tbody>
-    `;
+            <h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
+            <table class="table-auto border w-full text-sm">
+                <thead>
+                    <tr>
+                        <th class="border px-2 py-1">Period</th>
+                        <th class="border px-2 py-1">Days</th>
+                        <th class="border px-2 py-1">Principal (A)</th>
+                        <th class="border px-2 py-1">Interest</th>
+                        <th class="border px-2 py-1">TDS (B)</th>
+                        <th class="border px-2 py-1">Net Interest (A - B)</th>
+                        <th class="border px-2 py-1">Net Interest on Due Date</th>
+                        <th class="border px-2 py-1">Principal EOY</th>
+                        <th class="border px-2 py-1">Due By</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
  
             let start = new Date(openDate);
             let end = new Date(maturityDate);
@@ -258,18 +258,18 @@
                 cumulativeNetInterest += net1;
  
                 schedulerHtml += `
-            <tr>
-                <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
-                <td class="border px-2 py-1">${days1}</td>
-                <td class="border px-2 py-1">${principalEOY}</td>
-                <td class="border px-2 py-1">${interest1.toFixed(0)}</td>
-                <td class="border px-2 py-1">${tds1.toFixed(1)}</td>
-                <td class="border px-2 py-1">${net1.toFixed(0)}</td>
-                <td class="border px-2 py-1"></td>
-                <td class="border px-2 py-1"></td>
-                <td class="border px-2 py-1"></td>
-            </tr>
-        `;
+                    <tr>
+                        <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
+                        <td class="border px-2 py-1">${days1}</td>
+                        <td class="border px-2 py-1">${principalEOY}</td>
+                        <td class="border px-2 py-1">${interest1.toFixed(0)}</td>
+                        <td class="border px-2 py-1">${tds1.toFixed(1)}</td>
+                        <td class="border px-2 py-1">${net1.toFixed(0)}</td>
+                        <td class="border px-2 py-1"></td>
+                        <td class="border px-2 py-1"></td>
+                        <td class="border px-2 py-1"></td>
+                    </tr>
+                `;
  
                 // 2nd part: FY start → Next payout (depends on payoutType)
                 let fyStart = new Date(start);
@@ -286,18 +286,18 @@
                     dueDate.setDate(dueDate.getDate() + 1);
  
                     schedulerHtml += `
-                <tr>
-                    <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
-                    <td class="border px-2 py-1">${days2}</td>
-                    <td class="border px-2 py-1">${principalEOY}</td>
-                    <td class="border px-2 py-1">${interest2.toFixed(0)}</td>
-                    <td class="border px-2 py-1">${tds2.toFixed(1)}</td>
-                    <td class="border px-2 py-1">${net2.toFixed(0)}</td>
-                    <td class="border px-2 py-1">${cumulativeNetInterest.toFixed(0)}</td>
-                    <td class="border px-2 py-1">${principalEOY}</td>
-                    <td class="border px-2 py-1">${dueDate.toLocaleDateString()}</td>
-                </tr>
-            `;
+                        <tr>
+                            <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
+                            <td class="border px-2 py-1">${days2}</td>
+                            <td class="border px-2 py-1">${principalEOY}</td>
+                            <td class="border px-2 py-1">${interest2.toFixed(0)}</td>
+                            <td class="border px-2 py-1">${tds2.toFixed(1)}</td>
+                            <td class="border px-2 py-1">${net2.toFixed(0)}</td>
+                            <td class="border px-2 py-1">${cumulativeNetInterest.toFixed(0)}</td>
+                            <td class="border px-2 py-1">${principalEOY}</td>
+                            <td class="border px-2 py-1">${dueDate.toLocaleDateString()}</td>
+                        </tr>
+                    `;
                     start = new Date(secondEnd);
                     start.setDate(start.getDate() + 1);
                 } else {
