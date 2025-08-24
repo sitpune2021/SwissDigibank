@@ -142,176 +142,203 @@
 @endsection
 @push('script')
     <script>
-        function calculateFD() {
-            const amount = parseFloat(document.getElementById("amount").value) || 0;
-            const annualRate = parseFloat(document.getElementById("annual_interest_rate").value) || 0;
-            const openDate = new Date(document.getElementById("open_date").value);
-            const tenureYears = parseInt(document.getElementById("tenure_year").value) || 0;
-            const tenureMonths = parseInt(document.getElementById("tenure_month").value) || 0;
-            const tenureDays = parseInt(document.getElementById("tenure_day").value) || 0;
-            const bonusType = document.getElementById("bonus_type").value;
-            const bonusValue = parseFloat(document.getElementById("bonus").value) || 0;
-            const tds = document.querySelector("input[name='tds_deduction']:checked").value === "1";
-            const payoutType = document.getElementById("interest_payout_type").value;
- 
-            // maturity date
-            let maturityDate = new Date(openDate);
-            maturityDate.setFullYear(maturityDate.getFullYear() + tenureYears);
-            maturityDate.setMonth(maturityDate.getMonth() + tenureMonths);
-            maturityDate.setDate(maturityDate.getDate() + tenureDays);
- 
-            // interest earned (simple interest for now)
-            const totalMonths = tenureYears * 12 + tenureMonths + tenureDays / 30;
-            const interestEarned = (amount * annualRate * (totalMonths / 12)) / 100;
- 
-            // TDS
-            const tdsDeducted = tds ? interestEarned * 0.1 : 0; // 10% TDS
-            const netInterest = interestEarned - tdsDeducted;
- 
-            // bonus
-            let bonusAmt = 0;
-            if (bonusType === "%") {
-                bonusAmt = (amount * bonusValue) / 100;
-            } else {
-                bonusAmt = bonusValue;
-            }
- 
-            // maturity
-            const maturityAmount = amount + netInterest + bonusAmt;
-            // summary
-            const summaryHtml = `
-                <h3 class="text-lg font-semibold mb-2">Maturity Summary</h3>
-                <table class="table-auto border w-full text-sm">
-                    <tr><td>Principal Amount (A)</td><td>₹ ${amount.toFixed(2)}</td></tr>
-                    <tr><td>Interest Earned (B)</td><td>₹ ${interestEarned.toFixed(2)}</td></tr>
-                    <tr><td>TDS Deducted (C)</td><td>₹ ${tdsDeducted.toFixed(2)}</td></tr>
-                    <tr><td>Net Interest Earned (D = B - C)</td><td>₹ ${netInterest.toFixed(2)}</td></tr>
-                    <tr><td>Maturity Bonus Amount (E)</td><td>₹ ${bonusAmt.toFixed(2)}</td></tr>
-                    <tr><td><b>Maturity Amount (A + D + E)</b></td><td><b>₹ ${maturityAmount.toFixed(2)}</b></td></tr>
-                    <tr><td>Maturity Date</td><td>${maturityDate.toLocaleDateString()}</td></tr>
-                </table>
-            `;
- 
-            // -------- Financial Year–wise Schedule --------
-            let schedulerHtml = `
-            <h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
-            <table class="table-auto border w-full text-sm">
-                <thead>
-                    <tr>
-                        <th class="border px-2 py-1">Period</th>
-                        <th class="border px-2 py-1">Days</th>
-                        <th class="border px-2 py-1">Principal (A)</th>
-                        <th class="border px-2 py-1">Interest</th>
-                        <th class="border px-2 py-1">TDS (B)</th>
-                        <th class="border px-2 py-1">Net Interest (A - B)</th>
-                        <th class="border px-2 py-1">Net Interest on Due Date</th>
-                        <th class="border px-2 py-1">Principal EOY</th>
-                        <th class="border px-2 py-1">Due By</th>
-                    </tr>
-                </thead>
-                <tbody>
-            `;
- 
-            let start = new Date(openDate);
-            let end = new Date(maturityDate);
-            let principalEOY = amount;
-            let cumulativeNetInterest = 0;
- 
-            // helper: get next payout date based on payout type
-            function getNextPayoutDate(date, maturityDate, payoutType) {
-                let next = new Date(date);
-                switch (payoutType) {
-                    case "CUMULATIVE_YEARLY":
-                    case "YEARLY":
-                        next.setFullYear(next.getFullYear() + 1);
-                        break;
-                    case "CUMULATIVE_HALF_YEARLY":
-                    case "HALF_YEARLY":
-                        next.setMonth(next.getMonth() + 6);
-                        break;
-                    case "CUMULATIVE_QUARTERLY":
-                    case "QUARTERLY":
-                        next.setMonth(next.getMonth() + 3);
-                        break;
-                    case "CUMULATIVE_MONTHLY":
-                    case "MONTHLY":
-                        next.setMonth(next.getMonth() + 1);
-                        break;
-                    default:
-                        next.setFullYear(next.getFullYear() + 1); // fallback yearly
-                }
-                // don’t cross maturity
-                if (next > maturityDate) return new Date(maturityDate);
-                return next;
-            }
- 
-            // Loop until maturity
-            while (start < end) {
-                // 1st period: StartDate → 31st March (same FY)
-                let fyEnd = new Date(start.getFullYear() + (start.getMonth() >= 3 ? 1 : 0), 2, 31);
-                if (fyEnd > end) fyEnd = new Date(end); // don’t cross maturity
- 
-                let days1 = Math.floor((fyEnd - start) / (1000 * 60 * 60 * 24)) + 1;
-                let interest1 = (principalEOY * annualRate * (days1 / 365)) / 100;
-                let tds1 = tds ? interest1 * 0.1 : 0;
-                let net1 = interest1 - tds1;
-                cumulativeNetInterest += net1;
- 
-                schedulerHtml += `
-                    <tr>
-                        <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
-                        <td class="border px-2 py-1">${days1}</td>
-                        <td class="border px-2 py-1">${principalEOY}</td>
-                        <td class="border px-2 py-1">${interest1.toFixed(0)}</td>
-                        <td class="border px-2 py-1">${tds1.toFixed(1)}</td>
-                        <td class="border px-2 py-1">${net1.toFixed(0)}</td>
-                        <td class="border px-2 py-1"></td>
-                        <td class="border px-2 py-1"></td>
-                        <td class="border px-2 py-1"></td>
-                    </tr>
-                `;
- 
-                // 2nd part: FY start → Next payout (depends on payoutType)
-                let fyStart = new Date(start);
-                fyStart.setDate(fyStart.getDate() + 1);
-                let secondEnd = getNextPayoutDate(fyStart, end, payoutType);
- 
-                if (fyStart <= secondEnd) {
-                    let days2 = Math.floor((secondEnd - fyStart) / (1000 * 60 * 60 * 24)) + 1;
-                    let interest2 = (principalEOY * annualRate * (days2 / 365)) / 100;
-                    let tds2 = tds ? interest2 * 0.1 : 0;
-                    let net2 = interest2 - tds2;
-                    cumulativeNetInterest += net2;
-                    let dueDate = new Date(secondEnd);
-                    dueDate.setDate(dueDate.getDate() + 1);
- 
-                    schedulerHtml += `
-                        <tr>
-                            <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
-                            <td class="border px-2 py-1">${days2}</td>
-                            <td class="border px-2 py-1">${principalEOY}</td>
-                            <td class="border px-2 py-1">${interest2.toFixed(0)}</td>
-                            <td class="border px-2 py-1">${tds2.toFixed(1)}</td>
-                            <td class="border px-2 py-1">${net2.toFixed(0)}</td>
-                            <td class="border px-2 py-1">${cumulativeNetInterest.toFixed(0)}</td>
-                            <td class="border px-2 py-1">${principalEOY}</td>
-                            <td class="border px-2 py-1">${dueDate.toLocaleDateString()}</td>
-                        </tr>
-                    `;
-                    start = new Date(secondEnd);
-                    start.setDate(start.getDate() + 1);
-                } else {
-                    break;
-                }
-            }
- 
-            schedulerHtml += "</tbody></table>";
- 
-            // render
-            document.getElementById("output").innerHTML =
-                "<div class='mb-6'>" + summaryHtml + "</div>" +
-                "<div>" + schedulerHtml + "</div>";
+function calculateFD() {
+    // --------- read inputs ----------
+    const amount = parseFloat(document.getElementById("amount").value) || 0;
+    const annualRate = parseFloat(document.getElementById("annual_interest_rate").value) || 0;
+    const openDate = new Date(document.getElementById("open_date").value);
+    const tenureYears = parseInt(document.getElementById("tenure_year").value) || 0;
+    const tenureMonths = parseInt(document.getElementById("tenure_month").value) || 0;
+    const tenureDays = parseInt(document.getElementById("tenure_day").value) || 0;
+    const bonusType = document.getElementById("bonus_type").value;
+    const bonusValue = parseFloat(document.getElementById("bonus").value) || 0;
+    const tds = document.querySelector("input[name='tds_deduction']:checked").value === "1";
+    const payoutType = document.getElementById("interest_payout_type").value; // e.g. QUARTERLY or CUMULATIVE_QUARTERLY
+
+    // ---------- helpers ----------
+    const DAYMS = 24*60*60*1000;
+
+    function fmt(n) {
+        // tidy money: remove trailing zeros (e.g., 25.00 -> 25, 25.60 -> 25.6)
+        if (Math.abs(n) < 0.0000001) return "0";
+        const s = n.toFixed(2);
+        return s.replace(/\.?0+$/,'');
+    }
+    function dateISO(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function addDays(d, num) { const x = new Date(d); x.setDate(x.getDate()+num); return x; }
+    function addMonthsMinusOneDay(d, m) {
+        const x = new Date(d);
+        x.setMonth(x.getMonth()+m);
+        x.setDate(x.getDate()-1);
+        return x;
+    }
+    function addYearsMinusOneDay(d, y) {
+        const x = new Date(d);
+        x.setFullYear(x.getFullYear()+y);
+        x.setDate(x.getDate()-1);
+        return x;
+    }
+    function daysInclusive(a,b) { return Math.floor((dateISO(b)-dateISO(a))/DAYMS)+1; }
+    function ddmmyyyy(d) {
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const yy = d.getFullYear();
+        return `${dd}/${mm}/${yy}`;
+    }
+    function fyEndFor(date) {
+        // FY in India: 1 Apr – 31 Mar. If month >= Apr (3), fy end = 31 Mar next year; else same year.
+        const y = date.getFullYear();
+        const fyEndYear = (date.getMonth() >= 3) ? y+1 : y;
+        return new Date(fyEndYear, 2, 31); // 31-Mar
+    }
+    function freqInfo(pt) {
+        // maps payout type to (#periods per year, cumulative flag)
+        switch(pt){
+            case "MONTHLY": return {perYear:12, cumulative:false};
+            case "QUARTERLY": return {perYear:4, cumulative:false};
+            case "HALF_YEARLY": return {perYear:2, cumulative:false};
+            case "YEARLY": return {perYear:1, cumulative:false};
+
+            case "CUMULATIVE_MONTHLY": return {perYear:12, cumulative:true};
+            case "CUMULATIVE_QUARTERLY": return {perYear:4, cumulative:true};
+            case "CUMULATIVE_HALF_YEARLY": return {perYear:2, cumulative:true};
+            case "CUMULATIVE_YEARLY": return {perYear:1, cumulative:true};
+            default: return {perYear:4, cumulative:false}; // safe default = QUARTERLY
         }
+    }
+
+    // ---------- maturity date ----------
+    let maturityDate = new Date(openDate);
+    maturityDate.setFullYear(maturityDate.getFullYear()+tenureYears);
+    maturityDate.setMonth(maturityDate.getMonth()+tenureMonths);
+    maturityDate.setDate(maturityDate.getDate()+tenureDays);
+    const maturityDueBy = maturityDate; // “Due By” shown as this date when last payout ends the day before
+
+    // ---------- schedule core (period-first, then FY split) ----------
+    const {perYear, cumulative} = freqInfo(payoutType);
+    const periodMonths = (12 / perYear);
+    const periodRate = annualRate / perYear; // e.g. 10%/4 = 2.5% per quarter
+
+    let schedulerHtml = `
+        <h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
+        <table class="table-auto border w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="border px-2 py-1">Period</th>
+                    <th class="border px-2 py-1">Days</th>
+                    <th class="border px-2 py-1">Principal (A)</th>
+                    <th class="border px-2 py-1">Interest</th>
+                    <th class="border px-2 py-1">TDS (B)</th>
+                    <th class="border px-2 py-1">Net Interest (A - B)</th>
+                    <th class="border px-2 py-1">Net Interest on DUE DATE</th>
+                    <th class="border px-2 py-1">Principal at EOY</th>
+                    <th class="border px-2 py-1">Due By</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    let periodStart = new Date(openDate);
+    let principal = amount;
+    let totalInterest = 0, totalTDS = 0;
+
+    // we iterate payout periods (e.g., each quarter)
+    while (periodStart < maturityDate) {
+        // Period end is start + periodMonths - 1 day, but never past maturity-1 day
+        let nominalPeriodEnd = addMonthsMinusOneDay(periodStart, periodMonths);
+        let lastWorkingDay = addDays(maturityDate, -1); // payouts end day before maturity
+        let periodEnd = nominalPeriodEnd > lastWorkingDay ? lastWorkingDay : nominalPeriodEnd;
+
+        // If somehow start already beyond lastWorkingDay, break
+        if (periodStart > lastWorkingDay) break;
+
+        // Per-period (full) interest at fixed period rate, not day-count (matches your examples)
+        const principalShown = principal; // shown in all segments within this payout
+        const periodDays = daysInclusive(periodStart, periodEnd);
+        const periodInterest = principalShown * (periodRate/100);
+        const periodTDS = tds ? periodInterest * 0.10 : 0;
+        const periodNet = periodInterest - periodTDS;
+
+        // Split this payout period at FY boundary/boundaries
+        let segStart = new Date(periodStart);
+        while (segStart <= periodEnd) {
+            const fyEnd = fyEndFor(segStart);
+            let segEnd = fyEnd < periodEnd ? fyEnd : periodEnd;
+            const segDays = daysInclusive(segStart, segEnd);
+
+            // Allocate this segment's share from the full payout period amount
+            const share = segDays / periodDays;
+            const segInterest = periodInterest * share;
+            const segTDS = tds ? segInterest * 0.10 : 0;
+            const segNet = segInterest - segTDS;
+
+            totalInterest += segInterest;
+            totalTDS += segTDS;
+
+            // Only the last segment of the payout shows:
+            // - Net Interest on DUE DATE = full period net
+            // - Principal at EOY (for cumulative) = principal + full period net
+            // - Due By (for non-cumulative every payout; for cumulative only at maturity)
+            const isLastSegmentOfPeriod = (segEnd.getTime() === periodEnd.getTime());
+            const willShowDueBy = isLastSegmentOfPeriod && (!cumulative || (addDays(segEnd,1).getTime() === maturityDueBy.getTime()));
+            const dueByStr = willShowDueBy ? ddmmyyyy(addDays(segEnd,1)) : "";
+
+            const netOnDueDateStr = isLastSegmentOfPeriod ? fmt(periodNet) : "";
+            const principalEOYStr = (isLastSegmentOfPeriod && cumulative) ? fmt(principal + periodNet) : "";
+
+            schedulerHtml += `
+                <tr>
+                    <td class="border px-2 py-1">${ddmmyyyy(segStart)} - ${ddmmyyyy(segEnd)}</td>
+                    <td class="border px-2 py-1">${segDays}</td>
+                    <td class="border px-2 py-1">${fmt(principalShown)}</td>
+                    <td class="border px-2 py-1">${segInterest.toFixed(0)}</td>
+                    <td class="border px-2 py-1">${fmt(segTDS)}</td>
+                    <td class="border px-2 py-1">${fmt(segNet)}</td>
+                    <td class="border px-2 py-1">${netOnDueDateStr}</td>
+                    <td class="border px-2 py-1">${principalEOYStr}</td>
+                    <td class="border px-2 py-1">${dueByStr}</td>
+                </tr>
+            `;
+
+            segStart = addDays(segEnd, 1);
+        }
+
+        // Apply compounding at the payout boundary (only for cumulative types)
+        if (cumulative) {
+            principal += periodNet;
+        }
+        // Move to next payout period
+        periodStart = addDays(periodEnd, 1);
+    }
+
+    schedulerHtml += "</tbody></table>";
+
+    // ---------- bonus & maturity ----------
+    const bonusAmt = (bonusType === "%") ? (amount * (bonusValue/100)) : bonusValue;
+    const totalNetInterest = totalInterest - totalTDS;
+    const maturityAmount = cumulative
+        ? (principal + bonusAmt)                    // principal already includes compounded net interest
+        : (amount + totalNetInterest + bonusAmt);   // principal unchanged + all net interest
+
+    // ---------- summary ----------
+    const summaryHtml = `
+        <h3 class="text-lg font-semibold mb-2">Maturity Summary</h3>
+        <table class="table-auto border w-full text-sm">
+            <tr><td>Principal Amount (A)</td><td>₹ ${fmt(amount)}</td></tr>
+            <tr><td>Interest Earned (B)</td><td>₹ ${fmt(totalInterest)}</td></tr>
+            <tr><td>TDS Deducted (C)</td><td>₹ ${fmt(totalTDS)}</td></tr>
+            <tr><td>Net Interest Earned (D = B - C)</td><td>₹ ${fmt(totalNetInterest)}</td></tr>
+            <tr><td>Maturity Bonus Amount (E)</td><td>₹ ${fmt(bonusAmt)}</td></tr>
+            <tr><td><b>Maturity Amount (A + D + E)</b></td><td><b>₹ ${fmt(maturityAmount)}</b></td></tr>
+            <tr><td>Maturity Date</td><td>${ddmmyyyy(maturityDate)}</td></tr>
+        </table>
+    `;
+
+    document.getElementById("output").innerHTML =
+        "<div class='mb-6'>" + summaryHtml + "</div>" +
+        "<div>" + schedulerHtml + "</div>";
+}
+
     </script>
  
     <script>
