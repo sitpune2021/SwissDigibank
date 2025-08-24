@@ -113,7 +113,7 @@
                     </div>
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                {{-- <div class="col-span-2 md:col-span-1">
                     <label class="md:text-lg font-medium block mb-4">
                         <span>Senior Citizen <span class="text-red-500">*</span></span>
                     </label>
@@ -121,7 +121,7 @@
                         <input type="checkbox" id="senior_citizen" required class="w-4 h-4">
                         <label for="senior_citizen" class="text-sm">Yes</label>
                     </div>
-                </div>
+                </div> --}}
 
 
                 {{-- Submit --}}
@@ -140,7 +140,6 @@
     </div>
     </div>
 @endsection
-
 @push('script')
     <script>
         function calculateFD() {
@@ -154,21 +153,21 @@
             const bonusValue = parseFloat(document.getElementById("bonus").value) || 0;
             const tds = document.querySelector("input[name='tds_deduction']:checked").value === "1";
             const payoutType = document.getElementById("interest_payout_type").value;
-
+ 
             // maturity date
             let maturityDate = new Date(openDate);
             maturityDate.setFullYear(maturityDate.getFullYear() + tenureYears);
             maturityDate.setMonth(maturityDate.getMonth() + tenureMonths);
             maturityDate.setDate(maturityDate.getDate() + tenureDays);
-
+ 
             // interest earned (simple interest for now)
             const totalMonths = tenureYears * 12 + tenureMonths + tenureDays / 30;
             const interestEarned = (amount * annualRate * (totalMonths / 12)) / 100;
-
+ 
             // TDS
             const tdsDeducted = tds ? interestEarned * 0.1 : 0; // 10% TDS
             const netInterest = interestEarned - tdsDeducted;
-
+ 
             // bonus
             let bonusAmt = 0;
             if (bonusType === "%") {
@@ -176,7 +175,7 @@
             } else {
                 bonusAmt = bonusValue;
             }
-
+ 
             // maturity
             const maturityAmount = amount + netInterest + bonusAmt;
             // summary
@@ -192,7 +191,7 @@
             <tr><td>Maturity Date</td><td>${maturityDate.toLocaleDateString()}</td></tr>
         </table>
     `;
-
+ 
             // -------- Financial Year–wise Schedule --------
             let schedulerHtml = `
     <h3 class="text-lg font-semibold mb-2 mt-6">Year-wise Schedule</h3>
@@ -212,12 +211,12 @@
         </thead>
         <tbody>
     `;
-
+ 
             let start = new Date(openDate);
             let end = new Date(maturityDate);
             let principalEOY = amount;
             let cumulativeNetInterest = 0;
-
+ 
             // helper: get next payout date based on payout type
             function getNextPayoutDate(date, maturityDate, payoutType) {
                 let next = new Date(date);
@@ -245,19 +244,19 @@
                 if (next > maturityDate) return new Date(maturityDate);
                 return next;
             }
-
+ 
             // Loop until maturity
             while (start < end) {
                 // 1st period: StartDate → 31st March (same FY)
                 let fyEnd = new Date(start.getFullYear() + (start.getMonth() >= 3 ? 1 : 0), 2, 31);
                 if (fyEnd > end) fyEnd = new Date(end); // don’t cross maturity
-
+ 
                 let days1 = Math.floor((fyEnd - start) / (1000 * 60 * 60 * 24)) + 1;
                 let interest1 = (principalEOY * annualRate * (days1 / 365)) / 100;
                 let tds1 = tds ? interest1 * 0.1 : 0;
                 let net1 = interest1 - tds1;
                 cumulativeNetInterest += net1;
-
+ 
                 schedulerHtml += `
             <tr>
                 <td class="border px-2 py-1">${start.toLocaleDateString()} - ${fyEnd.toLocaleDateString()}</td>
@@ -271,12 +270,12 @@
                 <td class="border px-2 py-1"></td>
             </tr>
         `;
-
+ 
                 // 2nd part: FY start → Next payout (depends on payoutType)
                 let fyStart = new Date(start);
                 fyStart.setDate(fyStart.getDate() + 1);
                 let secondEnd = getNextPayoutDate(fyStart, end, payoutType);
-
+ 
                 if (fyStart <= secondEnd) {
                     let days2 = Math.floor((secondEnd - fyStart) / (1000 * 60 * 60 * 24)) + 1;
                     let interest2 = (principalEOY * annualRate * (days2 / 365)) / 100;
@@ -285,7 +284,7 @@
                     cumulativeNetInterest += net2;
                     let dueDate = new Date(secondEnd);
                     dueDate.setDate(dueDate.getDate() + 1);
-
+ 
                     schedulerHtml += `
                 <tr>
                     <td class="border px-2 py-1">${fyStart.toLocaleDateString()} - ${secondEnd.toLocaleDateString()}</td>
@@ -305,23 +304,23 @@
                     break;
                 }
             }
-
+ 
             schedulerHtml += "</tbody></table>";
-
+ 
             // render
             document.getElementById("output").innerHTML =
                 "<div class='mb-6'>" + summaryHtml + "</div>" +
                 "<div>" + schedulerHtml + "</div>";
         }
     </script>
-
+ 
     <script>
         function numberToWords(n) {
             const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
                 "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
             ];
             const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-
+ 
             if (n < 20) return a[n];
             if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
             if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + (n % 100 ? numberToWords(n % 100) : "");
@@ -331,11 +330,11 @@
                 100000) : "");
             return numberToWords(Math.floor(n / 10000000)) + " Crore " + (n % 10000000 ? numberToWords(n % 10000000) : "");
         }
-
+ 
         function updateAmountInWords() {
             const amountInput = document.getElementById('amount');
             const amountInWordsDiv = document.getElementById('amount-in-words');
-
+ 
             const amount = parseInt(amountInput.value, 10);
             if (!isNaN(amount) && amount >= 0) {
                 amountInWordsDiv.textContent = numberToWords(amount);
@@ -346,3 +345,4 @@
         document.getElementById('amount').addEventListener('input', updateAmountInWords);
     </script>
 @endpush
+ 
