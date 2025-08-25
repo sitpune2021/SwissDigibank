@@ -244,165 +244,274 @@
 @endsection
 
 @push('script')
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // ----- set today's date -----
-    const dateInput = document.getElementById("date2");
-    const today = new Date();
-    dateInput.value = today.toLocaleDateString("en-GB"); // dd/mm/yyyy
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // ----- set today's date -----
+            const dateInput = document.getElementById("date2");
+            const today = new Date();
+            dateInput.value = today.toLocaleDateString("en-GB"); // dd/mm/yyyy
 
-    // ----- element refs -----
-    const els = {
-        manualCheckbox: document.getElementById('manualCheckbox'),
-        scheme: document.getElementById('scheme'),
-        frequency: document.getElementById('frequency'),
-        compInterval: document.getElementById('compInterval'),
-        interestRate: document.getElementById('interestRate'),
-        tenureText: document.getElementById('tenureText'),
-        tenureNumber: document.getElementById('tenureNumber'),
-        bonusSelect: document.getElementById('bonusSelect'),
-        bonusInput: document.getElementById('bonusInput'),
-        schemeInfo: document.getElementById('schemeInfo'),
-        schemeContent: document.getElementById('schemeContent'),
-        toggleButton: document.getElementById('toggleButton'),
-        calculateBtn: document.getElementById('calculateBtn'),
-        resultSection: document.getElementById('resultSection'),
-        amount: document.getElementById('amount'),
-        tenureType: document.getElementById('tenure_type'),
-    };
+            // ----- element refs -----
+            const els = {
+                manualCheckbox: document.getElementById('manualCheckbox'),
+                scheme: document.getElementById('scheme'),
+                frequency: document.getElementById('frequency'),
+                compInterval: document.getElementById('compInterval'),
+                interestRate: document.getElementById('interestRate'),
+                tenureText: document.getElementById('tenureText'),
+                tenureNumber: document.getElementById('tenureNumber'),
+                bonusSelect: document.getElementById('bonusSelect'),
+                bonusInput: document.getElementById('bonusInput'),
+                schemeInfo: document.getElementById('schemeInfo'),
+                schemeContent: document.getElementById('schemeContent'),
+                toggleButton: document.getElementById('toggleButton'),
+                calculateBtn: document.getElementById('calculateBtn'),
+                resultSection: document.getElementById('resultSection'),
+                amount: document.getElementById('amount'),
+                tenureType: document.getElementById('tenure_type'),
+            };
 
-    // ----- scheme info -----
-    let isOpen = true;
-    function toggleSchemeInfo() {
-        const { schemeContent, toggleButton } = els;
-        schemeContent.style.maxHeight = isOpen ? '0' : '1000px';
-        schemeContent.style.opacity = isOpen ? '0' : '1';
-        toggleButton.textContent = isOpen ? '+' : '-';
-        isOpen = !isOpen;
-    }
-    els.toggleButton.addEventListener('click', toggleSchemeInfo);
+            // ----- scheme info -----
+            let isOpen = true;
 
-    els.scheme.addEventListener('change', function () {
-        const { schemeInfo, schemeContent, toggleButton } = els;
-        if (this.value) {
-            schemeInfo.classList.remove('hidden');
-            schemeContent.style.maxHeight = '1000px';
-            schemeContent.style.opacity = '1';
-            toggleButton.textContent = '-';
-            isOpen = true;
-        } else {
-            schemeInfo.classList.add('hidden');
-            schemeContent.style.maxHeight = '0';
-            schemeContent.style.opacity = '0';
-            toggleButton.textContent = '+';
-            isOpen = false;
-        }
-    });
+            function toggleSchemeInfo() {
+                const {
+                    schemeContent,
+                    toggleButton
+                } = els;
+                schemeContent.style.maxHeight = isOpen ? '0' : '1000px';
+                schemeContent.style.opacity = isOpen ? '0' : '1';
+                toggleButton.textContent = isOpen ? '+' : '-';
+                isOpen = !isOpen;
+            }
+            els.toggleButton.addEventListener('click', toggleSchemeInfo);
 
-    // ----- manual toggle -----
-    els.manualCheckbox.addEventListener('change', () => {
-        const disabled = !els.manualCheckbox.checked;
-        [
-            els.scheme, els.frequency, els.compInterval,
-            els.interestRate, els.tenureText, els.tenureNumber,
-            els.bonusSelect, els.bonusInput
-        ].forEach(el => el.disabled = disabled && el !== els.scheme);
-    });
-    els.manualCheckbox.dispatchEvent(new Event('change'));
+            els.scheme.addEventListener('change', function() {
+                const {
+                    schemeInfo,
+                    schemeContent,
+                    toggleButton
+                } = els;
+                if (this.value) {
+                    schemeInfo.classList.remove('hidden');
+                    schemeContent.style.maxHeight = '1000px';
+                    schemeContent.style.opacity = '1';
+                    toggleButton.textContent = '-';
+                    isOpen = true;
+                } else {
+                    schemeInfo.classList.add('hidden');
+                    schemeContent.style.maxHeight = '0';
+                    schemeContent.style.opacity = '0';
+                    toggleButton.textContent = '+';
+                    isOpen = false;
+                }
+            });
 
-    // ----- helpers -----
-    const toNum = v =>
-        typeof v === "number" ? v :
-        typeof v === "string" ? (parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, "")) || 0) : 0;
+            // ----- manual toggle -----
+            els.manualCheckbox.addEventListener('change', () => {
+                const disabled = !els.manualCheckbox.checked;
+                [
+                    els.scheme, els.frequency, els.compInterval,
+                    els.interestRate, els.tenureText, els.tenureNumber,
+                    els.bonusSelect, els.bonusInput
+                ].forEach(el => el.disabled = disabled && el !== els.scheme);
+            });
+            els.manualCheckbox.dispatchEvent(new Event('change'));
 
-    const formatINR = n => n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            // ----- auto change tenure_type based on frequency -----
+            els.frequency.addEventListener('change', function() {
+                let freq = this.value.toUpperCase();
+                if (freq === "DAILY") {
+                    els.tenureType.value = "DAYS";
+                } else if (freq === "WEEKLY") {
+                    els.tenureType.value = "WEEKS";
+                } else if (freq === "BI_WEEKLY") {
+                    els.tenureType.value = "WEEKS"; // still in weeks
+                } else if (freq === "MONTHLY") {
+                    els.tenureType.value = "MONTHS";
+                } else if (freq === "QUARTERLY") {
+                    els.tenureType.value = "MONTHS"; // quarters → months
+                } else if (freq === "HALF-YEARLY") {
+                    els.tenureType.value = "MONTHS"; // half-year → months
+                } else if (freq === "YEARLY") {
+                    els.tenureType.value = "MONTHS";
+                }
+            });
 
-    // ----- RD calculation -----
-    function calcRD({ amount, frequency, tenureUnit, tenureValue, interestRate, compInterval, bonusRate }) {
-        const amt = toNum(amount);
-        const freq = (frequency || "DAILY").toUpperCase().trim();
-        const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
-        const tVal = parseInt(toNum(tenureValue)) || 0;
-        const r = (toNum(interestRate) || 0) / 100;
-        const bonusPct = toNum(bonusRate) || 0;
-        const comp = (compInterval || "MONTHLY").toUpperCase().trim();
 
-        // ---- deposits ----
-        let deposits = 0;
-        if (freq === "DAILY") {
-            deposits = unit === "DAYS" ? tVal :
-                       unit === "WEEKS" ? (tVal * 7) / 30 :
-                       unit === "MONTHS" ? tVal * 30 :
-                       unit === "YEARS" ? tVal * 365 : 0;
-        } else if (freq === "WEEKLY") {
-            deposits = unit === "DAYS" ? tVal :
-                       unit === "WEEKS" ? tVal :
-                       unit === "MONTHS" ? tVal * 4 :
-                       unit === "YEARS" ? tVal * 52 : 0;
-        } else if (freq === "BI_WEEKLY") {
-            deposits = unit === "DAYS" || unit === "WEEKS" ? Math.floor(tVal / 2) :
-                       unit === "MONTHS" ? tVal * 2 :
-                       unit === "YEARS" ? tVal * 26 : 0;
-        } else if (freq === "MONTHLY") {
-            deposits = unit === "DAYS" ? Math.floor(tVal / 30) :
-                       unit === "WEEKS" ? Math.floor(tVal / 4) :
-                       unit === "MONTHS" ? tVal :
-                       unit === "YEARS" ? tVal * 12 : 0;
-        } else if (freq === "QUARTERLY") {
-            deposits = unit === "MONTHS" ? Math.floor(tVal / 3) :
-                       unit === "YEARS" ? tVal * 4 : 0;
-        } else if (freq === "HALF-YEARLY") {
-            deposits = unit === "MONTHS" ? Math.floor(tVal / 6) :
-                       unit === "YEARS" ? tVal * 2 : 0;
-        } else if (freq === "YEARLY") {
-            deposits = unit === "MONTHS" ? Math.floor(tVal / 12) :
-                       unit === "YEARS" ? tVal : 0;
-        }
+            // ----- helpers -----
+            const toNum = v =>
+                typeof v === "number" ? v :
+                typeof v === "string" ? (parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, "")) || 0) : 0;
 
-        const totalDeposit = amt * deposits;
+            const formatINR = n => n.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
 
-        // ---- compounding ----
-        const compMonths = { MONTHLY: 1, QUARTERLY: 3, "HALF-YEARLY": 6, YEARLY: 12 }[comp] || 1;
+            // ----- RD calculation -----
+            function calcRD({
+                amount,
+                frequency,
+                tenureUnit,
+                tenureValue,
+                interestRate,
+                compInterval,
+                bonusRate
+            }) {
+                const amt = parseFloat(amount) || 0;
+                const freq = (frequency || "DAILY").toUpperCase().trim();
+                const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
+                const tVal = parseInt(tenureValue) || 0;
+                const rate = (parseFloat(interestRate) || 0) / 100;
+                const bonusPct = parseFloat(bonusRate) || 0;
+                const comp = (compInterval || "MONTHLY").toUpperCase().trim();
 
-        // ---- tenure months ----
-        const months = unit === "DAYS" ? tVal / 30.437 :
-                       unit === "WEEKS" ? tVal / 4.345 :
-                       unit === "MONTHS" ? tVal :
-                       unit === "YEARS" ? tVal * 12 : 0;
+                // ---- deposits calculation ----
+                let deposits = 0;
+                if (freq === "DAILY" && unit === "DAYS") deposits = tVal;
 
-        // ---- maturity ----
-        let maturity = 0;
-        for (let i = 1; i <= deposits; i++) {
-            const monthsLeft = months - (i - 1) * (months / deposits);
-            const n = monthsLeft / compMonths;
-            const effRate = Math.pow(1 + r / (12 / compMonths), n);
-            maturity += amt * effRate;
-        }
+                const totalDeposit = amt * deposits;
 
-        const interestEarned = maturity - totalDeposit;
-        const bonus = totalDeposit * (bonusPct / 100);
-        return { totalDeposit, interestEarned, bonus, maturity: maturity + bonus };
-    }
+                // ---- compounding months ----
+                const compMonths = {
+                    MONTHLY: 1,
+                    QUARTERLY: 3,
+                    "HALF-YEARLY": 6,
+                    YEARLY: 12
+                } [comp] || 1;
 
-    // ----- calculate button -----
-    els.calculateBtn.addEventListener("click", () => {
-        const out = calcRD({
-            amount: els.amount.value,
-            frequency: els.frequency.value,
-            tenureUnit: els.tenureType.value,
-            tenureValue: els.tenureNumber.value,
-            interestRate: els.interestRate.value,
-            compInterval: els.compInterval.value,
-            bonusRate: els.bonusInput.value
+                // ---- tenure in months ----
+                let months = 0;
+                if (unit === "DAYS") months = tVal / 30.437;
+                else if (unit === "WEEKS") months = tVal / 4.345;
+                else if (unit === "MONTHS") months = tVal;
+                else if (unit === "YEARS") months = tVal * 12;
+
+                // ---- maturity calculation ----
+                let maturity = 0;
+                for (let i = 1; i <= deposits; i++) {
+                    const monthsLeft = months - (i - 1) * (months / deposits);
+                    const n = monthsLeft / compMonths;
+                    const effRate = Math.pow(1 + rate / (12 / compMonths), n);
+                    maturity += amt * effRate;
+                }
+
+                const interestEarned = maturity - totalDeposit;
+                const bonus = totalDeposit * (bonusPct / 100);
+                const maturityFinal = maturity + bonus;
+
+                return {
+                    totalDeposit,
+                    interestEarned,
+                    bonus,
+                    maturity: maturityFinal
+                };
+            }
+
+            // function calcRD({
+            //     amount,
+            //     frequency,
+            //     tenureUnit,
+            //     tenureValue,
+            //     interestRate,
+            //     compInterval,
+            //     bonusRate
+            // }) {
+            //     const amt = toNum(amount);
+            //     const freq = (frequency || "DAILY").toUpperCase().trim();
+            //     const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
+            //     const tVal = parseInt(toNum(tenureValue)) || 0;
+            //     const r = (toNum(interestRate) || 0) / 100;
+            //     const bonusPct = toNum(bonusRate) || 0;
+            //     const comp = (compInterval || "MONTHLY").toUpperCase().trim();
+
+            //     // ---- deposits ----
+            //     let deposits = 0;
+            //     if (freq === "DAILY") {
+            //         deposits = unit === "DAYS" ? tVal :
+            //             unit === "WEEKS" ? (tVal * 7) / 30 :
+            //             unit === "MONTHS" ? tVal * 30 :
+            //             unit === "YEARS" ? tVal * 365 : 0;
+            //     } else if (freq === "WEEKLY") {
+            //         deposits = unit === "DAYS" ? tVal :
+            //             unit === "WEEKS" ? tVal :
+            //             unit === "MONTHS" ? tVal * 4 :
+            //             unit === "YEARS" ? tVal * 52 : 0;
+            //     } else if (freq === "BI_WEEKLY") {
+            //         deposits = unit === "DAYS" || unit === "WEEKS" ? Math.floor(tVal / 2) :
+            //             unit === "MONTHS" ? tVal * 2 :
+            //             unit === "YEARS" ? tVal * 26 : 0;
+            //     } else if (freq === "MONTHLY") {
+            //         deposits = unit === "DAYS" ? Math.floor(tVal / 30) :
+            //             unit === "WEEKS" ? Math.floor(tVal / 4) :
+            //             unit === "MONTHS" ? tVal :
+            //             unit === "YEARS" ? tVal * 12 : 0;
+            //     } else if (freq === "QUARTERLY") {
+            //         deposits = unit === "MONTHS" ? Math.floor(tVal / 3) :
+            //             unit === "YEARS" ? tVal * 4 : 0;
+            //     } else if (freq === "HALF-YEARLY") {
+            //         deposits = unit === "MONTHS" ? Math.floor(tVal / 6) :
+            //             unit === "YEARS" ? tVal * 2 : 0;
+            //     } else if (freq === "YEARLY") {
+            //         deposits = unit === "MONTHS" ? Math.floor(tVal / 12) :
+            //             unit === "YEARS" ? tVal : 0;
+            //     }
+
+            //     const totalDeposit = amt * deposits;
+
+            //     // ---- compounding ----
+            //     const compMonths = {
+            //         MONTHLY: 1,
+            //         QUARTERLY: 3,
+            //         "HALF-YEARLY": 6,
+            //         YEARLY: 12
+            //     } [comp] || 1;
+
+            //     // ---- tenure months ----
+            //     const months = unit === "DAYS" ? tVal / 30.437 :
+            //         unit === "WEEKS" ? tVal / 4.345 :
+            //         unit === "MONTHS" ? tVal :
+            //         unit === "YEARS" ? tVal * 12 : 0;
+
+            //     // ---- maturity ----
+            //     let maturity = 0;
+            //     for (let i = 1; i <= deposits; i++) {
+            //         const monthsLeft = months - (i - 1) * (months / deposits);
+            //         const n = monthsLeft / compMonths;
+            //         const effRate = Math.pow(1 + r / (12 / compMonths), n);
+            //         maturity += amt * effRate;
+            //     }
+
+            //     const interestEarned = maturity - totalDeposit;
+            //     const bonus = totalDeposit * (bonusPct / 100);
+            //     const maturityFinal = maturity + bonus;
+            //     return {
+            //         totalDeposit,
+            //         interestEarned,
+            //         bonus,
+            //         maturity: maturity + bonus
+            //     };
+            // }
+
+            // ----- calculate button -----
+            els.calculateBtn.addEventListener("click", () => {
+                const out = calcRD({
+                    amount: els.amount.value,
+                    frequency: els.frequency.value,
+                    tenureUnit: els.tenureType.value,
+                    tenureValue: els.tenureNumber.value,
+                    interestRate: els.interestRate.value,
+                    compInterval: els.compInterval.value,
+                    bonusRate: els.bonusInput.value
+                });
+
+                const rows = els.resultSection.querySelectorAll("tr td:nth-child(2)");
+                [out.totalDeposit, out.interestEarned, out.bonus, out.maturity]
+                .forEach((val, i) => rows[i].textContent = formatINR(val));
+
+                els.resultSection.classList.remove("hidden");
+            });
         });
-
-        const rows = els.resultSection.querySelectorAll("tr td:nth-child(2)");
-        [out.totalDeposit, out.interestEarned, out.bonus, out.maturity]
-            .forEach((val, i) => rows[i].textContent = formatINR(val));
-
-        els.resultSection.classList.remove("hidden");
-    });
-});
-</script>
+    </script>
 @endpush
-
