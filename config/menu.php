@@ -96,6 +96,7 @@ return [
         'submenu' => [
             // ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
             ['title' => 'Calculator', 'route' => 'rd-calculator.create'],
+             ['title' => 'DDS Accounts', 'route' => 'dds-accounts.index'],
         ]
     ],
 

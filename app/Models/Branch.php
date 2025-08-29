@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\State;
 use App\Models\Member;
 use App\Models\Shareholders;
+use App\Models\dds_accounts;
 
 class Branch extends Model
 {
@@ -46,10 +47,12 @@ class Branch extends Model
         return $this->hasMany(Shareholders::class,'branch_id');
 
     }
-    public function ShareCertificate(){
+    public function ShareCertificate()
+    {
         return $this->hasMany(ShareCertificate::class,'branch_id');
     }
-        
-
-    
+        public function ddsAccounts()
+    {
+        return $this->hasMany(DdsAccount::class, 'branch_id');
+    }
 }

@@ -74,4 +74,9 @@ class Member extends Model
     {
         return $this->hasMany(Form15G15H::class, 'member_id');
     }
+         public function ddsAccounts()
+    {
+        return $this->hasMany(DdsAccount::class, 'member_id');
+    }
+    
 }

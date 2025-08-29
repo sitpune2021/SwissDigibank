@@ -63,21 +63,31 @@
 </style>
 
 @section('content')
+    @php
+        $isEdit = isset($ddsAccount);
+    @endphp
 
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-col  gap-2">
-                <h1 class="text-xl font-semibold">Open New DD Account</h1>
+                <h1 class="text-xl font-semibold">
+                    {{ $isEdit ? 'Update DD Account' : 'Open New DD Account' }}
+                </h1>
                 <p class="text-gray-500">
-                    <a href="{{ route('dds-accounts.store') }}" class="text-gray-500">Daily Deposits</a> >
-                    <a href="#" class="text-gray-500"> New</a>
+                    <a href="{{ route('dds-accounts.index') }}" class="text-gray-500">Daily Deposits</a> >
+                    <span class="text-gray-500">{{ $isEdit ? 'Edit' : 'New' }}</span>
                 </p>
             </div>
         </div>
 
         <div class="col-span-12 box lg:col-span-12">
-            <form action="{{ route('dds-accounts.store') }}" method="POST">
+            <form action="{{ $isEdit ? route('dds-accounts.update', $ddsAccount->id) : route('dds-accounts.store') }}"
+                method="POST">
                 @csrf
+                @if ($isEdit)
+                    @method('PUT')
+                @endif
+
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
@@ -99,8 +109,6 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
-
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberName" class="md:text-lg font-medium block mb-4">
@@ -242,6 +250,9 @@
                         @error('dd_amount')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+                        <p id="minAmountMsg" class="text-blue-600 text-xs mt-1 hidden">
+                            Minimum amount to be deposited ₹ 100.0
+                        </p>
                     </div>
 
 
@@ -497,9 +508,11 @@
 
                 <!-- Buttons -->
                 <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                    <button class="btn-primary" type="submit">Open DD</button>
-                    <button class="btn-outline" type="button">Back</button>
-                    <button class="btn-outline" type="reset">Reset</button>
+                    <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
+                    <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
+                    @if (!$isEdit)
+                        <button class="btn-outline" type="reset">Reset</button>
+                    @endif
                 </div>
             </form>
         </div>
@@ -525,7 +538,7 @@
 <div class="nominee-row flex flex-wrap justify-start gap-6">
     <div class="flex-center flex-1 min-w-[300px] max-w-full">
         <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
-        <select class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
+        <select name="nominee_relation[]" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                            rounded-10 px-3 md:px-6 py-2 md:py-3">
             <option value="">Select Relation</option>
 
@@ -568,14 +581,14 @@
 
     <div class="flex-1 min-w-[300px] max-w-full">
         <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
-        <input type="text" placeholder="Enter Nominee Name"
+        <input type="text" name="nominee_name[]" placeholder="Enter Nominee Name"
             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                         rounded-10 px-3 md:px-6 py-2 md:py-3">
     </div>
 
-    <div class="flex-1 min-w-[300px] max-w-full">
+    <div class="flex-1 min-w-[300px] max-w-full"> 
         <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
-        <input type="text" placeholder="Enter Nominee Address"
+        <input type="text" name="nominee_address[]"  placeholder="Enter Nominee Address"
             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                          rounded-10 px-3 md:px-6 py-2 md:py-3">
     </div>
@@ -625,6 +638,21 @@
             }
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const schemeSelect = document.querySelector('select[name="scheme"]');
+            const minAmountMsg = document.getElementById('minAmountMsg');
+
+            schemeSelect.addEventListener('change', function() {
+                if (schemeSelect.value) {
+                    minAmountMsg.classList.remove('hidden');
+                } else {
+                    minAmountMsg.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

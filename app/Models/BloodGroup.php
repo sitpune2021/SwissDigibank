@@ -8,3 +8,4 @@ class BloodGroup extends Model
 {
     protected $fillable=['group'];
 }
+

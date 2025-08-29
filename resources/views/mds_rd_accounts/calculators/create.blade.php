@@ -381,118 +381,40 @@
                     YEARLY: 12
                 } [comp] || 1;
 
-                // ---- tenure in months ----
-                let months = 0;
-                if (unit === "DAYS") months = tVal / 30.437;
-                else if (unit === "WEEKS") months = tVal / 4.345;
-                else if (unit === "MONTHS") months = tVal;
-                else if (unit === "YEARS") months = tVal * 12;
-
-                // ---- maturity calculation ----
                 let maturity = 0;
-                for (let i = 1; i <= deposits; i++) {
-                    const monthsLeft = months - (i - 1) * (months / deposits);
-                    const n = monthsLeft / compMonths;
-                    const effRate = Math.pow(1 + rate / (12 / compMonths), n);
-                    maturity += amt * effRate;
+                let interestEarned = 0;
+                if (unit === "DAYS") {
+                    // ---- Daily RD/DD logic ----
+                    for (let i = 0; i < deposits; i++) {
+                        let daysLeft = tVal - i; // e.g. 29, 28 ... 1
+                        // rate is already decimal (0.10 for 10%)
+                        let effInterest = amt * rate * (daysLeft / 365);
+
+                        maturity += amt + effInterest;
+                        interestEarned += effInterest;
+                    }
+                } else {
+                    // ---- Existing monthly compounding logic ----
+                    for (let i = 1; i <= deposits; i++) {
+                        const monthsLeft = months - (i - 1) * (months / deposits);
+                        const n = monthsLeft / compMonths;
+                        const effRate = Math.pow(1 + rate / (12 / compMonths), n);
+                        maturity += amt * effRate;
+                    }
+
+                    interestEarned = maturity - totalDeposit;
                 }
 
-                const interestEarned = maturity - totalDeposit;
                 const bonus = totalDeposit * (bonusPct / 100);
                 const maturityFinal = maturity + bonus;
 
                 return {
-                    totalDeposit,
-                    interestEarned,
-                    bonus,
-                    maturity: maturityFinal
+                    totalDeposit: totalDeposit.toFixed(2),
+                    interestEarned: interestEarned.toFixed(2), // <-- gives 129.00
+                    bonus: bonus.toFixed(2),
+                    maturity: maturityFinal.toFixed(2)
                 };
             }
-
-            // function calcRD({
-            //     amount,
-            //     frequency,
-            //     tenureUnit,
-            //     tenureValue,
-            //     interestRate,
-            //     compInterval,
-            //     bonusRate
-            // }) {
-            //     const amt = toNum(amount);
-            //     const freq = (frequency || "DAILY").toUpperCase().trim();
-            //     const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
-            //     const tVal = parseInt(toNum(tenureValue)) || 0;
-            //     const r = (toNum(interestRate) || 0) / 100;
-            //     const bonusPct = toNum(bonusRate) || 0;
-            //     const comp = (compInterval || "MONTHLY").toUpperCase().trim();
-
-            //     // ---- deposits ----
-            //     let deposits = 0;
-            //     if (freq === "DAILY") {
-            //         deposits = unit === "DAYS" ? tVal :
-            //             unit === "WEEKS" ? (tVal * 7) / 30 :
-            //             unit === "MONTHS" ? tVal * 30 :
-            //             unit === "YEARS" ? tVal * 365 : 0;
-            //     } else if (freq === "WEEKLY") {
-            //         deposits = unit === "DAYS" ? tVal :
-            //             unit === "WEEKS" ? tVal :
-            //             unit === "MONTHS" ? tVal * 4 :
-            //             unit === "YEARS" ? tVal * 52 : 0;
-            //     } else if (freq === "BI_WEEKLY") {
-            //         deposits = unit === "DAYS" || unit === "WEEKS" ? Math.floor(tVal / 2) :
-            //             unit === "MONTHS" ? tVal * 2 :
-            //             unit === "YEARS" ? tVal * 26 : 0;
-            //     } else if (freq === "MONTHLY") {
-            //         deposits = unit === "DAYS" ? Math.floor(tVal / 30) :
-            //             unit === "WEEKS" ? Math.floor(tVal / 4) :
-            //             unit === "MONTHS" ? tVal :
-            //             unit === "YEARS" ? tVal * 12 : 0;
-            //     } else if (freq === "QUARTERLY") {
-            //         deposits = unit === "MONTHS" ? Math.floor(tVal / 3) :
-            //             unit === "YEARS" ? tVal * 4 : 0;
-            //     } else if (freq === "HALF-YEARLY") {
-            //         deposits = unit === "MONTHS" ? Math.floor(tVal / 6) :
-            //             unit === "YEARS" ? tVal * 2 : 0;
-            //     } else if (freq === "YEARLY") {
-            //         deposits = unit === "MONTHS" ? Math.floor(tVal / 12) :
-            //             unit === "YEARS" ? tVal : 0;
-            //     }
-
-            //     const totalDeposit = amt * deposits;
-
-            //     // ---- compounding ----
-            //     const compMonths = {
-            //         MONTHLY: 1,
-            //         QUARTERLY: 3,
-            //         "HALF-YEARLY": 6,
-            //         YEARLY: 12
-            //     } [comp] || 1;
-
-            //     // ---- tenure months ----
-            //     const months = unit === "DAYS" ? tVal / 30.437 :
-            //         unit === "WEEKS" ? tVal / 4.345 :
-            //         unit === "MONTHS" ? tVal :
-            //         unit === "YEARS" ? tVal * 12 : 0;
-
-            //     // ---- maturity ----
-            //     let maturity = 0;
-            //     for (let i = 1; i <= deposits; i++) {
-            //         const monthsLeft = months - (i - 1) * (months / deposits);
-            //         const n = monthsLeft / compMonths;
-            //         const effRate = Math.pow(1 + r / (12 / compMonths), n);
-            //         maturity += amt * effRate;
-            //     }
-
-            //     const interestEarned = maturity - totalDeposit;
-            //     const bonus = totalDeposit * (bonusPct / 100);
-            //     const maturityFinal = maturity + bonus;
-            //     return {
-            //         totalDeposit,
-            //         interestEarned,
-            //         bonus,
-            //         maturity: maturity + bonus
-            //     };
-            // }
 
             // ----- calculate button -----
             els.calculateBtn.addEventListener("click", () => {

@@ -164,7 +164,6 @@ class MemberController extends Controller
                 'charges_net_fee' => 'required|numeric',
                 'charges_remarks' => 'nullable|string',
                 'charges_pay_mode' => 'required|in:cash,online,cheque',
-                // 'folio_no' => 34,
             ]);
 
             $request->merge([
@@ -222,8 +221,7 @@ class MemberController extends Controller
 
             $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
 
-            // fetch documents for this member
-            $documents = \App\Models\KycDocument::where('member_id', $id)->get();
+            $documents = KycDocument::where('member_id', $id)->get();
 
             $sections = config('member_form');
             $show = true;
@@ -611,5 +609,24 @@ class MemberController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
+    }
+       public function search(Request $request)
+    {
+        $search = $request->input('q');
+
+        $members = \App\Models\Member::where(function ($q) use ($search) {
+            $q->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('mobile_no', 'like', "%{$search}%");
+        })->limit(10)->get();
+
+        return response()->json($members->map(function ($member) {
+            return [
+                'id' => $member->id,
+                'member_info_first_name' => $member->first_name,
+                'member_info_last_name' => $member->last_name,
+                'mobile_no' => $member->mobile_no,
+            ];
+        }));
     }
 }

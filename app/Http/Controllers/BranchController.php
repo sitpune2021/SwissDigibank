@@ -33,7 +33,7 @@ class BranchController extends Controller
             return view('company.branch.manage-branch', compact('branches'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404); // Only if resource is missing
-        } 
+        }
     }
 
     public function create()
@@ -49,7 +49,7 @@ class BranchController extends Controller
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404); // Only if resource is missing
-        } 
+        }
     }
 
     public function store(Request $request)
@@ -85,7 +85,7 @@ class BranchController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404); // Only if resource is missing
-        } 
+        }
     }
 
 
@@ -105,7 +105,7 @@ class BranchController extends Controller
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'encryptedId', 'show'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function edit($id)
     {
@@ -121,7 +121,7 @@ class BranchController extends Controller
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function update(Request $request, $id)
@@ -158,7 +158,7 @@ class BranchController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
@@ -176,6 +176,27 @@ class BranchController extends Controller
             return response()->json($branches);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
+    }
+    // public function search(Request $request)
+    // {
+    //     $q = $request->get('q');
+
+    //     return Branch::where('branch_name', 'like', "%$q%")
+    //         ->limit(10)
+    //         ->get(['id', 'branch_name']);
+    // }
+    public function search(Request $request)
+    {
+        $search = $request->input('q');
+
+        $branches = \App\Models\Branch::where('branch_name', 'like', "%{$search}%")->limit(10)->get();
+
+        return response()->json($branches->map(function ($branch) {
+            return [
+                'id' => $branch->id,
+                'branch_name' => $branch->branch_name,
+            ];
+        }));
     }
 }

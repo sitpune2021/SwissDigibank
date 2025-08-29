@@ -32,9 +32,7 @@ use App\Http\Controllers\KycDocumentsController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\FdCalculatorController;
 use App\Http\Controllers\RDCalculatorController;
-
-
-
+use App\Http\Controllers\DdsAccountsController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -58,6 +56,7 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'company'], function () {
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
+        Route::get('/ajax/branches/search', [BranchController::class, 'search'])->name('ajax.branches.search');
         Route::resource('promotor', PromotorController::class);
         Route::get('/promotor/{id}/address', [PromotorController::class, 'addressedit'])->name('promotor.address');
         Route::put('/promotor/{id}/address', [PromotorController::class, 'addressupdate'])->name('promotor.address.update');
@@ -65,7 +64,7 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
         Route::resource('shareholding', ShareHoldingController::class);
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
-            ->name('shareholding.transfer'); // ✅ semicolon added here
+            ->name('shareholding.transfer');
         Route::resource('director', DirectorController::class);
     });
 
@@ -79,6 +78,22 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculator/create', [CalculatorController::class, 'create'])->name('calculator.create');
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
     });
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/dds-accounts', [DdsAccountsController::class, 'index'])->name('dds-accounts.index');
+        Route::get('/dds-accounts/create', [DdsAccountsController::class, 'create'])->name('dds-accounts.create');
+        Route::post('/dds-accounts/store', [DdsAccountsController::class, 'store'])->name('dds-accounts.store');
+        Route::get('/ajax/members/{id}', [DdsAccountsController::class, 'getMemberDetails'])
+            ->name('ajax.members.show');
+        Route::get('/dds-accounts/{id}', [DdsAccountsController::class, 'show'])->name('dds-accounts.show');
+        Route::get('/dds-accounts/{id}/edit', [DdsAccountsController::class, 'edit'])->name('dds-accounts.edit');
+        Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
+            ->name('dds-accounts.calculate-deposit');
+        // Updates
+        Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
+        Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
+    });
+
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
@@ -95,6 +110,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/member/{id}/mobile', [MemberController::class, 'editmobile'])->name('member.mobile');
         Route::put('/member/{id}/mobile', [MemberController::class, 'updatemobile'])->name('member.updatemobile');
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
+        // Ajax
+        Route::get('/ajax/members/search', [MemberController::class, 'search'])->name('ajax.members.search');
+
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
