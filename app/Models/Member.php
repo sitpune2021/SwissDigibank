@@ -38,8 +38,9 @@ class Member extends Model
 
     public function address(): HasOne
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Address::class,'member_id', 'id');
     }
+
     public function kyc(): HasOne
     {
         return $this->hasOne(KycAndNominee::class);

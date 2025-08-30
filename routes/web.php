@@ -32,6 +32,7 @@ use App\Http\Controllers\KycDocumentsController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\FDController;
 use App\Http\Controllers\MDSController;
+use App\Http\Controllers\RdschemesController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -122,9 +123,23 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::resource('fd-mis-schemes', FDController::class);
+
+    Route::get('fd-index', [FDController::class, 'fd_index'])->name('fd-mis-schemes.fd_index');
+    Route::get('fd-account', [FDController::class, 'fd_create'])->name('fd-mis-schemes.fd_create');
+
+    Route::post('add/fd-account', [FDController::class, 'fd_store'])->name('fd-mis-schemes.fd_store');
+    // web.php
+    Route::get('/account/balance/{id}', [FDController::class, 'getBalance'])->name('account.balance');
+
+    Route::get('fd-account-view/{id}', [FDController::class, 'fd_show'])->name('fd-mis-schemes.fd_show');
+    Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
+        ->name('member.savings');
+
 });
 Route::group(['prefix' => 'mds-rds-dds'], function () {
+
     Route::resource('mds-rds-dds', MDSController::class);
+    Route::resource('rdschemes', RdschemesController::class);
 });
 
 Route::group(['prefix' => 'deposits'], function () {

@@ -62,6 +62,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
+            ['title' => 'FD Accounts', 'route' => 'fd-mis-schemes.fd_index'],
             // ['title' => 'Calculator', 'route' => 'calculator.index'],
         ]
     ],
@@ -71,7 +72,8 @@ return [
         'position' => '7',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Schemes', 'route' => 'mds-rds-dds.index'],
+            ['title' => 'Schemes', 'route' => 'rdschemes.index'],
+            // ['title' => 'MDS / RD Accounts', 'route' => 'mds-rds-dds.rd_create'],
         ]
     ],
     [

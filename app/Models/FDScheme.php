@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FDScheme extends Model
 {
-    protected $table="fd_schemes";
+    protected $table = "fd_schemes";
 
     protected $fillable = [
         'scheme_name',
@@ -26,4 +26,8 @@ class FDScheme extends Model
         'member',
         'is_active'
     ];
+    public function fdslabs()
+    {
+        return $this->hasMany(FdSchemeSlab::class, 'fd_scheme_id');
+    }
 }

@@ -76,7 +76,9 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
-            <h1 class="text-xl font-semibold">New FD Account Scheme</h1>
+            <h1 class="text-xl font-semibold">
+                {{ isset($fdScheme) ? 'Edit FD Scheme' : 'Add FD Scheme' }}
+            </h1>
             <!-- <p class="text-gray-500">
                 <a href="#" class="text-gray-500">Fd Scheme</a> >
                 <a href="#" class="text-gray-500"> New</a>
@@ -85,8 +87,11 @@
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
-        <form method="POST" action="{{ route('fd-mis-schemes.store') }}" class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
+        <form method="POST" action="{{ isset($fdScheme) ? route('fd-mis-schemes.update', $fdScheme->id) : route('fd-mis-schemes.store') }}" class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
             @csrf
+            @if(isset($fdScheme))
+            @method('PUT')
+            @endif
             <div class="col-span-2 md:col-span-1">
                 <label for="" class="md:text-lg font-medium block mb-4">
                     Scheme Name
@@ -95,7 +100,7 @@
 
                 <input type="text" id="scheme_name" name="scheme_name"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="Enter Scheme Name " value="">
+                    placeholder="Enter Scheme Name " value="{{ old('scheme_name', $fdScheme->scheme_name ?? '') }}">
                 @error('scheme_name')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
@@ -108,7 +113,7 @@
 
                 <input type="text" id="scheme_code" name="scheme_code"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="Enter Scheme Code" value="">
+                    placeholder="Enter Scheme Code" value="{{ old('scheme_code', $fdScheme->scheme_code ?? '') }}">
 
                 @error('scheme_code')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -122,46 +127,31 @@
 
                 <input type="number" id="min_amount" name="min_amount"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="Enter Minimum FD Amount" value="">
+                    placeholder="Enter Minimum FD Amount" value="{{ old('min_amount', $fdScheme->min_amount ?? '') }}">
                 @error('min_amount')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
+
             <div class="col-span-2 md:col-span-1">
                 <label for="" class="md:text-lg font-medium block mb-4">
                     FD/ MIS Lock In Period
                     <span class="text-red-500">*</span>
                 </label>
-                <select name="lock_in_period" id="lock_in_period"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                    <option value="0">0 months</option>
-                    <option value="1">1 month</option>
-                    <option value="3" selected>3 months</option>
-                    <option value="6">6 months</option>
-                    <option value="9">9 months</option>
-                    <option value="12">12 months</option>
-                    <option value="15">15 months</option>
-                    <option value="18">18 months</option>
-                    <option value="21">21 months</option>
-                    <option value="24">24 months</option>
-                    <option value="25">25 Months</option>
-                    <option value="27">27 Months</option>
-                    <option value="30">30 months</option>
-                    <option value="33">33 Months</option>
-                    <option value="36">36 months</option>
-                    <option value="39">39 Months</option>
-                    <option value="42">42 Months</option>
-                    <option value="45">45 Months</option>
-                    <option value="48">48 months</option>
-                    <option value="51">51 Months</option>
-                    <option value="54">54 Months</option>
-                    <option value="57">57 Months</option>
-                    <option value="60">60 months</option>
+                <select name="lock_in_period" class="w-full text-sm bg-primary/5 border rounded-10 px-3 py-2">
+                    @foreach([0,1,3,6,9,12,15,18,21,24,25,27,30,33,36,39,42,45,48,51,54,57,60] as $month)
+                    <option value="{{ $month }}"
+                        {{ old('lock_in_period', $fdScheme->lock_in_period ?? '') == $month ? 'selected' : '' }}>
+                        {{ $month }} months
+                    </option>
+                    @endforeach
                 </select>
+
                 @error('lock_in_period')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
+
             <div class="col-span-2 md:col-span-1">
                 <label for="pincode" class="md:text-lg font-medium block mb-4">
                     Interest Lock In Period
@@ -170,196 +160,211 @@
                 <div class="flex items-center gap-1 ">
                     <select name="interest_lock_in" id="interest_lock_in"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="0">0 months</option>
-                        <option value="3">3 months</option>
-                        <option selected="selected" value="6">6 months</option>
-                        <option value="9">9 months</option>
-                        <option value="12">12 Months</option>
-                        <option value="15">15 Months</option>
-                        <option value="16">16 Months</option>
-                        <option value="18">18 Months</option>
-                        <option value="21">21 Months</option>
-                        <option value="24">24 Months</option>
-                        <option value="25">25 Months</option>
-                        <option value="27">27 Months</option>
-                        <option value="30">30 Months</option>
-                        <option value="33">33 Months</option>
-                        <option value="36">36 Months</option>
-                        <option value="39">39 Months</option>
-                        <option value="42">42 Months</option>
-                        <option value="45">45 Months</option>
-                        <option value="48">48 Months</option>
-                        <option value="51">51 Months</option>
-                        <option value="54">54 Months</option>
-                        <option value="57">57 Months</option>
-                        <option value="60">60 Months</option>
+
+                        @foreach ([0,3,6,9,12,15,16,18,21,24,25,27,30,33,36,39,42,45,48,51,54,57,60] as $month)
+                        <option value="{{ $month }}"
+                            {{ old('interest_lock_in', $fdScheme->interest_lock_in ?? '') == $month ? 'selected' : '' }}>
+                            {{ $month }} {{ Str::plural('Month', $month) }}
+                        </option>
+                        @endforeach
                     </select>
                     @error('interest_lock_in')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
             </div>
+
             <div class="col-span-2 md:col-span-1 pt-3">
                 <p class="text-blue-500">
                     10.0 % TDS will be deducted, if the Interest exceeds ₹ 40000 per annually.</p>
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="bonus_rate" class="md:text-lg font-medium block mb-4">
                     Bonus Rate
                     <span class="text-red-500">*</span>
                 </label>
                 <div class="flex gap-2">
+                    {{-- Bonus Type --}}
                     <select name="bonus_type" id="bonus_type"
-                        class=" text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">(%)</option>
-                        <option value="" class="uppercase">fixed</option>
+                        class="text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        <option value="">Select Type</option>
+                        <option value="percentage" {{ old('bonus_type', $fdScheme->bonus_type ?? '') == 'percentage' ? 'selected' : '' }}>(%)</option>
+                        <option value="fixed" {{ old('bonus_type', $fdScheme->bonus_type ?? '') == 'fixed' ? 'selected' : '' }}>Fixed</option>
                     </select>
+
+                    {{-- Bonus Rate --}}
                     <input type="number" id="bonus_rate" name="bonus_rate"
+                        value="{{ old('bonus_rate', $fdScheme->bonus_rate ?? '') }}"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0">
-                    @error('bonus_rate')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                        placeholder="0.0" step="0.01">
                 </div>
+
+                {{-- Error Message --}}
+                @error('bonus_rate')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
+
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="cancellation_type" class="md:text-lg font-medium block mb-4">
                     Cancellation Charges (if any)
                 </label>
                 <div class="flex gap-2">
                     <select name="cancellation_type" id="cancellation_type"
-                        class=" text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">(%)</option>
-                        <option value="" class="uppercase">fixed</option>
+                        class="text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        <option value="percent" {{ old('cancellation_type', $fdScheme->cancellation_type ?? '') == 'percent' ? 'selected' : '' }}>(%)</option>
+                        <option value="fixed" {{ old('cancellation_type', $fdScheme->cancellation_type ?? '') == 'fixed' ? 'selected' : '' }}>Fixed</option>
                     </select>
-                    <input type="number" id="" name="cancellation_charge"
+
+                    <input type="number" name="cancellation_charge" step="0.01"
+                        value="{{ old('cancellation_charge', $fdScheme->cancellation_charge ?? '') }}"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="0.0">
                 </div>
-
             </div>
+
             <div class="col-span-2 md:col-span-1">
                 <label for="contact_email" class="md:text-lg font-medium block mb-4">
                     Penal Charges (%)
                 </label>
-
                 <select name="penal_charge" id="penal_charge"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                    <option value="">0.0%</option>
+                    <option value="">0.0</option>
                 </select>
             </div>
+
             <div class="col-span-2 md:col-span-1">
-                <label for="contact_email" class="md:text-lg font-medium block mb-4">
+                <label for="effective_date" class="md:text-lg font-medium block mb-4">
                     Effective Date
                     <span class="text-red-500">*</span>
                 </label>
-                <input type="text" id="date2" name="effective_date" value="{{ date('D M d Y') }}"
+                <input type="text" id="date2" name="effective_date"
+                   value="{{ old('effective_date', isset($fdScheme) ? \Carbon\Carbon::parse($fdScheme->effective_date)->format('D M d Y') : date('D M d Y')) }}"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
             </div>
+
             <div class="col-span-2 md:col-span-1">
-                <label for="contact_email" class="md:text-lg font-medium block mb-4">
+                <label for="stationary_fee" class="md:text-lg font-medium block mb-4">
                     Stationary Fee
                 </label>
-                <input type="number" id="stationary_fee" name="stationary_fee"
+                <input
+                    type="number"
+                    id="stationary_fee"
+                    name="stationary_fee"
+                    value="{{ old('stationary_fee', $fdScheme->stationary_fee ?? '0.0') }}"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="0.0">
             </div>
-            <div class="col-span-2 md:col-span-1">
-                <label for="contact_email" class="md:text-lg font-medium block mb-4">
-                    App Type
-                    <span class="text-red-500">*</span>
-                </label>
-                <div class="flex flex-row pt-3 mt-5 gap-6">
-                    <label class="flex items-center gap-3">
-                        <input type="checkbox" name="admin" class="w-6 h-6 accent-green-500" checked>
-                        <span>Admin</span>
-                    </label>
 
+            <div class="col-span-2 md:col-span-1"> <label for="contact_email" class="md:text-lg font-medium block mb-4"> App Type <span class="text-red-500">*</span> </label>
+                <div class="flex flex-row pt-3 mt-5 gap-6"> <label class="flex items-center gap-3">
+                        <input type="checkbox" name="admin" class="w-6 h-6 accent-green-500" checked>
+                        <span>Admin</span> </label>
                     <label class="flex items-center gap-3">
                         <input type="checkbox" name="associate" class="w-6 h-6 accent-green-500" checked>
                         <span>Associate</span>
                     </label>
-
                     <label class="flex items-center gap-3">
                         <input type="checkbox" name="member" class="w-6 h-6 accent-green-500">
                         <span>Member</span>
                     </label>
                 </div>
             </div>
+
             <div class="col-span-2 md:col-span-1">
-                <label for="contact_email" class="md:text-lg font-medium block mb-4">
+                <label for="active" class="md:text-lg font-medium block mb-4">
                     Active
                     <span class="text-red-500">*</span>
                 </label>
                 <div class="flex items-center gap-6">
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="active" value="1">
+                        <input type="radio" name="active" value="1"
+                            {{ old('active', $item->active ?? 0) == 1 ? 'checked' : '' }}>
                         <span>Yes</span>
                     </label>
 
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="active" value="0" checked>
+                        <input type="radio" name="active" value="0"
+                            {{ old('active', $item->active ?? 0) == 0 ? 'checked' : '' }}>
                         <span>No</span>
                     </label>
                 </div>
             </div>
+
             <div class="col-span-2 mt-8">
                 <div class="tableWidth mt-8 px-4">
                     <div class="overflow-x-auto">
-                        <table class="">
-                            <thead class="bg-green-500  text-white">
+                        <table class="w-full border border-gray-300">
+                            <thead class="bg-green-500 text-white">
                                 <tr>
-                                    <th colspan="2" class="text-center py-3 ">DAYS</th>
+                                    <th colspan="2" class="text-center py-3">DAYS</th>
                                     <th rowspan="2" class="text-center">ANNUAL INTEREST <br> RATE (%)</th>
-                                    <th rowspan="2" class="text-center py-3  w-[15%]">
+                                    <th rowspan="2" class="text-center py-3 w-[15%]">
                                         SR CTZN INTEREST <br> RATE (%)
                                         <strong class="text-black cursor-pointer"
                                             title="In the case of SR. Citizen, Total Interest will be (INTEREST RATE + SR CTZN INTEREST RATE)">
                                             <i class="fa fa-info-circle fa-lg"></i>
                                         </strong>
                                     </th>
-                                    <th rowspan="2" class="text-center py-3 ">INTEREST PAYOUT TYPE</th>
+                                    <th rowspan="2" class="text-center py-3">INTEREST PAYOUT TYPE</th>
                                 </tr>
-                                <tr class="">
-                                    <th class="text-center ">FROM</th>
-                                    <th class="text-center  ">TO</th>
+                                <tr>
+                                    <th class="text-center">FROM</th>
+                                    <th class="text-center">TO</th>
                                 </tr>
                             </thead>
-
-
                             <tbody>
-                                @for ($i = 0; $i < 10; $i++)
+                                @php
+                                // if editing, use existing slabs, else make empty rows
+                                $slabs = isset($fdScheme) ? $fdScheme->fdslabs : collect([]);
+                                $rowCount = max(10, $slabs->count());
+                                @endphp
+
+                                @for ($i = 0; $i < $rowCount; $i++)
+                                    @php
+                                    $slab=$slabs[$i] ?? null;
+                                    @endphp
                                     <tr>
                                     <td class="border border-gray-300 p-1">
-                                        <input type="number" min="0" step="0" class="w-full border border-gray-300 rounded p-1">
+                                        <input type="number" name="rows[{{ $i }}][day_from]" min="0" step="1"
+                                            class="w-full border border-gray-300 rounded p-1"
+                                            value="{{ old('rows.'.$i.'.day_from', $slab->day_from ?? '') }}">
                                     </td>
                                     <td class="border border-gray-300 p-1">
-                                        <input type="number" min="0" step="0" class="w-full border border-gray-300 rounded p-1">
+                                        <input type="number" name="rows[{{ $i }}][day_to]" min="0" step="1"
+                                            class="w-full border border-gray-300 rounded p-1"
+                                            value="{{ old('rows.'.$i.'.day_to', $slab->day_to ?? '') }}">
                                     </td>
                                     <td class="border border-gray-300 p-1">
-                                        <input type="number" min="0" step="0.01" class="w-full border border-gray-300 rounded p-1">
+                                        <input type="number" name="rows[{{ $i }}][interest_rate]" min="0" step="0.01"
+                                            class="w-full border border-gray-300 rounded p-1"
+                                            value="{{ old('rows.'.$i.'.interest_rate', $slab->interest_rate ?? '') }}">
                                     </td>
                                     <td class="border border-gray-300 p-1">
-                                        <input type="number" min="0" step="0.01" class="w-full border border-gray-300 rounded p-1">
+                                        <input type="number" name="rows[{{ $i }}][sr_citizen_rate]" min="0" step="0.01"
+                                            class="w-full border border-gray-300 rounded p-1"
+                                            value="{{ old('rows.'.$i.'.sr_citizen_rate', $slab->sr_citizen_rate ?? '') }}">
                                     </td>
                                     <td class="border border-gray-300 p-1">
-                                        <select class="w-full border border-gray-300 rounded p-1">
+                                        <select class="w-full border border-gray-300 rounded p-1"
+                                            name="rows[{{ $i }}][payout_type]">
                                             <option value="">Select Interest Payout</option>
-                                            <option value="Cumulative Yearly">Cumulative Yearly</option>
-                                            <option value="Cumulative Half Yearly">Cumulative Half Yearly</option>
-                                            <option value="Cumulative Monthly">Cumulative Monthly</option>
-                                            <option value="Monthly">Monthly</option>
-                                            <option value="Quarterly">Quarterly</option>
+                                            <option value="Cumulative Yearly" {{ old('rows.'.$i.'.payout_type', $slab->payout_type ?? '') == 'Cumulative Yearly' ? 'selected' : '' }}>Cumulative Yearly</option>
+                                            <option value="Cumulative Half Yearly" {{ old('rows.'.$i.'.payout_type', $slab->payout_type ?? '') == 'Cumulative Half Yearly' ? 'selected' : '' }}>Cumulative Half Yearly</option>
+                                            <option value="Cumulative Monthly" {{ old('rows.'.$i.'.payout_type', $slab->payout_type ?? '') == 'Cumulative Monthly' ? 'selected' : '' }}>Cumulative Monthly</option>
+                                            <option value="Monthly" {{ old('rows.'.$i.'.payout_type', $slab->payout_type ?? '') == 'Monthly' ? 'selected' : '' }}>Monthly</option>
+                                            <option value="Quarterly" {{ old('rows.'.$i.'.payout_type', $slab->payout_type ?? '') == 'Quarterly' ? 'selected' : '' }}>Quarterly</option>
                                         </select>
                                     </td>
                                     </tr>
                                     @endfor
                             </tbody>
-
                         </table>
                     </div>
                 </div>
             </div>
+
+
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                 <button type="submit"
                     class="bg-green-500 p-2 border border-green-500 text-white uppercase rounded  sm:w-auto">

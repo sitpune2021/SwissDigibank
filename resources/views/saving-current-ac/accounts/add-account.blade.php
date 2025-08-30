@@ -160,9 +160,7 @@
                 @error('scheme_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
                 {{-- Minimum amount note --}}
-                <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>
-
-                
+                <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>             
 
             </div>
 
@@ -448,7 +446,6 @@
                     // Autofill when member is selected
                     $('#member_id_main').on('change', function () 
                     {
-
                         const memberId = $(this).val();
                         const member = membersData[memberId];
 
