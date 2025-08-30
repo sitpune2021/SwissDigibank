@@ -10,7 +10,6 @@
                 Add
             </a>
         </div>
-
         <!-- Alpine.js for toggle -->
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -22,7 +21,6 @@
                 <button type="button" class="text-white text-xl font-bold focus:outline-none"
                     x-text="open ? '-' : '+'"></button>
             </div>
-
             <!-- Collapsible Body -->
             <div class="bg-white dark:bg-bg3 border border-gray-200 rounded-10 shadow-md overflow-hidden transition-all duration-500"
                 x-show="open" x-transition:enter="transition ease-out duration-500"
@@ -41,7 +39,6 @@
                             class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-xl px-4 py-3"
                             placeholder="Enter Scheme Name">
                     </div>
-
                     <!-- Field 2 -->
                     <div>
                         <label class="md:text-lg font-medium block mb-2">
@@ -52,9 +49,6 @@
                             placeholder="Enter Scheme Code">
                     </div>
                 </form>
-
-
-                <!-- Buttons -->
                 <div class="flex justify-center gap-4 pb-6">
                     <button class="btn-primary px-6 py-2 rounded-full" type="submit">
                         Save Scheme
@@ -70,7 +64,6 @@
         <div class="col-span-12 box lg:col-span-6">
             <div class="pb-4 overflow-x-auto lg:pb-6">
                 <table class="w-full border border-n30 rounded-lg overflow-hidden">
-                    <!-- <table class="w-full whitespace-nowrap border border-n30 rounded-lg overflow-hidden"> -->
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
                             <th class="px-6 py-3 text-center">ASSOCIATE</th>
@@ -131,7 +124,6 @@
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->open_date?->format('d/m/Y') }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->maturity_date?->format('d-m-Y') }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->scheme?->payout_frequency ?? '-' }}</td>
-
                                 {{-- Status --}}
                                 <td class="px-6 py-4 text-center">
                                     @if ($ddaccount->status === 'active')
@@ -142,14 +134,10 @@
                                             class="px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">Inactive</span>
                                     @endif
                                 </td>
-
-                                {{-- Actions --}}
                                 <td class="px-6 py-4 text-center">
                                     <div class="relative">
                                         <a href="{{ route('dds-accounts.show', $ddaccount->id) }}"
                                             class="btn btn-default btn-xs" title="View">
-                                            {{-- <i class="fa fa-eye"></i> works with FA v4 --}}
-                                            {{-- OR with FA v6 --}}
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
                                     </div>

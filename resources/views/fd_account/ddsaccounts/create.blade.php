@@ -254,8 +254,6 @@
                             Minimum amount to be deposited ₹ 100.0
                         </p>
                     </div>
-
-
                     <div class="col-span-2 md:col-span-1 relative">
                         <label class="font-medium block mb-2">
                             Open Date <span class="text-red-500">*</span> :
@@ -268,8 +266,6 @@
                             class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
                         <!-- <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xlg pointer-events-none"></i> -->
                     </div>
-
-
                     <div class="col-span-2 md:col-span-1"></div>
 
                     <!-- TDS -->
@@ -373,15 +369,11 @@
                                     onclick="togglePaymentMode('saving')">
                                 <span>Saving</span>
                             </label>
-
                         </div>
-
                         <!-- Cash (no fields) -->
                         <div id="cash" class="hidden"></div>
-
                         <!-- Online Transfer Fields -->
                         <div id="onlineTr" class="hidden grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
-
                             <!-- Transfer Date -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">Transfer Date <span
@@ -390,9 +382,7 @@
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 <i
                                     class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-
                             </div>
-
                             <!-- UTR / Transaction No -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">UTR / Transaction No <span
@@ -400,7 +390,6 @@
                                 <input type="text" placeholder="Enter UTR / Transaction No"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             </div>
-
                             <!-- Transfer Mode -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">Transfer Mode <span

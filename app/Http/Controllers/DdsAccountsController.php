@@ -53,6 +53,7 @@ class DdsAccountsController extends Controller
     public function store(Request $request)
     {
         try {
+
             $validated = $request->validate([
                 'member_id' => 'required|integer',
                 'branch_id' => 'required|integer',
@@ -64,38 +65,40 @@ class DdsAccountsController extends Controller
                 'dd_amount' => 'required|numeric|min:100',
 
             ]);
-            // $scheme = Rdscheme::findOrFail($validated['scheme_id']);
+            $scheme = Rdscheme::findOrFail($validated['scheme_id']);
 
-            // $depositPerDay = $scheme->min_rd_dd_amount;
+            $depositPerDay = $scheme->min_rd_dd_amount;
 
-            // if ($scheme->tenure_of_rd_dd_type === 'months') {
-            //     $days = $scheme->tenure_of_rd_dd_value * 30;
-            // } elseif ($scheme->tenure_of_rd_dd_type === 'years') {
-            //     $days = $scheme->tenure_of_rd_dd_value * 365;
-            // } else {
-            //     $days = $scheme->tenure_of_rd_dd_value;
-            // }
+            if ($scheme->tenure_of_rd_dd_type === 'months') {
+                $days = $scheme->tenure_of_rd_dd_value * 30;
+            } elseif ($scheme->tenure_of_rd_dd_type === 'years') {
+                $days = $scheme->tenure_of_rd_dd_value * 365;
+            } else {
+                $days = $scheme->tenure_of_rd_dd_value;
+            }
 
-            // $rate = $scheme->anuual_interest_rate; 
+            $rate = $scheme->anuual_interest_rate;
 
-            // if ($scheme->bonus_rate_type === 'percentage') {
-            //     $bonusRate = $scheme->bonus_rate_value;
-            //     $fixedBonus = 0;
-            // } elseif ($scheme->bonus_rate_type === 'fixed') {
-            //     $bonusRate = 0;
-            //     $fixedBonus = $scheme->bonus_rate_value;
-            // } else {
-            //     $bonusRate = 0;
-            //     $fixedBonus = 0;
-            // }
-            
-            // $calculation = $this->calculateDailyDeposit(
-            //     $validated['deposit_per_day'],
-            //     $validated['days'],
-            //     $validated['rate'],
-            //     $validated['bonus_rate'] ?? 0,
-            //     $validated['fixed_bonus'] ?? 0
-            // );
+            if ($scheme->bonus_rate_type === 'percentage') {
+                $bonusRate = $scheme->bonus_rate_value;
+                $fixedBonus = 0;
+            } elseif ($scheme->bonus_rate_type === 'fixed') {
+                $bonusRate = 0;
+                $fixedBonus = $scheme->bonus_rate_value;
+            } else {
+                $bonusRate = 0;
+                $fixedBonus = 0;
+            }
+            $calculation = $this->calculateDailyDeposit(
+                $depositPerDay,
+                $days,
+                $rate,
+                $bonusRate,
+                $fixedBonus
+            );
+            echo "<pre>";
+            print_r($calculation);
+            exit;
 
             Log::info("Validated data", $validated);
 
@@ -285,58 +288,38 @@ class DdsAccountsController extends Controller
         $startDate = null
 
     ) {
-
         // --- Step 1: Total Deposit ---
-
         $totalDeposit = $depositPerDay * $days;
-
         // --- Step 2: Interest Calculation ---
-
         $interest = ($depositPerDay * $days * ($days + 1) * $rate) / (2 * 100 * 365);
-
         $interest = round($interest, 2);
-
         // --- Step 3: Bonus (applied only on maturity) ---
-
         $bonus = 0;
 
         if ($bonusRate > 0) {
-
             // percentage mode
-
             $bonus = ($totalDeposit * $bonusRate) / 100;
         } elseif ($fixedBonus > 0) {
 
             // fixed mode
-
             $bonus = $fixedBonus;
         }
-
         $bonus = round($bonus, 2);
-
         // --- Step 4: Maturity ---
-
         $maturity = $totalDeposit + $interest + $bonus;
-
         // --- Step 5: Maturity Date ---
-
         $maturityDate = null;
 
         if ($startDate) {
             $date = Carbon::parse($startDate)->addDays($days);
             $maturityDate = $date->format('d-m-Y');
         }
-
         return [
 
             'total_deposit'   => round($totalDeposit, 2),
-
             'interest_earned' => $interest,
-
             'bonus'           => $bonus,
-
             'maturity'        => round($maturity, 2),
-
             'maturity_date'   => $maturityDate,
 
         ];
