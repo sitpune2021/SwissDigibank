@@ -40,8 +40,9 @@ class Member extends Model
 
     public function address(): HasOne
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Address::class, 'member_id', 'id');
     }
+
     public function kyc(): HasOne
     {
         return $this->hasOne(KycAndNominee::class);
@@ -74,9 +75,23 @@ class Member extends Model
     {
         return $this->hasMany(Form15G15H::class, 'member_id');
     }
-         public function ddsAccounts()
+    public function ddsAccounts()
     {
         return $this->hasMany(DdsAccount::class, 'member_id');
     }
-    
+
+    public function rdTransaction()
+    {
+        return $this->hasMany(RdTransactions::class);
+    }
+
+
+    public function getFullNameAttribute()
+    {
+        return trim(
+            ($this->member_info_first_name ?? '') . ' ' .
+                ($this->member_info_middle_name ?? '') . ' ' .
+                ($this->member_info_last_name ?? '')
+        );
+    }
 }

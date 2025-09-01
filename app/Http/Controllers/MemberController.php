@@ -610,7 +610,7 @@ class MemberController extends Controller
             abort(404);
         }
     }
-       public function search(Request $request)
+    public function search(Request $request)
     {
         $search = $request->input('q');
 

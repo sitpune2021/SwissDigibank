@@ -52,13 +52,13 @@ return new class extends Migration
                 ->references('id')->on('branches')
                 ->cascadeOnDelete();
 
-            $table->foreign('advisor_id')
-                ->references('id')->on('staff')
-                ->nullOnDelete();
+            // $table->foreign('advisor_id')
+            //     ->references('id')->on('staff')
+            //     ->nullOnDelete();
 
-            $table->foreign('collection_advisor_id')
-                ->references('id')->on('staff')
-                ->nullOnDelete();
+            // $table->foreign('collection_advisor_id')
+            //     ->references('id')->on('staff')
+            //     ->nullOnDelete();
 
             $table->foreign('scheme_id')
                 ->references('id')->on('schemes')
