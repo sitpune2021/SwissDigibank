@@ -103,28 +103,31 @@
                                     </a>
                                 </td>
 
-                                <td><a href="{{ route('member.show', $ddaccount->member->id) }}"
+                                <td class="px-6 py-4 text-center"><a href="{{ route('member.show', $ddaccount->member->id) }}"
                                         class="text-primary hover:underline">
-                                        {{ $ddaccount->member->member_info_first_name ?? 'N/A' }}
+                                        {{ $ddaccount->member->id ?? 'N/A' }}
                                     </a>
                                 </td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->member->member_info_first_name ?? 'N/A' }}
+                                <td class="px-6 py-4 text-center">
+                                    {{ trim(($ddaccount->member->member_info_first_name ?? '') . ' ' . ($ddaccount->member->member_info_middle_name ?? '') . ' ' . ($ddaccount->member->member_info_last_name ?? '')) ?: 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->member->minor?->first_name ?? '' }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->member->branch?->branch_name ?? '-' }}
                                 </td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->scheme?->scheme_name ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->scheme->scheme_name ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">{{ number_format($ddaccount->dd_amount, 2) }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->total_installments ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->paid_installments ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->due_installments ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->overdue_installments ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->canceled_installments ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->not_due_installments ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->overdue_installments ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->canceled_installments ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->not_due_installments ?? '-' }}
+                                </td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->open_date?->format('d/m/Y') }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->maturity_date?->format('d-m-Y') }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->scheme?->payout_frequency ?? '-' }}</td>
-                                {{-- Status --}}
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->rd_dd_frequency ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">
                                     @if ($ddaccount->status === 'active')
                                         <span

@@ -20,9 +20,7 @@ class RdschemesController extends Controller
 
   public function store(Request $request)
   {
-
     try {
-
       $request->validate([
         'scheme_name' => 'required|string|max:255',
         'scheme_code' => 'required|string|max:50|unique:rdschemes,scheme_code',
@@ -48,8 +46,6 @@ class RdschemesController extends Controller
         'app_type_member' => 'nullable|string|in:1',
         'active' => 'required|string|in:yes,no',
       ]);
-      // dd("hii");
-
       // Insert record
       Rdscheme::create($request->all());
 
@@ -86,8 +82,6 @@ public function show($id)
     // return view and pass scheme data
     return view('rdschemes.show', compact('scheme'));
 }
-
-
 
 public function edit($id)
 {

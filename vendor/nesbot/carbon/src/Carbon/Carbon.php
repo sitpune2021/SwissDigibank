@@ -386,7 +386,6 @@ use DateTimeInterface;
  * @method        $this            addMonthNoOverflow()                                                               Add one month to the instance (using date interval) with overflow explicitly forbidden.
  * @method        $this            subMonthsNoOverflow(int|float $value = 1)                                          Sub months (the $value count passed in) to the instance (using date interval) with overflow explicitly forbidden.
  * @method        $this            subMonthNoOverflow()                                                               Sub one month to the instance (using date interval) with overflow explicitly forbidden.
- * @method        $this            addDays(int|float $value = 1)                                                      Add days (the $value count passed in) to the instance (using date interval).
  * @method        $this            addDay()                                                                           Add one day to the instance (using date interval).
  * @method        $this            subDays(int|float $value = 1)                                                      Sub days (the $value count passed in) to the instance (using date interval).
  * @method        $this            subDay()                                                                           Sub one day to the instance (using date interval).

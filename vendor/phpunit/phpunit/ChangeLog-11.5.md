@@ -251,6 +251,19 @@ All notable changes of the PHPUnit 11.5 release series are documented in this fi
 * [#6055](https://github.com/sebastianbergmann/phpunit/issues/6055): `assertNotContainsOnly()` (use `assertContainsNotOnlyArray()`, `assertContainsNotOnlyBool()`, `assertContainsNotOnlyCallable()`, `assertContainsNotOnlyFloat()`, `assertContainsNotOnlyInt()`, `assertContainsNotOnlyIterable()`, `assertContainsNotOnlyNumeric()`, `assertContainsNotOnlyObject()`, `assertContainsNotOnlyResource()`, `assertContainsNotOnlyClosedResource()`, `assertContainsNotOnlyScalar()`, or `assertContainsNotOnlyString()` instead)
 * [#6059](https://github.com/sebastianbergmann/phpunit/issues/6059): `containsOnly()` (use `containsOnlyArray()`, `containsOnlyBool()`, `containsOnlyCallable()`, `containsOnlyFloat()`, `containsOnlyInt()`, `containsOnlyIterable()`, `containsOnlyNumeric()`, `containsOnlyObject()`, `containsOnlyResource()`, `containsOnlyClosedResource()`, `containsOnlyScalar()`, or `containsOnlyString()` instead)
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+[11.5.34]: https://github.com/sebastianbergmann/phpunit/compare/11.5.33...11.5.34
+[11.5.33]: https://github.com/sebastianbergmann/phpunit/compare/11.5.32...11.5.33
+[11.5.32]: https://github.com/sebastianbergmann/phpunit/compare/11.5.31...11.5.32
+[11.5.31]: https://github.com/sebastianbergmann/phpunit/compare/11.5.30...11.5.31
+[11.5.30]: https://github.com/sebastianbergmann/phpunit/compare/11.5.29...11.5.30
+[11.5.29]: https://github.com/sebastianbergmann/phpunit/compare/11.5.28...11.5.29
+[11.5.28]: https://github.com/sebastianbergmann/phpunit/compare/11.5.27...11.5.28
+=======
+>>>>>>> a83fed6019e929c4a2bcb9f726e3e36006a378cb
+>>>>>>> 34b3508972604fb361930428a3e8af77bdd2e7c9
 [11.5.27]: https://github.com/sebastianbergmann/phpunit/compare/11.5.26...11.5.27
 [11.5.26]: https://github.com/sebastianbergmann/phpunit/compare/11.5.25...11.5.26
 [11.5.25]: https://github.com/sebastianbergmann/phpunit/compare/11.5.24...11.5.25

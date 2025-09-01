@@ -61,11 +61,6 @@
         /* Modern browser support */
     }
 </style>
-
-
-
-
-
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
@@ -75,13 +70,9 @@
                 <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recuuring Deposits</a> >
                 <a href="#" class="text-gray-500"> New</a>
             </p>
-
         </div>
-
     </div>
-
     <div class="col-span-12 box lg:col-span-12">
-
         <form>
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                 <div class="col-span-2 md:col-span-1">

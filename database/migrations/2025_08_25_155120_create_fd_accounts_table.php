@@ -20,6 +20,10 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('staff_id')->nullable();
 
+            // `AFTER` keyword वापरण्याआधी `member_id` असावा लागेल
+            $table->unsignedBigInteger('joint_member_id')->nullable();
+            $table->foreign('joint_member_id')->references('id')->on('members')->onDelete('set null');
+
             $table->date('open_date')->nullable();
             $table->integer('tenure_year')->nullable();
             $table->integer('tenure_month')->nullable();
