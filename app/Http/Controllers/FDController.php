@@ -45,11 +45,6 @@ class FDController extends Controller
     {
         return view('fd_mis_account.fd_scheme.add-scheme');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
     public function store(Request $request)
     {
         try {

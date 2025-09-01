@@ -67,7 +67,6 @@
                                 <td class="font-medium px-4 py-2 border-b">Interest Lock in Period</td>
                                 <td class="text-gray-700 px-4 py-2 border-b">
                                     {{ $scheme->interest_lock_in_period ?? 0}} Months
-
                                 </td>
                             </tr>
                             <tr>

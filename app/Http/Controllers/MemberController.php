@@ -59,51 +59,94 @@ class MemberController extends Controller
         }
     }
 
+    // public function create()
+    // {
+    //     try {
+    //         $dynamicOptions = [
+    //             'states' => State::pluck('name', 'id'),
+    //             'branch' => Branch::pluck('branch_name', 'id'),
+    //             'religion' => Religion::pluck('name', 'id')
+    //         ];
+    //         $sections = config('member_form');
+    //         $member = null;
+    //         $route = route('member.store');
+    //         $method = 'POST';
+
+    //         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
     public function create()
     {
         try {
             $dynamicOptions = [
-                'states' => State::pluck('name', 'id'),
-                'branch' => Branch::pluck('branch_name', 'id'),
-                'religion' => Religion::pluck('name', 'id')
+                'states'   => State::pluck('name', 'id'),
+                'branch'   => Branch::pluck('branch_name', 'id'),
+                'religion' => Religion::pluck('name', 'id'),
             ];
+
             $sections = config('member_form');
-            $member = null;
-            $route = route('member.store');
-            $method = 'POST';
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
+            $member   = null;
+            $route    = route('member.store');
+            $method   = 'POST';
+
+            // default empty document objects so Blade can safely read properties
+            $empty = fn($category) => (object)[
+                'file'          => null,
+                'category'      => $category,
+                'file_path'     => null,
+                'document_type' => null,
+            ];
+
+            $documents = [
+                'photo'              => $empty('photo'),
+                'signature'          => $empty('signature'),
+                'id_proof'           => $empty('id_proof'),
+                'id_proof_back'      => $empty('id_proof_back'),
+                'address_proof'      => $empty('address_proof'),
+                'address_proof_back' => $empty('address_proof_back'),
+                'pan_number'         => $empty('pan_number'),
+            ];
+
+            return view(
+                'members.member.create',
+                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents')
+            );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
+
     public function store(Request $request)
     {
         try {
             $request->validate([
                 // Membership Type
                 'membership_type' => 'required|in:nominal,regular',
+
                 // General Info
                 'general_advisor_staff' => 'nullable|string',
                 'general_group' => 'nullable|in:group1,group2',
                 'general_branch' => 'required|string',
-                'general_enrollment_date' => 'nullable',
+                'general_enrollment_date' => 'nullable|date',
 
                 // Member Info
                 'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
                 'member_info_gender' => 'required|in:male,female,other',
-                'member_info_first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_dob'        => 'required|date|before_or_equal:today',
-                'member_info_qualification' => 'nullable|string|regex:/^[A-Za-z]+$/',
-                'member_info_occupation' => 'nullable|string|regex:/^[A-Za-z]+$/',
+                'member_info_first_name' => 'required|string|max:255',
+                'member_info_middle_name' => 'nullable|string|max:255',
+                'member_info_last_name' => 'required|string|max:255',
+                'member_info_dob' => 'required|date|before_or_equal:today',
+                'member_info_qualification' => 'nullable|string',
+                'member_info_occupation' => 'nullable|string',
                 'member_info_monthly_income' => 'nullable|numeric',
                 'member_info_old_member_no' => 'nullable|string',
-                'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+                'member_info_father_name' => 'nullable|string|max:255',
+                'member_info_mother_name' => 'nullable|string|max:255',
+                'member_info_spouse_name' => 'nullable|string|max:255',
                 'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
-                'member_info_mobile_no' => 'required|string|max:10',
+                'member_info_mobile_no' => 'required|digits:10',
                 'member_info_collection_time' => 'nullable|string',
                 'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
                 'member_info_religion' => 'nullable|string',
@@ -143,8 +186,14 @@ class MemberController extends Controller
                 'member_kyc_dl_no' => 'nullable|string',
                 'member_kyc_passport_no' => 'nullable|string',
 
+                // Documents
+                'documents' => 'required|array',
+                'documents.*.file' => 'required|file',
+                'documents.*.category' => 'required|string',
+                'documents.*.type' => 'nullable|string',
+
                 // Nominee Info
-                'nominee_name' => 'nullable|string|regex:/^[A-Za-z]+$/',
+                'nominee_name' => 'nullable|string',
                 'nominee_relation' => 'nullable|string',
                 'nominee_mobile_no' => 'nullable|string',
                 'nominee_gender' => 'nullable|in:Male,Female,Other',
@@ -166,24 +215,50 @@ class MemberController extends Controller
                 'charges_pay_mode' => 'required|in:cash,online,cheque',
             ]);
 
+            // ✅ Normalize dates to Y-m-d
             $request->merge([
-                'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('D M d Y') : null,
-                'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('D M d Y') : null,
-                'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('D M d Y') : null,
-                'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('D M d Y') : null,
-                'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('D M d Y') : null,
+                'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
+                'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
+                'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
+                'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
+                'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
             ]);
 
+            // ✅ Insert data
             $memberData = $request->only((new Member)->getFillable());
             $addressData = $request->only((new Address)->getFillable());
             $kycData = $request->only((new KycAndNominee)->getFillable());
 
             $member = Member::create($memberData);
+
+            // ✅ Documents handling
+            if ($request->hasFile('documents')) {
+                foreach ($request->file('documents') as $index => $doc) {
+                    if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
+                        $filename = time() . '_' . $doc['file']->getClientOriginalName();
+                        $path = $doc['file']->storeAs('documents', $filename, 'public');
+
+                        KycDocument::updateOrCreate(
+                            [
+                                'member_id' => $member->id,
+                                'document_category' => $request->documents[$index]['category'],
+                                'document_type' => $request->documents[$index]['type'] ?? null,
+                            ],
+                            [
+                                'file_path' => $path,
+                                'type' => 'member',
+                            ]
+                        );
+                    }
+                }
+            }
+
             $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
             $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
+
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 

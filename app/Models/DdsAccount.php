@@ -20,6 +20,7 @@ class DdsAccount extends Model
         'collection_advisor_id',
         'scheme_id',
         'dd_amount',
+        'rd_dd_frequency',   
         'open_date',
         'tds_deduction',
         'account_type',
@@ -42,19 +43,19 @@ class DdsAccount extends Model
         return $this->belongsTo(Branch::class, 'branch_id');
     }
 
-    public function scheme()
-    {
-        return $this->belongsTo(Scheme::class, 'scheme_id');
-    }
-
     public function minor()
     {
         return $this->belongsTo(Member::class, 'minor_id'); // minors सुद्धा members table मध्ये आहेत
     }
 
-    // ✅ One Account has many Transactions
     public function transactions()
     {
         return $this->hasMany(DdTransaction::class, 'dds_account_id'); // <--- fix here
     }
+        public function scheme()
+    {
+        return $this->belongsTo(RdScheme::class, 'scheme_id', 'id');
+    }
+
+    
 }

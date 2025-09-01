@@ -9,7 +9,7 @@ return new class extends Migration
    public function up()
 {
     Schema::table('calculators', function (Blueprint $table) {
-        $table->decimal('maturity_amount', 15, 2)->change(); // Ensure it’s decimal
+        $table->decimal('maturity_amount', 15, 2); // Ensure it’s decimal
     });
 }
 

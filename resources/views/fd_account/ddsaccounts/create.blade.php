@@ -160,7 +160,6 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
                     <div class="col-span-2 md:col-span-1">
                         <label for="branch_id" class="md:text-lg font-medium block mb-4">
                             Branch <span class="text-red-500">*</span>
@@ -179,7 +178,6 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
                     <div class="col-span-2 md:col-span-1">
                         <label for="advisor_id" class="md:text-lg font-medium block mb-4">
                             Advisor / Staff
