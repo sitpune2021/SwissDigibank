@@ -620,7 +620,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 Event\Code\ComparisonFailureBuilder::from($e),
             );
         } catch (Throwable $exceptionRaisedDuringTearDown) {
-            if (!isset($e) || $e instanceof SkippedWithMessageException) {
+            if (!isset($e)) {
                 $this->status = TestStatus::error($exceptionRaisedDuringTearDown->getMessage());
                 $e            = $exceptionRaisedDuringTearDown;
 

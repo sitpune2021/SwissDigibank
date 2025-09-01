@@ -55,14 +55,28 @@ return [
             ['title' => 'Saving A/c', 'route' => 'accounts.index'],
         ]
     ],
-     [
+    [
         'title' => 'FD/ MIS Accounts',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',
         'submenu' => [
-            // ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
-            ['title' => 'Calculator', 'route' => 'calculator.index'],
+            ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
+            ['title' => 'Calculator', 'route' => 'rd-calculator.create'],
+            ['title' => 'FD Accounts', 'route' => 'fd-mis-schemes.fd_index'],
+            ['title' => 'MIS Accounts', 'route' => 'misaccount.index'],
+        ]
+    ],
+    [
+        'title' => 'MDS/RD/DDS Accounts',
+        'icon' => 'las la-university',
+        'position' => '7',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'Schemes', 'route' => 'rdschemes.index'],
+            ['title' => 'Calculator', 'route' => 'rd-calculator.create'],
+            ['title' => 'DDS Accounts', 'route' => 'dds-accounts.index'],
+            ['title' => 'MDS / RD Accounts', 'route' => 'mds-rd-accounts.rd-account-index'],
         ]
     ],
     [
@@ -88,7 +102,5 @@ return [
             ['title' => 'Employees', 'route' => 'employee.index'],
         ],
     ],
-
-
 
 ];

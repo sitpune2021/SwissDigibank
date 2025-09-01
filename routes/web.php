@@ -30,6 +30,14 @@ use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\FdCalculatorController;
+use App\Http\Controllers\RDCalculatorController;
+use App\Http\Controllers\DdsAccountsController;
+use App\Http\Controllers\FDController;
+use App\Http\Controllers\MDSController;
+use App\Http\Controllers\MisaccountController;
+use App\Http\Controllers\RdAccountController;
+use App\Http\Controllers\RdschemesController;
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -53,16 +61,15 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'company'], function () {
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
+        Route::get('/ajax/branches/search', [BranchController::class, 'search'])->name('ajax.branches.search');
         Route::resource('promotor', PromotorController::class);
         Route::get('/promotor/{id}/address', [PromotorController::class, 'addressedit'])->name('promotor.address');
         Route::put('/promotor/{id}/address', [PromotorController::class, 'addressupdate'])->name('promotor.address.update');
         Route::get('/company/promotor/{id}/documents', [PromotorController::class, 'documentShow'])->name('promotor.document');
         Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
         Route::resource('shareholding', ShareHoldingController::class);
-
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
-            ->name('shareholding.transfer'); // ✅ semicolon added here
-
+            ->name('shareholding.transfer');
         Route::resource('director', DirectorController::class);
     });
 
@@ -70,6 +77,33 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('users', UserController::class);
     });
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
+        Route::get('/calculator/create', [CalculatorController::class, 'create'])->name('calculator.create');
+        Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
+    });
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/dds-accounts', [DdsAccountsController::class, 'index'])->name('dds-accounts.index');
+        Route::get('/dds-accounts/create', [DdsAccountsController::class, 'create'])->name('dds-accounts.create');
+        Route::post('/dds-accounts/store', [DdsAccountsController::class, 'store'])->name('dds-accounts.store');
+        Route::get('/ajax/members/{id}', [DdsAccountsController::class, 'getMemberDetails'])
+            ->name('ajax.members.show');
+        Route::get('/dds-accounts/{id}', [DdsAccountsController::class, 'show'])->name('dds-accounts.show');
+        Route::get('/dds-accounts/{id}/edit', [DdsAccountsController::class, 'edit'])->name('dds-accounts.edit');
+        Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
+            ->name('dds-accounts.calculate-deposit');
+        // Updates
+        Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
+        Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
+    });
+
+
+    Route::resource('rd-calculator', RDCalculatorController::class)
+        ->only(['index', 'create', 'store']);
+
+
 
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
@@ -80,23 +114,23 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/members/{id}/address', [MemberController::class, 'addressupdate'])->name('member.address.update');
         Route::get('/member/{id}/mobile', [MemberController::class, 'editmobile'])->name('member.mobile');
         Route::put('/member/{id}/mobile', [MemberController::class, 'updatemobile'])->name('member.updatemobile');
-        // Route::get('/member/{id}/showmobile', [MemberController::class, 'showmobile'])->name('member.showmobile');
-
-
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
+        // Ajax
+        Route::get('/ajax/members/search', [MemberController::class, 'search'])->name('ajax.members.search');
+
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
         Route::resource('form15g15h', Form15Gor15HController::class);
+        Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
+        Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
     });
-
     Route::resource('shares-transfer', ShareTransferController::class);
-    // Route::get('shares-transfer', [ShareTransferController::class, 'transferForm'])->name('shares-transfer.transferForm');
     Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
 
     Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
-    Route::get('/share/allocate/{id?}', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
-    Route::post('/share/allocate/{id?}', [ShareTransferController::class, 'store'])->name('shares.allocate');
+    Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+    Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
     Route::resource('form15g15h', Form15Gor15HController::class);
 });
 
@@ -116,6 +150,49 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('transaction', AccountTransactionController::class);
     Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
     Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
+});
+
+Route::group(['prefix' => 'fd-mis-schemes'], function () {
+    Route::resource('fd-mis-schemes', FDController::class);
+
+    Route::get('fd-index', [FDController::class, 'fd_index'])->name('fd-mis-schemes.fd_index');
+    Route::get('fd-account', [FDController::class, 'fd_create'])->name('fd-mis-schemes.fd_create');
+
+    Route::post('add/fd-account', [FDController::class, 'fd_store'])->name('fd-mis-schemes.fd_store');
+    // web.php
+    Route::get('/account/balance/{id}', [FDController::class, 'getBalance'])->name('account.balance');
+
+    Route::get('fd-account-view/{id}', [FDController::class, 'fd_show'])->name('fd-mis-schemes.fd_show');
+    Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
+        ->name('member.savings');
+
+
+    Route::resource('misaccount', MisaccountController::class);
+    // Route::get('misaccount/create', [MisaccountController::class, 'create']);
+    // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
+
+
+    //Transactions Info
+    Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
+
+    //edit and update branches
+
+    Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
+        ->name('misaccount.update-branch');
+});
+Route::group(['prefix' => 'mds-rds-dds'], function () {
+
+    Route::resource('mds-rds-dds', MDSController::class);
+    Route::resource('rdschemes', RdschemesController::class);
+
+    Route::resource('mds-rd-account', RdAccountController::class);
+
+    Route::get('rd-account-index', [RdAccountController::class, 'index'])->name('mds-rd-accounts.rd-account-index');
+    Route::get('create-rd-account', [RdAccountController::class, 'create'])->name('mds-rd-accounts.create-rd-account');
+    Route::get('rd-dd-calculator', [RdAccountController::class, 'rdDdCalculator'])->name('calculator.rd-dd-calculator');
+    Route::get('/members/{id}', [RdAccountController::class, 'getMember'])->name('members.get');
+    Route::post('/rd-accounts', [RdAccountController::class, 'store'])->name('rd-accounts.store');
+    Route::get('/view-rd-account', [RdAccountController::class, 'show'])->name('view-rd-account');
 });
 
 Route::group(['prefix' => 'deposits'], function () {
@@ -158,6 +235,10 @@ Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
     Route::get('/help-center', [SupportController::class, 'helpCenter'])->name('help.center');
     Route::get('/privacy-policy', [SupportController::class, 'privacyPolicy'])->name('privacy.policy');
     Route::get('/contact-us', [SupportController::class, 'contactUs'])->name('contact.us');
+});
+Route::prefix('fd_account/calculator')->name('calculator.')->group(function () {
+    Route::get('/create', [CalculatorController::class, 'create'])->name('create');
+    Route::post('/store', [CalculatorController::class, 'store'])->name('store');
 });
 
 Route::get('/dev/run/{action}', function ($action) {

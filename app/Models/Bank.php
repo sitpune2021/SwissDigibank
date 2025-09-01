@@ -9,6 +9,11 @@ class Bank extends Model
 {
     use SoftDeletes;
 
-    protected $fillable=['name'];
+    protected $fillable = ['name'];
 
+    // Relationships
+    public function ddsAccounts()
+    {
+        return $this->hasMany(DdsAccount::class);
+    }
 }

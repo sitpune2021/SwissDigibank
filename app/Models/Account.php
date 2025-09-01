@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -62,8 +63,12 @@ class Account extends Model
     {
         return $this->hasmany(AccountNominee::class, 'account_id');
     }
-     public function transaction()
+    public function transaction()
     {
         return $this->hasmany(Transaction::class);
+    }
+    public function ddTransactions()
+    {
+        return $this->hasMany(DdTransaction::class, 'saving_account_id');
     }
 }

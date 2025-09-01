@@ -36,6 +36,7 @@
         </div>
 
         <a title="DOWNLOAD 15G/ 15H"
+            href="{{ isset($member) ? route('form15g15h.download', ['member_id' => $member->id]) : '#' }}"
             class="btn-default rounded-md px-2 py-1 text-sm text-gray-700 bg-gray-200 hover:bg-gray-300">
             <i class="fa fa-print"></i> DOWNLOAD 15G/ 15H
         </a>
@@ -455,42 +456,42 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc?->member_kyc_aadhaar_no??'' }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_aadhaar_no ?? '' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Voter ID No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{ $member->kyc?->member_kyc_voter_id_no??'' }}</td>
+                                        {{ $member->kyc?->member_kyc_voter_id_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc?->member_kyc_pan_no??'' }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_pan_no ?? '' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
                                     <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        <span>{{ $member->kyc?->member_kyc_ration_card_no??'' }}</span>
+                                        <span>{{ $member->kyc?->member_kyc_ration_card_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ??''}}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CI No.</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no??'' }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation??'' }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">DL No</th>
-                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no??'' }}</td>
+                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
@@ -518,57 +519,57 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Name</th>
                                     <td class="flex items-center justify-between px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_name??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_name ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">DOB</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Gender</th>
                                     <td class="flex items-center justify-between px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_gender??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_gender ?? '' }}</span>
 
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Relation</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_relation??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_relation ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Mobile No.</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_mobile_no??'' }}</span>
+                                        <span>{{ $member->kyc?->nominee_mobile_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Voter ID No. </th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
                                     <td class="px-6 py-2">
-                                        <span>{{ $member->kyc?->nominee_pan_no ??''}}</span>
+                                        <span>{{ $member->kyc?->nominee_pan_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Address</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
-                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no??'' }}</span>
+                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no ?? '' }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -592,63 +593,103 @@
 
                     <!-- Content -->
                     <div x-show="open" x-transition class="bg-white">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-sm border">
                             <tbody>
+                                {{-- Photo --}}
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
-                                    <td class="flex items-center justify-between px-6 py-2 text-start">
-                                        {{-- <a target="_blank" href="{{ asset($member->photo) }}"
-                                        class="text-blue-600 hover:underline">Show</a> --}}
+                                    <td class="px-6 py-2 text-start">
+                                        @php $photo = $documents->where('document_category', 'photo')->first(); @endphp
+                                        @if ($photo && $photo->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $photo->file_path) }}','Photo')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
 
+                                {{-- Signature --}}
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="https://nidhi-stag.s3.amazonaws.com/uploads/company/1/members/39/documents/photo/fm.php"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <td class="px-6 py-2 text-start">
+                                        @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
+                                        @if ($signature && $signature->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $signature->file_path) }}','Signature')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
-                                <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Id Proof (Passport)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
 
-                                    </span> --}}
+                                {{-- ID Proof --}}
+                                <tr class="border-b">
+                                    <th class="px-6 py-2 font-semibold text-start">ID Proof (Passport)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $idProof = $documents->where('document_category', 'id_proof')->first(); @endphp
+                                        @if ($idProof && $idProof->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $idProof->file_path) }}','ID Proof')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- ID Proof Back --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Id Proof Back (Aadhar Card)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">ID Proof Back (Aadhar Card)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $idProofBack = $documents->where('document_category', 'id_proof_back')->first(); @endphp
+                                        @if ($idProofBack && $idProofBack->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $idProofBack->file_path) }}','ID Proof Back')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- Address Proof --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport) </th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $addressProof = $documents->where('document_category', 'address_proof')->first(); @endphp
+                                        @if ($addressProof && $addressProof->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $addressProof->file_path) }}','Address Proof')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- Address Proof Back --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card) </th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $addressProofBack = $documents->where('document_category', 'address_proof_back')->first(); @endphp
+                                        @if ($addressProofBack && $addressProofBack->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $addressProofBack->file_path) }}','Address Proof Back')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
+
+                                {{-- PAN --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Pan Number (Pan)</th>
-                                    <td class="flex items-center justify-between px-6 py-2"text-start>
-                                        {{-- <span> <a target="_blank" href="{{ asset($member->photo) }}"
-                                            class="text-blue-600 hover:underline">Show</a>
-                                    </span> --}}
+                                    <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $pan = $documents->where('document_category', 'pan')->first(); @endphp
+                                        @if ($pan && $pan->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $pan->file_path) }}','PAN')">
+                                                View
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -809,314 +850,388 @@
                 </div>
                 <div>
 
-                <!-- KYC Status Section -->
-                <div class="mt-4 overflow-hidden bg-white border rounded shadow">
+                    <!-- KYC Status Section -->
+                    <div class="mt-4 overflow-hidden bg-white border rounded shadow">
+                        <div class="h-1 bg-red-500"></div>
+                        <div class="flex items-center justify-between px-4 py-2 border-b">
+                            <span class="font-semibold text-gray-700 uppercase">Current KYC Status</span>
+                            <span class="px-2 py-1 text-xs font-bold text-white bg-red-500 rounded">PENDING</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4">
+                            <label class="font-semibold text-gray-700 uppercase">KYC Status</label>
+                            <div class="flex">
+                                <select class="px-3 py-1 text-sm border rounded-l focus:outline-none">
+                                    <option>Pending</option>
+                                    <option>Approved</option>
+                                </select>
+                                <button class="px-4 py-1 text-sm text-white bg-green-500 rounded-r hover:bg-green-600">
+                                    UPDATE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Settings Section -->
+                <div class="mt-4 overflow-hidden border rounded shadow">
                     <div class="h-1 bg-red-500"></div>
-                    <div class="flex items-center justify-between px-4 py-2 border-b">
-                        <span class="font-semibold text-gray-700 uppercase">Current KYC Status</span>
-                        <span class="px-2 py-1 text-xs font-bold text-white bg-red-500 rounded">PENDING</span>
-                    </div>
-                    <div class="flex items-center justify-between p-4">
-                        <label class="font-semibold text-gray-700 uppercase">KYC Status</label>
-                        <div class="flex">
-                            <select class="px-3 py-1 text-sm border rounded-l focus:outline-none">
-                                <option>Pending</option>
-                                <option>Approved</option>
-                            </select>
-                            <button class="px-4 py-1 text-sm text-white bg-green-500 rounded-r hover:bg-green-600">
-                                UPDATE
-                            </button>
+                    <div class="px-4 py-2 font-semibold uppercase bg-white border-b">Settings</div>
+                    <div class="p-4 space-y-4 bg-white">
+                        <div class="flex items-center justify-between">
+                            <span>Internet Banking / Mob App Enabled</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Money Transfer</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Account Locked</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>SMS</span>
+                            <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Settings Section -->
-            <div class="mt-4 overflow-hidden border rounded shadow">
-                <div class="h-1 bg-red-500"></div>
-                <div class="px-4 py-2 font-semibold uppercase bg-white border-b">Settings</div>
-                <div class="p-4 space-y-4 bg-white">
-                    <div class="flex items-center justify-between">
-                        <span>Internet Banking / Mob App Enabled</span>
-                        <input type="checkbox" class="w-5 h-5 accent-blue-600">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Money Transfer</span>
-                        <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Account Locked</span>
-                        <input type="checkbox" class="w-5 h-5 accent-blue-600">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>SMS</span>
-                        <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
-                    </div>
-                </div>
-            </div>
-            <div>
-                {{-- Internet Banking section --}}
-                <div class="mt-4 bg-white border rounded shadow-sm">
+                <div>
+                    {{-- Internet Banking section --}}
+                    <div class="mt-4 bg-white border rounded shadow-sm">
 
-                    <div class="h-1 rounded-t" style="background: #2b9bd6;"></div>
+                        <div class="h-1 rounded-t" style="background: #2b9bd6;"></div>
 
-                    <!-- Header -->
-                    <div class="px-4 py-3 bg-white border-b">
-                        <h3 class="text-sm font-medium tracking-wide text-gray-700">INTERNET BANKING USERNAME</h3>
-                    </div>
-                    <!-- Table Body -->
-                    <div class="px-8 py-4">
-                        <table class="w-full border-collapse">
+                        <!-- Header -->
+                        <div class="px-4 py-3 bg-white border-b">
+                            <h3 class="text-sm font-medium tracking-wide text-gray-700">INTERNET BANKING USERNAME</h3>
+                        </div>
+                        <!-- Table Body -->
+                        <div class="px-8 py-4">
+                            <table class="w-full border-collapse">
 
-                            <!-- Body -->
-                            <div class="flex items-center justify-between px-6 py-4">
-                                <!-- Left label -->
-                                <div class="flex-1">
-                                    <div class="text-xs font-semibold text-gray-700 uppercase">USERNAME</div>
+                                <!-- Body -->
+                                <div class="flex items-center justify-between px-6 py-4">
+                                    <!-- Left label -->
+                                    <div class="flex-1">
+                                        <div class="text-xs font-semibold text-gray-700 uppercase">USERNAME</div>
+                                    </div>
+
+                                    <!-- Center username -->
+                                    <div class="flex-1 text-center">
+                                        <span class="text-sm text-gray-700">demo04421</span>
+                                    </div>
+
+                                    <!-- Right small action buttons -->
+                                    <div class="flex justify-end flex-1 gap-2">
+                                        <button type="button"
+                                            class="flex items-center justify-center w-8 h-8 text-gray-600 bg-white border rounded hover:bg-gray-50"
+                                            title="Reset username">
+                                            <i class="fa fa-undo"></i>
+                                        </button>
+
+                                        <button type="button"
+                                            class="flex items-center justify-center w-8 h-8 text-gray-600 bg-white border rounded hover:bg-gray-50"
+                                            title="Send username">
+                                            <i class="fa fa-share-square-o"></i>
+                                        </button>
+                                    </div>
                                 </div>
-
-                                <!-- Center username -->
-                                <div class="flex-1 text-center">
-                                    <span class="text-sm text-gray-700">demo04421</span>
-                                </div>
-
-                                <!-- Right small action buttons -->
-                                <div class="flex justify-end flex-1 gap-2">
-                                    <button type="button"
-                                        class="flex items-center justify-center w-8 h-8 text-gray-600 bg-white border rounded hover:bg-gray-50"
-                                        title="Reset username">
-                                        <i class="fa fa-undo"></i>
-                                    </button>
-
-                                    <button type="button"
-                                        class="flex items-center justify-center w-8 h-8 text-gray-600 bg-white border rounded hover:bg-gray-50"
-                                        title="Send username">
-                                        <i class="fa fa-share-square-o"></i>
-                                    </button>
+                        </div>
+                        <div x-data="{
+                            showMobile: false,
+                            editing: false
+                        }" class="mt-4 border rounded shadow">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t">
+                                <span class="font-semibold uppercase">Mobile & Email Details</span>
+                                <div class="flex gap-2">
+                                    <a href="{{ route('member.mobile', $member->id) }}">
+                                        <i class="cursor-pointer fa fa-pencil" @click="editing = !editing"></i>
+                                    </a>
+                                    <i class="cursor-pointer fa" :class="showMobile ? 'fa-minus' : 'fa-plus'"
+                                        @click="showMobile = !showMobile"></i>
                                 </div>
                             </div>
-                    </div>
-                    <div x-data="{
-                        showMobile: false,
-                        editing: false
-                    }" class="mt-4 border rounded shadow">
-                        <!-- Header -->
-                        <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t">
-                            <span class="font-semibold uppercase">Mobile & Email Details</span>
-                            <div class="flex gap-2">
-                                <a href="{{ route('member.mobile', $member->id) }}">
-                                    <i class="cursor-pointer fa fa-pencil" @click="editing = !editing"></i>
+                            <div class="p-4 text-sm bg-white" x-show="showMobile" x-transition>
+                                <div class="flex justify-between py-2 border-b">
+                                    <span class="font-medium">Mobile No</span>
+                                    <span>{{ $member->member_info_mobile_no }}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b">
+                                    <span class="font-medium">Email</span>
+                                    <span>{{ $member->member_info_email }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-white border rounded shadow">
+                            <div class="h-1 bg-green-500"></div>
+                            <!-- Header -->
+                            <div class="flex items-center justify-between px-4 py-2 rounded-t">
+                                <span class="font-semibold uppercase">
+                                    {{ isset($member) ? $member->member_info_first_name . ' ' . $member->member_info_last_name : 'Add member' }}
+                                </span>
+                                <!-- Redirect to create page -->
+                                <a href="{{ isset($member) ? route('minor.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
+                                    class="px-4 py-1 text-sm text-white bg-green-500 rounded-r hover:bg-green-600">
+                                    + Minor
                                 </a>
-                                <i class="cursor-pointer fa" :class="showMobile ? 'fa-minus' : 'fa-plus'"
-                                    @click="showMobile = !showMobile"></i>
                             </div>
-                        </div>
-                        <div class="p-4 text-sm bg-white" x-show="showMobile" x-transition>
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Mobile No</span>
-                                <span>{{ $member?->member_info_mobile_no??'' }}</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Email</span>
-                                <span>{{ $member?->member_info_email??'' }}</span>
+                            <!-- Table for minors -->
+                            <div class="p-4">
+                                <table class="w-full text-sm text-left">
+                                    <thead>
+                                        <tr class="border px-4 py-2">
+                                            <th class="font-semibold  px-4 py-2 text-start">NAME</th>
+                                            <th class="font-semibold text-gray-ft-600  px-4 py-2 text-start">DOB</th>
+                                            <th class="font-semibold text-gray-ft-600  py-8 text-left">ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($member->minors as $minor)
+                                            <tr>
+                                                <td class="border  px-4 py-2">{{ $minor->first_name }}
+                                                    {{ $minor->last_name }}
+                                                </td>
+                                                <td class="border  px-4 py-2">
+                                                    {{ \Carbon\Carbon::parse($minor->dob)->format('d/m/Y') }}
+                                                </td>
+                                                <td class="border  px-4 py-2">
+                                                    <a href="{{ route('minor.show', $minor->id) }}" title="View"
+                                                        class="text-green-600 hover:underline mr-2">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="{{ route('minor.edit', $minor->id) }}" title="Edit"
+                                                        class="text-green-600 hover:underline">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-4 bg-white border rounded shadow">
-                        <div class="h-1 bg-green-500"></div>
+                    {{-- Share Holdings section - table format --}}
+                    <div class="mt-4 bg-white border rounded shadow-sm">
+
+                        <!-- Top red border -->
+                        <div class="h-1 rounded-t" style="background:red;"></div>
+
                         <!-- Header -->
-                        <div class="flex items-center justify-between px-4 py-2 rounded-t">
-                            <span class="font-semibold uppercase">
-                                {{ isset($member) ? $member?->member_info_first_name??'' . ' ' . $member?->member_info_last_name??'' : 'Add member' }}
-                            </span>
-                            <!-- Redirect to create page -->
-                            <a href="{{ isset($member) ? route('minor.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
-                                class="px-4 py-1 text-sm text-white bg-green-500 rounded-r hover:bg-green-600">
-                                + Minor
-                            </a>
+                        <div class="px-4 py-3 bg-white border-b">
+                            <h6 class="font-medium tracking-wide text-gray-700 text-md">
+                                SHARE HOLDING DETAILS
+                            </h6>
                         </div>
-                        <!-- Table for minors -->
-                        <div class="p-4">
-                            <table class="w-full text-sm text-left">
-                                <thead>
-                                    <tr class="border px-4 py-2">
-                                        <th class="font-semibold  px-4 py-2 text-start">NAME</th>
-                                        <th class="font-semibold text-gray-ft-600  px-4 py-2 text-start">DOB</th>
-                                        <th class="font-semibold text-gray-ft-600  py-8 text-left">ACTIONS</th>
-                                    </tr>
-                                </thead>
+                        <!-- Table Body -->
+                        <div class="px-6 py-4">
+                            <table class="w-full border-collapse">
                                 <tbody>
-                                    @foreach ($member->minors as $minor)
-                                        <tr>
-                                            <td class="border  px-4 py-2">{{ $minor?->first_name??'' }}
-                                                {{ $minor?->last_name??'' }}
-                                            </td>
-                                            <td class="border  px-4 py-2">
-                                                {{ \Carbon\Carbon::parse($minor->dob)->format('d/m/Y') }}
-                                            </td>
-                                            <td class="border  px-4 py-2">
-                                                <a href="{{ route('minor.show', $minor->id) }}" title="View"
-                                                    class="text-green-600 hover:underline mr-2">
-                                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="{{ route('minor.edit', $minor->id) }}" title="Edit"
-                                                    class="text-green-600 hover:underline">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                    <tr>
+                                        <th class="px-4 py-2 text-xs font-semibold text-left text-gray-700 uppercase">
+                                            No. of Shares
+                                        </th>
+                                        <td class="px-4 py-2 text-sm text-center text-gray-700">
+                                            0
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
-                {{-- Share Holdings section - table format --}}
-                <div class="mt-4 bg-white border rounded shadow-sm">
-
-                    <!-- Top red border -->
-                    <div class="h-1 rounded-t" style="background:red;"></div>
-
-                    <!-- Header -->
-                    <div class="px-4 py-3 bg-white border-b">
-                        <h6 class="font-medium tracking-wide text-gray-700 text-md">
-                            SHARE HOLDING DETAILS
-                        </h6>
-                    </div>
-                    <!-- Table Body -->
-                    <div class="px-6 py-4">
-                        <table class="w-full border-collapse">
-                            <tbody>
-                                <tr>
-                                    <th class="px-4 py-2 text-xs font-semibold text-left text-gray-700 uppercase">
-                                        No. of Shares
-                                    </th>
-                                    <td class="px-4 py-2 text-sm text-center text-gray-700">
-                                        0
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div>
-                    <!-- ADDRESS & CONTACT INFO -->
-                    <div class="mt-4 border rounded shadow">
-                        <div class="flex items-center justify-between px-4 py-2 text-white rounded-t"
-                            style="background-color:#3c8dbc;">
-                            <span class="font-semibold uppercase">Address & Contact Info</span>
-                            <div class="flex gap-2">
-                                <a href="{{ route('member.address', $member->id) }}">
-                                    <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
-                                </a>
-                                <i :class="showAddress ? 'fa fa-minus' : 'fa fa-plus'"
-                                    @click="showAddress = !showAddress"></i>
+                    <div>
+                        <!-- ADDRESS & CONTACT INFO -->
+                        <div class="mt-4 border rounded shadow">
+                            <div class="flex items-center justify-between px-4 py-2 text-white rounded-t"
+                                style="background-color:#3c8dbc;">
+                                <span class="font-semibold uppercase">Address & Contact Info</span>
+                                <div class="flex gap-2">
+                                    <a href="{{ route('member.address', $member->id) }}">
+                                        <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
+                                    </a>
+                                    <i :class="showAddress ? 'fa fa-minus' : 'fa fa-plus'"
+                                        @click="showAddress = !showAddress"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-4 space-y-4 text-sm bg-white" x-show="showAddress" x-transition>
-                        <h5 class="mb-2 font-semibold text-center">Correspondence Address</h5>
-                        <div class="flex justify-between py-2 border-b">
-                            <span class="font-medium">Address</span>
-                            <span>{{ $member->address?->member_address_line_1 ?? '' }}</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b">
-                            <span class="font-medium">Para/ Ward/ Panchayat/ Area</span>
-                            <span>
-                                {{ $member->address?->member_address_para ?? '' }}/
-                                {{ $member->address?->member_address_ward ?? '' }}/
-                                {{ $member->address?->member_address_panchayat ?? '' }}/
-                                {{ $member->address?->member_address_area ?? '' }}
-                            </span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="font-medium">Landmark</span>
-                            <span>{{ $member->address?->member_address_landmark ?? '' }}</span>
-                        </div>
-
-                        <h5 class="mb-2 font-semibold text-center">Permanent Address</h5>
-                        <div class="flex justify-between py-2 border-b">
-                            <span class="font-medium">Address</span>
-                            <span>{{ $member->address?->member_address_address ?? '' }}</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b">
-                            <span class="font-medium">City / District</span>
-                            <span>{{ $member->address?->member_perm_address_city ?? '' }}/
-                                {{ $member->address?->member_address_city_district ?? '' }}
-                            </span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b">
-                            <span class="font-medium">State</span>
-                            <span>{{ $member->address?->member_perm_address_state ?? '' }}</span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="font-medium">GPS Lat/ Log</span>
-                            <span>{{ $member->address?->member_gps_location_latitude ?? '' }}
-                                {{ $member->address?->member_gps_location_latitude ?? '' }}
-                            </span>
-                        </div>
-                    </div>
-                    <!-- BANK DETAILS -->
-                    <div class="mt-4 bg-green-500 border rounded shadow">
-                        <div class="flex items-center justify-between px-4 py-2 text-white bg-orange-500 rounded-t">
-                            <span class="font-semibold uppercase">Bank Details</span>
-                            <div class="flex gap-2 space-x-2">
-                                <i class="cursor-pointer fa fa-pencil"></i>
-                                <i class="cursor-pointer fa" :class="showBank ? 'fa-minus' : 'fa-plus'"
-                                    @click="showBank = !showBank"></i>
-                            </div>
-                        </div>
-                        <div class="p-4 text-sm bg-white" x-show="showBank" x-transition>
+                        <div class="p-4 space-y-4 text-sm bg-white" x-show="showAddress" x-transition>
+                            <h5 class="mb-2 font-semibold text-center">Correspondence Address</h5>
                             <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Bank Name</span>
-                                <span>{{ $member->branch?->branch_name ?? '' }}</span>
+                                <span class="font-medium">Address</span>
+                                <span>{{ $member->address?->member_address_line_1 ?? '' }}</span>
                             </div>
                             <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">IFSC Code</span>
-                                <span>{{ $member->branch?->ifsc_code ?? '' }}</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Account Type</span>
-                                {{-- <span>{{ $member->accounts?->account_type??'' }}</span> --}}
+                                <span class="font-medium">Para/ Ward/ Panchayat/ Area</span>
+                                <span>
+                                    {{ $member->address?->member_address_para ?? '' }}/
+                                    {{ $member->address?->member_address_ward ?? '' }}/
+                                    {{ $member->address?->member_address_panchayat ?? '' }}/
+                                    {{ $member->address?->member_address_area ?? '' }}
+                                </span>
                             </div>
                             <div class="flex justify-between py-2">
-                                <span class="font-medium">Account No.</span>
-                                {{-- <span>{{ $member->accounts?->account_no??'' }}</span> --}}
+                                <span class="font-medium">Landmark</span>
+                                <span>{{ $member->address?->member_address_landmark ?? '' }}</span>
+                            </div>
+
+                            <h5 class="mb-2 font-semibold text-center">Permanent Address</h5>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="font-medium">Address</span>
+                                <span>{{ $member->address?->member_address_address ?? '' }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="font-medium">City / District</span>
+                                <span>{{ $member->address?->member_perm_address_city ?? '' }}/
+                                    {{ $member->address?->member_address_city_district ?? '' }}
+                                </span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="font-medium">State</span>
+                                <span>{{ $member->address?->member_perm_address_state ?? '' }}</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="font-medium">GPS Lat/ Log</span>
+                                <span>{{ $member->address?->member_gps_location_latitude ?? '' }}
+                                    {{ $member->address?->member_gps_location_latitude ?? '' }}
+                                </span>
                             </div>
                         </div>
-                    </div>
+                        <!-- BANK DETAILS -->
+                        <div class="mt-4 bg-green-500 border rounded shadow">
+                            <div class="flex items-center justify-between px-4 py-2 text-white bg-orange-500 rounded-t">
+                                <span class="font-semibold uppercase">Bank Details</span>
+                                <div class="flex gap-2 space-x-2">
+                                    <i class="cursor-pointer fa fa-pencil"></i>
+                                    <i class="cursor-pointer fa" :class="showBank ? 'fa-minus' : 'fa-plus'"
+                                        @click="showBank = !showBank"></i>
+                                </div>
+                            </div>
+                            <div class="p-4 text-sm bg-white" x-show="showBank" x-transition>
+                                <div class="flex justify-between py-2 border-b">
+                                    <span class="font-medium">Bank Name</span>
+                                    <span>{{ $member->branch?->branch_name ?? '' }}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b">
+                                    <span class="font-medium">IFSC Code</span>
+                                    <span>{{ $member->branch?->ifsc_code ?? '' }}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b">
+                                    <span class="font-medium">Account Type</span>
+                                    {{-- <span>{{ $member->accounts?->account_type??'' }}</span> --}}
+                                </div>
+                                <div class="flex justify-between py-2">
+                                    <span class="font-medium">Account No.</span>
+                                    {{-- <span>{{ $member->accounts?->account_no??'' }}</span> --}}
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- MEMBER ACCOUNTS -->
-                    <div class="mt-4 bg-green-500 border rounded shadow">
-                        <div class="px-4 py-2 font-semibold text-white uppercase bg-green-600 rounded-t">
-                            Member Accounts
-                        </div>
-                        <div class="flex bg-white border-b">
-                            <button
-                                class="px-4 py-2 text-sm font-semibold text-green-600 bg-white border border-b-0 border-gray-300 rounded-tl">
-                                Active Account
-                            </button>
-                            <button
-                                class="px-4 py-2 text-sm font-semibold text-gray-500 border border-b-0 border-gray-300 hover:text-green-600">
-                                Closed Account
-                            </button>
-                        </div>
-                        <div class="bg-white">
-                            <table class="w-full text-sm text-left border-collapse">
-                                <thead class="border-b">
-                                    <tr>
-                                        <th class="px-4 py-2 font-semibold">Account Type</th>
-                                        <th class="px-4 py-2 font-semibold">Account No.</th>
-                                        <th class="px-4 py-2 font-semibold">Open Date</th>
-                                        <th class="px-4 py-2 font-semibold">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <!-- MEMBER ACCOUNTS -->
+                        <div class="mt-4 bg-green-500 border rounded shadow">
+                            <div class="px-4 py-2 font-semibold text-white uppercase bg-green-600 rounded-t">
+                                Member Accounts
+                            </div>
+                            <div class="flex bg-white border-b">
+                                <button
+                                    class="px-4 py-2 text-sm font-semibold text-green-600 bg-white border border-b-0 border-gray-300 rounded-tl">
+                                    Active Account
+                                </button>
+                                <button
+                                    class="px-4 py-2 text-sm font-semibold text-gray-500 border border-b-0 border-gray-300 hover:text-green-600">
+                                    Closed Account
+                                </button>
+                            </div>
+                            <div class="bg-white">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead class="border-b">
+                                        <tr>
+                                            <th class="px-4 py-2 font-semibold">Account Type</th>
+                                            <th class="px-4 py-2 font-semibold">Account No.</th>
+                                            <th class="px-4 py-2 font-semibold">Open Date</th>
+                                            <th class="px-4 py-2 font-semibold">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 @endsection
+<!-- Document Preview Modal -->
+<div id="docModal"
+     class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl relative max-w-[90vw] max-h-[90vh]">
+        
+        <!-- Close Button -->
+        <button type="button" onclick="closeDocModal()"
+            class="absolute -right-3 -top-3 w-8 h-8 rounded-full bg-white shadow
+                   text-gray-700 hover:text-red-600 text-xl leading-none">
+            &times;
+        </button>
+
+        <div class="p-3">
+            <h3 id="docTitle" class="font-semibold mb-2"></h3>
+
+            <div id="docContainer"
+                 class="w-[80vw] h-[75vh] flex items-center justify-center">
+                 
+                <!-- Image Preview (Smaller Thumbnail Size) -->
+                <img id="docImg" src="" alt="Document Image"
+                     class="max-h-[200px] max-w-[200px] hidden border rounded shadow-md hover:scale-125 transition-transform duration-300">
+                
+                <!-- PDF Preview -->
+                <iframe id="docPdf" src=""
+                        class="w-full h-full hidden" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+    function previewDoc(url, title) {
+        const modal = document.getElementById('docModal');
+        document.getElementById('docTitle').innerText = title || '';
+
+        const isPdf = url.toLowerCase().includes('.pdf');
+        const img = document.getElementById('docImg');
+        const pdf = document.getElementById('docPdf');
+
+        if (isPdf) {
+            pdf.src = url;
+            pdf.classList.remove('hidden');
+            img.classList.add('hidden');
+        } else {
+            img.src = url;
+            img.classList.remove('hidden');
+            pdf.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeDocModal() {
+        const modal = document.getElementById('docModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.getElementById('docImg').src = '';
+        document.getElementById('docPdf').src = '';
+    }
+
+    // Close modal by clicking on overlay
+    document.getElementById('docModal').addEventListener('click', (e) => {
+        if (e.target.id === 'docModal') closeDocModal();
+    });
+
+    // Close modal on Escape key press
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDocModal();
+    });
+</script>
+
+

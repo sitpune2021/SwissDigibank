@@ -13,7 +13,6 @@ use App\Models\KycDocument;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 
-
 class MemberController extends Controller
 {
 
@@ -57,7 +56,7 @@ class MemberController extends Controller
             return view('members.member.index', compact('members'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function create()
@@ -75,7 +74,7 @@ class MemberController extends Controller
             return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function store(Request $request)
     {
@@ -119,7 +118,7 @@ class MemberController extends Controller
                 'member_address_area' => 'nullable|string',
                 'member_address_landmark' => 'nullable|string',
                 'member_address_city_district' => 'nullable|string',
-                'member_address_state' => 'required|string',
+                'member_address_state' => 'required|integer',
                 'member_address_pincode' => 'required|numeric',
                 'member_address_country' => 'required|string',
                 'member_address_address' => 'nullable|string',
@@ -185,9 +184,32 @@ class MemberController extends Controller
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
+    // public function show(string $id)
+    // {
+    //     try {
+    //         $dynamicOptions = [
+    //             'states' => State::pluck('name', 'id'),
+    //             'branch' => Branch::pluck('branch_name', 'id'),
+    //             'religion' => Religion::pluck('name', 'id')
+
+    //         ];
+    //         $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
+    //         $sections = config('member_form');
+    //         $show = true;
+    //         $button = true;
+    //         $method = 'PUT';
+    //         $minor = true;
+    //         session(['member_id' => $id]);
+    //         session(['type' => "member"]);
+
+    //         return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions', 'button', 'minor', 'method'));
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
     public function show(string $id)
     {
         try {
@@ -195,22 +217,36 @@ class MemberController extends Controller
                 'states' => State::pluck('name', 'id'),
                 'branch' => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id')
-
             ];
+
             $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
+
+            $documents = KycDocument::where('member_id', $id)->get();
+
             $sections = config('member_form');
             $show = true;
             $button = true;
             $method = 'PUT';
             $minor = true;
+
             session(['member_id' => $id]);
             session(['type' => "member"]);
 
-            return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions', 'button', 'minor', 'method'));
+            return view('members.member.show', compact(
+                'sections',
+                'member',
+                'show',
+                'dynamicOptions',
+                'button',
+                'minor',
+                'method',
+                'documents' // ✅ send documents also
+            ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
+
 
     public function documentShow(string $id)
     {
@@ -222,7 +258,7 @@ class MemberController extends Controller
             return view('members.member.kycDocumentAdd', compact('route', 'method', 'id', 'documents'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function documentUpdate(Request $request)
@@ -230,7 +266,7 @@ class MemberController extends Controller
         try {
             $request->validate([
                 'documents' => 'required|array',
-                'documents.*.file' => 'required',
+                'documents.*.file' => 'required|file',
                 'documents.*.category' => 'required|string',
                 'documents.*.type' => 'nullable|string',
                 'member_id' => 'nullable'
@@ -238,7 +274,13 @@ class MemberController extends Controller
 
             foreach ($request->documents as $doc) {
                 if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
-                    $path = $doc['file']->storeAs('documents', 'public');
+                    // Generate unique filename
+                    $filename = time() . '_' . $doc['file']->getClientOriginalName();
+
+                    // Store in storage/app/public/documents
+                    $path = $doc['file']->storeAs('documents', $filename, 'public');
+
+                    // Save or update DB record
                     KycDocument::updateOrCreate(
                         [
                             'member_id' => $request->member_id,
@@ -256,8 +298,9 @@ class MemberController extends Controller
             return redirect()->route('member.index')->with('success', 'Member updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
+
 
     public function edit(string $id)
     {
@@ -375,6 +418,7 @@ class MemberController extends Controller
                 'charges_net_fee' => 'required|numeric',
                 'charges_remarks' => 'nullable|string',
                 'charges_pay_mode' => 'nullable|in:cash,online,cheque',
+                // 'folio_no' => 34,
             ]);
 
             $request->merge([
@@ -397,7 +441,7 @@ class MemberController extends Controller
             return redirect()->route('member.index')->with('success', 'Member updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function destroy(string $id)
@@ -422,7 +466,7 @@ class MemberController extends Controller
             return view('members.minor.create', compact('parentMember'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function storeMinor(Request $request)
@@ -448,7 +492,7 @@ class MemberController extends Controller
             return redirect()->route('members.index')->with('success', 'Minor member added under promoter.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function addressedit(string $id)
@@ -476,7 +520,7 @@ class MemberController extends Controller
             return view('members.member.address', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function addressupdate(Request $request, string $id)
@@ -534,7 +578,7 @@ class MemberController extends Controller
             return view('members.member.mobile', compact('sections', 'member', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function updatemobile(Request $request, string $id)
@@ -553,7 +597,7 @@ class MemberController extends Controller
             return redirect()->route('member.index')->with('success', 'Member updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
@@ -564,6 +608,25 @@ class MemberController extends Controller
             return response()->json($members);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
+    }
+    public function search(Request $request)
+    {
+        $search = $request->input('q');
+
+        $members = \App\Models\Member::where(function ($q) use ($search) {
+            $q->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('mobile_no', 'like', "%{$search}%");
+        })->limit(10)->get();
+
+        return response()->json($members->map(function ($member) {
+            return [
+                'id' => $member->id,
+                'member_info_first_name' => $member->first_name,
+                'member_info_last_name' => $member->last_name,
+                'mobile_no' => $member->mobile_no,
+            ];
+        }));
     }
 }
