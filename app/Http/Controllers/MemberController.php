@@ -411,7 +411,6 @@ class MemberController extends Controller
 
                 // Extra Settings
                 'extra_sms' => 'nullable|boolean',
-
                 // Membership Charges
                 'charges_transaction_date' => 'required|date|before_or_equal:today',
                 'charges_membership_fee' => 'nullable|numeric',
@@ -610,23 +609,11 @@ class MemberController extends Controller
             abort(404);
         }
     }
-       public function search(Request $request)
+
+    public function getMemberDetails($id)
     {
-        $search = $request->input('q');
+        $member = Member::findOrFail($id, ['id', 'member_info_first_name', 'member_info_address', 'member_info_mobile']);
 
-        $members = \App\Models\Member::where(function ($q) use ($search) {
-            $q->where('first_name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
-                ->orWhere('mobile_no', 'like', "%{$search}%");
-        })->limit(10)->get();
-
-        return response()->json($members->map(function ($member) {
-            return [
-                'id' => $member->id,
-                'member_info_first_name' => $member->first_name,
-                'member_info_last_name' => $member->last_name,
-                'mobile_no' => $member->mobile_no,
-            ];
-        }));
+        return response()->json($member);
     }
 }
