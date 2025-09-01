@@ -222,7 +222,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Deposit Frequency </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ $ddaccount->rd_dd_frequency ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount</td>
@@ -642,56 +642,72 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->scheme_name ?? '-' }}</td>
                                         </tr>
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Scheme Code</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->scheme_code ?? '-' }}</td>
                                         </tr>
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Minimum Locking Period</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{$ddaccount->scheme->rd_dd_lock_in_period ?? 'NA' }} months</td>
                                         </tr>
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Interest Locking Period</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->interest_lock_in_period ?? 0 }} Months</td>
                                         </tr>
 
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Deposit Frequency</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->rd_dd_frequency ?? '-' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Annual Interest Rate (%)</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->anuual_interest_rate ??'NA'}}%</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Interest Compounding Interval</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                               {{ $ddaccount->scheme->interest_compounding_interval??'NA' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Tenure</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->tenure_of_rd_dd_value }}
+                                                {{ $ddaccount->scheme->tenure_of_rd_dd_type }}</td>
                                         </tr>
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Cancellation Charges</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->cancellation_charges_value }}
+                                                {{ $ddaccount->scheme->cancellation_charges_type === 'percentage' ? '%' : 'fixed' }}
+                                            </td>
                                         </tr>
 
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Penal Charges</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->penal_charges ?? '-' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Bonus Rate</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->bonus_rate_value }}
+                                                {{ $ddaccount->scheme->bonus_rate_type === 'percentage' ? '%' : 'fixed' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Minimum Amount</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->min_rd_dd_amount ??'NA'}}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Skip Days (For DD Only) </td>

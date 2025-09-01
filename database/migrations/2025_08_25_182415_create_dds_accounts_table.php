@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dds_accounts', function (Blueprint $table) {
-            $table->id();
+            $table->id();  // This is an auto-incrementing unsigned BIGINT column
 
             // Member details
             $table->unsignedBigInteger('member_id'); // FK to members table
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('member_mobile', 15)->nullable();
 
             // Minor (if any)
-            $table->unsignedBigInteger('minor_id')->nullable(); // FK to members table (if minor)
+            $table->unsignedBigInteger('minor_id')->nullable(); // FK to members table (nullable)
 
             // Branch & Staff
             $table->unsignedBigInteger('branch_id'); // FK to branches table
@@ -39,30 +39,29 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // ✅ Foreign keys (with proper null handling)
+            // Foreign keys (with proper null handling)
             $table->foreign('member_id')
                 ->references('id')->on('members')
-                ->cascadeOnDelete();
+                ->onDelete('cascade');
 
             $table->foreign('minor_id')
                 ->references('id')->on('members')
-                ->nullOnDelete();
+                ->onDelete('set null'); // Make sure 'set null' is handled properly
 
             $table->foreign('branch_id')
                 ->references('id')->on('branches')
-                ->cascadeOnDelete();
+                ->onDelete('cascade');
 
             // $table->foreign('advisor_id')
             //     ->references('id')->on('staff')
-            //     ->nullOnDelete();
+            //     ->onDelete('set null'); // Handle set null if advisor_id is nullable
 
             // $table->foreign('collection_advisor_id')
             //     ->references('id')->on('staff')
-            //     ->nullOnDelete();
-
+            //     ->onDelete('set null'); // Handle set null if collection_advisor_id is nullable
             $table->foreign('scheme_id')
                 ->references('id')->on('schemes')
-                ->cascadeOnDelete();
+                ->onDelete('cascade');
         });
     }
 

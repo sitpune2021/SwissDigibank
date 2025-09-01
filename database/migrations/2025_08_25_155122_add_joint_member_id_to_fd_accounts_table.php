@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::table('fd_accounts', function (Blueprint $table) {
             if (!Schema::hasColumn('fd_accounts', 'joint_member_id')) {
                 $table->unsignedBigInteger('joint_member_id')->nullable()->after('member_id');
-                $table->foreign('joint_member_id')
-                    ->references('id')
-                    ->on('members')
-                    ->onDelete('set null');
+                $table->foreign('joint_member_id')->references('id')->on('members')->onDelete('set null');
             }
         });
     }
@@ -27,7 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-
         Schema::table('fd_accounts', function (Blueprint $table) {
             if (Schema::hasColumn('fd_accounts', 'joint_member_id')) {
                 $table->dropForeign(['joint_member_id']);

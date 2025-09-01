@@ -7352,6 +7352,21 @@
         },
         {
             "name": "phpunit/phpunit",
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+            "version": "11.5.34",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/phpunit.git",
+                "reference": "3e4c6ef395f7cb61a6206c23e0e04b31724174f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3e4c6ef395f7cb61a6206c23e0e04b31724174f2",
+                "reference": "3e4c6ef395f7cb61a6206c23e0e04b31724174f2",
+=======
+>>>>>>> 34b3508972604fb361930428a3e8af77bdd2e7c9
             "version": "11.5.27",
             "source": {
                 "type": "git",
@@ -7362,6 +7377,10 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/446d43867314781df7e9adf79c3ec7464956fd8f",
                 "reference": "446d43867314781df7e9adf79c3ec7464956fd8f",
+<<<<<<< HEAD
+=======
+>>>>>>> a83fed6019e929c4a2bcb9f726e3e36006a378cb
+>>>>>>> 34b3508972604fb361930428a3e8af77bdd2e7c9
                 "shasum": ""
             },
             "require": {
@@ -7433,7 +7452,15 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
+<<<<<<< HEAD
                 "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.27"
+=======
+<<<<<<< HEAD
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.34"
+=======
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.27"
+>>>>>>> a83fed6019e929c4a2bcb9f726e3e36006a378cb
+>>>>>>> 34b3508972604fb361930428a3e8af77bdd2e7c9
             },
             "funding": [
                 {
@@ -7457,7 +7484,15 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-07-11T04:10:06+00:00"
+=======
+<<<<<<< HEAD
+            "time": "2025-08-20T14:41:45+00:00"
+=======
+            "time": "2025-07-11T04:10:06+00:00"
+>>>>>>> a83fed6019e929c4a2bcb9f726e3e36006a378cb
+>>>>>>> 34b3508972604fb361930428a3e8af77bdd2e7c9
         },
         {
             "name": "sebastian/cli-parser",

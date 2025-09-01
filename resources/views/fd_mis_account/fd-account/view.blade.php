@@ -153,10 +153,7 @@
             ACCOUNT DETAILS
         </button>
 
-
-
-
-        <!-- Print Documents -->
+       <!-- Print Documents -->
         <button class="btn-primary px-4 py-2 rounded-3xl ">
             PRINT DOCUMENTS
         </button>
