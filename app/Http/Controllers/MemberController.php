@@ -12,6 +12,8 @@ use App\Models\Religion;
 use App\Models\KycDocument;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
 {
@@ -59,24 +61,6 @@ class MemberController extends Controller
         }
     }
 
-    // public function create()
-    // {
-    //     try {
-    //         $dynamicOptions = [
-    //             'states' => State::pluck('name', 'id'),
-    //             'branch' => Branch::pluck('branch_name', 'id'),
-    //             'religion' => Religion::pluck('name', 'id')
-    //         ];
-    //         $sections = config('member_form');
-    //         $member = null;
-    //         $route = route('member.store');
-    //         $method = 'POST';
-
-    //         return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
     public function create()
     {
         try {
@@ -121,8 +105,9 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         try {
+            Log::info('Member store request received', $request->all());
+
             $request->validate([
-                // Membership Type
                 'membership_type' => 'required|in:nominal,regular',
 
                 // General Info
@@ -215,6 +200,8 @@ class MemberController extends Controller
                 'charges_pay_mode' => 'required|in:cash,online,cheque',
             ]);
 
+            Log::info('Validation passed');
+
             // ✅ Normalize dates to Y-m-d
             $request->merge([
                 'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
@@ -223,13 +210,27 @@ class MemberController extends Controller
                 'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
                 'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
             ]);
+            Log::info('Dates normalized', $request->only([
+                'general_enrollment_date',
+                'member_info_dob',
+                'member_info_spouse_dob',
+                'nominee_dob',
+                'charges_transaction_date'
+            ]));
 
             // ✅ Insert data
             $memberData = $request->only((new Member)->getFillable());
             $addressData = $request->only((new Address)->getFillable());
             $kycData = $request->only((new KycAndNominee)->getFillable());
 
+            Log::debug('Prepared data', [
+                'member' => $memberData,
+                'address' => $addressData,
+                'kyc' => $kycData
+            ]);
+
             $member = Member::create($memberData);
+            Log::info('Member created successfully', ['member_id' => $member->id]);
 
             // ✅ Documents handling
             if ($request->hasFile('documents')) {
@@ -237,6 +238,13 @@ class MemberController extends Controller
                     if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
                         $filename = time() . '_' . $doc['file']->getClientOriginalName();
                         $path = $doc['file']->storeAs('documents', $filename, 'public');
+
+                        Log::info('Document uploaded', [
+                            'filename' => $filename,
+                            'path' => $path,
+                            'category' => $request->documents[$index]['category'] ?? null,
+                            'type' => $request->documents[$index]['type'] ?? null,
+                        ]);
 
                         KycDocument::updateOrCreate(
                             [
@@ -254,37 +262,27 @@ class MemberController extends Controller
             }
 
             $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
+            Log::info('Address created for member', ['member_id' => $member->id]);
+
             $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
+            Log::info('KYC created for member', ['member_id' => $member->id]);
+
+            Log::info('Member created successfully with all relations', ['member_id' => $member->id]);
 
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $e) {
+            Log::error('Error creating member', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
+            ]);
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
-    // public function show(string $id)
-    // {
-    //     try {
-    //         $dynamicOptions = [
-    //             'states' => State::pluck('name', 'id'),
-    //             'branch' => Branch::pluck('branch_name', 'id'),
-    //             'religion' => Religion::pluck('name', 'id')
-
-    //         ];
-    //         $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
-    //         $sections = config('member_form');
-    //         $show = true;
-    //         $button = true;
-    //         $method = 'PUT';
-    //         $minor = true;
-    //         session(['member_id' => $id]);
-    //         session(['type' => "member"]);
-
-    //         return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions', 'button', 'minor', 'method'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
     public function show(string $id)
     {
         try {

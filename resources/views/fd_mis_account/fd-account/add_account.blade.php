@@ -89,7 +89,7 @@
                         Member <span class="text-red-500">*</span>
                     </label>
                     <select id="member_id" name="member_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" required>
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select member</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
@@ -231,6 +231,9 @@
                     <input type="number" id="fd_amount" name="fd_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3 md:py-3"
                         placeholder="0.0">
+                    @error('fd_amount')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -266,6 +269,9 @@
                             <span>No</span>
                         </label>
                     </div>
+                    @error('tds_deduction')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -273,6 +279,9 @@
                     <div class="md:w-2/3 my-2 ">
                         <input type="checkbox" name="senior_citizen" value="1" class="w-5 h-5" checked>
                     </div>
+                    @error('senior_citizen')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -303,6 +312,9 @@
                             <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
                             @endforeach
                         </select>
+                        @error('joint_member_id')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 
@@ -320,6 +332,9 @@
                         <label class=" mt-2 flex items-center  gap-2">
                             <input type="radio" name="nominees" value="no" onclick="toggleAddMore(false)"> No
                         </label>
+                        @error('nominees')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <!-- Add More Button -->
@@ -408,12 +423,18 @@
                                 <option value="HDFC">HDFC</option>
                                 <option value="ICICI">ICICI</option>
                             </select>
+                            @error('pay1_bank')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Cheque No. <span
+                            <label class="block text-sm font-medium text-gray-700">Cheque No.<span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
                                 placeholder="Enter Cheque No.">
+                            @error('pay1_cheque_no')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Cheque Date <span
@@ -421,6 +442,9 @@
                             <input type="text" id="date4" name="pay1_cheque_date"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
                                 placeholder="DD/MM/YYYY">
+                            @error('pay1_cheque_date')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

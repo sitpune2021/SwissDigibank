@@ -14,6 +14,7 @@ use App\Models\AccountNominee;
 use Illuminate\Support\Facades\DB;
 use App\Models\RdScheme;
 use App\Models\SavingsAccount;
+use Illuminate\Validation\ValidationException;
 
 class RdAccountController extends Controller
 {
@@ -376,6 +377,9 @@ class RdAccountController extends Controller
             return redirect()
                 ->route('mds-rd-accounts.rd-account-index')
                 ->with('success', 'RD Account created successfully!');
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $e) {
             Log::error('RD Account Store Error', [
                 'message' => $e->getMessage(),
