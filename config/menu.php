@@ -62,7 +62,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
-            ['title' => 'Calculator', 'route' => 'rd-calculator.create'],
+            ['title' => 'Calculator', 'route' => 'calculator.index'],
             ['title' => 'FD Accounts', 'route' => 'fd-mis-schemes.fd_index'],
             ['title' => 'MIS Accounts', 'route' => 'misaccount.index'],
         ]
