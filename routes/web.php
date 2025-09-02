@@ -82,7 +82,10 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
         Route::get('/calculator/create', [CalculatorController::class, 'create'])->name('calculator.create');
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
+        Route::get('/calculator/calculate', [CalculatorController::class, 'calculateInvestment'])->name('calculator.calculate');
+        Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
     });
+
 
     Route::middleware('auth')->group(function () {
         Route::get('/dds-accounts', [DdsAccountsController::class, 'index'])->name('dds-accounts.index');
