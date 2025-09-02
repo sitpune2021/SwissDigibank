@@ -385,6 +385,7 @@ class MemberController extends Controller
             ];
             $method = 'PUT';
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
+            $documents = KycDocument::where('member_id', $id)->get();
             $member = array_merge(
                 $memberModel->toArray(),
                 $memberModel->address?->toArray() ?? [],
@@ -395,7 +396,10 @@ class MemberController extends Controller
             $route = route('member.update', $id);
             session(['member_id' => $id]);
             $minor = true;
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
+            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents'));
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
