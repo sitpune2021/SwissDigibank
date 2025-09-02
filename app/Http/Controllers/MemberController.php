@@ -172,9 +172,9 @@ class MemberController extends Controller
                 'member_kyc_passport_no' => 'nullable|string',
 
                 // Documents
-                'documents' => 'required|array',
-                'documents.*.file' => 'required|file',
-                'documents.*.category' => 'required|string',
+                'documents' => 'nullable|array',
+                'documents.*.file' => 'nullable|file',
+                'documents.*.category' => 'nullable|string',
                 'documents.*.type' => 'nullable|string',
 
                 // Nominee Info
