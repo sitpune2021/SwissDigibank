@@ -79,7 +79,7 @@ class DdsAccountsController extends Controller
     {
         $members  = Member::all();
         $branches = Branch::all();
-        $schemes  = Rdscheme::all();
+        $schemes = RdScheme::all();
         $minors   = Minor::all();
         $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
@@ -92,8 +92,10 @@ class DdsAccountsController extends Controller
         $branches = Branch::select('id', 'branch_name')->orderBy('branch_name')->get();
         $branches = Branch::all(); // or whatever query you need
         $members  = Member::all();
+        $schemes  = Rdscheme::all();
 
-        return view('fd_account.ddsaccounts.show', compact('ddaccount', 'branches', 'members'));
+
+        return view('fd_account.ddsaccounts.show', compact('ddaccount', 'branches', 'members','schemes'));
     }
 
     public function store(Request $request)

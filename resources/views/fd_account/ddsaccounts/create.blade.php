@@ -216,15 +216,15 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
+                        <label for="scheme_id" class="font-medium block mb-2">
                             Scheme <span class="text-red-500">*</span> :
                         </label>
-                        <select id="scheme_id" name="scheme_id"
+                        <select id="scheme_id" name="scheme_id" required
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Scheme</option>
                             @foreach ($schemes as $scheme)
-                                <option value="{{ $scheme->id }}"
-                                    {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
+                                <option
+                                    value="{{ $scheme->id }}"{{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
                                     {{ $scheme->scheme_name }}
                                 </option>
                             @endforeach
@@ -240,11 +240,9 @@
                         </label>
                         <input type="number" id="dd_amount" name="dd_amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
-               border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3
-               @error('dd_amount') border-red-500 @enderror"
+        border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter DD Amount" value="{{ old('dd_amount') }}">
 
-                        {{-- Laravel Validation Error --}}
                         @error('dd_amount')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -273,7 +271,7 @@
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
                                     value="yes"> Yes</label>
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
-                                    value="no"> No</label>
+                                    value="no" checked> No</label>
                         </div>
                     </div>
 
@@ -284,7 +282,7 @@
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="account_type" value="single"
-                                    onclick="toggleAccountType('single')" class="accent-primary">
+                                    onclick="toggleAccountType('single')" class="accent-primary" checked>
                                 <span>Single</span>
                             </label>
                             <label class="flex items-center gap-2">
@@ -319,7 +317,7 @@
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
                                 value="yes" onclick="toggleAddMore(true)">Yes</label>
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
-                                value="no" onclick="toggleAddMore(false)"> No</label>
+                                value="no" checked onclick="toggleAddMore(false)"> No</label>
                     </div>
 
                     <!-- Add More Button -->
@@ -487,20 +485,22 @@
 
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2">
-                            Amount <span class="text-red-500">*</span> </label>
-                        <input type="number" name="amount"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            Amount <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="amount" name="amount"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
+        border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     </div>
-                </div>
 
-                <!-- Buttons -->
-                <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                    <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
-                    <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
-                    @if (!$isEdit)
-                        <button class="btn-outline" type="reset">Reset</button>
-                    @endif
-                </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
+                        <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
+                        <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
+                        @if (!$isEdit)
+                            <button class="btn-outline" type="reset">Reset</button>
+                        @endif
+                    </div>
             </form>
         </div>
     </div>
@@ -624,6 +624,21 @@
                 document.getElementById('single').classList.remove('hidden');
             }
         }
+        $('#member').on('change', function() {
+            let memberId = $(this).val();
+
+            if (memberId) {
+                $.get('/members/' + memberId + '/details', function(data) {
+                    // Fill member details
+                    $('#memberName').val(data.member_info_first_name + ' ' + data.member_info_last_name);
+                    $('#memberAddress').val(data.member_address_line_1);
+                    $('#memberMobile').val(data.member_info_mobile_no);
+
+                    // Auto select branch
+                    $('#branch_id').val(data.branch_id).trigger('change');
+                });
+            }
+        });
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -639,11 +654,31 @@
             });
         });
     </script>
+    <script>
+        document.getElementById('dd_amount').addEventListener('input', function() {
+            document.getElementById('amount').value = this.value;
+        });
+    </script>
+    <script>
+    const ddInput = document.getElementById('dd_amount');
+    const amountInput = document.getElementById('amount');
+    const msg = document.getElementById('minAmountMsg');
+
+    ddInput.addEventListener('input', function() {
+        amountInput.value = this.value;
+
+        if (this.value && parseFloat(this.value) < 100) {
+            msg.classList.remove('hidden');  // show msg if less than 100
+        } else {
+            msg.classList.add('hidden');     // hide msg otherwise
+        }
+    });
+</script>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
+    {{-- <script>
         // Auto fill Name, Address, Mobile
         $(document).ready(function() {
             $('#memberDropdown').on('change', function() {
@@ -697,7 +732,7 @@
                 }
             });
         });
-    </script>
+    </script> --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>

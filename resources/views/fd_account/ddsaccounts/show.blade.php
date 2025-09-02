@@ -340,8 +340,6 @@
                         </button>
                     </div>
                 </div>
-
-
                 <!--documents-->
                 <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                     <!-- Header -->
@@ -352,7 +350,6 @@
                             <i class="las la-upload"></i>
                         </button>
                     </div>
-
                     <!-- Body -->
                     <div class="p-4">
                         <div class="overflow-x-auto">
@@ -360,16 +357,13 @@
                         </div>
                     </div>
                 </div>
-
                 <!--COMMENTS-->
                 <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                     <!-- Header -->
                     <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('hidden')">
                         <h3 class="text-lg font-semibold">COMMENTS</h3>
-
                     </div>
-
                     <!-- Body -->
                     <div class="p-4">
                         <div class="overflow-x-auto text-center mt-5">
@@ -655,7 +649,7 @@
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Minimum Locking Period</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                                {{$ddaccount->scheme->rd_dd_lock_in_period ?? 'NA' }} months</td>
+                                                {{ $ddaccount->scheme->rd_dd_lock_in_period ?? 'NA' }} months</td>
                                         </tr>
 
                                         <tr>
@@ -672,12 +666,12 @@
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Annual Interest Rate (%)</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                                {{ $ddaccount->scheme->anuual_interest_rate ??'NA'}}%</td>
+                                                {{ $ddaccount->scheme->anuual_interest_rate ?? 'NA' }}%</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Interest Compounding Interval</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                               {{ $ddaccount->scheme->interest_compounding_interval??'NA' }}</td>
+                                                {{ $ddaccount->scheme->interest_compounding_interval ?? 'NA' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Tenure</td>
@@ -702,12 +696,13 @@
                                             <td class="font-bold px-4 py-2">Bonus Rate</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->bonus_rate_value }}
-                                                {{ $ddaccount->scheme->bonus_rate_type === 'percentage' ? '%' : 'fixed' }}</td>
+                                                {{ $ddaccount->scheme->bonus_rate_type === 'percentage' ? '%' : 'fixed' }}
+                                            </td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Minimum Amount</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                                {{ $ddaccount->scheme->min_rd_dd_amount ??'NA'}}</td>
+                                                {{ $ddaccount->scheme->min_rd_dd_amount ?? 'NA' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Skip Days (For DD Only) </td>
@@ -737,7 +732,8 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Principal Amount (A)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">₹ 500,000.00</td>
+                                            <td class="px-4 py-2 text-right md:text-left">
+                                                {{ number_format($ddaccount->dd_amount, 2) }}</td>
                                         </tr>
 
                                         <tr>
@@ -747,7 +743,10 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Bonus Amount (C)</td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->scheme->bonus_rate_value }}
+                                                {{ $ddaccount->scheme->bonus_rate_type === 'percentage' ? '%' : 'fixed' }}
+                                            </td>
                                         </tr>
 
                                         <tr>
