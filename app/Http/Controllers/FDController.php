@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class FDController extends Controller
 {
@@ -105,6 +106,9 @@ class FDController extends Controller
             return redirect()
                 ->route('fd-mis-schemes.index')
                 ->with('success', 'FD Scheme created successfully!');
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -366,14 +370,9 @@ class FDController extends Controller
 
             return redirect()->route('fd-mis-schemes.fd_index')
                 ->with('success', 'FD/MIS account opened successfully!');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-
-            Log::error('FD Store validation failed', [
-                'errors' => $e->errors(),
-                'input' => $request->all(),
-            ]);
-
-            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $ex) {
             DB::rollBack();
             Log::error('FD Store failed', ['error' => $ex->getMessage()]);

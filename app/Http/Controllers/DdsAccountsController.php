@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class DdsAccountsController extends Controller
 {
@@ -95,7 +96,7 @@ class DdsAccountsController extends Controller
         $schemes  = Rdscheme::all();
 
 
-        return view('fd_account.ddsaccounts.show', compact('ddaccount', 'branches', 'members','schemes'));
+        return view('fd_account.ddsaccounts.show', compact('ddaccount', 'branches', 'members', 'schemes'));
     }
 
     // public function store(Request $request)
@@ -329,6 +330,9 @@ class DdsAccountsController extends Controller
 
             return redirect()->route('dds-accounts.index')
                 ->with('success', 'DDS Account created successfully!');
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $e) {
             Log::error("DDS Store error", [
                 'message' => $e->getMessage(),

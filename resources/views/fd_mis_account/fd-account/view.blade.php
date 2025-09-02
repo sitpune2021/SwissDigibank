@@ -630,7 +630,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Minimum Locking Period</td>
-                                <td class="px-4 py-2 text-right md:text-left">60 Months</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->scheme_name??'NA'}}Months</td>
                             </tr>
 
                             <tr>

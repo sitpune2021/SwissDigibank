@@ -452,20 +452,21 @@
                     <input type="text" name="t_date" id="date4" value="{{ old('t_date') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="DD/MM/YYYY"> <i class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+                    @error('t_date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
-                @error('t_date')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+
 
                 <div class="col-span-2 md:col-span-1">
                     <label class="font-medium block mb-2">
                         Amount <span class="text-red-500">*</span> </label>
                     <input type="number" name="amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    @error('amount')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
-                @error('amount')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
             </div>
             <!-- Buttons -->
             <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
@@ -618,7 +619,7 @@
     $(document).ready(function() {
         $('#memberDropdown').on('change', function() {
             let memberId = $(this).val();
-console.log(memberId);
+            console.log(memberId);
             // Get dropdown references
             const $jointSelect = $('#savingAccountJoint');
             const $savingSelect = $('#savingAccountSelect');
@@ -630,7 +631,7 @@ console.log(memberId);
 
             if (memberId) {
                 $.ajax({
-                     url: "{{ route('members.get', '') }}/" + memberId,
+                    url: "{{ route('members.get', '') }}/" + memberId,
                     type: 'GET',
                     success: function(response) {
                         console.log(response);
