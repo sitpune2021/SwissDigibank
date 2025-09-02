@@ -9,7 +9,7 @@ use App\Models\AccountNominee;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\FDAccount;
-use App\Models\FdScheme;
+use App\Models\FDScheme;
 use App\Models\Minor;
 use App\Models\Misaccount;
 use App\Models\Member;
@@ -38,7 +38,7 @@ class MisaccountController extends Controller
         $branches = Branch::all();
         $banks = Bank::all();
         $savingAccounts = Account::where('account_type', 'SAVING')->get();
-        $schemes = FdScheme::all(); // fetch all FD schemes
+        $schemes = FDScheme::all(); // fetch all FD schemes
 
         return view('fd_mis_account.misaccount.create', compact('members', 'minors', 'branches', 'banks', 'savingAccounts', 'schemes'));
     }
