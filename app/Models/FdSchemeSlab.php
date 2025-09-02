@@ -22,6 +22,6 @@ class FdSchemeSlab extends Model
      */
     public function fdscheme()
     {
-        return $this->belongsTo(FdScheme::class, 'fd_scheme_id');
+        return $this->belongsTo(FDScheme::class, 'fd_scheme_id');
     }
 }
