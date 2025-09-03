@@ -214,19 +214,19 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Scheme</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2"> {{ $ddaccount->scheme->scheme_name ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Open Date </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ $ddaccount->open_date?->format('d/m/Y') }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Deposit Frequency </td>
-                                <td class="px-4 py-2">{{ $ddaccount->rd_dd_frequency ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ $ddaccount->scheme->rd_dd_frequency ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ $ddaccount->total_installments ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount Received (C)</td>
@@ -242,7 +242,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">TDS Deducted (E) </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{$ddaccount->tds_deduction ??'0'}} </td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Balance Available (C + D - E)</td>
@@ -250,11 +250,11 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount Due (A) </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ number_format($ddaccount->dd_amount, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Penalty / Other Charges Due (B)</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ $ddaccount->scheme->penalty_charges_value ?? 'NA' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total Amount Due (A + B) </td>
@@ -262,7 +262,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Date </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ $ddaccount->maturity_date?->format('d-m-Y') }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Close Date </td>
@@ -282,7 +282,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Compounding Interval</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">{{ $ddaccount->scheme->interest_compounding_interval ?? 'NA' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">TDS Deduction</td>
@@ -606,7 +606,7 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Penal Charges (B)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">₹ 225,000.00</td>
+                                            <td class="px-4 py-2 text-right md:text-left">{{ $ddaccount->scheme->penalty_charges_value ?? 'NA' }}</td>
                                         </tr>
 
                                         <tr>
@@ -661,7 +661,7 @@
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Deposit Frequency</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                                {{ $ddaccount->rd_dd_frequency ?? '-' }}</td>
+                                                {{ $ddaccount->scheme->rd_dd_frequency ?? '-' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Annual Interest Rate (%)</td>
@@ -690,7 +690,7 @@
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Penal Charges</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                                {{ $ddaccount->penal_charges ?? '-' }}</td>
+                                                {{ $ddaccount->scheme->penal_charges ?? '-' }}</td>
                                         </tr>
                                         <tr class="bg-gray-50 dark:bg-bg3">
                                             <td class="font-bold px-4 py-2">Bonus Rate</td>
@@ -751,10 +751,57 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Maturity Amount (A + B + C) </td>
-                                            <td class="px-4 py-2   text-right md:text-left">-</td>
+                                            <td class="px-4 py-2   text-right md:text-left">
+                                                {{ $ddaccount->maturity_amount ?? '0' }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                        <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                                onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                <h3 class="text-lg font-semibold uppercase">Transactions Info</h3>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4">
+                                <div class="overflow-x-auto text-center mt-5">
+                                    <div class="overflow-x-auto">
+                                        <table
+                                            class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                            <thead class="bg-gray-100 text-start text-gray-700">
+                                                <tr class="border-b">
+                                                    <th class="px-4 py-2 text-start text-sm font-semibold">TOTAL INST</th>
+                                                    <th class="px-4 py-2 text-start text-sm font-semibold">PAID INST</th>
+                                                    <th class="px-4 py-2 text-start text-sm font-semibold">DUE INST </th>
+                                                    <th class="px-4 py-2 text-start text-sm font-semibold">OVERDUE INST
+                                                    </th>
+                                                    <th class="px-4 py-2 text-start text-sm font-semibold">INST CANCELED
+                                                    </th>
+                                                    <th class="px-4 py-2 text-start text-sm font-semibold">TOTAL INST NOT
+                                                        DUE</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="text-left">
+                                                <tr class="border-b hover:bg-gray-50">
+                                                    <td class="px-4 py-2">
+                                                        {{ $ddaccount->total_installments ?? '0' }}</td>
+                                                    <td class="px-4 py-2">
+                                                        {{ $ddaccount->paid_installments ?? '0' }}</td>
+                                                    <td class="px-4 py-2">
+                                                        {{ $ddaccount->due_installments ?? '0' }}</td>
+                                                    <td class="px-4 py-2">
+                                                        {{ $ddaccount->overdue_installments ?? '0' }}</td>
+                                                    <td class="px-4 py-2">
+                                                        {{ $ddaccount->canceled_installments ?? '0' }}</td>
+                                                    <td class="px-4 py-2">
+                                                        {{ $ddaccount->not_due_installments ?? '0' }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!--FD Info-->
@@ -808,11 +855,11 @@
                                             <tbody class="text-left">
                                                 <tr class="border-b hover:bg-gray-50">
                                                     <td class="px-4 py-2">
-                                                        {{ $ddaccount->transfer_date ?? 'N/A' }}</td>
+                                                        {{ $ddaccount->transaction->transaction_date ?? 'N/A' }}</td>
                                                     <td class="px-4 py-2">
                                                         {{ $ddaccount->account_type ?? 'N/A' }}</td>
                                                     <td class="px-4 py-2">
-                                                        {{ $ddaccount->pay_mode ?? 'N/A' }}</td>
+                                                        {{ $ddaccount->transaction->pay_mode ?? 'N/A' }}</td>
                                                     <td class="px-4 py-2">
                                                         {{ $ddaccount->dd_amount ?? 'N/A' }}</td>
                                                     <td class="px-4 py-2 text-sm text-green-600 font-medium">Approved</td>

@@ -397,7 +397,27 @@ class MemberController extends Controller
             $route = route('member.update', $id);
             session(['member_id' => $id]);
             $minor = true;
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor'));
+                    // 🔹 Prepare documents (either existing or empty defaults)
+        $empty = fn($category) => (object)[
+            'file'          => null,
+            'category'      => $category,
+            'file_path'     => null,
+            'document_type' => null,
+        ];
+
+        $existingDocs =KycDocument::where('member_id', $id)->get()->keyBy('document_category');
+
+        $documents = [
+            'photo'              => $existingDocs['photo'] ?? $empty('photo'),
+            'signature'          => $existingDocs['signature'] ?? $empty('signature'),
+            'id_proof'           => $existingDocs['id_proof'] ?? $empty('id_proof'),
+            'id_proof_back'      => $existingDocs['id_proof_back'] ?? $empty('id_proof_back'),
+            'address_proof'      => $existingDocs['address_proof'] ?? $empty('address_proof'),
+            'address_proof_back' => $existingDocs['address_proof_back'] ?? $empty('address_proof_back'),
+            'pan_number'         => $existingDocs['pan_number'] ?? $empty('pan_number'),
+        ];
+
+            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor','documents'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
