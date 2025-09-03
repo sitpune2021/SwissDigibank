@@ -82,7 +82,7 @@ $isEdit = isset($ddsAccount);
 
     <div class="col-span-12 box lg:col-span-12">
         <form action="{{ $isEdit ? route('dds-accounts.update', $ddsAccount->id) : route('dds-accounts.store') }}"
-            method="POST">
+            method="POST" id="DDForm">
             @csrf
             @if ($isEdit)
             @method('PUT')
@@ -500,7 +500,7 @@ $isEdit = isset($ddsAccount);
                     <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
                     <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
                     @if (!$isEdit)
-                    <button class="btn-outline" type="reset">Reset</button>
+                    <button class="btn-outline" type="reset" onclick="document.getElementById('DDForm').reset();">Reset</button>
                     @endif
                 </div>
         </form>
@@ -677,8 +677,7 @@ $isEdit = isset($ddsAccount);
     });
 </script>
 
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 {{-- <script>
         // Auto fill Name, Address, Mobile

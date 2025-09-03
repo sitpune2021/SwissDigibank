@@ -6,7 +6,6 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
         <h2 class="h2">RD/ DD Accounts</h2>
         <a class="btn-primary flex items-center gap-2" href="{{ route('mds-rd-accounts.create-rd-account') }}">
-            <i class="text-base las la-plus-circle md:text-lg"></i>
             Add
         </a>
     </div>

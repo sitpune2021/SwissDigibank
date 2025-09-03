@@ -59,9 +59,6 @@ return new class extends Migration
             // $table->foreign('collection_advisor_id')
             //     ->references('id')->on('staff')
             //     ->onDelete('set null'); // Handle set null if collection_advisor_id is nullable
-            $table->foreign('scheme_id')
-                ->references('id')->on('schemes')
-                ->onDelete('cascade');
         });
     }
 

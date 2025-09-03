@@ -28,7 +28,7 @@ class Misaccount extends Model
         'nominee',
         'final_amount',
         'transaction_date',
-        
+
         'monthly_interest',
         'total_interest',
         'maturity_amount',
@@ -51,10 +51,11 @@ class Misaccount extends Model
     }
     public function fdScheme()
     {
-        return $this->belongsTo(FdScheme::class, 'fd_scheme_id');
+        return $this->belongsTo(FDScheme::class, 'fd_scheme_id');
     }
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
+ 
 }
