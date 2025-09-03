@@ -241,9 +241,9 @@ class FDController extends Controller
                 'branch_id'       => 'required|integer|exists:branches,id',
                 'advisor_staff'   => 'nullable|integer',
                 'date'            => 'required|date',
-                // 'tenure_year'     => 'required|integer|min:0',
-                // 'tenure_month'    => 'required|integer|min:0',
-                // 'tenure_day'      => 'required|integer|min:0',
+                'tenure_year'     => 'required|integer|min:0',
+                'tenure_month'    => 'required|integer|min:0',
+                'tenure_day'      => 'required|integer|min:0',
                 'fd_amount'       => 'required|numeric|min:1',
                 'payout'          => 'nullable|string',
                 'tds_decution'    => 'nullable|string',
@@ -592,7 +592,32 @@ class FDController extends Controller
     {
         $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])->findOrFail($id);
 
-        return view('fd_mis_account.fd-account.view', compact('fdAccount'));
+        $fdSlabs = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)->get();
+
+        $years  = $fdAccount->tenure_year ?? 0;
+        $months = $fdAccount->tenure_month ?? 0;
+        $days   = $fdAccount->tenure_days ?? 0;
+
+        $tenureDays = ($years * 365) + ($months * 30) + $days;
+
+        $fdAnnualIntrest = null;
+
+        if ($tenureDays > 0) {
+            $slab = FdSchemeSlab::where('fd_scheme_id', $id)
+                ->where('day_from', '<=', $tenureDays)
+                ->where('day_to', '>=', $tenureDays)
+                ->first();
+
+            if ($slab) {
+                if (!empty($fdAccount->senior_citizen) && $fdAccount->senior_citizen == 1) {
+                    $fdAnnualIntrest = $slab->sr_citizen_rate;
+                } else {
+                    $fdAnnualIntrest = $slab->interest_rate;
+                }
+            }
+        }
+
+        return view('fd_mis_account.fd-account.view', compact('fdAccount', 'fdAnnualIntrest','fdSlabs'));
     }
 
     public function getMemberSavings($member_id)

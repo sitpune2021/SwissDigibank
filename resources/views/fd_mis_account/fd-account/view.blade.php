@@ -153,7 +153,7 @@
             ACCOUNT DETAILS
         </button>
 
-       <!-- Print Documents -->
+        <!-- Print Documents -->
         <button class="btn-primary px-4 py-2 rounded-3xl ">
             PRINT DOCUMENTS
         </button>
@@ -219,16 +219,25 @@
                             <td class="px-4 py-2">{{$fdAccount->maturity_date ?? 'N/A'}}</td>
                         </tr>
                         <tr>
+                            <td class="font-semibold px-4 py-2">Tenure of FD/MIS</td>
+                            <td class="px-4 py-2">{{$fdAccount->tenure_year}}Y,{{$fdAccount->tenure_month}}M,{{$fdAccount->tenure_days}}D</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold px-4 py-2">Interest Payout Type</td>
+                            <td class="px-4 py-2">{{$fdAccount->interest_payout_type}}</td>
+                        </tr>
+
+                        <tr>
                             <td class="font-semibold px-4 py-2">Close Date</td>
                             <td class="px-4 py-2">—</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
-                            <td class="px-4 py-2">9.0 %</td>
+                            <td class="px-4 py-2">{{ $fdAnnualIntrest }} %</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Balance Available</td>
-                            <td class="px-4 py-2">₹ 500,000.00</td>
+                            <td class="px-4 py-2">₹ {{$fdAccount->fd_amount}}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Status</td>
@@ -262,8 +271,6 @@
                     </tbody>
                 </table>
             </div>
-
-
 
             <!--MEMBER DETAILS-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
@@ -682,7 +689,7 @@
                                     <th class="px-4 py-2 text-center font-semibold text-gray-700 border-b">TO</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <!-- <tbody>
                                 <tr class="text-center border-t">
                                     <td class="px-3 py-2">1</td>
                                     <td class="px-3 py-2">30</td>
@@ -743,6 +750,17 @@
                                     <td class="px-3 py-2">5.0 %</td>
                                     <td class="px-3 py-2">11.0 %</td>
                                 </tr>
+                            </tbody> -->
+
+                            <tbody>
+                                @foreach($fdSlabs as $slab)
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">{{ $slab->day_from }}</td>
+                                    <td class="px-3 py-2">{{ $slab->day_to }}</td>
+                                    <td class="px-3 py-2">{{ $slab->interest_rate }} %</td>
+                                    <td class="px-3 py-2">{{ $slab->sr_citizen_rate }} %</td>
+                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

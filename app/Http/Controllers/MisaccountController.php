@@ -550,14 +550,10 @@ class MisaccountController extends Controller
 
     public function show($id)
     {
-        // Get MIS record with its related Member
-
-
         $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme'])->findOrFail($id);
 
         $branches = Branch::all();
 
-        // fetch all transactions of this member
         $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
             ->whereHas('misaccount', function ($q) use ($misaccount) {
                 $q->where('member_id', $misaccount->member_id);
@@ -568,13 +564,8 @@ class MisaccountController extends Controller
             ->where('account_type', 'SAVING')
             ->get();
 
-
-
-
         return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches'));
     }
-
-
 
     //edit editBranch
     public function updateBranch(Request $request, $misaccountId)
