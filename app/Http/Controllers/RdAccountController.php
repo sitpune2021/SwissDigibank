@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\AccountNominee;
 use Illuminate\Support\Facades\DB;
-use App\Models\RdScheme;
+use App\Models\Rdscheme;
 use App\Models\SavingsAccount;
 use Illuminate\Validation\ValidationException;
 
@@ -36,7 +36,7 @@ class RdAccountController extends Controller
             'member_info_middle_name',
             'member_info_last_name'
         )->get();
-        $schemes = RdScheme::all();
+        $schemes = Rdscheme::all();
         $accounts = Account::all();
 
         return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts'));
