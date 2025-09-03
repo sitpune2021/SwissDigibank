@@ -163,9 +163,6 @@
             SHOW AUDIT TRAIL
         </button>
     </div>
-
-
-
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
         <!-- Left: Details -->
@@ -262,9 +259,6 @@
                     </tbody>
                 </table>
             </div>
-
-
-
             <!--MEMBER DETAILS-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                 <!-- Header -->
@@ -296,9 +290,6 @@
                     </table>
                 </div>
             </div>
-
-
-
             <!-- Table Wrapper -->
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
                 <table class="w-full text-sm  ">
@@ -320,10 +311,6 @@
                     </tbody>
                 </table>
             </div>
-
-
-
-
             <!--PASSBOOK-->
             <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                 <!-- Header -->
@@ -335,8 +322,6 @@
                     </button>
                 </div>
             </div>
-
-
             <!--documents-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
@@ -413,22 +398,10 @@
                         <button class="btn-primary  mt-3">View All</button>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
-
-
-
-
-
-
-
         <!-- Right: Settings -->
         <div class=" w-full ">
-
-            <!--settings-->
             <!--settings-->
             <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
                 <!-- Header -->
@@ -530,7 +503,6 @@
                                 <option value="REINVEST_PRINCIPAL_AND_INTEREST">REINVEST_PRINCIPAL_AND_INTEREST</option>
                             </select>
                         </div>
-
                         <!-- Submit Button -->
                         <div class="text-center mt-5">
                             <button type="submit" class="btn-primary px-4 py-2 rounded-3xl">
@@ -540,9 +512,6 @@
                     </form>
                 </div>
             </div>
-
-
-            <!---->
             <div class="box dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
                 <!--Old MIS No.-->
                 <form action="" class="mt-3 p-3">
@@ -599,12 +568,9 @@
                         <select class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
        dark:bg-bg3 dark:text-white">
                             <option>Select Commission Chart</option>
-
                             <option>Option 2</option>
                         </select>
-
                         <input type="button" value="update" class="block  btn-primary">
-
                     </div>
                 </form>
             </div>
@@ -654,11 +620,8 @@
                                 <td class="font-bold px-4 py-2">Min. Amount</td>
                                 <td class="px-4 py-2  text-right md:text-left">₹ 100,000.00</td>
                             </tr>
-
                         </tbody>
                     </table>
-
-
                     <!-- Table Wrapper  -->
                     <div class="overflow-x-auto mt-5  bg-white dark:bg-bg3">
                         <table class="min-w-full text-sm ">
@@ -747,35 +710,26 @@
                         </table>
                     </div>
                 </div>
-
             </div>
-
-
             <!--FD  Maturity Info-->
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                     onclick="this.nextElementSibling.classList.toggle('hidden')">
                     <h3 class="text-lg font-semibold uppercase">FD Maturity Info</h3>
-
                 </div>
-
                 <!-- Body -->
-
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Maturity Date</td>
                                 <td class="px-4 py-2 text-right md:text-left">02/03/2029</td>
                             </tr>
-
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount (A)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ 500,000.00</td>
                             </tr>
-
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total Interest (B)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ 225,000.00</td>
@@ -800,17 +754,10 @@
                                 <td class="font-semibold px-4 py-2">Net Maturity Amount (A + B + D - C)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00 </td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>
-
-
-
             </div>
-
-
             <!--FD Info-->
 
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
@@ -818,11 +765,8 @@
                 <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                     onclick="this.nextElementSibling.classList.toggle('hidden')">
                     <h3 class="text-lg font-semibold uppercase">FD Info</h3>
-
                 </div>
-
                 <!-- Body -->
-
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -846,54 +790,32 @@
                         </tbody>
                     </table>
                 </div>
-
-
-
             </div>
-
-
             <!--FD  Branch Info-->
-
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                     onclick="this.nextElementSibling.classList.toggle('hidden')">
                     <h3 class="text-lg font-semibold uppercase">FD Branch Info</h3>
-
                 </div>
-
                 <!-- Body -->
-
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Branch</td>
                                 <td class="px-4 py-2 text-right md:text-left">Ananthapur</td>
                             </tr>
-
-
-
                             <tr>
                                 <td class="font-semibold px-4 py-2">Joint Account</td>
                                 <td class="px-4 py-2 text-right text-error md:text-left">No</td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>
-
-
-
             </div>
-
         </div>
-
     </div>
-
-
     @endsection
     <script>
         // Label update on toggle

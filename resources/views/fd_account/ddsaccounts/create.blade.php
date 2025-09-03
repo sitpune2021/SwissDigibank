@@ -189,12 +189,11 @@
                             <option value="head_office" {{ old('advisor_id') == 'head_office' ? 'selected' : '' }}>Head
                                 Office</option>
 
-                            {{-- जर DB मधून Advisor/Staff येत असतील तर --}}
                             @if (!empty($advisors))
                                 @foreach ($advisors as $advisor)
                                     <option value="{{ $advisor->id }}"
                                         {{ old('advisor_id') == $advisor->id ? 'selected' : '' }}>
-                                        {{ $advisor->name }}
+                                        {{ $advisor->general_advisor_staff }}
                                     </option>
                                 @endforeach
                             @endif

@@ -140,15 +140,15 @@
         </div>
 
         <div class="flex flex-wrap gap-3">
-            <!-- FD Payout Plan -->
             <button type="" class="btn-primary px-4 py-2 rounded-3xl ">
-                FD PAYOUT PLAN
+                INSTALLMENT PLAN
             </button>
 
             <!-- View Transactions -->
-            <button class="btn-primary px-4 py-2 rounded-3xl ">
+            <a href="{{ route('dds-accounts.transactions', $ddaccount->id) }}"
+                class="btn btn-primary px-4 py-2 rounded-3xl">
                 VIEW TRANSACTIONS
-            </button>
+            </a>
 
             <!-- Account Details -->
             <button class="btn-primary px-4 py-2 rounded-3xl ">
@@ -210,7 +210,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Old DD No.</td>
-                                <td class="px-4 py-2">—</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Scheme</td>
@@ -230,23 +230,23 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount Received (C)</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Penalty/ Other Charges Received</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Credited (D) </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">TDS Deducted (E) </td>
-                                <td class="px-4 py-2">{{$ddaccount->tds_deduction ??'0'}} </td>
+                                <td class="px-4 py-2">{{ $ddaccount->tds_deduction ?? '0' }} </td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Balance Available (C + D - E)</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount Due (A) </td>
@@ -258,7 +258,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total Amount Due (A + B) </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Date </td>
@@ -266,19 +266,19 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Close Date </td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2"></td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Amount (approx.)</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Bonus Amount</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
-                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">0.00</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Compounding Interval</td>
@@ -321,7 +321,8 @@
 
                                 <tr>
                                     <td class="font-semibold px-4 py-2">Address</td>
-                                    <td class="px-4 py-2">{{ $ddaccount->member->address->member_address_line_1 ?? 'N/A' }}
+                                    <td class="px-4 py-2">
+                                        {{ $ddaccount->member->address->member_address_line_1 ?? 'N/A' }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -606,7 +607,8 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Penal Charges (B)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">{{ $ddaccount->scheme->penalty_charges_value ?? 'NA' }}</td>
+                                            <td class="px-4 py-2 text-right md:text-left">
+                                                {{ $ddaccount->scheme->penalty_charges_value ?? 'NA' }}</td>
                                         </tr>
 
                                         <tr>

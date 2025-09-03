@@ -95,7 +95,7 @@ class DdsAccountsController extends Controller
         $schemes  = Rdscheme::all();
 
 
-        return view('fd_account.ddsaccounts.show', compact('ddaccount', 'branches', 'members','schemes'));
+        return view('fd_account.ddsaccounts.show', compact('ddaccount', 'branches', 'members', 'schemes'));
     }
 
     public function store(Request $request)
@@ -176,23 +176,6 @@ class DdsAccountsController extends Controller
             $ddsAccount->maturity_amount = $calculation['maturity'];
             $ddsAccount->maturity_date = \Carbon\Carbon::createFromFormat('d-m-Y', $calculation['maturity_date'])->format('Y-m-d');
             $ddsAccount->save();
-
-            // DdsAccountSchemeDetail::create([
-            //     'dds_account_id'             => $ddsAccount->id,
-            //     'scheme_code'                => $scheme->scheme_code,
-            //     'scheme_name'                => $scheme->scheme_name,
-            //     'rd_dd_lock_in_period'       => $scheme->rd_dd_lock_in_period,
-            //     'interest_lock_in_period'    => $scheme->interest_lock_in_period,
-            //     'anuual_interest_rate'       => $scheme->anuual_interest_rate,
-            //     'interest_compounding_interval' => $scheme->interest_compounding_interval,
-            //     'tenure_of_rd_dd_value'      => $scheme->tenure_of_rd_dd_value,
-            //     'cancellation_charges_value' => $scheme->cancellation_charges_value,
-            //     'bonus_rate_value'           => $scheme->bonus_rate_value,
-            //     'min_rd_dd_amount'           => $scheme->min_rd_dd_amount,
-            //     'rd_dd_frequency'            => $scheme->rd_dd_frequency,
-            //     'commission_chart'           => $scheme->commission_chart, // जर JSON असेल तर
-            // ]);
-
 
             // Save first transaction
             $transaction = new DdTransaction();
@@ -406,5 +389,54 @@ class DdsAccountsController extends Controller
             'maturity'        => round($maturity, 2),
             'maturity_date'   => $maturityDate,
         ];
+    }
+    public function transactions(Request $request, $id)
+    {
+        $ddsAccount = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($id);
+
+        // Apply filters
+        $query = DdTransaction::where('dds_account_id', $id);
+
+        if ($request->filled('tranx_id')) {
+            $query->where('id', $request->tranx_id);
+        }
+
+        if ($request->filled('remarks')) {
+            $query->where('remarks', 'like', '%' . $request->remarks . '%');
+        }
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('transaction_date', [
+                Carbon::parse($request->from_date)->startOfDay(),
+                Carbon::parse($request->to_date)->endOfDay()
+            ]);
+        }
+
+        if ($request->filled('from_amount') && $request->filled('to_amount')) {
+            $query->whereBetween('amount', [
+                $request->from_amount,
+                $request->to_amount
+            ]);
+        }
+
+        $transactions = $query->orderBy('transaction_date', 'desc')->get();
+
+        return view('fd_account.ddsaccounts.transactions', compact('ddsAccount', 'transactions'));
+    }
+    public function destroyTransaction($id)
+    {
+        $tranx = DdTransaction::findOrFail($id);
+        $tranx->delete();
+
+        return back()->with('success', 'Transaction deleted.');
+    }
+    public function transactionShow($accountId, $transactionId)
+    {
+        $ddsAccount  = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($accountId);
+        $transaction = DdTransaction::where('dds_account_id', $accountId)
+            ->with('ddsAccount')
+            ->findOrFail($transactionId);
+
+        return view('fd_account.ddsaccounts.transaction-show', compact('ddsAccount', 'transaction'));
     }
 }

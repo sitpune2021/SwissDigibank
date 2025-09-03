@@ -108,10 +108,14 @@ class MemberController extends Controller
                 'address_proof_back' => $empty('address_proof_back'),
                 'pan_number'         => $empty('pan_number'),
             ];
+            $advisors = Member::select('id', 'general_advisor_staff')
+                ->whereNotNull('general_advisor_staff')
+                ->distinct()
+                ->get();
 
             return view(
                 'members.member.create',
-                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents')
+                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents', 'advisors')
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -262,29 +266,6 @@ class MemberController extends Controller
         }
     }
 
-    // public function show(string $id)
-    // {
-    //     try {
-    //         $dynamicOptions = [
-    //             'states' => State::pluck('name', 'id'),
-    //             'branch' => Branch::pluck('branch_name', 'id'),
-    //             'religion' => Religion::pluck('name', 'id')
-
-    //         ];
-    //         $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
-    //         $sections = config('member_form');
-    //         $show = true;
-    //         $button = true;
-    //         $method = 'PUT';
-    //         $minor = true;
-    //         session(['member_id' => $id]);
-    //         session(['type' => "member"]);
-
-    //         return view('members.member.show ', compact('sections', 'member', 'show', 'dynamicOptions', 'button', 'minor', 'method'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
     public function show(string $id)
     {
         try {
@@ -397,27 +378,27 @@ class MemberController extends Controller
             $route = route('member.update', $id);
             session(['member_id' => $id]);
             $minor = true;
-                    // 🔹 Prepare documents (either existing or empty defaults)
-        $empty = fn($category) => (object)[
-            'file'          => null,
-            'category'      => $category,
-            'file_path'     => null,
-            'document_type' => null,
-        ];
+            // 🔹 Prepare documents (either existing or empty defaults)
+            $empty = fn($category) => (object)[
+                'file'          => null,
+                'category'      => $category,
+                'file_path'     => null,
+                'document_type' => null,
+            ];
 
-        $existingDocs =KycDocument::where('member_id', $id)->get()->keyBy('document_category');
+            $existingDocs = KycDocument::where('member_id', $id)->get()->keyBy('document_category');
 
-        $documents = [
-            'photo'              => $existingDocs['photo'] ?? $empty('photo'),
-            'signature'          => $existingDocs['signature'] ?? $empty('signature'),
-            'id_proof'           => $existingDocs['id_proof'] ?? $empty('id_proof'),
-            'id_proof_back'      => $existingDocs['id_proof_back'] ?? $empty('id_proof_back'),
-            'address_proof'      => $existingDocs['address_proof'] ?? $empty('address_proof'),
-            'address_proof_back' => $existingDocs['address_proof_back'] ?? $empty('address_proof_back'),
-            'pan_number'         => $existingDocs['pan_number'] ?? $empty('pan_number'),
-        ];
+            $documents = [
+                'photo'              => $existingDocs['photo'] ?? $empty('photo'),
+                'signature'          => $existingDocs['signature'] ?? $empty('signature'),
+                'id_proof'           => $existingDocs['id_proof'] ?? $empty('id_proof'),
+                'id_proof_back'      => $existingDocs['id_proof_back'] ?? $empty('id_proof_back'),
+                'address_proof'      => $existingDocs['address_proof'] ?? $empty('address_proof'),
+                'address_proof_back' => $existingDocs['address_proof_back'] ?? $empty('address_proof_back'),
+                'pan_number'         => $existingDocs['pan_number'] ?? $empty('pan_number'),
+            ];
 
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor','documents'));
+            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }

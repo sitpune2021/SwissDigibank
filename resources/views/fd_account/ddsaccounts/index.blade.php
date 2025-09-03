@@ -93,9 +93,9 @@
                     <tbody>
                         @foreach ($ddaccounts as $ddaccount)
                             <tr class="border-t">
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->advisor?->name ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->collectionAdvisor?->name ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->group?->name ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_advisor_staff ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_advisor_staff ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_group ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('dds-accounts.show', $ddaccount->id) }}"
                                         class="text-primary hover:underline">
