@@ -283,7 +283,6 @@
                 <div class="p-4 overflow-x-auto">
                     <table class="min-w-full text-sm text-left">
                         <tbody class="divide-y divide-gray-200">
-
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/3">Member Name</td>
                                 <td class="px-4 py-2">{{$fdAccount->member->member_info_first_name??''}}</td>
@@ -303,8 +302,6 @@
                     </table>
                 </div>
             </div>
-
-
 
             <!-- Table Wrapper -->
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
@@ -327,9 +324,6 @@
                     </tbody>
                 </table>
             </div>
-
-
-
 
             <!--PASSBOOK-->
             <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
@@ -424,13 +418,6 @@
             </div>
 
         </div>
-
-
-
-
-
-
-
 
         <!-- Right: Settings -->
         <div class=" w-full ">
@@ -563,18 +550,23 @@
                 </form>
 
                 <!--Branch-->
-                <form action="" class="mt-2 px-3">
-                    <label for="" class="block ">Branch</label>
+                <form action="{{ route('fd.updateBranch', $fdAccount->id) }}" method="POST" class="mt-2 px-3">
+                    @csrf
+                    @method('PUT')
+
+                    <label for="branch_id" class="block">Branch</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
-                        <select class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
-       dark:bg-bg3 dark:text-white">
-                            <option>Select option</option>
-
-                            <option>Option 2</option>
+                        <select name="branch_id" id="branch_id"
+                            class="w-full rounded-10 border px-3 py-3 bg-secondary/5 dark:bg-bg3 dark:text-white">
+                            <option value="">Select Branch</option>
+                            @foreach($branches as $branch)
+                            <option value="{{ $branch->id }}"
+                                {{ $fdAccount->branch_id == $branch->id ? 'selected' : '' }}>
+                                {{ $branch->branch_name }}
+                            </option>
+                            @endforeach
                         </select>
-
-                        <input type="button" value="update" class="block  btn-primary">
-
+                        <button type="submit" class="block btn-primary">Update</button>
                     </div>
                 </form>
 
@@ -637,29 +629,29 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Minimum Locking Period</td>
-                                <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->scheme_name??'NA'}}Months</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->lock_in_period ?? 0}}Months</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Locking Period</td>
-                                <td class="px-4 py-2 text-right md:text-left">12 Months</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->interest_lock_in ?? 0}} Months</td>
                             </tr>
 
                             <tr class="bg-gray-50 dark:bg-bg3">
                                 <td class="font-bold px-4 py-2">Bonus Rate</td>
-                                <td class="px-4 py-2  text-right md:text-left">0.0 %</td>
+                                <td class="px-4 py-2  text-right md:text-left">{{ $fdAccount->fdscheme->bonus_rate ?? 0.0}} %</td>
                             </tr>
                             <tr class="bg-gray-50 dark:bg-bg3">
                                 <td class="font-bold px-4 py-2">Cancellation Charges</td>
-                                <td class="px-4 py-2  text-right md:text-left">₹</td>
+                                <td class="px-4 py-2  text-right md:text-left">₹ {{ $fdAccount->fdscheme->cancellation_charge ?? 0}}</td>
                             </tr>
                             <tr class="bg-gray-50 dark:bg-bg3">
                                 <td class="font-bold px-4 py-2">Penal Charges (%)</td>
-                                <td class="px-4 py-2   text-right md:text-left">0.00 %</td>
+                                <td class="px-4 py-2   text-right md:text-left">{{ $fdAccount->fdscheme->penal_charge ?? 0.0}} %</td>
                             </tr>
                             <tr class="bg-gray-50 dark:bg-bg3">
                                 <td class="font-bold px-4 py-2">Min. Amount</td>
-                                <td class="px-4 py-2  text-right md:text-left">₹ 100,000.00</td>
+                                <td class="px-4 py-2  text-right md:text-left">₹ {{ $fdAccount->fdscheme->min_amount ?? 0}}</td>
                             </tr>
 
                         </tbody>
@@ -775,57 +767,49 @@
                 <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                     onclick="this.nextElementSibling.classList.toggle('hidden')">
                     <h3 class="text-lg font-semibold uppercase">FD Maturity Info</h3>
-
                 </div>
-
                 <!-- Body -->
-
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Maturity Date</td>
-                                <td class="px-4 py-2 text-right md:text-left">02/03/2029</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->maturity_date}}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount (A)</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 500,000.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{$fdAccount->fd_amount}}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total Interest (B)</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 225,000.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{$totalInterest}}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total TDS Deducted (C)</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{$tds}}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Bonus Amount (D)</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{$bonus}}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Amount (A + B + D)</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{$maturityAmount}}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Net Maturity Amount (A + B + D - C)</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00 </td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{$netMaturityAmount}}</td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>
-
-
-
             </div>
 
 
@@ -844,29 +828,23 @@
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Interest Credited</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{ number_format($fdAccount->interest_credited ?? 0, 2) }}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Released</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{ number_format($fdAccount->interest_released ?? 0, 2) }}</td>
                             </tr>
 
                             <tr>
                                 <td class="font-semibold px-4 py-2">TDS Deducted</td>
-                                <td class="px-4 py-2 text-right md:text-left">60 Months</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ number_format($fdAccount->tds_deducted ?? 0, 2) }}</td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>
-
-
-
             </div>
 
 
@@ -888,17 +866,18 @@
 
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Branch</td>
-                                <td class="px-4 py-2 text-right md:text-left">Ananthapur</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->branch->branch_name}}</td>
                             </tr>
-
-
-
                             <tr>
                                 <td class="font-semibold px-4 py-2">Joint Account</td>
-                                <td class="px-4 py-2 text-right text-error md:text-left">No</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    @if(!empty($fdAccount->joint_member_id))
+                                    <span class="text-green-600 font-semibold">Yes</span>
+                                    @else
+                                    <span class="text-red-600 font-semibold">No</span>
+                                    @endif
+                                </td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>

@@ -535,6 +535,100 @@ class MisaccountController extends Controller
         return [$results, $totalInterest, $principal];
     }
 
+
+    public function edit(Misaccount $misaccount)
+    {
+        $members = Member::with(['address', 'branch'])->get();
+        $minors = Minor::all();
+        $branches = Branch::all();
+        $banks = Bank::all();
+        $savingAccounts = Account::where('account_type', 'SAVING')->get();
+        $schemes = FdScheme::all();
+        $misaccount->load(['transactions', 'nominees']);
+
+        return view('fd_mis_account.misaccount.create', compact('members', 'minors', 'branches', 'banks', 'savingAccounts', 'schemes', 'misaccount'));
+    }
+
+    public function update(Request $request, Misaccount $misaccount)
+    {
+        try {
+            Log::info('MIS Update started', [
+                'misaccount_id' => $misaccount->id,
+                'request_data' => $request->all()
+            ]);
+
+            $validated = $request->validate([
+                'member_id' => 'required|exists:members,id',
+                'branch_id' => 'required|exists:branches,id',
+                'fd_scheme_id' => 'nullable|exists:fd_schemes,id',
+                'open_date' => 'required|date',
+                'tenure_year' => 'nullable|integer|min:0',
+                'tenure_month' => 'nullable|integer|min:0|max:12',
+                'tenure_day' => 'nullable|integer|min:0|max:31',
+                'mis_amount' => 'required|numeric|min:0',
+                'interest_payout_type' => 'nullable|string|max:100',
+                'tds_deduction' => 'required|in:yes,no',
+                'senior_citizen' => 'nullable|in:yes,no',
+                'account_type' => 'required|in:single,joint',
+                'joint_member_id' => 'nullable|exists:members,id',
+                'nominee' => 'required|in:yes,no',
+                'final_amount' => 'nullable|integer|min:0',
+            ]);
+
+            Log::info('Validation passed', ['validated' => $validated]);
+
+            $validated['open_date'] = Carbon::parse($validated['open_date'])->format('Y-m-d');
+
+            // ✅ Update MIS account
+            $misaccount->update($validated);
+            Log::info('MIS Account updated', ['misaccount' => $misaccount->toArray()]);
+
+            $chequeDate = $request->cheque_date
+                ? Carbon::parse($request->cheque_date)->format('Y-m-d')
+                : null;
+
+            $transferDate = $request->transfer_date
+                ? Carbon::parse($request->transfer_date)->format('Y-m-d')
+                : null;
+
+            // ✅ Always create new transaction
+            $transaction = MisTransaction::create([
+                'misaccount_id' => $misaccount->id,
+                'amount' => $request->amount,
+                'pay_mode' => $request->pay_mode,
+                'bank_id' => $request->bank_id ?? null,
+                'cheque_no' => $request->cheque_no ?? null,
+                'cheque_date' => $chequeDate,
+                'transfer_date' => $transferDate,
+                'utr_no' => $request->utr_no ?? null,
+                'transfer_mode' => $request->transfer_mode ?? null,
+                'saving_account_id' => $request->saving_account_id ?? null,
+            ]);
+
+            Log::info('New MIS Transaction created', ['transaction' => $transaction->toArray()]);
+
+            return redirect()
+                ->route('misaccount.index')
+                ->with('success', 'MIS Account updated successfully.');
+        } catch (ValidationException $e) {
+            Log::warning('Validation failed during MIS update', [
+                'errors' => $e->errors()
+            ]);
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (Exception $e) {
+            Log::error('MIS Account update failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()
+                ->with('error', 'Something went wrong while updating MisAccount. Please try again.')
+                ->withInput();
+        }
+    }
+
+
     public function showMemberTransactions($memberId)
     {
         $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
@@ -582,5 +676,15 @@ class MisaccountController extends Controller
         $misaccount->save();
 
         return redirect()->back()->with('success', 'Branch updated successfully.');
+    }
+
+    public function mispayoutplan()
+    {
+        $misaccounts = Misaccount::with('fdScheme')->get();
+
+        // Fetch MIS accounts, optionally eager-load related models if needed
+        $misaccounts = Misaccount::with(['member', 'fdScheme', 'branch'])->get();
+
+        return view('misaccount.viewbuttons.mispayoutplan.mispayoutplan', compact('misaccounts'));
     }
 }

@@ -149,17 +149,45 @@
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->open_date)->format('d/m/Y') }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ strtoupper($mis->interest_payout_type) }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->transaction_date)->addYears($mis->tenure_year)->format('d/m/Y') }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">- </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px]">
+                            @if ($mis->status == 0)
+                            Pending
+                            @elseif ($mis->status == 1)
+                            Approve
+                            @elseif ($mis->status == 2)
+                            Not Approve
+                            @endif
+                        </td>
                         <td class="px-6 py-2">
                             <div class="flex justify-center">
                                 <div class="flex justify-center">
                                     @include('partials._vertical-options', [
                                     'id' => $mis->id,
                                     'viewRoute' => 'misaccount.show',
+                                    'editRoute' => $mis->status == 0 ? 'misaccount.edit' : null
                                     ])
                                 </div>
                             </div>
                         </td>
+                        <!-- <td class="px-6 py-2">
+                            <div class="flex justify-center">
+                                <div class="relative">
+                                    <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                    <ul class="horiz-option popover-content">
+                                        <li><a href="{{ route('misaccount.show', $mis->id) }}"
+                                                class="single-option">View</a></li>
+                                        {{-- <li><a href="{{ route('misaccount.edit', $mis->id) }}"
+                                        class="single-option">Edit</a></li> --}}
+                                        @if ($mis->status == 0)
+                                        <li>
+                                            <a href="{{ route('misaccount.edit', $mis->id) }}"
+                                                class="single-option">Edit</a>
+                                        </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        </td> -->
                     </tr>
                     @endforeach
                 </tbody>

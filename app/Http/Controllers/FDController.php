@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\AccountNominee;
+use App\Models\Branch;
 use App\Models\FdAccount;
 use App\Models\FDScheme;
 use App\Models\FdSchemeSlab;
@@ -227,7 +228,7 @@ class FDController extends Controller
                     ]
                 ];
             });
-        // dd($membersData);
+
         return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings'));
     }
 
@@ -311,7 +312,7 @@ class FDController extends Controller
                 'fd_amount'             => $request->fd_amount,
                 'interest_payout_type'  => $request->payout,
                 'tds_deduction'         => $request->tds_deduction,
-                'senior_citizen'        => $request->senior_citizen,
+                'senior_citizen'        => $request->senior_citizen ?? 0,
                 'account_type'          => $request->account_type,
                 // 'final_amount'          => $request->final_amount,
                 'scheme_id'          => $request->scheme_id,
@@ -326,6 +327,8 @@ class FDController extends Controller
                 'maturity_date'         => isset($summary['maturity_date'])
                     ? Carbon::createFromFormat('d/m/Y', $summary['maturity_date'])->format('Y-m-d')
                     : null,
+
+
             ]);
             Log::info('FD Account created', ['fd_account_id' => $fdAccount->id]);
 
@@ -369,9 +372,9 @@ class FDController extends Controller
             Log::info('Transaction committed successfully');
 
             return redirect()->route('fd-mis-schemes.fd_index')
-                ->with('success', 'FD/MIS account opened successfully!');
+                ->with('success', 'Please approve status!');
         } catch (ValidationException $e) {
-            // rethrow so Laravel handles it (shows validation errors in the view)
+
             throw $e;
         } catch (\Exception $ex) {
             DB::rollBack();
@@ -379,8 +382,6 @@ class FDController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $ex->getMessage());
         }
     }
-
-
 
     function calculateInvestment(
         $type = null,
@@ -575,24 +576,29 @@ class FDController extends Controller
 
         return [$results, $totalInterest, $principal];
     }
-    // AccountController.php
-    public function getBalance($id)
-    {
-
-        $account = Account::find($id);
-
-        if ($account) {
-            return response()->json(['balance' => $account->balance]);
-        } else {
-            return response()->json(['balance' => 0]);
-        }
-    }
 
     public function fd_show(string $id)
     {
         $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])->findOrFail($id);
 
         $fdSlabs = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)->get();
+        $branches = Branch::all();
+
+        $calculation = $this->calculateFdMaturity($fdAccount);
+
+        return view('fd_mis_account.fd-account.view', array_merge(
+            [
+                'fdAccount' => $fdAccount,
+                'fdSlabs'   => $fdSlabs,
+                'branches'  => $branches
+            ],
+            $calculation
+        ));
+    }
+
+    private function calculateFdMaturity($fdAccount)
+    {
+        $principal = $fdAccount->fd_amount;
 
         $years  = $fdAccount->tenure_year ?? 0;
         $months = $fdAccount->tenure_month ?? 0;
@@ -603,7 +609,7 @@ class FDController extends Controller
         $fdAnnualIntrest = null;
 
         if ($tenureDays > 0) {
-            $slab = FdSchemeSlab::where('fd_scheme_id', $id)
+            $slab = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)
                 ->where('day_from', '<=', $tenureDays)
                 ->where('day_to', '>=', $tenureDays)
                 ->first();
@@ -617,7 +623,60 @@ class FDController extends Controller
             }
         }
 
-        return view('fd_mis_account.fd-account.view', compact('fdAccount', 'fdAnnualIntrest','fdSlabs'));
+        $timeInYears = (($years * 360) + ($months * 30) + $days) / 360;
+
+        $totalInterest = ($principal * $fdAnnualIntrest * $timeInYears) / 100;
+
+        $exemption = $fdAccount->senior_citizen ? 50000 : 40000;
+        $tds = ($totalInterest > $exemption) ? $totalInterest * 0.10 : 0;
+
+        $bonus = 0;
+        if (!is_null($fdAccount->fdscheme->bonus_rate)) {
+            $bonusRate = $fdAccount->fdscheme->bonus_rate;
+            $bonusType = $fdAccount->fdscheme->bonus_type ?? 'percentage';
+
+            if ($bonusType === 'percentage') {
+                $bonus = ($principal * $bonusRate) / 100;
+            } elseif ($bonusType === 'fixed') {
+                $bonus = $bonusRate;
+            }
+        }
+
+        $maturityAmount = $principal + $totalInterest + $bonus;
+        $netMaturityAmount = $maturityAmount - $tds;
+
+        return [
+            'fdAnnualIntrest'   => $fdAnnualIntrest,
+            'totalInterest'     => $totalInterest,
+            'tds'               => $tds,
+            'bonus'             => $bonus,
+            'maturityAmount'    => $maturityAmount,
+            'netMaturityAmount' => $netMaturityAmount,
+        ];
+    }
+    public function updateBranch(Request $request, $id)
+    {
+        $request->validate([
+            'branch_id' => 'required|exists:branches,id',
+        ]);
+
+        $fdAccount = FdAccount::findOrFail($id);
+        $fdAccount->branch_id = $request->branch_id;
+        $fdAccount->save();
+
+        return redirect()->back()->with('success', 'Branch updated successfully!');
+    }
+
+    public function getBalance($id)
+    {
+
+        $account = Account::find($id);
+
+        if ($account) {
+            return response()->json(['balance' => $account->balance]);
+        } else {
+            return response()->json(['balance' => 0]);
+        }
     }
 
     public function getMemberSavings($member_id)

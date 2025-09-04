@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Account;
-
+use App\Models\FDAccount;
+use Illuminate\Support\Facades\DB;
 
 class ApproveController extends Controller
 {
@@ -52,7 +53,7 @@ class ApproveController extends Controller
             return view('approvals.pending_transactions', compact('pending_transactions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -79,7 +80,7 @@ class ApproveController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     /**
      * Show transfer allocaction
@@ -170,7 +171,7 @@ class ApproveController extends Controller
             return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function approveShareTransfer(Request $request)
@@ -198,7 +199,7 @@ class ApproveController extends Controller
             return redirect()->back()->with('success', 'Share transfer updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     /**
      * Reverse Transaction. - view form called
@@ -211,7 +212,7 @@ class ApproveController extends Controller
             return view('saving-current-ac.accounts.reverse-transaction', compact('transaction', 'id'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function reverseTransactionApprove(Request $request, $id)
@@ -246,7 +247,7 @@ class ApproveController extends Controller
                 ->with('success', 'Please approve reversed transaction.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function approveReverseTransaction()
@@ -260,7 +261,7 @@ class ApproveController extends Controller
             return view('approvals.reverse_transaction', compact('transactions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function approveTransaction($encodedId, Request $request)
     {
@@ -279,7 +280,7 @@ class ApproveController extends Controller
             return redirect()->route('reverse-transaction.reverse_transaction')->with('success', 'Transaction approved successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     /**
      * Display the specified resource.

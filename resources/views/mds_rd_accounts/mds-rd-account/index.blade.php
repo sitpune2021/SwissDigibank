@@ -4,7 +4,7 @@
 <div class="main-inner">
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h2 class="h2">RD/ DD Accounts</h2>
+        <h2 class="h2">MDS/ RD Accounts</h2>
         <a class="btn-primary flex items-center gap-2" href="{{ route('mds-rd-accounts.create-rd-account') }}">
             Add
         </a>
@@ -34,7 +34,7 @@
                         <th class="px-6 py-3 text-center">PAID INST</th>
                         <th class="px-6 py-3 text-center">DUE INST</th>
                         <th class="px-6 py-3 text-center">OVERDUE INST</th>
-                        <th class="px-6 py-3 text-center">INST CANCELED</th>
+                        <th class="px-6 py-3 text-center">INST CANCELLED</th>
                         <th class="px-6 py-3 text-center">TOTAL INST NOT DUE</th>
                         <th class="px-6 py-3 text-center">OPEN DATE</th>
                         <th class="px-6 py-3 text-center">MATURITY DATE</th>
