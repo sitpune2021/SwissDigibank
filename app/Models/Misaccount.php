@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Misaccount extends Model
@@ -57,5 +58,34 @@ class Misaccount extends Model
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
- 
+
+    // protected $appends = ['monthly_dates', 'maturity_date'];
+
+    // // ✅ Computed maturity date
+    // public function getMaturityDateAttribute()
+    // {
+    //     return Carbon::parse($this->open_date)
+    //         ->addYears($this->tenure_year ?? 0)
+    //         ->addMonths($this->tenure_month ?? 0)
+    //         ->addDays($this->tenure_day ?? 0);
+    // }
+
+    // // ✅ Computed monthly dates
+    // public function getMonthlyDatesAttribute()
+    // {
+    //     $dates = [];
+    //     $current = Carbon::parse($this->open_date);
+
+    //     while ($current < $this->maturity_date) {
+    //         $dates[] = [
+    //             'from' => $current->copy()->startOfMonth(),
+    //             'to' => $current->copy()->endOfMonth(),
+    //             'year' => $current->year,
+    //             'days_in_month' => $current->daysInMonth,
+    //         ];
+    //         $current->addMonth();
+    //     }
+
+    //     return $dates;
+    // }
 }

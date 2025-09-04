@@ -248,7 +248,7 @@ function calculateInvestment(
 
     // ---- Final Summary ----
     $netInterest = $totalInterest - $totalTDS;
-    $maturityAmt = $principal + $maturityBonus + $netInterest;
+    $maturityAmt = $principal + $maturityBonus;
 
     $summary['summary'] = [
         'principal'       => number_format($principal, 2),
@@ -260,11 +260,14 @@ function calculateInvestment(
         'maturity_date'   => $maturityDate
     ];
 
+
             return response()->json([
                 'success' => true,
                 'summary' => $summary,
                 'details' => $results
             ]);
+
+            
 }
 
 function processPeriod(
@@ -317,6 +320,9 @@ function processPeriod(
                 'maturity_date'    => Carbon::createFromFormat('Y-m-d', $maturityDateInternal)->format('d/m/Y'),
             ];
 
+         
+
+
             $current = $next->copy()->addDay(1);
         }
     } else {
@@ -339,6 +345,8 @@ function processPeriod(
             'maturity_date'    => Carbon::createFromFormat('Y-m-d', $maturityDateInternal)->format('d/m/Y'),
         ];
     }
+
+      
 
     return [$results, $totalInterest, $principal];
 }

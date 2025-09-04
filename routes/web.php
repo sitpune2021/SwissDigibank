@@ -169,6 +169,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
         ->name('member.savings');
 
+    Route::put('/fd/{id}/update-branch', [FDController::class, 'updateBranch'])->name('fd.updateBranch');
 
     Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
