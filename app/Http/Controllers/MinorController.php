@@ -180,17 +180,18 @@ class MinorController extends Controller
                 'father_name'     => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'aadhaar_no'      => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
                 'address'         => 'required|string|max:500',
-                'member_id'       => $type === 'member' ? 'required|exists:members,id' : 'nullable',
-                'promotor_id'     => $type === 'promotor' ? 'required|exists:promotors,id' : 'nullable',
+                'member_id'       => 'nullable|exists:members,id',
+                'promotor_id'     => 'nullable|exists:promotors,id',
             ]);
 
-            if (!($data['member_id'] ?? null) && !($data['promotor_id'] ?? null)) {
+            if (empty($data['member_id']) && empty($data['promotor_id'])) {
                 Log::warning('Minor Update Validation Failed - Missing Relation', [
                     'minor_id' => $id,
                     'data' => $data
                 ]);
                 return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
             }
+
 
             // ✅ Format dates
             $data['dob'] = date('Y-m-d', strtotime($data['dob']));
@@ -230,5 +231,7 @@ class MinorController extends Controller
             return redirect()->back()->with('error', 'Failed to update minor: ' . $e->getMessage());
         }
     }
+
+
     public function destroy(string $id) {}
 }
