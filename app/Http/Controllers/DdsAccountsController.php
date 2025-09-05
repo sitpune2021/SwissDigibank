@@ -80,7 +80,7 @@ class DdsAccountsController extends Controller
     {
         $members  = Member::all();
         $branches = Branch::all();
-        $schemes = RdScheme::all();
+        $schemes = Rdscheme::all();
         $minors   = Minor::all();
         $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
