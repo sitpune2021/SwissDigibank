@@ -226,39 +226,39 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount</td>
-                                <td class="px-4 py-2">{{ $ddaccount->total_installments ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ number_format($ddaccount->dd_amount  ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount Received (C)</td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($installmentReceived, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Penalty/ Other Charges Received</td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($penaltyReceived, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Credited (D) </td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($interestCredited, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">TDS Deducted (E) </td>
-                                <td class="px-4 py-2">{{ $ddaccount->tds_deduction ?? '0' }} </td>
+                                <td class="px-4 py-2">{{ number_format($tdsDeduction, 2) }} </td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2">Balance Available (C + D - E)</td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="font-semibold  px-4 py-2">Balance Available (C + D - E)</td>
+                                <td class="px-4 py-2">{{ number_format($balanceAvailable, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount Due (A) </td>
-                                <td class="px-4 py-2">{{ number_format($ddaccount->dd_amount, 2) }}</td>
+                                <td class="px-4 py-2">{{ number_format($principalDue, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Penalty / Other Charges Due (B)</td>
-                                <td class="px-4 py-2">{{ $ddaccount->scheme->penalty_charges_value ?? 'NA' }}</td>
+                                <td class="px-4 py-2">{{ number_format($penaltyDue, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total Amount Due (A + B) </td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($totalAmountDue, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Date </td>
@@ -266,33 +266,37 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Close Date </td>
-                                <td class="px-4 py-2"></td>
+                                <td class="px-4 py-2">{{ $closeDate ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Amount (approx.)</td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($maturityAmount, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Bonus Amount</td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($maturityBonus, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
-                                <td class="px-4 py-2">0.00</td>
+                                <td class="px-4 py-2">{{ number_format($annualInterestRate, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Interest Compounding Interval</td>
-                                <td class="px-4 py-2">{{ $ddaccount->scheme->interest_compounding_interval ?? 'NA' }}</td>
+                                <td class="px-4 py-2">
+                                    {{ ucfirst($ddaccount->scheme->interest_compounding_interval ?? 'N/A') }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">TDS Deduction</td>
                                 <td class="px-4 py-2"><span
-                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
+                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600"{{ $tdsDeduction === 'Yes' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
+                                        {{ $tdsDeduction }}</span></td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Special Account </td>
                                 <td class="px-4 py-2"><span
-                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
+                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600"{{ $specialAccount === 'Yes' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
+                                        {{ $specialAccount }}
+                                    </span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -533,8 +537,7 @@
                                 <label for="" class="block ">Advisor/ Staff</label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select
-                                        class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
-       dark:bg-bg3 dark:text-white">
+                                        class="w-full rounded-10 border  px-3 py-3  bg-secondary/5 dark:bg-bg3 dark:text-white">
                                         <option>Select Advisor/ Staff</option>
 
                                         <option>Option 2</option>
@@ -550,8 +553,7 @@
                                 </label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select
-                                        class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
-       dark:bg-bg3 dark:text-white">
+                                        class="w-full rounded-10 border  px-3 py-3  bg-secondary/5 dark:bg-bg3 dark:text-white">
                                         <option>Select Advisor/ Staff</option>
 
                                         <option>Option 2</option>
@@ -571,8 +573,7 @@
                                 <label for="" class="block ">Commission Chart</label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select
-                                        class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
-       dark:bg-bg3 dark:text-white">
+                                        class="w-full rounded-10 border  px-3 py-3  bg-secondary/5 dark:bg-bg3 dark:text-white">
                                         <option>Select Commission Chart</option>
 
                                         <option>Option 2</option>
@@ -583,47 +584,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
-                            <!-- Header -->
-                            <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
-                                onclick="this.nextElementSibling.classList.toggle('hidden')">
-                                <h3 class="text-lg font-semibold uppercase">Fore Closure Info</h3>
-                            </div>
-                            <!-- Body -->
-                            <div class="overflow-x-auto mt-5">
-                                <table
-                                    class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
-                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
-                                        <tr>
-                                            <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Fore Closure Date</td>
-                                            <td class="px-4 py-2 text-right md:text-left">02/03/2029</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="font-semibold px-4 py-2">Current Balance (A) </td>
-                                            <td class="px-4 py-2 text-right md:text-left">₹ 500,000.00</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="font-semibold px-4 py-2">Penal Charges (B)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">
-                                                {{ $ddaccount->scheme->penalty_charges_value ?? 'NA' }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="font-semibold px-4 py-2">Fore Closure Charges (C)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="font-semibold px-4 py-2">Final Payable Amount (A - B - C)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        
                         <!--Scheme Info-->
                         <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                             <!-- Header -->
@@ -855,17 +816,29 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="text-left">
-                                                <tr class="border-b hover:bg-gray-50">
-                                                    <td class="px-4 py-2">
-                                                        {{ $ddaccount->transaction->transaction_date ?? 'N/A' }}</td>
-                                                    <td class="px-4 py-2">
-                                                        {{ $ddaccount->account_type ?? 'N/A' }}</td>
-                                                    <td class="px-4 py-2">
-                                                        {{ $ddaccount->transaction->pay_mode ?? 'N/A' }}</td>
-                                                    <td class="px-4 py-2">
-                                                        {{ $ddaccount->dd_amount ?? 'N/A' }}</td>
-                                                    <td class="px-4 py-2 text-sm text-green-600 font-medium">Approved</td>
-                                                </tr>
+                                                @forelse ($ddaccount->transactions as $transaction)
+                                                    <tr class="border-b hover:bg-gray-50">
+                                                        <td class="px-4 py-2">
+                                                            {{ $transaction->transaction_date ?? 'N/A' }}
+                                                        </td>
+                                                        <td class="px-4 py-2">
+                                                            {{ $transaction->type ?? ucfirst($ddaccount->account_type) }}
+                                                        </td>
+                                                        <td class="px-4 py-2">
+                                                            {{ $transaction->pay_mode ?? 'N/A' }}
+                                                        </td>
+                                                        <td class="px-4 py-2">
+                                                            {{ $transaction->amount ?? 'N/A' }}
+                                                        </td>
+                                                        <td class="px-4 py-2 text-sm text-green-600 font-medium">Approved
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-3 text-gray-500">No
+                                                            transactions found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

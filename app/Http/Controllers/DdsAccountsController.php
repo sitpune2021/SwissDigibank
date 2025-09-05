@@ -31,7 +31,6 @@ class DdsAccountsController extends Controller
             $openDate     = $account->open_date ? Carbon::parse($account->open_date) : null;
             $today        = Carbon::today();
 
-            // Calculate how many installments should have been paid till today
             $diff = 0;
             if ($openDate) {
                 $frequency = strtolower($account->rd_dd_frequency);
@@ -91,20 +90,24 @@ class DdsAccountsController extends Controller
     {
         Log::info("DdsAccountsController@show called for ID: $id");
 
-        $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions'])->findOrFail($id);
+        $ddaccount = DdsAccount::with(['member', 'branch', 'scheme'])->findOrFail($id);
+
+        $transactions = DdTransaction::where('dds_account_id', $id)
+            ->orderBy('transaction_date', 'desc')
+            ->get();
 
         $installmentAmount = $ddaccount->dd_amount ?? 0;
 
         $totalInstallments = $ddaccount->total_installments
-            ?? (strtolower($ddaccount->rd_dd_frequency) === 'daily'
-                ? 365
-                : $ddaccount->scheme->tenure_of_rd_dd_value);
+            ?? (strtolower($ddaccount->rd_dd_frequency) === 'daily' ? 365 : ($ddaccount->scheme->tenure_of_rd_dd_value ?? 12));
 
-        $installmentReceived = $ddaccount->transactions->sum('amount');
-        $tdsDeducted = $ddaccount->tds_deduction ?? 0;
-        $balanceAvailable = $installmentReceived - $tdsDeducted;
+        $installmentReceived = $transactions->sum('amount') ?? 0;
+        $penaltyReceived     = $transactions->sum('penalty_amount') ?? 0;
+        $interestCredited    = $transactions->sum('interest_amount') ?? 0;
+        $tdsDeduction        = $ddaccount->tds_deduction ?? 0;
 
-        // Calculate installments expected till today
+        $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
+
         $shouldHavePaid = 0;
         if ($ddaccount->open_date) {
             $openDate = Carbon::parse($ddaccount->open_date);
@@ -125,88 +128,210 @@ class DdsAccountsController extends Controller
             $shouldHavePaid = min($shouldHavePaid, $totalInstallments);
         }
 
-        $paid = $ddaccount->transactions->count();
-        $due = max($shouldHavePaid - $paid, 0);
-        $overdue = 0;
+        $paid = $transactions->count();
+        $due  = max($shouldHavePaid - $paid, 0);
 
+        $overdue = 0;
         if (!empty($ddaccount->maturity_date)) {
-            $maturityDate = Carbon::parse($ddaccount->maturity_date);
-            if ($today->gt($maturityDate)) {
+            $maturityDateCheck = Carbon::parse($ddaccount->maturity_date);
+            if ($today->gt($maturityDateCheck)) {
                 $overdue = $totalInstallments - $paid;
             }
         }
 
         $notDue = $totalInstallments - $paid - $due;
 
-        // Principal due
         $principalDue = max($installmentAmount * $due, 0);
-
-        // Penalty due
-        $penaltyDue = 0;
-        if ($principalDue > 0 && !empty($ddaccount->scheme->penalty_charges_value)) {
-            $penaltyDue = $due * $ddaccount->scheme->penalty_charges_value;
-        }
+        $penaltyDue   = ($principalDue > 0 && !empty($ddaccount->scheme->penalty_charges_value))
+            ? $due * $ddaccount->scheme->penalty_charges_value
+            : 0;
 
         $totalAmountDue = $principalDue + $penaltyDue;
 
-        // Close date
         $closeDate = '';
         if ($paid >= $totalInstallments && $ddaccount->open_date) {
             $openingDate = Carbon::parse($ddaccount->open_date);
-            if (strtolower($ddaccount->rd_dd_frequency) === 'daily') {
-                $closeDate = $openingDate->copy()->addDays($totalInstallments)->format('d-m-Y');
-            } else {
-                $closeDate = $openingDate->copy()->addMonths($totalInstallments)->format('d-m-Y');
-            }
+            $closeDate = match (strtolower($ddaccount->rd_dd_frequency)) {
+                'daily' => $openingDate->copy()->addDays($totalInstallments)->format('d-m-Y'),
+                'monthly' => $openingDate->copy()->addMonths($totalInstallments)->format('d-m-Y'),
+                'yearly' => $openingDate->copy()->addYears($totalInstallments)->format('d-m-Y'),
+                default => $openingDate->copy()->addDays($totalInstallments)->format('d-m-Y'),
+            };
         }
 
         $annualInterestRate = $ddaccount->scheme->anuual_interest_rate ?? 0;
 
-        // Maturity amount (Recurring Deposit formula)
-        $maturityAmount = 0;
-        if ($installmentAmount && $totalInstallments) {
-            $r = match (strtolower($ddaccount->scheme->interest_compounding_interval ?? 'monthly')) {
-                'monthly' => 12,
-                'quarterly' => 4,
-                'half-yearly' => 2,
-                'yearly' => 1,
-                default => 12,
-            };
-            $t = $totalInstallments / 365; // tenure in years for daily deposits
-            $rate = $annualInterestRate / 100;
+        // Call calculateMaturity with logging
+        $calculation = $this->calculateMaturity(
+            $installmentAmount,
+            $totalInstallments,
+            strtolower($ddaccount->rd_dd_frequency),
+            $annualInterestRate,
+            $ddaccount->scheme->maturity_bonus_percent ?? 0,
+            0,
+            $ddaccount->open_date,
+            $ddaccount->scheme->tenure_of_rd_dd_value
+        );
 
-            $maturityAmount = $installmentAmount * (pow(1 + $rate / $r, $r * $t) - 1) / (1 - pow(1 + $rate / $r, -1 / $r));
-            $maturityAmount = round($maturityAmount, 2);
-        }
+        Log::info('DDS Maturity Calculation', [
+            'dds_account_id'         => $ddaccount->id,
+            'installment_amount'     => $installmentAmount,
+            'total_installments'     => $totalInstallments,
+            'frequency'              => $ddaccount->rd_dd_frequency,
+            'annual_interest_rate'   => $annualInterestRate,
+            'maturity_bonus_percent' => $ddaccount->scheme->maturity_bonus_percent ?? 0,
+            'open_date'              => $ddaccount->open_date,
+            'scheme_tenure_value'    => $ddaccount->scheme->tenure_of_rd_dd_value,
+            'calculation'            => $calculation
+        ]);
 
-        $maturityBonus = 0;
-        if (!empty($ddaccount->scheme->maturity_bonus_percent)) {
-            $maturityBonus = ($maturityAmount * $ddaccount->scheme->maturity_bonus_percent) / 100;
-            $maturityBonus = round($maturityBonus, 2);
-        }
+        $maturityAmount = $calculation['maturity'];
+        $maturityBonus  = $calculation['bonus'];
+        $maturityDate   = $calculation['maturity_date'];
+
+        $specialAccount = $ddaccount->account_type === 'special';
 
         return view('fd_account.ddsaccounts.show', [
-            'ddaccount'           => $ddaccount,
-            'branches'            => Branch::all(),
-            'members'             => Member::all(),
-            'schemes'             => Rdscheme::all(),
-            'installmentAmount'   => $installmentAmount,
-            'installmentReceived' => $installmentReceived,
-            'balanceAvailable'    => $balanceAvailable,
-            'principalDue'        => $principalDue,
-            'penaltyDue'          => $penaltyDue,
-            'totalAmountDue'      => $totalAmountDue,
-            'closeDate'           => $closeDate,
-            'maturityAmount'      => $maturityAmount,
-            'maturityBonus'       => $maturityBonus,
-            'annualInterestRate'  => $annualInterestRate,
-            'paid_installments'   => $paid,
-            'due_installments'    => $due,
+            'ddaccount'            => $ddaccount,
+            'branches'             => Branch::all(),
+            'members'              => Member::all(),
+            'schemes'              => Rdscheme::all(),
+            'installmentAmount'    => $installmentAmount,
+            'installmentReceived'  => $installmentReceived,
+            'penaltyReceived'      => $penaltyReceived,
+            'interestCredited'     => $interestCredited,
+            'tdsDeduction'         => $tdsDeduction,
+            'balanceAvailable'     => $balanceAvailable,
+            'principalDue'         => $principalDue,
+            'penaltyDue'           => $penaltyDue,
+            'totalAmountDue'       => $totalAmountDue,
+            'closeDate'            => $closeDate,
+            'maturityAmount'       => $maturityAmount,
+            'maturityBonus'        => $maturityBonus,
+            'maturityDate'         => $maturityDate,
+            'annualInterestRate'   => $annualInterestRate,
+            'paid_installments'    => $paid,
+            'due_installments'     => $due,
             'overdue_installments' => $overdue,
             'not_due_installments' => max($notDue, 0),
+            'specialAccount'       => $specialAccount,
         ]);
     }
 
+
+
+    // public function show($id)
+    // {
+    //     Log::info("DdsAccountsController@show called for ID: $id");
+
+    //     $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions'])->findOrFail($id);
+
+    //     $installmentAmount = $ddaccount->dd_amount ?? 0;
+
+    //     $totalInstallments = $ddaccount->total_installments
+    //         ?? (strtolower($ddaccount->rd_dd_frequency) === 'daily' ? 365 : ($ddaccount->scheme->tenure_of_rd_dd_value ?? 12));
+
+    //     $installmentReceived = $ddaccount->transactions->sum('amount') ?? 0;
+    //     $penaltyReceived     = $ddaccount->transactions->sum('penalty_amount') ?? 0;
+    //     $interestCredited    = $ddaccount->transactions->sum('interest_amount') ?? 0;
+    //     $tdsDeduction        = $ddaccount->tds_deduction ?? 0;
+
+    //     $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
+
+    //     $shouldHavePaid = 0;
+    //     if ($ddaccount->open_date) {
+    //         $openDate = Carbon::parse($ddaccount->open_date);
+    //         $today = Carbon::today();
+
+    //         switch (strtolower($ddaccount->rd_dd_frequency)) {
+    //             case 'daily':
+    //                 $shouldHavePaid = $openDate->diffInDays($today);
+    //                 break;
+    //             case 'monthly':
+    //                 $shouldHavePaid = $openDate->diffInMonths($today);
+    //                 break;
+    //             case 'yearly':
+    //                 $shouldHavePaid = $openDate->diffInYears($today);
+    //                 break;
+    //         }
+
+    //         $shouldHavePaid = min($shouldHavePaid, $totalInstallments);
+    //     }
+
+    //     $paid = $ddaccount->transactions->count();
+    //     $due = max($shouldHavePaid - $paid, 0);
+
+    //     $overdue = 0;
+    //     if (!empty($ddaccount->maturity_date)) {
+    //         $maturityDateCheck = Carbon::parse($ddaccount->maturity_date);
+    //         if ($today->gt($maturityDateCheck)) {
+    //             $overdue = $totalInstallments - $paid;
+    //         }
+    //     }
+
+    //     $notDue = $totalInstallments - $paid - $due;
+
+    //     $principalDue = max($installmentAmount * $due, 0);
+
+    //     $penaltyDue = ($principalDue > 0 && !empty($ddaccount->scheme->penalty_charges_value))
+    //         ? $due * $ddaccount->scheme->penalty_charges_value
+    //         : 0;
+
+    //     $totalAmountDue = $principalDue + $penaltyDue;
+
+    //     $closeDate = '';
+    //     if ($paid >= $totalInstallments && $ddaccount->open_date) {
+    //         $openingDate = Carbon::parse($ddaccount->open_date);
+    //         if (strtolower($ddaccount->rd_dd_frequency) === 'daily') {
+    //             $closeDate = $openingDate->copy()->addDays($totalInstallments)->format('d-m-Y');
+    //         } else {
+    //             $closeDate = $openingDate->copy()->addMonths($totalInstallments)->format('d-m-Y');
+    //         }
+    //     }
+
+    //     $annualInterestRate = $ddaccount->scheme->anuual_interest_rate ?? 0;
+
+    //     $calculation = $this->calculateMaturity(
+    //         $installmentAmount,
+    //         $totalInstallments,
+    //         strtolower($ddaccount->rd_dd_frequency),
+    //         $annualInterestRate,
+    //         $ddaccount->scheme->maturity_bonus_percent ?? 0,
+    //         0,
+    //         $ddaccount->open_date
+    //     );
+
+    //     $maturityAmount = $calculation['maturity'];
+    //     $maturityBonus  = $calculation['bonus'];
+    //     $maturityDate   = $calculation['maturity_date'];
+
+    //     $specialAccount = $ddaccount->account_type === 'special';
+    //     return view('fd_account.ddsaccounts.show', [
+    //         'ddaccount'             => $ddaccount,
+    //         'branches'              => Branch::all(),
+    //         'members'               => Member::all(),
+    //         'schemes'               => Rdscheme::all(),
+    //         'installmentAmount'     => $installmentAmount,
+    //         'installmentReceived'   => $installmentReceived,
+    //         'penaltyReceived'       => $penaltyReceived,
+    //         'interestCredited'      => $interestCredited,
+    //         'tdsDeduction'          => $tdsDeduction,
+    //         'balanceAvailable'      => $balanceAvailable,
+    //         'principalDue'          => $principalDue,
+    //         'penaltyDue'            => $penaltyDue,
+    //         'totalAmountDue'        => $totalAmountDue,
+    //         'closeDate'             => $closeDate,
+    //         'maturityAmount'        => $maturityAmount,
+    //         'maturityBonus'         => $maturityBonus,
+    //         'maturityDate'          => $maturityDate,
+    //         'annualInterestRate'    => $annualInterestRate,
+    //         'paid_installments'     => $paid,
+    //         'due_installments'      => $due,
+    //         'overdue_installments'  => $overdue,
+    //         'not_due_installments'  => max($notDue, 0),
+    //         'specialAccount'        => $specialAccount,
+    //     ]);
+    // }
 
     public function store(Request $request)
     {
@@ -262,7 +387,6 @@ class DdsAccountsController extends Controller
                 $fixedBonus = 0;
             }
 
-            // Calculate maturity
             $calculation = $this->calculateMaturity(
                 $depositPerDay,
                 $installments,
@@ -430,21 +554,24 @@ class DdsAccountsController extends Controller
         return back()->with('success', 'Branch updated successfully');
     }
 
-    function calculateMaturity($depositAmount, $installments, $frequency, $rate, $bonusRate = 0, $fixedBonus = 0, $startDate = null)
+    function calculateMaturity($depositAmount, $installments, $frequency, $annualRate, $bonusRate = 0, $fixedBonus = 0, $startDate = null, $schemeTenureMonths = null)
     {
-        Log::info('DdsAccountsController@calculateMaturity called');
         $totalDeposit = $depositAmount * $installments;
         $interest = 0;
 
-        if ($frequency === 'daily') {
-            $days = $installments;
-            $interest = ($depositAmount * $days * ($days + 1) * $rate) / (2 * 100 * 365);
-        } elseif ($frequency === 'monthly') {
-            $months = $installments;
-            $interest = ($depositAmount * $months * ($months + 1) * $rate) / (2 * 100 * 12);
-        } elseif ($frequency === 'yearly') {
-            $years = $installments;
-            $interest = ($depositAmount * $years * ($years + 1) * $rate) / (2 * 100);
+        switch (strtolower($frequency)) {
+            case 'daily':
+                $days = $installments;
+                $interest = ($depositAmount * $days * ($days + 1) * $annualRate) / (2 * 100 * 365);
+                break;
+            case 'monthly':
+                $months = $installments;
+                $interest = ($depositAmount * $months * ($months + 1) * $annualRate) / (2 * 100 * 12);
+                break;
+            case 'yearly':
+                $years = $installments;
+                $interest = ($depositAmount * $years * ($years + 1) * $annualRate) / (2 * 100);
+                break;
         }
 
         $interest = round($interest, 2);
@@ -455,7 +582,6 @@ class DdsAccountsController extends Controller
         } elseif ($fixedBonus > 0) {
             $bonus = $fixedBonus;
         }
-
         $bonus = round($bonus, 2);
 
         $maturity = $totalDeposit + $interest + $bonus;
@@ -463,15 +589,23 @@ class DdsAccountsController extends Controller
         $maturityDate = null;
         if ($startDate) {
             $date = Carbon::parse($startDate);
-            if ($frequency === 'daily') {
-                $date->addMonths($installments);
-            } elseif ($frequency === 'monthly') {
-                $date->addMonths($installments);
-            } elseif ($frequency === 'yearly') {
-                $date->addYears($installments);
+
+            switch (strtolower($frequency)) {
+                case 'daily':
+                    $date->addDays($installments);
+                    break;
+                case 'monthly':
+                    $date->addMonths($installments);
+                    break;
+                case 'yearly':
+                    $date->addYears($installments);
+                    break;
             }
+
             $maturityDate = $date->format('d-m-Y');
         }
+
+
         return [
             'total_deposit'   => round($totalDeposit, 2),
             'interest_earned' => $interest,
@@ -480,6 +614,7 @@ class DdsAccountsController extends Controller
             'maturity_date'   => $maturityDate,
         ];
     }
+
 
     public function transactions(Request $request, $id)
     {

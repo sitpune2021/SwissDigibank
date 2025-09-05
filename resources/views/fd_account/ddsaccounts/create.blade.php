@@ -93,10 +93,10 @@
                         <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
                             Member <span class="text-red-500">*</span>
                         </label>
+
                         <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
-               border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3
-               @error('member_id') border-red-500 @enderror">
+        border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Search Member No or Name</option>
                             @foreach ($members as $member)
                                 <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
@@ -164,7 +164,8 @@
                         <label for="branch_id" class="md:text-lg font-medium block mb-4">
                             Branch <span class="text-red-500">*</span>
                         </label>
-                        <select id="branch_id" name="branch_id" required
+
+                        <select id="branch_id" name="branch_id"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Branch</option>
                             @foreach ($branches as $branch)
@@ -174,10 +175,14 @@
                                 </option>
                             @endforeach
                         </select>
+
                         @error('branch_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+
+
                     <div class="col-span-2 md:col-span-1">
                         <label for="advisor_id" class="md:text-lg font-medium block mb-4">
                             Advisor / Staff
@@ -218,37 +223,53 @@
                         <label for="scheme_id" class="font-medium block mb-2">
                             Scheme <span class="text-red-500">*</span> :
                         </label>
-                        <select id="scheme_id" name="scheme_id" required
+
+                        <select id="scheme_id" name="scheme_id"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Scheme</option>
                             @foreach ($schemes as $scheme)
-                                <option
-                                    value="{{ $scheme->id }}"{{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
+                                <option value="{{ $scheme->id }}"
+                                    {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
                                     {{ $scheme->scheme_name }}
                                 </option>
                             @endforeach
                         </select>
+
                         @error('scheme_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2">
                             DD Amount <span class="text-red-500">*</span>:
                         </label>
                         <input type="number" id="dd_amount" name="dd_amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
-        border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+    border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter DD Amount" value="{{ old('dd_amount') }}">
 
                         @error('dd_amount')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
-                        <p id="minAmountMsg" class="text-blue-600 text-xs mt-1 hidden">
-                            Minimum amount to be deposited ₹ 100.0
+
+                        <p id="minAmountMsg" class="text-red-500 text-xs mt-1 hidden">
+                            Minimum amount to be deposited ₹ 100
                         </p>
                     </div>
+
+                    <script>
+                        document.getElementById('dd_amount').addEventListener('input', function() {
+                            const minAmount = 100;
+                            const msg = document.getElementById('minAmountMsg');
+                            if (this.value && parseFloat(this.value) < minAmount) {
+                                msg.classList.remove('hidden');
+                            } else {
+                                msg.classList.add('hidden');
+                            }
+                        });
+                    </script>
+
+
                     <div class="col-span-2 md:col-span-1 relative">
                         <label class="font-medium block mb-2">
                             Open Date <span class="text-red-500">*</span> :
@@ -259,7 +280,10 @@
                             placeholder="DD/MM/YYYY" value="">
                         <i
                             class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                        <!-- <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xlg pointer-events-none"></i> -->
+                        @error('open_date')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+
                     </div>
                     <div class="col-span-2 md:col-span-1"></div>
 
@@ -271,6 +295,10 @@
                                     value="yes"> Yes</label>
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
                                     value="no" checked> No</label>
+                            @error('tds')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+
                         </div>
                     </div>
 
@@ -288,6 +316,10 @@
                                 <input type="radio" name="account_type" value="joint"
                                     onclick="toggleAccountType('joint')" class="accent-primary">
                                 <span>Joint A/C</span>
+                                @error('account_type')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+
                             </label>
                         </div>
                         <!-- single (no fields) -->
@@ -317,6 +349,10 @@
                                 value="yes" onclick="toggleAddMore(true)">Yes</label>
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
                                 value="no" checked onclick="toggleAddMore(false)"> No</label>
+                        @error('nominee')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+
                     </div>
 
                     <!-- Add More Button -->
@@ -364,7 +400,12 @@
                                     onclick="togglePaymentMode('saving')">
                                 <span>Saving</span>
                             </label>
+
                         </div>
+                        @error('pay_mode')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+
                         <!-- Cash (no fields) -->
                         <div id="cash" class="hidden"></div>
                         <!-- Online Transfer Fields -->
@@ -468,19 +509,26 @@
                 </div>
 
                 <!-- Date & Amount -->
+                <!-- Date & Amount -->
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2">
-                            T.Date <span class="text-red-500">*</span> </label>
+                            T.Date <span class="text-red-500">*</span>
+                        </label>
                         @php
                             $today = \Carbon\Carbon::now()->format('d/m/Y');
                         @endphp
                         <input type="text" name="transaction_date" id="date4"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
+                            placeholder="DD/MM/YYYY" value="{{ old('transaction_date', $today) }}">
                         <i
                             class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+
+                        @error('transaction_date')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
+
 
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2">
@@ -489,6 +537,10 @@
                         <input type="number" id="amount" name="amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        @error('amount')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+
                     </div>
 
 
@@ -659,79 +711,37 @@
         });
     </script>
     <script>
-    const ddInput = document.getElementById('dd_amount');
-    const amountInput = document.getElementById('amount');
-    const msg = document.getElementById('minAmountMsg');
+        const ddInput = document.getElementById('dd_amount');
+        const amountInput = document.getElementById('amount');
+        const msg = document.getElementById('minAmountMsg');
 
-    ddInput.addEventListener('input', function() {
-        amountInput.value = this.value;
+        ddInput.addEventListener('input', function() {
+            amountInput.value = this.value;
 
-        if (this.value && parseFloat(this.value) < 100) {
-            msg.classList.remove('hidden');  // show msg if less than 100
-        } else {
-            msg.classList.add('hidden');     // hide msg otherwise
-        }
-    });
-</script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    {{-- <script>
-        // Auto fill Name, Address, Mobile
-        $(document).ready(function() {
-            $('#memberDropdown').on('change', function() {
-                let memberId = $(this).val();
-
-                if (memberId) {
-                    $.ajax({
-                        url: `/members/${memberId}`,
-                        type: 'GET',
-                        success: function(response) {
-
-                            $('#memberName').val(response.member.member_info_first_name);
-                            $('#memberAddress').val(response.member.address
-                                .member_address_line_1 ?? '');
-                            $('#memberMobile').val(response.member.member_info_mobile_no);
-                            $('#branch_id').val(response.member.branch.id);
-
-                            const $branchSelect = $('#branch_id');
-                            //   console.log($branchSelect);
-                            $branchSelect.empty(); // clear options
-
-                            if (response.member.branch.id) {
-
-                                // If a single branch
-                                $branchSelect.append(
-                                    `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
-                                );
-                            } else if (response.member.branch && response.member.branch.length >
-                                0) {
-                                // If multiple branches
-                                member.branch.forEach(branch => {
-                                    $branchSelect.append(
-                                        `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
-                                    );
-                                });
-                            } else {
-                                $branchSelect.append(
-                                    '<option value="">No branches available</option>');
-                            }
-                        },
-                        error: function() {
-                            alert('Member details could not be fetched.');
-                        }
-                    });
-                } else {
-                    // Reset fields if no member selected
-                    $('#memberName').val('');
-                    $('#memberAddress').val('');
-                    $('#memberMobile').val('');
-                    $('#branch_id').empty().append('<option value="">Select branch</option>');
-                }
-            });
+            if (this.value && parseFloat(this.value) < 100) {
+                msg.classList.remove('hidden'); // show msg if less than 100
+            } else {
+                msg.classList.add('hidden'); // hide msg otherwise
+            }
         });
-    </script> --}}
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let dateInput = document.getElementById("date5");
+            if (dateInput) {
+                // जर value रिकामी असेल तर आजची date भरा
+                if (!dateInput.value) {
+                    let today = new Date();
+                    let formatted = today.toISOString().split('T')[0]; // yyyy-mm-dd format
+                    dateInput.value = formatted;
+                }
+            }
+        });
+    </script>
 
     <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
