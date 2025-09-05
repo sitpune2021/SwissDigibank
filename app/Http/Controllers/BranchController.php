@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Branch;
 use App\Models\State;
 use Illuminate\Http\Request;
@@ -28,7 +27,6 @@ class BranchController extends Controller
                         });
                 });
             }
-
             $branches = $query->paginate($perPage)->appends($request->all());
             return view('company.branch.manage-branch', compact('branches'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

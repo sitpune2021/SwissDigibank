@@ -98,23 +98,19 @@
                 @if (isset($method) && $method == 'PUT')
                     @method('PUT')
                 @endif
-                @php
+                {{-- @php
                     $promoterId = request()->query('promotor_id');
                     $memberId = request()->query('member_id');
-                    $type = request()->query('type');
-                @endphp
+                    // $type = request()->query('type');
+                @endphp --}}
 
-                {{-- <input name="type" id="type" type="hidden" value="{{ $type }}" hidden /> --}}
-                <input type="text" name="type" value="{{ strtolower($type) }}" hidden />
-                @php
-                    $add_id = request()->query('promotor_id') !== null ? $promoterId : $memberId;
-                @endphp
-                <input type="hidden" name="type" value="{{ $type }}" />
+                <input type="hidden" name="type" value="{{ $type }}">
                 @if ($type === 'member')
-                    <input type="text" name="member_id" value="{{ $add_id }}" hidden />
+                    <input type="hidden" name="member_id" value="{{ $memberId }}">
                 @elseif ($type === 'promotor')
-                    <input type="text" name="promotor_id" value="{{ $add_id }}" hidden />
+                    <input type="hidden" name="promotor_id" value="{{ $minor->promotor_id }}">
                 @endif
+
                 @foreach ($sections as $field)
                     @php
                         $name = $field['name'];
@@ -138,15 +134,15 @@
 
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
                                     @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
-                                        <option value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'selected' : '' }} {{ !empty($readonly) ? 'readonly' : '' }}>
+                                        <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}
+                                            {{ !empty($readonly) ? 'readonly' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
                                 @elseif(!empty($field['options']))
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
-                                        <option value="{{ $optionValue }}"
-                                            {{ $value == $optionValue ? 'selected' : '' }} {{ !empty($readonly) ? 'readonly' : '' }}>
+                                        <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}
+                                            {{ !empty($readonly) ? 'readonly' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
