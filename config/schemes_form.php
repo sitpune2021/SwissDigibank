@@ -62,7 +62,7 @@ return [
                 'Monthly'     => 'Monthly',
                 'Quarterly'   => 'Quarterly',
                 'Half-Yearly' => 'Half-Yearly',
-                'Yearly'      => 'Yearly',
+                'Annually'      => 'Yearly',
             ]
         ],
 

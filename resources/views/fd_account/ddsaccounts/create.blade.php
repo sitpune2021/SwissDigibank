@@ -666,8 +666,8 @@ $isEdit = isset($ddsAccount);
     const amountInput = document.getElementById('amount');
     const msg = document.getElementById('minAmountMsg');
 
-    ddInput.addEventListener('input', function() {
-        amountInput.value = this.value;
+        ddInput.addEventListener('input', function() {
+            amountInput.value = this.value;
 
         if (this.value && parseFloat(this.value) < 100) {
             msg.classList.remove('hidden'); // show msg if less than 100

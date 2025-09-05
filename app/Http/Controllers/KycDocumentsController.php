@@ -52,7 +52,6 @@ class KycDocumentsController extends Controller
                 'promoter_id' => 'nullable|exists:promoters,id',
             ]);
 
-            // Ensure only one of member_id or promoter_id is present
             if (!$request->member_id && !$request->promoter_id) {
                 return response()->json(['error' => 'Either member_id or promoter_id must be provided.'], 422);
             }

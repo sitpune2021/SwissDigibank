@@ -8,6 +8,7 @@ use App\Models\Form15G15H;
 use App\Models\Promotor;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class Form15Gor15HController extends Controller
 {
@@ -18,7 +19,7 @@ class Form15Gor15HController extends Controller
             return view('members.form15g15h.index', compact('form15g15hs'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function create(Request $request)
@@ -51,7 +52,7 @@ class Form15Gor15HController extends Controller
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function store(Request $request)
@@ -94,7 +95,7 @@ class Form15Gor15HController extends Controller
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function show(string $id)
@@ -104,7 +105,7 @@ class Form15Gor15HController extends Controller
             return view('members.form15g15h.show', compact('form15g15h'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function edit(string $id)
@@ -133,41 +134,89 @@ class Form15Gor15HController extends Controller
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
+
 
     public function update(Request $request, string $id)
     {
         try {
+            Log::info('Form15G15H Update Request Received', [
+                'form_id' => $id,
+                'payload' => $request->all()
+            ]);
+
             $form15g15h = Form15G15H::findOrFail($id);
 
             $validated = $request->validate([
                 'financial_year' => 'required|string|max:20',
-                'member_id' => 'nullable|exists:members,id',
-                'promotor_id' => 'nullable|exists:promotors,id',
+                'member_id'      => 'nullable|exists:members,id',
+                'promotor_id'    => 'nullable|exists:promotors,id',
                 'form_15_upload' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+
+
+
             ]);
 
-            // At least one of member_id or promotor_id is required
-            if (!$validated['member_id'] && !$validated['promotor_id']) {
+            // ✅ Safe check for missing keys
+            $memberId = $validated['member_id']   ?? $form15g15h->member_id;
+            $promotorId = $validated['promotor_id'] ?? $form15g15h->promotor_id;
+
+            if (!$memberId && !$promotorId) {
+                Log::warning('Form15G15H Update Validation Failed - Missing Relation', [
+                    'form_id' => $id,
+                    'validated_data' => $validated
+                ]);
                 return back()->withErrors(['relation' => 'Either member or promoter must be selected.'])->withInput();
             }
 
+            // ✅ Handle file upload
             if ($request->hasFile('form_15_upload')) {
+                Log::info('Form15G15H File Upload Detected', [
+                    'form_id' => $id,
+                    'old_file' => $form15g15h->form_15_upload
+                ]);
+
                 if ($form15g15h->form_15_upload) {
                     Storage::disk('public')->delete($form15g15h->form_15_upload);
+                    Log::info('Old file deleted successfully', ['file' => $form15g15h->form_15_upload]);
                 }
+
                 $path = $request->file('form_15_upload')->store('uploads', 'public');
                 $validated['form_15_upload'] = $path;
+
+                Log::info('New file uploaded successfully', [
+                    'form_id' => $id,
+                    'file_path' => $path
+                ]);
             }
 
             $form15g15h->update($validated);
 
+            Log::info('Form15G15H Updated Successfully', [
+                'form_id' => $form15g15h->id,
+                'updated_data' => $validated
+            ]);
+
             return redirect()->route('form15g15h.index')->with('success', 'Form updated successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Form15G15H Update Failed - Not Found', [
+                'form_id' => $id,
+                'error_message' => $e->getMessage()
+            ]);
             abort(404);
-        } 
+        } catch (\Exception $e) {
+            Log::error('Form15G15H Update Failed - Exception', [
+                'form_id' => $id,
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'payload' => $request->all()
+            ]);
+            return redirect()->back()->with('error', 'Failed to update form: ' . $e->getMessage());
+        }
     }
+
+
 
     public function destroy(string $id)
     {
@@ -199,7 +248,7 @@ class Form15Gor15HController extends Controller
             return $options;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function download($member_id)
     {

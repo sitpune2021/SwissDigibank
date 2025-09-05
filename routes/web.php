@@ -38,6 +38,8 @@ use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
 use App\Http\Controllers\RdAccountController;
 use App\Http\Controllers\RdschemesController;
+use App\Http\Controllers\PassbookController;
+
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -102,6 +104,10 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
     });
 
+    Route::get('/passbooks', [PassbookController::class, 'index'])->name('passbook.index');
+    Route::get('/passbooks/create', [PassbookController::class, 'create'])->name('passbooks.create'); // Show form
+    Route::post('/passbooks', [PassbookController::class, 'store'])->name('passbooks.store'); // Save
+    Route::get('/passbooks/{id}', [PassbookController::class, 'show'])->name('passbooks.show'); // Details
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
