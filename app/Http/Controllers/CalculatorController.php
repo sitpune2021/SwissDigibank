@@ -181,6 +181,7 @@ function calculateInvestment(
 
     // ---- Defaults ----
     $type         = $type ?? 'FD';
+    $principalFn  = (float) ($principal ?? 0);
     $principal    = (float) ($principal ?? 0);
     $rate         = (float) ($rate ?? 10);
     $tenureMonths = (int) ($tenureMonths ?? 12);
@@ -248,10 +249,10 @@ function calculateInvestment(
 
     // ---- Final Summary ----
     $netInterest = $totalInterest - $totalTDS;
-    $maturityAmt = $principal + $maturityBonus;
+    $maturityAmt = $principal + $maturityBonus ;
 
     $summary['summary'] = [
-        'principal'       => number_format($principal, 2),
+        'principal'       => number_format($principalFn, 2),
         'interest_earned' => number_format($totalInterest, 2),
         'tds_deducted'    => number_format($totalTDS, 2),
         'net_interest'    => number_format($netInterest, 2),
@@ -260,14 +261,11 @@ function calculateInvestment(
         'maturity_date'   => $maturityDate
     ];
 
-
             return response()->json([
                 'success' => true,
                 'summary' => $summary,
                 'details' => $results
             ]);
-
-            
 }
 
 function processPeriod(
@@ -320,9 +318,6 @@ function processPeriod(
                 'maturity_date'    => Carbon::createFromFormat('Y-m-d', $maturityDateInternal)->format('d/m/Y'),
             ];
 
-         
-
-
             $current = $next->copy()->addDay(1);
         }
     } else {
@@ -345,8 +340,6 @@ function processPeriod(
             'maturity_date'    => Carbon::createFromFormat('Y-m-d', $maturityDateInternal)->format('d/m/Y'),
         ];
     }
-
-      
 
     return [$results, $totalInterest, $principal];
 }

@@ -158,8 +158,8 @@
         <h2 class="mt-5">Tabs</h2>
         <div class="tab mt-5">
             <button class="tablinks active" onclick="openTab(event, 'finalpayment')">final payment</button>
-            <button class="tablinks" onclick="openTab(event, 'year1')">1 year</button>
-            <button class="tablinks" onclick="openTab(event, 'year2')">2 year</button>
+            <!-- <button class="tablinks" onclick="openTab(event, 'year1')">1 year</button>
+            <button class="tablinks" onclick="openTab(event, 'year2')">2 year</button> -->
         </div>
     </div>
 
@@ -210,7 +210,7 @@
     </div>
 </div>
 
-    <div id="year1" class="tabcontent">
+    <!-- <div id="year1" class="tabcontent">
         <div class="overflow-x-auto">
             <table class="w-full min-w-max bg-white  rounded-xl shadow-md">
                 <thead class="bg-blue-600 text-white text-sm">
@@ -279,7 +279,7 @@
             </table>
         </div>
 
-    </div>
+    </div> -->
 </div>
 
 
