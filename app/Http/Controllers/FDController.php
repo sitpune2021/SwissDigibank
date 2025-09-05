@@ -137,6 +137,7 @@ class FDController extends Controller
                 $from = Carbon::now()->addDays($slab->day_from);
                 $to   = Carbon::now()->addDays($slab->day_to);
                 $slab->months = $from->diffInMonths($to);
+
             } else {
                 $slab->months = null;
             }
