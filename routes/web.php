@@ -99,15 +99,19 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/dds-accounts/{id}/edit', [DdsAccountsController::class, 'edit'])->name('dds-accounts.edit');
         Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
             ->name('dds-accounts.calculate-deposit');
+        Route::get('/dds-accounts/{id}/transactions', [DdsAccountsController::class, 'transactions'])->name('dds-accounts.transactions');
+        Route::delete(
+            '/dds-accounts/transactions/{id}',
+            [DdsAccountsController::class, 'destroyTransaction']
+        )
+            ->name('dds-accounts.transactions.destroy');
+        Route::get('/dds-accounts/{account}/transactions/{transaction}', [DdsAccountsController::class, 'transactionShow'])
+            ->name('dds-accounts.transactions.show');
+
         // Updates
         Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
         Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
     });
-
-    Route::get('/passbooks', [PassbookController::class, 'index'])->name('passbook.index');
-    Route::get('/passbooks/create', [PassbookController::class, 'create'])->name('passbooks.create'); // Show form
-    Route::post('/passbooks', [PassbookController::class, 'store'])->name('passbooks.store'); // Save
-    Route::get('/passbooks/{id}', [PassbookController::class, 'show'])->name('passbooks.show'); // Details
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
