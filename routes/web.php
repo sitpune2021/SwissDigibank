@@ -36,6 +36,8 @@ use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\RdschemesController;
+use App\Http\Controllers\PassbookController;
+
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -97,6 +99,10 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
     });
 
+    Route::get('/passbooks', [PassbookController::class, 'index'])->name('passbook.index');
+    Route::get('/passbooks/create', [PassbookController::class, 'create'])->name('passbooks.create'); // Show form
+    Route::post('/passbooks', [PassbookController::class, 'store'])->name('passbooks.store'); // Save
+    Route::get('/passbooks/{id}', [PassbookController::class, 'show'])->name('passbooks.show'); // Details
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
@@ -163,7 +169,6 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('fd-account-view/{id}', [FDController::class, 'fd_show'])->name('fd-mis-schemes.fd_show');
     Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
         ->name('member.savings');
-
 });
 Route::group(['prefix' => 'mds-rds-dds'], function () {
 
