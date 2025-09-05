@@ -144,7 +144,7 @@
                                 @include('partials._vertical-options', [
                                 'id' => $fdScheme->id,
                                 'viewRoute' => 'fd-mis-schemes.show',
-                                'editRoute' => 'fd-mis-schemes.edit',
+                
                                 ])
                             </div>
                         </td>
