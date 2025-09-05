@@ -83,12 +83,12 @@
 
                         <td class="px-6 py-2">
                             <div class="flex justify-center">
-                                <div class="relative">
+                                <!-- <div class="relative">
                                     <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                     <ul class="horiz-option popover-content">
                                         <li><a href="{{ route('view-rd-account') }}" class="single-option">View</a></li>
                                     </ul>
-                                </div>
+                                </div> -->
                             </div>
                         </td>
                     </tr>
