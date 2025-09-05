@@ -9,11 +9,11 @@
             Add
         </a>
     </div>
-   
+
 
     <!-- Alpine.js for toggle -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-{{-- 
+    {{--
     <div class="mt-6" x-data="{ open: false }">
         <!-- Header -->
         <div class="bg-primary text-white font-semibold px-4 py-3 rounded-10 flex justify-between items-center cursor-pointer"
@@ -74,19 +74,22 @@
     <!-- Table -->
     <div class="col-span-12 box lg:col-span-6">
         <div class="pb-4 overflow-x-auto lg:pb-6">
-             {{-- Success Message --}}
-    @if(session('success'))
-        <div class="alert alert-success text-primary">
-            {{ session('success') }}
-        </div>
-    @endif
+            <!-- {{-- Success Message --}}
+            @if(session('success'))
+            <div class="alert alert-success text-primary">
+                {{ session('success') }}
+            </div>
+            @endif
 
-    {{-- Error Message --}}
-    @if(session('error'))
-        <div class="alert alert-danger text-error">
-            {{ session('error') }}
-        </div>
-    @endif
+            {{-- Error Message --}}
+            @if(session('error'))
+            <div class="alert alert-danger text-error">
+                {{ session('error') }}
+            </div>
+            @endif -->
+            <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+                <x-alert />
+            </div>
             <table class="w-full border border-n30 rounded-lg overflow-hidden">
                 <!-- <table class="w-full whitespace-nowrap border border-n30 rounded-lg overflow-hidden"> -->
                 <thead>
@@ -102,41 +105,41 @@
                         <th class="px-6 py-3 text-start">ACTION</th>
                     </tr>
                 </thead>
-              <tbody>
-    @foreach($schemes as $scheme)
-    <tr class="border-t text-start">
-        <td class="px-6 py-4 uppercase">{{ $scheme->scheme_code }}</td>
-        <td class="px-6 py-4">{{ $scheme->scheme_name }}</td>
-        <td class="px-6 py-4">{{ $scheme->min_rd_dd_amount }}</td>
-        <td class="px-6 py-4">{{ $scheme->tenure_of_rd_dd_value }} {{ $scheme->tenure_of_rd_dd_type }}</td>
-        <td class="px-6 py-4">{{ ucfirst($scheme->rd_dd_frequency) }}</td>
-        <td class="px-6 py-4">{{ $scheme->anuual_interest_rate }}%</td>
-        <td class="px-6 py-4">{{ ucfirst($scheme->interest_compounding_interval) }}</td>
-        <td class="px-6 py-4 text-center">
-            @if($scheme->active === 'yes')
-                <span class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Yes</span>
-            @else
-                <span class="px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">No</span>
-            @endif
-        </td>
-        <td class="px-6 py-2">
-            <div class="flex justify-center">
-                <div class="relative">
-                    <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                    <ul class="horiz-option popover-content">
-                        <li><a href="{{ route('rdschemes.show', $scheme->id) }}" class="single-option">View</a></li>
-                        <li><a href="{{ route('rdschemes.edit', $scheme->id) }}" class="single-option">Edit</a></li>
-                    </ul>
-                </div>
-            </div>
-        </td>
-    </tr>
-    @endforeach
-              </tbody>
+                <tbody>
+                    @foreach($schemes as $scheme)
+                    <tr class="border-t text-start">
+                        <td class="px-6 py-4 uppercase">{{ $scheme->scheme_code }}</td>
+                        <td class="px-6 py-4">{{ $scheme->scheme_name }}</td>
+                        <td class="px-6 py-4">{{ $scheme->min_rd_dd_amount }}</td>
+                        <td class="px-6 py-4">{{ $scheme->tenure_of_rd_dd_value }} {{ $scheme->tenure_of_rd_dd_type }}</td>
+                        <td class="px-6 py-4">{{ ucfirst($scheme->rd_dd_frequency) }}</td>
+                        <td class="px-6 py-4">{{ $scheme->anuual_interest_rate }}%</td>
+                        <td class="px-6 py-4">{{ ucfirst($scheme->interest_compounding_interval) }}</td>
+                        <td class="px-6 py-4 text-center">
+                            @if($scheme->active === 'yes')
+                            <span class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Yes</span>
+                            @else
+                            <span class="px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">No</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-2">
+                            <div class="flex justify-center">
+                                <div class="relative">
+                                    <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                    <ul class="horiz-option popover-content">
+                                        <li><a href="{{ route('rdschemes.show', $scheme->id) }}" class="single-option">View</a></li>
+                                        <li><a href="{{ route('rdschemes.edit', $scheme->id) }}" class="single-option">Edit</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
             </table>
 
             <!-- pagination -->
-           
+
 
         </div>
     </div>

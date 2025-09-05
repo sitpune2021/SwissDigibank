@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class DdsAccountsController extends Controller
 {
@@ -217,122 +218,6 @@ class DdsAccountsController extends Controller
             'specialAccount'       => $specialAccount,
         ]);
     }
-
-
-
-    // public function show($id)
-    // {
-    //     Log::info("DdsAccountsController@show called for ID: $id");
-
-    //     $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions'])->findOrFail($id);
-
-    //     $installmentAmount = $ddaccount->dd_amount ?? 0;
-
-    //     $totalInstallments = $ddaccount->total_installments
-    //         ?? (strtolower($ddaccount->rd_dd_frequency) === 'daily' ? 365 : ($ddaccount->scheme->tenure_of_rd_dd_value ?? 12));
-
-    //     $installmentReceived = $ddaccount->transactions->sum('amount') ?? 0;
-    //     $penaltyReceived     = $ddaccount->transactions->sum('penalty_amount') ?? 0;
-    //     $interestCredited    = $ddaccount->transactions->sum('interest_amount') ?? 0;
-    //     $tdsDeduction        = $ddaccount->tds_deduction ?? 0;
-
-    //     $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
-
-    //     $shouldHavePaid = 0;
-    //     if ($ddaccount->open_date) {
-    //         $openDate = Carbon::parse($ddaccount->open_date);
-    //         $today = Carbon::today();
-
-    //         switch (strtolower($ddaccount->rd_dd_frequency)) {
-    //             case 'daily':
-    //                 $shouldHavePaid = $openDate->diffInDays($today);
-    //                 break;
-    //             case 'monthly':
-    //                 $shouldHavePaid = $openDate->diffInMonths($today);
-    //                 break;
-    //             case 'yearly':
-    //                 $shouldHavePaid = $openDate->diffInYears($today);
-    //                 break;
-    //         }
-
-    //         $shouldHavePaid = min($shouldHavePaid, $totalInstallments);
-    //     }
-
-    //     $paid = $ddaccount->transactions->count();
-    //     $due = max($shouldHavePaid - $paid, 0);
-
-    //     $overdue = 0;
-    //     if (!empty($ddaccount->maturity_date)) {
-    //         $maturityDateCheck = Carbon::parse($ddaccount->maturity_date);
-    //         if ($today->gt($maturityDateCheck)) {
-    //             $overdue = $totalInstallments - $paid;
-    //         }
-    //     }
-
-    //     $notDue = $totalInstallments - $paid - $due;
-
-    //     $principalDue = max($installmentAmount * $due, 0);
-
-    //     $penaltyDue = ($principalDue > 0 && !empty($ddaccount->scheme->penalty_charges_value))
-    //         ? $due * $ddaccount->scheme->penalty_charges_value
-    //         : 0;
-
-    //     $totalAmountDue = $principalDue + $penaltyDue;
-
-    //     $closeDate = '';
-    //     if ($paid >= $totalInstallments && $ddaccount->open_date) {
-    //         $openingDate = Carbon::parse($ddaccount->open_date);
-    //         if (strtolower($ddaccount->rd_dd_frequency) === 'daily') {
-    //             $closeDate = $openingDate->copy()->addDays($totalInstallments)->format('d-m-Y');
-    //         } else {
-    //             $closeDate = $openingDate->copy()->addMonths($totalInstallments)->format('d-m-Y');
-    //         }
-    //     }
-
-    //     $annualInterestRate = $ddaccount->scheme->anuual_interest_rate ?? 0;
-
-    //     $calculation = $this->calculateMaturity(
-    //         $installmentAmount,
-    //         $totalInstallments,
-    //         strtolower($ddaccount->rd_dd_frequency),
-    //         $annualInterestRate,
-    //         $ddaccount->scheme->maturity_bonus_percent ?? 0,
-    //         0,
-    //         $ddaccount->open_date
-    //     );
-
-    //     $maturityAmount = $calculation['maturity'];
-    //     $maturityBonus  = $calculation['bonus'];
-    //     $maturityDate   = $calculation['maturity_date'];
-
-    //     $specialAccount = $ddaccount->account_type === 'special';
-    //     return view('fd_account.ddsaccounts.show', [
-    //         'ddaccount'             => $ddaccount,
-    //         'branches'              => Branch::all(),
-    //         'members'               => Member::all(),
-    //         'schemes'               => Rdscheme::all(),
-    //         'installmentAmount'     => $installmentAmount,
-    //         'installmentReceived'   => $installmentReceived,
-    //         'penaltyReceived'       => $penaltyReceived,
-    //         'interestCredited'      => $interestCredited,
-    //         'tdsDeduction'          => $tdsDeduction,
-    //         'balanceAvailable'      => $balanceAvailable,
-    //         'principalDue'          => $principalDue,
-    //         'penaltyDue'            => $penaltyDue,
-    //         'totalAmountDue'        => $totalAmountDue,
-    //         'closeDate'             => $closeDate,
-    //         'maturityAmount'        => $maturityAmount,
-    //         'maturityBonus'         => $maturityBonus,
-    //         'maturityDate'          => $maturityDate,
-    //         'annualInterestRate'    => $annualInterestRate,
-    //         'paid_installments'     => $paid,
-    //         'due_installments'      => $due,
-    //         'overdue_installments'  => $overdue,
-    //         'not_due_installments'  => max($notDue, 0),
-    //         'specialAccount'        => $specialAccount,
-    //     ]);
-    // }
-
     public function store(Request $request)
     {
         Log::info('DdsAccountsController@store called');
@@ -349,6 +234,7 @@ class DdsAccountsController extends Controller
 
         try {
             $scheme = Rdscheme::findOrFail($validated['scheme_id']);
+            Log::info('Scheme fetched', ['scheme' => $scheme]);
 
             $depositPerDay = $scheme->min_rd_dd_amount;
 
@@ -360,6 +246,7 @@ class DdsAccountsController extends Controller
             } else {
                 $days = $scheme->tenure_of_rd_dd_value;
             }
+            Log::info('Tenure calculated', ['days' => $days]);
 
             $rate = $scheme->anuual_interest_rate;
 
@@ -386,7 +273,6 @@ class DdsAccountsController extends Controller
                 $bonusRate = 0;
                 $fixedBonus = 0;
             }
-
             $calculation = $this->calculateMaturity(
                 $depositPerDay,
                 $installments,
@@ -396,7 +282,6 @@ class DdsAccountsController extends Controller
                 $fixedBonus,
                 $request->open_date
             );
-
             $ddsAccount = new DdsAccount();
             $ddsAccount->member_id = $request->member_id;
             $ddsAccount->branch_id = $request->branch_id;
@@ -411,7 +296,6 @@ class DdsAccountsController extends Controller
             $ddsAccount->maturity_amount = $calculation['maturity'];
             $ddsAccount->maturity_date = \Carbon\Carbon::createFromFormat('d-m-Y', $calculation['maturity_date'])->format('Y-m-d');
             $ddsAccount->save();
-
             $transaction = new DdTransaction();
             $transaction->dds_account_id = $ddsAccount->id;
             $transaction->transaction_date = now()->format('Y-m-d');
@@ -419,6 +303,7 @@ class DdsAccountsController extends Controller
             $transaction->account_id = null;
             $transaction->pay_mode = $request->pay_mode;
             $transaction->save();
+            Log::info('First transaction saved', ['transaction_id' => $transaction->id]);
 
             if ($request->nominee === "yes" && $request->has('nominee_name')) {
                 $totalNominees = count(array_filter($request->nominee_name));
@@ -439,11 +324,15 @@ class DdsAccountsController extends Controller
 
             return redirect()->route('dds-accounts.index')
                 ->with('success', 'DDS Account created successfully!');
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $e) {
             Log::error("DDS Store Error: " . $e->getMessage());
             return back()->withInput()->withErrors(['error' => 'Something went wrong. Please try again.']);
         }
     }
+
 
     public function edit(DdsAccount $ddaccount)
     {

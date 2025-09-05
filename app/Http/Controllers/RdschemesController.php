@@ -92,8 +92,6 @@ public function edit($id)
 public function update(Request $request, $id)
 {
     $request->validate([
-  
-       
         'min_rd_dd_amount' => 'required|integer|min:1',
         'rd_dd_frequency' => 'required|string|in:daily,weekly,bi_weekly,monthly,quarterly,half-yearly,yearly',
         'anuual_interest_rate' => 'required|numeric|min:0|max:100',

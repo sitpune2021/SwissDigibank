@@ -162,7 +162,7 @@
             <!-- Right Section -->
             <div class="col-span-2 md:col-span-1">
                 <div class="p-6 bg-white dark:bg-bg3 rounded-lg shadow-md">
-                  <form action="{{ route('rdschemes.update-commission', $scheme->id) }}" method="POST">
+                  <form action="{{ route('rdschemes.update', $scheme->id) }}" method="POST">
     @csrf
     @method('PUT')
 

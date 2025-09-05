@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'FD Account Schemes')
+@section('page-title', 'FD Account')
 @section('action-button')
 <a class="btn-primary" href="{{ route('fd-mis-schemes.fd_create') }}">
     <i class=" md:text-lg"></i>
@@ -9,8 +9,10 @@
 @section('content')
 
 <div class="box col-span-12 lg:col-span-12">
-    <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
+    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
+    </div>
+    <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
@@ -108,7 +110,21 @@
                         <td class="px-6 py-3">{{ $account->open_date??'-' }}</td>
                         <td class="px-6 py-3">{{ $account->interest_payout_type??'-' }}</td>
                         <td class="px-6 py-3">{{ $account->maturity_date ?? '-' }}</td>
-                        <td class="px-6 py-3"></td>
+                        <td class="px-6 py-3">
+                            @if ($account->status == 0)
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-warning/20 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Pending
+                            </span>
+                            @elseif ($account->status == 1)
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Approved
+                            </span>
+                            @elseif ($account->status == 2)
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Rejected
+                            </span>
+                            @endif
+                        </td>
                         <td class="px-6 py-3">
                             <span class="text-green-600">Active</span>
                         </td>

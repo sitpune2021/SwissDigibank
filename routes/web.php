@@ -35,6 +35,8 @@ use App\Http\Controllers\RDCalculatorController;
 use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
 use App\Http\Controllers\MDSController;
+use App\Http\Controllers\MisaccountController;
+use App\Http\Controllers\RdAccountController;
 use App\Http\Controllers\RdschemesController;
 use App\Http\Controllers\PassbookController;
 
@@ -82,7 +84,10 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
         Route::get('/calculator/create', [CalculatorController::class, 'create'])->name('calculator.create');
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
+        Route::get('/calculator/calculate', [CalculatorController::class, 'calculateInvestment'])->name('calculator.calculate');
+        Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
     });
+
 
     Route::middleware('auth')->group(function () {
         Route::get('/dds-accounts', [DdsAccountsController::class, 'index'])->name('dds-accounts.index');
@@ -169,11 +174,35 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('fd-account-view/{id}', [FDController::class, 'fd_show'])->name('fd-mis-schemes.fd_show');
     Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
         ->name('member.savings');
+
+    Route::put('/fd/{id}/update-branch', [FDController::class, 'updateBranch'])->name('fd.updateBranch');
+
+    Route::resource('misaccount', MisaccountController::class);
+    // Route::get('misaccount/create', [MisaccountController::class, 'create']);
+    // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
+
+
+    //Transactions Info
+    Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
+
+    //edit and update branches
+
+    Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
+        ->name('misaccount.update-branch');
 });
 Route::group(['prefix' => 'mds-rds-dds'], function () {
 
     Route::resource('mds-rds-dds', MDSController::class);
     Route::resource('rdschemes', RdschemesController::class);
+
+    Route::resource('mds-rd-account', RdAccountController::class);
+
+    Route::get('rd-account-index', [RdAccountController::class, 'index'])->name('mds-rd-accounts.rd-account-index');
+    Route::get('create-rd-account', [RdAccountController::class, 'create'])->name('mds-rd-accounts.create-rd-account');
+    Route::get('rd-dd-calculator', [RdAccountController::class, 'rdDdCalculator'])->name('calculator.rd-dd-calculator');
+    Route::get('/members/{id}', [RdAccountController::class, 'getMember'])->name('members.get');
+    Route::post('/rd-accounts', [RdAccountController::class, 'store'])->name('rd-accounts.store');
+    Route::get('/view-rd-account', [RdAccountController::class, 'show'])->name('view-rd-account');
 });
 
 Route::group(['prefix' => 'deposits'], function () {

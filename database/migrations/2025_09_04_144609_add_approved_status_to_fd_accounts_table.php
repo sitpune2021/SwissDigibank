@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('fd_accounts', function (Blueprint $table) {
-            if (!Schema::hasColumn('fd_accounts', 'joint_member_id')) {
-                $table->unsignedBigInteger('joint_member_id')->nullable()->after('member_id');
-                $table->foreign('joint_member_id')->references('id')->on('members')->onDelete('set null');
-            }
+            $table->tinyInteger('status')
+                ->default(0) // 0 = Pending, 1 = Approved, 2 = Rejected
+                ->after('maturity_date')
+                ->comment('0 = Pending, 1 = Approved, 2 = Rejected');
         });
     }
 
@@ -25,10 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('fd_accounts', function (Blueprint $table) {
-            if (Schema::hasColumn('fd_accounts', 'joint_member_id')) {
-                $table->dropForeign(['joint_member_id']);
-                $table->dropColumn('joint_member_id');
-            }
+            $table->dropColumn('status');
         });
     }
 };

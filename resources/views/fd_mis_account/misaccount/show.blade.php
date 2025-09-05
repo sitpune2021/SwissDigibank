@@ -1,0 +1,1055 @@
+@extends('layout.main')
+
+<style>
+  .breadcrumb {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-size: 14px;
+  }
+
+  .breadcrumb li+li::before {
+    content: "/";
+    padding: 0 8px;
+    color: #888;
+  }
+
+  .breadcrumb li a {
+    text-decoration: none;
+    color: #007bff;
+  }
+
+  .breadcrumb li.active {
+    color: #555;
+  }
+
+  .custom-thead {
+    background-color: #e6f4ea;
+    color: #14532d;
+  }
+
+  .custom-thead th {
+    font-weight: 600;
+    border-bottom: 1px solid #ccc;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .custom-thead {
+      background-color: #14532d;
+      color: #d1fae5;
+    }
+  }
+
+  input[type="checkbox"] {
+    width: 28px;
+    height: 28px;
+    accent-color: green;
+    /* For modern browsers */
+  }
+
+  /* Fallback for browsers without accent-color support */
+  input[type="checkbox"]:checked {
+    background-color: green;
+    border: none;
+  }
+
+  input[type="radio"] {
+    width: 24px;
+    height: 24px;
+    accent-color: green;
+    /* Modern browser support */
+  }
+
+  .tableWidth {
+    width: 90%;
+    margin: auto;
+  }
+
+  .bg-yellow {
+    background-color: #e17100;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Container for the toggle background */
+  .blocks {
+    width: 56px;
+    /* 14 * 4px */
+    height: 32px;
+    /* 8 * 4px */
+    border-radius: 9999px;
+    /* Fully rounded */
+    background-color: #9CA3AF;
+    /* Tailwind gray-400 default */
+    transition: background-color 0.3s ease;
+  }
+
+  /* The small white dot */
+  .dot {
+    position: absolute;
+    top: 4px;
+    /* 1 * 4px */
+    left: 4px;
+    /* 1 * 4px */
+    width: 24px;
+    /* 6 * 4px */
+    height: 24px;
+    /* 6 * 4px */
+    background-color: white;
+    border-radius: 9999px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* When the checkbox is checked, change bg color */
+  input[type="checkbox"].slider-toggle:checked+div .blocks {
+    background-color: #228cc5;
+    /* Tailwind green-500 */
+  }
+
+  /* Move the dot to right when checked */
+  input[type="checkbox"].slider-toggle:checked+div .dot {
+    transform: translateX(24px);
+    /* 6 * 4px */
+  }
+</style>
+
+@section('content')
+  <div class="main-inner">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+      <div class="flex items-start flex-col gap-2">
+        <h1 class="text-2xl font-semibold">MIS Account - {{'DEMO-' . $misaccount->member_id}} </h1>
+        <p class="text-gray-500">
+          <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS Account</a> >
+          <a href="#" class="text-gray-500"> {{'DEMO-' . $misaccount->member_id}} </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <!-- FD Payout Plan -->
+      <button type="" class="btn-primary text-sm px-2 py-2 rounded-10 ">
+        FD PAYOUT PLAN
+      </button>
+
+      <!-- View Transactions -->
+      <button class="btn-secondary text-sm px-2 py-2 rounded-10 ">
+        VIEW TRANSACTIONS
+      </button>
+
+      <!-- Account Details -->
+      <div class="relative inline-block text-left">
+        <button id="accountButton" class="flex items-center px-2 py-2 rounded-10 btn-warning text-sm text-white">
+          ACCOUNT DETAILS
+          <i id="accountArrow" class="las la-angle-down ml-2"></i>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+          <a href="#" class="block px-4 py-2 uppercase  hover:bg-warning">change Account info</a>
+          <a href="#" class="block px-4 py-2 uppercase hover:bg-warning">Add Nominee</a>
+
+        </div>
+      </div>
+
+      <!--   RELEASE INTEREStT-->
+      <button class="btn-primary text-sm px-2 py-2  rounded-10 ">
+        RELEASE INTEREST
+      </button>
+      <!--   RELEASE INTEREStT-->
+      <button class="btn-warning text-sm px-2 py-2  rounded-10 ">
+        LINK SAVING ACCOUNT(AUTO CREDIT)
+      </button>
+
+      <!--  MARK LIEN AGAINST LOAN-->
+      <button class="btn-error text-sm px-2 py-2   rounded-10 ">
+        MARK LIEN AGAINST LOAN
+      </button>
+
+      <!-- INTEREST/TDS Button -->
+      <div class="relative inline-block text-left">
+        <button id="interestButton" class="btn-secondary text-sm px-2 py-2 rounded-10 flex items-center">
+          INTEREST/TDS
+          <i id="interestArrow" class="las la-angle-down ml-2"></i>
+        </button>
+
+        <div id="interestMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+          <a href="#" class="block px-4 py-2 uppercase hover:bg-secondary">CREDIT/DEBIT INTEREST</a>
+          <a href="#" class="block px-4 py-2 uppercase hover:bg-secondary">DEDUCT/REVESRE TDS</a>
+
+        </div>
+      </div>
+
+
+      <div class="relative inline-block text-left">
+        <button id="dropdownButton" class="flex items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
+          <i class="las la-print mr-2"></i>
+          PRINT DOCUMENTS
+          <i id="dropdownArrow" class="las la-angle-down ml-2"></i>
+
+        </button>
+
+        <!-- Dropdown menu -->
+        <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
+          <a href="#" class="block px-4 py-2   hover:bg-secondary ">Print PDF</a>
+          <a href="#" class="block px-4 py-2 hover:bg-secondary">Print Excel</a>
+          <a href="#" class="block px-4 py-2 hover:bg-secondary">Print All</a>
+        </div>
+      </div>
+
+
+
+      <!-- Show Audit Trail -->
+      <button class="btn-secondary text-sm px-2 py-2  rounded-10  ">
+        SHOW AUDIT TRAIL
+      </button>
+    </div>
+
+
+
+
+
+
+    <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
+
+      <!-- Left: Details -->
+      <div class=" w-full  overflow-hidden">
+        <div class="overflow-x-auto rounded-lg dark:bg-bg3  bg-white shadow-md">
+          <table class="min-w-full text-sm text-left border-collapse">
+            <tbody class="divide-y divide-gray-200">
+              <tr>
+                <td class="font-semibold px-4 py-2 w-1/3">Member</td>
+                <td class="px-4 py-2">
+                  <a href="" class="text-primary hover:underline">
+                    {{  'DEMO-' . $misaccount->member_id}} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td class="font-semibold  px-4 py-2">Create on</td>
+                <td class="px-4 py-2">-</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Created by</td>
+                <td class="px-4 py-2">-</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">MIS No.</td>
+                <td class="px-4 py-2"> {{  'DEMO-' . $misaccount->id}} </td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Old MIS No.</td>
+                <td class="px-4 py-2">—</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Scheme</td>
+                <td class="px-4 py-2">-</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Principal Amount</td>
+                <td class="px-4 py-2">₹ {{ number_format($misaccount->mis_amount, 2) }}</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Open Date</td>
+                <td class="px-4 py-2">
+                  {{ \Carbon\Carbon::parse($misaccount->open_date)->format('d/m/Y') }}
+                </td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Maturity Date</td>
+                <td class="px-4 py-2">
+                  {{ \Carbon\Carbon::parse($misaccount->transaction_date)->format('d/m/Y') }}
+
+                </td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Close Date</td>
+                <td class="px-4 py-2">—</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
+                <td class="px-4 py-2">-</td>
+              </tr>
+              @foreach($savingAccounts as $account)
+                <tr>
+                  <td class="font-semibold px-4 py-2">Balance Available</td>
+                  <td class="px-4 py-2">₹ {{ $account->amount_deposit }}</td>
+                </tr>
+              @endforeach
+              <tr>
+                <td class="font-semibold px-4 py-2">Status</td>
+                <td class="px-4 py-2">-</td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">TDS Deduction</td>
+                <td class="px-4 py-2">
+                  <span class="px-2 py-1 text-xs font-medium rounded
+            {{ $misaccount->tds_deduction === 'yes' ? 'bg-primary text-white rounded-10' : 'bg-red-100 text-red-600' }}">
+                    {{ ucfirst($misaccount->tds_deduction) }}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Special Account</td>
+                <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded ">-</span></td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">IS Lien</td>
+                <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded ">-</span></td>
+              </tr>
+              <tr>
+                <td class="font-semibold px-4 py-2">Sweep In</td>
+                <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded">-</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+
+        <!--MEMBER DETAILS-->
+        <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="border-b px-4 py-3 bg-red-100">
+            <h3 class="text-lg font-semibold text-black">MEMBER DETAILS</h3>
+          </div>
+
+          <!-- Body -->
+          <div class="p-4 overflow-x-auto">
+            <table class="min-w-full text-sm text-left">
+              <tbody class="divide-y divide-gray-200">
+
+                <tr>
+                  <td class="font-semibold px-4 py-2 w-1/3">Member Name</td>
+                  <td class="px-4 py-2">
+                    {{ $misaccount->member->full_name ?? 'N/A' }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Mobile No</td>
+                  <td class="px-4 py-2"> {{ $misaccount->member->member_info_mobile_no ?? 'N/A' }}</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Address</td>
+                  <td class="px-4 py-2">{{ $misaccount->member_address ?? 'N/A' }}</td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
+          <!-- Header -->
+          <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
+            <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
+            <button class="btn-primary px-3 py-2 rounded-3xl text-white">
+              <i class="las la-plus"></i>
+              passbok
+            </button>
+          </div>
+        </div>
+
+
+        <!--documents-->
+        <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold">DOCUMENTS</h3>
+            <button class=" btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i>
+            </button>
+          </div>
+
+          <!-- Body -->
+          <div class="p-4">
+            <div class="overflow-x-auto">
+              <p class="capitalize">No documents found</p>
+            </div>
+          </div>
+        </div>
+
+        <!--COMMENTS-->
+        <div class="bg-white box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold">COMMENTS</h3>
+
+          </div>
+
+          <!-- Body -->
+          <div class="p-4">
+            <div class="overflow-x-auto text-center mt-5">
+              <button class="btn-primary px-3 py-2 capitalize rounded-3xl text-white">Add Comments</button>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!--Transactions Info-->
+        <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between bg-secondary/5  text-black rounded-10 px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold uppercase">Transactions Info</h3>
+
+          </div>
+
+          <!-- Body -->
+          <div class="p-4">
+            <div class="overflow-x-auto text-center mt-5">
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                  <thead class="bg-gray-100 text-start text-gray-700">
+                    <tr class="border-b border-t">
+                      <th class="px-4 py-2 text-start text-sm font-semibold">DATE</th>
+                      <th class="px-4 py-2 text-start text-sm font-semibold">TYPE</th>
+                      <th class="px-4 py-2 text-start text-sm font-semibold">PAYMENT MODE</th>
+                      <th class="px-4 py-2 text-start text-sm font-semibold">AMOUNT</th>
+                      <th class="px-4 py-2 text-start text-sm font-semibold">STATUS</th>
+                    </tr>
+                  </thead>
+                  @forelse($misaccount->transactions as $transaction)
+                    <tr class="border-b">
+                      <td class="px-4 py-2 text-start text-sm font-semibold">
+                        {{ $transaction->created_at->format('d/m/Y H:i') }}
+                      </td>
+                      <td class="px-4 py-2 text-start text-sm font-semibold">N/A</td>
+                      <td class="px-4 py-2 text-start text-sm font-semibold">{{ ucfirst($transaction->pay_mode) }}</td>
+                      {{-- <td>
+                        @if($transaction->bank)
+                        {{ $transaction->bank->name }}
+                        @elseif($transaction->savingAccount)
+                        Saving A/c: {{ $transaction->savingAccount->account_no }}
+                        @else
+                        -
+                        @endif
+                      </td> --}}
+                      <td class="px-4 py-2 text-start text-sm font-semibold">{{ number_format($transaction->amount, 2) }}
+                      </td>
+                      <td class="px-4 py-2 text-start text-sm font-semibold">N/A</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="4">No transactions found</td>
+                    </tr>
+                  @endforelse
+
+                </table>
+              </div>
+
+              <button class="btn-primary px-3 py-2 mt-3 rounded-3xl text-white">View All</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+
+
+
+
+
+      <!-- Right: Settings -->
+      <div class=" w-full ">
+
+        <!--settings-->
+        <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
+          <!-- Header -->
+          <div class="px-4 py-3">
+            <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
+          </div>
+          <div class="p-4 overflow-x-auto">
+            <table class="min-w-full text-sm text-left">
+              <tbody class="divide-y divide-gray-200">
+
+                <!-- SMS Toggle -->
+                <tr>
+                  <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
+                  <td class="px-4 py-3">
+                    <label class="inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="smsToggle" class="sr-only slider-toggle" data-label-id="smsLabel">
+                      <div class="relative">
+                        <div class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                        </div>
+                        <div
+                          class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                        </div>
+                      </div>
+                      <span id="smsLabel" class="ml-4 text-sm font-medium text-black">OFF</span>
+                    </label>
+                  </td>
+                </tr>
+
+                <!-- DEDUCT TDS Toggle -->
+                <tr>
+                  <td class="font-semibold text-center align-middle px-4 py-3">DEDUCT TDS</td>
+                  <td class="px-4 py-3">
+                    <label class="inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="tdsToggle" class="sr-only slider-toggle" data-label-id="tdsLabel">
+                      <div class="relative">
+                        <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all">
+                        </div>
+                        <div
+                          class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                        </div>
+                      </div>
+                      <span id="tdsLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span>
+                    </label>
+                  </td>
+                </tr>
+
+                <!-- ACCOUNT ON HOLD Toggle -->
+                <tr>
+                  <td class="font-semibold text-center align-middle px-4 py-3">ACCOUNT ON HOLD</td>
+                  <td class="px-4 py-3">
+                    <label class="inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="holdToggle" class="sr-only slider-toggle" data-label-id="holdLabel">
+                      <div class="relative">
+                        <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all">
+                        </div>
+                        <div
+                          class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                        </div>
+                      </div>
+                      <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span>
+                    </label>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+
+        <!--AUTO RENEW SETTINGS-->
+        <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
+          <!-- Header -->
+          <div class="border-b px-4 py-3">
+            <h3 class="text-lg font-semibold text-black ">AUTO RENEW SETTINGS</h3>
+          </div>
+
+          <!-- Body -->
+          <div class="p-4">
+            <form class="space-y-6">
+
+              <!-- AUTO RENEW -->
+              <div class="flex flex-col md:flex-row md:items-center md:gap-6">
+                <label class="md:w-1/3 font-medium text-gray-700">AUTO RENEW</label>
+                <div class="flex gap-6  md:mt-0">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="fd_account[auto_renew]" value=""
+                      class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span>Yes</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="fd_account[auto_renew]" value="false" checked
+                      class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span>No</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- AUTO RENEW INSTRUCTION -->
+              <div class="flex flex-col md:flex-row mt-5 md:items-center md:gap-6">
+                <label class="md:w-1/3 font-medium text-gray-700">AUTO RENEW INSTRUCTION</label>
+
+                <select name="fd_account[auto_renew_instruction]"
+                  class="w-full  rounded-10 bg-secondary/5 py-3  shadow-sm focus:ring-primary focus:border-blue-500 text-sm p-2">
+                  <option value="">Select Instruction</option>
+                  <option value="">REINVEST_PRINCIPAL</option>
+                  <option value="">REINVEST_PRINCIPAL_AND_INTEREST</option>
+                </select>
+
+              </div>
+
+              <!-- Submit Button -->
+              <div class="text-center mt-5">
+                <button type="submit" class="btn-primary px-4 py-2 rounded-3xl ">
+                  UPDATE
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+
+        <!---->
+        <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
+          <!--Old MIS No.-->
+          <form action="" class="mt-3 p-3">
+            <label for="" class="block ">Old MIS No.</label>
+            <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
+              <input type="text" name="" id="" class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white"
+                placeholder="Enter Old MIS Number">
+              <input type="button" value="update" class="block  btn-primary">
+            </div>
+          </form>
+
+          <!--Branch-->
+          <form action="{{ route('misaccount.update-branch', $misaccount->id) }}" method="POST" class="mt-2 px-3">
+            @csrf
+            @method('PUT')
+
+            <label for="branch" class="block mb-2">Branch</label>
+            <div class="flex flex-row items-center gap-3 justify-between">
+              <select name="branch_id" id="branch_id"
+                class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
+                <option value="">Select branch</option>
+                @foreach ($branches as $branch)
+                  <option value="{{ $branch->id }}" {{ $misaccount->branch_id == $branch->id ? 'selected' : '' }}>
+                    {{ $branch->branch_name }}
+                  </option>
+                @endforeach
+              </select>
+
+              <button type="submit" class="block btn-primary">Update</button>
+            </div>
+          </form>
+
+          <!--Advisor/ Staff-->
+          <form action="" class="mt-2 px-3">
+            <label for="" class="block ">Advisor/ Staff</label>
+            <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
+              <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3 
+           dark:bg-bg3 dark:text-white">
+                <option>Select option</option>
+
+                <option>Option 2</option>
+              </select>
+
+              <input type="button" value="update" class="block  btn-primary">
+
+            </div>
+          </form>
+
+          <div class=" px-6 flex py-4 flex-row items-center gap-6">
+            <p class="w-full text-lg  ">Current Chart</p>
+            <a href="#" class="text-primary w-full">MISVVPAT</a>
+          </div>
+
+          <!--Commission Chart-->
+          <form action="" class="mt-2 px-3 pb-4">
+            <label for="" class="block ">Commission Chart</label>
+            <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
+              <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3
+           dark:bg-bg3 dark:text-white">
+                <option>Select option</option>
+
+                <option>Option 2</option>
+              </select>
+
+              <input type="button" value="update" class="block  btn-primary">
+
+            </div>
+          </form>
+
+        </div>
+
+        <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="border-b px-4 py-3 bg-red-100">
+            <h3 class="text-lg font-semibold text-black uppercase">Fore Closure Info</h3>
+          </div>
+
+          <!-- Body -->
+          <div class="p-4 overflow-x-auto">
+            <table class="min-w-full text-sm text-left">
+              <tbody class="divide-y divide-gray-200">
+
+                <tr>
+                  <td class="font-semibold px-4 py-2 w-1/3">Fore Close Date</td>
+                  <td class="px-4 py-2">02/04/2025</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Principal Amount</td>
+                  <td class="px-4 py-2">₹ 500,000.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Current Balance (A)</td>
+                  <td class="px-4 py-2">₹ 500,000.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Balance Interest to Credit (B)</td>
+                  <td class="px-4 py-2">₹ 48,750.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">TDS on Balance Interest to Credit (C)</td>
+                  <td class="px-4 py-2">₹ 0.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Penal Charges to Deduct (D)</td>
+                  <td class="px-4 py-2">₹ 0.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Fore Closure Charges (E)</td>
+                  <td class="px-4 py-2">₹ 0.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Final Payable Amount (A + B - C - D - E)</td>
+                  <td class="px-4 py-2">₹ 548,750.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+        <!--Scheme Info-->
+        <div class="bg-white shadow-md box dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold uppercase">Scheme Info</h3>
+
+          </div>
+
+          <!-- Body -->
+
+          <div class="overflow-x-auto   mt-5">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                <tr>
+                  <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
+                  <td class="px-4 py-2 text-right md:text-left">
+                    {{ $misaccount->fdScheme->scheme_name ?? '-' }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Scheme Code</td>
+                  <td class="px-4 py-2 text-right md:text-left">
+                    {{ $misaccount->fdScheme->scheme_code ?? '-' }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Minimum Locking Period</td>
+                  <td class="px-4 py-2 text-right md:text-left capitalize">
+                    {{ $misaccount->fdScheme->lock_in_period ?? '-' }} months
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Interest Locking Period</td>
+                  <td class="px-4 py-2 text-right md:text-left capitalize">
+                    {{ $misaccount->fdScheme->interest_lock_in ?? '-' }} months
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Tenure of FD/ MIS</td>
+                  <td class="px-4 py-2 text-right md:text-left">
+                    N/A
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Interest Payout</td>
+                  <td class="px-4 py-2 text-right md:text-left">
+                    N/A
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
+                  <td class="px-4 py-2 text-right md:text-left">
+                    N/A
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+
+
+        </div>
+
+
+        <!--MIS Maturity Info-->
+        <div class="bg-white shadow-md dark:bg-bg3  box mt-5 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold uppercase">MIS Maturity Info</h3>
+
+          </div>
+
+          <!-- Body -->
+
+          <div class="overflow-x-auto mt-5">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                <tr>
+                  <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Maturity Date</td>
+                  <td class="px-4 py-2 text-right md:text-left">02/03/2029</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Principal Amount (A)</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ 500,000.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Total Interest (B)</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ 225,000.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Total TDS Deducted (C)</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Maturity Bonus Amount (D)</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Maturity Amount (A + B + D)</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Net Maturity Amount (A + B + D - C)</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00 </td>
+                </tr>
+
+
+              </tbody>
+            </table>
+          </div>
+
+
+
+        </div>
+
+
+        <!--MIS Info-->
+
+        <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold uppercase">MIS Info</h3>
+
+          </div>
+
+          <!-- Body -->
+
+          <div class="overflow-x-auto mt-5">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                <tr>
+                  <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Interest Credited</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ N/A</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Interest Released</td>
+                  <td class="px-4 py-2 text-right md:text-left">₹ N/A</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">TDS Deducted</td>
+                  <td class="px-4 py-2 text-right md:text-left"> N/A Months</td>
+                </tr>
+
+
+              </tbody>
+            </table>
+          </div>
+
+
+
+        </div>
+
+
+        <!--MIS Branch Info-->
+
+        <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between bg-secondary/5 text-black rounded px-4 py-3 cursor-pointer"
+            onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <h3 class="text-lg font-semibold uppercase">MIS Branch Info</h3>
+
+          </div>
+
+          <!-- Body -->
+
+          <div class="overflow-x-auto mt-5">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                <tr>
+                  <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Branch</td>
+                  <td class="px-4 py-2 text-right md:text-left">
+                    @if($misaccount->branch)
+                      <option value="{{ $misaccount->branch->id }}" selected>
+                        {{ $misaccount->branch->branch_name }}
+                      </option>
+                    @endif
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Advisor/ Staff</td>
+                  <td class="px-4 py-2 text-right md:text-left">N/A</td>
+                </tr>
+
+                <tr>
+                  <td class="font-semibold px-4 py-2">Joint Account</td>
+                  <td
+                    class="px-4 py-2 text-right md:text-left">
+                  <span class=" {{ $misaccount->joint_member_id ? ' rounded-10 bg-primary  text-white px-2 text-sm py-1' : 'bg-error rounded-10  text-white px-2 text-sm py-1' }}"> {{ $misaccount->joint_member_id ? 'Yes' : 'No' }}</span> 
+                  </td>
+                </tr>
+
+
+
+              </tbody>
+            </table>
+          </div>
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+
+  <script>
+
+    //Account Details
+    const accountButton = document.getElementById('accountButton');
+    const accountMenu = document.getElementById('accountMenu');
+    const accountArrow = document.getElementById('accountArrow');
+
+    accountButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      accountMenu.classList.toggle('hidden');
+
+      // Toggle arrow
+      if (accountMenu.classList.contains('hidden')) {
+        accountArrow.classList.remove('la-angle-up');
+        accountArrow.classList.add('la-angle-down');
+      } else {
+        accountArrow.classList.remove('la-angle-down');
+        accountArrow.classList.add('la-angle-up');
+      }
+    });
+
+    // Close dropdown if clicked outside
+    window.addEventListener('click', () => {
+      accountMenu.classList.add('hidden');
+      accountArrow.classList.remove('la-angle-up');
+      accountArrow.classList.add('la-angle-down');
+    });
+
+    //Interest/Tds
+    const interestButton = document.getElementById('interestButton');
+    const interestMenu = document.getElementById('interestMenu');
+    const interestArrow = document.getElementById('interestArrow');
+
+    interestButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      interestMenu.classList.toggle('hidden');
+
+      // Toggle arrow
+      if (interestMenu.classList.contains('hidden')) {
+        interestArrow.classList.remove('la-angle-up');
+        interestArrow.classList.add('la-angle-down');
+      } else {
+        interestArrow.classList.remove('la-angle-down');
+        interestArrow.classList.add('la-angle-up');
+      }
+    });
+
+    // Close dropdown if clicked outside
+    window.addEventListener('click', () => {
+      interestMenu.classList.add('hidden');
+      interestArrow.classList.remove('la-angle-up');
+      interestArrow.classList.add('la-angle-down');
+    });
+
+
+
+
+    //dropdownButton for print doc
+    const button = document.getElementById('dropdownButton');
+    const menu = document.getElementById('dropdownMenu');
+    const arrow = document.getElementById('dropdownArrow');
+
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('hidden');
+
+      // Toggle arrow
+      if (menu.classList.contains('hidden')) {
+        arrow.classList.remove('la-angle-up');
+        arrow.classList.add('la-angle-down');
+      } else {
+        arrow.classList.remove('la-angle-down');
+        arrow.classList.add('la-angle-up');
+      }
+    });
+    window.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      arrow.classList.remove('la-angle-up');
+      arrow.classList.add('la-angle-down');
+    });
+  </script>
+
+  <script>
+    //Settings toggle
+    // Label update on toggle
+    document.querySelectorAll('.slider-toggle').forEach(toggle => {
+      toggle.addEventListener('change', function () {
+        const label = document.getElementById(this.dataset.labelId);
+        label.textContent = this.checked ? '' : '';
+      });
+
+      // Initialize label on page load
+      toggle.dispatchEvent(new Event('change'));
+    });
+  </script>
+
+
+@endsection

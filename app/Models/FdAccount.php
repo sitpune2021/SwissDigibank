@@ -38,6 +38,11 @@ class FDAccount extends Model
         'pay1_credited',
         'pay1_saving_account',
 
+        'monthly_interest',
+        'final_amount',
+        'maturity_amount',
+        'maturity_date',
+
     ];
 
     public function member()
@@ -52,5 +57,4 @@ class FDAccount extends Model
     {
         return $this->belongsTo(FDScheme::class, 'scheme_id');
     }
-   
 }

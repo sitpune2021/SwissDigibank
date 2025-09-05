@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Scheme;
 use App\Models\SchemeCharge;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class SchemesController extends Controller
 {
@@ -32,7 +33,7 @@ class SchemesController extends Controller
             return view('schemes.index', compact('schemes'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function create()
@@ -46,12 +47,14 @@ class SchemesController extends Controller
             return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function store(Request $request)
     {
         try {
+            Log::info('Scheme store request received', $request->all());
+
             $validated = $request->validate([
                 'scheme_name'   => 'required|string|max:255',
                 'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
@@ -82,6 +85,8 @@ class SchemesController extends Controller
                 'upi_charge' => 'nullable|numeric|min:0',
             ]);
 
+            Log::info('Validation passed', $validated);
+
             $scheme = new Scheme();
             $scheme->scheme_name = $validated['scheme_name'];
             $scheme->scheme_code = $validated['scheme_code'];
@@ -105,10 +110,10 @@ class SchemesController extends Controller
             $scheme->app_type   = $validated['app_type'] ?? 0;
             $scheme->app_type_associate = $validated['app_type_associate'] ?? 0;
             $scheme->app_type_member    = $validated['app_type_member'] ?? 0;
-
             $scheme->active = $request->active;
 
             $scheme->save();
+            Log::info('Scheme saved successfully', ['scheme_id' => $scheme->id]);
 
             $charges = [];
 
@@ -128,20 +133,44 @@ class SchemesController extends Controller
                     }
 
                     $charges[$limit]["{$mode}_charge"] = $value;
+                    Log::debug('Charge prepared', [
+                        'mode' => $mode,
+                        'limit' => $limit,
+                        'value' => $value
+                    ]);
                 }
             }
 
             foreach ($charges as $chargeData) {
                 SchemeCharge::create($chargeData);
+                Log::info('Scheme charge created', $chargeData);
             }
+
+            Log::info('Scheme created with charges successfully', [
+                'scheme_id' => $scheme->id,
+                'total_charges' => count($charges)
+            ]);
 
             return redirect()->route('schemes.index')
                 ->with('success', 'Scheme added successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Model not found during scheme store', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             abort(404);
-        } 
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during scheme store', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
+            ]);
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
-
 
     public function show(string $id)
     {
@@ -171,7 +200,7 @@ class SchemesController extends Controller
             return view('schemes.add-edit', compact('sections', 'schemes', 'route', 'method', 'schemeCharges'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
@@ -262,7 +291,7 @@ class SchemesController extends Controller
             return redirect()->route('schemes.index')->with('success', 'Scheme updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function destroy(string $id) {}

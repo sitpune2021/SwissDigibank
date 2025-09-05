@@ -12,6 +12,8 @@ use App\Models\Religion;
 use App\Models\KycDocument;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
 {
@@ -58,7 +60,6 @@ class MemberController extends Controller
             abort(404);
         }
     }
-
 
     public function create()
     {
@@ -218,6 +219,7 @@ class MemberController extends Controller
             // Create Member
             $memberData = $request->only((new Member)->getFillable());
             $member = Member::create($memberData);
+            Log::info('Member created successfully', ['member_id' => $member->id]);
 
             // Create Address
             $addressData = $request->only((new Address)->getFillable());
@@ -246,6 +248,9 @@ class MemberController extends Controller
             }
 
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
+        } catch (ValidationException $e) {
+            // rethrow so Laravel handles it (shows validation errors in the view)
+            throw $e;
         } catch (\Exception $e) {
             dd($e);
             return back()->withErrors(['error' => $e->getMessage()]);
@@ -307,9 +312,9 @@ class MemberController extends Controller
     {
         try {
             $request->validate([
-                'documents' => 'required|array',
-                'documents.*.file' => 'required|file',
-                'documents.*.category' => 'required|string',
+                'documents' => 'nullable|array',
+                'documents.*.file' => 'nullable|file',
+                'documents.*.category' => 'nullable|string',
                 'documents.*.type' => 'nullable|string',
                 'member_id' => 'nullable'
             ]);
@@ -343,7 +348,6 @@ class MemberController extends Controller
         }
     }
 
-
     public function edit(string $id)
     {
         try {
@@ -354,6 +358,7 @@ class MemberController extends Controller
             ];
             $method = 'PUT';
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
+            $documents = KycDocument::where('member_id', $id)->get();
             $member = array_merge(
                 $memberModel->toArray(),
                 $memberModel->address?->toArray() ?? [],
