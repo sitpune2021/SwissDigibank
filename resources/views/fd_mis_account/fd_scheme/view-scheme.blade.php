@@ -208,7 +208,7 @@
                 </table>
             </div>
         </div>
-        <!-- Right Column -->
+
         <div class="lg:w-[30%] w-full flex flex-col gap-6">
             <div class="bg-white p-4 dark:bg-bg3 rounded-lg shadow">
                 <table class="w-full text-sm text-black">
@@ -220,7 +220,7 @@
                         <tr>
                             <td class="font-bold text-center px-4 py-2">Commission Chart</td>
                             <td class="px-4 py-2">
-                                <form class="flex flex-col sm:flex-row gap-2" action="#" method="post"> <select
+                                <form class="flex flex-col sm:flex-row gap-2" method="post"> <select
                                         class="w-full bg-secondary/5 border border-green-500 rounded-10 px-3 py-3 focus:outline-none focus:ring-2 focus:ring-green-500">
                                         <option>Select Chart</option>
                                         <option>FD COMISSION CHART (Tenure - 6 M)</option>
@@ -232,9 +232,9 @@
                                         <option>Ultima 10 (Tenure - 60 M)</option>
                                         <option>FD 6 MONTH (Tenure - 6 M)</option>
                                     </select>
-                                    <button type="submit"
+                                    <a
                                         class="btn-primary justify-center">
-                                        UPDATE </button>
+                                        UPDATE </a>
                                 </form>
                             </td>
                         </tr>
