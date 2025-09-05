@@ -54,7 +54,7 @@ class DdsAccount extends Model
     }
         public function scheme()
     {
-        return $this->belongsTo(RdScheme::class, 'scheme_id', 'id');
+        return $this->belongsTo(Rdscheme::class, 'scheme_id', 'id');
     }
 
     

@@ -260,7 +260,6 @@ function calculateInvestment(
         'maturity_amount' => number_format($maturityAmt, 2),
         'maturity_date'   => $maturityDate
     ];
-
             return response()->json([
                 'success' => true,
                 'summary' => $summary,
