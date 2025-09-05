@@ -88,22 +88,22 @@ $isEdit = isset($ddsAccount);
             @method('PUT')
             @endif
 
-                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
-                            Member <span class="text-red-500">*</span>
-                        </label>
-
-                        <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
-        border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Search Member No or Name</option>
-                            @foreach ($members as $member)
-                                <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
-                                </option>
-                            @endforeach
-                        </select>
+            <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+                <div class="col-span-2 md:col-span-1">
+                    <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
+                        Member <span class="text-red-500">*</span>
+                    </label>
+                    <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
+               border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3
+               @error('member_id') border-red-500 @enderror">
+                        <option value="">Search Member No or Name</option>
+                        @foreach ($members as $member)
+                        <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
+                            {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
+                        </option>
+                        @endforeach
+                    </select>
 
                     @error('member_id')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -128,217 +128,17 @@ $isEdit = isset($ddsAccount);
                         placeholder="" value="" readonly>
                 </div>
 
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="memberMobile" class="md:text-lg font-medium block mb-4">
-                            Member Mobile No
-                        </label>
-                        <div class="flex gap-2">
-                            <input type="text"
-                                class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                value="+91" readonly>
-                            <input type="text" id="memberMobile" name="member_mobile"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                placeholder="Enter Mobile No" readonly>
-                        </div>
-                    </div>
-                    <div class="col-span-2 md:col-span-1"></div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="minor_id" class="md:text-lg font-medium block mb-4">
-                            Minor (if any)
-                        </label>
-                        <select id="minor_id" name="minor_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Minor</option>
-                            @foreach ($minors as $minor)
-                                <option value="{{ $minor->id }}">
-                                    {{ $minor->first_name }} {{ $minor->last_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('minor_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="branch_id" class="md:text-lg font-medium block mb-4">
-                            Branch <span class="text-red-500">*</span>
-                        </label>
-
-                        <select id="branch_id" name="branch_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Branch</option>
-                            @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}"
-                                    {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
-                                    {{ $branch->branch_name }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        @error('branch_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="advisor_id" class="md:text-lg font-medium block mb-4">
-                            Advisor / Staff
-                        </label>
-                        <select id="advisor_id" name="advisor_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Advisor / Staff</option>
-                            <option value="all" {{ old('advisor_id') == 'all' ? 'selected' : '' }}>ALL</option>
-                            <option value="head_office" {{ old('advisor_id') == 'head_office' ? 'selected' : '' }}>Head
-                                Office</option>
-
-                            @if (!empty($advisors))
-                                @foreach ($advisors as $advisor)
-                                    <option value="{{ $advisor->id }}"
-                                        {{ old('advisor_id') == $advisor->id ? 'selected' : '' }}>
-                                        {{ $advisor->general_advisor_staff }}
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
-                        @error('advisor_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1"></div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">Collection Advisor/ Staff </label>
-                        <select id="" name="collection_advisor_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
-                            <option value="">Select Collection Advisor Staff</option>
-                            <option value="head_office">Head Office</option>
-                        </select>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="scheme_id" class="font-medium block mb-2">
-                            Scheme <span class="text-red-500">*</span> :
-                        </label>
-
-                        <select id="scheme_id" name="scheme_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Scheme</option>
-                            @foreach ($schemes as $scheme)
-                                <option value="{{ $scheme->id }}"
-                                    {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
-                                    {{ $scheme->scheme_name }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        @error('scheme_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
-                            DD Amount <span class="text-red-500">*</span>:
-                        </label>
-                        <input type="number" id="dd_amount" name="dd_amount"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
-    border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Enter DD Amount" value="{{ old('dd_amount') }}">
-
-                        @error('dd_amount')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-
-                        <p id="minAmountMsg" class="text-red-500 text-xs mt-1 hidden">
-                            Minimum amount to be deposited ₹ 100
-                        </p>
-                    </div>
-
-                    <script>
-                        document.getElementById('dd_amount').addEventListener('input', function() {
-                            const minAmount = 100;
-                            const msg = document.getElementById('minAmountMsg');
-                            if (this.value && parseFloat(this.value) < minAmount) {
-                                msg.classList.remove('hidden');
-                            } else {
-                                msg.classList.add('hidden');
-                            }
-                        });
-                    </script>
-
-
-                    <div class="col-span-2 md:col-span-1 relative">
-                        <label class="font-medium block mb-2">
-                            Open Date <span class="text-red-500">*</span> :
-                        </label>
-                        <input type="text" id="date5" name="open_date"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-               rounded-10 px-3 md:px-6 py-2 md:py-3 pr-10"
-                            placeholder="DD/MM/YYYY" value="">
-                        <i
-                            class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                        @error('open_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-
-                    </div>
-                    <div class="col-span-2 md:col-span-1"></div>
-
-                    <!-- TDS -->
-                    <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
-                        <div class="flex items-center  gap-2">
-                            <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
-                                    value="yes"> Yes</label>
-                            <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
-                                    value="no" checked> No</label>
-                            @error('tds')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-
-                        </div>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1"></div>
-
-                    <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
-                        <div class="flex items-center gap-4">
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="account_type" value="single"
-                                    onclick="toggleAccountType('single')" class="accent-primary" checked>
-                                <span>Single</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="account_type" value="joint"
-                                    onclick="toggleAccountType('joint')" class="accent-primary">
-                                <span>Joint A/C</span>
-                                @error('account_type')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-
-                            </label>
-                        </div>
-                        <!-- single (no fields) -->
-                        <div id="single" class="hidden"></div>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1 mt-4">
-                        <div id="joint" class="hidden mt-4">
-                            <label class="font-medium block mb-1">Joint A/C Member <span
-                                    class="text-red-500">*</span></label>
-                            <select
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-                       rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                <option value="">Search member no or name</option>
-                                <option value="1001">Account 1001 - Akask Doshi</option>
-                                <option value="1002">Account 1002 - vijay Smith</option>
-                                <option value="1003">Account 1003 - Alex Kumar</option>
-                            </select>
-                        </div>
+                <div class="col-span-2 md:col-span-1">
+                    <label for="memberMobile" class="md:text-lg font-medium block mb-4">
+                        Member Mobile No
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text"
+                            class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                            value="+91" readonly>
+                        <input type="text" id="memberMobile" name="member_mobile"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                            placeholder="Enter Mobile No" readonly>
                     </div>
                 </div>
                 <div class="col-span-2 md:col-span-1"></div>
@@ -468,27 +268,12 @@ $isEdit = isset($ddsAccount);
                 <div class="col-span-2 md:col-span-1 mt-4">
                     <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
                     <div class="flex items-center  gap-2">
-                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
-                                value="yes" onclick="toggleAddMore(true)">Yes</label>
-                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
-                                value="no" checked onclick="toggleAddMore(false)"> No</label>
-                        @error('nominee')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-
-                    </div>
-
-                    <!-- Add More Button -->
-                    <div id="addMoreContainer" class="mt-2 hidden">
-                        <button type="button" onclick="addNominee()" class="text-blue-600 font-medium">
-                            + ADD MORE NOMINEE
-                        </button>
-                    </div>
-
-                    <!-- Nominee Forms Container -->
-                    <div id="nomineeContainer"
-                        class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 items-end p-3 rounded-10 bg-gray-50 dark:bg-bg3">
-                        <!-- Forms will be added here -->
+                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
+                                value="yes"> Yes</label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="tds" value="no" checked>
+                            No
+                        </label>
                     </div>
                 </div>
 
@@ -512,41 +297,140 @@ $isEdit = isset($ddsAccount);
                     <div id="single" class="hidden"></div>
                 </div>
 
-                        <!-- Payment Mode Radios -->
-                        <div class="flex flex-wrap gap-4 mt-4">
-                            <label class="flex items-center gap-2 text-sm">
-                                <input type="radio" name="pay_mode" value="cash"
-                                    onclick="togglePaymentMode('cash')">
-                                <span>Cash</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="pay_mode" value="onlineTr"
-                                    onclick="togglePaymentMode('onlineTr')">
-                                <span>Online Tr.</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="pay_mode" value="cheque"
-                                    onclick="togglePaymentMode('cheque')">
-                                <span>Cheque</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="pay_mode" value="saving"
-                                    onclick="togglePaymentMode('saving')">
-                                <span>Saving</span>
-                            </label>
+                <div class="col-span-2 md:col-span-1 mt-4">
+                    <div id="joint" class="hidden mt-4">
+                        <label class="font-medium block mb-1">Joint A/C Member <span
+                                class="text-red-500">*</span></label>
+                        <select
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
+                       rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Search member no or name</option>
+                            <option value="1001">Account 1001 - Akask Doshi</option>
+                            <option value="1002">Account 1002 - vijay Smith</option>
+                            <option value="1003">Account 1003 - Alex Kumar</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- Nominee -->
+            <div class="col-span-2 md:col-span-1 mt-4">
+                <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
+                <div class="flex items-center  gap-2">
+                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
+                            value="yes" onclick="toggleAddMore(true)">Yes</label>
+                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
+                            value="no" checked onclick="toggleAddMore(false)"> No</label>
+                </div>
 
+                <!-- Add More Button -->
+                <div id="addMoreContainer" class="mt-2 hidden">
+                    <button type="button" onclick="addNominee()" class="text-blue-600 font-medium">
+                        + ADD MORE NOMINEE
+                    </button>
+                </div>
+
+                <!-- Nominee Forms Container -->
+                <div id="nomineeContainer"
+                    class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 items-end p-3 rounded-10 bg-gray-50 dark:bg-bg3">
+                    <!-- Forms will be added here -->
+                </div>
+            </div>
+
+            <div class="col-span-2 md:col-span-1"></div>
+            <!-- Payment Mode -->
+            <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+
+                <div class="col-span-1 mt-4">
+                    <label class="block font-medium mb-2">
+                        Payment Mode <span class="text-red-500">*</span>
+                    </label>
+
+                    <!-- Payment Mode Radios -->
+                    <div class="flex flex-wrap gap-4 mt-4">
+                        <label class="flex items-center gap-2 text-sm">
+                            <input type="radio" name="pay_mode" value="cash"
+                                onclick="togglePaymentMode('cash')" checked>
+                            <span>Cash</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="pay_mode" value="onlineTr"
+                                onclick="togglePaymentMode('onlineTr')">
+                            <span>Online Tr.</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="pay_mode" value="cheque"
+                                onclick="togglePaymentMode('cheque')">
+                            <span>Cheque</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="pay_mode" value="saving"
+                                onclick="togglePaymentMode('saving')">
+                            <span>Saving</span>
+                        </label>
+                    </div>
+                    <!-- Cash (no fields) -->
+                    <div id="cash" class="hidden"></div>
+                    <!-- Online Transfer Fields -->
+                    <div id="onlineTr" class="hidden grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
+                        <!-- Transfer Date -->
+                        <div class="col-span-2 md:col-span-1 mt-4">
+                            <label class="font-medium block mb-1">Transfer Date <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="date2" placeholder="dd/mm/yyyy"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <i
+                                class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
                         </div>
-                        @error('pay_mode')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
+                        <!-- UTR / Transaction No -->
+                        <div class="col-span-2 md:col-span-1 mt-4">
+                            <label class="font-medium block mb-1">UTR / Transaction No <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" placeholder="Enter UTR / Transaction No"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        </div>
+                        <!-- Transfer Mode -->
+                        <div class="col-span-2 md:col-span-1 mt-4">
+                            <label class="font-medium block mb-1">Transfer Mode <span
+                                    class="text-red-500">*</span></label>
+                            <div class="flex flex-wrap gap-4 mt-2">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transfer_mode" value="IMPS"
+                                        class="accent-primary">
+                                    <span>IMPS</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transfer_mode" value="VPA"
+                                        class="accent-primary">
+                                    <span>VPA</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transfer_mode" value="NEFT/RTGS"
+                                        class="accent-primary">
+                                    <span>NEFT/RTGS</span>
+                                </label>
+                            </div>
+                        </div>
 
-                        <!-- Cash (no fields) -->
-                        <div id="cash" class="hidden"></div>
-                        <!-- Online Transfer Fields -->
-                        <div id="onlineTr" class="hidden grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
-                            <!-- Transfer Date -->
-                            <div class="col-span-2 md:col-span-1 mt-4">
-                                <label class="font-medium block mb-1">Transfer Date <span
+                        <!-- Credited in Company Account -->
+                        <div class="col-span-2 md:col-span-1 mt-4">
+                            <label class="font-medium block mb-1">Credited in Company Account? <span
+                                    class="text-red-500">*</span></label>
+                            <div class="flex items-center gap-4 mt-1">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="credited_in_company" value="yes"> <span>Yes</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="credited_in_company" value="no"> <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cheque Fields -->
+                    <div id="cheque" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 mt-4">
+                        <div class="cheque-row flex flex-wrap justify-start gap-4">
+                            <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                                <label class="font-medium block mb-1">Bank Name<span
                                         class="text-red-500">*</span></label>
                                 <input type="text" placeholder="Enter Bank Name"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -586,40 +470,29 @@ $isEdit = isset($ddsAccount);
                 </div>
             </div>
 
-                <!-- Date & Amount -->
-                <!-- Date & Amount -->
-                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
-                            T.Date <span class="text-red-500">*</span>
-                        </label>
-                        @php
-                            $today = \Carbon\Carbon::now()->format('d/m/Y');
-                        @endphp
-                        <input type="text" name="transaction_date" id="date4"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="DD/MM/YYYY" value="{{ old('transaction_date', $today) }}">
-                        <i
-                            class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+            <!-- Date & Amount -->
+            <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+                <div class="col-span-2 md:col-span-1">
+                    <label class="font-medium block mb-2">
+                        T.Date <span class="text-red-500">*</span> </label>
+                    @php
+                    $today = \Carbon\Carbon::now()->format('d/m/Y');
+                    @endphp
+                    <input type="text" name="transaction_date" id="date4"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
+                    <i
+                        class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+                </div>
 
-                        @error('transaction_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
-                            Amount <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" id="amount" name="amount"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
+                <div class="col-span-2 md:col-span-1">
+                    <label class="font-medium block mb-2">
+                        Amount <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="amount" name="amount"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        @error('amount')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-
-                    </div>
+                </div>
 
 
                 <!-- Buttons -->
@@ -781,63 +654,92 @@ $isEdit = isset($ddsAccount);
                 minAmountMsg.classList.add('hidden');
             }
         });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const schemeSelect = document.querySelector('select[name="scheme"]');
-            const minAmountMsg = document.getElementById('minAmountMsg');
-
-            schemeSelect.addEventListener('change', function() {
-                if (schemeSelect.value) {
-                    minAmountMsg.classList.remove('hidden');
-                } else {
-                    minAmountMsg.classList.add('hidden');
-                }
-            });
-        });
-    </script>
-    <script>
-        document.getElementById('dd_amount').addEventListener('input', function() {
-            document.getElementById('amount').value = this.value;
-        });
-    </script>
-    <script>
-        const ddInput = document.getElementById('dd_amount');
-        const amountInput = document.getElementById('amount');
-        const msg = document.getElementById('minAmountMsg');
+    });
+</script>
+<script>
+    document.getElementById('dd_amount').addEventListener('input', function() {
+        document.getElementById('amount').value = this.value;
+    });
+</script>
+<script>
+    const ddInput = document.getElementById('dd_amount');
+    const amountInput = document.getElementById('amount');
+    const msg = document.getElementById('minAmountMsg');
 
         ddInput.addEventListener('input', function() {
             amountInput.value = this.value;
 
-            if (this.value && parseFloat(this.value) < 100) {
-                msg.classList.remove('hidden'); // show msg if less than 100
-            } else {
-                msg.classList.add('hidden'); // hide msg otherwise
-            }
-        });
-    </script>
+        if (this.value && parseFloat(this.value) < 100) {
+            msg.classList.remove('hidden'); // show msg if less than 100
+        } else {
+            msg.classList.add('hidden'); // hide msg otherwise
+        }
+    });
+</script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let dateInput = document.getElementById("date5");
-            if (dateInput) {
-                // जर value रिकामी असेल तर आजची date भरा
-                if (!dateInput.value) {
-                    let today = new Date();
-                    let formatted = today.toISOString().split('T')[0]; // yyyy-mm-dd format
-                    dateInput.value = formatted;
+{{-- <script>
+        // Auto fill Name, Address, Mobile
+        $(document).ready(function() {
+            $('#memberDropdown').on('change', function() {
+                let memberId = $(this).val();
+
+                if (memberId) {
+                    $.ajax({
+                        url: `/members/${memberId}`,
+                        type: 'GET',
+                        success: function(response) {
+
+                            $('#memberName').val(response.member.member_info_first_name);
+                            $('#memberAddress').val(response.member.address
+                                .member_address_line_1 ?? '');
+                            $('#memberMobile').val(response.member.member_info_mobile_no);
+                            $('#branch_id').val(response.member.branch.id);
+
+                            const $branchSelect = $('#branch_id');
+                            //   console.log($branchSelect);
+                            $branchSelect.empty(); // clear options
+
+                            if (response.member.branch.id) {
+
+                                // If a single branch
+                                $branchSelect.append(
+                                    `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
+                                );
+                            } else if (response.member.branch && response.member.branch.length >
+                                0) {
+                                // If multiple branches
+                                member.branch.forEach(branch => {
+                                    $branchSelect.append(
+                                        `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
+                                    );
+                                });
+                            } else {
+                                $branchSelect.append(
+                                    '<option value="">No branches available</option>');
+                            }
+                        },
+                        error: function() {
+                            alert('Member details could not be fetched.');
+                        }
+                    });
+                } else {
+                    // Reset fields if no member selected
+                    $('#memberName').val('');
+                    $('#memberAddress').val('');
+                    $('#memberMobile').val('');
+                    $('#branch_id').empty().append('<option value="">Select branch</option>');
                 }
-            }
+            });
         });
-    </script>
+    </script> --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        document.getElementById('memberDropdown').addEventListener('change', function() {
-            let memberId = this.value;
-            let url = this.getAttribute('data-url').replace(':id', memberId);
+<script>
+    document.getElementById('memberDropdown').addEventListener('change', function() {
+        let memberId = this.value;
+        let url = this.getAttribute('data-url').replace(':id', memberId);
 
         if (memberId) {
             fetch(url)
