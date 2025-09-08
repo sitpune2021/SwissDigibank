@@ -226,7 +226,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount</td>
-                                <td class="px-4 py-2">{{ number_format($ddaccount->dd_amount  ?? 0, 2) }}</td>
+                                <td class="px-4 py-2">{{ number_format($ddaccount->dd_amount ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Installment Amount Received (C)</td>
@@ -270,11 +270,11 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Amount (approx.)</td>
-                                <td class="px-4 py-2">{{ number_format($maturityAmount, 2) }}</td>
+                                <td class="px-4 py-2">{{ $ddaccount->maturity_amount ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Maturity Bonus Amount</td>
-                                <td class="px-4 py-2">{{ number_format($maturityBonus, 2) }}</td>
+                                <td class="px-4 py-2">{{ $ddaccount->bonus ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
@@ -584,7 +584,7 @@
                                 </div>
                             </form>
                         </div>
-                        
+
                         <!--Scheme Info-->
                         <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                             <!-- Header -->
@@ -701,14 +701,13 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Total Interest (B)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">₹ 225,000.00</td>
+                                            <td class="px-4 py-2 text-right md:text-left">{{ $ddaccount->interest_earned }}</td>
                                         </tr>
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Bonus Amount (C)</td>
                                             <td class="px-4 py-2   text-right md:text-left">
-                                                {{ $ddaccount->scheme->bonus_rate_value }}
-                                                {{ $ddaccount->scheme->bonus_rate_type === 'percentage' ? '%' : 'fixed' }}
+                                                {{ $ddaccount->bonus }}
                                             </td>
                                         </tr>
 
@@ -722,11 +721,6 @@
                             </div>
                         </div>
                         <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
-                            <!-- Header -->
-                            <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
-                                onclick="this.nextElementSibling.classList.toggle('hidden')">
-                                <h3 class="text-lg font-semibold uppercase">Transactions Info</h3>
-                            </div>
                             <!-- Body -->
                             <div class="p-4">
                                 <div class="overflow-x-auto text-center mt-5">
@@ -786,7 +780,7 @@
                                         </tr>
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Joint Account </td>
-                                            <td class="px-4 py-2 text-right md:text-left">60 Months</td>
+                                            <td class="px-4 py-2 text-right md:text-left">-</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -822,7 +816,7 @@
                                                             {{ $transaction->transaction_date ?? 'N/A' }}
                                                         </td>
                                                         <td class="px-4 py-2">
-                                                            {{ $transaction->type ?? ucfirst($ddaccount->account_type) }}
+                                                            {{ ucfirst($transaction->type ?? 'N/A') }}
                                                         </td>
                                                         <td class="px-4 py-2">
                                                             {{ $transaction->pay_mode ?? 'N/A' }}
