@@ -108,7 +108,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/dds-accounts/{account}/transactions/{transaction}', [DdsAccountsController::class, 'transactionShow'])
             ->name('dds-accounts.transactions.show');
 
-        // Updates
         Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
         Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
 
@@ -117,8 +116,6 @@ Route::middleware('auth.user')->group(function () {
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
-
-
 
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);

@@ -144,23 +144,19 @@
                 INSTALLMENT PLAN
             </button>
 
-            <!-- View Transactions -->
             <a href="{{ route('dds-accounts.transactions', $ddaccount->id) }}"
                 class="btn btn-primary px-4 py-2 rounded-3xl">
                 VIEW TRANSACTIONS
             </a>
 
-            <!-- Account Details -->
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 ACCOUNT DETAILS
             </button>
 
-            <!-- Print Documents -->
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 PRINT DOCUMENTS
             </button>
 
-            <!-- Show Audit Trail -->
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 SHOW AUDIT TRAIL
             </button>
@@ -168,7 +164,6 @@
 
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
-            <!-- Left: Details -->
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="text-end p-3">

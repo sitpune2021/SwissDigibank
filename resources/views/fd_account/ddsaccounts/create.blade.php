@@ -262,12 +262,9 @@
                             placeholder="DD/MM/YYYY" value="">
                         <i
                             class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                        <!-- <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xlg pointer-events-none"></i> -->
                     </div>
                     <div class="col-span-2 md:col-span-1"></div>
 
-                    <!-- TDS -->
-                    <div class="col-span-2 md:col-span-1 mt-4">
                         <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
                         <div class="flex items-center  gap-2">
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
@@ -295,7 +292,6 @@
                                 <span>Joint A/C</span>
                             </label>
                         </div>
-                        <!-- single (no fields) -->
                         <div id="single" class="hidden"></div>
                     </div>
 
@@ -314,7 +310,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Nominee -->
                 <div class="col-span-2 md:col-span-1 mt-4">
                     <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
                     <div class="flex items-center  gap-2">
@@ -324,22 +319,18 @@
                                 value="no" checked onclick="toggleAddMore(false)"> No</label>
                     </div>
 
-                    <!-- Add More Button -->
                     <div id="addMoreContainer" class="mt-2 hidden">
                         <button type="button" onclick="addNominee()" class="text-blue-600 font-medium">
                             + ADD MORE NOMINEE
                         </button>
                     </div>
 
-                    <!-- Nominee Forms Container -->
                     <div id="nomineeContainer"
                         class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 items-end p-3 rounded-10 bg-gray-50 dark:bg-bg3">
-                        <!-- Forms will be added here -->
                     </div>
                 </div>
 
                 <div class="col-span-2 md:col-span-1"></div>
-                <!-- Payment Mode -->
                 <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
 
                     <div class="col-span-1 mt-4">
@@ -347,7 +338,6 @@
                             Payment Mode <span class="text-red-500">*</span>
                         </label>
 
-                        <!-- Payment Mode Radios -->
                         <div class="flex flex-wrap gap-4 mt-4">
                             <label class="flex items-center gap-2 text-sm">
                                 <input type="radio" name="pay_mode" value="cash" onclick="togglePaymentMode('cash')"
@@ -370,11 +360,8 @@
                                 <span>Saving</span>
                             </label>
                         </div>
-                        <!-- Cash (no fields) -->
                         <div id="cash" class="hidden"></div>
-                        <!-- Online Transfer Fields -->
                         <div id="onlineTr" class="hidden grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
-                            <!-- Transfer Date -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">Transfer Date <span
                                         class="text-red-500">*</span></label>
@@ -383,14 +370,12 @@
                                 <i
                                     class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
                             </div>
-                            <!-- UTR / Transaction No -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">UTR / Transaction No <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="utr_no" placeholder="Enter UTR / Transaction No"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             </div>
-                            <!-- Transfer Mode -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">Transfer Mode <span
                                         class="text-red-500">*</span></label>
@@ -413,7 +398,6 @@
                                 </div>
                             </div>
 
-                            <!-- Credited in Company Account -->
                             <div class="col-span-2 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1">Credited in Company Account? <span
                                         class="text-red-500">*</span></label>
@@ -428,7 +412,6 @@
                             </div>
                         </div>
 
-                        <!-- Cheque Fields -->
                         <div id="cheque" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 mt-4">
                             <div class="cheque-row flex flex-wrap justify-start gap-4">
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
@@ -454,7 +437,6 @@
                             </div>
                         </div>
 
-                        <!-- Saving Account Fields -->
                         <div id="saving" class="hidden mt-4">
                             <label class="font-medium block mb-1">Select Saving Account<span
                                     class="text-red-500">*</span></label>
@@ -472,7 +454,6 @@
                     </div>
                 </div>
 
-                <!-- Date & Amount -->
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2">
@@ -497,7 +478,6 @@
                     </div>
 
 
-                    <!-- Buttons -->
                     <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
                         <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
                         <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
@@ -512,7 +492,6 @@
     </div>
 
     <script>
-        // Nominee functions
         function toggleAddMore(show) {
             document.getElementById('addMoreContainer').style.display = show ? 'block' : 'none';
             if (!show) document.getElementById('nomineeContainer').style.display = 'hidden';
@@ -520,7 +499,7 @@
 
         function addNominee() {
             const container = document.getElementById("nomineeContainer");
-            container.style.display = "flex"; // make visible
+            container.style.display = "flex"; 
 
             const newNominee = document.createElement("div");
             newNominee.className = "w-full nominee-item columns-4 gap-4 items-end bg-white p-4 rounded dark:bg-bg3";
@@ -600,7 +579,6 @@
             const item = button.closest(".nominee-item");
             item.remove();
 
-            // Hide container if no nominee left
             const container = document.getElementById("nomineeContainer");
             if (container.children.length === 0) {
                 container.style.display = "none";
@@ -622,7 +600,6 @@
             ['single', 'joint'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
-            // Show the selected section
             if (type === 'joint') {
                 document.getElementById('joint').classList.remove('hidden');
             } else {
@@ -634,12 +611,10 @@
 
             if (memberId) {
                 $.get('/members/' + memberId + '/details', function(data) {
-                    // Fill member details
                     $('#memberName').val(data.member_info_first_name + ' ' + data.member_info_last_name);
                     $('#memberAddress').val(data.member_address_line_1);
                     $('#memberMobile').val(data.member_info_mobile_no);
 
-                    // Auto select branch
                     $('#branch_id').val(data.branch_id).trigger('change');
                 });
             }
@@ -673,9 +648,9 @@
             amountInput.value = this.value;
 
             if (this.value && parseFloat(this.value) < 100) {
-                msg.classList.remove('hidden'); // show msg if less than 100
+                msg.classList.remove('hidden'); 
             } else {
-                msg.classList.add('hidden'); // hide msg otherwise
+                msg.classList.add('hidden'); 
             }
         });
     </script>
@@ -693,19 +668,15 @@
                 fetch(url)
                     .then(res => res.json())
                     .then(data => {
-                        // ✅ Auto fill
                         document.getElementById('memberName').value = data.member_info_first_name + ' ' + (data
                             .member_info_last_name ?? '');
                         document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
                         document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
 
-                        // ✅ Branch auto select
                         if (data.branch_id) {
                             $('#branch_id').val(data.branch_id).trigger('change');
                         }
 
-
-                        // ✅ Open Date auto fill
                         document.getElementById('date5').value = data.open_date ?? '';
                     })
                     .catch(err => {
@@ -713,7 +684,6 @@
                         alert('Member details could not be fetched.');
                     });
             } else {
-                // Reset fields if no member selected
                 document.getElementById('memberName').value = '';
                 document.getElementById('memberAddress').value = '';
                 document.getElementById('memberMobile').value = '';
@@ -722,41 +692,6 @@
             }
         });
     </script>
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const schemeSelect = document.getElementById('scheme_id');
-            const minAmountNote = document.getElementById('minAmountNote');
-            const depositInput = document.querySelector('input[name="amount_deposit"]'); // Adjust name if different
-
-            function updateMinAmountNote() {
-                const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-                const minAmount = selectedOption.getAttribute('data-min');
-
-                if (minAmount) {
-                    minAmountNote.textContent = `Minimum required amount is ₹${parseFloat(minAmount).toFixed(2)}`;
-
-                    // Optional: Validate amount
-                    if (depositInput) {
-                        const depositVal = parseFloat(depositInput.value);
-                        if (depositVal < parseFloat(minAmount)) {
-                            depositInput.setCustomValidity(
-                                `Minimum required amount for this scheme is ₹${minAmount}`);
-                            depositInput.reportValidity();
-                        } else {
-                            depositInput.setCustomValidity('');
-                        }
-                    }
-                } else {
-                    minAmountNote.textContent = '';
-                }
-            }
-
-            schemeSelect.addEventListener('change', updateMinAmountNote);
-
-            // Trigger on page load if a scheme is pre-selected
-            updateMinAmountNote();
-        });
-    </script> --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -771,29 +706,21 @@
                 if (minAmount && !isNaN(minAmount)) {
                     const amount = parseFloat(minAmount).toFixed(2);
 
-                    // Set value in DD Amount input
                     ddAmountInput.value = amount;
 
-                    // Show updated minimum amount message
                     minAmountMsg.textContent = `Minimum amount to be deposited ₹${amount}`;
                     minAmountMsg.classList.remove('hidden');
 
                 } else {
-                    // If no scheme selected, clear and hide
                     ddAmountInput.value = '';
                     minAmountMsg.textContent = '';
                     minAmountMsg.classList.add('hidden');
                 }
             }
 
-            // Attach change event
             schemeSelect.addEventListener('change', updateDDAmountFromScheme);
 
-            // Trigger on page load (in case of edit form or validation failure)
             updateDDAmountFromScheme();
         });
     </script>
-
-
-
 @endsection
