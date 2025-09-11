@@ -140,15 +140,24 @@
         </div>
 
         <div class="flex flex-wrap gap-3">
-            <button type="" class="btn-primary px-4 py-2 rounded-3xl ">
+            <a href="{{ route('ddsaccounts.installments', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
                 INSTALLMENT PLAN
-            </button>
+            </a>
 
             <a href="{{ route('dds-accounts.transactions', $ddaccount->id) }}"
                 class="btn btn-primary px-4 py-2 rounded-3xl">
                 VIEW TRANSACTIONS
             </a>
 
+            <a href="{{ route('ddsaccounts.createDeposit', $ddaccount->id) }}"
+                class="btn-primary px-4 py-2 rounded-3xl">
+                DEPOSIT MONEY
+            </a>
+
+            <a href="{{ route('ddsaccounts.createDeposit', $ddaccount->id) }}"
+                class="btn-primary px-4 py-2 rounded-3xl">
+                WITHDRAW MONEY
+            </a>
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 ACCOUNT DETAILS
             </button>
@@ -696,7 +705,8 @@
 
                                         <tr>
                                             <td class="font-semibold px-4 py-2">Total Interest (B)</td>
-                                            <td class="px-4 py-2 text-right md:text-left">{{ $ddaccount->interest_earned }}</td>
+                                            <td class="px-4 py-2 text-right md:text-left">
+                                                {{ $ddaccount->interest_earned }}</td>
                                         </tr>
 
                                         <tr>

@@ -12,9 +12,12 @@
         <x-alert />
     </div>
     <div class="flex flex-wrap gap-3 mb-3 text-center">
-        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHARE HOLDINGS</a>
+        <a href="{{ route('member.shareholding', $member->id) }}"
+            class="btn-info rounded-md px-2 py-1 text-white text-sm bg-blue-500 hover:bg-blue-600">
+            SHARE HOLDINGS
+        </a>
 
-        <a href="{{ route('shareholding.transfer.form', $member->id) }}"
+        <a href="{{ url('/share/allocate') }}?member_id={{ $member->id }}"
             class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
             ALLOCATE SHARES
         </a>
@@ -1087,7 +1090,7 @@
                             </div>
                             <div class="flex justify-between py-2 border-b">
                                 <span class="font-medium">State</span>
-                                <span>{{ $member->address?->member_perm_address_state ?? '' }}</span>
+                                <span>{{ $member->state?->name ?? 'Unknown' }}</span>
                             </div>
                             <div class="flex justify-between py-2">
                                 <span class="font-medium">GPS Lat/ Log</span>
@@ -1162,10 +1165,9 @@
     </div>
 @endsection
 <!-- Document Preview Modal -->
-<div id="docModal"
-     class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+<div id="docModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl relative max-w-[90vw] max-h-[90vh]">
-        
+
         <!-- Close Button -->
         <button type="button" onclick="closeDocModal()"
             class="absolute -right-3 -top-3 w-8 h-8 rounded-full bg-white shadow
@@ -1176,16 +1178,14 @@
         <div class="p-3">
             <h3 id="docTitle" class="font-semibold mb-2"></h3>
 
-            <div id="docContainer"
-                 class="w-[80vw] h-[75vh] flex items-center justify-center">
-                 
+            <div id="docContainer" class="w-[80vw] h-[75vh] flex items-center justify-center">
+
                 <!-- Image Preview (Smaller Thumbnail Size) -->
                 <img id="docImg" src="" alt="Document Image"
-                     class="max-h-[200px] max-w-[200px] hidden border rounded shadow-md hover:scale-125 transition-transform duration-300">
-                
+                    class="max-h-[200px] max-w-[200px] hidden border rounded shadow-md hover:scale-125 transition-transform duration-300">
+
                 <!-- PDF Preview -->
-                <iframe id="docPdf" src=""
-                        class="w-full h-full hidden" frameborder="0"></iframe>
+                <iframe id="docPdf" src="" class="w-full h-full hidden" frameborder="0"></iframe>
             </div>
         </div>
     </div>
@@ -1233,5 +1233,3 @@
         if (e.key === 'Escape') closeDocModal();
     });
 </script>
-
-

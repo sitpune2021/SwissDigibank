@@ -487,9 +487,29 @@ return [
             'label' => 'Nominee Relation',
             'name' => 'nominee_relation',
             'id' => 'nominee_relation',
-            'type' => 'text',
+            'type' => 'select', // changed from 'text' to 'select'
             'required' => false,
+            'options' => [
+                '' => 'Select Relation',
+                'father' => 'Father',
+                'mother' => 'Mother',
+                'son' => 'Son',
+                'daughter' => 'Daughter',
+                'spouse' => 'Spouse (Husband/ Wife)',
+                'husband' => 'Husband',
+                'wife' => 'Wife',
+                'brother' => 'Brother',
+                'sister' => 'Sister',
+                'daughter_in_law' => 'Daughter in Law',
+                'brother_in_law' => 'Brother in Law',
+                'grand_daughter' => 'Grand Daughter',
+                'grand_son' => 'Grand Son',
+                'nephew' => 'Nephew',
+                'niece' => 'Niece',
+                'other' => 'Other'
+            ]
         ],
+
         [
             'label' => 'Nominee Mobile No',
             'name' => 'nominee_mobile_no',

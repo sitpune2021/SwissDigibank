@@ -112,6 +112,10 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/ddsaccounts/{ddaccount}/update-branch', [DdsAccountsController::class, 'updateBranch'])->name('ddsaccounts.updateBranch');
 
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
+        Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
+            ->name('ddsaccounts.installments');
+
+        Route::get('/ddsaccount/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])->name('ddsaccounts.createDeposit');
     });
 
     Route::resource('rd-calculator', RDCalculatorController::class)
@@ -127,8 +131,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/member/{id}/mobile', [MemberController::class, 'editmobile'])->name('member.mobile');
         Route::put('/member/{id}/mobile', [MemberController::class, 'updatemobile'])->name('member.updatemobile');
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
-        // Ajax
         Route::get('/ajax/members/search', [MemberController::class, 'search'])->name('ajax.members.search');
+        Route::get('/members/member/{id}/shareholding', [MemberController::class, 'shareholding'])->name('member.shareholding');
+        Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
 
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);
@@ -143,6 +148,9 @@ Route::middleware('auth.user')->group(function () {
     Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
     Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
     Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+    Route::get('/members/{member}/share-holdings', [ShareHoldingController::class, 'index'])
+        ->name('members.share-holdings.index');
+
     Route::resource('form15g15h', Form15Gor15HController::class);
 });
 

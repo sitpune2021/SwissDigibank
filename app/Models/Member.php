@@ -85,6 +85,10 @@ class Member extends Model
         return $this->hasMany(RdTransactions::class);
     }
 
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'member_perm_address_state');
+    }
 
     public function getFullNameAttribute()
     {
@@ -94,4 +98,14 @@ class Member extends Model
                 ($this->member_info_last_name ?? '')
         );
     }
+    public function promotors()
+    {
+        return $this->hasMany(Promotor::class);
+    }
+
+    public function shareHoldings()
+    {
+        return $this->hasMany(ShareHolding::class,'promotor_id');
+    }
+
 }

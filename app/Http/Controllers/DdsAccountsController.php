@@ -230,7 +230,7 @@ class DdsAccountsController extends Controller
             'amount' => 'required|numeric',
             'nominee' => 'required|in:yes,no',
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
-            'dd_amount' => 'required|numeric|min:100',
+            'dd_amount' => 'required|numeric',
         ]);
 
         try {
@@ -407,7 +407,7 @@ class DdsAccountsController extends Controller
                 'advisor_id'            => 'nullable|exists:staff,id',
                 'collection_advisor_id' => 'nullable|exists:staff,id',
                 'scheme_id'             => 'required|exists:schemes,id',
-                'dd_amount'             => 'required|numeric|min:1',
+                'dd_amount'             => 'required|numeric',
                 'open_date'             => 'required|date|before_or_equal:today',
                 'tds_deduction'         => 'nullable|boolean',
                 'account_type'          => ['required', Rule::in(['single', 'joint'])],
@@ -489,16 +489,16 @@ class DdsAccountsController extends Controller
         return back()->with('success', 'Branch updated successfully');
     }
 
-                function calculateMaturity(
-                    $depositAmount,
-                    $installments,
-                    $frequency,
-                    $annualRate,
-                    $bonusRate = 0,
-                    $fixedBonus = 0,
-                    $startDate = null,
-                    $schemeTenureMonths = null
-                ) {
+    function calculateMaturity(
+        $depositAmount,
+        $installments,
+        $frequency,
+        $annualRate,
+        $bonusRate = 0,
+        $fixedBonus = 0,
+        $startDate = null,
+        $schemeTenureMonths = null
+    ) {
         if (strtolower($frequency) !== 'daily') {
             throw new InvalidArgumentException("Only 'daily' frequency is supported.");
         }
@@ -588,4 +588,53 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.transaction-show', compact('ddsAccount', 'transaction'));
     }
+
+    public function installments($id)
+    {
+        $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
+
+        $installmentAmount = $ddaccount->dd_amount;
+        $openDate = Carbon::parse($ddaccount->open_date);
+        $totalInstallments = $ddaccount->total_installments;
+        $frequency = strtolower($ddaccount->rd_dd_frequency);
+
+        $installments = [];
+
+        for ($i = 0; $i < $totalInstallments; $i++) {
+            $dueDate = match ($frequency) {
+                'daily' => $openDate->copy()->addDays($i),
+                'monthly' => $openDate->copy()->addMonths($i),
+                'yearly' => $openDate->copy()->addYears($i),
+                default => $openDate->copy()->addDays($i),
+            };
+
+            $transaction = $ddaccount->transactions->firstWhere(function ($tranx) use ($dueDate) {
+                return Carbon::parse($tranx->transaction_date)->isSameDay($dueDate);
+            });
+
+            $installments[] = [
+                'number'   => $i + 1,
+                'amount'   => number_format($installmentAmount, 2),
+                'due_date' => $dueDate->format('d/m/Y'),
+                'state'    => $transaction ? 'PAID' : '',
+                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d/m/Y') : '',
+            ];
+        }
+
+        return view('fd_account.ddsaccounts.installments', [
+            'ddaccount' => $ddaccount,
+            'installments' => $installments,
+        ]);
+    }
+    public function createDeposit($id)
+    {
+        Log::info('Deposit form requested for DDS account: ' . $id);
+        $ddAccount = DdsAccount::findOrFail($id);
+        $members = Member::all();
+        $installmentReceived = $ddAccount->installment_received;
+        $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
+        $installmentAmount = $ddAccount->dd_amount; 
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable','installmentAmount'));
+    }
+
 }

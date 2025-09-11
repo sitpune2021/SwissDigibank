@@ -124,7 +124,7 @@ class MemberController extends Controller
             'member_info_first_name' => 'required|string|max:255',
             'member_info_middle_name' => 'nullable|string|max:255',
             'member_info_last_name' => 'required|string|max:255',
-            'member_info_dob' => 'required|date|before_or_equal:today',
+            'member_info_dob' => 'required|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
             'member_info_qualification' => 'nullable|string',
             'member_info_occupation' => 'nullable|string',
             'member_info_monthly_income' => 'nullable|numeric',
@@ -132,7 +132,8 @@ class MemberController extends Controller
             'member_info_father_name' => 'nullable|string|max:255',
             'member_info_mother_name' => 'nullable|string|max:255',
             'member_info_spouse_name' => 'nullable|string|max:255',
-            'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
+            'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
+
             'member_info_mobile_no' => 'required|digits:10',
             'member_info_collection_time' => 'nullable|string',
             'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -150,7 +151,7 @@ class MemberController extends Controller
             'member_address_city_district' => 'nullable|string',
             'member_address_state' => 'required|integer',
             'member_address_pincode' => 'required|numeric',
-            'member_address_country' => 'required|string',
+            'member_address_country' => 'required|regex:/^[A-Za-z\s]+$/',
             'member_address_address' => 'nullable|string',
 
             // Permanent Address
@@ -184,7 +185,8 @@ class MemberController extends Controller
             'nominee_relation' => 'nullable|string',
             'nominee_mobile_no' => 'nullable|string',
             'nominee_gender' => 'nullable|in:Male,Female,Other',
-            'nominee_dob' => 'nullable|date|before_or_equal:today',
+            'nominee_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
+
             'nominee_aadhaar_no' => 'nullable|string',
             'nominee_voter_id_no' => 'nullable|string',
             'nominee_pan_no' => 'nullable|string',
@@ -414,7 +416,7 @@ class MemberController extends Controller
                 'member_info_first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'member_info_last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_dob' => 'required|date|before_or_equal:today',
+                'member_info_dob' => 'required|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
                 'member_info_qualification' => 'nullable|string|regex:/^[A-Za-z]+$/',
                 'member_info_occupation' => 'nullable|string|regex:/^[A-Za-z]+$/',
                 'member_info_monthly_income' => 'nullable|numeric',
@@ -422,7 +424,7 @@ class MemberController extends Controller
                 'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_spouse_dob' => 'nullable|date|before_or_equal:today',
+                'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
                 'member_info_mobile_no' => 'required|string|max:10',
                 'member_info_collection_time' => 'nullable|string',
                 'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
@@ -440,7 +442,7 @@ class MemberController extends Controller
                 'member_address_city_district' => 'nullable|string',
                 'member_address_state' => 'required|string',
                 'member_address_pincode' => 'nullable|numeric',
-                'member_address_country' => 'required|string',
+                'member_address_country' => 'required|regex:/^[A-Za-z\s]+$/',
                 'member_address_address' => 'nullable|string',
 
                 // Permanent Address
@@ -469,7 +471,7 @@ class MemberController extends Controller
                 'nominee_relation' => 'nullable|string',
                 'nominee_mobile_no' => 'nullable|string',
                 'nominee_gender' => 'nullable|in:Male,Female,Other',
-                'nominee_dob' => 'nullable|date|before_or_equal:today',
+                'nominee_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
                 'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
                 'nominee_voter_id_no' => 'nullable|string',
                 'nominee_pan_no' => 'nullable|string',
@@ -560,6 +562,62 @@ class MemberController extends Controller
             abort(404);
         }
     }
+    public function shareholding($id)
+    {
+        try {
+            Log::info("Fetching shareholding view for member ID: {$id}");
+
+            $member = Member::findOrFail($id);
+
+            $shareholdings = $member->shareHoldings()->get();
+
+            Log::info("Successfully fetched shareholdings for member ID: {$id}, Total: " . $shareholdings->count());
+
+            return view('members.member.shareholding', compact('member', 'shareholdings'));
+        } catch (\Exception $e) {
+            Log::error("Error fetching shareholding for member ID {$id}: " . $e->getMessage());
+        }
+    }
+
+    public function getShareHoldings($id)
+    {
+        try {
+            Log::info("📥 [getShareHoldings] Requested for Member ID: {$id}");
+
+            $member = Member::findOrFail($id);
+            Log::info("✅ Member found: {$member->name} (ID: {$member->id})");
+
+            $query = $member->shareHoldings();
+
+
+            Log::info("🔍 Executing query: shareHoldings with conditions (transfer_date NOT NULL OR is_surrendered = true)");
+
+            $shareholdings = $query->get();
+
+            Log::info("📊 Found {$shareholdings->count()} matching shareholding records for Member ID: {$id}");
+
+            $formatted = $shareholdings->map(function ($share) {
+                return [
+                    'share_range' => $share->share_from . ' - ' . $share->share_to,
+                    'total_shares' => $share->total_shares,
+                    'nominal_value' => number_format($share->share_nominal, 2),
+                    'total_value' => number_format($share->total_share_value, 2),
+                    'allotment_date' => \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y'),
+                    'transfer_date' => $share->transfer_date ? \Carbon\Carbon::parse($share->transfer_date)->format('d-m-Y') : '-',
+                    'is_surrendered' => $share->is_surrendered,
+                    'id' => $share->id,
+                ];
+            });
+
+            Log::info("✅ Successfully formatted shareholdings. Returning JSON response.");
+
+            return response()->json($formatted);
+        } catch (\Exception $e) {
+            Log::error("❌ Error in getShareHoldings for Member ID {$id}: " . $e->getMessage());
+            return response()->json(['error' => 'Unable to fetch shareholding data'], 500);
+        }
+    }
+
 
     public function addressedit(string $id)
     {

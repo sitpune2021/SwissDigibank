@@ -116,7 +116,7 @@
 
                         <td class="py-3 px-6">
                             <a href="{{ route('member.show', $item->id) }}" class="text-primary hover:underline">
-                                DEMO-{{ $item->member_info_old_member_no ?? 'N/A' }}
+                                DEMO-{{ $item->id ?? 'N/A' }}
                             </a>
                         </td>
                         <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
