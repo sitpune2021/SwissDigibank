@@ -17,13 +17,14 @@ class DdTransaction extends Model
         'credited_in_company',
         'bank_id',
         'cheque_no',
+        'bank_name',
         'cheque_date',
         'saving_account_id',
     ];
 
     public function ddsAccount()
     {
-        return $this->belongsTo(DdsAccount::class, 'dds_account_id'); 
+        return $this->belongsTo(DdsAccount::class, 'dds_account_id');
     }
 
     public function bank()

@@ -1,192 +1,201 @@
 @extends('layout.main')
 
+<style>
+    .breadcrumb {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 14px;
+    }
+
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 8px;
+        color: #888;
+    }
+
+    .breadcrumb li a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .breadcrumb li.active {
+        color: #555;
+    }
+
+    .custom-thead {
+        background-color: #e6f4ea;
+        color: #14532d;
+    }
+
+    .custom-thead th {
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .custom-thead {
+            background-color: #14532d;
+            color: #d1fae5;
+        }
+    }
+
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+    }
+
+    input[type="checkbox"]:checked {
+        background-color: green;
+        border: none;
+    }
+
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+    }
+
+    .tableWidth {
+        width: 90%;
+        margin: auto;
+    }
+
+    .bg-yellow {
+        background-color: #F1BA07;
+    }
+</style>
+
 @section('content')
-    <div class="container-fluid">
-        <h3 class="mb-3">DD - {{ $ddsAccount->id }} | Transactions</h3>
-
-        {{-- Filters --}}
-        <form method="GET" action="{{ route('dds-accounts.transactions', $ddsAccount->id) }}" class="row g-2 mb-3">
-            <div class="box-body">
-                <form class="search-form-2" onsubmit="block_ui()" id="rd_account_transaction_search"
-                    action="/recurring-deposit/accounts/a80ac358-1593-4c29-81de-7d82402f8ea2/transactions"
-                    accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="✓">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="q_tranx_id_cont">Tranx Id :</label>
-                            <input class="form-control" placeholder="Search Tranx Id" autocomplete="off" type="search"
-                                name="q[tranx_id_cont]" id="q_tranx_id_cont">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="q_message_cont">Remarks :</label>
-                            <input class="form-control" placeholder="Search Remarks" autocomplete="off" type="search"
-                                name="q[message_cont]" id="q_message_cont">
-                        </div>
-                    </div>
-
-                    <div class="clearfix"></div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="q_transaction_date_gteq">Transaction Date Range:</label>
-                            <input class="form-control bg-white datepicker-inputmask" placeholder="T Date From (DD/MM/YYYY)"
-                                autocomplete="off" type="search" name="q[transaction_date_gteq]"
-                                id="q_transaction_date_gteq">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="q_transaction_date_lteq">&nbsp;</label>
-                            <input class="form-control bg-white datepicker-inputmask" placeholder="T Date To (DD/MM/YYYY)"
-                                autocomplete="off" type="search" name="q[transaction_date_lteq]"
-                                id="q_transaction_date_lteq">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="q_amount_gteq">Amount Range :</label>
-                            <input class="form-control" placeholder="From Amount" autocomplete="off" type="search"
-                                name="q[amount_gteq]" id="q_amount_gteq">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="q_amount_lteq">&nbsp;</label>
-                            <input class="form-control" placeholder="To Amount" autocomplete="off" type="search"
-                                name="q[amount_lteq]" id="q_amount_lteq">
-                        </div>
-                    </div>
-
-                    <div class="clearfix margin-bottom-10"></div>
-
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success">
-                            <span class="fa fa-search"></span> SEARCH
-                        </button>
-
-                        <a class="btn btn-warning" href="{{ route('dds-accounts.transactions', $ddsAccount->id) }}"
-                            class="btn btn-secondary">Clear</a>
-
-                    </div>
-                </form>
+    <div class="main-inner">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+            <div class="flex items-start flex-col gap-2">
+                <h1 class="text-2xl font-semibold dark:text-white">DD - {{ $ddsAccount->id }}</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm">
+                    <a href="#" class="text-gray-500 dark:text-gray-400">Daily Deposits</a> >
+                    <a href="#" class="text-gray-500 dark:text-gray-400">DD - {{ $ddsAccount->id }}</a> >
+                    <span class="text-gray-500 dark:text-gray-400">Transactions</span>
+                </p>
             </div>
-
-        </form>
-
-        {{-- Table --}}
-        {{-- <div class="card shadow-sm p-3">
-            <table class="table table-bordered table-striped">
-                <thead class="table-light">
-                    <tr>
-                        <th>T. Date</th>
-                        <th>Pay Mode</th>
-                        <th>Remarks</th>
-                        <th>Status</th>
-                        <th>Debit</th>
-                        <th>Credit</th>
-                        <th>Balance</th>
-                        <th>Accounted</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($transactions as $tran)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($tran->transaction_date)->format('d/m/Y') }}</td>
-                            <td>{{ ucfirst($tran->pay_mode) }}</td>
-                            <td>{{ $tran->remarks ?? '-' }}</td>
-                            <td><span class="badge bg-success">Approved</span></td>
-                            <td>{{ number_format($tran->debit ?? 0, 2) }}</td>
-                            <td>{{ number_format($tran->amount, 2) }}</td>
-                            <td>{{ number_format($tran->balance ?? $tran->amount, 2) }}</td>
-                            <td><span class="badge bg-danger">{{ $tran->accounted ? 'Yes' : 'No' }}</span></td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-success">Receipt</a>
-                                <form action="{{ route('dds-accounts.transactions.destroy', $tran->id) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Delete this transaction?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" class="text-center">No transactions found</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
         </div>
-    </div> --}}
-        <div class="box">
-            <div class="box-body table-responsive">
-                <table class="table table-hover table-header">
-                    <thead>
+
+        <div class="">
+            <button class="btn-warning uppercase text-sm rounded-10">
+                Re-generate balance in ledger
+            </button>
+        </div>
+
+        <!-- Filter Form -->
+        <div class="w-full max-w-7xl bg-white dark:bg-gray-900 mt-4 mx-auto p-4 rounded-lg shadow">
+            <form method="GET" action="{{ route('dds-accounts.transactions', $ddsAccount->id) }}"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+                <!-- Tranx Id -->
+                <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tranx Id :</label>
+                    <input type="text" name="q[tranx_id_cont]" placeholder="Search Tranx Id"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
+                </div>
+
+                <!-- Remarks -->
+                <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Remarks :</label>
+                    <input type="text" name="q[message_cont]" placeholder="Search Remarks"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
+                </div>
+
+                <!-- Transaction Date From -->
+                <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Date
+                        From:</label>
+                    <input type="text" name="q[transaction_date_gteq]" placeholder="DD/MM/YYYY"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
+                </div>
+
+                <!-- Transaction Date To -->
+                <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Date
+                        To:</label>
+                    <input type="text" name="q[transaction_date_lteq]" placeholder="DD/MM/YYYY"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
+                </div>
+
+                <!-- Amount From -->
+                <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount From :</label>
+                    <input type="text" name="q[amount_gteq]" placeholder="From Amount"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
+                </div>
+
+                <!-- Amount To -->
+                <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount To :</label>
+                    <input type="text" name="q[amount_lteq]" placeholder="To Amount"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-center gap-4 mt-4">
+                    <button type="submit" class="btn-primary rounded-10 uppercase">
+                        SEARCH
+                    </button>
+                    <a href="{{ route('dds-accounts.transactions', $ddsAccount->id) }}"
+                        class="btn-outline rounded-10 uppercase">
+                        CLEAR FORM
+                    </a>
+                </div>
+            </form>
+        </div>
+        <!-- Table -->
+        <div class="box dark:bg-gray-900 mt-5 shadow rounded-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-700 dark:text-gray-200">
+                    <thead class="bg-secondary/5 text-black uppercase text-lg dark:bg-green-700">
                         <tr>
-                            <th class="px-6 py-4 text-center">T.DATE</th>
-                            <th class="px-6 py-4 text-center">PAY MODE</th>
-                            <th class="px-6 py-4 text-center">REMARKS</th>
-                            <th class="px-6 py-4 text-center"> STATUS</th>
-                            <th class="px-6 py-4 text-center">DEBIT</th>
-                            <th class="px-6 py-4 text-center">CREDIT</th>
-                            <th class="px-6 py-4 text-center">BALANCE</th>
-                            <th class="px-6 py-4 text-center">ACCOUNTED</th>
-                            <th class="px-7 py-4 text-center">ACTIONS</th>
+                            <th class="px-4 py-2 text-start">T. DATE</th>
+                            <th class="px-4 py-2 text-start">PAY MODE</th>
+                            <th class="px-4 py-2 text-start">REMARKS</th>
+                            <th class="px-4 py-2 text-start">STATUS</th>
+                            <th class="px-4 py-2 text-start">DEBIT</th>
+                            <th class="px-4 py-2 text-start">CREDIT</th>
+                            <th class="px-4 py-2 text-start">BALANCE</th>
+                            <th class="px-4 py-2 text-start">ACCOUNTED</th>
+                            <th class="px-4 py-2 text-start">ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($transactions as $tran)
-                            <tr class="popup-gallery">
-                                {{-- Transaction Date --}}
-                                <td class="px-6 py-4 text-center">
-                                    {{ \Carbon\Carbon::parse($tran->transaction_date)->format('d/m/Y') }}</td>
-
-                                {{-- Pay Mode --}}
-                                <td class="px-6 py-4 text-center">{{ ucfirst($tran->pay_mode) }}</td>
-
-                                {{-- Remarks --}}
-                                <td class="px-6 py-4 text-center"> {{ $tran->remarks ?? '-' }}</td>
-
-                                {{-- Status --}}
-                                <td class="px-6 py-4 text-center">
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700">
+                                <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tran->transaction_date)->format('d/m/Y') }}
+                                </td>
+                                <td class="px-4 py-2">{{ ucfirst($tran->pay_mode) }}</td>
+                                <td class="px-4 py-2">{{ $tran->remarks ?? '-' }}</td>
+                                <td class="px-4 py-2">
                                     <span
-                                        class="label {{ $tran->status == 'Approved' ? 'label-success' : 'label-warning' }}">
+                                        class="px-2 py-1 text-xs font-semibold text-white rounded {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
                                         {{ $tran->status ?? 'Pending' }}
                                     </span>
                                 </td>
-
-                                {{-- Debit / Credit / Balance --}}
-                                <td class="px-6 py-4 text-center">{{ $tran->debit ? number_format($tran->debit, 2) : '' }}
+                                <td class="px-4 py-2 text-right">{{ $tran->debit ? number_format($tran->debit, 2) : '' }}
                                 </td>
-                                <td class="px-6 py-3 text-center">{{ number_format($tran->amount, 2) }}</td>
-                                <td class="px-6 py-3 text-center">{{ number_format($tran->balance ?? $tran->amount, 2) }}
+                                <td class="px-4 py-2 text-right">{{ number_format($tran->amount, 2) }}</td>
+                                <td class="px-4 py-2 text-right">{{ number_format($tran->balance ?? $tran->amount, 2) }}
                                 </td>
-
-                                {{-- Accounted --}}
-                                <td class="text-center">
-                                    <span class="label {{ $tran->accounted ? 'label-success' : 'label-danger' }}">
+                                <td class="px-4 py-2 text-center">
+                                    <span
+                                        class="px-2 py-1 text-xs font-semibold text-white rounded {{ $tran->accounted ? 'bg-green-500' : 'bg-red-500' }}">
                                         {{ $tran->accounted ? 'Yes' : 'No' }}
                                     </span>
                                 </td>
-
-                                {{-- Actions --}}
-                                <td class="px-6 py-3 text-center">
-                                    View
+                                <td class="px-4 py-2 text-right space-x-1">
                                     <a href="{{ route('dds-accounts.transactions.show', [$ddsAccount->id, $tran->id]) }}"
                                         class="btn btn-sm btn-info">
                                         <i class="fa fa-eye"></i>
                                     </a>
-
                                     {{-- Print --}}
-                                    {{-- <a class="btn btn-success btn-xs" href="{{ route('dds-accounts.transactions.print', $tran->id) }}"> --}}
                                     <i class="fa fa-print"></i>
-                                    </a>
-
                                     {{-- Delete --}}
                                     <form action="{{ route('dds-accounts.transactions.destroy', $tran->id) }}"
                                         method="POST" style="display:inline">
@@ -201,24 +210,20 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted">No transactions found</td>
+                                <td colspan="9" class="text-center text-muted py-4">No transactions found</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-
-                {{-- Footer --}}
-                {{-- <div class="box-footer clearfix">
-            <div class="pagination-sm no-margin text-center">
-                {{ $transactions->links() }}
             </div>
-        </div> --}}
 
-                {{-- CSV Download --}}
-                <div class="clearfix"></div>
-                {{-- <a class="btn btn-danger btn-xs" href="{{ route('dds-accounts.transactions.export', $ddsAccount->id) }}"> --}}
-                <i class="fa fa-download" aria-hidden="true"></i> &nbsp; DOWNLOAD CSV
-                </a>
+            <!-- Footer -->
+            <div class="mt-5 py-3 px-3 text-start">
+                {{-- <a class="inline-flex items-center btn-error rounded-10 text-sm px-3 py-2"
+               href="{{ route('dds-accounts.transactions.export', $ddsAccount->id) }}">
+                <i class="fa fa-download mr-1"></i> DOWNLOAD CSV
+            </a> --}}
             </div>
         </div>
-    @endsection
+    </div>
+@endsection

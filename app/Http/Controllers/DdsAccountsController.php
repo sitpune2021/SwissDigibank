@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Branch;
@@ -16,6 +15,7 @@ use Illuminate\Validation\Rule;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 
 class DdsAccountsController extends Controller
 {
@@ -72,7 +72,6 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.index', compact('ddaccounts'));
     }
-
 
     public function create()
     {
@@ -162,7 +161,6 @@ class DdsAccountsController extends Controller
 
         $annualInterestRate = $ddaccount->scheme->anuual_interest_rate ?? 0;
 
-        // Call calculateMaturity with logging
         $calculation = $this->calculateMaturity(
             $installmentAmount,
             $totalInstallments,
@@ -218,9 +216,12 @@ class DdsAccountsController extends Controller
             'specialAccount'       => $specialAccount,
         ]);
     }
+
     public function store(Request $request)
     {
-        Log::info('DdsAccountsController@store called');
+
+        Log::info('🔹 DdsAccountsController@store called');
+
         $validated = $request->validate([
             'member_id' => 'required|integer',
             'branch_id' => 'required|integer',
@@ -229,16 +230,17 @@ class DdsAccountsController extends Controller
             'amount' => 'required|numeric',
             'nominee' => 'required|in:yes,no',
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
-            'dd_amount' => 'required|numeric|min:100',
+            'dd_amount' => 'required|numeric',
         ]);
 
         try {
+            Log::info('✅ Validation successful', $validated);
+
             $scheme = Rdscheme::findOrFail($validated['scheme_id']);
-            Log::info('Scheme fetched', ['scheme' => $scheme]);
+            Log::info('✅ Scheme fetched', ['scheme_id' => $scheme->id, 'scheme_name' => $scheme->name ?? 'N/A']);
 
             $depositPerDay = $scheme->min_rd_dd_amount;
 
-            // Tenure days calculate
             if ($scheme->tenure_of_rd_dd_type === 'months') {
                 $days = $scheme->tenure_of_rd_dd_value * 30;
             } elseif ($scheme->tenure_of_rd_dd_type === 'years') {
@@ -246,7 +248,7 @@ class DdsAccountsController extends Controller
             } else {
                 $days = $scheme->tenure_of_rd_dd_value;
             }
-            Log::info('Tenure calculated', ['days' => $days]);
+            Log::info('📅 Tenure calculated', ['days' => $days]);
 
             $rate = $scheme->anuual_interest_rate;
 
@@ -263,6 +265,7 @@ class DdsAccountsController extends Controller
                 default:
                     $installments = 365;
             }
+
             if ($scheme->bonus_rate_type === 'percentage') {
                 $bonusRate = $scheme->bonus_rate_value;
                 $fixedBonus = 0;
@@ -273,15 +276,27 @@ class DdsAccountsController extends Controller
                 $bonusRate = 0;
                 $fixedBonus = 0;
             }
+
             $calculation = $this->calculateMaturity(
-                $depositPerDay,
+                $request->dd_amount,
                 $installments,
-                $scheme->rd_dd_frequency,
+                'daily',
                 $rate,
                 $bonusRate,
                 $fixedBonus,
                 $request->open_date
             );
+
+            sleep(5);
+
+            $total_deposit          = $calculation['total_deposit'];
+            $interest_earned        = $calculation['interest_earned'];
+            $bonus                  = $calculation['bonus'];
+            $maturity               = $calculation['maturity'];
+            $maturity_date          = $calculation['maturity_date'];
+
+            Log::info('📈 Maturity calculated', $calculation);
+
             $ddsAccount = new DdsAccount();
             $ddsAccount->member_id = $request->member_id;
             $ddsAccount->branch_id = $request->branch_id;
@@ -294,16 +309,44 @@ class DdsAccountsController extends Controller
             $ddsAccount->rd_dd_frequency = $scheme->rd_dd_frequency;
             $ddsAccount->total_installments = $installments;
             $ddsAccount->maturity_amount = $calculation['maturity'];
+
+            $ddsAccount->member_name = $request->member_name;
+            $ddsAccount->member_mobile = $request->member_mobile;
+            $ddsAccount->member_address = $request->member_address;
+            $ddsAccount->total_deposit = $calculation['total_deposit'];
+            $ddsAccount->interest_earned = $calculation['interest_earned'];
+            $ddsAccount->bonus = $calculation['bonus'];
+            $ddsAccount->maturity = $calculation['maturity'];
+            $ddsAccount->paid_installments     = 1;
+            $ddsAccount->due_installments      = 0;
+            $ddsAccount->overdue_installments  = 0;
+            $ddsAccount->canceled_installments = 0;
+            $ddsAccount->not_due_installments  = $ddsAccount->total_installments - 1;
             $ddsAccount->maturity_date = \Carbon\Carbon::createFromFormat('d-m-Y', $calculation['maturity_date'])->format('Y-m-d');
             $ddsAccount->save();
+
+            Log::info('✅ DDS Account created', ['dds_account_id' => $ddsAccount->id]);
+
             $transaction = new DdTransaction();
             $transaction->dds_account_id = $ddsAccount->id;
             $transaction->transaction_date = now()->format('Y-m-d');
             $transaction->amount = $request->amount;
             $transaction->account_id = null;
             $transaction->pay_mode = $request->pay_mode;
+
+            $transaction->transfer_date = now()->format('Y-m-d');
+            $transaction->transfer_mode = $request->transfer_mode;
+            $transaction->utr_no = $request->utr_no;
+            $transaction->credited_in_company = $request->credited_in_company;
+            $transaction->cheque_no = $request->cheque_no;
+            $transaction->cheque_date = now()->format('Y-m-d');
+            $transaction->bank_name = $request->bank_name;
+            $transaction->saving_account_id = $request->saving_account_id;
             $transaction->save();
-            Log::info('First transaction saved', ['transaction_id' => $transaction->id]);
+
+            Log::info('✅ Transaction saved', ['transaction_id' => $transaction->id, 'pay_mode' => $transaction->pay_mode]);
+
+            Log::debug('📦 Full transaction request payload', $request->all());
 
             if ($request->nominee === "yes" && $request->has('nominee_name')) {
                 $totalNominees = count(array_filter($request->nominee_name));
@@ -320,19 +363,22 @@ class DdsAccountsController extends Controller
                         ]);
                     }
                 }
+
+                Log::info('👥 Nominees added', ['total_nominees' => $totalNominees]);
             }
 
             return redirect()->route('dds-accounts.index')
                 ->with('success', 'DDS Account created successfully!');
         } catch (ValidationException $e) {
-            // rethrow so Laravel handles it (shows validation errors in the view)
             throw $e;
         } catch (\Exception $e) {
-            Log::error("DDS Store Error: " . $e->getMessage());
-            return back()->withInput()->withErrors(['error' => 'Something went wrong. Please try again.']);
+            Log::error('❌ DDS Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->withInput()->withErrors([
+                'error' => 'Something went wrong. Please try again.',
+                'exception' => $e->getMessage(),
+            ]);
         }
     }
-
 
     public function edit(DdsAccount $ddaccount)
     {
@@ -361,7 +407,7 @@ class DdsAccountsController extends Controller
                 'advisor_id'            => 'nullable|exists:staff,id',
                 'collection_advisor_id' => 'nullable|exists:staff,id',
                 'scheme_id'             => 'required|exists:schemes,id',
-                'dd_amount'             => 'required|numeric|min:1',
+                'dd_amount'             => 'required|numeric',
                 'open_date'             => 'required|date|before_or_equal:today',
                 'tds_deduction'         => 'nullable|boolean',
                 'account_type'          => ['required', Rule::in(['single', 'joint'])],
@@ -443,26 +489,24 @@ class DdsAccountsController extends Controller
         return back()->with('success', 'Branch updated successfully');
     }
 
-    function calculateMaturity($depositAmount, $installments, $frequency, $annualRate, $bonusRate = 0, $fixedBonus = 0, $startDate = null, $schemeTenureMonths = null)
-    {
-        $totalDeposit = $depositAmount * $installments;
-        $interest = 0;
-
-        switch (strtolower($frequency)) {
-            case 'daily':
-                $days = $installments;
-                $interest = ($depositAmount * $days * ($days + 1) * $annualRate) / (2 * 100 * 365);
-                break;
-            case 'monthly':
-                $months = $installments;
-                $interest = ($depositAmount * $months * ($months + 1) * $annualRate) / (2 * 100 * 12);
-                break;
-            case 'yearly':
-                $years = $installments;
-                $interest = ($depositAmount * $years * ($years + 1) * $annualRate) / (2 * 100);
-                break;
+    function calculateMaturity(
+        $depositAmount,
+        $installments,
+        $frequency,
+        $annualRate,
+        $bonusRate = 0,
+        $fixedBonus = 0,
+        $startDate = null,
+        $schemeTenureMonths = null
+    ) {
+        if (strtolower($frequency) !== 'daily') {
+            throw new InvalidArgumentException("Only 'daily' frequency is supported.");
         }
 
+        $totalDeposit = $depositAmount * $installments;
+
+        $days = $installments;
+        $interest = ($depositAmount * $days * ($days + 1) * $annualRate) / (2 * 100 * 365);
         $interest = round($interest, 2);
 
         $bonus = 0;
@@ -478,22 +522,9 @@ class DdsAccountsController extends Controller
         $maturityDate = null;
         if ($startDate) {
             $date = Carbon::parse($startDate);
-
-            switch (strtolower($frequency)) {
-                case 'daily':
-                    $date->addDays($installments);
-                    break;
-                case 'monthly':
-                    $date->addMonths($installments);
-                    break;
-                case 'yearly':
-                    $date->addYears($installments);
-                    break;
-            }
-
+            $date->addDays($installments);
             $maturityDate = $date->format('d-m-Y');
         }
-
 
         return [
             'total_deposit'   => round($totalDeposit, 2),
@@ -503,7 +534,6 @@ class DdsAccountsController extends Controller
             'maturity_date'   => $maturityDate,
         ];
     }
-
 
     public function transactions(Request $request, $id)
     {
@@ -558,4 +588,53 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.transaction-show', compact('ddsAccount', 'transaction'));
     }
+
+    public function installments($id)
+    {
+        $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
+
+        $installmentAmount = $ddaccount->dd_amount;
+        $openDate = Carbon::parse($ddaccount->open_date);
+        $totalInstallments = $ddaccount->total_installments;
+        $frequency = strtolower($ddaccount->rd_dd_frequency);
+
+        $installments = [];
+
+        for ($i = 0; $i < $totalInstallments; $i++) {
+            $dueDate = match ($frequency) {
+                'daily' => $openDate->copy()->addDays($i),
+                'monthly' => $openDate->copy()->addMonths($i),
+                'yearly' => $openDate->copy()->addYears($i),
+                default => $openDate->copy()->addDays($i),
+            };
+
+            $transaction = $ddaccount->transactions->firstWhere(function ($tranx) use ($dueDate) {
+                return Carbon::parse($tranx->transaction_date)->isSameDay($dueDate);
+            });
+
+            $installments[] = [
+                'number'   => $i + 1,
+                'amount'   => number_format($installmentAmount, 2),
+                'due_date' => $dueDate->format('d/m/Y'),
+                'state'    => $transaction ? 'PAID' : '',
+                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d/m/Y') : '',
+            ];
+        }
+
+        return view('fd_account.ddsaccounts.installments', [
+            'ddaccount' => $ddaccount,
+            'installments' => $installments,
+        ]);
+    }
+    public function createDeposit($id)
+    {
+        Log::info('Deposit form requested for DDS account: ' . $id);
+        $ddAccount = DdsAccount::findOrFail($id);
+        $members = Member::all();
+        $installmentReceived = $ddAccount->installment_received;
+        $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
+        $installmentAmount = $ddAccount->dd_amount; 
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable','installmentAmount'));
+    }
+
 }

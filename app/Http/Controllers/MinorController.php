@@ -24,12 +24,13 @@ class MinorController extends Controller
     public function create(Request $request)
     {
         try {
-            $memberId = $request->member_id ?? session('member_id');
+            // $memberId = $request->member_id ?? session('member_id');
+            // $memberId = $request->member_id ?? session('member_id');
             $type = $request->type ?? session('type');
 
-            if (!$memberId || !Member::find($memberId)) {
-                return redirect()->back()->with('error', 'Invalid Member ID');
-            }
+            // if (!$memberId || !Member::find($memberId)) {
+            //     return redirect()->back()->with('error', 'Invalid Member ID');
+            // }
 
             $sections = config('minor_form');
             $minor = null;
@@ -145,23 +146,25 @@ class MinorController extends Controller
         // detect type
         $type = null;
         $memberId = null;
+        $promotorId = null;
 
         if (!empty($minor->member_id)) {
             $type = 'member';
             $memberId = $minor->member_id;
         } elseif (!empty($minor->promotor_id)) {
+            $promotorId = $minor->promotor_id;
             $type = 'promotor';
         }
 
         // Debug check
         // dd($type, $memberId);
 
-        return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId'));
+        return view('members.minor.create', compact('sections', 'minor', 'route', 'type', 'method', 'memberId', 'promotorId'));
     }
 
     public function update(Request $request, string $id)
     {
-        try {
+        
             $type = $request->type;
 
             Log::info('Minor Update Request Received', [
@@ -192,7 +195,7 @@ class MinorController extends Controller
                 return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
             }
 
-
+try {
             // ✅ Format dates
             $data['dob'] = date('Y-m-d', strtotime($data['dob']));
             $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
@@ -206,11 +209,11 @@ class MinorController extends Controller
                 'updated_data' => $data
             ]);
 
-            if ($data['member_id']) {
+            if (isset($data['member_id']) && $data['member_id']) {
                 return redirect()->route('member.show', $data['member_id'])
                     ->with('success', 'Minor updated successfully.');
-            } elseif ($data['promotor_id']) {
-                return redirect()->route('promoter.show', $data['promotor_id'])
+            } elseif (isset($data['promotor_id']) && $data['promotor_id']) {
+                return redirect()->route('promotor.show', base64_encode($data['promotor_id']))
                     ->with('success', 'Minor updated successfully.');
             }
 
@@ -231,7 +234,6 @@ class MinorController extends Controller
             return redirect()->back()->with('error', 'Failed to update minor: ' . $e->getMessage());
         }
     }
-
 
     public function destroy(string $id) {}
 }

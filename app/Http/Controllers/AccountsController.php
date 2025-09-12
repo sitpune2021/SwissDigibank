@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Helpers\AccountsTransactionsHelper;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AccountsController extends Controller
 {
@@ -33,7 +35,7 @@ class AccountsController extends Controller
             return view('saving-current-ac.accounts.index', compact('Accounts'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -77,9 +79,8 @@ class AccountsController extends Controller
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -87,8 +88,8 @@ class AccountsController extends Controller
 
     public function store(Request $request)
     {
-
         try {
+            Log::info('Account store request started', ['request_data' => $request->all()]);
 
             $rules = [
                 'account_type'  => 'required|in:saving,current',
@@ -114,106 +115,131 @@ class AccountsController extends Controller
                 $rules['nominee_address'] = 'required|string|max:500';
             }
 
-            // ✅ Validate input
+            if ($request->payment_mode === 'online') {
+                $rules['pay1_transfer_utr'] = 'required|string|max:50';
+                $rules['transfer_mode'] = 'nullable|string|max:50';
+                $rules['credited'] = 'nullable|numeric|max:100';
+            }
+
+            if ($request->payment_mode === 'cheque') {
+                $rules['pay1_bank'] = 'required|string|max:50';
+                $rules['pay1_cheque_no'] = 'required|numeric';
+                $rules['pay1_cheque_date'] = 'nullable|date';
+            }
+
+            Log::info('Validating request data');
             $validated = $request->validate($rules);
+            Log::info('Validation passed', ['validated' => $validated]);
 
-            // ✅ Check scheme minimum amount
             $scheme = \App\Models\Scheme::find($validated['scheme_id']);
-
             if ($scheme && $validated['amount'] < $scheme->min_opening_balance) {
+                Log::warning('Amount less than scheme min balance', [
+                    'entered_amount' => $validated['amount'],
+                    'min_balance'    => $scheme->min_opening_balance,
+                ]);
                 return back()->withErrors([
                     'amount' => 'Minimum required amount for this scheme is ₹' . $scheme->min_opening_balance,
                 ])->withInput();
             }
 
-            // ✅ Create account
+            DB::beginTransaction();
+            Log::info('DB transaction started');
 
-            try {
-                DB::beginTransaction();
+            $account = Account::create([
+                'account_type'          => $request->account_type,
+                'account_no'            => rand(100000, 999999), // Temporary
+                'firm_name'             => $request->firm_d,
+                'member_id'             => $request->member_id,
+                'branch_id'             => $request->branch_id,
+                'advisor_id'            => $request->advisor_id,
+                'scheme_id'             => $request->scheme_id,
+                'open_date'             => Carbon::parse($request->open_date)->format('Y-m-d'),
+                'amount_deposit'        => $request->amount,
+                'account_holder_type'   => $request->account_holder_type,
+                'joint_member1'         => $request->member_id_one,
+                'joint_member2'         => $request->member_id_two,
+                'mode_of_operation'     => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
+                'payment_mode'          => $request->payment_mode,
+                'transaction_date'      => Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s'),
+            ]);
 
-                $account = Account::create([
-                    'account_type'          => $request->account_type,
-                    'account_no'            => rand(100000, 999999), // Temporary
-                    'firm_name'             => $request->firm_d,
-                    'member_id'             => $request->member_id,
-                    'branch_id'             => $request->branch_id,
-                    'advisor_id'            => $request->advisor_id,
-                    'scheme_id'             => $request->scheme_id,
-                    'open_date'             => Carbon::parse($request->open_date)->format('Y-m-d'),
-                    'amount_deposit'        => $request->amount,
-                    'account_holder_type'   => $request->account_holder_type,
-                    'joint_member1'         => $request->member_id_one,
-                    'joint_member2'         => $request->member_id_two,
-                    'mode_of_operation'     => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
-                    'payment_mode'          => $request->payment_mode,
-                    'transaction_date'      => Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s'),
-                ]);
 
-                $account->account_no = 'SA' . str_pad($account->id, 6, '0', STR_PAD_LEFT);
-                $account->save();
+            Log::info('Account created', ['account_id' => $account->id]);
 
-                // Save nominee(s)
-                if ($request->nominee === 'yes') {
-                    AccountNominee::create([
-                        'account_id'        => $account->id,
-                        'nominee_name'      => $request->nominee_name,
-                        'nominee_relation'  => $request->nominee_relation,
-                        'nominee_address'   => $request->nominee_address,
-                        'share_percentage'  => 100.00,
-                    ]);
+            $account->account_no = 'SA' . str_pad($account->id, 6, '0', STR_PAD_LEFT);
+            $account->save();
+            Log::info('Account number updated', ['account_no' => $account->account_no]);
 
-                    if (is_array($request->additional_nominee_name)) {
-                        $count = count($request->additional_nominee_name);
-
-                        foreach ($request->additional_nominee_name as $index => $name) {
-                            if (trim($name) !== '') {
-                                AccountNominee::create([
-                                    'account_id'        => $account->id,
-                                    'nominee_name'      => $name,
-                                    'nominee_relation'  => $request->additional_nominee_relation[$index] ?? '',
-                                    'nominee_address'   => $request->additional_nominee_address[$index] ?? '',
-                                    'share_percentage'  => round(100 / ($count + 1), 2),
-                                ]);
-                            }
-                        }
-
-                        // Update primary nominee share
-                        AccountNominee::where('account_id', $account->id)
-                            ->where('nominee_name', $request->nominee_name)
-                            ->update(['share_percentage' => round(100 / ($count + 1), 2)]);
-                    }
-                }
-
-                // Save initial transaction
-                Transaction::create([
+            if ($request->nominee === 'yes') {
+                Log::info('Saving nominee data');
+                AccountNominee::create([
                     'account_id'        => $account->id,
-                    'payment_mode'      => $request->payment_mode,
-                    'amount'            => $request->amount,
-                    'transaction_type'  => 'credit',
-                    'transaction_date'  => now(),
-                    'approve_status'    => 'pending',
-                    'comment'           => 'Opening deposit',
-                    // Optional fields (uncomment if needed)
-                    // 'utr_number'        => $request->utr_number ?? null,
-                    // 'transfer_mode'     => $request->transfer_mode ?? null,
-                    // 'transfer_date'     => $request->transfer_date ?? null,
-                    // 'credited_in'       => $request->credited_in ?? null,
-                    // 'bank_name'         => $request->bank_name ?? null,
-                    // 'cheque_no'         => $request->cheque_no ?? null,
-                    // 'cheque_date'       => $request->cheque_date ?? null,
+                    'nominee_name'      => $request->nominee_name,
+                    'nominee_relation'  => $request->nominee_relation,
+                    'nominee_address'   => $request->nominee_address,
+                    'share_percentage'  => 100.00,
                 ]);
 
-                DB::commit();
-
-                return redirect()->route('accounts.show', base64_encode($account->id))
-                    ->with('success', 'Account added successfully.');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
+                if (is_array($request->additional_nominee_name)) {
+                    foreach ($request->additional_nominee_name as $index => $name) {
+                        if (trim($name) !== '') {
+                            AccountNominee::create([
+                                'account_id'        => $account->id,
+                                'nominee_name'      => $name,
+                                'nominee_relation'  => $request->additional_nominee_relation[$index] ?? '',
+                                'nominee_address'   => $request->additional_nominee_address[$index] ?? '',
+                                'share_percentage'  => round(100 / (count($request->additional_nominee_name) + 1), 2),
+                            ]);
+                        }
+                    }
+                    Log::info('Additional nominees saved');
+                }
             }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
-        } 
+
+            Log::info('Creating initial transaction', ['payment_mode' => $request->payment_mode]);
+            Transaction::create([
+                'account_id'        => $account->id,
+                'payment_mode'      => $request->payment_mode,
+                'amount'            => $request->amount,
+                'transaction_type'  => 'credit',
+                'transaction_date'  => now(),
+                'approve_status'    => 'pending',
+                'comment'           => 'Opening deposit',
+                'utr_number'        => $request->pay1_transfer_utr ?? null,
+                'transfer_mode'     => $request->transfer_mode ?? null,
+                'transfer_date'     => $request->pay1_transfer_date
+                    ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d')
+                    : null,
+                'credited_in'       => $request->credited ?? null,
+                'bank_name'         => $request->pay1_bank ?? null,
+                'cheque_no'         => $request->pay1_cheque_no ?? null,
+                'cheque_date'       => $request->pay1_cheque_date
+                    ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d')
+                    : null,
+            ]);
+
+            Log::info('Transaction payload', [
+                'transfer_mode' => $request->transfer_mode,
+                'transfer_date' => $request->pay1_transfer_date,
+            ]);
+
+            Log::info('Transaction saved successfully');
+
+            DB::commit();
+            Log::info('DB transaction committed');
+
+            return redirect()->route('accounts.show', base64_encode($account->id))
+                ->with('success', 'Please approve status!.');
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in store account', [
+                'error_message' => $e->getMessage(),
+                'trace'         => $e->getTraceAsString(),
+            ]);
+            return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -235,7 +261,7 @@ class AccountsController extends Controller
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function show(string $id)
     {
@@ -251,7 +277,7 @@ class AccountsController extends Controller
             return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
