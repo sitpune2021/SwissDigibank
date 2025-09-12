@@ -7,6 +7,8 @@ use App\Models\Promotor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use App\Models\Member;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ShareHoldingController extends Controller
@@ -44,10 +46,10 @@ class ShareHoldingController extends Controller
             return view('company.share-holdings.manage-shareholding', compact('share_holdings', 'dynamicOptions', 'transfoer'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
-
-    public function create()
+    
+     public function create()
     {
         try {
             $shareholding = null;
@@ -103,7 +105,7 @@ class ShareHoldingController extends Controller
             return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function show($id)
@@ -121,7 +123,7 @@ class ShareHoldingController extends Controller
             return view('company.share-holdings.add-shares', compact('shareholding', 'show', 'formFields', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function edit($id)
     {
@@ -137,7 +139,7 @@ class ShareHoldingController extends Controller
             return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'formFields', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
         // return view('branch.add-branch', compact('branch', 'states'));
     }
     public function update(Request $request, $id)

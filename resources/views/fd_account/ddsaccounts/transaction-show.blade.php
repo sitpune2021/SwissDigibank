@@ -47,7 +47,7 @@
 
             <tr>
                 <th class="font-semibold px-4 py-2"> Transaction Type</th>
-                <td class="font-semibold px-4 py-2">{{ ucfirst($transaction->transaction_type ?? 'credit') }}</td>
+                <td class="font-semibold px-4 py-2">{{ ucfirst($transaction->transaction_type ?? '') }}</td>
             </tr>
 
             <tr>

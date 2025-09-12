@@ -32,7 +32,8 @@ class Account extends Model
         'member_info_first_name',
         'member_info_middle_name',
         'member_info_last_name',
-        'member_address_line_1'
+        'member_address_line_1',
+        
     ];
 
     public function members()

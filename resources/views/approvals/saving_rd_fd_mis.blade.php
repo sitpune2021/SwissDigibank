@@ -54,9 +54,11 @@
 
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Status
+                                <label for="selectAllStatus">Status</label>
+                                <input type="checkbox" id="selectAllStatus" class="form-checkbox h-4 w-4 text-green-500">
                             </div>
                         </th>
+
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 Remarks
@@ -105,3 +107,19 @@
     <x-pagination :paginator="$pending_transactions" />
 </div>
 @endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const approveAllCheckbox = document.getElementById('selectAllStatus');
+        const allSelects = document.querySelectorAll('.select-transaction-status');
+
+        approveAllCheckbox.addEventListener('change', function() {
+            allSelects.forEach(select => {
+                if (approveAllCheckbox.checked) {
+                    select.value = '1'; 
+                } else {
+                    select.value = 'pending'; 
+                }
+            });
+        });
+    });
+</script>
