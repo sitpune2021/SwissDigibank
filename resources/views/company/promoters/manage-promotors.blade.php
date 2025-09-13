@@ -82,8 +82,7 @@
                 @foreach ($promotors as $promotor)
                 <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                     <td class="py-5 px-6">
-                        <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
-                            {{-- class="text-blue-500 hover:underline"> --}}
+                        <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
                             class="text-primary hover:underline">
                             DEMO-{{ $promotor->folio_no ?? ''}}
                         </a>

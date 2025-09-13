@@ -54,15 +54,15 @@
                         <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_advisor_staff ?? '-' }}</td>
                         <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_group ?? '-' }}</td>
                         <td class="px-6 py-4 text-center">
-                            <a href="{{ route('dds-accounts.show', $ddaccount->id) }}"
+                            <a href="{{ $ddaccount?->id ? route('dds-accounts.show', $ddaccount->id) : '#' }}"
                                 class="text-primary hover:underline">
                                 DDA {{ $ddaccount->id }}
                             </a>
                         </td>
 
-                        <td class="px-6 py-4 text-center"><a href="{{ route('member.show', $ddaccount->member->id) }}"
+                        <td class="px-6 py-4 text-center"><a href="{{ $ddaccount?->member?->id ? route('member.show', $ddaccount->member->id) : '#' }}"
                                 class="text-primary hover:underline">
-                                DEMO {{ $ddaccount->member->id ?? 'N/A' }}
+                                DEMO-{{ $ddaccount->member->id ?? 'N/A' }}
                             </a>
                         </td>
                         <td class="px-6 py-4 text-center">

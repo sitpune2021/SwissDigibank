@@ -84,6 +84,7 @@
 @section('content')
     @include('fields.errormessage')
     <div class="box mb-4 xxxl:mb-6">
+
         <form action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST"
             class="grid grid-cols-2 gap-4 xxxl:gap-6" enctype="multipart/form-data">
             @csrf
@@ -93,7 +94,7 @@
             @foreach ($sections as $sectionName => $fields)
                 {{-- Section Heading --}}
                 @if ($sectionName && (!isset($member) || $sectionName != 'member_KYC_documents'))
-                    <div class="col-span-2">
+                    <div class="col-span-2 {{ str_replace('_', ' ', $sectionName) }}">
                         <h3 class="text-xl font-semibold text-center text-gray-800 mb-4 capitalize">
                             {{ str_replace('_', ' ', $sectionName) }}
                         </h3>
@@ -445,7 +446,7 @@
                                 );
                             }
                         @endphp
-                        <div class="col-span-4 md:col-span-1">
+                        <div class="col-span-4 md:col-span-1 {{ str_replace('_', ' ', $sectionName) }}" >
                             @include('fields.label', [
                                 'id' => $id,
                                 'label' => $label,
@@ -469,6 +470,7 @@
                 @endif
             @endforeach
 
+
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (isset($method))
                     <button class="btn-primary" type="submit">
@@ -484,4 +486,28 @@
             </div>
         </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.online, .cheque').hide(); 
+
+            $('input[name="charges_pay_mode"]').change(function() {
+                var selectedValue = $(this).val(); 
+
+                if (selectedValue === 'online') {
+                    $('.online').show(); 
+                    $('.cheque').hide(); 
+                }
+                else if (selectedValue === 'cheque') {
+                    $('.cheque').show();
+                    $('.online').hide(); 
+                }
+                else if (selectedValue === 'cash') {
+                    $('.online').hide(); 
+                    $('.cheque').hide(); 
+                }
+            });
+        });
+    </script>
 @endsection

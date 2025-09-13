@@ -87,7 +87,7 @@
                     <td class="py-3 px-6">{{ $item->general_group }}</td>
 
                     <td class="py-3 px-6">
-                        <a href="{{ route('member.show', $item->id) }}" class="text-primary hover:underline">
+                        <a href="{{ $item?->id ? route('member.show', $item->id) : '#' }}" class="text-primary hover:underline">
                             DEMO-{{ $item->id ?? 'N/A' }}
                         </a>
                     </td>

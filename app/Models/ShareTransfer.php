@@ -33,4 +33,5 @@ class ShareTransfer extends Model
    {
       return $this->belongsTo(Promotor::class, 'transferor_id');
    }
+   
 }

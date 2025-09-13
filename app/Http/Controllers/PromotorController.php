@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class PromotorController extends Controller
 {
@@ -94,11 +95,11 @@ class PromotorController extends Controller
                 'mobile' => 'required|digits:10|unique:promotors,mobile',
                 'sms' => 'boolean',
 
-                'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-                'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
-                'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
-                'ration_card_no' => 'nullable|string|max:20',
-                'meter_no' => 'nullable|string|max:20',
+                'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:promotor_k_y_c_s,aadhaar_no',
+                'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/|unique:promotor_k_y_c_s,voter_id_no',
+                'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|unique:promotor_k_y_c_s,pan_no',
+                'ration_card_no' => 'nullable|string|max:20|unique:promotor_k_y_c_s,ration_card_no',
+                'meter_no' => 'nullable|string|max:20|unique:promotor_k_y_c_s,meter_no',
                 'ci_no' => 'nullable|string|max:20',
                 'ci_relation' => 'nullable|string|max:50',
                 'dl_no' => 'nullable|string|max:20',
@@ -255,6 +256,8 @@ class PromotorController extends Controller
     public function update(Request $request, $id)
     {
         try {
+
+            $promotor = Promotor::findOrFail($id);
             $validated = $request->validate([
                 'enrollment_date' => 'required|date|before_or_equal:today',
                 'title' => 'required|string|max:10',
@@ -275,11 +278,39 @@ class PromotorController extends Controller
                 'sms' => 'boolean',
 
                 // KYC fields
-                'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-                'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
-                'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
-                'ration_card_no' => 'nullable|string|max:20',
-                'meter_no' => 'nullable|string|max:20',
+                // 'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+                // 'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
+                // 'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
+                // 'ration_card_no' => 'nullable|string|max:20',
+                // 'meter_no' => 'nullable|string|max:20',
+                'aadhaar_no' => [
+                    'required',
+                    'digits:12',
+                    'regex:/^[2-9]{1}[0-9]{11}$/',
+                    Rule::unique('promotor_k_y_c_s', 'aadhaar_no')->ignore(optional($promotor->kyc)->id),
+                ],
+                'voter_id_no' => [
+                    'nullable',
+                    'regex:/^[A-Z]{3}[0-9]{7}$/',
+                    Rule::unique('promotor_k_y_c_s', 'voter_id_no')->ignore(optional($promotor->kyc)->id),
+                ],
+                'pan_no' => [
+                    'required',
+                    'regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
+                    Rule::unique('promotor_k_y_c_s', 'pan_no')->ignore(optional($promotor->kyc)->id),
+                ],
+                'ration_card_no' => [
+                    'nullable',
+                    'string',
+                    'max:20',
+                    Rule::unique('promotor_k_y_c_s', 'ration_card_no')->ignore(optional($promotor->kyc)->id),
+                ],
+                'meter_no' => [
+                    'nullable',
+                    'string',
+                    'max:20',
+                    Rule::unique('promotor_k_y_c_s', 'meter_no')->ignore(optional($promotor->kyc)->id),
+                ],
                 'ci_no' => 'nullable|string|max:20',
                 'ci_relation' => 'nullable|string|max:50',
                 'dl_no' => 'nullable|string|max:20',
@@ -296,9 +327,6 @@ class PromotorController extends Controller
 
             try {
                 DB::beginTransaction();
-
-
-                $promotor = Promotor::findOrFail($id);
 
                 // Update promotor
                 $promotor->update([

@@ -85,7 +85,7 @@
                 @forelse($share_holdings as $index => $share)
                 <tr>
                     <td class="px-6 py-4">
-                        <a href="{{route('promotor.show',base64_encode($share->promotor->id))}}" class="text-primary hover:underline">
+                        <a href="{{ $share?->promotor?->id ? route('promotor.show', base64_encode($share->promotor->id)) : '#' }}" class="text-primary hover:underline">
                           DEMO-{{ $share->promotor->id ?? 'N/A' }}-{{ $share->promotor->first_name ?? 'N/A' }}
                         </a>
                     </td>
@@ -127,7 +127,7 @@
             'dynamic' => true,
             'options_key' => 'promoter',
             ];
-            $name = 'is_transfer'; // Define this for the @error directive
+            $name = 'is_transfer'; 
             @endphp
             <form action="{{ route('shareholding.transfer') }}" method="POST" class="flex items-center justify-center gap-4 xl:gap-6">
                 @csrf

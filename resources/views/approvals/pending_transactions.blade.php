@@ -98,16 +98,19 @@
                             <td class="py-5 px-6">{{ $pending_transaction->accounts?->branch?->branch_name ?? '' }}</td>
                             <td class="py-5 px-6"></td>
                             <td class="py-5 px-6">
-                                <a href="{{route('member.show',$pending_transaction->accounts->members->id)}}" class="text-primary underline hover:text-primary/80">{{ $pending_transaction->accounts?->members?->member_info_first_name ?? ''  }}</a>
+                                <a href="{{ $pending_transaction->accounts?->members?->id 
+                 ? route('member.show', $pending_transaction->accounts->members->id) 
+                 : '#' }}"
+                                    class="text-primary underline hover:text-primary/80">{{ $pending_transaction->accounts?->members?->member_info_first_name ?? ''  }}</a>
                             </td>
                             <td class="py-5 px-6">{{ $pending_transaction?->accounts?->account_type?? '' }}</td>
                             <td class="py-5 px-6">
-                                <a href="{{route('accounts.show',base64_encode($pending_transaction->accounts->id))}}" class="text-primary underline hover:text-primary/80">
+                                <a href="{{ $pending_transaction?->accounts ? route('accounts.show', base64_encode($pending_transaction->accounts->id)) : '#' }}" class="text-primary underline hover:text-primary/80">
                                     {{ $pending_transaction?->accounts?->account_no?? ''  }}
                                 </a>
                             </td>
                             <td class="py-5 px-6">
-                                <a href="" class="text-primary underline hover:text-primary/80">View</a>
+                                <a href="{{ $pending_transaction ? route('transaction.show', base64_encode($pending_transaction->id)) : '#' }}" class="text-primary underline hover:text-primary/80">View</a>
                             </td>
                             <td class="py-5 px-6">
                                 {{ $pending_transaction->transaction_date ? \Carbon\Carbon::parse($pending_transaction->transaction_date)->format('D M d Y') : '' }}

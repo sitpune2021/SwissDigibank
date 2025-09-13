@@ -140,7 +140,6 @@ class AccountTransactionController extends Controller
         try {
             $decryptedId = base64_decode($id);
             $transactions = Transaction::with('accounts')->findOrFail($decryptedId);
-
             return view('saving-current-ac.accounts.single-transaction', compact('transactions', 'decryptedId'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

@@ -37,11 +37,6 @@ class KycAndNominee extends Model
         'nominee_ration_card_no',
          'nominee_address',
          'extra_sms', 
-         'charges_transaction_date',
-        'charges_membership_fee',
-         'charges_net_fee', 
-         'charges_remarks', 
-         'charges_pay_mode',
     ];
 
     protected $casts = [

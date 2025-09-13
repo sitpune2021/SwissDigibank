@@ -77,7 +77,7 @@
 
                         <td class="px-6 py-4">
                             @if ($minor->member)
-                            <a href="{{ route('member.show', $minor->member->id) }}"
+                            <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}" 
                                 class="text-primary hover:underline">
                                 DEMO-{{ $minor->member->member_info_first_name ?? 'N/A' }}
                             </a>

@@ -75,7 +75,7 @@
                     @foreach($fdSchemes as $fdScheme)
                     <tr>
                         <td class="py-5 px-6">
-                            <a href="{{route('fd-mis-schemes.show',$fdScheme->id)}}" class="text-primary underline hover:text-primary/80">
+                            <a href="{{ $fdScheme?->id ? route('fd-mis-schemes.show', $fdScheme->id) : '#' }}" class="text-primary underline hover:text-primary/80">
                                 {{ $fdScheme->scheme_code?? 'N/A' }}
                             </a>
                         </td>
