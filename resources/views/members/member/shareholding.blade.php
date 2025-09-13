@@ -47,44 +47,36 @@
                 </thead>
                 <tbody id="shareHoldingsBody">
                     @php
-                        $finalizedShares = $shareholdings; 
+                        $finalizedShares = $shareholdings;
                     @endphp
-                    @forelse ($finalizedShares as $share)
-                        <tr class="border-b border-gray-200">
-                            <td class="py-4 px-6">{{ $share->share_from }} - {{ $share->share_to }}</td>
-                            <td class="py-4 px-6">{{ $share->total_shares }}</td>
-                            <td class="py-4 px-6">{{ number_format($share->share_nominal, 2) }}</td>
-                            <td class="py-4 px-6">{{ number_format($share->total_share_value, 2) }}</td>
-                            <td class="py-4 px-6">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td>
-                            <td class="py-4 px-6">{{ \Carbon\Carbon::parse($share->transfer_date)->format('d-m-Y') ?? '-' }}
+                    @forelse ($shareholdings as $shareholding)
+                        <tr>
+                            <td class="px-6 py-5">{{ $shareholding->from_share_no . '-' . $shareholding->to_share_no ?? '-' }}
                             </td>
-                            <td class="py-4 px-6">
-                                @if ($share->is_surrendered)
-                                    <span class="text-red-500 font-semibold">Yes</span>
-                                @else
-                                    <span class="text-green-500 font-semibold">No</span>
-                                @endif
-                            </td>
-                            <td class="py-4 px-6">
-                                <a href="{{ route('shareholding.edit', $share->id) }}"
-                                    class="text-blue-600 hover:underline">Edit</a> |
-                                <form action="{{ route('shareholding.destroy', $share->id) }}" method="POST"
-                                    class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:underline"
-                                        onclick="return confirm('Are you sure?')">Delete</button>
-                                </form>
+                            <td class="px-6 py-5">{{ $shareholding->shares ?? '-' }}</td>
+                            <td class="px-6 py-5">{{ $shareholding->face_value ?? '-' }}</td>
+                            <td class="px-6 py-5">{{ $shareholding->total_consideration ?? '-' }}</td>
+                            <td class="px-6 py-5">
+                                {{ \Carbon\Carbon::parse($shareholding->allotment_date)->format('D M d Y') ?? '-' }}</td>
+                            <td class="px-6 py-5">
+                                {{ \Carbon\Carbon::parse($shareholding->transfer_date)->format('D M d Y') ?? '-' }}</td>
+                            <td class="px-6 py-5">{{ $shareholding->is_surrendered ? 'Yes' : 'No' }}</td>
+                            <td class="px-6 py-5 text-center">
+                                <div class="flex justify-center">
+                                    @include('partials._vertical-options', [
+                                        'id' => $shareholding->id,
+                                        'viewRoute' => 'shares-transfer.show',
+                                        'printRoute' => 'shares-transfer.print',
+                                    ])
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-6 text-gray-500">No finalized shareholdings found.</td>
+                            <td colspan="12" class="text-center px-6 py-5 text-gray-500">No shareholdings available.</td>
                         </tr>
                     @endforelse
                 </tbody>
-
-
             </table>
         </div>
         {{-- <x-pagination :paginator="$shareholdings" /> --}}

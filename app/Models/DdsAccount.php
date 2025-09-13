@@ -20,7 +20,7 @@ class DdsAccount extends Model
         'collection_advisor_id',
         'scheme_id',
         'dd_amount',
-        'rd_dd_frequency',   
+        'rd_dd_frequency',
         'open_date',
         'tds_deduction',
         'account_type',
@@ -52,10 +52,12 @@ class DdsAccount extends Model
     {
         return $this->hasMany(DdTransaction::class, 'dds_account_id'); // <--- fix here
     }
-        public function scheme()
+    public function scheme()
     {
         return $this->belongsTo(Rdscheme::class, 'scheme_id', 'id');
     }
-
-    
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

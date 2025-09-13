@@ -8,6 +8,7 @@ use App\Models\Promotor;
 use App\Models\Shareholding;
 use App\Models\ShareTransfer;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ShareTransferController extends Controller
@@ -47,29 +48,45 @@ class ShareTransferController extends Controller
         }
     }
 
-    public function transferForm($memberId = null)
-    {
 
+    public function transferForm(Request $request)
+    {
+        $memberId=$request->input('member_id');
         try {
+            Log::debug("Starting transferForm method.", ['memberId' => $memberId]);
+
             $members = Member::pluck('member_info_first_name', 'id');
+            Log::debug("Fetched members info.", ['members_count' => $members->count()]);
 
             $promoterId = Promotor::where('is_transfer', 1)->value('id');
+            Log::debug("Promoter ID fetched.", ['promoterId' => $promoterId]);
 
             if (!$promoterId) {
+                Log::warning("No promoter found with is_transfer set to 1.");
                 return redirect()->route('shareholding.index')->with('error', 'Please select a promoter first.');
             }
 
             $promoter = Shareholding::with('promotor')->where('promotor_id', $promoterId)->first();
+            Log::debug("Promoter and Shareholding fetched.", ['promoter_id' => $promoterId]);
 
             $selectedMember = $memberId ? Member::find($memberId) : null;
-
+            if ($selectedMember) {
+                Log::debug("Selected member fetched.", ['member_id' => $selectedMember->id, 'member_name' => $selectedMember->member_info_first_name]);
+            } else {
+                Log::debug("No member selected or member not found.", ['memberId' => $memberId]);
+            }
+            // dd($memberId);
             return view('members.shares-transfer.create', [
                 'promoter' => $promoter,
-                'members'         => $members,
-                'selectedMember'  => $selectedMember
+                'members' => $members,
+                'selectedMember' => $selectedMember
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error("ModelNotFoundException in transferForm method.", ['exception' => $e->getMessage()]);
             abort(404);
+        } catch (\Exception $e) {
+            Log::error("Exception in transferForm method.", ['exception' => $e->getMessage()]);
+            abort(500);
         }
     }
 
@@ -82,123 +99,58 @@ class ShareTransferController extends Controller
             abort(404);
         }
     }
-
-    // public function store(Request $request,$memberId = null)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'transferor_id'          => 'required',
-    //             'member_id'              => 'required',
-    //             'business_type'          => 'required',
-    //             'allotment_date'         => 'required|date',
-    //             'share_no'               => 'required|integer|min:1',
-    //             'share_nominal'          => 'required|numeric|min:0',
-    //             'total_consideration'    => 'required|numeric|min:0',
-    //         ]);
-
-    //         try {
-    //             DB::transaction(function () use ($validated) {
-    //                 $transferorId = $validated['transferor_id'];
-    //                 $newShares = $validated['share_no'];
-
-    //                 $promoterTotalShares = Shareholding::where('id', $transferorId)->value('total_share_held');
-
-    //                 if (!$promoterTotalShares || $promoterTotalShares <= 0) {
-    //                     throw new \Exception('Promoter does not have any shares.');
-    //                 }
-
-    //                 $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
-    //                     ->max('to_share_no');
-
-
-    //                 $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
-    //                 $toShareNo = ($fromShareNo + $newShares) - 1;
-
-    //                 if ($toShareNo > $promoterTotalShares) {
-    //                     throw new \Exception("Not enough shares left to allocate. Last available share no: {$promoterTotalShares}");
-    //                 }
-
-    //                 ShareTransfer::create([
-    //                     'transferor_id'       => $transferorId,
-    //                     'member_id'           => $validated['member_id'],
-    //                     'business_type'       => $validated['business_type'],
-    //                     'transfer_date'       => $validated['allotment_date'],
-    //                     'shares'              => $newShares,
-    //                     'face_value'          => $validated['share_nominal'],
-    //                     'total_consideration' => $validated['total_consideration'],
-    //                     'from_share_no'       => $fromShareNo,
-    //                     'to_share_no'         => $toShareNo,
-    //                 ]);
-    //             });
-
-    //             return redirect()->route('shares-transfer.index')->with('success', 'Share transfer successfully added. Please approve it.');
-    //         } catch (\Exception $e) {
-    //             return redirect()->route('shares-transfer.index')->with('error', $e->getMessage());
-    //         }
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     } 
-    // }
-
     public function store(Request $request, $memberId = null)
     {
+        $validated = $request->validate([
+            'transferor_id'          => 'required',
+            'member_id'              => 'required',
+            'business_type'          => 'required',
+            'allotment_date'         => 'required|date',
+            'share_no'               => 'required|integer|min:1',
+            'share_nominal'          => 'required|numeric|min:0',
+            'total_consideration'    => 'required|numeric|min:0',
+        ]);
+
+        $memberExists = Member::where('id', $validated['member_id'])->exists();
+        if (!$memberExists) {
+            return redirect()->route('shares-transfer.index')->with('error', 'Selected member does not exist.');
+        }
+
         try {
-            $validated = $request->validate([
-                'transferor_id'          => 'required',
-                'member_id'              => 'required',
-                'business_type'          => 'required',
-                'allotment_date'         => 'required|date',
-                'share_no'               => 'required|integer|min:1',
-                'share_nominal'          => 'required|numeric|min:0',
-                'total_consideration'    => 'required|numeric|min:0',
-            ]);
+            DB::transaction(function () use ($validated) {
+                $transferorId = $validated['transferor_id'];
+                $newShares = $validated['share_no'];
 
-            try {
-                // ✅ Check if member exists in DB before proceeding
-                $memberExists = Member::where('id', $validated['member_id'])->exists();
-                if (!$memberExists) {
-                    return redirect()->route('shares-transfer.index')->with('error', 'Selected member does not exist.');
+                $promoterTotalShares = Shareholding::where('id', $transferorId)->value('total_share_held');
+
+                if (!$promoterTotalShares || $promoterTotalShares <= 0) {
+                    throw new \Exception('Promoter does not have any shares.');
                 }
+                $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
+                    ->max('to_share_no');
+                $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
+                $toShareNo = ($fromShareNo + $newShares) - 1;
 
-                DB::transaction(function () use ($validated) {
-                    $transferorId = $validated['transferor_id'];
-                    $newShares = $validated['share_no'];
+                if ($toShareNo > $promoterTotalShares) {
+                    throw new \Exception("Not enough shares left to allocate. Last available share no: {$promoterTotalShares}");
+                }
+                ShareTransfer::create([
+                    'transferor_id'       => $transferorId,
+                    'member_id'           => $validated['member_id'],
+                    'business_type'       => $validated['business_type'],
+                    'transfer_date'       => $validated['allotment_date'],
+                    'shares'              => $newShares,
+                    'face_value'          => $validated['share_nominal'],
+                    'total_consideration' => $validated['total_consideration'],
+                    'from_share_no'       => $fromShareNo,
+                    'to_share_no'         => $toShareNo,
+                ]);
+            });
 
-                    $promoterTotalShares = Shareholding::where('id', $transferorId)->value('total_share_held');
-
-                    if (!$promoterTotalShares || $promoterTotalShares <= 0) {
-                        throw new \Exception('Promoter does not have any shares.');
-                    }
-
-                    $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
-                        ->max('to_share_no');
-
-                    $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
-                    $toShareNo = ($fromShareNo + $newShares) - 1;
-
-                    if ($toShareNo > $promoterTotalShares) {
-                        throw new \Exception("Not enough shares left to allocate. Last available share no: {$promoterTotalShares}");
-                    }
-
-                    ShareTransfer::create([
-                        'transferor_id'       => $transferorId,
-                        'member_id'           => $validated['member_id'],
-                        'business_type'       => $validated['business_type'],
-                        'transfer_date'       => $validated['allotment_date'],
-                        'shares'              => $newShares,
-                        'face_value'          => $validated['share_nominal'],
-                        'total_consideration' => $validated['total_consideration'],
-                        'from_share_no'       => $fromShareNo,
-                        'to_share_no'         => $toShareNo,
-                    ]);
-                });
-
-                return redirect()->route('shares-transfer.index')->with('success', 'Share transfer successfully added. Please approve it.');
-            } catch (\Exception $e) {
-                return redirect()->route('shares-transfer.index')->with('error', $e->getMessage());
-            }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+            return redirect()->route('shareholding', ['id' => $validated['member_id']])
+                ->with('success', 'Share transfer successfully added. Please approve it.');
+        } catch (\Exception $e) {
+            return redirect()->route('shares-transfer.index')->with('error', $e->getMessage());
         }
     }
 

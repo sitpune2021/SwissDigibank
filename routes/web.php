@@ -114,8 +114,13 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
+        Route::post('/dds/deposit/store', [DdsAccountsController::class, 'storeDeposit'])->name('dds.deposit.store');
 
         Route::get('/ddsaccount/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])->name('ddsaccounts.createDeposit');
+        // routes/web.php
+
+        Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
+            ->name('dds.transactions');
     });
 
     Route::resource('rd-calculator', RDCalculatorController::class)
@@ -133,7 +138,10 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
         Route::get('/ajax/members/search', [MemberController::class, 'search'])->name('ajax.members.search');
         Route::get('/members/member/{id}/shareholding', [MemberController::class, 'shareholding'])->name('member.shareholding');
-        Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
+        // Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
+        Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
+        Route::get('/shareholding/view/{id}', [ShareholdingController::class, 'viewShareholding'])->name('viewShareholding');
+        Route::get('/shareholding/{id}', [MemberController::class, 'shareholding'])->name('shareholding');
 
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);

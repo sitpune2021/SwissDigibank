@@ -105,7 +105,10 @@ class Member extends Model
 
     public function shareHoldings()
     {
-        return $this->hasMany(ShareHolding::class,'promotor_id');
+        return $this->hasMany(ShareHolding::class, 'promotor_id');
     }
-
+    public function shareTransfers()
+    {
+        return $this->hasMany(ShareTransfer::class, 'member_id');
+    }
 }

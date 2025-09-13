@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Branch;
@@ -630,11 +631,83 @@ class DdsAccountsController extends Controller
     {
         Log::info('Deposit form requested for DDS account: ' . $id);
         $ddAccount = DdsAccount::findOrFail($id);
+
         $members = Member::all();
         $installmentReceived = $ddAccount->installment_received;
         $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
-        $installmentAmount = $ddAccount->dd_amount; 
-        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable','installmentAmount'));
-    }
+        $installmentAmount = $ddAccount->dd_amount;
 
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount'));
+    }
+    public function storeDeposit(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'dds_account_id'    => 'required|exists:dds_accounts,id',
+                'account_id'        => 'nullable|exists:accounts,id',
+                'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
+                'transaction_date'  => 'required|date_format:d/m/Y',
+                'amount'            => 'required|numeric',
+                'collected_by'      => 'nullable|string|max:255',
+
+                // Files
+                't_receipt'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'member_sign'       => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            ]);
+
+            //  dd($validated);
+
+            // ✅ Convert date format
+            $transaction_date = \Carbon\Carbon::createFromFormat('d/m/Y', $validated['transaction_date'])->format('Y-m-d');
+            // File uploads
+            if ($request->hasFile('t_receipt')) {
+                $validated['t_receipt'] = $request->file('t_receipt')->store('receipts', 'public');
+            }
+
+            if ($request->hasFile('member_sign')) {
+                $validated['member_sign'] = $request->file('member_sign')->store('signatures', 'public');
+            }
+
+            if ($request->hasFile('member_photo')) {
+                $validated['member_photo'] = $request->file('member_photo')->store('photos', 'public');
+            }
+
+            // Save transaction
+            $transaction = \App\Models\DdTransaction::create([
+                'dds_account_id'    => $validated['dds_account_id'],
+                'account_id'        => $validated['account_id'],
+                'pay_mode'          => $validated['pay_mode'],
+                'transaction_date'  => $transaction_date,
+                'amount'            => $validated['amount'],
+                'collected_by'      => $validated['collected_by'] ?? null,
+                't_receipt'         => $validated['t_receipt'] ?? null,
+                'member_sign'       => $validated['member_sign'] ?? null,
+                'member_photo'      => $validated['member_photo'] ?? null,
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+
+            Log::info('DDS Deposit Saved', [
+                'transaction_id' => $transaction->id,
+                'account_id'     => $transaction->account_id,
+            ]);
+
+            return redirect()->route('dds.transactions', [
+                'id' => $transaction->dds_account_id,
+                'transaction_id' => $transaction->id
+            ])->with('success', 'Deposit saved successfully.');
+        } catch (ValidationException $e) {
+            // Log validation errors
+            Log::error('Validation failed', [
+                'errors' => $e->validator->errors()->all()
+            ]);
+
+            // Then re-throw to preserve Laravel's default redirect behavior
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Error saving DDS deposit: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong while saving the deposit.');
+        }
+    }
 }
