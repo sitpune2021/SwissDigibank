@@ -33,7 +33,6 @@
         <!-- Latest Transactions -->
         <div class="box col-span-12 lg:col-span-6">
             <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-                <!-- <h4 clas-s="h4">Share Transfer History</h4> -->
                 <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
                     <form
                         class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">

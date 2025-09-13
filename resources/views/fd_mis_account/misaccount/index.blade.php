@@ -52,6 +52,7 @@
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
+        <x-searchbox />
         <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
             <x-alert />
         </div>
@@ -139,8 +140,16 @@
                     <tr class="border-b dark:border-bg3">
                         <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->id }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{'DEMO-'. $mis->member_id ?? '-' }}</td>
+                        <td class="text-start !py-5 px-6 min-w-[100px]">
+                            <a href="{{'misaccount.show', $mis->id }}" class="text-primary underline hover:text-primary/80">
+                                {{ $mis->id }}
+                            </a>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px]">
+                            <a href="{{route('member.show',$mis->member_id)}}" class="text-primary underline hover:text-primary/80">
+                                {{'DEMO-'. $mis->member_id ?? '-' }}
+                            </a>
+                        </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->member->full_name  ?? '-' }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->minor->first_name ?? '-' }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->branch->branch_id ?? '-' }}</td>
@@ -169,25 +178,6 @@
                                 </div>
                             </div>
                         </td>
-                        <!-- <td class="px-6 py-2">
-                            <div class="flex justify-center">
-                                <div class="relative">
-                                    <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                    <ul class="horiz-option popover-content">
-                                        <li><a href="{{ route('misaccount.show', $mis->id) }}"
-                                                class="single-option">View</a></li>
-                                        {{-- <li><a href="{{ route('misaccount.edit', $mis->id) }}"
-                                        class="single-option">Edit</a></li> --}}
-                                        @if ($mis->status == 0)
-                                        <li>
-                                            <a href="{{ route('misaccount.edit', $mis->id) }}"
-                                                class="single-option">Edit</a>
-                                        </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
-                        </td> -->
                     </tr>
                     @endforeach
                 </tbody>

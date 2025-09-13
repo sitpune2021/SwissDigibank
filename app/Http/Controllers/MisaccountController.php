@@ -26,7 +26,7 @@ class MisaccountController extends Controller
 {
     public function index()
     {
-        $misaccounts = MisAccount::all();
+        $misaccounts = MisAccount::orderBy('id','desc')->get();
         return view('fd_mis_account.misaccount.index', compact('misaccounts'));
     }
 

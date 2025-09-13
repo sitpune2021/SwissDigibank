@@ -9,38 +9,10 @@
 
 @section('content')
     <div class="col-span-12 box lg:col-span-6">
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-            <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
-                <label for="perPage" class="text-sm">Show</label>
-                <select name="perPage" id="perPage" onchange="this.form.submit()"
-                    class="px-2 py-1 text-sm border rounded">
-                    <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('perPage') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
-                </select>
-                <span class="text-sm">entries</span>
-            </form>
-            <div class="flex flex-wrap items-center gap-4 grow sm:justify-end">
-                <form method="GET" action="{{ route('branch.index') }}"
-                    class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
-                    <input type="text" id="transaction-search" name="search" placeholder="Search"
-                        value="{{ request('search') }}"
-                        class="w-full py-1 text-sm bg-transparent border-none ltr:pl-4 rtl:pr-4" />
-                    <button type="submit"
-                        class="flex items-center justify-center rounded-full w-7 h-7 bg-primary shrink-0 lg:w-8 lg:h-8 text-n0">
-                        <i class="text-lg las la-search"></i>
-                    </button>
-                    @if (request('search'))
-                        <a href="{{ route('branch.index') }}"
-                            class="flex items-center justify-center transition duration-200 rounded-full w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark"
-                            title="Clear Search">
-                            <i class="text-lg las la-times"></i>
-                        </a>
-                    @endif
-                </form>
-            </div>
-        </div>
+        <x-searchbox />
+        <!-- <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+            <x-alert />
+        </div> -->
         @include('fields.errormessage')
         <div class="pb-4 overflow-x-auto lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
@@ -89,7 +61,7 @@
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <td class="px-2 py-5 text-center">
                                 <div>
-                                    <a href="{{ route('branch.show', $branch->id) }}" class="text-primary hover:underline">
+                                    <a href="{{ route('branch.show', base64_encode($branch->id)) }}" class="text-primary hover:underline">
                                         <p class="mb-1 font-medium">DEMO-{{ $branch?->branch_name??'' }}</p>
                                     </a>
                                 </div>

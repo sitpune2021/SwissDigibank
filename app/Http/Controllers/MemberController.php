@@ -303,7 +303,6 @@ class MemberController extends Controller
             $route = route('member.documentupdate', $id);
             $method = 'POST';
             $documents = KycDocument::where('member_id', $id)->get()->keyBy('document_category');
-            // dd($documents);
             return view('members.member.kycDocumentAdd', compact('route', 'method', 'id', 'documents'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -521,12 +520,11 @@ class MemberController extends Controller
     public function createMinor(Request $request)
     {
         try {
-            $memberId = $request->input('member_id'); // e.g. 4
-            $type = $request->input('type'); // e.g. 'promoter' or 'member'
+            $memberId = $request->input('member_id'); 
+            $type = $request->input('type'); 
 
             $parentMember = Member::findOrFail($memberId);
 
-            // Check type validity
             if ($type !== 'promoter') {
                 return redirect()->back()->with('error', 'Minor can only be added under a promoter.');
             }

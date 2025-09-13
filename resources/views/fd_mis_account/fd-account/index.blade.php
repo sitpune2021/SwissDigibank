@@ -9,6 +9,7 @@
 @section('content')
 
 <div class="box col-span-12 lg:col-span-12">
+    <x-searchbox />
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
@@ -99,9 +100,13 @@
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
                         <td class="px-6 py-3">
-                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:blue;">{{ "FD-".$account->id }}</a>
+                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" class="text-primary underline hover:text-primary/80">{{ "FD-".$account->id }}</a>
                         </td>
-                        <td class="px-6 py-3">{{ $account->member->id ?? '-' }}</td>
+                        <td class="px-6 py-3">
+                            <a href="{{route('member.show',$account->member->id)}}" class="text-primary underline hover:text-primary/80">
+                              DEMO-{{ $account->member->id ?? '-' }}
+                            </a>
+                        </td>
                         <td class="px-6 py-3">{{ $account->member->member_info_first_name ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->minor_id ? 'Yes' : 'No' }}</td>
                         <td class="px-6 py-3">{{ $account->branch->branch_name ?? '-' }}</td>

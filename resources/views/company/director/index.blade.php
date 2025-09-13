@@ -10,7 +10,7 @@
 
 @section('content')
 <div class="box col-span-12 lg:col-span-6">
-    <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
+    <!-- <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
         <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
             <label for="perPage" class="text-sm">Show</label>
             <select name="perPage" id="perPage" onchange="this.form.submit()"
@@ -23,7 +23,6 @@
             <span class="text-sm">entries</span>
         </form>
 
-        <!-- Latest Transactions -->
         <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
             <form method="GET" action="{{ route('director.index') }}"
                 class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
@@ -43,7 +42,8 @@
                 @endif
             </form>
         </div>
-    </div>
+    </div> -->
+    <x-searchbox />
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
@@ -95,18 +95,22 @@
                 @forelse ($directors as $index => $director)
                 <tr>
                     <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
-                    {{-- <td class="px-6 py-4">{{ $director->member?->member_info_first_name ?? 'N/A' }}</td> --}}
-                     <td class="py-3 px-6">
-                            @if ($director->member)
-                            <a href="{{ route('member.show', $director->member->id) }}"
-                                class="text-primary hover:underline">
-                                DEMO-{{ $director->member?->member_info_first_name ??''}}
-                            </a>
-                            @else
-                            N/A
-                            @endif
-                        </td>
-                    <td class="px-6 py-4">{{ $director?->director_name ?? 'N/A' }}</td>
+                    <!-- {{-- <td class="px-6 py-4">{{ $director->member?->member_info_first_name ?? 'N/A' }}</td> --}} -->
+                    <td class="py-3 px-6">
+                        @if ($director->member)
+                        <a href="{{ route('member.show', $director->member->id) }}"
+                            class="text-primary hover:underline">
+                            DEMO-{{ $director->member?->member_info_first_name ??''}}
+                        </a>
+                        @else
+                       
+                        @endif
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{route('director.show',base64_encode($director->id))}}" class="text-primary hover:underline">
+                            {{ $director?->director_name ?? '' }}
+                        </a>
+                    </td>
                     <td class="px-6 py-4">{{ $director?->din_no??'' }}</td>
                     <td class="px-6 py-4">{{ $director->appointment_date?->format('d/m/Y') ?? 'N/A' }}</td>
                     <td class="px-6 py-4">{{ $director->resignation_date?->format('d/m/Y') ?? 'N/A' }}</td>
