@@ -94,7 +94,11 @@
                     <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
                     <hr class="my-4 border-gray-300 dark:border-gray-700">
 
-                    <form class="space-y-6" action="" method="">
+                    <form class="space-y-6" action="{{ route('dds.deposit.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="dds_account_id" value="{{ $ddAccount->id }}">
+                        <input type="hidden" name="account_id" value="{{ $ddAccount->account->id ?? '' }}">
 
                         <!-- Member Signature -->
                         <div>
@@ -114,11 +118,13 @@
 
                         <!-- Collected By -->
                         <div class="mt-3">
-                            <label class="block text-sm font-medium  dark:bg-bg3">Collected By</label>
-                            <select
+                            <label class="block text-sm font-medium dark:bg-bg3">Collected By</label>
+                            <select name="collected_by"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                                 <option value="">Select Advisor / Staff</option>
-
+                                {{-- Example options (replace with dynamic data) --}}
+                                <option value="staff_1">Staff 1</option>
+                                <option value="staff_2">Staff 2</option>
                             </select>
                         </div>
 
@@ -126,7 +132,8 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Amount to Deposit <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" min="0" id="amountToDeposit" placeholder="Enter Amount to Deposit"
+                            <input type="number" min="0" name="amount" id="amountToDeposit"
+                                placeholder="Enter Amount to Deposit"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
                                 required>
                             <span id="amountError" class="text-red-500 hidden">Amount can't be less than the DDS installment
@@ -140,7 +147,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3">Remarks (if
                                 any)</label>
-                            <textarea placeholder="Enter Remarks"
+                            <textarea name="remarks" placeholder="Enter Remarks"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"></textarea>
                         </div>
 
@@ -149,7 +156,7 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Transaction Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" placeholder="DD/MM/YYYY" id="date"
+                            <input type="text" name="transaction_date" placeholder="DD/MM/YYYY" id="date"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
                                 readonly>
                         </div>
@@ -158,7 +165,7 @@
                         <!-- Receipt -->
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">T. Receipt</label>
-                            <input type="file" disabled
+                            <input type="file" name="t_receipt" disabled
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
 
                         </div>
@@ -171,25 +178,22 @@
                             </label>
                             <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_mode" value="cash" class="text-green-600">
+                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600">
                                     Cash
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_mode" value="online" class="text-green-600"> Online
+                                    <input type="radio" name="pay_mode" value="online" class="text-green-600"> Online
                                     Tr.
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_mode" value="cheque" class="text-green-600"> Cheque
+                                    <input type="radio" name="pay_mode" value="cheque" class="text-green-600"> Cheque
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_mode" value="saving" class="text-green-600"> Saving
+                                    <input type="radio" name="pay_mode" value="saving" class="text-green-600"> Saving
                                     Ac.
                                 </label>
                             </div>
                         </div>
-
-
-
                         <!-- Online Fields -->
                         <div id="onlineFields" class="space-y-4 mt-2 hidden">
                             <label class="block text-sm font-medium text-gray-700">Transfer Date <span
@@ -201,21 +205,22 @@
                                 UTR / Transaction No.
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="utr_no" class="w-full border rounded-10 px-3 py-3 bg-secondary/5"
+                            <input type="text" name="utr_no"
+                                class="w-full border rounded-10 px-3 py-3 bg-secondary/5"
                                 placeholder="Enter UTR/Transaction No.">
                             <label class="block text-sm font-medium text-gray-700">
-                                UTR / Transaction No.
+                                Transfer Mode.
                                 <span class="text-red-500">*</span>
                             </label>
                             <div class="flex gap-3">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_modes" class="text-green-600"> IMPS
+                                    <input type="radio" name="transfer_mode	" class="text-green-600"> IMPS
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_modes" class="text-green-600"> VPA
+                                    <input type="radio" name="transfer_mode	" class="text-green-600"> VPA
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="payment_modes" class=""> NEFT/RTGS
+                                    <input type="radio" name="transfer_mode	" class=""> NEFT/RTGS
                                 </label>
                             </div>
 
@@ -256,10 +261,10 @@
                         </div>
 
                         <div class="flex justify-center gap-4 pt-4">
-                            <button type="submit" class="btn-primary  rounded-10">
+                            <button type="submit" class="btn-primary  ">
                                 DEPOSIT
                             </button>
-                            <a href="#" class="btn-outline rounded-10">
+                            <a href="#" class="btn-outline ">
                                 CANCEL
                             </a>
                         </div>
@@ -339,7 +344,7 @@
                 onlineFields.classList.add("hidden");
                 savingFields.classList.add("hidden");
             }
-            const radios = document.querySelectorAll("input[name='payment_mode']")
+            const radios = document.querySelectorAll("input[name='pay_mode']")
             radios.forEach(radio => {
                 radio.addEventListener("change", function() {
                     hideAll();

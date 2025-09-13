@@ -12,12 +12,18 @@
         <x-alert />
     </div>
     <div class="flex flex-wrap gap-3 mb-3 text-center">
-        <a href="{{ route('member.shareholding', $member->id) }}"
+        {{-- <a href="{{ route('member.shareholding', $member->id) }}"
             class="btn-info rounded-md px-2 py-1 text-white text-sm bg-blue-500 hover:bg-blue-600">
             SHARE HOLDINGS
-        </a>
+        </a> --}}
+        @if ($member->share_allocated==1)
+            <a href="{{ route('member.shareholding', $member->id) }}"
+                class="btn-info rounded-md px-2 py-1 text-white text-sm bg-blue-500 hover:bg-blue-600">
+                SHARE HOLDINGS
+            </a>
+        @endif
 
-        <a href="{{ url('/share/allocate') }}?member_id={{ $member->id }}"
+           <a href="{{ url('/share/allocate') }}?member_id={{ $member->id }}"
             class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
             ALLOCATE SHARES
         </a>
@@ -1028,19 +1034,22 @@
                         </div>
                         <!-- Table Body -->
                         <div class="px-6 py-4">
-                            <table class="w-full border-collapse">
-                                <tbody>
-                                    <tr>
-                                        <th class="px-4 py-2 text-xs font-semibold text-left text-gray-700 uppercase">
-                                            No. of Shares
-                                        </th>
-                                        <td class="px-4 py-2 text-sm text-center text-gray-700">
-                                            0
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+    @foreach ($shareholdings as $shareholding)
+        <table class="w-full border-collapse mb-4">
+            <tbody>
+                <tr>
+                    <th class="px-4 py-2 text-xs font-semibold text-left text-gray-700 uppercase">
+                        No. of Shares
+                    </th>
+                    <td class="px-4 py-2 text-sm text-center text-gray-700">
+                        {{ $shareholding->shares ?? '—' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    @endforeach
+</div>
+
                     </div>
                     <div>
                         <!-- ADDRESS & CONTACT INFO -->

@@ -183,7 +183,7 @@ class ApproveController extends Controller
                 'remarks'           => 'nullable|string|max:255',
             ]);
 
-            $transfer = ShareTransfer::find($validated['share_transfer_id']);
+            $transfer = ShareTransfer::with('members')->find($validated['share_transfer_id']);
             $transfer->status = $validated['status'];
             $transfer->remarks = $validated['remarks'];
 
@@ -194,7 +194,11 @@ class ApproveController extends Controller
                 $transfer->certificate_number = null;
             }
 
-            $transfer->save();
+           if( $transfer->save())
+           {
+             $transfer->members->share_allocated =1;
+             $transfer->members->save();
+           }
 
             return redirect()->back()->with('success', 'Share transfer updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

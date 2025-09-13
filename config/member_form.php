@@ -588,7 +588,10 @@ return [
             'id' => 'date5',
             'type' => 'string',
             'required' => true,
+            'default' => now()->format('D M d Y'), // <- This line
+
         ],
+
         [
             'label' => 'Membership Fee',
             'name' => 'charges_membership_fee',
@@ -602,6 +605,7 @@ return [
             'id' => 'net_fee',
             'type' => 'number',
             'required' => true,
+            'default' => 100, // Default value set to 100
         ],
         [
             'label' => 'Remarks(if any) ',
@@ -621,6 +625,65 @@ return [
                 'online' => 'Online Tr.',
                 'cheque' => 'Cheque',
             ],
+        ],
+    ],
+
+    'online Tr' => [
+        [
+            'label' => 'Transfer Date ',
+            'name' => 'online_transfer_date',
+            'id' => 'date',
+            'type' => 'text',
+            'required' => true,
+            'default' =>  now()->format('D M d Y'),
+        ],
+        [
+            'label' => 'UTR/ Transaction No ',
+            'name' => 'online_utr_no',
+            'id' => 'online_utr_no',
+            'type' => 'text',
+            'required' => true,
+            'placeholder' => 'Enter UTR/ Transaction No',
+        ],
+        [
+            'label' => 'Transfer Mode ',
+            'name' => 'online_transfer_mode',
+            'id' => 'online_transfer_mode',
+            'type' => 'select',
+            'options' => [
+                'imps' => 'IMPS',
+                'vpa' => 'VPA',
+                'neft_rtgs' => 'NEFT/RTGS',
+            ],
+            'required' => true,
+        ],
+    ],
+
+    'cheque' => [
+        [
+            'label' => 'Bank Name ',
+            'name' => 'cheque_bank_name',
+            'id' => 'cheque_bank_name',
+            'type' => 'text',
+            'required' => true,
+            'placeholder' => 'Enter Bank Name',
+        ],
+        [
+            'label' => 'Cheque No. ',
+            'name' => 'cheque_no',
+            'id' => 'cheque_no',
+            'type' => 'text',
+            'required' => true,
+            'placeholder' => 'Enter Cheque No.',
+        ],
+        [
+            'label' => 'Cheque Date ',
+            'name' => 'cheque_date',
+            'id' => 'cheque_date',
+            'id' => 'date',
+            'type' => 'text',
+            'required' => true,
+            'default' =>  now()->format('D M d Y'),
         ],
     ],
 ];

@@ -131,12 +131,28 @@ return [
                 'required' => false,
             ],
             [
+                'label' => 'Upload CIN Certificate',
+                'name' => 'cin_certificate',
+                'id' => 'cin_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+
+            [
                 'label' => 'PAN No.',
                 'name' => 'pan_no',
                 'id' => 'pan_no',
                 'type' => 'text',
                 'required' => false,
             ],
+            [
+                'label' => 'Upload PAN Certificate',
+                'name' => 'pan_certificate',
+                'id' => 'pan_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+
             [
                 'label' => 'TAN No.',
                 'name' => 'tan_no',
@@ -145,10 +161,91 @@ return [
                 'required' => false,
             ],
             [
+                'label' => 'Upload TAN Certificate',
+                'name' => 'tan_certificate',
+                'id' => 'tan_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+            [
                 'label' => 'GST No.',
                 'name' => 'gst_no',
                 'id' => 'gst_no',
                 'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Upload GST Certificate',
+                'name' => 'gst_certificate',
+                'id' => 'gst_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+
+
+            [
+                'label' => 'ISO Certification',
+                'name' => 'iso_certification',
+                'id' => 'iso_certification',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Upload ISO Certificate',
+                'name' => 'iso_certificate',
+                'id' => 'iso_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+            // [
+            //     'label' => 'View ISO Certificate',
+            //     'name' => 'iso_certificate_view',
+            //     'id' => 'iso_certificate_view',
+            //     'type' => 'view_file',
+            //     'required' => false,
+            // ],
+
+            [
+                'label' => 'BIS Certification',
+                'name' => 'bis_certification',
+                'id' => 'bis_certification',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Upload BIS Certificate',
+                'name' => 'bis_certificate',
+                'id' => 'bis_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+
+            [
+                'label' => 'PF Number',
+                'name' => 'pf_number',
+                'id' => 'pf_number',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Upload PF Certificate',
+                'name' => 'pf_certificate',
+                'id' => 'pf_certificate',
+                'type' => 'file',
+                'required' => false,
+            ],
+            [
+                'label' => 'ESIC Number',
+                'name' => 'esic_number',
+                'id' => 'esic_number',
+                'type' => 'text',
+                'required' => false,
+            ],
+            [
+                'label' => 'Upload ESIC Certificate',
+                'name' => 'esic_certificate',
+                'id' => 'esic_certificate',
+                'type' => 'file',
                 'required' => false,
             ],
             [

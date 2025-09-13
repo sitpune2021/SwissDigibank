@@ -33,7 +33,7 @@ class Shareholding extends Model
     }
       public function Shareholder()
     {
-        return $this->hasMany(Shareholder::class,'shareholding_id');
+        return $this->hasMany(Shareholders::class,'shareholding_id');
 
     }
       public function sharecertificate()

@@ -20,6 +20,12 @@ class DdTransaction extends Model
         'bank_name',
         'cheque_date',
         'saving_account_id',
+        'dds_account_id',
+        'collected_by',
+        't_receipt',
+        'member_sign',
+        'member_photo',
+
     ];
 
     public function ddsAccount()

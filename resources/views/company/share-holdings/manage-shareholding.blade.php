@@ -127,7 +127,7 @@
             'dynamic' => true,
             'options_key' => 'promoter',
             ];
-            $name = 'is_transfer'; // Define this for the @error directive
+            $name = 'is_transfer'; 
             @endphp
             <form action="{{ route('shareholding.transfer') }}" method="POST" class="flex items-center justify-center gap-4 xl:gap-6">
                 @csrf

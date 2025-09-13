@@ -10,15 +10,17 @@ use App\Models\State;
 use App\Models\Branch;
 use App\Models\Religion;
 use App\Models\KycDocument;
+use App\Models\ShareTransfer;
+use App\Models\Shareholding;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use App\Models\MembershipChargeTransaction;
 use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
 {
-
     public function index(Request $request)
     {
         try {
@@ -136,19 +138,10 @@ class MemberController extends Controller
             'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
 
             'member_info_mobile_no' => 'required|digits:10',
-            'member_info_collection_time' => 'nullable|string',
-            'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
-            'member_info_religion' => 'nullable|string',
-            'member_info_email' => 'nullable|email',
 
-            // Member Address
+            // Address Info
             'member_address_line_1' => 'nullable|string',
             'member_address_line_2' => 'nullable|string',
-            'member_address_para' => 'nullable|string',
-            'member_address_ward' => 'nullable|string',
-            'member_address_panchayat' => 'nullable|string',
-            'member_address_area' => 'nullable|string',
-            'member_address_landmark' => 'nullable|string',
             'member_address_city_district' => 'nullable|string',
             'member_address_state' => 'required|integer',
             'member_address_pincode' => 'required|numeric',
@@ -202,21 +195,22 @@ class MemberController extends Controller
             'charges_transaction_date' => 'required|date|before_or_equal:today',
             'charges_membership_fee' => 'nullable|numeric',
             'charges_net_fee' => 'required|numeric',
-            'charges_remarks' => 'nullable|string',
             'charges_pay_mode' => 'required|in:cash,online,cheque',
         ]);
+
         try {
+            // Format date fields into Y-m-d format
             $dates = [
                 'general_enrollment_date',
                 'member_info_dob',
-                'member_info_spouse_dob',
-                'nominee_dob',
-                'charges_transaction_date'
+                'charges_transaction_date',
+                'online_transfer_date',
+                'cheque_date'
             ];
 
             foreach ($dates as $dateField) {
                 if ($request->filled($dateField)) {
-                    $request->merge([$dateField => \Carbon\Carbon::parse($request->$dateField)->format('Y-m-d')]);
+                    $request->merge([$dateField => Carbon::parse($request->$dateField)->format('Y-m-d')]);
                 }
             }
 
@@ -229,35 +223,44 @@ class MemberController extends Controller
             $addressData = $request->only((new Address)->getFillable());
             $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
 
-            // Create KYC & Nominee
+            // Create KYC & Nominee (if any)
             $kycData = $request->only((new KycAndNominee)->getFillable());
             $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
 
-            // Handle documents
+            // Handle Documents
             if ($request->has('documents')) {
                 foreach ($request->documents as $doc) {
                     if (isset($doc['file']) && $doc['file'] instanceof \Illuminate\Http\UploadedFile) {
                         $path = $doc['file']->store('documents', 'public');
-
                         KycDocument::create([
                             'member_id' => $member->id,
-                            'promoter_id' => $request->promoter_id ?? null,
                             'document_category' => $doc['category'],
                             'document_type' => $doc['type'] ?? null,
                             'file_path' => $path,
-                            'type' => $member->id ? 'member' : 'promoter',
                         ]);
                     }
                 }
             }
 
+            MembershipChargeTransaction::create([
+                'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
+                'membership_fee' => $request->charges_membership_fee ?? 0, // Default to 0 if null
+                'net_fee_to_collect' => $request->charges_net_fee,
+                'remarks' => $request->charges_remarks ?? null,
+                'charges_pay_mode' => $request->charges_pay_mode,
+                'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
+                'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
+                'cheque_bank_name' => $request->charges_pay_mode === 'cheque' ? $request->cheque_bank_name : null,
+                'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
+                'cheque_date' => $request->charges_pay_mode === 'cheque' ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
+            ]);
+
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
         } catch (ValidationException $e) {
-            // rethrow so Laravel handles it (shows validation errors in the view)
             throw $e;
         } catch (\Exception $e) {
-            dd($e);
-            return back()->withErrors(['error' => $e->getMessage()]);
+            Log::error('Error during member store: ' . $e->getMessage(), ['exception' => $e]);
+            return back()->withErrors(['error' => 'An error occurred while creating the member. Please try again.']);
         }
     }
 
@@ -271,7 +274,10 @@ class MemberController extends Controller
             ];
 
             $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
-
+            // 👇 Add this line to fetch the shareholdings
+            $shareholdings = ShareTransfer::where('member_id', $member->id)
+                ->where('status', 'approved')
+                ->get();
             $documents = KycDocument::where('member_id', $id)->get();
 
             $sections = config('member_form');
@@ -291,7 +297,8 @@ class MemberController extends Controller
                 'button',
                 'minor',
                 'method',
-                'documents' // ✅ send documents also
+                'documents' ,
+                'shareholdings'// ✅ send documents also
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -504,12 +511,11 @@ class MemberController extends Controller
                 // Extra Settings
                 'extra_sms' => 'nullable|boolean',
                 // Membership Charges
-                'charges_transaction_date' => 'required|date|before_or_equal:today',
-                'charges_membership_fee' => 'nullable|numeric',
-                'charges_net_fee' => 'required|numeric',
-                'charges_remarks' => 'nullable|string',
-                'charges_pay_mode' => 'nullable|in:cash,online,cheque',
-                // 'folio_no' => 34,
+                'transaction_date	' => 'required|date|before_or_equal:today',
+                'membership_fee' => 'nullable|numeric',
+                'net_fee_to_collect' => 'required|numeric',
+                'remarks' => 'nullable|string',
+                'charges_pay_mode' => 'required|in:cash,online,cheque',
             ]);
 
             $request->merge([
@@ -584,22 +590,22 @@ class MemberController extends Controller
             abort(404);
         }
     }
-    public function shareholding($id)
-    {
-        try {
-            Log::info("Fetching shareholding view for member ID: {$id}");
+    // public function shareholding($id)
+    // {
+    //     try {
+    //         Log::info("Fetching shareholding view for member ID: {$id}");
 
-            $member = Member::findOrFail($id);
+    //         $member = Member::findOrFail($id);
 
-            $shareholdings = $member->shareHoldings()->get();
+    //         $shareholdings = $member->shareHoldings()->get();
 
-            Log::info("Successfully fetched shareholdings for member ID: {$id}, Total: " . $shareholdings->count());
+    //         Log::info("Successfully fetched shareholdings for member ID: {$id}, Total: " . $shareholdings->count());
 
-            return view('members.member.shareholding', compact('member', 'shareholdings'));
-        } catch (\Exception $e) {
-            Log::error("Error fetching shareholding for member ID {$id}: " . $e->getMessage());
-        }
-    }
+    //         return view('members.member.shareholding', compact('member', 'shareholdings'));
+    //     } catch (\Exception $e) {
+    //         Log::error("Error fetching shareholding for member ID {$id}: " . $e->getMessage());
+    //     }
+    // }
 
     public function getShareHoldings($id)
     {
@@ -641,6 +647,40 @@ class MemberController extends Controller
     }
 
 
+    public function shareholding($id)
+    {
+        try {
+            Log::info("Fetching shareholding view for member ID: {$id}");
+
+            $member = Member::findOrFail($id);
+            Log::info("Found member: {$member->name} (ID: {$member->id})");
+
+            $shareholdings = ShareTransfer::with('members')->where('member_id', $member->id)
+                ->where('status', 'approved')->get();
+            $finalizedShares = $shareholdings->groupBy('share_range')->toArray();
+
+            if ($shareholdings->isEmpty()) {
+                Log::info("No shareholdings found for member ID: {$id}");
+            } else {
+                Log::info("Successfully fetched shareholdings for member ID: {$id}, Total: " . $shareholdings->count());
+            }
+            return view('members.member.shareholding', compact('member', 'finalizedShares', 'shareholdings'));
+        } catch (\Exception $e) {
+            Log::error("Error fetching shareholding for member ID {$id}: " . $e->getMessage());
+            return back()->with('error', 'An error occurred while fetching shareholding data.');
+        }
+    }
+    public function viewShareholding($id)
+    {
+        try {
+            $share = ShareTransfer::findOrFail($id);
+
+            return view('members.member.shareholding_view', compact('share'));
+        } catch (\Exception $e) {
+            Log::error("Error fetching shareholding details for ID {$id}: " . $e->getMessage());
+            return back()->with('error', 'An error occurred while fetching shareholding details.');
+        }
+    }
     public function addressedit(string $id)
     {
         try {
