@@ -61,7 +61,11 @@
                         <input type="hidden" name="share_transfer_id" value="{{ $share_transfer->id }}">
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <td class="py-5 px-6">{{ $share_transfer->shareholdings?->promotor?->branch?->branch_name ??'' }}</td>
-                            <td class="py-5 px-6">{{ $share_transfer->members?->member_info_first_name ?? ''}}</td>
+                            <td class="py-5 px-6">
+                                <a href="{{ $share_transfer->members ? route('member.show', $share_transfer->members->id) : '#' }}" class="text-primary hover:underline">
+                                    {{ $share_transfer->members?->member_info_first_name ?? ''}}
+                                </a>
+                            </td>
                             <td class="py-5 px-6">{{ $share_transfer?->transfer_date ?? ''}}</td>
                             <td class="py-5 px-6">{{ $share_transfer?->business_type ??'' }}</td>
                             <td class="py-5 px-6">{{ $share_transfer?->shares ?? '' }}</td>

@@ -57,7 +57,7 @@
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">
                             <a href="" class="text-blue-500 hover:underline">
-                                N/A
+                               DEMO-{{ $employee->id }}
                             </a>
                         </td>
                         <td class="py-5 px-6">

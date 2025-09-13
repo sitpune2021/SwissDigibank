@@ -32,7 +32,7 @@
                     @foreach ($schemes as $scheme)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">
-                            <a href="{{route('schemes.show',$scheme->id)}}" class="text-primary hover:underline">
+                            <a href="{{ $scheme?->id ? route('schemes.show', $scheme->id) : '#' }}" class="text-primary hover:underline">
                                 {{ $scheme->scheme_code }}
                             </a>
                         </td>

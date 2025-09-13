@@ -13,6 +13,7 @@ use App\Models\KycDocument;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
@@ -164,11 +165,12 @@ class MemberController extends Controller
             'member_gps_location_longitude' => 'nullable|numeric',
 
             // KYC Info
-            'member_kyc_aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-            'member_kyc_voter_id_no' => 'nullable|string',
-            'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
-            'member_kyc_ration_card_no' => 'nullable|string',
-            'member_kyc_meter_no' => 'nullable|string',
+            'member_kyc_aadhaar_no'     => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
+            'member_kyc_voter_id_no'    => 'nullable|string|unique:kyc_and_nominees,member_kyc_voter_id_no',
+            'member_kyc_pan_no'         => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
+            'member_kyc_ration_card_no' => 'nullable|string|unique:kyc_and_nominees,member_kyc_ration_card_no',
+            'member_kyc_meter_no'       => 'nullable|string|unique:kyc_and_nominees,member_kyc_meter_no',
+
             'member_kyc_ci_no' => 'nullable|string',
             'member_kyc_ci_relation' => 'nullable|string',
             'member_kyc_dl_no' => 'nullable|string',
@@ -400,7 +402,6 @@ class MemberController extends Controller
     {
         try {
             $request->validate([
-                // (Same validation rules as in store)
                 'membership_type' => 'required|in:nominal,regular',
 
                 // General Info
@@ -454,11 +455,34 @@ class MemberController extends Controller
                 'member_gps_location_longitude' => 'nullable|numeric',
 
                 // KYC Info
-                'member_kyc_aadhaar_no' => 'required|string',
-                'member_kyc_voter_id_no' => 'nullable|string',
-                'member_kyc_pan_no' => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
-                'member_kyc_ration_card_no' => 'nullable|string',
-                'member_kyc_meter_no' => 'nullable|string',
+                'member_kyc_aadhaar_no' => [
+                    'required',
+                    'digits:12',
+                    'regex:/^[2-9]{1}[0-9]{11}$/',
+                    Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')->ignore($id),
+                ],
+                'member_kyc_voter_id_no' => [
+                    'nullable',
+                    'string',
+                    Rule::unique('kyc_and_nominees', 'member_kyc_voter_id_no')->ignore($id),
+                ],
+                'member_kyc_pan_no' => [
+                    'required',
+                    'string',
+                    'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+                    Rule::unique('kyc_and_nominees', 'member_kyc_pan_no')->ignore($id),
+                ],
+                'member_kyc_ration_card_no' => [
+                    'nullable',
+                    'string',
+                    Rule::unique('kyc_and_nominees', 'member_kyc_ration_card_no')->ignore($id),
+                ],
+                'member_kyc_meter_no' => [
+                    'nullable',
+                    'string',
+                    Rule::unique('kyc_and_nominees', 'member_kyc_meter_no')->ignore($id),
+                ],
+
                 'member_kyc_ci_no' => 'nullable|string',
                 'member_kyc_ci_relation' => 'nullable|string',
                 'member_kyc_dl_no' => 'nullable|string',
@@ -520,8 +544,8 @@ class MemberController extends Controller
     public function createMinor(Request $request)
     {
         try {
-            $memberId = $request->input('member_id'); 
-            $type = $request->input('type'); 
+            $memberId = $request->input('member_id');
+            $type = $request->input('type');
 
             $parentMember = Member::findOrFail($memberId);
 

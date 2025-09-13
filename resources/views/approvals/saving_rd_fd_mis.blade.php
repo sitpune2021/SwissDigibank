@@ -71,9 +71,19 @@
                     @foreach ($pending_transactions as $pending_transaction)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">{{ $pending_transaction->branch->branch_name ?? '' }}</td>
-                        <td class="py-5 px-6">{{ $pending_transaction->members->member_info_first_name." ".$pending_transaction->members->member_info_last_name  ?? '' }}</td>
+                        <td class="py-5 px-6">
+                            <a href="{{ $pending_transaction->members ? route('member.show', $pending_transaction->members->id) : '#' }}"
+                                class="text-primary underline hover:text-primary/80">
+                                {{ optional($pending_transaction->members)->member_info_first_name . ' ' . optional($pending_transaction->members)->member_info_last_name ?? '' }}
+                            </a>
+                        </td>
                         <td class="py-5 px-6">{{ $pending_transaction->account_type  ?? '' }}</td>
-                        <td class="py-5 px-6">{{ $pending_transaction->account_no  ?? '' }}</td>
+                        <td class="py-5 px-6">
+                            <a href="{{ $pending_transaction->id ? route('accounts.show', base64_encode($pending_transaction->id)) : '#' }}"
+                                class="text-primary underline hover:text-primary/80">
+                                {{ $pending_transaction->account_no ?? 'N/A' }}
+                            </a>
+                        </td>
                         <td class="py-5 px-6">{{ $pending_transaction->amount_deposit ?? '' }}</td>
                         <td class="py-5 px-6">{{ $pending_transaction->payment_mode  ?? '' }}</td>
                         <td class="py-5 px-6">{{ $pending_transaction->open_date  ?? '' }}</td>
@@ -115,9 +125,9 @@
         approveAllCheckbox.addEventListener('change', function() {
             allSelects.forEach(select => {
                 if (approveAllCheckbox.checked) {
-                    select.value = '1'; 
+                    select.value = '1';
                 } else {
-                    select.value = 'pending'; 
+                    select.value = 'pending';
                 }
             });
         });

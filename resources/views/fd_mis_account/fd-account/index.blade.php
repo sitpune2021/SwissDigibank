@@ -100,10 +100,10 @@
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
                         <td class="px-6 py-3">
-                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" class="text-primary underline hover:text-primary/80">{{ "FD-".$account->id }}</a>
+                            <a href="{{ $account?->id ? route('fd-mis-schemes.fd_show', $account->id) : '#' }}" class="text-primary underline hover:text-primary/80">{{ "FD-".$account->id }}</a>
                         </td>
                         <td class="px-6 py-3">
-                            <a href="{{route('member.show',$account->member->id)}}" class="text-primary underline hover:text-primary/80">
+                            <a href="{{ $account?->member?->id ? route('member.show', $account->member->id) : '#' }}" class="text-primary underline hover:text-primary/80">
                               DEMO-{{ $account->member->id ?? '-' }}
                             </a>
                         </td>

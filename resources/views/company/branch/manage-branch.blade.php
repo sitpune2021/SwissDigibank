@@ -61,7 +61,7 @@
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <td class="px-2 py-5 text-center">
                                 <div>
-                                    <a href="{{ route('branch.show', base64_encode($branch->id)) }}" class="text-primary hover:underline">
+                                    <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}" class="text-primary hover:underline">
                                         <p class="mb-1 font-medium">DEMO-{{ $branch?->branch_name??'' }}</p>
                                     </a>
                                 </div>
