@@ -42,6 +42,8 @@ class DirectorController extends Controller
             }
 
             $directors = $query->orderBy('created_at', 'desc')->paginate(10);
+
+            // dd(  $directors );
             return view('company.director.index', compact('directors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

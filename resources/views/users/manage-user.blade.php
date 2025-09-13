@@ -50,7 +50,24 @@
                         <td class="px-6 py-4">{{ $user->fname . ' ' . $user->lname ?? 'N/A' }}</td>
                         <td class="px-6 py-4">{{ $user->email }}</td>
                         <td class="px-6 py-4">{{ $user->mobile ?? 'N/A' }}</td>
-                        <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td>
+                        <!-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td> -->
+                        <td class="px-6 py-4">
+                            @if ($user->user_active == 1)
+                            <span
+                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                Yes
+                            </span>
+
+                            @elseif ($user->user_active == 0)
+                            <span
+                                class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                No
+                            </span>
+                            @else
+                            N/A
+                            @endif
+                        </td>
+
 
                         <td class="py-2 px-6">
                             <div class="flex justify-center">

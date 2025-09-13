@@ -84,7 +84,11 @@
             <tbody>
                 @forelse($share_holdings as $index => $share)
                 <tr>
-                    <td class="px-6 py-4">{{ $share->promotor->first_name ?? 'N/A' }}</td>
+                    <td class="px-6 py-4">
+                        <a href="{{route('promotor.show',base64_encode($share->promotor->id))}}" class="text-primary hover:underline">
+                          DEMO-{{ $share->promotor->id ?? 'N/A' }}-{{ $share->promotor->first_name ?? 'N/A' }}
+                        </a>
+                    </td>
                     <td class="px-6 py-4">{{ $share->first_share }}</td>
                     <td class="px-6 py-4">{{ $share->share_no }}</td>
                     <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>

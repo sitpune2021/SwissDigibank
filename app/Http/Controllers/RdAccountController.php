@@ -23,7 +23,7 @@ class RdAccountController extends Controller
 
         $rdAccounts = RdAccount::with(['member', 'branch', 'minor'])
             ->latest()
-            ->paginate(2);
+            ->paginate(10);
 
         return view('mds_rd_accounts.mds-rd-account.index', compact('rdAccounts'));
     }

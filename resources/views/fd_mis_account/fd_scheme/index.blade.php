@@ -74,7 +74,11 @@
                 <tbody>
                     @foreach($fdSchemes as $fdScheme)
                     <tr>
-                        <td class="py-5 px-6">{{ $fdScheme->scheme_code?? 'N/A' }}</td>
+                        <td class="py-5 px-6">
+                            <a href="{{route('fd-mis-schemes.show',$fdScheme->id)}}" class="text-primary underline hover:text-primary/80">
+                                {{ $fdScheme->scheme_code?? 'N/A' }}
+                            </a>
+                        </td>
                         <td class="py-5 px-6">{{ $fdScheme->scheme_name?? 'N/A' }}</td>
                         <td class="py-5 px-6">{{ $fdScheme->min_amount?? 'N/A' }}</td>
 
@@ -144,7 +148,7 @@
                                 @include('partials._vertical-options', [
                                 'id' => $fdScheme->id,
                                 'viewRoute' => 'fd-mis-schemes.show',
-                
+
                                 ])
                             </div>
                         </td>

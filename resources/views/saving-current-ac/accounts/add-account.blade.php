@@ -211,7 +211,6 @@
                 </div>
             </div>
 
-
             <div class="col-span-2 md:col-span-1"></div>
 
             <!-- // Hidden  section-->
@@ -269,8 +268,6 @@
                 @error('mode_of_operation') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
-
-
             <!-- // Hidden  section-->
 
             <!-- ------------------nominees-------------------- -->
