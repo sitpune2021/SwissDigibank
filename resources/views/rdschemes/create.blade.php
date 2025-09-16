@@ -121,9 +121,11 @@
                     <span class="text-red-500">*</span>
                 </label>
 
-                <input type="number" id="" name="min_rd_dd_amount"
+                <input type="number" id="min_rd_dd_amount" name="min_rd_dd_amount"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="Enter Min Opening Amount">
+
+                <x-number-to-word for="min_rd_dd_amount" />
                 @error('min_rd_dd_amount') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
 
@@ -404,12 +406,12 @@
                 </label>
                 <div class="flex flex-row pt-3 mt-5 gap-6">
                     <label class="flex items-center gap-3">
-                        <input type="checkbox" name="app_type_admin" value="1" class="w-6 h-6 accent-green-500">
+                        <input type="checkbox" name="app_type_admin" checked value="1" class="w-6 h-6 accent-green-500">
                         <span>Admin</span>
                     </label>
 
                     <label class="flex items-center gap-3">
-                        <input type="checkbox" name="app_type_associate" value="1"
+                        <input type="checkbox" name="app_type_associate" value="1" checked
                             class="w-6 h-6 accent-green-500">
                         <span>Associate</span>
                     </label>
@@ -433,7 +435,7 @@
                     </label>
 
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="active" value="no">
+                        <input type="radio" name="active" value="no" checked>
                         <span>No</span>
                     </label>
                 </div>

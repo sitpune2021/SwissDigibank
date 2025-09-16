@@ -231,7 +231,7 @@
 
                     placeholder="Enter Email" value=""> -->
 
-                <input type="text" name="email" id="email" value="{{ old('email', $employee->email ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
+                <input type="text" name="email" placeholder="Enter Email" id="email" value="{{ old('email', $employee->email ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
 
                 @error('email')
 

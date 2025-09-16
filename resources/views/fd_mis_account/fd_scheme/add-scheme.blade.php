@@ -239,7 +239,7 @@
                     <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="date2" name="effective_date"
-                   value="{{ old('effective_date', isset($fdScheme) ? \Carbon\Carbon::parse($fdScheme->effective_date)->format('D M d Y') : date('D M d Y')) }}"
+                    value="{{ old('effective_date', isset($fdScheme) ? \Carbon\Carbon::parse($fdScheme->effective_date)->format('D M d Y') : date('D M d Y')) }}"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
             </div>
 
@@ -254,6 +254,7 @@
                     value="{{ old('stationary_fee', $fdScheme->stationary_fee ?? '0.0') }}"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="0.0">
+                <x-number-to-word for="stationary_fee" />
             </div>
 
             <div class="col-span-2 md:col-span-1"> <label for="contact_email" class="md:text-lg font-medium block mb-4"> App Type <span class="text-red-500">*</span> </label>
