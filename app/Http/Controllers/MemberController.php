@@ -297,8 +297,8 @@ class MemberController extends Controller
                 'button',
                 'minor',
                 'method',
-                'documents' ,
-                'shareholdings'// ✅ send documents also
+                'documents',
+                'shareholdings' // ✅ send documents also
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -590,22 +590,7 @@ class MemberController extends Controller
             abort(404);
         }
     }
-    // public function shareholding($id)
-    // {
-    //     try {
-    //         Log::info("Fetching shareholding view for member ID: {$id}");
 
-    //         $member = Member::findOrFail($id);
-
-    //         $shareholdings = $member->shareHoldings()->get();
-
-    //         Log::info("Successfully fetched shareholdings for member ID: {$id}, Total: " . $shareholdings->count());
-
-    //         return view('members.member.shareholding', compact('member', 'shareholdings'));
-    //     } catch (\Exception $e) {
-    //         Log::error("Error fetching shareholding for member ID {$id}: " . $e->getMessage());
-    //     }
-    // }
 
     public function getShareHoldings($id)
     {
@@ -802,5 +787,45 @@ class MemberController extends Controller
         $member = Member::findOrFail($id, ['id', 'member_info_first_name', 'member_info_address', 'member_info_mobile']);
 
         return response()->json($member);
+    }
+    public function showTransactions($memberId)
+    {
+        // Find the member by ID or fail
+        $member = Member::findOrFail($memberId);
+
+        // Fetch transactions for the member from the 'membership_charges_transactions' table
+        $transactions = MembershipChargeTransaction::where('member_id', $member->id)
+            ->orderBy('transaction_date', 'desc') // Sort by transaction date
+            ->paginate(10); // Paginate results (10 transactions per page)
+
+        // Return the view with transactions and member data
+        return view('members.member.transactions', compact('member', 'transactions'));
+    }
+    public function storeTransaction(Request $request, $memberId)
+    {
+        $request->validate([
+            'transaction_date' => 'required|date',
+            'payment_mode' => 'required|string',
+            'type' => 'required|string',
+            'amount' => 'required|numeric',
+            'remarks' => 'nullable|string',
+            'status' => 'required|string',
+            'is_accounted' => 'required|boolean',
+        ]);
+
+        // Create a new transaction in the membership_charges_transactions table
+        \App\Models\MembershipChargeTransaction::create([
+            'transaction_date' => $request->transaction_date,
+            'payment_mode' => $request->payment_mode,
+            'type' => $request->type,
+            'amount' => $request->amount,
+            'remarks' => $request->remarks,
+            'status' => $request->status,
+            'is_accounted' => $request->is_accounted,
+            'member_id' => $memberId,
+        ]);
+
+        return redirect()->route('members.transactions', $memberId)
+            ->with('success', 'Transaction added successfully!');
     }
 }

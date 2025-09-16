@@ -138,6 +138,8 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
         Route::get('/ajax/members/search', [MemberController::class, 'search'])->name('ajax.members.search');
         Route::get('/members/member/{id}/shareholding', [MemberController::class, 'shareholding'])->name('member.shareholding');
+        Route::get('{memberId}/transactions', [MemberController::class, 'showTransactions'])->name('members.transactions');
+        Route::post('{memberId}/transactions', [MemberController::class, 'storeTransaction'])->name('members.storeTransaction');
         // Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/shareholding/view/{id}', [ShareholdingController::class, 'viewShareholding'])->name('viewShareholding');
