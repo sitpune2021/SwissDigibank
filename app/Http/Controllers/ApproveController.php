@@ -83,7 +83,7 @@ class ApproveController extends Controller
         }
     }
     /**
-     * Show transfer allocaction
+     * Start Approved Status
      */
 
     public function updateAccountStatus(Request $request, $id)
@@ -146,8 +146,12 @@ class ApproveController extends Controller
             return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
+
+    /**
+     * End Approved Status
+     */
 
     public function approveTransfer(Request $request)
     {
@@ -166,6 +170,7 @@ class ApproveController extends Controller
                             ->orWhere('shares', 'like', "%$search%");
                     });
                 })
+                ->orderBy('id', 'desc')
                 ->paginate(10); // 10 records per page
 
             return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
@@ -194,18 +199,17 @@ class ApproveController extends Controller
                 $transfer->certificate_number = null;
             }
 
-           if( $transfer->save())
-           {
-             $transfer->members->share_allocated =1;
-             $transfer->members->save();
-           }
+            if ($transfer->save()) {
+                $transfer->members->share_allocated = 1;
+                $transfer->members->save();
+            }
 
             return redirect()->back()->with('success', 'Share transfer updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
-    
+
     /**
      * Reverse Transaction. - view form called
      */

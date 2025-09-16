@@ -93,17 +93,16 @@
 
                     <input type="text" id="" name=""
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="" value="">
+                        placeholder="Member Name" value="">
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="city" class="md:text-lg font-medium block mb-4">
                         Member Address
-
                     </label>
 
                     <input type="text" id="" name=""
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="" value="">
+                        placeholder="Address" value="">
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -113,7 +112,7 @@
                     <div class="flex gap-2">
 
                         <input type="text" name="" id="" class=" text-sm bg-primary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" value="+91" disabled>
-                        <input type="text" id="" name="" class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Enter Mobile No " disabled>
+                        <input type="text" id="" name="" class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Mobile No " disabled>
                     </div>
                 </div>
 

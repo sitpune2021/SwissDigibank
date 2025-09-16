@@ -124,7 +124,7 @@
 
                     <input type="text" id="memberAddress" name="member_address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="" value="" readonly>
+                        placeholder="Member Name" value="" readonly>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -134,7 +134,7 @@
                     <div class="flex gap-2">
 
                         <input type="text" name="member_mobile" id="" class=" text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" value="+91" readonly>
-                        <input type="text" id="memberMobile" name="member_mobile" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Enter Mobile No " readonly>
+                        <input type="text" id="memberMobile" name="member_mobile" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Mobile No " readonly>
                     </div>
                 </div>
 
@@ -199,7 +199,10 @@
                         :</label>
                     <input type="number" id="rdAmount" name="rd_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="" value="">
+                        placeholder="Enter RD Amount" value="">
+
+                    <x-number-to-word for="rdAmount" />
+
                 </div>
                 @error('rd_amount')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -225,7 +228,7 @@
                     <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
                     <div class="flex items-center  gap-2">
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds" value="yes"> Yes</label>
-                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds" value="no"> No</label>
+                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds" value="no" checked> No</label>
                     </div>
                     @error('tds')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -238,7 +241,7 @@
                     <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
                     <div class="flex items-center gap-4">
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="accountType" value="single" onclick="toggleAccountType('single')" class="accent-primary">
+                            <input type="radio" name="accountType" value="single" onclick="toggleAccountType('single')" checked class="accent-primary">
                             <span>Single</span>
                         </label>
                         <label class="flex items-center gap-2">
@@ -273,7 +276,7 @@
                 <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
                 <div class="flex items-center  gap-2">
                     <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee" value="yes" onclick="toggleAddMore(true)">Yes</label>
-                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee" value="no" onclick="toggleAddMore(false)"> No</label>
+                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee" value="no" onclick="toggleAddMore(false)" checked> No</label>
                 </div>
                 @error('nominee')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -461,7 +464,7 @@
                 <div class="col-span-2 md:col-span-1">
                     <label class="font-medium block mb-2">
                         Amount <span class="text-red-500">*</span> </label>
-                    <input type="number" name="amount"
+                    <input type="number" name="amount" placeholder="Enter Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     @error('amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
