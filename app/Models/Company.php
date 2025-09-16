@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\State;
+use App\Models\CompanyCertificate;
 
 class Company extends Model
 {
@@ -29,6 +30,11 @@ class Company extends Model
         'pan_no',
         'tan_no',
         'gst_no',
+        
+        'iso_certification',
+        'bis_certification',
+        'pf_number',
+        'esic_number',
 
         'company_category',
         'company_class',
@@ -52,5 +58,10 @@ class Company extends Model
     public function incorporationState()
     {
         return $this->belongsTo(State::class, 'incorporation_state');
+    }
+
+     public function certificate()
+    {
+        return $this->hasOne(CompanyCertificate::class, 'company_id');
     }
 }

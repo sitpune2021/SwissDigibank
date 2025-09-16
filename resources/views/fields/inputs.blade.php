@@ -1,7 +1,7 @@
 @if ($type === 'textarea')
     <textarea id="{{ $id }}" name="{{ $name }}" rows="4"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 resize-none"
-        placeholder="Enter {{ strtolower($label) }}"{{ !empty($readonly) ? 'readonly' : '' }} >{{ $value }}</textarea>
+        placeholder="Enter {{ strtolower($label) }}"{{ !empty($readonly) ? 'readonly' : '' }}>{{ $value }}</textarea>
 @elseif ($type === 'date')
     <input type="date" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -9,7 +9,8 @@
 @elseif ($type === 'number')
     <input type="number" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}" {{ !empty($readonly) ? 'readonly' : '' }} />
+        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
+        {{ !empty($readonly) ? 'readonly' : '' }} />
 @elseif ($type === 'select')
     <select name="{{ $name }}" id="{{ $id }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -35,7 +36,8 @@
     <div class="flex gap-4">
         @foreach ($field['options'] as $optionValue => $optionLabel)
             <div class="flex items-center relative"><input id="{{ $id }}" class="opacity-0 absolute h-8 w-8"
-                    type="radio" name="{{ $name }}" value="{{ $optionValue }}" name="A3-confirmation" {{ $value == $optionValue ? 'checked' : '' }}{{ !empty($readonly) ? 'readonly' : '' }}>
+                    type="radio" name="{{ $name }}" value="{{ $optionValue }}" name="A3-confirmation"
+                    {{ $value == $optionValue ? 'checked' : '' }}{{ !empty($readonly) ? 'readonly' : '' }}>
                 <div
                     class="bg-n0 dark:bg-bg4 border border-gray-400 rounded-full w-5 h-5 flex shrink-0 justify-center items-center ltr:mr-2 rtl:ml-2 focus-within:border-primary">
                     <svg class="fill-current hidden w-[10px] h-[10px] text-primary pointer-events-none" version="1.1"
@@ -62,8 +64,21 @@
             <span class="switch-off">OFF</span>
         </div>
     </label>
+@elseif ($type === 'file')
+    @if (!empty($value))
+        <!-- If the file exists, show a "View File" button -->
+        <a href="{{ asset('storage/' . $value) }}" target="_blank" class="text-blue-500 hover:underline">
+            View File
+        </a>
+    @else
+        <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
+            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+            placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
+            {{ !empty($readonly) ? 'readonly disabled' : '' }} />
+    @endif
 @else
     <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}" {{ !empty($readonly) ? 'readonly' : '' }} />
+        placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
+        {{ !empty($readonly) ? 'readonly' : '' }} />
 @endif

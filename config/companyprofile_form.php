@@ -132,8 +132,8 @@ return [
             ],
             [
                 'label' => 'Upload CIN Certificate',
-                'name' => 'cin_certificate',
-                'id' => 'cin_certificate',
+                'name' => 'cin_certificate_path',
+                'id' => 'cin_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -147,8 +147,8 @@ return [
             ],
             [
                 'label' => 'Upload PAN Certificate',
-                'name' => 'pan_certificate',
-                'id' => 'pan_certificate',
+                'name' => 'pan_certificate_path',
+                'id' => 'pan_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -162,8 +162,8 @@ return [
             ],
             [
                 'label' => 'Upload TAN Certificate',
-                'name' => 'tan_certificate',
-                'id' => 'tan_certificate',
+                'name' => 'tan_certificate_path',  // updated here
+                'id' => 'tan_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -176,8 +176,8 @@ return [
             ],
             [
                 'label' => 'Upload GST Certificate',
-                'name' => 'gst_certificate',
-                'id' => 'gst_certificate',
+                'name' => 'gst_certificate_path',  // updated here
+                'id' => 'gst_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -192,8 +192,8 @@ return [
             ],
             [
                 'label' => 'Upload ISO Certificate',
-                'name' => 'iso_certificate',
-                'id' => 'iso_certificate',
+                'name' => 'iso_certificate_path',  // updated here
+                'id' => 'iso_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -214,8 +214,8 @@ return [
             ],
             [
                 'label' => 'Upload BIS Certificate',
-                'name' => 'bis_certificate',
-                'id' => 'bis_certificate',
+                'name' => 'bis_certificate_path',  // updated here
+                'id' => 'bis_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -229,8 +229,8 @@ return [
             ],
             [
                 'label' => 'Upload PF Certificate',
-                'name' => 'pf_certificate',
-                'id' => 'pf_certificate',
+                'name' => 'pf_certificate_path',  // updated here
+                'id' => 'pf_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
@@ -243,8 +243,8 @@ return [
             ],
             [
                 'label' => 'Upload ESIC Certificate',
-                'name' => 'esic_certificate',
-                'id' => 'esic_certificate',
+                'name' => 'esic_certificate_path',  // updated here
+                'id' => 'esic_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
