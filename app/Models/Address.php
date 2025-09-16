@@ -32,4 +32,9 @@ class Address extends Model
     {
         return $this->belongsTo(Member::class,'member_id');
     }
+    public function state()
+{
+    return $this->belongsTo(State::class, 'member_perm_address_state');
+}
+
 }
