@@ -205,6 +205,7 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    
     /**
      * Reverse Transaction. - view form called
      */

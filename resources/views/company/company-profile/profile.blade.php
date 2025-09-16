@@ -7,7 +7,7 @@ $companyprofile = config('companyprofile_form');
 
 @section('content')
 @include('fields.errormessage')
-<form action="{{ $route }}" method="POST" class="relative">
+<form action="{{ $route }}" method="POST" enctype="multipart/form-data" class="relative">
     @csrf
     @if (isset($method))
     @method($method)
@@ -38,13 +38,14 @@ $companyprofile = config('companyprofile_form');
                     ])
                 </section>
                 @else
-                <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
+                {{-- Changed from <form> to <section> to avoid nested forms --}}
+                <section class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                     @include('company.company-profile.partial.sectionLoop', [
                     'section' => $section,
                     'model' => $company,
                     'show' => true,
                     ])
-                </form>
+                </section>
                 @endif
 
             </div>

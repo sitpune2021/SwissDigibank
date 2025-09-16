@@ -15,6 +15,7 @@ class Member extends Model
         'general_enrollment_date',
         'member_info_title',
         'folio_no',
+        'type',
         'member_info_gender',
         'member_info_first_name',
         'member_info_middle_name',

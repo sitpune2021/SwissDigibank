@@ -36,6 +36,11 @@ class CompanySeeder extends Seeder
             'tan_no'                => 'DELX12345B',
             'gst_no'                => '22ABCDE1234F1Z5',
 
+            'iso_certification'     => 'ISO9001:2015-QMS-IND-12345678',
+            'bis_certification'     => 'CM/L-9876543210',
+            'pf_number'             => 'DL/12345/67890',
+            'esic_number'           => '1234567890',
+
             'company_category'      => 'Private',
             'company_class'         => 'Class A',
             'incorporation_date'    => '2020-01-15',

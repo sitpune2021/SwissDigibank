@@ -1,6 +1,12 @@
 @extends('layout.main')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<!-- FancyBox CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox.css" />
+<!-- FancyBox JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox.umd.js"></script>
+
+
 @section('page-title',
     isset($member)
     ? $member->member_info_first_name . ' ' . $member->member_info_last_name
@@ -16,14 +22,14 @@
             class="btn-info rounded-md px-2 py-1 text-white text-sm bg-blue-500 hover:bg-blue-600">
             SHARE HOLDINGS
         </a> --}}
-        @if ($member->share_allocated==1)
+        @if ($member->share_allocated == 1)
             <a href="{{ route('member.shareholding', $member->id) }}"
                 class="btn-info rounded-md px-2 py-1 text-white text-sm bg-blue-500 hover:bg-blue-600">
                 SHARE HOLDINGS
             </a>
         @endif
 
-           <a href="{{ url('/share/allocate') }}?member_id={{ $member->id }}"
+        <a href="{{ url('/share/allocate') }}?member_id={{ $member->id }}"
             class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
             ALLOCATE SHARES
         </a>
@@ -592,10 +598,11 @@
                         @click="open = !open">
                         <span class="font-semibold uppercase">Documents</span>
                         <div class="flex gap-2 space-x-2">
-                            {{-- <i class="cursor-pointer fa fa-pencil"></i> --}}
+                            {{-- Link to document edit page --}}
                             <a href="{{ route('member.document', $member->id) }}">
                                 <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
                             </a>
+                            {{-- Toggle button for showing/hiding sections --}}
                             <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                         </div>
                     </div>
@@ -692,18 +699,26 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
                                     <td class="px-6 py-2 text-start">
-                                        @php $pan = $documents->where('document_category', 'pan')->first(); @endphp
+                                        @php $pan = $documents->where('document_category', 'pan_number')->first(); @endphp
                                         @if ($pan && $pan->file_path)
                                             <button type="button" class="text-blue-600 underline"
                                                 onclick="previewDoc('{{ asset('storage/' . $pan->file_path) }}','PAN')">
                                                 View
                                             </button>
                                         @endif
+
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <script>
+                        function previewDoc(fileUrl, docType) {
+                            window.open(fileUrl, '_blank');
+                        }
+                    </script>
+
                 </div>
                 <!-- MY GUARANTOR SHIP -->
                 <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
@@ -1034,21 +1049,21 @@
                         </div>
                         <!-- Table Body -->
                         <div class="px-6 py-4">
-    @foreach ($shareholdings as $shareholding)
-        <table class="w-full border-collapse mb-4">
-            <tbody>
-                <tr>
-                    <th class="px-4 py-2 text-xs font-semibold text-left text-gray-700 uppercase">
-                        No. of Shares
-                    </th>
-                    <td class="px-4 py-2 text-sm text-center text-gray-700">
-                        {{ $shareholding->shares ?? '—' }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    @endforeach
-</div>
+                            @foreach ($shareholdings as $shareholding)
+                                <table class="w-full border-collapse mb-4">
+                                    <tbody>
+                                        <tr>
+                                            <th class="px-4 py-2 text-xs font-semibold text-start text-gray-700 uppercase">
+                                                No. of Shares
+                                            </th>
+                                            <td class="px-4 py-2 text-sm  text-start text-gray-700">
+                                                {{ $shareholding->shares ?? '—' }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            @endforeach
+                        </div>
 
                     </div>
                     <div>
@@ -1099,8 +1114,9 @@
                             </div>
                             <div class="flex justify-between py-2 border-b">
                                 <span class="font-medium">State</span>
-                                <span>{{ $member->state?->name ?? 'Unknown' }}</span>
+                                <span>{{ $member->address?->state?->name ?? 'N/A' }}</span>
                             </div>
+
                             <div class="flex justify-between py-2">
                                 <span class="font-medium">GPS Lat/ Log</span>
                                 <span>{{ $member->address?->member_gps_location_latitude ?? '' }}
@@ -1173,72 +1189,3 @@
         </div>
     </div>
 @endsection
-<!-- Document Preview Modal -->
-<div id="docModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl relative max-w-[90vw] max-h-[90vh]">
-
-        <!-- Close Button -->
-        <button type="button" onclick="closeDocModal()"
-            class="absolute -right-3 -top-3 w-8 h-8 rounded-full bg-white shadow
-                   text-gray-700 hover:text-red-600 text-xl leading-none">
-            &times;
-        </button>
-
-        <div class="p-3">
-            <h3 id="docTitle" class="font-semibold mb-2"></h3>
-
-            <div id="docContainer" class="w-[80vw] h-[75vh] flex items-center justify-center">
-
-                <!-- Image Preview (Smaller Thumbnail Size) -->
-                <img id="docImg" src="" alt="Document Image"
-                    class="max-h-[200px] max-w-[200px] hidden border rounded shadow-md hover:scale-125 transition-transform duration-300">
-
-                <!-- PDF Preview -->
-                <iframe id="docPdf" src="" class="w-full h-full hidden" frameborder="0"></iframe>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Script -->
-<script>
-    function previewDoc(url, title) {
-        const modal = document.getElementById('docModal');
-        document.getElementById('docTitle').innerText = title || '';
-
-        const isPdf = url.toLowerCase().includes('.pdf');
-        const img = document.getElementById('docImg');
-        const pdf = document.getElementById('docPdf');
-
-        if (isPdf) {
-            pdf.src = url;
-            pdf.classList.remove('hidden');
-            img.classList.add('hidden');
-        } else {
-            img.src = url;
-            img.classList.remove('hidden');
-            pdf.classList.add('hidden');
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-
-    function closeDocModal() {
-        const modal = document.getElementById('docModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.getElementById('docImg').src = '';
-        document.getElementById('docPdf').src = '';
-    }
-
-    // Close modal by clicking on overlay
-    document.getElementById('docModal').addEventListener('click', (e) => {
-        if (e.target.id === 'docModal') closeDocModal();
-    });
-
-    // Close modal on Escape key press
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeDocModal();
-    });
-</script>
