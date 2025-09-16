@@ -305,10 +305,13 @@
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                        rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                <option value="">Search member no or name</option>
-                                <option value="1001">Account 1001 - Akask Doshi</option>
-                                <option value="1002">Account 1002 - vijay Smith</option>
-                                <option value="1003">Account 1003 - Alex Kumar</option>
+                                <option value="">Search Member No or Name</option>
+                                @foreach ($members as $member)
+                                    <option value="{{ $member->id }}"
+                                        {{ old('member_id') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -628,24 +631,8 @@
                 document.getElementById('single').classList.remove('hidden');
             }
         }
-        $('#member').on('change', function() {
-            let memberId = $(this).val();
-
-            if (memberId) {
-                $.get('/members/' + memberId + '/details', function(data) {
-                    // Fill member details
-                    $('#memberName').val(data.member_info_first_name + ' ' + data.member_info_last_name);
-                    $('#memberAddress').val(data.member_address_line_1);
-                    $('#memberMobile').val(data.member_info_mobile_no);
-
-                    // Auto select branch
-                    $('#branch_id').val(data.branch_id).trigger('change');
-                });
-            }
-        });
     </script>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -663,12 +650,10 @@
                         document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
                         document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
 
-                        // ✅ Branch auto select
+                        // ✅ Branch auto fill only
                         if (data.branch_id) {
-                            $('#branch_id').val(data.branch_id).trigger('change');
+                            document.getElementById('branch_id').value = data.branch_id;
                         }
-
-
                         // ✅ Open Date auto fill
                         document.getElementById('date5').value = data.open_date ?? '';
                     })
@@ -686,48 +671,35 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const schemeSelect = document.getElementById('scheme_id');
+            const ddAmountInput = document.getElementById('dd_amount');
+            const amountInput = document.getElementById('amount');
+            const minAmountMsg = document.getElementById('minAmountMsg');
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const schemeSelect = document.getElementById('scheme_id');
-        const ddAmountInput = document.getElementById('dd_amount');
-        const amountInput = document.getElementById('amount');
-        const minAmountMsg = document.getElementById('minAmountMsg');
+            let currentMinAmount = 0;
 
-        function updateDDAmountFromScheme() {
-            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-            const minAmount = selectedOption.getAttribute('data-min');
+            // ✅ Scheme बदलल्यावर फक्त minAmount सेट करायचं
+            schemeSelect.addEventListener('change', function() {
+                const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+                const minAmount = selectedOption.getAttribute('data-min');
 
-            if (minAmount && !isNaN(minAmount)) {
-                const amount = parseFloat(minAmount).toFixed(2);
-
-                // ✅ Set value in DD Amount and Amount (AUTO ONLY)
-                ddAmountInput.value = amount;
-                amountInput.value = amount;
-
-                // Show updated message
-                minAmountMsg.textContent = `Minimum amount to be deposited ₹${amount}`;
+                currentMinAmount = (minAmount && !isNaN(minAmount)) ? parseFloat(minAmount) : 0;
+                minAmountMsg.textContent = currentMinAmount ?
+                    `Minimum amount to be deposited ₹${currentMinAmount.toFixed(2)}` :
+                    '';
                 minAmountMsg.classList.remove('hidden');
-            } else {
-                // Clear both
-                ddAmountInput.value = '';
-                amountInput.value = '';
-                minAmountMsg.textContent = '';
-                minAmountMsg.classList.add('hidden');
-            }
-        }
+                minAmountMsg.style.color = "green"; // फक्त माहिती साठी
+            });
 
-        // ❌ Removed manual DD amount syncing to amount
-        // i.e., NO ddAmountInput.addEventListener('input', ...);
-
-        // ✅ On scheme change
-        schemeSelect.addEventListener('change', updateDDAmountFromScheme);
-
-        // ❌ NO autofill on page load
-    });
-</script>
-
-
+            // ✅ User जे टाकेल ते amount मध्ये reflect होईल + validation
+            ddAmountInput.addEventListener('input', function() {
+                let value = parseFloat(ddAmountInput.value) || 0;
+                amountInput.value = value ? value.toFixed(2) : '';
+            });
+        });
+    </script>
 
 
 @endsection

@@ -794,8 +794,6 @@
                         }
                     }
 
-
-
                     // Show balance box if hidden
                     $("#balanceBox").removeClass("hidden");
                 },

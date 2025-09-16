@@ -46,8 +46,8 @@
                     <tr>
                         <td class="px-4 py-2 font-semibold border-b bg-gray-50">Member</td>
                         <td class="px-4 py-2 border-b">
-                            <a href="{{ route('member.show', $shareholding->id) }}" class="text-primary hover:underline">
-                                DEMO-{{ $shareholding->id ?? 'N/A' }} -
+                            <a href="{{ route('member.show', $shareholding->members->id) }}" class="text-primary hover:underline">
+                                DEMO-{{ $shareholding->members->id ?? 'N/A' }} -
                                 {{ $shareholding->members->member_info_first_name ?? '' }}{{ $shareholding->members->member_info_middle_name }}
                                 {{ $shareholding->members->member_info_last_name }}
                             </a>
@@ -125,9 +125,9 @@
                                 </a>
                             </td>
                             <td class="px-4 py-2 text-blue-600 border-0">
-                                <a href="{{ route('member.show', $shareholding->id) }}"
+                                <a href="{{ route('member.show', $shareholding->members->id) }}"
                                     class="text-primary hover:underline">
-                                    DEMO-{{ $shareholding->id ?? 'N/A' }} -
+                                    DEMO-{{ $shareholding->members->id ?? 'N/A' }} -
                                     {{ $shareholding->members->member_info_first_name ?? '' }}{{ $shareholding->members->member_info_middle_name }}
                                     {{ $shareholding->members->member_info_last_name }}
                                 </a>
