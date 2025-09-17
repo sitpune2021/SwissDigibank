@@ -1,20 +1,18 @@
 @extends('layout.main')
-
 @section('page-title',
 isset($member)
 ? $member->member_info_first_name . ' ' . $member->member_info_last_name
 : 'Add
 member')
 
-
 @section('content')
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <!-- FancyBox CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox.css" />
 <!-- FancyBox JS -->
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox.umd.js"></script>
+
 
 <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
     <x-alert />
@@ -39,7 +37,7 @@ member')
     <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD SHARE
         AMOUNT</a>
 
-    <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
+    <a href="{{ route('member.shareholding', $member->id) }}" class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
 
     <!-- Dropdown -->
     <div class="relative">
@@ -621,7 +619,7 @@ member')
                                     @php $photo = $documents->where('document_category', 'photo')->first(); @endphp
                                     @if ($photo && $photo->file_path)
                                     <button type="button" class="text-blue-600 underline"
-                                        onclick="previewDoc('{{ asset(`storage/` . $photo->file_path) }}','Photo')">
+                                        onclick="previewDoc('{{ asset('storage/' . $photo->file_path) }}','Photo')">
                                         View
                                     </button>
                                     @endif
@@ -635,7 +633,7 @@ member')
                                     @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
                                     @if ($signature && $signature->file_path)
                                     <button type="button" class="text-blue-600 underline"
-                                        onclick="previewDoc('{{ asset(`storage/` . $signature->file_path) }}','Signature')">
+                                        onclick="previewDoc('{{ asset('storage/' . $signature->file_path) }}','Signature')">
                                         View
                                     </button>
                                     @endif
@@ -649,7 +647,7 @@ member')
                                     @php $idProof = $documents->where('document_category', 'id_proof')->first(); @endphp
                                     @if ($idProof && $idProof->file_path)
                                     <button type="button" class="text-blue-600 underline"
-                                        onclick="previewDoc('{{ asset(`storage/` . $idProof->file_path) }}','ID Proof')">
+                                        onclick="previewDoc('{{ asset('storage/' . $idProof->file_path) }}','ID Proof')">
                                         View
                                     </button>
                                     @endif
@@ -663,7 +661,7 @@ member')
                                     @php $idProofBack = $documents->where('document_category', 'id_proof_back')->first(); @endphp
                                     @if ($idProofBack && $idProofBack->file_path)
                                     <button type="button" class="text-blue-600 underline"
-                                        onclick="previewDoc('{{ asset(`storage/` . $idProofBack->file_path) }}','ID Proof Back')">
+                                        onclick="previewDoc('{{ asset('storage/' . $idProofBack->file_path) }}','ID Proof Back')">
                                         View
                                     </button>
                                     @endif
@@ -677,7 +675,7 @@ member')
                                     @php $addressProof = $documents->where('document_category', 'address_proof')->first(); @endphp
                                     @if ($addressProof && $addressProof->file_path)
                                     <button type="button" class="text-blue-600 underline"
-                                        onclick="previewDoc('{{ asset(`storage/` . $addressProof->file_path) }}','Address Proof')">
+                                        onclick="previewDoc('{{ asset('storage/' . $addressProof->file_path) }}','Address Proof')">
                                         View
                                     </button>
                                     @endif
@@ -691,7 +689,7 @@ member')
                                     @php $addressProofBack = $documents->where('document_category', 'address_proof_back')->first(); @endphp
                                     @if ($addressProofBack && $addressProofBack->file_path)
                                     <button type="button" class="text-blue-600 underline"
-                                        onclick="previewDoc('{{ asset(`storage/` . $addressProofBack->file_path) }}','Address Proof Back')">
+                                        onclick="previewDoc('{{ asset('storage/' . $addressProofBack->file_path) }}','Address Proof Back')">
                                         View
                                     </button>
                                     @endif
@@ -710,63 +708,10 @@ member')
                                     </button>
                                     @endif
 
-                                {{-- PAN --}}
-                                <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
-                                    <td class="px-6 py-2 text-start">
-                                        @php $pan = $documents->where('document_category', 'pan_number')->first(); @endphp
-                                        @if ($pan && $pan->file_path)
-                                            <button type="button" class="text-blue-600 underline"
-                                                onclick="previewDoc('{{ asset('storage/' . $pan->file_path) }}','PAN')">
-                                                View
-                                            </button>
-                                        @endif
-
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <script>
-                        function previewDoc(fileUrl, docType) {
-                            window.open(fileUrl, '_blank');
-                        }
-                    </script>
-
-                </div>
-                <!-- MY GUARANTOR SHIP -->
-                <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"style="background-color:#3c8dbc;"
-                        @click="open = !open">
-                        <span class="font-semibold uppercase">Joint Accounts</span>
-                        <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-                    </div>
-
-                    <!-- Content -->
-                    <div x-show="open" x-transition class="bg-white">
-                        <table class="w-full text-sm text-left border-collapse">
-                            <thead class="border-b">
-                                <tr>
-                                    <th class="px-4 py-2 font-semibold">Account Type</th>
-                                    <th class="px-4 py-2 font-semibold">Account No.</th>
-                                    <th class="px-4 py-2 font-semibold">Open Date</th>
-                                    <th class="px-4 py-2 font-semibold">Status</th>
-                                    <th class="px-4 py-2 font-semibold">State</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="px-4 py-2">-</td>
-                                    <td class="px-4 py-2">-</td>
-                                    <td class="px-4 py-2">-</td>
-                                    <td class="px-4 py-2">-</td>
-                                    <td class="px-4 py-2">-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <script>
@@ -779,20 +724,36 @@ member')
             <!-- MY GUARANTOR SHIP -->
             <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
                 <!-- Header -->
-                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer" style="background-color:#3c8dbc;"
                     @click="open = !open">
                     <span class="font-semibold uppercase">Joint Accounts</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
-                <!-- MY GUARANTOR SHIP -->
-                <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer" style="background-color:#3c8dbc;"
-                        @click="open = !open">
-                        <span class="font-semibold uppercase">My Guarantor Ship</span>
-                        <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-                    </div>
+                <!-- Content -->
+                <div x-show="open" x-transition class="bg-white">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="border-b">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold">Account Type</th>
+                                <th class="px-4 py-2 font-semibold">Account No.</th>
+                                <th class="px-4 py-2 font-semibold">Open Date</th>
+                                <th class="px-4 py-2 font-semibold">Status</th>
+                                <th class="px-4 py-2 font-semibold">State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                                <td class="px-4 py-2">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <!-- MY GUARANTOR SHIP -->
             <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
@@ -831,7 +792,7 @@ member')
             <!-- MY GUARANTOR SHIP -->
             <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
                 <!-- Header -->
-                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer" style="background-color:#3c8dbc;"
                     @click="open = !open">
                     <span class="font-semibold uppercase">My Guarantor Ship</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
