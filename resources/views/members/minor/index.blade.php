@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('page-title', 'Minors')
 @section('content')
 
 <div class="main-inner">
