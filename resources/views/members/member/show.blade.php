@@ -34,10 +34,10 @@
             ALLOCATE SHARES
         </a>
 
-        <a class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD SHARE
+        <a  href="{{ route('members.transactions.share-amount.store', $member->id) }}"class="btn-warning rounded-md px-2 py-1 text-white  text-sm bg-yellow-500 hover:bg-yellow-600">ADD SHARE
             AMOUNT</a>
 
-        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
+        <a href="{{ route('members.transactions', $member->id) }}" class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
 
         <!-- Dropdown -->
         <div class="relative">

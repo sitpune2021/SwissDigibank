@@ -801,6 +801,7 @@ class MemberController extends Controller
         // Return the view with transactions and member data
         return view('members.member.transactions', compact('member', 'transactions'));
     }
+
     public function storeTransaction(Request $request, $memberId)
     {
         $request->validate([
@@ -813,19 +814,46 @@ class MemberController extends Controller
             'is_accounted' => 'required|boolean',
         ]);
 
-        // Create a new transaction in the membership_charges_transactions table
-        \App\Models\MembershipChargeTransaction::create([
-            'transaction_date' => $request->transaction_date,
-            'payment_mode' => $request->payment_mode,
-            'type' => $request->type,
-            'amount' => $request->amount,
-            'remarks' => $request->remarks,
-            'status' => $request->status,
-            'is_accounted' => $request->is_accounted,
-            'member_id' => $memberId,
+        MembershipChargeTransaction::create([
+            'transaction_date'     => $request->transaction_date,
+            'membership_fee'       => $request->membership_fee,
+            'net_fee_to_collect'   => $request->membership_fee, // or calculate as needed
+            'remarks'              => $request->remarks,
+            'charges_pay_mode'     => $request->charges_pay_mode, // cash, online, cheque
+            'member_id'            => $memberId,
         ]);
 
-        return redirect()->route('members.transactions', $memberId)
+        return redirect()->route('members.member.transactions', $memberId)
+            ->with('success', 'Transaction added successfully!');
+    }
+    public function createShareAmount($id)
+    {
+        $member = Member::findOrFail($id);
+
+        return view('members.member.shareAmount', compact('member'));
+    }
+
+    public function storeShareAmount(Request $request, $id)
+    {
+        $member = Member::findOrFail($id);
+
+        $validated = $request->validate([
+            'transaction_date' => 'required|date',
+            'membership_fee' => 'required|numeric|min:0',
+            'remarks' => 'nullable|string',
+            'charges_pay_mode' => 'required|in:cash,online,cheque',
+        ]);
+
+        MembershipChargeTransaction::create([
+            'transaction_date'     => $validated['transaction_date'],
+            'membership_fee'       => $validated['membership_fee'],
+            'net_fee_to_collect'   => $validated['membership_fee'],
+            'remarks'              => $validated['remarks'] ?? null,
+            'charges_pay_mode'     => $validated['charges_pay_mode'],
+            'member_id'            => $member->id,
+        ]);
+
+        return redirect()->route('members.member.transactions', $id)
             ->with('success', 'Transaction added successfully!');
     }
 }

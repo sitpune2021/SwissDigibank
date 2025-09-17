@@ -73,32 +73,32 @@ class CompanyController extends Controller
 
                 // LEGAL INFO
                 'cin_no' => 'nullable|regex:/^[LU]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/',
-                'cin_certificate_path' => 'nullable|file|max:2048',
+                'cin_certificate_path' => 'nullable|file',
 
                 'pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
-                'pan_certificate_path' => 'nullable|file|max:2048',
+                'pan_certificate_path' => 'nullable|file',
 
                 'tan_no' => 'nullable|regex:/^[A-Z]{4}[0-9]{5}[A-Z]{1}$/',
-                'tan_certificate_path' => 'nullable|file|max:2048',
+                'tan_certificate_path' => 'nullable|file',
 
                 'gst_no' => 'nullable|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/',
-                'gst_certificate_path' => 'nullable|file|max:2048',
+                'gst_certificate_path' => 'nullable|file',
 
                 // ISO Certification – formats like ISO-9001:2015 or ISO/IEC 27001
                 'iso_certification' => 'nullable|regex:/^ISO([\/\- ]?[A-Z0-9]+)*$/i|max:255',
-                'iso_certificate_path' => 'nullable|file|max:2048',
+                'iso_certificate_path' => 'nullable|file',
 
                 // BIS Certification – usually simple alphanumeric with dash/slash
                 'bis_certification' => 'nullable|regex:/^[A-Z0-9\-\/ ]{3,255}$/i|max:255',
-                'bis_certificate_path' => 'nullable|file|max:2048',
+                'bis_certificate_path' => 'nullable|file',
 
                 // PF Number – Indian PF format: 2 letters (state) / 3–7 digits / alphanumeric
                 'pf_number' => 'nullable|regex:/^[A-Z]{2}\/[0-9]{3,7}\/[A-Z0-9]+$/i|max:50',
-                'pf_certificate_path' => 'nullable|file|max:2048',
+                'pf_certificate_path' => 'nullable|file',
 
                 // ESIC Number – 10 to 17 digits
                 'esic_number' => 'nullable|regex:/^[0-9]{10,17}$/',
-                'esic_certificate_path' => 'nullable|file|max:2048',
+                'esic_certificate_path' => 'nullable|file',
 
                 // Incorporation Info
                 'incorporation_date' => 'nullable|date',
@@ -125,6 +125,7 @@ class CompanyController extends Controller
                     'incorporation_date' => $incorporationDate,
                 ]);
             }
+
             $company = Company::findOrFail($id);
             $company->update($request->all());
             $certificate = $company->certificate ?? new CompanyCertificate(['company_id' => $company->id]);
