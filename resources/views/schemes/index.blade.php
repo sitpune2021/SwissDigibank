@@ -5,7 +5,6 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
         <h4 class="h2">Schemes</h4>
         <a class="btn-primary" href="{{ route('schemes.create') }}">
-            <i class="text-base md:text-lg"></i>
             Add
         </a>
     </div>

@@ -6,7 +6,7 @@
                 <img width="174" height="38" src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
                     class="logo-full2 hidden lg:block" />
             </a>
-             <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0"
+            <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0"
                 id="sidebar-toggle-btn">
                 <i class="las la-angle-left text-lg"></i>
             </button>
@@ -110,8 +110,8 @@
                                 <span class="text-xs text-n100 dark:text-n50">1 hour ago</span>
                             </div>
                         </div>
-                      
-                     
+
+
                         <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
                             <img src="{{ asset('assets/images/user-7.png') }}" width="44" height="40"
                                 class="shrink-0 rounded-full" alt="img" />
@@ -173,7 +173,8 @@
                         <img src="{{ asset('assets/images/user-big-4.png') }}" width="60" height="60" class="rounded-full"
                             alt="profile img" />
                         <h6 class="h6 mt-2">
-                        {{ auth()->user()->name}} </h6>
+                            {{ auth()->user()->name}}
+                        </h6>
                         <span class="text-sm">{{auth()->user()->email}}</span>
                     </div>
                     <ul class="flex w-[250px] flex-col p-4">
@@ -205,9 +206,9 @@
                             </a>
                         </li>
                         <li>
-                          
-                            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
-                            class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
+
+                            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
                                 <span>
                                     <i class="las la-sign-out-alt mt-1 text-xl"></i>
                                 </span>

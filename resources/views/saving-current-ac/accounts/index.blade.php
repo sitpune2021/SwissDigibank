@@ -2,13 +2,10 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <!-- <div class="flex items-center gap-2"> -->
         <h2 class="h2">Saving / Current Accounts</h2>
         <a class="btn-primary" href="{{ route('accounts.create') }}">
-            <i class="text-base md:text-lg"></i>
             Add
         </a>
-        <!-- </div> -->
     </div>
 
     <!-- Latest Transactions -->
@@ -127,7 +124,7 @@
     </div>
     <x-pagination :paginator="$Accounts" />
 </div>
-@endsection
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -166,3 +163,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+@endsection

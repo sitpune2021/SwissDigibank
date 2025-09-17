@@ -1,9 +1,10 @@
 @extends('layout.main')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 @section('page-title', isset($promoter) ? $promoter->first_name : 'Add Promoter')
 
 @section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
@@ -1031,20 +1032,18 @@
 
                     </div>
                 </div>
-            </div>
-        @endsection
+    
         <!-- Modal HTML -->
-        <div id="docPreviewModal"
+        <!-- <div id="docPreviewModal"
             class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
             <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
                 <button onclick="closePreview()"
                     class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
                 <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
                 <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
-                    <!-- Document will be displayed here -->
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- JS Script -->
         <script>
@@ -1074,3 +1073,5 @@
                 document.getElementById("docPreviewModal").classList.add("hidden");
             }
         </script>
+        </div>
+        @endsection

@@ -47,7 +47,6 @@ $companyprofile = config('companyprofile_form');
                     ])
                 </section>
                 @endif
-
             </div>
         </div>
         @endforeach

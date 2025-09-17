@@ -32,7 +32,6 @@ class MisaccountController extends Controller
 
     public function create(Request $request)
     {
-
         $members = Member::with(['address', 'branch'])->get();
         $minors = Minor::all();
         $branches = Branch::all();
@@ -51,129 +50,6 @@ class MisaccountController extends Controller
 
         return response()->json($accounts);
     }
-
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'member_id' => 'required|exists:members,id',
-    //             'member_name' => 'nullable|string|max:255',
-    //             'member_address' => 'nullable|string|max:500',
-    //             'member_mobile' => 'nullable|string|max:15',
-    //             'minor_id' => 'nullable|exists:minors,id',
-    //             'branch_id' => 'required|exists:branches,id',
-    //             'fd_scheme_id' => 'nullable|exists:fd_schemes,id',
-    //             'advisor_id' => 'nullable|integer',
-    //             'open_date' => 'required|date',
-    //             'tenure_year' => 'nullable|integer|min:0',
-    //             'tenure_month' => 'nullable|integer|min:0|max:12',
-    //             'tenure_day' => 'nullable|integer|min:0|max:31',
-    //             'mis_amount' => 'required|numeric|min:0',
-    //             'interest_payout_type' => 'required|string|max:100',
-    //             'tds_deduction' => 'required|in:yes,no',
-    //             'senior_citizen' => 'required|in:yes,no',
-    //             'account_type' => 'required|in:single,joint',
-    //             'joint_member_id' => 'nullable|exists:members,id',
-    //             'nominee' => 'required|in:yes,no',
-    //             'final_amount' => 'nullable|integer|min:0',
-    //             'transaction_date' => 'required|date',
-
-    //             'amount' => 'required|numeric|min:1',
-    //             'pay_mode' => 'required|in:cash,cheque,online,saving',
-    //         ]);
-
-
-
-    //         if ($request->account_type === 'joint') {
-    //             if (!$request->joint_member_id) {
-    //                 return back()->withInput()->withErrors(['joint_member_id' => 'Joint member is required for joint accounts.']);
-    //             }
-    //             $validated['joint_member_id'] = $request->joint_member_id;
-    //         } else {
-    //             $validated['joint_member_id'] = null;
-    //         }
-
-    //         $validated['open_date'] = Carbon::parse($validated['open_date'])->format('Y-m-d');
-    //         $validated['transaction_date'] = Carbon::parse($validated['transaction_date'])->format('Y-m-d');
-    //         $misaccount = Misaccount::create($validated);
-
-    //         if ($request->nominee === 'yes' && $request->has('nominee_name')) {
-    //             $totalNominees = count(array_filter($request->nominee_name));
-    //             $share = $totalNominees > 0 ? round(100 / $totalNominees, 2) : 100;
-    //             foreach ($request->nominee_name as $key => $name) {
-    //                 if (!empty($name)) {
-    //                     $acc = AccountNominee::create([
-    //                         'account_id' => "MIS-" . $misaccount->id,
-    //                         'nominee_name' => $name,
-    //                         'nominee_relation' => $request->nominee_relation[$key] ?? null,
-    //                         'nominee_address' => $request->nominee_address[$key] ?? null,
-    //                         'share_percentage' => $share ?? null,
-    //                     ]);
-    //                     //  dd($acc);
-
-    //                 }
-    //             }
-    //             Log::info("Nomninees saved", ['count' => $totalNominees]);
-    //         }
-
-    //         $chequeDate = $request->cheque_date
-    //             ? Carbon::parse($request->cheque_date)->format('Y-m-d')
-    //             : null;
-
-    //         $transferDate = $request->transfer_date
-    //             ? Carbon::parse($request->transfer_date)->format('Y-m-d')
-    //             : null;
-
-    //         $calc = $this->calculateInvestment(
-    //             'MIS',
-    //             $request->mis_amount,
-    //             $request->scheme->interest_rate ?? 8,
-    //             ($request->tenure_year * 12) + $request->tenure_month,
-    //             $request->date,
-    //             $request->payout
-    //         );
-
-    //         $summary = $calc->getData(true)['summary']['summary'] ?? [];
-    //         $transactionDate = $request->transaction_date
-    //             ? Carbon::createFromFormat('D M d Y', $request->transaction_date)->format('Y-m-d')
-    //             : null;
-
-    //         MisTransaction::create([
-    //             'misaccount_id' => $misaccount->id,
-    //             'amount' => $request->amount,
-    //             'pay_mode' => $request->pay_mode,
-    //             'bank_id' => $request->bank_id ?? null,
-    //             'cheque_no' => $request->cheque_no ?? null,
-    //             'cheque_date' => $chequeDate,
-    //             'transfer_date' => $transferDate,
-    //             'utr_no' => $request->utr_no ?? null,
-    //             'transfer_mode' => $request->transfer_mode ?? null,
-    //             'saving_account_id' => $request->saving_account_id ?? null,
-
-    //             // Store MIS calculated fields
-    //             'monthly_interest' => $summary['net_interest'],
-    //             'final_amount'          => isset($summary['final_amount'])
-    //                 ? (float) str_replace(',', '', $summary['final_amount'])
-    //                 : 0,
-    //             'maturity_amount' => $summary['maturity_amount'],
-    //             'maturity_date'         => Carbon::createFromFormat('d/m/Y', $summary['maturity_date'])->format('Y-m-d'),
-    //         ]);
-
-
-    //         return redirect()
-    //             ->route('misaccount.index')
-    //             ->with('success', 'MIS Account created successfully.');
-    //     } catch (ValidationException $e) {
-    //         return redirect()->back()
-    //             ->withErrors($e->errors())
-    //             ->withInput();
-    //     } catch (Exception $e) {
-    //         Log::error('MisAccount creation failed: ' . $e->getMessage());
-    //         return redirect()->back()
-    //             ->with('error', 'Something went wrong while creating MisAccount. Please try again.')
-    //             ->withInput();
-    //     }
-    // }
 
     public function store(Request $request)
     {

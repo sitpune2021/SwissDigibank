@@ -2,7 +2,6 @@
 @section('page-title', 'Members')
 @section('action-button')
 <a class="btn-primary" href="{{ route('member.create') }}">
-    <i class=" md:text-lg"></i>
     Add
 </a>
 @endsection
