@@ -1,15 +1,4 @@
 @extends('layout.main')
-
-<!-- @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif -->
-
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
@@ -492,7 +481,7 @@ return [
 })->toArray();
 
 @endphp
-@endsection
+
 
 <style>
     .firm-field-wrapper {
@@ -696,3 +685,4 @@ return [
         }
     });
 </script>
+@endsection

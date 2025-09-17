@@ -201,10 +201,13 @@
                             <button class="btn-primary" type="submit">
                                 {{ $method === 'PUT' ? 'Update' : 'UPLOAD' }} FORM 15G/ 15H
                             </button>
-                            <button class="btn-outline" type="reset"
-                                onclick="document.getElementById('companyForm').reset();">
-                                Reset
-                            </button>
+                            @if ($method !== 'PUT')
+                                <!-- Only show Reset button if not 'Update' -->
+                                <button class="btn-outline" type="reset"
+                                    onclick="document.getElementById('companyForm').reset();">
+                                    Reset
+                                </button>
+                            @endif
                         </div>
                     @endif
 
@@ -218,7 +221,7 @@
             </form>
         </div>
     </div>
-@endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let today = new Date().toISOString().split('T')[0];
@@ -234,3 +237,4 @@
         });
     });
 </script>
+@endsection

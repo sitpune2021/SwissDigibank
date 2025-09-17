@@ -1,77 +1,4 @@
 @extends('layout.main')
-
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
-    input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
-        accent-color: green;
-        /* For modern browsers */
-    }
-
-    /* Fallback for browsers without accent-color support */
-    input[type="checkbox"]:checked {
-        background-color: green;
-        border: none;
-    }
-
-    input[type="radio"] {
-        width: 24px;
-        height: 24px;
-        accent-color: green;
-        /* Modern browser support */
-    }
-
-    .tableWidth {
-        width: 90%;
-        margin: auto;
-
-    }
-
-    .bg-yellow {
-        background-color: #e17100;
-    }
-</style>
-
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
@@ -530,7 +457,7 @@
                     Reset
                 </button>
                 <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline"
-                    onclick="window.location.href='{{ route('fd-mis-schemes.fd_index') }}'">
+                    onclick="window.location.href='{{ route(`fd-mis-schemes.fd_index`) }}'">
                     back
                 </button>
             </div>
@@ -795,8 +722,6 @@
                             $("#accountBalance2").text("insufficiant balance......");
                         }
                     }
-
-
 
                     // Show balance box if hidden
                     $("#balanceBox").removeClass("hidden");

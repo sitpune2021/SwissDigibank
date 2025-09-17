@@ -25,8 +25,6 @@
 
     @endif
 
-
-
     @if (session('error'))
 
     <div id="error-alert"
@@ -76,14 +74,6 @@
                 <label for="branch" class="md:text-lg font-medium block mb-4">Branch<span
 
                         class="text-red-500">*</span></label>
-
-                <!-- <select name="branch" id="branchDropdown"
-
-                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-
-                    <option value="">Select</option>
-
-                </select> -->
                 <input type="hidden" id="selectedBranchId" value="{{ isset($employee) ? $employee->branch_id : '' }}">
                 @if(isset($isView) && $isView)
                 {{-- View Mode: Just display the member name --}}
@@ -249,13 +239,6 @@
 
                         class="text-red-500">*</span></label>
 
-                <!-- <input type="text" name="mobile_no" id="mobile_no" value="{{ old('mobile_no') }}"
-
-                    placeholder="Enter Mobile No."
-
-                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-
-                    value=""> -->
                 <input type="text" name="mobile_no" id="mobile_no" value="{{ old('mobile_no', $employee->mobile_no ?? '') }}" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
 
                 @error('mobile_no')
@@ -635,9 +618,6 @@
 </div>
 
 </div>
-
-@endsection
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     setTimeout(function() {
@@ -663,7 +643,7 @@
                 let dropdown = $('#memberDropdown');
                 dropdown.empty();
                 dropdown.append('<option value="">Select Member</option>');
-                
+
                 $.each(response, function(index, member) {
                     console.log(member);
                     let selected = (selectedId == member.id) ? 'selected' : '';
@@ -708,11 +688,6 @@
         $.ajax({
             url: "{{ url('/get-relation') }}",
             type: "GET",
-            // success: function(response) {
-            //     $.each(response, function(key, relation) {
-            //         $('#nomineeDropdown').append(`<option value="${relation.id}">${relation.relation}</option>`);
-            //     });
-            // },
             success: function(response) {
                 let dropdown = $('#nomineeDropdown');
                 dropdown.empty();
@@ -831,3 +806,5 @@
         checkbox.addEventListener("change", toggleLedgerDropdown);
     });
 </script>
+
+@endsection

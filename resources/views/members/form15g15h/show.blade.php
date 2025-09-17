@@ -8,9 +8,11 @@ isset($form15g15h) && $form15g15h->member
 ($form15g15h->financial_year ?? '')
 : 'Add member'
 )
+
+@section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-@section('content')
+
 <div class="main-inner">
     <!-- Page Header -->
     <div class="flex items-center justify-between mb-6 lg:mb-8">

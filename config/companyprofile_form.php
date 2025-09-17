@@ -197,13 +197,6 @@ return [
                 'type' => 'file',
                 'required' => false,
             ],
-            // [
-            //     'label' => 'View ISO Certificate',
-            //     'name' => 'iso_certificate_view',
-            //     'id' => 'iso_certificate_view',
-            //     'type' => 'view_file',
-            //     'required' => false,
-            // ],
 
             [
                 'label' => 'BIS Certification',
@@ -252,6 +245,7 @@ return [
                 'label' => 'Incorporation Date',
                 'name' => 'incorporation_date',
                 'id' => 'date2',
+                // 'default' => now()->format('D M d Y'),
                 'type' => 'text',
                 'required' => false,
             ],

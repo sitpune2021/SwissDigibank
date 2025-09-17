@@ -5,7 +5,6 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">Employees </h2>
         <a class="btn-primary" href="{{route('employee.create')}}">
-            <i class="text-base md:text-lg"></i>
             Add
         </a>
     </div>

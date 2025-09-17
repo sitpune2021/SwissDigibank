@@ -1,46 +1,7 @@
 @extends('layout.main')
 
+@section('content')
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -62,23 +23,15 @@
     }
 </style>
 
-
-
-
-
-@section('content')
-
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
             <h1 class="text-xl font-semibold">Open New RD Account</h1>
             <p class="text-gray-500">
-                <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recuuring Deposits</a> >
+                <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recurring Deposits</a> >
                 <a href="#" class="text-gray-500"> New</a>
             </p>
-
         </div>
-
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
@@ -115,7 +68,7 @@
 
                     <input type="text" id="memberName" name="member_name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="" value="" readonly>
+                        placeholder="Member Name" value="" readonly>
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="city" class="md:text-lg font-medium block mb-4">
@@ -124,7 +77,7 @@
 
                     <input type="text" id="memberAddress" name="member_address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Member Name" value="" readonly>
+                        placeholder="Member Address" value="" readonly>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">

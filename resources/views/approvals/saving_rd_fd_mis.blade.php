@@ -119,19 +119,3 @@
     <x-pagination :paginator="$pending_transactions" />
 </div>
 @endsection
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const approveAllCheckbox = document.getElementById('selectAllStatus');
-        const allSelects = document.querySelectorAll('.select-transaction-status');
-
-        approveAllCheckbox.addEventListener('change', function() {
-            allSelects.forEach(select => {
-                if (approveAllCheckbox.checked) {
-                    select.value = '1';
-                } else {
-                    select.value = 'pending';
-                }
-            });
-        });
-    });
-</script> -->

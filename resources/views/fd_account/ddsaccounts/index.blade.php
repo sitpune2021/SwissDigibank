@@ -6,7 +6,6 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
         <h3 class="h2">DD Accounts</h3>
         <a class="btn-primary flex items-center gap-2" href="{{ route('dds-accounts.create') }}">
-            <i class="text-base  md:text-lg"></i>
             Add
         </a>
     </div>

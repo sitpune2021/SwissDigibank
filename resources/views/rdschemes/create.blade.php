@@ -1,54 +1,15 @@
 @extends('layout.main')
 
+@section('content')
+
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
-    input[type="checkbox"] {
+      input[type="checkbox"] {
         width: 28px;
         height: 28px;
         accent-color: green;
-        /* For modern browsers */
+      
     }
 
-    /* Fallback for browsers without accent-color support */
     input[type="checkbox"]:checked {
         background-color: green;
         border: none;
@@ -58,11 +19,8 @@
         width: 24px;
         height: 24px;
         accent-color: green;
-        /* Modern browser support */
     }
 </style>
-
-@section('content')
 
 
 <div class="main-inner">

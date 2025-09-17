@@ -190,6 +190,16 @@
                 <button class="btn-primary" type="submit">
                     {{ $method === 'PUT' ? 'Update' : 'Save' }} Minor
                 </button>
+
+                @endif
+                <a href="{{ route('minor.index') }}" class="btn-outline inline-flex items-center justify-center">
+                    Back
+                </a>
+                  @if ($method !== 'PUT')
+                    <!-- Only show Reset button if not 'Update' -->
+                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+                        Reset
+                    </button>
                 @endif
             </div>
         </form>

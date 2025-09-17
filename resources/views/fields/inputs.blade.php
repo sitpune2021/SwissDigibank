@@ -66,19 +66,21 @@
     </label>
 @elseif ($type === 'file')
     @if (!empty($value))
-        <!-- If the file exists, show a "View File" button -->
-        <a href="{{ asset('storage/' . $value) }}" target="_blank" class="text-blue-500 hover:underline">
+        <a href="{{ asset('storage/' . $value) }}" target="_blank" class="text-blue-500 hover:underline mb-2 inline-block">
             View File
         </a>
-    @else
-        <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
-            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-            placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
-            {{ !empty($readonly) ? 'readonly disabled' : '' }} />
     @endif
+
+    <input type="file" id="{{ $id }}" name="{{ $name }}"
+        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+        {{ !empty($readonly) ? 'readonly disabled' : '' }} />
 @else
     <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
         placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
         {{ !empty($readonly) ? 'readonly' : '' }} />
 @endif
+
+
+
+
