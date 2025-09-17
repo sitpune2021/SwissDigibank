@@ -63,7 +63,7 @@ class HRController extends Controller
                     'dob' => 'required|date',
                     'mobile_no' => 'required|digits:10',
                     'address' => 'nullable|string',
-                    'email' => 'nullable|email',
+                    'email' => 'nullable|email|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/',
                     'name' => 'required',
                     'designation' => 'nullable'
                ]);

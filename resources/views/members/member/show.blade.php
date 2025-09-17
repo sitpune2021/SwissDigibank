@@ -723,7 +723,7 @@
                 <!-- MY GUARANTOR SHIP -->
                 <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
                     <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"style="background-color:#3c8dbc;"
                         @click="open = !open">
                         <span class="font-semibold uppercase">Joint Accounts</span>
                         <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
@@ -791,7 +791,7 @@
                 <!-- MY GUARANTOR SHIP -->
                 <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
                     <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer" style="background-color:#3c8dbc;"
                         @click="open = !open">
                         <span class="font-semibold uppercase">My Guarantor Ship</span>
                         <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>

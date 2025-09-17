@@ -77,9 +77,12 @@
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                Status
-                            </div>
+                            <x-approve-all
+                                id="approveAllStatus"
+                                class="select-transaction-status"
+                                approvedValue="approved"
+                                pendingValue="pending" />
+
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
@@ -149,10 +152,29 @@
                                 </select>
                             </td>
                             <td class="py-5 px-6">
-                                <select name="transaction_status" id="transaction_status-1" class="form-control width-100 select-transaction-status">
+                                <!-- <select name="transaction_status" id="transaction_status-1" class="form-control width-100 select-transaction-status">
                                     <option value="approved">Approve</option>
                                     <option value="disapproved">Not Approve</option>
                                     <option selected="selected" value="pending">Pending</option>
+                                </select> -->
+
+                                <select name="transaction_status" id="transaction_status-{{ $pending_transaction->id }}"
+                                    class="form-control width-100 select-transaction-status">
+
+                                    <option value="approved"
+                                        {{ old('transaction_status', $pending_transaction->transaction_status) === 'approved' ? 'selected' : '' }}>
+                                        Approve
+                                    </option>
+
+                                    <option value="disapproved"
+                                        {{ old('transaction_status', $pending_transaction->transaction_status) === 'disapproved' ? 'selected' : '' }}>
+                                        Not Approve
+                                    </option>
+
+                                    <option value="pending"
+                                        {{ old('transaction_status', $pending_transaction->transaction_status) === 'pending' || empty($pending_transaction->transaction_status) ? 'selected' : '' }}>
+                                        Pending
+                                    </option>
                                 </select>
                             </td>
                             <td class="py-2 px-6">

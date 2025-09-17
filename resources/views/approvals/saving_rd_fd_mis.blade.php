@@ -37,12 +37,12 @@
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Amount Deposit
+                                Amount <br>Deposit
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Pay mode
+                                Pay<br> mode
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -53,10 +53,11 @@
 
 
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                <label for="selectAllStatus">Status</label>
-                                <input type="checkbox" id="selectAllStatus" class="form-checkbox h-4 w-4 text-green-500">
-                            </div>
+                            <x-approve-all
+                                id="approveAllStatus"
+                                class="select-transaction-status"
+                                approvedValue="1"
+                                pendingValue="0" />
                         </th>
 
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -92,9 +93,10 @@
                             <td class="py-5 px-6">
                                 <input type="hidden" name="account_id" value="{{ $pending_transaction->id }}">
                                 <select name="transaction_status" class="form-control width-100 select-transaction-status">
-                                    <option value="1" {{ old('transaction_status') == 'approved' ? 'selected' : '' }}>Approve</option>
-                                    <option value="2" {{ old('transaction_status') == 'disapproved' ? 'selected' : '' }}>Not Approve</option>
-                                    <option value="pending" selected>Pending</option>
+                                    <option value="1" {{ old('transaction_status', $pending_transaction->transaction_status) == 1 ? 'selected' : '' }}>Approve</option>
+                                    <option value="2" {{ old('transaction_status', $pending_transaction->transaction_status) == 2 ? 'selected' : '' }}>Not Approve</option>
+                                    <option value="0" {{ old('transaction_status', $pending_transaction->transaction_status) == '0' || 
+                                    old('transaction_status', $pending_transaction->transaction_status) === null ? 'selected' : '' }}>Pending</option>
                                 </select>
                             </td>
                             <td class="py-5 px-6">
@@ -117,7 +119,7 @@
     <x-pagination :paginator="$pending_transactions" />
 </div>
 @endsection
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         const approveAllCheckbox = document.getElementById('selectAllStatus');
         const allSelects = document.querySelectorAll('.select-transaction-status');
@@ -132,4 +134,4 @@
             });
         });
     });
-</script>
+</script> -->

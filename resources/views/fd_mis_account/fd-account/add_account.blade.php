@@ -231,6 +231,8 @@
                     <input type="number" id="fd_amount" name="fd_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3 md:py-3"
                         placeholder="0.0">
+
+                    <x-number-to-word for="fd_amount" />
                     @error('fd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -265,7 +267,7 @@
                             <span>Yes</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="tds_deduction" value="0" selected>
+                            <input type="radio" name="tds_deduction" value="0" checked>
                             <span>No</span>
                         </label>
                     </div>
@@ -292,7 +294,7 @@
 
                     <div class="flex items-center gap-4">
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="account_type" value="single" onclick="toggleSelect(false)"> Single
+                            <input type="radio" name="account_type" value="single" onclick="toggleSelect(false)" checked> Single
                         </label>
                         <label class="flex items-center gap-2">
                             <input type="radio" name="account_type" value="joint" onclick="toggleSelect(true)"> Joint A/C
@@ -330,7 +332,7 @@
                             <input type="radio" name="nominees" value="yes" onclick="toggleAddMore(true)"> Yes
                         </label>
                         <label class=" mt-2 flex items-center  gap-2">
-                            <input type="radio" name="nominees" value="no" onclick="toggleAddMore(false)"> No
+                            <input type="radio" name="nominees" value="no" onclick="toggleAddMore(false)" checked> No
                         </label>
                         @error('nominees')
                         <span class="text-red-500 text-sm">{{ $message }}</span>

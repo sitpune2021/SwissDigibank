@@ -114,12 +114,17 @@ class CompanyController extends Controller
                 'bis_certification.regex' => 'BIS Certification may only contain letters, numbers, dashes, or slashes.',
                 'pf_number.regex' => 'PF Number must be in the format STATE/12345/ABC (e.g., MH/123456/XYZ).',
                 'esic_number.regex' => 'ESIC Number must be between 10 to 17 digits.',
-                'cin_no.regex' => 'CIN must follow the format: L/U + 5 digits + 2 letters + 4 digits + 3 letters + 6 digits.',
+                'cin_no.regex' => 'CIN must follow the format: L/U + 5 digits + 2 letters + 4 digits + 3 letters + 6 digits(e.g. L12345AB1234XYZ123456).',
                 'pan_no.regex' => 'PAN must be 5 letters, 4 digits, and 1 letter (e.g., ABCDE1234F).',
                 'tan_no.regex' => 'TAN must be 4 letters, 5 digits, and 1 letter (e.g., ABCD12345E).',
                 'gst_no.regex' => 'GST must be 15 characters: 2 digits, 5 letters, 4 digits, 1 letter, 1 alphanumeric, Z, 1 alphanumeric (e.g., 22AAAAA0000A1Z5).',
             ]);
-
+            if ($request->has('incorporation_date') && $request->incorporation_date) {
+                $incorporationDate = Carbon::createFromFormat('D M d Y', $request->incorporation_date)->format('Y-m-d');
+                $request->merge([
+                    'incorporation_date' => $incorporationDate,
+                ]);
+            }
             $company = Company::findOrFail($id);
             $company->update($request->all());
             $certificate = $company->certificate ?? new CompanyCertificate(['company_id' => $company->id]);
