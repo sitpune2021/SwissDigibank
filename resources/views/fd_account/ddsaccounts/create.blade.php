@@ -128,113 +128,113 @@ $isEdit = isset($ddsAccount);
                         placeholder="" value="" readonly>
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
-                    <label for="memberMobile" class="md:text-lg font-medium block mb-4">
-                        Member Mobile No
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="text"
-                            class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                            value="+91" readonly>
-                        <input type="text" id="memberMobile" name="member_mobile"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                            placeholder="Enter Mobile No" readonly>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="memberMobile" class="md:text-lg font-medium block mb-4">
+                            Member Mobile No
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text"
+                                class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                                value="+91" readonly>
+                            <input type="text" id="memberMobile" name="member_mobile"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                                placeholder="Enter Mobile No" readonly>
+                        </div>
                     </div>
-                </div>
-                <div class="col-span-2 md:col-span-1"></div>
+                    <div class="col-span-2 md:col-span-1"></div>
 
-                <div class="col-span-2 md:col-span-1">
-                    <label for="minor_id" class="md:text-lg font-medium block mb-4">
-                        Minor (if any)
-                    </label>
-                    <select id="minor_id" name="minor_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Minor</option>
-                        @foreach ($minors as $minor)
-                        <option value="{{ $minor->id }}">
-                            {{ $minor->first_name }} {{ $minor->last_name }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('minor_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <label for="branch_id" class="md:text-lg font-medium block mb-4">
-                        Branch <span class="text-red-500">*</span>
-                    </label>
-                    <select id="branch_id" name="branch_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Branch</option>
-                        @foreach ($branches as $branch)
-                        <option value="{{ $branch->id }}"
-                            {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
-                            {{ $branch->branch_name }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('branch_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <label for="advisor_id" class="md:text-lg font-medium block mb-4">
-                        Advisor / Staff
-                    </label>
-                    <select id="advisor_id" name="advisor_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Advisor / Staff</option>
-                        <option value="all" {{ old('advisor_id') == 'all' ? 'selected' : '' }}>ALL</option>
-                        <option value="head_office" {{ old('advisor_id') == 'head_office' ? 'selected' : '' }}>Head
-                            Office</option>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="minor_id" class="md:text-lg font-medium block mb-4">
+                            Minor (if any)
+                        </label>
+                        <select id="minor_id" name="minor_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Minor</option>
+                            @foreach ($minors as $minor)
+                                <option value="{{ $minor->id }}">
+                                    {{ $minor->first_name }} {{ $minor->last_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('minor_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="branch_id" class="md:text-lg font-medium block mb-4">
+                            Branch <span class="text-red-500">*</span>
+                        </label>
+                        <select id="branch_id" name="branch_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Branch</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                    {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                    {{ $branch->branch_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('branch_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="advisor_id" class="md:text-lg font-medium block mb-4">
+                            Advisor / Staff
+                        </label>
+                        <select id="advisor_id" name="advisor_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Advisor / Staff</option>
+                            <option value="all" {{ old('advisor_id') == 'all' ? 'selected' : '' }}>ALL</option>
+                            <option value="head_office" {{ old('advisor_id') == 'head_office' ? 'selected' : '' }}>Head
+                                Office</option>
 
-                        @if (!empty($advisors))
-                        @foreach ($advisors as $advisor)
-                        <option value="{{ $advisor->id }}"
-                            {{ old('advisor_id') == $advisor->id ? 'selected' : '' }}>
-                            {{ $advisor->name }}
-                        </option>
-                        @endforeach
-                        @endif
-                    </select>
-                    @error('advisor_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                            @if (!empty($advisors))
+                                @foreach ($advisors as $advisor)
+                                    <option value="{{ $advisor->id }}"
+                                        {{ old('advisor_id') == $advisor->id ? 'selected' : '' }}>
+                                        {{ $advisor->name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                        @error('advisor_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <div class="col-span-2 md:col-span-1"></div>
+                    <div class="col-span-2 md:col-span-1"></div>
 
-                <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">Collection Advisor/ Staff </label>
-                    <select id="" name="collection_advisor_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
-                        <option value="">Select Collection Advisor Staff</option>
-                        <option value="head_office">Head Office</option>
-                    </select>
-                </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="font-medium block mb-2">Collection Advisor/ Staff </label>
+                        <select id="" name="collection_advisor_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
+                            <option value="">Select Collection Advisor Staff</option>
+                            <option value="head_office">Head Office</option>
+                        </select>
+                    </div>
 
-                <div class="col-span-2 md:col-span-1">
-                    <label for="scheme_id" class="font-medium block mb-2">
-                        Scheme <span class="text-red-500">*</span> :
-                    </label>
-                    <select id="scheme_id" name="scheme_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Scheme</option>
-                        @foreach ($schemes as $scheme)
-                        <option data-min="{{ $scheme->min_rd_dd_amount }}" value="{{ $scheme->id }}"
-                            {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
-                            {{ $scheme->scheme_name }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('scheme_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                    <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>
-                </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="scheme_id" class="font-medium block mb-2">
+                            Scheme <span class="text-red-500">*</span> :
+                        </label>
+                        <select id="scheme_id" name="scheme_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Scheme</option>
+                            @foreach ($schemes as $scheme)
+                                <option data-min="{{ $scheme->min_rd_dd_amount }}" value="{{ $scheme->id }}"
+                                    {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
+                                    {{ $scheme->scheme_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('scheme_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                        <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>
+                    </div>
 
-                <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-2 md:col-span-1">
                     <label class="font-medium block mb-2">
                         DD Amount <span class="text-red-500">*</span>:
                     </label>
@@ -252,68 +252,72 @@ $isEdit = isset($ddsAccount);
                 </div>
 
 
-                <div class="col-span-2 md:col-span-1 relative">
-                    <label class="font-medium block mb-2">
-                        Open Date <span class="text-red-500">*</span> :
-                    </label>
-                    <input type="text" id="date5" name="open_date"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-               rounded-10 px-3 md:px-6 py-2 md:py-3 pr-10"
-                        placeholder="DD/MM/YYYY" value="">
-                    <i
-                        class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                    <!-- <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xlg pointer-events-none"></i> -->
-                </div>
-                <div class="col-span-2 md:col-span-1"></div>
-                <!-- TDS -->
-                <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
-                    <div class="flex items-center  gap-2">
-                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
-                                value="yes"> Yes</label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="tds" value="no" checked>
-                            No
+                    <div class="col-span-2 md:col-span-1 relative">
+                        <label class="font-medium block mb-2">
+                            Open Date <span class="text-red-500">*</span> :
                         </label>
-                    </div>
-                </div>
-
-                <div class="col-span-2 md:col-span-1"></div>
-
-                <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="account_type" value="single"
-                                onclick="toggleAccountType('single')" class="accent-primary" checked>
-                            <span>Single</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="account_type" value="joint"
-                                onclick="toggleAccountType('joint')" class="accent-primary">
-                            <span>Joint A/C</span>
-                        </label>
-                    </div>
-                    <!-- single (no fields) -->
-                    <div id="single" class="hidden"></div>
-                </div>
-
-                <div class="col-span-2 md:col-span-1 mt-4">
-                    <div id="joint" class="hidden mt-4">
-                        <label class="font-medium block mb-1">Joint A/C Member <span
-                                class="text-red-500">*</span></label>
-                        <select
+                        <input type="text" id="date5" name="open_date"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
+               rounded-10 px-3 md:px-6 py-2 md:py-3 pr-10"
+                            placeholder="DD/MM/YYYY" value="">
+                        <i
+                            class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+                        <!-- <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xlg pointer-events-none"></i> -->
+                    </div>
+                    <div class="col-span-2 md:col-span-1"></div>
+                    <!-- TDS -->
+                    <div class="col-span-2 md:col-span-1 mt-4">
+                        <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
+                        <div class="flex items-center  gap-2">
+                            <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
+                                    value="yes"> Yes</label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="tds" value="no" checked>
+                                No
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-span-2 md:col-span-1"></div>
+
+                    <div class="col-span-2 md:col-span-1 mt-4">
+                        <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="account_type" value="single"
+                                    onclick="toggleAccountType('single')" class="accent-primary" checked>
+                                <span>Single</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="account_type" value="joint"
+                                    onclick="toggleAccountType('joint')" class="accent-primary">
+                                <span>Joint A/C</span>
+                            </label>
+                        </div>
+                        <!-- single (no fields) -->
+                        <div id="single" class="hidden"></div>
+                    </div>
+
+                    <div class="col-span-2 md:col-span-1 mt-4">
+                        <div id="joint" class="hidden mt-4">
+                            <label class="font-medium block mb-1">Joint A/C Member <span
+                                    class="text-red-500">*</span></label>
+                            <select
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                        rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Search member no or name</option>
-                            <option value="1001">Account 1001 - Akask Doshi</option>
-                            <option value="1002">Account 1002 - vijay Smith</option>
-                            <option value="1003">Account 1003 - Alex Kumar</option>
-                        </select>
+                                <option value="">Search Member No or Name</option>
+                                @foreach ($members as $member)
+                                    <option value="{{ $member->id }}"
+                                        {{ old('member_id') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Nominee -->
+                <div class="col-span-2 md:col-span-1"></div>
+                          <!-- Nominee -->
             <div class="col-span-2 md:col-span-1 mt-4">
                 <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
                 <div class="flex items-center  gap-2">
@@ -606,128 +610,106 @@ $isEdit = isset($ddsAccount);
         }
     }
 
-    function togglePaymentMode(type) {
-        ['cash', 'onlineTr', 'cheque', 'saving'].forEach(id => {
-            document.getElementById(id).classList.add('hidden');
-        });
-        if (type === 'onlineTr') document.getElementById('onlineTr').classList.remove('hidden');
-        if (type === 'cheque') document.getElementById('cheque').classList.remove('hidden');
-        if (type === 'saving') document.getElementById('saving').classList.remove('hidden');
-    }
+        function removeNominee(button) {
+            const item = button.closest(".nominee-item");
+            item.remove();
 
-
-    function toggleAccountType(type) {
-
-        ['single', 'joint'].forEach(id => {
-            document.getElementById(id).classList.add('hidden');
-        });
-        // Show the selected section
-        if (type === 'joint') {
-            document.getElementById('joint').classList.remove('hidden');
-        } else {
-            document.getElementById('single').classList.remove('hidden');
-        }
-    }
-    $('#member').on('change', function() {
-        let memberId = $(this).val();
-
-        if (memberId) {
-            $.get('/members/' + memberId + '/details', function(data) {
-                // Fill member details
-                $('#memberName').val(data.member_info_first_name + ' ' + data.member_info_last_name);
-                $('#memberAddress').val(data.member_address_line_1);
-                $('#memberMobile').val(data.member_info_mobile_no);
-
-                // Auto select branch
-                $('#branch_id').val(data.branch_id).trigger('change');
-            });
-        }
-    });
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    document.getElementById('memberDropdown').addEventListener('change', function() {
-        let memberId = this.value;
-        let url = this.getAttribute('data-url').replace(':id', memberId);
-
-        if (memberId) {
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    // ✅ Auto fill
-                    document.getElementById('memberName').value = data.member_info_first_name + ' ' + (data
-                        .member_info_last_name ?? '');
-                    document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
-                    document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
-
-                    // ✅ Branch auto select
-                    if (data.branch_id) {
-                        $('#branch_id').val(data.branch_id).trigger('change');
-                    }
-
-
-                    // ✅ Open Date auto fill
-                    document.getElementById('date5').value = data.open_date ?? '';
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Member details could not be fetched.');
-                });
-        } else {
-            // Reset fields if no member selected
-            document.getElementById('memberName').value = '';
-            document.getElementById('memberAddress').value = '';
-            document.getElementById('memberMobile').value = '';
-            document.getElementById('branch_id').value = '';
-            document.getElementById('date5').value = '';
-        }
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const schemeSelect = document.getElementById('scheme_id');
-        const ddAmountInput = document.getElementById('dd_amount');
-        const amountInput = document.getElementById('amount');
-        const minAmountMsg = document.getElementById('minAmountMsg');
-
-        function updateDDAmountFromScheme() {
-            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-            const minAmount = selectedOption.getAttribute('data-min');
-
-            if (minAmount && !isNaN(minAmount)) {
-                const amount = parseFloat(minAmount).toFixed(2);
-
-                // ✅ Set value in DD Amount and Amount (AUTO ONLY)
-                ddAmountInput.value = amount;
-                amountInput.value = amount;
-
-                // Show updated message
-                minAmountMsg.textContent = `Minimum amount to be deposited ₹${amount}`;
-                minAmountMsg.classList.remove('hidden');
-            } else {
-                // Clear both
-                ddAmountInput.value = '';
-                amountInput.value = '';
-                minAmountMsg.textContent = '';
-                minAmountMsg.classList.add('hidden');
+            // Hide container if no nominee left
+            const container = document.getElementById("nomineeContainer");
+            if (container.children.length === 0) {
+                container.style.display = "none";
             }
         }
 
-        // ❌ Removed manual DD amount syncing to amount
-        // i.e., NO ddAmountInput.addEventListener('input', ...);
-
-        // ✅ On scheme change
-        schemeSelect.addEventListener('change', updateDDAmountFromScheme);
-
-        // ❌ NO autofill on page load
-    });
-</script>
-
+        function togglePaymentMode(type) {
+            ['cash', 'onlineTr', 'cheque', 'saving'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            if (type === 'onlineTr') document.getElementById('onlineTr').classList.remove('hidden');
+            if (type === 'cheque') document.getElementById('cheque').classList.remove('hidden');
+            if (type === 'saving') document.getElementById('saving').classList.remove('hidden');
+        }
 
 
+        function toggleAccountType(type) {
 
+            ['single', 'joint'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            // Show the selected section
+            if (type === 'joint') {
+                document.getElementById('joint').classList.remove('hidden');
+            } else {
+                document.getElementById('single').classList.remove('hidden');
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        document.getElementById('memberDropdown').addEventListener('change', function() {
+            let memberId = this.value;
+            let url = this.getAttribute('data-url').replace(':id', memberId);
+
+            if (memberId) {
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        // ✅ Auto fill
+                        document.getElementById('memberName').value = data.member_info_first_name + ' ' + (data
+                            .member_info_last_name ?? '');
+                        document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
+                        document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
+
+                        // ✅ Branch auto fill only
+                        if (data.branch_id) {
+                            document.getElementById('branch_id').value = data.branch_id;
+                        }
+                        // ✅ Open Date auto fill
+                        document.getElementById('date5').value = data.open_date ?? '';
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Member details could not be fetched.');
+                    });
+            } else {
+                // Reset fields if no member selected
+                document.getElementById('memberName').value = '';
+                document.getElementById('memberAddress').value = '';
+                document.getElementById('memberMobile').value = '';
+                document.getElementById('branch_id').value = '';
+                document.getElementById('date5').value = '';
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const schemeSelect = document.getElementById('scheme_id');
+            const ddAmountInput = document.getElementById('dd_amount');
+            const amountInput = document.getElementById('amount');
+            const minAmountMsg = document.getElementById('minAmountMsg');
+
+            let currentMinAmount = 0;
+
+            // ✅ Scheme बदलल्यावर फक्त minAmount सेट करायचं
+            schemeSelect.addEventListener('change', function() {
+                const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+                const minAmount = selectedOption.getAttribute('data-min');
+
+                currentMinAmount = (minAmount && !isNaN(minAmount)) ? parseFloat(minAmount) : 0;
+                minAmountMsg.textContent = currentMinAmount ?
+                    `Minimum amount to be deposited ₹${currentMinAmount.toFixed(2)}` :
+                    '';
+                minAmountMsg.classList.remove('hidden');
+                minAmountMsg.style.color = "green"; // फक्त माहिती साठी
+            });
+
+            // ✅ User जे टाकेल ते amount मध्ये reflect होईल + validation
+            ddAmountInput.addEventListener('input', function() {
+                let value = parseFloat(ddAmountInput.value) || 0;
+                amountInput.value = value ? value.toFixed(2) : '';
+            });
+        });
+    </script>
 @endsection

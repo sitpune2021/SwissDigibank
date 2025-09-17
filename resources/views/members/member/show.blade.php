@@ -710,10 +710,63 @@ member')
                                     </button>
                                     @endif
 
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                {{-- PAN --}}
+                                <tr class="border-b">
+                                    <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
+                                    <td class="px-6 py-2 text-start">
+                                        @php $pan = $documents->where('document_category', 'pan_number')->first(); @endphp
+                                        @if ($pan && $pan->file_path)
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="previewDoc('{{ asset('storage/' . $pan->file_path) }}','PAN')">
+                                                View
+                                            </button>
+                                        @endif
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <script>
+                        function previewDoc(fileUrl, docType) {
+                            window.open(fileUrl, '_blank');
+                        }
+                    </script>
+
+                </div>
+                <!-- MY GUARANTOR SHIP -->
+                <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"style="background-color:#3c8dbc;"
+                        @click="open = !open">
+                        <span class="font-semibold uppercase">Joint Accounts</span>
+                        <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                    </div>
+
+                    <!-- Content -->
+                    <div x-show="open" x-transition class="bg-white">
+                        <table class="w-full text-sm text-left border-collapse">
+                            <thead class="border-b">
+                                <tr>
+                                    <th class="px-4 py-2 font-semibold">Account Type</th>
+                                    <th class="px-4 py-2 font-semibold">Account No.</th>
+                                    <th class="px-4 py-2 font-semibold">Open Date</th>
+                                    <th class="px-4 py-2 font-semibold">Status</th>
+                                    <th class="px-4 py-2 font-semibold">State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2">-</td>
+                                    <td class="px-4 py-2">-</td>
+                                    <td class="px-4 py-2">-</td>
+                                    <td class="px-4 py-2">-</td>
+                                    <td class="px-4 py-2">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <script>
@@ -732,30 +785,14 @@ member')
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
-                <!-- Content -->
-                <div x-show="open" x-transition class="bg-white">
-                    <table class="w-full text-sm text-left border-collapse">
-                        <thead class="border-b">
-                            <tr>
-                                <th class="px-4 py-2 font-semibold">Account Type</th>
-                                <th class="px-4 py-2 font-semibold">Account No.</th>
-                                <th class="px-4 py-2 font-semibold">Open Date</th>
-                                <th class="px-4 py-2 font-semibold">Status</th>
-                                <th class="px-4 py-2 font-semibold">State</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="px-4 py-2">-</td>
-                                <td class="px-4 py-2">-</td>
-                                <td class="px-4 py-2">-</td>
-                                <td class="px-4 py-2">-</td>
-                                <td class="px-4 py-2">-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                <!-- MY GUARANTOR SHIP -->
+                <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer" style="background-color:#3c8dbc;"
+                        @click="open = !open">
+                        <span class="font-semibold uppercase">My Guarantor Ship</span>
+                        <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                    </div>
 
             <!-- MY GUARANTOR SHIP -->
             <div x-data="{ open: true }" class="mt-4 mb-4 border rounded shadow">

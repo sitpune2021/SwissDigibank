@@ -446,7 +446,7 @@
                                 );
                             }
                         @endphp
-                        <div class="col-span-4 md:col-span-1 {{ str_replace('_', ' ', $sectionName) }}" >
+                        <div class="col-span-4 md:col-span-1 {{ str_replace('_', ' ', $sectionName) }}">
                             @include('fields.label', [
                                 'id' => $id,
                                 'label' => $label,
@@ -480,9 +480,12 @@
                 <a href="{{ route('member.index') }}" class="btn-outline inline-flex items-center justify-center">
                     Back
                 </a>
-                <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-                    Reset
-                </button>
+                @if ($method !== 'PUT')
+                    <!-- Only show Reset button if not 'Update' -->
+                    <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+                        Reset
+                    </button>
+                @endif
             </div>
         </form>
     </div>
@@ -490,22 +493,20 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('.online, .cheque').hide(); 
+            $('.online, .cheque').hide();
 
             $('input[name="charges_pay_mode"]').change(function() {
-                var selectedValue = $(this).val(); 
+                var selectedValue = $(this).val();
 
                 if (selectedValue === 'online') {
-                    $('.online').show(); 
-                    $('.cheque').hide(); 
-                }
-                else if (selectedValue === 'cheque') {
+                    $('.online').show();
+                    $('.cheque').hide();
+                } else if (selectedValue === 'cheque') {
                     $('.cheque').show();
-                    $('.online').hide(); 
-                }
-                else if (selectedValue === 'cash') {
-                    $('.online').hide(); 
-                    $('.cheque').hide(); 
+                    $('.online').hide();
+                } else if (selectedValue === 'cash') {
+                    $('.online').hide();
+                    $('.cheque').hide();
                 }
             });
         });

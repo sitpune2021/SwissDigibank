@@ -19,7 +19,7 @@ class CompanyController extends Controller
     {
         try {
             $userId = Auth::id();
-            $company = Company::with(['State', 'incorporationState', ])->where('user_id',  $userId)
+            $company = Company::with(['State', 'incorporationState',])->where('user_id',  $userId)
                 ->first();
             $dynamicOptions = [
                 'state' => State::pluck('name', 'id')
@@ -36,12 +36,17 @@ class CompanyController extends Controller
     {
         try {
             $company = Company::findOrFail($id);
+         
+            $company->incorporation_date = \Carbon\Carbon::parse($company->incorporation_date)
+                                ->format('D M d Y');
+
             $dynamicOptions = [
                 'state' => State::pluck('name', 'id')
             ];
             $show = false;
             $route = route('company.update', $id);
             $method = 'PUT';
+
             return view('company.company-profile.profile', compact('company', 'dynamicOptions', 'show', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -51,7 +56,7 @@ class CompanyController extends Controller
     public function update(Request $request, $id)
     {
         try {
-           $request->validate([
+            $request->validate([
                 // COMPANY
                 'company_website' => 'nullable|string|url|max:255',
                 'company_name' => 'required|string|max:255',
@@ -84,26 +89,47 @@ class CompanyController extends Controller
                 'gst_no' => 'nullable|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/',
                 'gst_certificate_path' => 'nullable|file|max:2048',
 
-                'iso_certification' => 'nullable|string|max:255',
+                // ISO Certification – formats like ISO-9001:2015 or ISO/IEC 27001
+                'iso_certification' => 'nullable|regex:/^ISO([\/\- ]?[A-Z0-9]+)*$/i|max:255',
                 'iso_certificate_path' => 'nullable|file|max:2048',
 
-                'bis_certification' => 'nullable|string|max:255',
+                // BIS Certification – usually simple alphanumeric with dash/slash
+                'bis_certification' => 'nullable|regex:/^[A-Z0-9\-\/ ]{3,255}$/i|max:255',
                 'bis_certificate_path' => 'nullable|file|max:2048',
 
-                'pf_number' => 'nullable|string|max:50',
+                // PF Number – Indian PF format: 2 letters (state) / 3–7 digits / alphanumeric
+                'pf_number' => 'nullable|regex:/^[A-Z]{2}\/[0-9]{3,7}\/[A-Z0-9]+$/i|max:50',
                 'pf_certificate_path' => 'nullable|file|max:2048',
 
-                'esic_number' => 'nullable|string|max:50',
+                // ESIC Number – 10 to 17 digits
+                'esic_number' => 'nullable|regex:/^[0-9]{10,17}$/',
                 'esic_certificate_path' => 'nullable|file|max:2048',
 
+                // Incorporation Info
                 'incorporation_date' => 'nullable|date',
                 'incorporation_state' => 'nullable|string|max:255',
                 'incorporation_country' => 'nullable|string|max:255',
 
+                // Capital
                 'authorized_capital' => 'nullable|numeric|min:0',
                 'paid_up_capital' => 'nullable|numeric|min:0',
+            ], [
+                // Custom messages
+                'iso_certification.regex' => 'Enter a valid ISO Certification (e.g., ISO-9001, ISO/IEC 27001).',
+                'bis_certification.regex' => 'BIS Certification may only contain letters, numbers, dashes, or slashes.',
+                'pf_number.regex' => 'PF Number must be in the format STATE/12345/ABC (e.g., MH/123456/XYZ).',
+                'esic_number.regex' => 'ESIC Number must be between 10 to 17 digits.',
+                'cin_no.regex' => 'CIN must follow the format: L/U + 5 digits + 2 letters + 4 digits + 3 letters + 6 digits(e.g. L12345AB1234XYZ123456).',
+                'pan_no.regex' => 'PAN must be 5 letters, 4 digits, and 1 letter (e.g., ABCDE1234F).',
+                'tan_no.regex' => 'TAN must be 4 letters, 5 digits, and 1 letter (e.g., ABCD12345E).',
+                'gst_no.regex' => 'GST must be 15 characters: 2 digits, 5 letters, 4 digits, 1 letter, 1 alphanumeric, Z, 1 alphanumeric (e.g., 22AAAAA0000A1Z5).',
             ]);
-
+            if ($request->has('incorporation_date') && $request->incorporation_date) {
+                $incorporationDate = Carbon::createFromFormat('D M d Y', $request->incorporation_date)->format('Y-m-d');
+                $request->merge([
+                    'incorporation_date' => $incorporationDate,
+                ]);
+            }
             $company = Company::findOrFail($id);
             $company->update($request->all());
             $certificate = $company->certificate ?? new CompanyCertificate(['company_id' => $company->id]);
