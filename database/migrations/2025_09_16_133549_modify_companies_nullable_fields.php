@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('contact_email', 255)->nullable()->change();
             $table->string('cin_no', 255)->nullable()->change();
             $table->date('incorporation_date')->nullable()->change();
-            $table->string('incorporation_state', 255)->nullable()->change();
             $table->string('incorporation_country', 255)->nullable()->change();
             $table->decimal('authorized_capital', 15, 2)->nullable()->change();
             $table->decimal('paid_up_capital', 15, 2)->nullable()->change();

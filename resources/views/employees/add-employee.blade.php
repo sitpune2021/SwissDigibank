@@ -1,5 +1,13 @@
 @extends('layout.main')
 @section('content')
+<style>
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+
+    }
+</style>
 
 <div class="main-inner">
 
@@ -61,9 +69,7 @@
                     </select>
 
                     @error('member')
-
                     <span class="text-red-500 text-xs">{{ $message }}</span>
-
                     @enderror
                     @endif
 
@@ -161,27 +167,28 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="gender" class="md:text-lg font-medium block mb-4">
+                <label for="gender" class="block mb-4 font-medium md:text-lg">
                     Gender <span class="text-red-500">*</span>
                 </label>
+                <div class="flex flex-wrap gap-4 mt-4">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="radio" name="gender" value="male" {{ old('gender', $employee->gender ?? '') == 'male' ? 'checked' : '' }} @if($isView) disabled @endif>
+                        <span> Male</span>
+                    </label>
 
-                <label class="mr-4">
-                    <!-- <input type="radio" name="gender" value="male" {{ old('gender') == 'male' ? 'checked' : '' }}> -->
-                    <input type="radio" name="gender" value="male" {{ old('gender', $employee->gender ?? '') == 'male' ? 'checked' : '' }} @if($isView) disabled @endif> Male
-                    <!-- Male -->
-                </label>
-
-                <label>
-                    <!-- <input type="radio" name="gender" value="female" {{ old('gender') == 'female' ? 'checked' : '' }}> -->
-                    <input type="radio" name="gender" value="female" {{ old('gender', $employee->gender ?? '') == 'female' ? 'checked' : '' }} @if($isView) disabled @endif> Female
-                    <!-- Female -->
-                </label>
-
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="radio" name="gender" value="female" {{ old('gender', $employee->gender ?? '') == 'female' ? 'checked' : '' }} @if($isView) disabled @endif>
+                        <span>Female</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="radio" name="gender" value="other" {{ old('gender', $employee->gender ?? '') == 'other' ? 'checked' : '' }} @if($isView) disabled @endif>
+                        <span>Other</span>
+                    </label>
+                </div>
                 @error('gender')
-                <span class="text-red-500 text-xs block mt-2">{{ $message }}</span>
+                <span class="block mt-2 text-xs text-red-500">{{ $message }}</span>
                 @enderror
             </div>
-
 
             <div class="col-span-2 md:col-span-1">
 

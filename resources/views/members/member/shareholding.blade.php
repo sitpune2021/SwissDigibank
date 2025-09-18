@@ -61,7 +61,7 @@
 <script>
     function fetchShareHoldings(memberId) {
         $.ajax({
-            url: `/api/member/${memberId}/share-holdings`, // 👈 Your backend route
+            url: '/api/member/${memberId}/share-holdings', // 👈 Your backend route
             method: 'GET',
             success: function(data) {
                 let html = '';

@@ -87,7 +87,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-bold px-4 py-2">Effective / Start Date</td>
-                            <td class="px-4 py-2">{{ $fdScheme->effective_date}}</td>
+                           <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdScheme->effective_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-bold px-4 py-2">Bonus Rate</td>

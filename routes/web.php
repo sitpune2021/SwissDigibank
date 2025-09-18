@@ -222,8 +222,19 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::get('create-rd-account', [RdAccountController::class, 'create'])->name('mds-rd-accounts.create-rd-account');
     Route::get('rd-dd-calculator', [RdAccountController::class, 'rdDdCalculator'])->name('calculator.rd-dd-calculator');
     Route::get('/members/{id}', [RdAccountController::class, 'getMember'])->name('members.get');
+    
     Route::post('/rd-accounts', [RdAccountController::class, 'store'])->name('rd-accounts.store');
-    Route::get('/view-rd-account', [RdAccountController::class, 'show'])->name('view-rd-account');
+    Route::get('/rd-accounts/{id}', [RdAccountController::class, 'show'])->name('rd-accounts.show');
+
+    Route::get('/rd-accounts/{id}/installments', [RdAccountController::class, 'installmentPlan'])->name('installment.plan');
+    Route::get('/rd-accounts/{id}/transactions', [RdAccountController::class, 'viewTransactions'])->name('view.viewTransaction');
+    Route::get('/rd-accounts/{id}/transaction-summary', [RdAccountController::class, 'viewRdTransactionSummary'])->name('view.transactionSummary');
+    Route::get('/rd-accounts/{id}/deposit', [RdAccountController::class, 'showDepositForm'])->name('rd-accounts.deposit.form');
+    Route::post('/rd-accounts/{rdAccount}/deposit', [RdAccountController::class, 'storeDeposit'])->name('rd.deposit.store');
+    Route::get('/rd-accounts/{id}/withdraw', [RdAccountController::class, 'showWithdrawForm'])->name('rd-accounts.withdraw.form');
+    Route::post('/rd-accounts/{rdAccount}/withdraw', [RdAccountController::class, 'storeWithdraw'])->name('rd.withdraw.store');
+    Route::get('/rd-accounts/{id}/change-info', [RdAccountController::class, 'showChangeInfoForm'])->name('rd-accounts.change-info');
+    Route::post('/rd-accounts/{rdAccount}/change-info', [RdAccountController::class, 'storeChangeInfo'])->name('rd.change-info.store');
 });
 
 Route::group(['prefix' => 'deposits'], function () {

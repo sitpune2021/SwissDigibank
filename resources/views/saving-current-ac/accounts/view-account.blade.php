@@ -64,7 +64,7 @@
                             </tr>
                             <tr class="border-b">
                                 <th class="p-2 font-medium text-gray-700">Open Date</th>
-                                <td class="p-2">{{ \Carbon\Carbon::parse($account->open_date)->format('D M d Y') }}</td>
+                                <td class="p-2">{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b">
                                 <th class="p-2 font-medium text-gray-700">Status</th>
