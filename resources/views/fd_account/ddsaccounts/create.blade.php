@@ -265,6 +265,22 @@
                             class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
                         <!-- <i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xlg pointer-events-none"></i> -->
                     </div>
+
+                    <div class="col-span-2 md:col-span-1 relative">
+                        {{-- do not remove this div --}}
+                    </div>
+
+                    <div class="col-span-2 md:col-span-1 relative">
+                        <label for="remarks" class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0">
+                            Remarks (if any)
+                        </label>
+                        <div class="w-full md:w-3/4 mt-2">
+                            <textarea name="remarks" id="remarks" placeholder="Enter Remarks (if any)"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-10 dark:bg-bg3 bg-secondary/5 resize-none"
+                                maxlength="254" rows="2"></textarea>
+                        </div>
+                    </div>
+
                     <div class="col-span-2 md:col-span-1"></div>
                     <!-- TDS -->
                     <div class="col-span-2 md:col-span-1 mt-4">
@@ -495,7 +511,7 @@
                         <label class="font-medium block mb-2">
                             Amount <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" id="amount" name="amount"
+                        <input type="number" id="amount" name="amount" placeholder="Enter Amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     </div>
@@ -714,23 +730,23 @@
         });
     </script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const mobileFields = ['memberMobile'];
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileFields = ['memberMobile'];
 
-        mobileFields.forEach(function(id) {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', function () {
-                    // Allow only digits
-                    this.value = this.value.replace(/\D/g, '');
+            mobileFields.forEach(function(id) {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        // Allow only digits
+                        this.value = this.value.replace(/\D/g, '');
 
-                    // Limit to 10 digits
-                    if (this.value.length > 10) {
-                        this.value = this.value.slice(0, 10);
-                    }
-                });
-            }
+                        // Limit to 10 digits
+                        if (this.value.length > 10) {
+                            this.value = this.value.slice(0, 10);
+                        }
+                    });
+                }
+            });
         });
-    });
-</script>
+    </script>
 @endsection
