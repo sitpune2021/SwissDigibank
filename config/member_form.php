@@ -613,7 +613,7 @@ return [
             'id' => 'net_fee',
             'type' => 'number',
             'required' => true,
-            'default' => 100, // Default value set to 100
+            'default' => 10, // Default value set to 100
         ],
         [
             'label' => 'Remarks(if any) ',
