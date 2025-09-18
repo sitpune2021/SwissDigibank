@@ -14,12 +14,18 @@ class MembershipChargeTransaction extends Model
         'net_fee_to_collect',
         'remarks',
         'charges_pay_mode',
+        'type',  // ✅ Make sure this is present
+        'approve_status',
+        'is_accounted',
+        'member_id',
         'transfer_date',
         'online_utr_no',
         'transfer_mode',
-        'cheque_bank_name',
+        'bank_id',
         'cheque_no',
         'cheque_date',
+        'saving_account_id',
+
     ];
 
     protected $dates = [

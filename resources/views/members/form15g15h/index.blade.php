@@ -35,12 +35,12 @@
                             @if ($item->member)
                             <a href="{{ route('member.show', $item?->member?->id??'') }}"
                                 class="text-primary hover:underline">
-                                DEMO-{{ $item->member?->member_info_first_name ??'' }}
+                                {{ $item->member?->member_info_first_name ??'' }}
                             </a>
                             @else
                             <a href="{{ route('promotor.show',  base64_encode($item?->promotor?->id??'')) }}"
                                 class="text-primary hover:underline">
-                                DEMO-{{ $item->promotor?->first_name??'' }}
+                                {{ $item->promotor?->first_name??'' }}
                             </a>
                             @endif
                         </td>

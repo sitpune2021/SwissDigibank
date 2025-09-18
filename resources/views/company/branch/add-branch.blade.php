@@ -31,6 +31,7 @@ $branch->branch_name . ' Branch') : 'Add Branch')
         );
         }
         @endphp
+        
         <div class="col-span-2 md:col-span-1">
             @include('fields.label', [
             'id' => $id,
@@ -80,4 +81,18 @@ $branch->branch_name . ' Branch') : 'Add Branch')
         if (errorAlert) errorAlert.style.display = 'none';
     }, 5000);
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileInput = document.getElementById('mobile_no');
+
+    mobileInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+        }
+    });
+});
+</script>
+
 @endpush

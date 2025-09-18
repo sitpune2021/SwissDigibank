@@ -140,6 +140,11 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/member/{id}/shareholding', [MemberController::class, 'shareholding'])->name('member.shareholding');
         Route::get('{memberId}/transactions', [MemberController::class, 'showTransactions'])->name('members.transactions');
         Route::post('{memberId}/transactions', [MemberController::class, 'storeTransaction'])->name('members.storeTransaction');
+        Route::post('/members/{id}/transactions/share-amount', [MemberController::class, 'storeShareAmount'])
+            ->name('members.transactions.share-amount.store');
+            Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
+    ->name('members.transactions.share-amount.create');
+
         // Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/shareholding/view/{id}', [ShareholdingController::class, 'viewShareholding'])->name('viewShareholding');

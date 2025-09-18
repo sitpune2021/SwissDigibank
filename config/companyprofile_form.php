@@ -100,7 +100,10 @@ return [
                 'label' => 'Mobile No',
                 'name' => 'mobile_no',
                 'id' => 'mobile_no',
-                'type' => 'text',
+                'type' => 'number',
+                'maxlength' => '10',
+                'minlength' => '10',
+                'pattern' => '[0-9]{10}',
                 'required' => true,
             ],
             [

@@ -469,8 +469,6 @@
                     @endforeach
                 @endif
             @endforeach
-
-
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (isset($method))
                     <button class="btn-primary" type="submit">
@@ -507,6 +505,26 @@
                 } else if (selectedValue === 'cash') {
                     $('.online').hide();
                     $('.cheque').hide();
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileFields = ['mobile_no','nominee_mobile_no'];
+
+            mobileFields.forEach(function(id) {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        // Allow only digits
+                        this.value = this.value.replace(/\D/g, '');
+
+                        // Limit to 10 digits
+                        if (this.value.length > 10) {
+                            this.value = this.value.slice(0, 10);
+                        }
+                    });
                 }
             });
         });

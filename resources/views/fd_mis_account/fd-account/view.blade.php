@@ -138,7 +138,7 @@
                             <td class="font-semibold px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary hover:underline">
-                                    DEMO-{{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
+                                    {{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
                                 </a>
                             </td>
                         </tr>

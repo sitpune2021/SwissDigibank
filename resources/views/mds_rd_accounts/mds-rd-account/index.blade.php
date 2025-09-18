@@ -61,7 +61,7 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <a href="{{route('member.show',$account->member->id)}}" class="text-primary underline hover:text-primary/80">
-                            DEMO-{{ optional($account->member)->id ?? '—' }}
+                            {{ optional($account->member)->id ?? '—' }}
                         </a>
                     </td>
                     <td class="px-6 py-4 text-center">{{ optional($account->member)->full_name ?? '—' }}</td>

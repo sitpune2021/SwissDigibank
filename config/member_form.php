@@ -169,7 +169,10 @@ return [
             'label' => 'Mobile No',
             'name' => 'member_info_mobile_no',
             'id' => 'mobile_no',
-            'type' => 'text',
+            'type' => 'number',
+            'maxlength' => '10',
+            'minlength' => '10',
+            'pattern' => '[0-9]{10}',
             'required' => true,
         ],
         [
@@ -516,7 +519,10 @@ return [
             'label' => 'Nominee Mobile No',
             'name' => 'nominee_mobile_no',
             'id' => 'nominee_mobile_no',
-            'type' => 'text',
+            'type' => 'number',
+            'maxlength' => '10',
+            'minlength' => '10',
+            'pattern' => '[0-9]{10}',
             'required' => false,
         ],
         [
@@ -607,7 +613,7 @@ return [
             'id' => 'net_fee',
             'type' => 'number',
             'required' => true,
-            'default' => 100, // Default value set to 100
+            'default' => 10, // Default value set to 100
         ],
         [
             'label' => 'Remarks(if any) ',

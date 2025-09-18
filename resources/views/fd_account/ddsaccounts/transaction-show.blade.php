@@ -23,7 +23,7 @@
                 <th>Member</th>
                 <td class="font-semibold px-4 py-2">
                     <a href="{{ route('member.show', $ddsAccount->member->id) }}" class="text-primary hover:underline">
-                        DEMO-{{ $ddsAccount->member->id }} -
+                        {{ $ddsAccount->member->id }} -
                         {{ $ddsAccount->member->member_info_first_name }}
                         {{ $ddsAccount->member->member_info_last_name }}
                     </a>

@@ -177,8 +177,7 @@
                               'name' => $name,
                               'value' => $value,
                               'readonly' => empty($show) ? '' : 'readonly',
-                              'field' =>$field
-
+                              'field' => $field,
                           ])
 
                           @error($name)
@@ -206,3 +205,26 @@
           </form>
       </div>
   @endsection
+  @push('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileFields = ['mobile', 'nominee_mobile_no'];
+
+        mobileFields.forEach(function(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function () {
+                    // Allow only digits
+                    this.value = this.value.replace(/\D/g, '');
+
+                    // Limit to 10 digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+                });
+            }
+        });
+    });
+</script>
+@endpush
+

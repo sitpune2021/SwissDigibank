@@ -103,7 +103,7 @@
                         </td>
                         <td class="px-6 py-3">
                             <a href="{{ $account?->member?->id ? route('member.show', $account->member->id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                              DEMO-{{ $account->member->id ?? '-' }}
+                              {{ $account->member->id ?? '-' }}
                             </a>
                         </td>
                         <td class="px-6 py-3">{{ $account->member->member_info_first_name ?? '-' }}</td>

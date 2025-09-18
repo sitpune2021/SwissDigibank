@@ -37,7 +37,7 @@ class ShareHoldingController extends Controller
                 'promoter' => Promotor::select('id', 'folio_no', 'first_name')
                     ->get()
                     ->mapWithKeys(function ($item) {
-                        return [$item->id => 'DEMO-' . $item->folio_no . " - " . $item->first_name];
+                        return [$item->id => '' . $item->folio_no . " - " . $item->first_name];
                     }),
             ];
 

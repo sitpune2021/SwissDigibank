@@ -21,13 +21,13 @@
                             Group
                         </div>
                     </th>
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">
+                    <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 text-center">
                             Member no
                         </div>
                     </th>
-                    <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">
+                    <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 text-center">
                             Branch
                         </div>
                     </th>
@@ -85,16 +85,15 @@
                 <tr class="border-b dark:border-bg3">
                     <td class="py-3 px-6">{{ $item->general_group }}</td>
 
-                    <td class="py-3 px-6">
+                    <td class="py-3 px-6 text-center ">
                         <a href="{{ $item?->id ? route('member.show', $item->id) : '#' }}" class="text-primary hover:underline">
-                            DEMO-{{ $item->id ?? 'N/A' }}
+                            {{ $item->id ?? 'N/A' }}
                         </a>
                     </td>
                     <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
 
                     <td class="py-3 px-6">
                         {{ $item->member_info_first_name }}
-                        {{ $item->member_info_middle_name }}
                         {{ $item->member_info_last_name }}
                     </td>
 

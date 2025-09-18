@@ -238,22 +238,24 @@
 
             </div>
 
-
-
             <div class="col-span-2 md:col-span-1">
 
                 <label for="mobile_no" class="md:text-lg font-medium block mb-4">Mobile No.<span
-
                         class="text-red-500">*</span></label>
+                <div class="flex gap-2">
+                    <input type="text"
+                        class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        value="+91" readonly>
+                    <input type="text" name="mobile_no" id="mobile_no" type="number" maxlength="10"
+                        minlength="10" placeholder="Enter Mobile No"
+                        value="{{ old('mobile_no', $employee->mobile_no ?? '') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        @if ($isView) disabled @endif>
 
-                <input type="text" name="mobile_no" id="mobile_no" value="{{ old('mobile_no', $employee->mobile_no ?? '') }}" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
-
-                @error('mobile_no')
-
-                <span class="text-red-500 text-xs">{{ $message }}</span>
-
-                @enderror
-
+                    @error('mobile_no')
+                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
@@ -811,6 +813,26 @@
         toggleLedgerDropdown();
 
         checkbox.addEventListener("change", toggleLedgerDropdown);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileFields = ['mobile_no'];
+
+        mobileFields.forEach(function(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function() {
+                    // Allow only digits
+                    this.value = this.value.replace(/\D/g, '');
+
+                    // Limit to 10 digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+                });
+            }
+        });
     });
 </script>
 

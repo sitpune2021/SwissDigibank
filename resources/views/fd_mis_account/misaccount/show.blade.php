@@ -88,10 +88,10 @@
 <div class="main-inner">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
-      <h1 class="text-2xl font-semibold">MIS Account - {{'DEMO-' . $misaccount->member_id}} </h1>
+      <h1 class="text-2xl font-semibold">MIS Account - {{'' . $misaccount->member_id}} </h1>
       <p class="text-gray-500">
         <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS Account</a> >
-        <a href="#" class="text-gray-500"> {{'DEMO-' . $misaccount->member_id}} </a>
+        <a href="#" class="text-gray-500"> {{'' . $misaccount->member_id}} </a>
       </p>
     </div>
   </div>
@@ -191,7 +191,7 @@
               <td class="font-semibold px-4 py-2 w-1/3">Member</td>
               <td class="px-4 py-2">
                 <a href="" class="text-primary hover:underline">
-                  {{ 'DEMO-' . $misaccount->member_id}} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
+                  {{ '' . $misaccount->member_id}} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
                 </a>
               </td>
             </tr>
@@ -205,7 +205,7 @@
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2">MIS No.</td>
-              <td class="px-4 py-2"> {{ 'DEMO-' . $misaccount->id}} </td>
+              <td class="px-4 py-2"> {{ '' . $misaccount->id}} </td>
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2">Old MIS No.</td>

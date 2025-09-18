@@ -130,6 +130,7 @@ class CompanyController extends Controller
                     'incorporation_date' => $incorporationDate,
                 ]);
             }
+
             $company = Company::findOrFail($id);
             $company->update($request->all());
             $certificate = $company->certificate ?? new CompanyCertificate(['company_id' => $company->id]);
