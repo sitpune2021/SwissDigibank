@@ -231,7 +231,7 @@
             </form>
         </div>
     </div>
-@endsection
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     setTimeout(function() {
@@ -329,3 +329,4 @@
         totalConsiderationInput.val("0.00");
     });
 </script>
+@endsection

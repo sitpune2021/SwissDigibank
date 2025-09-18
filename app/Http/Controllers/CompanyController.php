@@ -36,12 +36,17 @@ class CompanyController extends Controller
     {
         try {
             $company = Company::findOrFail($id);
+         
+            $company->incorporation_date = \Carbon\Carbon::parse($company->incorporation_date)
+                                ->format('D M d Y');
+
             $dynamicOptions = [
                 'state' => State::pluck('name', 'id')
             ];
             $show = false;
             $route = route('company.update', $id);
             $method = 'PUT';
+
             return view('company.company-profile.profile', compact('company', 'dynamicOptions', 'show', 'route', 'method'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

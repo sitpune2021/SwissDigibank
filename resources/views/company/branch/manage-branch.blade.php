@@ -2,7 +2,6 @@
 @section('page-title', 'Branches')
 @section('action-button')
     <a class="btn-primary" href="{{ route('branch.create') }}">
-        <i class=" md:text-lg"></i>
         Add
     </a>
 @endsection
@@ -10,9 +9,6 @@
 @section('content')
     <div class="col-span-12 box lg:col-span-6">
         <x-searchbox />
-        <!-- <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-            <x-alert />
-        </div> -->
         @include('fields.errormessage')
         <div class="pb-4 overflow-x-auto lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
@@ -62,7 +58,7 @@
                             <td class="px-2 py-5 text-center">
                                 <div>
                                     <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}" class="text-primary hover:underline">
-                                        <p class="mb-1 font-medium">DEMO-{{ $branch?->branch_name??'' }}</p>
+                                        <p class="mb-1 font-medium">{{ $branch?->branch_name??'' }}</p>
                                     </a>
                                 </div>
                             </td>

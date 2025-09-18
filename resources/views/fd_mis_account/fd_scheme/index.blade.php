@@ -2,7 +2,6 @@
 @section('page-title', 'FD Account Schemes')
 @section('action-button')
 <a class="btn-primary" href="{{ route('fd-mis-schemes.create') }}">
-    <i class=" md:text-lg"></i>
     Add
 </a>
 @endsection

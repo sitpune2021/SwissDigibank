@@ -5,7 +5,6 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h2 class="h2">Employees </h2>
         <a class="btn-primary" href="{{route('employee.create')}}">
-            <i class="text-base md:text-lg"></i>
             Add
         </a>
     </div>
@@ -57,7 +56,7 @@
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">
                             <a href="" class="text-blue-500 hover:underline">
-                               DEMO-{{ $employee->id }}
+                               {{ $employee->id }}
                             </a>
                         </td>
                         <td class="py-5 px-6">

@@ -3,7 +3,6 @@
 @section('page-title', 'Promoters Share Holding Details')
 @section('action-button')
 <a class="btn-primary" href="{{ route('shareholding.create') }}">
-    <i class=" md:text-lg"></i>
     Add
 </a>
 @endsection
@@ -86,7 +85,7 @@
                 <tr>
                     <td class="px-6 py-4">
                         <a href="{{ $share?->promotor?->id ? route('promotor.show', base64_encode($share->promotor->id)) : '#' }}" class="text-primary hover:underline">
-                          DEMO-{{ $share->promotor->id ?? 'N/A' }}-{{ $share->promotor->first_name ?? 'N/A' }}
+                          {{ $share->promotor->id ?? 'N/A' }}-{{ $share->promotor->first_name ?? 'N/A' }}
                         </a>
                     </td>
                     <td class="px-6 py-4">{{ $share->first_share }}</td>

@@ -1,48 +1,6 @@
 @extends('layout.main')
-
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-</style>
-
 @section('content')
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h1 class="text-xl font-semibold">MIS Accounts</h1>
@@ -147,7 +105,7 @@
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">
                             <a href="{{ $mis?->member_id ? route('member.show', $mis->member_id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                                {{'DEMO-'. $mis->member_id ?? '-' }}
+                                {{''. $mis->member_id ?? '-' }}
                             </a>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->member->full_name  ?? '-' }}</td>

@@ -37,9 +37,17 @@ return [
         ['label' => 'Member Religion', 'name' => 'religions_id', 'id' => 'religions_id', 'type' => 'select', 'required' => false, 'dynamic' => true, 'options_key' => 'religions'],
         ['label' => 'Spouse Name', 'name' => 'husband_wife_name', 'id' => 'spouse', 'type' => 'text', 'required' => false],
         ['label' => 'Email', 'name' => 'email', 'id' => 'email', 'type' => 'email', 'required' => false],
-        ['label' => 'Mobile No.', 'name' => 'mobile', 'id' => 'mobile', 'type' => 'text', 'required' => true],
+        [
+            'label' => 'Mobile No.',
+            'name' => 'mobile',
+            'id' => 'mobile',
+            'type' => 'number',
+            'required' => true,
+            'maxlength' => '10',
+            'minlength' => '10',
+            'pattern' => '[0-9]{10}',
+        ],
     ],
-
     // Step 3: KYC Info
     'KYC' => [
         ['label' => 'Aadhaar No.', 'name' => 'aadhaar_no', 'id' => 'aadhaar_no', 'type' => 'text', 'required' => true],
@@ -82,7 +90,17 @@ return [
                 'other' => 'Other'
             ]
         ],
-        ['label' => 'Nominee Mobile', 'name' => 'nominee_mobile_no', 'id' => 'nominee_mobile_no', 'type' => 'text', 'required' => false],
+        [
+            'label' => 'Nominee Mobile',
+            'name' => 'nominee_mobile_no',
+            'id' => 'nominee_mobile_no',
+            'type' => 'number',
+            'required' => false,
+            'maxlength' => '10',
+            'minlength' => '10',
+            'pattern' => '[0-9]{10}',
+        ],
+        
         ['label' => 'Nominee Aadhar No.', 'name' => 'nominee_aadhaar_no', 'id' => 'nominee_aadhaar_no', 'type' => 'text', 'required' => false],
         ['label' => 'Nominee Voter ID No.', 'name' => 'nominee_voter_id_no', 'id' => 'nominee_voter_id_no', 'type' => 'text', 'required' => false],
         ['label' => 'Nominee PAN No.', 'name' => 'nominee_pan_no', 'id' => 'nominee_pan_no', 'type' => 'text', 'required' => false],

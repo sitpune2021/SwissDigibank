@@ -1,29 +1,7 @@
 @extends('layout.main')
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-</style>
+@section('page-title', 'Minors')
 @section('content')
+
 <div class="main-inner">
     <div class="box col-span-12 lg:col-span-6">
         <x-searchbox />
@@ -77,9 +55,9 @@
 
                         <td class="px-6 py-4">
                             @if ($minor->member)
-                            <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}" 
+                            <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}"
                                 class="text-primary hover:underline">
-                                DEMO-{{ $minor->member->member_info_first_name ?? 'N/A' }}
+                                {{ $minor->member->member_info_first_name ?? 'N/A' }}
                             </a>
                             @else
                             N/A

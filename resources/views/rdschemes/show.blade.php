@@ -4,10 +4,10 @@
     <div class="main-inner">
         <!-- Header -->
         <h2 class="text-xl font-semibold mb-4">
-            GUARANTEED MONTHLY DEPOSIT SCHEME FOR GENERAL & SR CITIZEN - 5YRS PERIOD (LESS THAN 3 CRORES)
+            {{ $scheme->scheme_name ??''}}
         </h2>
         <p class="text-sm text-gray-500 mb-6">
-            <a href="{{route('rdschemes.index')}}">RD/ DD Scheme</a> &gt; GUARANTEED MONTHLY DEPOSIT SCHEME...
+            <a href="{{route('rdschemes.index')}}">RD/ DD Scheme</a> &gt; {{ $scheme->scheme_name ??''}}
         </p>
 
         <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">

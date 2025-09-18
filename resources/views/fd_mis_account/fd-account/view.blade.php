@@ -1,46 +1,7 @@
 @extends('layout.main')
 
+@section('content')
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -124,8 +85,6 @@
         /* 6 * 4px */
     }
 </style>
-
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -179,7 +138,7 @@
                             <td class="font-semibold px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary hover:underline">
-                                    DEMO-{{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
+                                    {{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
                                 </a>
                             </td>
                         </tr>
@@ -843,7 +802,7 @@
             </div>
         </div>
     </div>
-    @endsection
+
     <script>
         // Label update on toggle
         document.querySelectorAll('.slider-toggle').forEach(toggle => {
@@ -856,3 +815,5 @@
             toggle.dispatchEvent(new Event('change'));
         });
     </script>
+
+    @endsection

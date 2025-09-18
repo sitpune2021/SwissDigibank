@@ -63,70 +63,70 @@
 </style>
 
 @section('content')
-@php
-$isEdit = isset($ddsAccount);
-@endphp
+    @php
+        $isEdit = isset($ddsAccount);
+    @endphp
 
-<div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
-        <div class="flex items-center flex-col  gap-2">
-            <h1 class="text-xl font-semibold">
-                {{ $isEdit ? 'Update DD Account' : 'Open New DD Account' }}
-            </h1>
-            <p class="text-gray-500">
-                <a href="{{ route('dds-accounts.index') }}" class="text-gray-500">Daily Deposits</a> >
-                <span class="text-gray-500">{{ $isEdit ? 'Edit' : 'New' }}</span>
-            </p>
+    <div class="main-inner">
+        <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
+            <div class="flex items-center flex-col  gap-2">
+                <h1 class="text-xl font-semibold">
+                    {{ $isEdit ? 'Update DD Account' : 'Open New DD Account' }}
+                </h1>
+                <p class="text-gray-500">
+                    <a href="{{ route('dds-accounts.index') }}" class="text-gray-500">Daily Deposits</a> >
+                    <span class="text-gray-500">{{ $isEdit ? 'Edit' : 'New' }}</span>
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="col-span-12 box lg:col-span-12">
-        <form action="{{ $isEdit ? route('dds-accounts.update', $ddsAccount->id) : route('dds-accounts.store') }}"
-            method="POST" id="DDForm">
-            @csrf
-            @if ($isEdit)
-            @method('PUT')
-            @endif
+        <div class="col-span-12 box lg:col-span-12">
+            <form action="{{ $isEdit ? route('dds-accounts.update', $ddsAccount->id) : route('dds-accounts.store') }}"
+                method="POST" id="DDForm">
+                @csrf
+                @if ($isEdit)
+                    @method('PUT')
+                @endif
 
-            <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
-                <div class="col-span-2 md:col-span-1">
-                    <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
-                        Member <span class="text-red-500">*</span>
-                    </label>
-                    <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
+                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
+                            Member <span class="text-red-500">*</span>
+                        </label>
+                        <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
                border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3
                @error('member_id') border-red-500 @enderror">
-                        <option value="">Search Member No or Name</option>
-                        @foreach ($members as $member)
-                        <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
-                            {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
-                        </option>
-                        @endforeach
-                    </select>
+                            <option value="">Search Member No or Name</option>
+                            @foreach ($members as $member)
+                                <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
+                                    {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
+                                </option>
+                            @endforeach
+                        </select>
 
-                    @error('member_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                        @error('member_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <div class="col-span-2 md:col-span-1">
-                    <label for="memberName" class="md:text-lg font-medium block mb-4">
-                        Member Name
-                    </label>
-                    <input type="text" id="memberName" name="member_name"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Member Name" value="" readonly>
-                </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="memberName" class="md:text-lg font-medium block mb-4">
+                            Member Name
+                        </label>
+                        <input type="text" id="memberName" name="member_name"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Member Name" value="" readonly>
+                    </div>
 
-                <div class="col-span-2 md:col-span-1">
-                    <label for="memberAddress" class="md:text-lg font-medium block mb-4">
-                        Member Address
-                    </label>
-                    <input type="text" id="memberAddress" name="member_address"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="" value="" readonly>
-                </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="memberAddress" class="md:text-lg font-medium block mb-4">
+                            Member Address
+                        </label>
+                        <input type="text" id="memberAddress" name="member_address"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="" value="" readonly>
+                    </div>
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberMobile" class="md:text-lg font-medium block mb-4">
@@ -136,7 +136,8 @@ $isEdit = isset($ddsAccount);
                             <input type="text"
                                 class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 value="+91" readonly>
-                            <input type="text" id="memberMobile" name="member_mobile"
+                            <input type="text" id="memberMobile" name="member_mobile" type ="number", maxlength ="10",
+                                minlength= "10", pattern = "[0-9]{10}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 placeholder="Enter Mobile No" readonly>
                         </div>
@@ -235,21 +236,21 @@ $isEdit = isset($ddsAccount);
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">
-                        DD Amount <span class="text-red-500">*</span>:
-                    </label>
-                    <input type="number" id="dd_amount" name="dd_amount"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
+                        <label class="font-medium block mb-2">
+                            DD Amount <span class="text-red-500">*</span>:
+                        </label>
+                        <input type="number" id="dd_amount" name="dd_amount"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter DD Amount" value="">
-                    <x-number-to-word for="dd_amount" />
-                    @error('dd_amount')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                            placeholder="Enter DD Amount" value="">
+                        <x-number-to-word for="dd_amount" />
+                        @error('dd_amount')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
 
-                    <p id="minAmountMsg" class="text-green-600 text-xs mt-1 hidden">
-                    </p>
-                </div>
+                        <p id="minAmountMsg" class="text-green-600 text-xs mt-1 hidden">
+                        </p>
+                    </div>
 
 
                     <div class="col-span-2 md:col-span-1 relative">
@@ -317,218 +318,218 @@ $isEdit = isset($ddsAccount);
                     </div>
                 </div>
                 <div class="col-span-2 md:col-span-1"></div>
-                          <!-- Nominee -->
-            <div class="col-span-2 md:col-span-1 mt-4">
-                <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
-                <div class="flex items-center  gap-2">
-                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
-                            value="yes" onclick="toggleAddMore(true)">Yes</label>
-                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
-                            value="no" checked onclick="toggleAddMore(false)"> No</label>
-                </div>
-
-                <!-- Add More Button -->
-                <div id="addMoreContainer" class="mt-2 hidden">
-                    <button type="button" onclick="addNominee()" class="text-blue-600 font-medium">
-                        + ADD MORE NOMINEE
-                    </button>
-                </div>
-
-                <!-- Nominee Forms Container -->
-                <div id="nomineeContainer"
-                    class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 items-end p-3 rounded-10 bg-gray-50 dark:bg-bg3">
-                    <!-- Forms will be added here -->
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1"></div>
-            <!-- Payment Mode -->
-            <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
-
-                <div class="col-span-1 mt-4">
-                    <label class="block font-medium mb-2">
-                        Payment Mode <span class="text-red-500">*</span>
-                    </label>
-
-                    <!-- Payment Mode Radios -->
-                    <div class="flex flex-wrap gap-4 mt-4">
-                        <label class="flex items-center gap-2 text-sm">
-                            <input type="radio" name="pay_mode" value="cash" onclick="togglePaymentMode('cash')"
-                                checked>
-                            <span>Cash</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="pay_mode" value="onlineTr"
-                                onclick="togglePaymentMode('onlineTr')">
-                            <span>Online Tr.</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="pay_mode" value="cheque"
-                                onclick="togglePaymentMode('cheque')">
-                            <span>Cheque</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="pay_mode" value="saving"
-                                onclick="togglePaymentMode('saving')">
-                            <span>Saving</span>
-                        </label>
-                    </div>
-                    <!-- Cash (no fields) -->
-                    <div id="cash" class="hidden"></div>
-                    <!-- Online Transfer Fields -->
-                    <div id="onlineTr" class="hidden grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
-                        <!-- Transfer Date -->
-                        <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">Transfer Date <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="transfer_date" id="date2" placeholder="dd/mm/yyyy"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <i
-                                class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                        </div>
-                        <!-- UTR / Transaction No -->
-                        <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">UTR / Transaction No <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="utr_no" placeholder="Enter UTR / Transaction No"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        </div>
-                        <!-- Transfer Mode -->
-                        <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">Transfer Mode <span
-                                    class="text-red-500">*</span></label>
-                            <div class="flex flex-wrap gap-4 mt-2">
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="transfer_mode" value="IMPS"
-                                        class="accent-primary">
-                                    <span>IMPS</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="transfer_mode" value="VPA"
-                                        class="accent-primary">
-                                    <span>VPA</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="transfer_mode" value="NEFT/RTGS"
-                                        class="accent-primary">
-                                    <span>NEFT/RTGS</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Credited in Company Account -->
-                        <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">Credited in Company Account? <span
-                                    class="text-red-500">*</span></label>
-                            <div class="flex items-center gap-4 mt-1">
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="credited_in_company" value="1"> <span>Yes</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="credited_in_company" value="0"> <span>No</span>
-                                </label>
-                            </div>
-                        </div>
+                <!-- Nominee -->
+                <div class="col-span-2 md:col-span-1 mt-4">
+                    <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
+                    <div class="flex items-center  gap-2">
+                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
+                                value="yes" onclick="toggleAddMore(true)">Yes</label>
+                        <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
+                                value="no" checked onclick="toggleAddMore(false)"> No</label>
                     </div>
 
-                    <!-- Cheque Fields -->
-                    <div id="cheque" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 mt-4">
-                        <div class="cheque-row flex flex-wrap justify-start gap-4">
-                            <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                                <label class="font-medium block mb-1">Bank Name<span
+                    <!-- Add More Button -->
+                    <div id="addMoreContainer" class="mt-2 hidden">
+                        <button type="button" onclick="addNominee()" class="text-blue-600 font-medium">
+                            + ADD MORE NOMINEE
+                        </button>
+                    </div>
+
+                    <!-- Nominee Forms Container -->
+                    <div id="nomineeContainer"
+                        class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 items-end p-3 rounded-10 bg-gray-50 dark:bg-bg3">
+                        <!-- Forms will be added here -->
+                    </div>
+                </div>
+
+                <div class="col-span-2 md:col-span-1"></div>
+                <!-- Payment Mode -->
+                <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+
+                    <div class="col-span-1 mt-4">
+                        <label class="block font-medium mb-2">
+                            Payment Mode <span class="text-red-500">*</span>
+                        </label>
+
+                        <!-- Payment Mode Radios -->
+                        <div class="flex flex-wrap gap-4 mt-4">
+                            <label class="flex items-center gap-2 text-sm">
+                                <input type="radio" name="pay_mode" value="cash" onclick="togglePaymentMode('cash')"
+                                    checked>
+                                <span>Cash</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay_mode" value="onlineTr"
+                                    onclick="togglePaymentMode('onlineTr')">
+                                <span>Online Tr.</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay_mode" value="cheque"
+                                    onclick="togglePaymentMode('cheque')">
+                                <span>Cheque</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay_mode" value="saving"
+                                    onclick="togglePaymentMode('saving')">
+                                <span>Saving</span>
+                            </label>
+                        </div>
+                        <!-- Cash (no fields) -->
+                        <div id="cash" class="hidden"></div>
+                        <!-- Online Transfer Fields -->
+                        <div id="onlineTr" class="hidden grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
+                            <!-- Transfer Date -->
+                            <div class="col-span-2 md:col-span-1 mt-4">
+                                <label class="font-medium block mb-1">Transfer Date <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" name="bank_name" placeholder="Enter Bank Name"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            </div>
-                            <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                                <label class="font-medium block mb-1">Cheque No<span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" name="cheque_no" placeholder="Enter Cheque No"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            </div>
-                            <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                                <label class="font-medium block mb-1">Cheque Date<span
-                                        class="text-red-500">*</span></label>
-                                <input type="date" name="cheque_date" id="date3"
+                                <input type="text" name="transfer_date" id="date2" placeholder="dd/mm/yyyy"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 <i
                                     class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
                             </div>
+                            <!-- UTR / Transaction No -->
+                            <div class="col-span-2 md:col-span-1 mt-4">
+                                <label class="font-medium block mb-1">UTR / Transaction No <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" name="utr_no" placeholder="Enter UTR / Transaction No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+                            <!-- Transfer Mode -->
+                            <div class="col-span-2 md:col-span-1 mt-4">
+                                <label class="font-medium block mb-1">Transfer Mode <span
+                                        class="text-red-500">*</span></label>
+                                <div class="flex flex-wrap gap-4 mt-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="transfer_mode" value="IMPS"
+                                            class="accent-primary">
+                                        <span>IMPS</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="transfer_mode" value="VPA"
+                                            class="accent-primary">
+                                        <span>VPA</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="transfer_mode" value="NEFT/RTGS"
+                                            class="accent-primary">
+                                        <span>NEFT/RTGS</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Credited in Company Account -->
+                            <div class="col-span-2 md:col-span-1 mt-4">
+                                <label class="font-medium block mb-1">Credited in Company Account? <span
+                                        class="text-red-500">*</span></label>
+                                <div class="flex items-center gap-4 mt-1">
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="credited_in_company" value="1"> <span>Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="credited_in_company" value="0"> <span>No</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cheque Fields -->
+                        <div id="cheque" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 mt-4">
+                            <div class="cheque-row flex flex-wrap justify-start gap-4">
+                                <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                                    <label class="font-medium block mb-1">Bank Name<span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" name="bank_name" placeholder="Enter Bank Name"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                </div>
+                                <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                                    <label class="font-medium block mb-1">Cheque No<span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" name="cheque_no" placeholder="Enter Cheque No"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                </div>
+                                <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                                    <label class="font-medium block mb-1">Cheque Date<span
+                                            class="text-red-500">*</span></label>
+                                    <input type="date" name="cheque_date" id="date3"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    <i
+                                        class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Saving Account Fields -->
+                        <div id="saving" class="hidden mt-4">
+                            <label class="font-medium block mb-1">Select Saving Account<span
+                                    class="text-red-500">*</span></label>
+                            <select id="saving_account_id" name="saving_account_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <option value="">Choose Account</option>
+                                @foreach ($savingAccounts as $account)
+                                    <option value="{{ $account->id }}">
+                                        {{ $account->account_no }}
+                                        {{ $account->member->first_name ?? '' }} {{ $account->member->last_name ?? '' }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Saving Account Fields -->
-                    <div id="saving" class="hidden mt-4">
-                        <label class="font-medium block mb-1">Select Saving Account<span
-                                class="text-red-500">*</span></label>
-                        <select id="saving_account_id" name="saving_account_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Choose Account</option>
-                            @foreach ($savingAccounts as $account)
-                            <option value="{{ $account->id }}">
-                                {{ $account->account_no }}
-                                {{ $account->member->first_name ?? '' }} {{ $account->member->last_name ?? '' }}
-                            </option>
-                            @endforeach
-                        </select>
+                <!-- Date & Amount -->
+                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="font-medium block mb-2">
+                            T.Date <span class="text-red-500">*</span> </label>
+                        @php
+                            $today = \Carbon\Carbon::now()->format('d/m/Y');
+                        @endphp
+                        <input type="text" name="transaction_date" id="date4"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
+                        <i
+                            class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
                     </div>
-                </div>
-            </div>
 
-            <!-- Date & Amount -->
-            <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
-                <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">
-                        T.Date <span class="text-red-500">*</span> </label>
-                    @php
-                    $today = \Carbon\Carbon::now()->format('d/m/Y');
-                    @endphp
-                    <input type="text" name="transaction_date" id="date4"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
-                    <i
-                        class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                </div>
-
-                <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">
-                        Amount <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="amount" name="amount"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="font-medium block mb-2">
+                            Amount <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="amount" name="amount"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                </div>
+                    </div>
 
 
-                <!-- Buttons -->
-                <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                    <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
-                    <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
-                    @if (!$isEdit)
-                    <button class="btn-outline" type="reset"
-                        onclick="document.getElementById('DDForm').reset();">Reset</button>
-                    @endif
-                </div>
-        </form>
+                    <!-- Buttons -->
+                    <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
+                        <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
+                        <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
+                        @if (!$isEdit)
+                            <button class="btn-outline" type="reset"
+                                onclick="document.getElementById('DDForm').reset();">Reset</button>
+                        @endif
+                    </div>
+            </form>
+        </div>
     </div>
-</div>
-</div>
+    </div>
 
-<script>
-    // Nominee functions
-    function toggleAddMore(show) {
-        document.getElementById('addMoreContainer').style.display = show ? 'block' : 'none';
-        if (!show) document.getElementById('nomineeContainer').style.display = 'hidden';
-    }
+    <script>
+        // Nominee functions
+        function toggleAddMore(show) {
+            document.getElementById('addMoreContainer').style.display = show ? 'block' : 'none';
+            if (!show) document.getElementById('nomineeContainer').style.display = 'hidden';
+        }
 
-    function addNominee() {
-        const container = document.getElementById("nomineeContainer");
-        container.style.display = "flex"; // make visible
+        function addNominee() {
+            const container = document.getElementById("nomineeContainer");
+            container.style.display = "flex"; // make visible
 
-        const newNominee = document.createElement("div");
-        newNominee.className = "w-full nominee-item columns-4 gap-4 items-end bg-white p-4 rounded dark:bg-bg3";
+            const newNominee = document.createElement("div");
+            newNominee.className = "w-full nominee-item columns-4 gap-4 items-end bg-white p-4 rounded dark:bg-bg3";
 
-        newNominee.innerHTML = `
+            newNominee.innerHTML = `
         
 <div class="nominee-row flex flex-wrap justify-start gap-6">
     <div class="flex-center flex-1 min-w-[300px] max-w-full">
@@ -596,19 +597,19 @@ $isEdit = isset($ddsAccount);
           
         `;
 
-        container.appendChild(newNominee);
-    }
-
-    function removeNominee(button) {
-        const item = button.closest(".nominee-item");
-        item.remove();
-
-        // Hide container if no nominee left
-        const container = document.getElementById("nomineeContainer");
-        if (container.children.length === 0) {
-            container.style.display = "none";
+            container.appendChild(newNominee);
         }
-    }
+
+        function removeNominee(button) {
+            const item = button.closest(".nominee-item");
+            item.remove();
+
+            // Hide container if no nominee left
+            const container = document.getElementById("nomineeContainer");
+            if (container.children.length === 0) {
+                container.style.display = "none";
+            }
+        }
 
         function removeNominee(button) {
             const item = button.closest(".nominee-item");
@@ -712,4 +713,24 @@ $isEdit = isset($ddsAccount);
             });
         });
     </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileFields = ['memberMobile'];
+
+        mobileFields.forEach(function(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function () {
+                    // Allow only digits
+                    this.value = this.value.replace(/\D/g, '');
+
+                    // Limit to 10 digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+                });
+            }
+        });
+    });
+</script>
 @endsection

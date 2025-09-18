@@ -37,3 +37,23 @@
         @enderror
     </div>
 @endforeach
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileFields = ['mobile_no'];
+
+        mobileFields.forEach(function(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function () {
+                    // Allow only digits
+                    this.value = this.value.replace(/\D/g, '');
+
+                    // Limit to 10 digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+                });
+            }
+        });
+    });
+</script>

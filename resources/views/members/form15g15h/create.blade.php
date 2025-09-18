@@ -221,7 +221,7 @@
             </form>
         </div>
     </div>
-@endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let today = new Date().toISOString().split('T')[0];
@@ -237,3 +237,4 @@
         });
     });
 </script>
+@endsection

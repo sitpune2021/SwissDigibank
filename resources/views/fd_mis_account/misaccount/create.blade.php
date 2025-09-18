@@ -1,46 +1,8 @@
 @extends('layout.main')
 
+@section('content')
+
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -48,7 +10,6 @@
         /* For modern browsers */
     }
 
-    /* Fallback for browsers without accent-color support */
     input[type="checkbox"]:checked {
         background-color: green;
         border: none;
@@ -72,7 +33,6 @@
     }
 </style>
 
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -126,7 +86,6 @@
                         @error('member_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
@@ -141,7 +100,6 @@
                     <div class="col-span-2 md:col-span-1">
                         <label for="city" class="md:text-lg font-medium block mb-4">
                             Member Address
-
                         </label>
 
                         <input type="text" id="selected_member_address" name="member_address"
@@ -152,8 +110,6 @@
                         @enderror
                     </div>
 
-
-
                     <div class="col-span-2 md:col-span-1">
                         <label for="" class="md:text-lg font-medium block mb-4">
                             Member Mobile No.
@@ -163,7 +119,6 @@
                             <input type="text" name="" id=""
                                 class=" text-sm bg-secondary/5 w-20 dark:bg-bg3 border  rounded-10 px-3 md:px-6  py-3 md:py-3"
                                 value="+91" disabled>
-
 
                             <input type="text" id="selected_member_mobile" name="member_mobile"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3 md:py-3"
@@ -190,9 +145,6 @@
                                 </option>
                                 @endforeach
                             </select>
-
-
-
                         </div>
                         @error('minor_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -401,8 +353,6 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-
-
                     @if(!isset($misaccount))
                     <div class="col-span-2 md:col-span-1">
                         <label class="md:w-1/3 font-medium">Senior Citizen</label>
@@ -475,10 +425,6 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-
-
-
-
                     <!--  Nominee  -->
                     <div class="mt-4 col-span-2 md:col-span-1">
                         <p class="font-medium">
@@ -573,7 +519,6 @@
                                 class="text-error font-bold text-lg hover:text-red-700">✕</button>
                         </div>
                     </div>
-
                     @endforeach
                     @endif
                 </div>
@@ -817,8 +762,6 @@
                                 Select Saving Account <span class="text-red-500">*</span>
                             </label>
 
-
-
                             <!-- Saving Account Select -->
                             <select id="savingAccountSelect" name="saving_account_id"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-white mt-3">
@@ -841,16 +784,17 @@
                     <button type="submit" class="sm:w-auto justify-center  btn-primary uppercase">
                         {{ isset($misaccount) ? 'Update MIS' : 'Open MIS' }}
                     </button>
+                    @if(!isset($misaccount))
                     <button type="reset" class="sm:w-auto  justify-center uppercase btn-outline">
                         Reset
                     </button>
-                    <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline">
-                        back
+                    @endif
+                    <button type="button" class=" sm:w-auto justify-center uppercase btn-outline"
+                        onclick="window.location.href='{{ route('misaccount.index') }}'">
+                        Back
                     </button>
                 </div>
             </form>
-
-
     </div>
 
 </div>
@@ -862,386 +806,383 @@
 <script>
     //nomine
     function toggleSelect(show) {
-        document.getElementById("accountSelect").classList.toggle("hidden", !show);
-    }
+        document.getElementById(" accountSelect").classList.toggle("hidden", !show);
+                        }
 
-    function toggleAddMore(show) {
-        document.getElementById("addMoreText").classList.toggle("hidden", !show);
-        if (!show) {
-            document.getElementById("extraInputs").innerHTML = "";
-        }
-    }
+                        function toggleAddMore(show) {
+                        document.getElementById("addMoreText").classList.toggle("hidden", !show);
+                        if (!show) {
+                        document.getElementById("extraInputs").innerHTML="" ;
+                        }
+                        }
 
-    function addNomineeInputs() {
-        const container = document.getElementById("extraInputs");
-        const nomineeBlock = document.createElement("div");
+                        function addNomineeInputs() {
+                        const container=document.getElementById("extraInputs");
+                        const nomineeBlock=document.createElement("div");
 
-        nomineeBlock.className = "nominee-item grid grid-cols-4 gap-2 tems-center bg-gray-50 p-2 rounded-md shadow";
-        nomineeBlock.innerHTML = `
-                              <div class="nominee-row flex flex-wrap items-start gap-6">
-                                 <div class="flex-center flex-1 min-w-[200px] max-w-full">
-                      <label class="font-medium mb-2">Relation
-                              <span class="text-red-500">*</span>
-                      </label>
-                           <select name="nominee_relation[]" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3 capitalize">
-                <option value="">Select Relation</option>
-                <option value="mother">Mother</option>
-                <option value="son">Son</option>
-                <option value="daughter">Daughter</option>
-                <option value="spouse">Spouse (Husband/ Wife)</option>
-                <option value="husband">Husband</option>
-                <option value="wife">Wife</option>
-                <option value="brother">Brother</option>
-                <option value="sister">Sister</option>
-                <option value="daughter_in_law">Daughter in Law</option>
-                <option value="brother_in_law">Brother in Law</option>
-                <option selected="selected" value="grand_daughter">Grand Daughter</option>
-                <option value="grand_son">Grand Son</option>
-                <option value="nephew">Nephew</option>
-                <option value="niece">Niece</option>
-                <option value="other">Other</option>
-                </select>
-             </div>
-                      <div class="flex-1 min-w-[200px] max-w-full">
-                   <label class="font-medium mb-2">
-                    Name <span class="text-red-500">*</span>
-                    </label>
-                     <input type="text" name="nominee_name[]" placeholder="Enter Nominee Name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3 capitalize">
-                                </div>
-                              <div class="flex-1 min-w-[200px] max-w-full">
-                        <label class="font-medium mb-2">Address <span class="text-red-500">*</span></label>
-                       <input type="text" name="nominee_address[]" placeholder="Enter Nominee Address" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3 capitalize">
-                                                                                            </div>
+                        nomineeBlock.className="nominee-item grid grid-cols-4 gap-2 tems-center bg-gray-50 p-2 rounded-md shadow" ;
+                        nomineeBlock.innerHTML=`
+                        <div class="nominee-row flex flex-wrap items-start gap-6">
+                        <div class="flex-center flex-1 min-w-[200px] max-w-full">
+                            <label class="font-medium mb-2">Relation
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <select name="nominee_relation[]" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3 capitalize">
+                                <option value="">Select Relation</option>
+                                <option value="mother">Mother</option>
+                                <option value="son">Son</option>
+                                <option value="daughter">Daughter</option>
+                                <option value="spouse">Spouse (Husband/ Wife)</option>
+                                <option value="husband">Husband</option>
+                                <option value="wife">Wife</option>
+                                <option value="brother">Brother</option>
+                                <option value="sister">Sister</option>
+                                <option value="daughter_in_law">Daughter in Law</option>
+                                <option value="brother_in_law">Brother in Law</option>
+                                <option selected="selected" value="grand_daughter">Grand Daughter</option>
+                                <option value="grand_son">Grand Son</option>
+                                <option value="nephew">Nephew</option>
+                                <option value="niece">Niece</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="flex-1 min-w-[200px] max-w-full">
+                            <label class="font-medium mb-2">
+                                Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="nominee_name[]" placeholder="Enter Nominee Name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3 capitalize">
+                        </div>
+                        <div class="flex-1 min-w-[200px] max-w-full">
+                            <label class="font-medium mb-2">Address <span class="text-red-500">*</span></label>
+                            <input type="text" name="nominee_address[]" placeholder="Enter Nominee Address" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3 capitalize">
+                        </div>
 
-                         <div class="flex-1 min-w-[60px] max-w-full flex justify-end items-center">
-                      <button type="button" onclick="removeNominee(this)" class="text-error font-bold text-lg hover:text-red-700">✕</button>
-                                                                                            </div>
-                                                                                        </div>`;
-        container.appendChild(nomineeBlock);
-    }
-
-    function removeNominee(button) {
-        const item = button.closest(".nominee-item");
-        if (item) item.remove();
-
-        const container = document.getElementById("extraInputs");
-
-        // ✅ Keep container visible, just clear content if empty
-        if (container.children.length === 0) {
-            container.innerHTML = "";
-        }
-    }
-</script>
-
-
-
-<!--payment mode1-->
-<script>
-    //payment mode1
-    const payModeRadios = document.querySelectorAll('input[name="pay_mode"]');
-    const onlineFields = document.getElementById('onlineFields');
-    const chequeFields = document.getElementById('chequeFields');
-    const savingFields = document.getElementById('savingFields');
-
-    payModeRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            // hide all first
-            onlineFields.classList.add('hidden');
-            chequeFields.classList.add('hidden');
-            savingFields.classList.add('hidden');
-
-            // show based on selected
-            if (radio.value === 'online') onlineFields.classList.remove('hidden');
-            if (radio.value === 'cheque') chequeFields.classList.remove('hidden');
-            if (radio.value === 'saving') savingFields.classList.remove('hidden');
-        });
-    });
-</script>
-
-
-<!--saving account amount show here-->
-<script>
-    //saving account amount show here
-    document.getElementById('savingAccountSelect').addEventListener('change', function() {
-        let selectedOption = this.options[this.selectedIndex];
-        let balance = selectedOption.getAttribute('data-balance');
-        let balanceDiv = document.getElementById('accountBalanceDiv');
-        let balanceText = document.getElementById('accountBalance');
-
-        if (balance) {
-            balanceText.textContent = "₹ " + balance;
-            balanceDiv.classList.remove('hidden');
-        } else {
-            balanceText.textContent = "";
-            balanceDiv.classList.add('hidden');
-        }
-    });
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const select = document.getElementById('member_id');
-        const nameInput = document.getElementById('selected_member_name');
-        const addressInput = document.getElementById('selected_member_address');
-        const mobileInput = document.getElementById('selected_member_mobile');
-
-        function updateFields(option) {
-            nameInput.value = option.getAttribute('data-fullname') || '';
-            addressInput.value = option.getAttribute('data-address') || '';
-            mobileInput.value = option.getAttribute('data-mobile') || '';
-        }
-
-        select.addEventListener('change', function() {
-            updateFields(this.options[this.selectedIndex]);
-        });
-
-        // On load (e.g. after validation error)
-        updateFields(select.options[select.selectedIndex]);
-    });
-</script>
-
-
-
-<script>
-    //branch
-    document.addEventListener('DOMContentLoaded', function() {
-        const memberSelect = document.getElementById('member_id');
-        const minorSelect = document.getElementById('minor_id');
-        const allMinorOptions = Array.from(minorSelect.querySelectorAll('option[data-member]'));
-
-        function filterAndSelectMinor(memberId) {
-            minorSelect.value = ''; // reset
-
-            // Hide and disable all minors
-            allMinorOptions.forEach(option => {
-                option.style.display = 'none';
-                option.disabled = true;
-            });
-
-            // Show minors for selected member
-            const relatedMinors = allMinorOptions.filter(option => option.getAttribute('data-member') === memberId);
-
-            if (relatedMinors.length > 0) {
-                relatedMinors.forEach(option => {
-                    option.style.display = 'block';
-                    option.disabled = false;
-                });
-                // Automatically select the first minor
-                minorSelect.value = relatedMinors[0].value;
-            }
-        }
-
-        memberSelect.addEventListener('change', function() {
-            filterAndSelectMinor(this.value);
-        });
-
-        // Optional: If member already selected on page load, run once
-        if (memberSelect.value) {
-            filterAndSelectMinor(memberSelect.value);
-        }
-    });
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const memberSelect = document.getElementById('member_id');
-        const branchSelect = document.getElementById('branch_id');
-
-        const allBranchOptions = Array.from(branchSelect.options).filter(opt => opt.value !== "");
-
-        function updateBranchFromMember() {
-            const selectedMember = memberSelect.options[memberSelect.selectedIndex];
-            const branchId = selectedMember.getAttribute('data-branch');
-
-            // Reset all options
-            branchSelect.value = "";
-            allBranchOptions.forEach(opt => {
-                opt.style.display = 'none';
-            });
-
-            // Show and select the matching branch
-            if (branchId) {
-                const match = branchSelect.querySelector(`option[value="${branchId}"]`);
-                if (match) {
-                    match.style.display = 'block';
-                    branchSelect.value = branchId;
+                        <div class="flex-1 min-w-[60px] max-w-full flex justify-end items-center">
+                            <button type="button" onclick="removeNominee(this)" class="text-error font-bold text-lg hover:text-red-700">✕</button>
+                        </div>
+                </div>`;
+                container.appendChild(nomineeBlock);
                 }
-            }
-        }
 
-        memberSelect.addEventListener('change', updateBranchFromMember);
+                function removeNominee(button) {
+                const item = button.closest(".nominee-item");
+                if (item) item.remove();
 
-        // Optional: pre-fill on page load
-        if (memberSelect.value) {
-            updateBranchFromMember();
-        }
-    });
-</script>
+                const container = document.getElementById("extraInputs");
 
-<!--same amount chnage at misamount , final and amount-->
-<script>
-    const misAmount = document.getElementById('misAmount');
-    const finalAmount = document.getElementById('finalAmount');
-    const amount = document.getElementById('amount');
-
-    function syncAmounts() {
-        const misValue = misAmount.value || 0;
-        if (finalAmount) finalAmount.value = misValue;
-        if (amount) amount.value = misValue;
-    }
-
-    // Sync on page load
-    syncAmounts();
-
-    // Sync when user changes
-    misAmount.addEventListener('input', syncAmounts);
-</script>
-
-<!--Show/hide  Rdios section based on radio-->
-<script>
-    const radios = document.querySelectorAll('input[name="pay_mode"]');
-    const savingFields = document.getElementById('savingFields');
-    const savingSelect = document.getElementById('savingAccountSelect');
-    const balanceDiv = document.getElementById('accountBalanceDiv');
-    const balanceText = document.getElementById('accountBalance');
-
-    // Show/hide Saving Account section based on radio
-    radios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.value === 'saving') {
-                savingFields.classList.remove('hidden');
-
-                // Restore previous selection if exists
-                let savedBalance = localStorage.getItem('selected_balance');
-                let savedAccount = localStorage.getItem('selected_account');
-
-                if (savedBalance && savedAccount) {
-                    savingSelect.value = savedAccount;
-                    balanceText.textContent = "₹ " + savedBalance;
-                    balanceDiv.classList.remove('hidden');
+                // ✅ Keep container visible, just clear content if empty
+                if (container.children.length === 0) {
+                container.innerHTML = "";
                 }
-            } else {
-                savingFields.classList.add('hidden');
-                balanceDiv.classList.add('hidden');
-            }
-        });
-    });
+                }
+                </script>
+                <!--payment mode1-->
+                <script>
+                    //payment mode1
+                    const payModeRadios = document.querySelectorAll('input[name="pay_mode"]');
+                    const onlineFields = document.getElementById('onlineFields');
+                    const chequeFields = document.getElementById('chequeFields');
+                    const savingFields = document.getElementById('savingFields');
 
-    // Handle saving account select
-    savingSelect.addEventListener('change', function() {
-        let selectedOption = this.options[this.selectedIndex];
-        let balance = selectedOption.getAttribute('data-balance');
+                    payModeRadios.forEach(radio => {
+                        radio.addEventListener('change', () => {
+                            // hide all first
+                            onlineFields.classList.add('hidden');
+                            chequeFields.classList.add('hidden');
+                            savingFields.classList.add('hidden');
 
-        if (balance) {
-            balanceText.textContent = "₹ " + balance;
-            balanceDiv.classList.remove('hidden');
-            localStorage.setItem('selected_balance', balance);
-            localStorage.setItem('selected_account', this.value);
-        } else {
-            balanceText.textContent = "";
-            balanceDiv.classList.add('hidden');
-            localStorage.removeItem('selected_balance');
-            localStorage.removeItem('selected_account');
-        }
-    });
-
-    // Restore on page reload
-    window.addEventListener('DOMContentLoaded', function() {
-        let savedPayMode = document.querySelector('input[name="pay_mode"]:checked');
-        let savedBalance = localStorage.getItem('selected_balance');
-        let savedAccount = localStorage.getItem('selected_account');
-
-        if (savedPayMode && savedPayMode.value === 'saving') {
-            savingFields.classList.remove('hidden');
-            if (savedBalance && savedAccount) {
-                savingSelect.value = savedAccount;
-                balanceText.textContent = "₹ " + savedBalance;
-                balanceDiv.classList.remove('hidden');
-            }
-        }
-    });
-</script>
-
-
-<script>
-    // saving account selection by members
-
-    document.getElementById('member_id').addEventListener('change', function() {
-        let memberId = this.value;
-        let accountSelect = document.getElementById('savingAccountSelect');
-        accountSelect.innerHTML = '<option value="">Select Account</option>'; // reset
-
-        if (memberId) {
-            fetch(`/misaccount/member/${memberId}/accounts`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(account => {
-                        let option = document.createElement('option');
-                        option.value = account.id;
-                        option.textContent = account.account_no;
-                        option.setAttribute('data-balance', account.amount_deposit);
-                        accountSelect.appendChild(option);
+                            // show based on selected
+                            if (radio.value === 'online') onlineFields.classList.remove('hidden');
+                            if (radio.value === 'cheque') chequeFields.classList.remove('hidden');
+                            if (radio.value === 'saving') savingFields.classList.remove('hidden');
+                        });
                     });
-                });
-        }
-    });
+                </script>
 
-    // Show balance when account is selected
-    document.getElementById('savingAccountSelect').addEventListener('change', function() {
-        let balanceDiv = document.getElementById('accountBalanceDiv');
-        let balanceSpan = document.getElementById('accountBalance');
-        let selectedOption = this.options[this.selectedIndex];
-        let balance = selectedOption.getAttribute('data-balance');
 
-        if (balance) {
-            balanceDiv.classList.remove('hidden');
-            balanceSpan.textContent = balance;
-        } else {
-            balanceDiv.classList.add('hidden');
-        }
-    });
-</script>
+                <!--saving account amount show here-->
+                <script>
+                    //saving account amount show here
+                    document.getElementById('savingAccountSelect').addEventListener('change', function() {
+                        let selectedOption = this.options[this.selectedIndex];
+                        let balance = selectedOption.getAttribute('data-balance');
+                        let balanceDiv = document.getElementById('accountBalanceDiv');
+                        let balanceText = document.getElementById('accountBalance');
 
-<!-- selected scheme amount scheme and mis/*Amount should be greater than or equal*/-->
-<script>
-    // selected scheme amount scheme and mis/Amount should be greater than or equal/
-    document.addEventListener("DOMContentLoaded", function() {
-        const fdScheme = document.getElementById("fd_scheme_id");
-        const misAmount = document.getElementById("misAmount");
-        const errorMsg = document.getElementById("misAmountError");
-        const form = misAmount.closest("form");
+                        if (balance) {
+                            balanceText.textContent = "₹ " + balance;
+                            balanceDiv.classList.remove('hidden');
+                        } else {
+                            balanceText.textContent = "";
+                            balanceDiv.classList.add('hidden');
+                        }
+                    });
+                </script>
 
-        form.addEventListener("submit", function(e) {
-            const selectedOption = fdScheme.options[fdScheme.selectedIndex];
-            const minAmount = parseFloat(selectedOption.getAttribute("data-min_amount")) || 0;
-            const enteredAmount = parseFloat(misAmount.value) || 0;
 
-            if (enteredAmount < minAmount) {
-                e.preventDefault(); // ❌ stop form submit
-                errorMsg.textContent = `Amount should be greater than or equal to ${minAmount}`;
-                errorMsg.classList.remove("hidden");
-                misAmount.focus();
-            } else {
-                errorMsg.classList.add("hidden");
-            }
-        });
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const select = document.getElementById('member_id');
+                        const nameInput = document.getElementById('selected_member_name');
+                        const addressInput = document.getElementById('selected_member_address');
+                        const mobileInput = document.getElementById('selected_member_mobile');
 
-        // Optional: live validation on input
-        misAmount.addEventListener("input", function() {
-            const selectedOption = fdScheme.options[fdScheme.selectedIndex];
-            const minAmount = parseFloat(selectedOption.getAttribute("data-min_amount")) || 0;
-            const enteredAmount = parseFloat(misAmount.value) || 0;
+                        function updateFields(option) {
+                            nameInput.value = option.getAttribute('data-fullname') || '';
+                            addressInput.value = option.getAttribute('data-address') || '';
+                            mobileInput.value = option.getAttribute('data-mobile') || '';
+                        }
 
-            if (enteredAmount < minAmount) {
-                errorMsg.textContent = `Amount should be greater than or equal to ${minAmount}`;
-                errorMsg.classList.remove("hidden");
-            } else {
-                errorMsg.classList.add("hidden");
-            }
-        });
-    });
-</script>
+                        select.addEventListener('change', function() {
+                            updateFields(this.options[this.selectedIndex]);
+                        });
 
-@endsection
+                        // On load (e.g. after validation error)
+                        updateFields(select.options[select.selectedIndex]);
+                    });
+                </script>
+
+
+
+                <script>
+                    //branch
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const memberSelect = document.getElementById('member_id');
+                        const minorSelect = document.getElementById('minor_id');
+                        const allMinorOptions = Array.from(minorSelect.querySelectorAll('option[data-member]'));
+
+                        function filterAndSelectMinor(memberId) {
+                            minorSelect.value = ''; // reset
+
+                            // Hide and disable all minors
+                            allMinorOptions.forEach(option => {
+                                option.style.display = 'none';
+                                option.disabled = true;
+                            });
+
+                            // Show minors for selected member
+                            const relatedMinors = allMinorOptions.filter(option => option.getAttribute('data-member') === memberId);
+
+                            if (relatedMinors.length > 0) {
+                                relatedMinors.forEach(option => {
+                                    option.style.display = 'block';
+                                    option.disabled = false;
+                                });
+                                // Automatically select the first minor
+                                minorSelect.value = relatedMinors[0].value;
+                            }
+                        }
+
+                        memberSelect.addEventListener('change', function() {
+                            filterAndSelectMinor(this.value);
+                        });
+
+                        // Optional: If member already selected on page load, run once
+                        if (memberSelect.value) {
+                            filterAndSelectMinor(memberSelect.value);
+                        }
+                    });
+                </script>
+
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const memberSelect = document.getElementById('member_id');
+                        const branchSelect = document.getElementById('branch_id');
+
+                        const allBranchOptions = Array.from(branchSelect.options).filter(opt => opt.value !== "");
+
+                        function updateBranchFromMember() {
+                            const selectedMember = memberSelect.options[memberSelect.selectedIndex];
+                            const branchId = selectedMember.getAttribute('data-branch');
+
+                            // Reset all options
+                            branchSelect.value = "";
+                            allBranchOptions.forEach(opt => {
+                                opt.style.display = 'none';
+                            });
+
+                            // Show and select the matching branch
+                            if (branchId) {
+                                const match = branchSelect.querySelector(`option[value="${branchId}"]`);
+                                if (match) {
+                                    match.style.display = 'block';
+                                    branchSelect.value = branchId;
+                                }
+                            }
+                        }
+
+                        memberSelect.addEventListener('change', updateBranchFromMember);
+
+                        // Optional: pre-fill on page load
+                        if (memberSelect.value) {
+                            updateBranchFromMember();
+                        }
+                    });
+                </script>
+
+                <!--same amount chnage at misamount , final and amount-->
+                <script>
+                    const misAmount = document.getElementById('misAmount');
+                    const finalAmount = document.getElementById('finalAmount');
+                    const amount = document.getElementById('amount');
+
+                    function syncAmounts() {
+                        const misValue = misAmount.value || 0;
+                        if (finalAmount) finalAmount.value = misValue;
+                        if (amount) amount.value = misValue;
+                    }
+
+                    // Sync on page load
+                    syncAmounts();
+
+                    // Sync when user changes
+                    misAmount.addEventListener('input', syncAmounts);
+                </script>
+
+                <!--Show/hide  Rdios section based on radio-->
+                <script>
+                    const radios = document.querySelectorAll('input[name="pay_mode"]');
+                    const savingFields = document.getElementById('savingFields');
+                    const savingSelect = document.getElementById('savingAccountSelect');
+                    const balanceDiv = document.getElementById('accountBalanceDiv');
+                    const balanceText = document.getElementById('accountBalance');
+
+                    // Show/hide Saving Account section based on radio
+                    radios.forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            if (this.value === 'saving') {
+                                savingFields.classList.remove('hidden');
+
+                                // Restore previous selection if exists
+                                let savedBalance = localStorage.getItem('selected_balance');
+                                let savedAccount = localStorage.getItem('selected_account');
+
+                                if (savedBalance && savedAccount) {
+                                    savingSelect.value = savedAccount;
+                                    balanceText.textContent = "₹ " + savedBalance;
+                                    balanceDiv.classList.remove('hidden');
+                                }
+                            } else {
+                                savingFields.classList.add('hidden');
+                                balanceDiv.classList.add('hidden');
+                            }
+                        });
+                    });
+
+                    // Handle saving account select
+                    savingSelect.addEventListener('change', function() {
+                        let selectedOption = this.options[this.selectedIndex];
+                        let balance = selectedOption.getAttribute('data-balance');
+
+                        if (balance) {
+                            balanceText.textContent = "₹ " + balance;
+                            balanceDiv.classList.remove('hidden');
+                            localStorage.setItem('selected_balance', balance);
+                            localStorage.setItem('selected_account', this.value);
+                        } else {
+                            balanceText.textContent = "";
+                            balanceDiv.classList.add('hidden');
+                            localStorage.removeItem('selected_balance');
+                            localStorage.removeItem('selected_account');
+                        }
+                    });
+
+                    // Restore on page reload
+                    window.addEventListener('DOMContentLoaded', function() {
+                        let savedPayMode = document.querySelector('input[name="pay_mode"]:checked');
+                        let savedBalance = localStorage.getItem('selected_balance');
+                        let savedAccount = localStorage.getItem('selected_account');
+
+                        if (savedPayMode && savedPayMode.value === 'saving') {
+                            savingFields.classList.remove('hidden');
+                            if (savedBalance && savedAccount) {
+                                savingSelect.value = savedAccount;
+                                balanceText.textContent = "₹ " + savedBalance;
+                                balanceDiv.classList.remove('hidden');
+                            }
+                        }
+                    });
+                </script>
+
+
+                <script>
+                    // saving account selection by members
+
+                    document.getElementById('member_id').addEventListener('change', function() {
+                        let memberId = this.value;
+                        let accountSelect = document.getElementById('savingAccountSelect');
+                        accountSelect.innerHTML = '<option value="">Select Account</option>'; // reset
+
+                        if (memberId) {
+                            fetch(`/misaccount/member/${memberId}/accounts`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    data.forEach(account => {
+                                        let option = document.createElement('option');
+                                        option.value = account.id;
+                                        option.textContent = account.account_no;
+                                        option.setAttribute('data-balance', account.amount_deposit);
+                                        accountSelect.appendChild(option);
+                                    });
+                                });
+                        }
+                    });
+
+                    // Show balance when account is selected
+                    document.getElementById('savingAccountSelect').addEventListener('change', function() {
+                        let balanceDiv = document.getElementById('accountBalanceDiv');
+                        let balanceSpan = document.getElementById('accountBalance');
+                        let selectedOption = this.options[this.selectedIndex];
+                        let balance = selectedOption.getAttribute('data-balance');
+
+                        if (balance) {
+                            balanceDiv.classList.remove('hidden');
+                            balanceSpan.textContent = balance;
+                        } else {
+                            balanceDiv.classList.add('hidden');
+                        }
+                    });
+                </script>
+
+                <!-- selected scheme amount scheme and mis/*Amount should be greater than or equal*/-->
+                <script>
+                    // selected scheme amount scheme and mis/Amount should be greater than or equal/
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const fdScheme = document.getElementById("fd_scheme_id");
+                        const misAmount = document.getElementById("misAmount");
+                        const errorMsg = document.getElementById("misAmountError");
+                        const form = misAmount.closest("form");
+
+                        form.addEventListener("submit", function(e) {
+                            const selectedOption = fdScheme.options[fdScheme.selectedIndex];
+                            const minAmount = parseFloat(selectedOption.getAttribute("data-min_amount")) || 0;
+                            const enteredAmount = parseFloat(misAmount.value) || 0;
+
+                            if (enteredAmount < minAmount) {
+                                e.preventDefault(); // ❌ stop form submit
+                                errorMsg.textContent = `Amount should be greater than or equal to ${minAmount}`;
+                                errorMsg.classList.remove("hidden");
+                                misAmount.focus();
+                            } else {
+                                errorMsg.classList.add("hidden");
+                            }
+                        });
+
+                        // Optional: live validation on input
+                        misAmount.addEventListener("input", function() {
+                            const selectedOption = fdScheme.options[fdScheme.selectedIndex];
+                            const minAmount = parseFloat(selectedOption.getAttribute("data-min_amount")) || 0;
+                            const enteredAmount = parseFloat(misAmount.value) || 0;
+
+                            if (enteredAmount < minAmount) {
+                                errorMsg.textContent = `Amount should be greater than or equal to ${minAmount}`;
+                                errorMsg.classList.remove("hidden");
+                            } else {
+                                errorMsg.classList.add("hidden");
+                            }
+                        });
+                    });
+                </script>
+
+                @endsection
