@@ -84,7 +84,7 @@
                     <td class="py-5 px-6">
                         <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
                             class="text-blue-500 hover:underline">
-                            DEMO-{{ $promotor->folio_no ?? ''}}
+                            {{ $promotor->folio_no ?? ''}}
                         </a>
                     </td>
                     <td class="py-5 px-6">

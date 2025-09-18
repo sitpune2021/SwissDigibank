@@ -158,22 +158,30 @@
                 </select>
                 @error('scheme_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                 {{-- Minimum amount note --}}
-                <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>             
+                <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>
             </div>
 
             {{-- Open Date --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
+                <!-- <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
                 <input type="text" readonly name="open_date" id="open_date"
                     value="{{ date('D M d Y h:i:s A') }}"
                     class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                @error('open_date') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                @error('open_date') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror -->
+
+                <x-datepicker-disabled
+                    label="Open Date"
+                    name="open_date"
+                    value="{{ old('open_date') }}"
+                    inputId="open_date" />
 
             </div>
 
             {{-- Amount --}}
+            <div class="col-span-2 md:col-span-1">
                 <x-amount-input name="amount" id="amount" label="Enter Amount" />
                 @error('amount') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+            </div>
 
             {{-- Section Heading --}}
             <div class="col-span-2">
@@ -372,25 +380,24 @@
                         @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Cheque Date <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="date4" name="pay1_cheque_date"
-                            class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                            placeholder="DD/MM/YYYY" value="{{ old('pay1_cheque_date', date('Y-m-d')) }}">
-                        @error('pay1_cheque_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <x-datepicker-disabled
+                            label="Cheque Date"
+                            name="pay1_cheque_date"
+                            value="{{ old('pay1_cheque_date') }}"
+                            inputId="pay1_cheque_date" />
+
                     </div>
                 </div>
 
                 <!-- Online Transaction Fields -->
                 <div id="onlineFields" class="space-y-4 hidden">
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700">Transfer Date <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" id="date3" name="pay1_transfer_date" value="{{ old('pay1_transfer_date', date('Y-m-d')) }}"
-                            class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
-                            placeholder="DD/MM/YYYY">
+                        <x-datepicker-disabled
+                            label="Transfer Date"
+                            name="pay1_transfer_date"
+                            value="{{ old('pay1_transfer_date') }}"
+                            inputId="pay1_transfer_date" />
+
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
@@ -439,13 +446,11 @@
             </div>
             {{-- Transaction Date --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="transaction_date" class="font-medium block mb-4"><span class="text-red-500">*</span>Transaction Date</label>
-
-                <input type="text" name="transaction_date" id="date2"
-                    value="{{ old('transaction_date', date('Y-m-d')) }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-
-                @error('transaction_date') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                <x-datepicker-disabled
+                    label="Transaction Date"
+                    name="transaction_date"
+                    value="{{ old('transaction_date') }}"
+                    inputId="transaction_date" />
             </div>
 
             {{-- Buttons --}}

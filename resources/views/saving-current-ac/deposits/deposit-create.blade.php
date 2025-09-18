@@ -179,7 +179,7 @@
                 <!-- Content -->
                 <div x-show="open" x-transition class="p-4 text-sm bg-white">
                     <ul class="space-y-2">
-                        <li class="flex justify-between"><strong>Member:</strong><span>DEMO-04395 - Sagar Chavan</span></li>
+                        <li class="flex justify-between"><strong>Member:</strong><span>04395 - Sagar Chavan</span></li>
                         <hr class="my-2 border-gray-300">
                         <li class="flex justify-between"><strong>PAN No.:</strong><span>AAAAA4444A</span></li>
                         <hr class="my-2 border-gray-300">

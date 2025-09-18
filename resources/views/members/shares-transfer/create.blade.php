@@ -283,7 +283,7 @@
             }
 
             $.ajax({
-                url: `/get-promoter-shares/${memberId}`,
+                url: '/get-promoter-shares/${memberId}',
                 type: "GET",
                 success: function(data) {
                     currentShares = parseInt(data.shares) || 0;

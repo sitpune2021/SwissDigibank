@@ -20,7 +20,7 @@
         <x-alert />
     </div>
     <div class="pb-4 overflow-x-auto lg:pb-6">
-        <table class="w-full border border-n30 rounded-lg overflow-hidden">
+        <table class="w-full border border-n30 rounded-lg overflow-hidden whitespace-nowrap">
             <thead>
                 <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
                     <th class="px-6 py-3 text-center">ASSOCIATE</th>
@@ -61,7 +61,7 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <a href="{{route('member.show',$account->member->id)}}" class="text-primary underline hover:text-primary/80">
-                            DEMO-{{ optional($account->member)->id ?? '—' }}
+                            {{ optional($account->member)->id ?? '—' }}
                         </a>
                     </td>
                     <td class="px-6 py-4 text-center">{{ optional($account->member)->full_name ?? '—' }}</td>
@@ -83,7 +83,7 @@
                     <td class="px-6 py-4 text-center">—</td>
 
                     <td class="px-6 py-4 text-center">
-                        {{ $account->open_date ? \Carbon\Carbon::parse($account->open_date)->format('d/m/Y') : '—' }}
+                        {{ $account->open_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $account->open_date)->format('d-m-Y') : '' }}
                     </td>
                     <td class="px-6 py-4 text-center">—</td>
                     <td class="px-6 py-4 text-center">Monthly</td>
@@ -91,15 +91,12 @@
                     <td class="px-6 py-4 text-center">
                         <span class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Active</span>
                     </td>
-
-                    <td class="px-6 py-2">
+                    <td class="px-6 py-4 text-center">
                         <div class="flex justify-center">
-                            <!-- <div class="relative">
-                                    <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                    <ul class="horiz-option popover-content">
-                                        <li><a href="{{ route('view-rd-account') }}" class="single-option">View</a></li>
-                                    </ul>
-                                </div> -->
+                            @include('partials._vertical-options', [
+                            'id' => $account->id,
+                            'viewRoute' => 'mds-rd-account.show',
+                            ])
                         </div>
                     </td>
                 </tr>

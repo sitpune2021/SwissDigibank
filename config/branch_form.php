@@ -20,7 +20,7 @@ return [
         'name' => 'open_date',
         'id' => 'date',
         'type' => 'text',
-        'default' => now()->format('D M d Y'),
+        'default' => now()->format('d-m-Y'),
         'required' => false,
     ],
     [
@@ -50,7 +50,7 @@ return [
         'id' => 'country',
         'type' => 'text',
         'required' => true,
-        'default' => 'India',  
+        'default' => 'India',
     ],
     [
         'label' => 'State',
@@ -86,9 +86,13 @@ return [
         'label' => 'Contact No.',
         'name' => 'mobile_no',
         'id' => 'mobile_no',
-        'type' => 'text',
+        'type' => 'number',
+        'maxlength' => '10',
+        'minlength' => '10',
+        'pattern' => '[0-9]{10}',
         'required' => false,
     ],
+
     [
         'label' => 'Landline No.',
         'name' => 'landline_no',
@@ -109,7 +113,7 @@ return [
         'id' => 'disable_recharge',
         'type' => 'radio',
         'required' => true,
-        'default' => 'yes', 
+        'default' => 'yes',
         'options' => [
             'yes' => 'Yes',
             'no' => 'No',
@@ -121,7 +125,7 @@ return [
         'type' => 'radio',
         'id' => 'disable_neft',
         'required' => true,
-        'default' => 'no', 
+        'default' => 'no',
         'options' => [
             'yes' => 'Yes',
             'no' => 'No',

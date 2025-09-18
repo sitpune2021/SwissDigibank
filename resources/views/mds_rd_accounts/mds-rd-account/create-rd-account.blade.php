@@ -1,5 +1,4 @@
 @extends('layout.main')
-
 @section('content')
 <style>
     input[type="checkbox"] {
@@ -28,7 +27,7 @@
         <div class="flex items-center flex-col  gap-2">
             <h1 class="text-xl font-semibold">Open New RD Account</h1>
             <p class="text-gray-500">
-                <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recurring Deposits</a> >
+                <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recuuring Deposits</a> >
                 <a href="#" class="text-gray-500"> New</a>
             </p>
         </div>
@@ -53,7 +52,7 @@
                         <option value="">Select Member</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">
-                            {{ $member->full_name }}
+                            {{ $member->member_info_first_name }}
                             @endforeach
                     </select>
                     @error('member_id')
@@ -87,7 +86,7 @@
                     <div class="flex gap-2">
 
                         <input type="text" name="member_mobile" id="" class=" text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" value="+91" readonly>
-                        <input type="text" id="memberMobile" name="member_mobile" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Mobile No " readonly>
+                        <input type="text" id="memberMobile" name="member_mobile" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Enter Mobile No " readonly>
                     </div>
                 </div>
 
@@ -95,7 +94,7 @@
 
                 <div class="col-span-2 md:col-span-1">
                     <label class="font-medium block mb-2"> Minor (if any) </label>
-                    <select id="minor_id" name="minor_id" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
+                    <select id="minor_id" name="minor_id" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Minor">
                     </select>
 
                 </div>
@@ -152,27 +151,22 @@
                         :</label>
                     <input type="number" id="rdAmount" name="rd_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter RD Amount" value="">
-
+                        placeholder="Amount" value="">
                     <x-number-to-word for="rdAmount" />
+                    @error('rd_amount')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
 
                 </div>
-                @error('rd_amount')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
 
                 <div class="col-span-2 md:col-span-1 relative">
-                    <label class="font-medium block mb-2">
-                        Open Date <span class="text-red-500">*</span> :
-                    </label>
-                    <input type="text" id="date5" name="open_date" value="{{ old('open_date') }}" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-               rounded-10 px-3 md:px-6 py-2 md:py-3 pr-10" placeholder="DD/MM/YYYY">
-                    <i class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                </div>
-                @error('open_date')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                    <x-datepicker-disabled
+                        label="Open Date"
+                        name="open_date"
+                        value="{{ old('open_date') }}"
+                        inputId="date_pass" />
 
+                </div>
 
                 <div class="col-span-2 md:col-span-1"></div>
 
@@ -194,17 +188,18 @@
                     <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
                     <div class="flex items-center gap-4">
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="accountType" value="single" onclick="toggleAccountType('single')" checked class="accent-primary">
+                            <input type="radio" name="accountType" value="single" onclick="toggleAccountType('single')" class="accent-primary" checked>
                             <span>Single</span>
                         </label>
                         <label class="flex items-center gap-2">
                             <input type="radio" name="accountType" value="joint" onclick="toggleAccountType('joint')" class="accent-primary">
                             <span>Joint A/C</span>
                         </label>
+                        @error('accountType')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    @error('accountType')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+
                     <!-- single (no fields) -->
                     <div id="single" class="hidden"></div>
                 </div>
@@ -215,8 +210,6 @@
                         <select id="savingAccountJoint" name="savings_account" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                        rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Account</option>
-
-
                         </select>
                         @error('savings_account')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -226,26 +219,12 @@
             </div>
             <!-- Nominee -->
             <div class="col-span-2 md:col-span-1 mt-4">
-                <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
-                <div class="flex items-center  gap-2">
-                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee" value="yes" onclick="toggleAddMore(true)">Yes</label>
-                    <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee" value="no" onclick="toggleAddMore(false)" checked> No</label>
-                </div>
-                @error('nominee')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                <x-add-nominee
+                    :rdAccount="null"
+                    :member="$member ?? null"
+                    submitText="Add"
+                    backText="Back" />
 
-                <!-- Add More Button -->
-                <div id="addMoreContainer" class="mt-2 hidden">
-                    <button type="button" onclick="addNominee()" class="text-blue-600 font-medium">
-                        + ADD MORE NOMINEE
-                    </button>
-                </div>
-
-                <!-- Nominee Forms Container -->
-                <div id="nomineeContainer" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 items-end p-3 rounded-10 bg-gray-50 dark:bg-bg3">
-                    <!-- Forms will be added here -->
-                </div>
             </div>
 
             <div class="col-span-2 md:col-span-1"></div>
@@ -275,10 +254,11 @@
                             <input type="radio" name="payment_mode" value="savingAcc" onclick="togglePaymentMode('savingAcc')">
                             <span>Saving Ac.</span>
                         </label>
+                        @error('payment_mode')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    @error('payment_mode')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+
 
 
                     <!-- Cash (no fields) -->
@@ -286,29 +266,24 @@
 
 
                     <!-- Online Transfer Fields -->
-                    <div id="onlineTr" class="hidden grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6 mt-4">
-
+                    <div id="onlineTr" class="hidden grid  grid-cols-2 gap-4 xl:mt-8 2xl:gap-6 mt-4">
                         <!-- Transfer Date -->
-                        <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">Transfer Date <span class="text-red-500">*</span></label>
-                            <input type="text" name="transfer_date" id="date2" value="{{ old('transfer_date') }}" placeholder="dd/mm/yyyy"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <i class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                        </div>
-                        @error('transfer_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+
+                        <x-datepicker-disabled
+                            label="Transfer Date"
+                            name="transfer_date"
+                            value="{{ old('transfer_date') }}"
+                            inputId="transfer_date" />
 
                         <!-- UTR / Transaction No -->
                         <div class="col-span-2 md:col-span-1 mt-4">
                             <label class="font-medium block mb-1">UTR / Transaction No <span class="text-red-500">*</span></label>
                             <input type="text" name="transaction_no" placeholder="Enter UTR / Transaction No"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            @error('transaction_no')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
-                        @error('transaction_no')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-
 
                         <!-- Transfer Mode -->
                         <div class="col-span-2 md:col-span-1 mt-4">
@@ -327,10 +302,10 @@
                                     <span>NEFT/RTGS</span>
                                 </label>
                             </div>
+                            @error('transfer_mode')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
-                        @error('transfer_mode')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
 
                         <!-- Credited in Company Account -->
                         <div class="col-span-2 md:col-span-1 mt-4">
@@ -343,11 +318,12 @@
                                     <input type="radio" name="credited" value="no"> <span>No</span>
                                 </label>
                             </div>
+                            @error('credited')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+
                         </div>
                     </div>
-                    @error('credited')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
 
 
                     <!-- Cheque Fields -->
@@ -356,26 +332,26 @@
                             <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                 <label class="font-medium block mb-1">Bank Name<span class="text-red-500">*</span></label>
                                 <input type="text" name="cheque_bank_name" placeholder="Enter Bank Name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('cheque_bank_name')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
-                            @error('cheque_bank_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+
 
                             <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                 <label class="font-medium block mb-1">Cheque No<span class="text-red-500">*</span></label>
                                 <input type="text" placeholder="Enter Cheque No" name="cheque_no" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('cheque_no')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
-                            @error('cheque_no')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                            <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                                <label class="font-medium block mb-1">Cheque Date<span class="text-red-500">*</span></label>
-                                <input type="text" id="date3" value="{{ old('cheque_date') }}" placeholder="dd/mm/yyyy" name="cheque_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                <i class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                            </div>
-                            @error('cheque_date')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+
+                            <x-datepicker-disabled
+                                label="Cheque Date"
+                                name="cheque_date"
+                                value="{{ old('cheque_date') }}"
+                                inputId="cheque_date" />
+
                         </div>
                     </div>
 
@@ -390,6 +366,9 @@
                             <option value="">Select Account</option>
 
                         </select>
+                        @error('savings_account')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div id="accountBalanceDiv" class="mt-3 hidden">
                         <label class="block text-sm font-medium text-gray-700">Account Balance</label>
@@ -399,156 +378,73 @@
                 </div>
             </div>
 
-
             <!-- Date & Amount -->
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
-                <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">
-                        T.Date <span class="text-red-500">*</span> </label>
-                    <input type="text" name="t_date" id="date4" value="{{ old('t_date') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="DD/MM/YYYY"> <i class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
-                    @error('t_date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                <div class="col-span-2 md:col-span-1 relative">
+
+                    <x-datepicker-disabled
+                        label="T. Date"
+                        name="t_date"
+                        value="{{ old('t_date') }}"
+                        inputId="tdate" />
                 </div>
 
-
-                <div class="col-span-2 md:col-span-1">
+                <div class=" col-span-2 md:col-span-1">
                     <label class="font-medium block mb-2">
                         Amount <span class="text-red-500">*</span> </label>
-                    <input type="number" name="amount" placeholder="Enter Amount"
+                    <input type="number" name="amount" placeholder="Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     @error('amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+
             </div>
+
             <!-- Buttons -->
             <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                <button class="btn-primary" type="submit">Save Scheme</button>
-                <button class="btn-outline" type="button">Back</button>
-                <button class="btn-outline" type="reset">Reset</button>
+                <button class="btn-primary" type="submit">OPEN RD</button>
+                <button class="btn-outline" type="button">BACK</button>
+                <button class="btn-outline" type="reset">RESET</button>
             </div>
         </form>
     </div>
 </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Nominee functions
-    function toggleAddMore(show) {
-        document.getElementById('addMoreContainer').style.display = show ? 'block' : 'none';
-        if (!show) document.getElementById('nomineeContainer').style.display = 'hidden';
-    }
-
-    function addNominee() {
-        const container = document.getElementById("nomineeContainer");
-        container.style.display = "flex"; // make visible
-
-        const newNominee = document.createElement("div");
-        newNominee.className = "w-full nominee-item columns-4 gap-4 items-end bg-white p-4 rounded dark:bg-bg3";
-
-        newNominee.innerHTML = `
-        
-<div class="nominee-row flex flex-wrap justify-start gap-6">
-    <div class="flex-center flex-1 min-w-[300px] max-w-full">
-        <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
-        <select name="nominees[0][relation]" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-                           rounded-10 px-3 md:px-6 py-2 md:py-3">
-            <option value="">Select Relation</option>
-
-            <!-- Immediate Family -->
-            <option>Father</option>
-            <option>Mother</option>
-            <option>Spouse</option>
-            <option>Son</option>
-            <option>Daughter</option>
-
-            <!-- Siblings -->
-            <option>Brother</option>
-            <option>Sister</option>
-
-            <!-- Extended Family -->
-            <option>Grandfather</option>
-            <option>Grandmother</option>
-            <option>Uncle</option>
-            <option>Aunt</option>
-            <option>Cousin</option>
-            <option>Nephew</option>
-            <option>Niece</option>
-
-            <!-- In-Laws -->
-            <option>Father-in-law</option>
-            <option>Mother-in-law</option>
-            <option>Brother-in-law</option>
-            <option>Sister-in-law</option>
-            <option>Son-in-law</option>
-            <option>Daughter-in-law</option>
-
-            <!-- Others -->
-            <option>Guardian</option>
-            <option>Friend</option>
-            <option>Other</option>
-        </select>
-
-
-    </div>
-
-    <div class="flex-1 min-w-[300px] max-w-full">
-        <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
-        <input type="text" name="nominees[0][name]" placeholder="Enter Nominee Name"
-            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-                        rounded-10 px-3 md:px-6 py-2 md:py-3">
-    </div>
-
-    <div class="flex-1 min-w-[300px] max-w-full">
-        <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
-        <input type="text" name="nominees[0][address]" placeholder="Enter Nominee Address"
-            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
-                         rounded-10 px-3 md:px-6 py-2 md:py-3">
-    </div>
-
-    <div class="flex-1 min-w-[60px] max-w-full flex justify-end items-center">
-        <button type="button" onclick="removeNominee(this)"
-            class="text-red-500 mt-8 font-bold text-lg hover:text-red-700">✕</button>
-    </div>
-</div>
-          
-        `;
-
-        container.appendChild(newNominee);
-    }
-
-    function removeNominee(button) {
-        const item = button.closest(".nominee-item");
-        item.remove();
-
-        // Hide container if no nominee left
-        const container = document.getElementById("nomineeContainer");
-        if (container.children.length === 0) {
-            container.style.display = "none";
-        }
-    }
     const rdAmount = document.getElementById('rdAmount');
     const amountField = document.querySelector('input[name="amount"]');
 
-    // Update the "Amount" field whenever "RD Amount" changes
     if (rdAmount && amountField) {
         rdAmount.addEventListener('input', () => {
             amountField.value = rdAmount.value;
         });
     }
+</script>
 
+<script>
     function togglePaymentMode(type) {
         // Hide all sections first
         ['cash', 'onlineTr', 'cheque', 'savingAcc'].forEach(id => {
             document.getElementById(id).classList.add('hidden');
         });
+
+        // Always hide balance first
+        document.getElementById('accountBalanceDiv').classList.add('hidden');
+
         // Show the selected section
-        if (type === 'onlineTr') document.getElementById('onlineTr').classList.remove('hidden');
-        if (type === 'cheque') document.getElementById('cheque').classList.remove('hidden');
-        if (type === 'savingAcc') document.getElementById('savingAcc').classList.remove('hidden');
+        if (type === 'onlineTr') {
+            document.getElementById('onlineTr').classList.remove('hidden');
+        }
+        if (type === 'cheque') {
+            document.getElementById('cheque').classList.remove('hidden');
+        }
+        if (type === 'savingAcc') {
+            document.getElementById('savingAcc').classList.remove('hidden');
+            document.getElementById('accountBalanceDiv').classList.remove('hidden');
+        }
     }
 
     function toggleAccountType(type) {
@@ -567,15 +463,13 @@
     }
 </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 
 
 <script>
     $(document).ready(function() {
         $('#memberDropdown').on('change', function() {
             let memberId = $(this).val();
-            console.log(memberId);
+
             // Get dropdown references
             const $jointSelect = $('#savingAccountJoint');
             const $savingSelect = $('#savingAccountSelect');

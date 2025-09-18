@@ -72,7 +72,7 @@ class FDController extends Controller
                 'rows.*.payout_type'     => 'nullable|string',
             ]);
 
-            $validated['effective_date'] = \Carbon\Carbon::parse($request->effective_date)->format('Y-m-d');
+            $validated['effective_date'] = \Carbon\Carbon::parse('d/m/Y', $request->effective_date)->format('Y-m-d');
             $validated['admin']     = $request->has('admin') ? 1 : 0;
             $validated['associate'] = $request->has('associate') ? 1 : 0;
             $validated['member']    = $request->has('member') ? 1 : 0;
@@ -108,12 +108,10 @@ class FDController extends Controller
                 ->route('fd-mis-schemes.index')
                 ->with('success', 'FD Scheme created successfully!');
         } catch (ValidationException $e) {
-            // rethrow so Laravel handles it (shows validation errors in the view)
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // Log for debugging
             Log::error('FD Scheme Store Error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -137,7 +135,6 @@ class FDController extends Controller
                 $from = Carbon::now()->addDays($slab->day_from);
                 $to   = Carbon::now()->addDays($slab->day_to);
                 $slab->months = $from->diffInMonths($to);
-
             } else {
                 $slab->months = null;
             }
@@ -298,7 +295,7 @@ class FDController extends Controller
             $summary = $calc->getData(true)['summary']['summary'] ?? [];
 
             $transactionDate = $request->transaction_date
-                ? Carbon::createFromFormat('D M d Y', $request->transaction_date)->format('Y-m-d')
+                ? Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d')
                 : null;
 
             $fdAccount = FdAccount::create([
@@ -306,7 +303,9 @@ class FDController extends Controller
                 'branch_id'             => $request->branch_id,
                 'minor_id'              => $request->minor_id,
                 'staff_id'              => $request->advisor_staff,
-                'open_date'             => $request->date ? Carbon::parse($request->date)->format('Y-m-d') : null,
+                'open_date' => $request->date
+                    ? Carbon::createFromFormat('d-m-Y', $request->date)->format('Y-m-d')
+                    : null,
                 'tenure_year'           => $request->tenure_year,
                 'tenure_month'          => $request->tenure_month,
                 'tenure_days'           => $request->tenure_day,
@@ -328,8 +327,6 @@ class FDController extends Controller
                 'maturity_date'         => isset($summary['maturity_date'])
                     ? Carbon::createFromFormat('d/m/Y', $summary['maturity_date'])->format('Y-m-d')
                     : null,
-
-
             ]);
             Log::info('FD Account created', ['fd_account_id' => $fdAccount->id]);
 
@@ -494,7 +491,7 @@ class FDController extends Controller
             'maturity_amount' => number_format($maturityAmt, 2),
             'maturity_date'   => $maturityDate
         ];
-
+ 
         return response()->json([
             'success' => true,
             'summary' => $summary,

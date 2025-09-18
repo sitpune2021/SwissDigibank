@@ -2,104 +2,104 @@
 
 return [
     [
-        'title' => 'Dashboard',
+        'title' => 'DASHBOARD',
         'icon' => 'las la-home',
         'route' => 'index1',
         'position' => '0',
         'active' => '1'
     ],
     [
-        'title' => 'Company',
+        'title' => 'COMPANY',
         'icon' => 'las la-piggy-bank',
         'position' => '2',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Profile', 'route' => 'company.index'],
-            ['title' => 'Branches', 'route' => 'branch.index'],
-            ['title' => 'Promoters', 'route' => 'promotor.index'],
-            ['title' => 'Promotor Share Holdings', 'route' => 'shareholding.index'],
-            ['title' => 'Director', 'route' => 'director.index'],
+            ['title' => 'PROFILE', 'route' => 'company.index'],
+            ['title' => 'BRANCHES', 'route' => 'branch.index'],
+            ['title' => 'PROMOTORS', 'route' => 'promotor.index'],
+            ['title' => 'PROMOTOR SHARE HOLDINGS', 'route' => 'shareholding.index'],
+            ['title' => 'DIRECTOR', 'route' => 'director.index'],
         ],
     ],
     [
-        'title' => 'User',
+        'title' => 'USER',
         'icon' => 'las la-user',
         'position' => '3',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Permissions / Roles', 'route' => 'roles.index'],
-            ['title' => 'Users', 'route' => 'users.index'],
+            ['title' => 'PERMISSION/ROLES', 'route' => 'roles.index'],
+            ['title' => 'USERS', 'route' => 'users.index'],
         ],
     ],
     [
-        'title' => 'Member',
+        'title' => 'MEMBER',
         'icon' => 'las la-piggy-bank',
         'position' => '4',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Members', 'route' => 'member.index'],
-            ['title' => 'Minors', 'route' => 'minor.index'],
-            ['title' => 'Share Holding', 'route' => 'shares-transfer.index'],
+            ['title' => 'MEMBERS', 'route' => 'member.index'],
+            ['title' => 'MINORS', 'route' => 'minor.index'],
+            ['title' => 'SHARE HOLDING', 'route' => 'shares-transfer.index'],
             // ['title' => 'Share Certificates', 'route' => 'share-certificates.index'],
             // ['title' => 'Share Transfer History', 'route' => 'share_transfer_histories.index'],
-            ['title' => 'Form 15G/15H', 'route' => 'form15g15h.index'],
+            ['title' => 'FORM 15G/15H', 'route' => 'form15g15h.index'],
         ]
     ],
     [
-        'title' => 'Account',
+        'title' => 'ACCOUNT',
         'icon' => 'las la-university',
         'position' => '5',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Schemes', 'route' => 'schemes.index'],
-            ['title' => 'Saving A/c', 'route' => 'accounts.index'],
+            ['title' => 'SCHEMES', 'route' => 'schemes.index'],
+            ['title' => 'SAVING A/C', 'route' => 'accounts.index'],
         ]
     ],
     [
-        'title' => 'FD/ MIS Accounts',
+        'title' => 'FD/ MIS ACCOUNTS',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Schemes', 'route' => 'fd-mis-schemes.index'],
-            ['title' => 'Calculator', 'route' => 'calculator.index'],
-            ['title' => 'FD Accounts', 'route' => 'fd-mis-schemes.fd_index'],
-            ['title' => 'MIS Accounts', 'route' => 'misaccount.index'],
+            ['title' => 'SCHEMES', 'route' => 'fd-mis-schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'calculator.index'],
+            ['title' => 'FD ACCOUNTS', 'route' => 'fd-mis-schemes.fd_index'],
+            ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index'],
         ]
     ],
     [
-        'title' => 'MDS/RD/DDS Accounts',
+        'title' => 'MDS/RD/DDS ACCOUNTS',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Schemes', 'route' => 'rdschemes.index'],
-            ['title' => 'Calculator', 'route' => 'rd-calculator.create'],
-            ['title' => 'DDS Accounts', 'route' => 'dds-accounts.index'],
-            ['title' => 'MDS / RD Accounts', 'route' => 'mds-rd-accounts.rd-account-index'],
+            ['title' => 'SCHEMES', 'route' => 'rdschemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'rd-calculator.create'],
+            ['title' => 'DDS ACCOUNTS', 'route' => 'dds-accounts.index'],
+            ['title' => 'MDS / RD ACCOUNTS', 'route' => 'mds-rd-accounts.rd-account-index'],
         ]
     ],
     [
-        'title' => 'Approvals',
+        'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Pending Transactions', 'route' => 'pending-transaction.index'],
-            ['title' => 'Share Transfer/ Allocation', 'route' => 'share-transfer-approval.approve_transfer'],
-            ['title' => 'Reversed Transactions', 'route' => 'reverse-transaction.reverse_transaction'],
-            ['title' => 'Account Approvals', 'route' => 'approveAccounts'],
+            ['title' => 'PENDING TRANSACTIONS', 'route' => 'pending-transaction.index'],
+            ['title' => 'SHARE TRANSFER/ ALLOCATION', 'route' => 'share-transfer-approval.approve_transfer'],
+            ['title' => 'REVERSED TRANSACTIONS', 'route' => 'reverse-transaction.reverse_transaction'],
+            ['title' => 'ACCOUNT APPROVALS', 'route' => 'approveAccounts'],
 
             // ['title' => 'Share Surrender', 'route' => 'share-surrender.index'],
         ]
     ],
     [
-        'title' => 'HR Management',
+        'title' => 'HR MANAGEMENT',
         'icon' => 'las la-user',
         'position' => '6',
         'active' => '1',
         'submenu' => [
-            ['title' => 'Employees', 'route' => 'employee.index'],
+            ['title' => 'EMPLOYEES', 'route' => 'employee.index'],
         ],
     ],
 

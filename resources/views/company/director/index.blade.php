@@ -66,7 +66,7 @@
                         @if ($director->member)
                         <a href="{{ $director?->member?->id ? route('member.show', $director->member->id) : '#' }}"
                             class="text-primary hover:underline">
-                            DEMO-{{ $director->member?->member_info_first_name ??''}}
+                            {{ $director->member?->member_info_first_name ??''}}
                         </a>
                         @else
                         N/A

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Branch;
@@ -499,8 +500,8 @@ class DdsAccountsController extends Controller
         $startDate = null,
         $schemeTenureMonths = null
     ) {
-        if (strtolower($frequency) !== 'daily') {
-            throw new InvalidArgumentException("Only 'daily' frequency is supported.");
+        if (!in_array($frequency, ['daily', 'weekly'])) {
+            throw new InvalidArgumentException("Only 'daily' and 'weekly' frequencies are supported.");
         }
 
         $totalDeposit = $depositAmount * $installments;
@@ -654,8 +655,6 @@ class DdsAccountsController extends Controller
                 'member_sign'       => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                 'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             ]);
-
-            //  dd($validated);
 
             // ✅ Convert date format
             $transaction_date = \Carbon\Carbon::createFromFormat('d/m/Y', $validated['transaction_date'])->format('Y-m-d');

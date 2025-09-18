@@ -502,7 +502,7 @@
                                         class="w-full rounded-10 border px-3 py-3 bg-secondary/5 dark:bg-bg3 dark:text-white">
                                         @if (!empty($ddaccount->member))
                                             <option value="{{ $ddaccount->member->id }}" selected>
-                                                DEMO-{{ str_pad($ddaccount->member->id, 5, '0', STR_PAD_LEFT) }}
+                                                {{ str_pad($ddaccount->member->id, 5, '0', STR_PAD_LEFT) }}
                                                 - {{ $ddaccount->member->member_info_first_name }}
                                                 {{ $ddaccount->member->member_info_last_name }}
                                             </option>
@@ -882,7 +882,7 @@
                             results: $.map(data, function(member) {
                                 return {
                                     id: member.id,
-                                    text: "DEMO-" + String(member.id).padStart(5, '0') + " - " +
+                                    text: "" + String(member.id).padStart(5, '0') + " - " +
                                         member.member_info_first_name + " " + member
                                         .member_info_last_name +
                                         " (" + member.mobile_no + ")"
@@ -934,7 +934,7 @@
                             results: $.map(data, function(member) {
                                 return {
                                     id: member.id,
-                                    text: `DEMO-${String(member.id).padStart(5, '0')} - ${member.member_info_first_name} ${member.member_info_last_name} (${member.mobile_no})`
+                                    text: `${String(member.id).padStart(5, '0')} - ${member.member_info_first_name} ${member.member_info_last_name} (${member.mobile_no})`
                                 };
                             })
                         };

@@ -103,7 +103,7 @@
                         </td>
                         <td class="px-6 py-3">
                             <a href="{{ $account?->member?->id ? route('member.show', $account->member->id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                              DEMO-{{ $account->member->id ?? '-' }}
+                              {{ $account->member->id ?? '-' }}
                             </a>
                         </td>
                         <td class="px-6 py-3">{{ $account->member->member_info_first_name ?? '-' }}</td>
@@ -111,7 +111,7 @@
                         <td class="px-6 py-3">{{ $account->branch->branch_name ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->account_type??'-' }}</td>
                         <td class="px-6 py-3">{{ number_format($account->fd_amount, 2) }}</td>
-                        <td class="px-6 py-3">{{ $account->open_date??'-' }}</td>
+                        <td class="px-6 py-3">{{ $account->open_date ? \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') : '-' }}</td>
                         <td class="px-6 py-3">{{ $account->interest_payout_type??'-' }}</td>
                         <td class="px-6 py-3">{{ $account->maturity_date ?? '-' }}</td>
                         <td class="px-6 py-3">

@@ -118,8 +118,8 @@ class MinorController extends Controller
             return redirect()->back()->with('error', 'Failed to save minor: ' . $e->getMessage());
         }
     }
-
-
+    
+    // {{-- 18-09-22 changes  --}}
     public function show(string $id)
     {
         try {
@@ -127,11 +127,13 @@ class MinorController extends Controller
             $minor = Minor::findOrFail($id);
             $route = "";
             $method = 'POST';
+            $method = 'PUT';
+            $show = true;
             $type = 'edit';
             $dynamicOptions = [
                 'member' => Member::pluck('member_info_first_name', 'id')
             ];
-            return view('members.minor.create', compact('sections', 'type', 'minor'));
+            return view('members.minor.create', compact('sections', 'type', 'minor', 'method', 'show'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -164,38 +166,38 @@ class MinorController extends Controller
 
     public function update(Request $request, string $id)
     {
-        
-            $type = $request->type;
 
-            Log::info('Minor Update Request Received', [
+        $type = $request->type;
+
+        Log::info('Minor Update Request Received', [
+            'minor_id' => $id,
+            'type' => $type,
+            'payload' => $request->all()
+        ]);
+
+        $data = $request->validate([
+            'enrollment_date' => 'required|date|before_or_equal:today',
+            'title'           => 'required|in:md,mr,ms,mrs',
+            'gender'          => 'required|in:male,female,other',
+            'first_name'      => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'last_name'       => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'dob'             => 'required|date|before_or_equal:today',
+            'father_name'     => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'aadhaar_no'      => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
+            'address'         => 'required|string|max:500',
+            'member_id'       => 'nullable|exists:members,id',
+            'promotor_id'     => 'nullable|exists:promotors,id',
+        ]);
+
+        if (empty($data['member_id']) && empty($data['promotor_id'])) {
+            Log::warning('Minor Update Validation Failed - Missing Relation', [
                 'minor_id' => $id,
-                'type' => $type,
-                'payload' => $request->all()
+                'data' => $data
             ]);
+            return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
+        }
 
-            $data = $request->validate([
-                'enrollment_date' => 'required|date|before_or_equal:today',
-                'title'           => 'required|in:md,mr,ms,mrs',
-                'gender'          => 'required|in:male,female,other',
-                'first_name'      => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-                'last_name'       => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'dob'             => 'required|date|before_or_equal:today',
-                'father_name'     => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-                'aadhaar_no'      => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-                'address'         => 'required|string|max:500',
-                'member_id'       => 'nullable|exists:members,id',
-                'promotor_id'     => 'nullable|exists:promotors,id',
-            ]);
-
-            if (empty($data['member_id']) && empty($data['promotor_id'])) {
-                Log::warning('Minor Update Validation Failed - Missing Relation', [
-                    'minor_id' => $id,
-                    'data' => $data
-                ]);
-                return back()->withErrors(['relation' => 'Either member_id or promotor_id is required.']);
-            }
-
-try {
+        try {
             // ✅ Format dates
             $data['dob'] = date('Y-m-d', strtotime($data['dob']));
             $data['enrollment_date'] = date('Y-m-d', strtotime($data['enrollment_date']));
