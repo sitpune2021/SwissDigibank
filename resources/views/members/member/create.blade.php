@@ -14,6 +14,12 @@
             height: 0;
         }
 
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -441,7 +447,7 @@
                                 $value = old(
                                     $name,
                                     isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
-                                        ? $member[$name]->format('D M d Y')
+                                        ? $member[$name]->format('d-m-Y')
                                         : $member[$name] ?? ($field['default'] ?? ''),
                                 );
                             }
@@ -511,16 +517,14 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileFields = ['mobile_no','nominee_mobile_no'];
+            const mobileFields = ['mobile_no', 'nominee_mobile_no'];
 
             mobileFields.forEach(function(id) {
                 const input = document.getElementById(id);
                 if (input) {
                     input.addEventListener('input', function() {
-                        // Allow only digits
                         this.value = this.value.replace(/\D/g, '');
 
-                        // Limit to 10 digits
                         if (this.value.length > 10) {
                             this.value = this.value.slice(0, 10);
                         }
@@ -529,4 +533,28 @@
             });
         });
     </script>
+    <script>
+        const titleRadios = document.querySelectorAll('input[name="member_info_title"]');
+        const genderRadios = document.querySelectorAll('input[name="member_info_gender"]');
+
+        titleRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const title = this.value;
+                let genderToSelect = '';
+
+                if (title === 'Md' || title === 'Mr') {
+                    genderToSelect = 'male';
+                } else if (title === 'Ms' || title === 'Mrs') {
+                    genderToSelect = 'female';
+                } else {
+                    genderToSelect = '';
+                }
+
+                genderRadios.forEach(genderRadio => {
+                    genderRadio.checked = genderRadio.value === genderToSelect;
+                });
+            });
+        });
+    </script>
+
 @endsection

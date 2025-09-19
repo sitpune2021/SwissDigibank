@@ -62,7 +62,6 @@
                     <input type="text" value="{{ $employee->members->member_info_first_name ?? 'N/A' }}" @if($isView) disabled @endif
                         class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     @else
-
                     <select name="member" id="memberDropdown" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
                         <option value="">Select Member</option>
                         <!-- Dynamic options here -->
@@ -101,15 +100,12 @@
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="joining_date" class="md:text-lg font-medium block mb-4">Joining Date<span
+                <!-- <label for="joining_date" class="md:text-lg font-medium block mb-4">Joining Date<span
 
                         class="text-red-500">*</span></label>
 
                 <div class="relative">
 
-                    <!-- <input name="joining_date" id="date2" class="border-none" placeholder="DD/MM/YYYY" value="{{ old('joining_date') }}"
-
-                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" autocomplete="off" /> -->
                     <input name="joining_date" id="date2" type="text" placeholder="DD/MM/YYYY"
                         value="{{ old('joining_date', $employee->joining_date ?? '') }}"
                         class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" autocomplete="off" @if($isView) disabled @endif>
@@ -123,7 +119,14 @@
 
                 <span class="text-red-500 text-xs">{{ $message }}</span>
 
-                @enderror
+                @enderror -->
+
+                <x-datepicker-disabled
+                    label="Joining Date"
+                    name="joining_date"
+                    value="{{ old('joining_date') }}"
+                    inputId="joining_date" />
+
 
             </div>
 
@@ -142,18 +145,11 @@
 
             </div>
 
-
             <div class="col-span-2 md:col-span-1">
 
                 <label for="name" class="md:text-lg font-medium block mb-4">Name</span><span
 
                         class="text-red-500">*</span></label>
-
-                <!-- <input type="text" name="email" value="{{ old('email') }}" id="email"
-
-                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-
-                    placeholder="Enter Email" value=""> -->
 
                 <input type="text" name="name" id="name" placeholder="Enter Name"
                     value="{{ old('name', $employee->name ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
@@ -191,42 +187,18 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
+                <x-datepicker-disabled
+                    label="Date of Birth"
+                    name="dob"
+                    value="{{ old('dob') }}"
+                    inputId="dob" />
 
-                <label for="dob" class="md:text-lg font-medium block mb-4">Date of Birth<span
-
-                        class="text-red-500">*</span></label>
-
-                <div class="relative">
-
-                    <!-- <input name="dob" id="date" class="border-none" placeholder="DD/MM/YYYY" value="{{ old('dob') }}" -->
-                    <input name="dob" id="date" type="text" placeholder="DD/MM/YYYY"
-                        value="{{ old('dob', $employee->dob ?? '') }}" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" autocomplete="off" @if($isView) disabled @endif>
-
-                    <!-- class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" autocomplete="off" /> -->
-
-                    <i
-
-                        class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i>
-
-                </div>
-
-                @error('dob')
-
-                <span class="text-red-500 text-xs">{{ $message }}</span>
-
-                @enderror
 
             </div>
 
             <div class="col-span-2 md:col-span-1">
 
                 <label for="email" class="md:text-lg font-medium block mb-4">Email</span></label>
-
-                <!-- <input type="text" name="email" value="{{ old('email') }}" id="email"
-
-                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-
-                    placeholder="Enter Email" value=""> -->
 
                 <input type="text" name="email" placeholder="Enter Email" id="email" value="{{ old('email', $employee->email ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
 
@@ -657,7 +629,7 @@
                     console.log(member);
                     let selected = (selectedId == member.id) ? 'selected' : '';
                     dropdown.append(
-                        `<option value="${member.id}" ${selected}> ${member.member_info_first_name}</option>`
+                        `<option value="${member.id}" ${selected}> ${member.member_info_first_name+' '+member.member_info_last_name}</option>`
                     );
                 });
             },

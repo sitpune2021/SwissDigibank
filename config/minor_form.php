@@ -8,7 +8,7 @@ return
         'id' => 'date',
         'type' => 'text', // or 'date' if using a date picker
         'required' => true,
-        'default' => now()->format('D M d Y'),
+        'default' => now()->format('d-m-Y'),
     ],
     [
         'label' => 'Title',
@@ -54,11 +54,9 @@ return
     [
         'label' => 'Date of Birth',
         'name' => 'dob',
-        'id' => 'date2',
-        'type' => 'text', // or 'date'
+        'id' => 'datep4',
+        'type' => 'text', 
         'required' => true,
-        'placeholder' => 'DD/MM/YYYY',
-        'default' => now()->format('D M d Y'),
     ],
     [
         'label' => 'Father Name',

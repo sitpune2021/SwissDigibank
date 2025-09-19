@@ -117,7 +117,7 @@
                             $value = old(
                                 $name,
                                 isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
-                                    ? $member[$name]->format('D M d Y')
+                                    ? $member[$name]->format('d-m-Y')
                                     : $member[$name] ?? ($field['default'] ?? ''),
                             );
                         }

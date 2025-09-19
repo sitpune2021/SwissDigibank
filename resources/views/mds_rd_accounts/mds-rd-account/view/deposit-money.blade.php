@@ -412,7 +412,7 @@
         // Initialize datepicker
         const picker = new Datepicker(dateInput, {
             autohide: true,
-            format: 'dd-mm-yyyy', // Format: day-month-year
+            format: 'd-m-Y', // Format: day-month-year
             maxDate: new Date(), // Disable future dates
         });
 

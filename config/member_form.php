@@ -50,7 +50,7 @@ return [
             'id' => 'date',
             'type' => 'text',
             'required' => true,
-            'default' => now()->format('D M d Y'), // <- This line
+            'default' => now()->format('d-m-Y'), // <- This line
         ],
 
     ],
@@ -105,7 +105,7 @@ return [
         [
             'label' => 'Date of Birth',
             'name' => 'member_info_dob',
-            'id' => 'date2',
+            'id' => 'datep',
             'type' => 'text',
             'required' => true,
         ],
@@ -161,7 +161,7 @@ return [
         [
             'label' => 'Husband/ Wife DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'date3',
+            'id' => 'datep',
             'type' => 'text',
             'required' => false,
         ],
@@ -536,7 +536,7 @@ return [
         [
             'label' => 'Nominee DOB',
             'name' => 'nominee_dob',
-            'id' => 'date4',
+            'id' => 'datep4',
             'type' => 'text',
             'required' => false,
         ],
@@ -596,7 +596,7 @@ return [
             'id' => 'date5',
             'type' => 'string',
             'required' => true,
-            'default' => now()->format('D M d Y'), // <- This line
+            'default' => now()->format('d-m-Y'), // <- This line
 
         ],
 
@@ -643,7 +643,7 @@ return [
             'id' => 'date',
             'type' => 'text',
             'required' => true,
-            'default' =>  now()->format('D M d Y'),
+            'default' =>  now()->format('d-m-Y'),
         ],
         [
             'label' => 'UTR/ Transaction No ',
@@ -691,7 +691,7 @@ return [
             'id' => 'date',
             'type' => 'text',
             'required' => true,
-            'default' =>  now()->format('D M d Y'),
+            'default' =>  now()->format('d-m-Y'),
         ],
     ],
 ];

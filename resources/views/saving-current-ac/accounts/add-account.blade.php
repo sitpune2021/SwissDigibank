@@ -1,63 +1,89 @@
 @extends('layout.main')
 @section('content')
-<div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h3 class="h2">{{ isset($account) ? 'Edit' : 'Add' }} Account</h3>
-    </div>
 
-    @if (session('success'))
-    <div id="success-alert"
-        style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-        <strong>Success:</strong> {{ session('success') }}
-        <span onclick="document.getElementById('success-alert').style.display='none';"
-            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
-    </div>
-    @endif
+    <head>
+        <style>
+            input[type="radio"] {
+                width: 24px;
+                height: 24px;
+                accent-color: green;
+            }
 
-    @if (session('error'))
-    <div id="error-alert"
-        style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-        <strong>Error:</strong> {{ session('error') }}
-        <span onclick="document.getElementById('error-alert').style.display='none';"
-            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
-    </div>
-    @endif
+            input[type="checkbox"] {
+                width: 28px;
+                height: 28px;
+                accent-color: green;
+                /* For modern browsers */
+            }
 
-    <div class="box mb-4 xxxl:mb-6">
-        <form id="accountForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
-            @csrf
-            @if($method === 'PUT')
-            @method('PUT')
-            @endif
+            /* Fallback for browsers without accent-color support */
+            input[type="checkbox"]:checked {
+                background-color: green;
+                border: none;
+            }
+        </style>
+    </head>
+    <div class="main-inner">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+            <h3 class="h2">{{ isset($account) ? 'Edit' : 'Add' }} Account</h3>
+        </div>
 
-            {{-- Account Type --}}
-            <div class="col-span-2 md:col-span-1">
-                <label class="font-medium block mb-4">Account Type <span class="text-red-500">*</span></label>
-                <div class="flex gap-5">
-                    <label>
-                        <input type="radio" name="account_type" value="saving"
-                            {{ old('account_type', $account->account_type ?? 'saving') === 'saving' ? 'checked' : '' }}>
-                        Saving
-                    </label>
-                    <label>
-                        <input type="radio" name="account_type" value="current"
-                            {{ old('account_type', $account->account_type ?? '') === 'current' ? 'checked' : '' }}>
-                        Current
-                    </label>
-                </div>
+        @if (session('success'))
+            <div id="success-alert"
+                style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+                <strong>Success:</strong> {{ session('success') }}
+                <span onclick="document.getElementById('success-alert').style.display='none';"
+                    style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
             </div>
+        @endif
 
-            {{-- Firm Name --}}
-            <div class="col-span-2 md:col-span-1 firm-field-wrapper">
-                <div id="firmNameDiv" class="hidden">
-                    <label for="firm_d" class="font-medium block mb-4">Firm Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="firm_d" id="firm_d"
-                        value="{{ old('firm_d', $account->firm_d ?? '') }}"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
-                        placeholder="Enter firm name">
-                    @error('firm_d') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
-                </div>
+        @if (session('error'))
+            <div id="error-alert"
+                style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+                <strong>Error:</strong> {{ session('error') }}
+                <span onclick="document.getElementById('error-alert').style.display='none';"
+                    style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
             </div>
+        @endif
+
+        <div class="box mb-4 xxxl:mb-6">
+            <form id="accountForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+                @csrf
+                @if ($method === 'PUT')
+                    @method('PUT')
+                @endif
+
+                {{-- Account Type --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label class="font-medium block mb-4">Account Type <span class="text-red-500">*</span></label>
+                    <div class="flex items-center gap-5">
+                        <label class="flex gap-2">
+                            <input type="radio" name="account_type" value="saving"
+                                {{ old('account_type', $account->account_type ?? 'saving') === 'saving' ? 'checked' : '' }}>
+                            Saving
+                        </label>
+                        <label class="flex gap-2">
+                            <input type="radio" name="account_type" value="current"
+                                {{ old('account_type', $account->account_type ?? '') === 'current' ? 'checked' : '' }}>
+                            Current
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Firm Name --}}
+                <div class="col-span-2 md:col-span-1 firm-field-wrapper">
+                    <div id="firmNameDiv" class="hidden">
+                        <label for="firm_d" class="font-medium block mb-4">Firm Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" name="firm_d" id="firm_d"
+                            value="{{ old('firm_d', $account->firm_d ?? '') }}"
+                            class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
+                            placeholder="Enter firm name">
+                        @error('firm_d')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
 
             {{-- Member Selection --}}
             <div class="col-span-2 md:col-span-1">
@@ -66,7 +92,7 @@
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                     </option>
 
                     @endforeach
@@ -79,7 +105,7 @@
                 <label for="member_name" class="font-medium block mb-4">Member Name</label>
                 <input type="text" readonly name="member_name" id="member_name"
                     value="{{ old('member_name', $account->member_name ?? '') }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Member name">
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member name">
                 @error('member_name') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
@@ -89,7 +115,7 @@
                 <label for="member_address" class="font-medium block mb-4">Member Address</label>
                 <input type="text" readonly name="member_address" id="member_address"
                     value="{{ old('member_address', $account->member_address ?? '') }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Member address">
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member address">
                 @error('member_address') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
@@ -99,7 +125,7 @@
                 <label for="member_mobile" class="font-medium block mb-4">Member Mobile No.</label>
                 <input type="text" name="member_mobile" readonly id="member_mobile"
                     value="{{ old('member_mobile', $account->member_mobile ?? '') }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Mobile number">
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Mobile number">
                 @error('member_mobile') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
@@ -218,7 +244,7 @@
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                     </option>
 
                     @endforeach
@@ -234,7 +260,7 @@
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                     </option>
 
                     @endforeach
@@ -300,32 +326,62 @@
                         <option value="child" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'child' ? 'selected' : '' }}>Child</option>
                         <!-- Add more as needed -->
                     </select>
-                    @error('nominee_relation') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                    @error('member_id')
+                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                {{-- Member Name --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label for="member_name" class="font-medium block mb-4">Member Name</label>
+                    <input type="text" readonly name="member_name" id="member_name"
+                        value="{{ old('member_name', $account->member_name ?? '') }}"
+                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Member name">
+                    @error('member_name')
+                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    @enderror
 
                 </div>
 
-                <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="nominee_name" value="{{ old('nominee_name', $account->nominee_name ?? '') }}"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Enter Nominee Name">
-                    @error('nominee_name') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                {{-- Member Address --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label for="member_address" class="font-medium block mb-4">Member Address</label>
+                    <input type="text" readonly name="member_address" id="member_address"
+                        value="{{ old('member_address', $account->member_address ?? '') }}"
+                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Member address">
+                    @error('member_address')
+                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    @enderror
 
                 </div>
 
-                <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
-                    <textarea name="nominee_address" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Enter Nominee Address">{{ old('nominee_address', $account->nominee_address ?? '') }}</textarea>
-                    @error('nominee_address') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                {{-- Member Mobile --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label for="member_mobile" class="font-medium block mb-4">Member Mobile No.</label>
+                    <input type="text" name="member_mobile" readonly id="member_mobile"
+                        value="{{ old('member_mobile', $account->member_mobile ?? '') }}"
+                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Mobile number">
+                    @error('member_mobile')
+                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    @enderror
+
                 </div>
 
-                <div class="col-span-2 mt-4">
-                    <button type="button" id="addMoreNominee" class="btn-outline">+ ADD MORE NOMINEE</button>
+                {{-- Minor --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label for="minor_id" class="font-medium block mb-4">Minor</label>
+                    <select name="minor_id" id="minor_id"
+                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                        <option>-- Select Minor --</option>
+                    </select>
+                    @error('minor_id')
+                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    @enderror
+
                 </div>
 
                 <div id="additionalNominees" class="col-span-2 mt-4"></div>
             </div>
-
-
             <!-- -----------------------nominees--------------- -->
 
             {{-- Section Heading --}}
@@ -360,12 +416,20 @@
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                 class="text-red-500">*</span></label>
-                        <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
+                        <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
                             <option value="">Select Bank</option>
                             <option value="SBI">SBI</option>
                             <option value="HDFC">HDFC</option>
                             <option value="ICICI">ICICI</option>
-                        </select>
+                        </select> -->
+                        <x-searchable-dropdown
+                            :items="$banks"
+                            label="Select Bank"
+                            name="pay1_bank"
+                            display-field="name"
+                            value-field="id"
+                            event="Bank-selected"
+                            :selected="null" />
                         @error('pay1_bank')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -373,7 +437,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Cheque No.<span
                                 class="text-red-500">*</span></label>
-                        <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                        <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-2.5 text-sm bg-white dark:bg-bg3"
                             placeholder="Enter Cheque No.">
                         @error('pay1_cheque_no')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -387,22 +451,69 @@
                             inputId="pay1_cheque_date" />
 
                     </div>
+
+                    <div class="col-span-2 md:col-span-1 mt-4">
+                        <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="nominee_name"
+                            value="{{ old('nominee_name', $account->nominee_name ?? '') }}"
+                            class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
+                            placeholder="Enter Nominee Name">
+                        @error('nominee_name')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+
+                    </div>
+
+                    <div class="col-span-2 md:col-span-1 mt-4">
+                        <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
+                        <textarea name="nominee_address" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
+                            placeholder="Enter Nominee Address">{{ old('nominee_address', $account->nominee_address ?? '') }}</textarea>
+                        @error('nominee_address')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-2 mt-4">
+                        <button type="button" id="addMoreNominee" class="btn-outline">+ ADD MORE NOMINEE</button>
+                    </div>
+
+                    <div id="additionalNominees" class="col-span-2 mt-4"></div>
                 </div>
 
-                <!-- Online Transaction Fields -->
-                <div id="onlineFields" class="space-y-4 hidden">
-                    <div class="mt-3">
-                        <x-datepicker-disabled
-                            label="Transfer Date"
-                            name="pay1_transfer_date"
-                            value="{{ old('pay1_transfer_date') }}"
-                            inputId="pay1_transfer_date" />
 
+                <!-- -----------------------nominees--------------- -->
+
+                {{-- Section Heading --}}
+                <div class="col-span-2">
+                    <hr class="my-4">
+                    <h4 class="text-lg font-semibold mb-2">Payment Info</h4>
+                </div>
+
+                {{-- Payment Mode --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label class="font-medium block mb-4">Payment Mode <span class="text-red-500">*</span></label>
+                    <div class="flex gap-5">
+                        <label class="flex gap-2">
+                            <input type="radio" name="payment_mode" value="cash"
+                                {{ old('payment_mode', $account->payment_mode ?? '') === 'cash' || old('payment_mode', $account->payment_mode ?? '') === '' ? 'checked' : '' }}>
+                            Cash
+                        </label>
+
+                        <label class="flex gap-2">
+                            <input type="radio" name="payment_mode" value="online"
+                                {{ old('payment_mode', $account->payment_mode ?? '') === 'online' ? 'checked' : '' }}>
+                            Online Tr.
+                        </label>
+                        <label class="flex gap-2">
+                            <input type="radio" name="payment_mode" value="cheque"
+                                {{ old('payment_mode', $account->payment_mode ?? '') === 'cheque' ? 'checked' : '' }}>
+                            Cheque
+                        </label>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" name="pay1_transfer_utr" class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                        <input type="text" name="pay1_transfer_utr" class="w-full border rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 bg-white"
                             placeholder="Enter Transaction No.">
                     </div>
                     <div>
@@ -426,214 +537,252 @@
                             </label>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Credited in Company Account <span
-                                class="text-red-500">*</span></label>
-                        <div class="flex gap-4 mt-2">
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="credited" value="1"
-                                    class="text-green-500 focus:ring-green-500">
-                                <span>Yes</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="credited" value="0"
-                                    class="text-green-500 focus:ring-green-500">
-                                <span>No</span>
-                            </label>
+
+                    <!-- Online Transaction Fields -->
+                    <div id="onlineFields" class="space-y-4 hidden">
+                        <div class="mt-3">
+                            <x-datepicker-disabled label="Transfer Date" name="pay1_transfer_date"
+                                value="{{ old('pay1_transfer_date') }}" inputId="pay1_transfer_date" />
+
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" name="pay1_transfer_utr"
+                                class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                                placeholder="Enter Transaction No.">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Transfer Mode <span
+                                    class="text-red-500">*</span></label>
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transfer_mode" value="IMPS"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>IMPS</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transfer_mode" value="VPA"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>VPA</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transfer_mode" value="NEFT/RTGS"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>NEFT/RTGS</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Credited in Company Account <span
+                                    class="text-red-500">*</span></label>
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="credited" value="1"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>Yes</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="credited" value="0"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>No</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {{-- Transaction Date --}}
-            <div class="col-span-2 md:col-span-1">
-                <x-datepicker-disabled
-                    label="Transaction Date"
-                    name="transaction_date"
-                    value="{{ old('transaction_date') }}"
-                    inputId="transaction_date" />
-            </div>
+                {{-- Transaction Date --}}
+                <div class="col-span-2 md:col-span-1">
+                    <x-datepicker-disabled label="Transaction Date" name="transaction_date"
+                        value="{{ old('transaction_date') }}" inputId="transaction_date" />
+                </div>
 
-            {{-- Buttons --}}
-            <div class="col-span-2 flex gap-4 mt-4">
-                <button class="btn-primary" type="submit">{{ $method === 'PUT' ? 'Update' : 'Open' }} Account</button>
-                <button class="btn-outline" type="reset">Reset</button>
-                <button class="btn-outline" type="button" onclick="window.location.href='{{ route('accounts.index') }}'">Back</button>
-            </div>
-        </form>
+                {{-- Buttons --}}
+                <div class="col-span-2 flex gap-4 mt-4">
+                    <button class="btn-primary" type="submit">{{ $method === 'PUT' ? 'Update' : 'Open' }}
+                        Account</button>
+                    <button class="btn-outline" type="reset">Reset</button>
+                    <button class="btn-outline" type="button"
+                        onclick="window.location.href='{{ route('accounts.index') }}'">Back</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-@php
+    @php
 
-$membersData = $members->mapWithKeys(function($member)
-{
+        $membersData = $members
+            ->mapWithKeys(function ($member) {
+                return [
+                    $member->id => [
+                        'first_name' => $member->member_info_first_name,
+                        'last_name' => $member->member_info_last_name,
+                        'mobile' => $member->member_info_mobile_no ?? '',
+                        'branch_id' => $member->general_branch,
+                        'address' => $member->address->member_address_line_1 ?? '',
+                        'minors' => $member->minors
+                            ->map(function ($minor) {
+                                return [
+                                    'id' => $minor->id,
+                                    'first_name' => $minor->first_name,
+                                    'last_name' => $minor->last_name,
+                                ];
+                            })
+                            ->toArray(),
+                    ],
+                ];
+            })
+            ->toArray();
 
-return [
-$member->id => [
-'first_name' => $member->member_info_first_name,
-'last_name' => $member->member_info_last_name,
-'mobile' => $member->member_info_mobile_no ?? '',
-'branch_id' => $member->general_branch,
-'address' => ($member->address)->member_address_line_1 ?? '',
-'minors' => $member->minors->map(function ($minor) {
-return [
-'id' => $minor->id,
-'first_name' => $minor->first_name,
-'last_name' => $minor->last_name,
-];
-})->toArray(),
-],
-];
-})->toArray();
-
-@endphp
+    @endphp
 
 
-<style>
-    .firm-field-wrapper {
-        position: relative;
-        min-height: 100px;
-        transition: all 0.3s ease;
-    }
+    <style>
+        .firm-field-wrapper {
+            position: relative;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
 
-    .firm-field-wrapper.hidden {
-        visibility: hidden;
-        position: absolute;
-    }
-</style>
+        .firm-field-wrapper.hidden {
+            visibility: hidden;
+            position: absolute;
+        }
+    </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    const membersData = @json($membersData);
-    $(document).ready(function() {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const membersData = @json($membersData);
+        $(document).ready(function() {
 
-        const schemeMinimums = @json($schemeMinimums);
+            const schemeMinimums = @json($schemeMinimums);
 
-        $('#scheme_id').on('change', function() {
-            const selectedId = $(this).val();
+            $('#scheme_id').on('change', function() {
+                const selectedId = $(this).val();
 
-            const minAmount = schemeMinimums[selectedId];
+                const minAmount = schemeMinimums[selectedId];
 
-            if (minAmount) {
-                $('#minAmountNote').text('Minimum required amount is ₹' + minAmount);
-            } else {
-                $('#minAmountNote').text('');
-            }
-        });
-
-        // Trigger on page load if already selected (e.g., in edit mode or after validation error)
-        $('#scheme_id').trigger('change');
-
-        // Autofill when member is selected
-        $('#member_id_main').on('change', function() {
-            const memberId = $(this).val();
-            const member = membersData[memberId];
-
-            if (member) {
-                $('#member_name').val(member.first_name + ' ' + member.last_name);
-                $('#member_mobile').val(member.mobile);
-                $('#branch_id').val(member.branch_id); // auto-select branch
-                $('#member_address').val(member.address);
-
-                const $minorSelect = $('#minor_id');
-                $minorSelect.empty().append('<option value="">-- Select Minor --</option>');
-
-                if (member?.minors?.length) {
-                    member.minors.forEach(minor => {
-                        $minorSelect.append(
-                            `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`);
-                    });
+                if (minAmount) {
+                    $('#minAmountNote').text('Minimum required amount is ₹' + minAmount);
+                } else {
+                    $('#minAmountNote').text('');
                 }
+            });
+
+            // Trigger on page load if already selected (e.g., in edit mode or after validation error)
+            $('#scheme_id').trigger('change');
+
+            // Autofill when member is selected
+            $('#member_id_main').on('change', function() {
+                const memberId = $(this).val();
+                const member = membersData[memberId];
+
+                if (member) {
+                    $('#member_name').val(member.first_name + ' ' + member.last_name);
+                    $('#member_mobile').val(member.mobile);
+                    $('#branch_id').val(member.branch_id); // auto-select branch
+                    $('#member_address').val(member.address);
+
+                    const $minorSelect = $('#minor_id');
+                    $minorSelect.empty().append('<option value="">-- Select Minor --</option>');
+
+                    if (member?.minors?.length) {
+                        member.minors.forEach(minor => {
+                            $minorSelect.append(
+                                `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
+                            );
+                        });
+                    }
 
 
-            } else {
-                $('#member_name').val('');
-                $('#member_address').val('');
-                $('#member_mobile').val('');
-                $('#branch_id').val('');
+                } else {
+                    $('#member_name').val('');
+                    $('#member_address').val('');
+                    $('#member_mobile').val('');
+                    $('#branch_id').val('');
+                }
+            });
+
+            // Trigger on page load to auto-fill if editing
+            $('#member_id_main').trigger('change');
+
+            function toggleFirmName() {
+                var selectedType = $('input[name="account_type"]:checked').val();
+                if (selectedType === 'saving') {
+                    $('#firmNameDiv').hide();
+                } else if (selectedType === 'current') {
+                    $('#firmNameDiv').show();
+
+                    $("#firm_d").val("");
+                    $("#member_id_main").val("");
+                    $("#member_name").val("");
+                    $("#member_address").val("");
+                    $("#member_mobile").val("");
+                }
             }
-        });
 
-        // Trigger on page load to auto-fill if editing
-        $('#member_id_main').trigger('change');
+            // Initial toggle on page load
+            toggleFirmName();
 
-        function toggleFirmName() {
-            var selectedType = $('input[name="account_type"]:checked').val();
-            if (selectedType === 'saving') {
-                $('#firmNameDiv').hide();
-            } else if (selectedType === 'current') {
-                $('#firmNameDiv').show();
+            // Toggle on change
+            $('input[name="account_type"]').on('change', toggleFirmName);
 
-                $("#firm_d").val("");
-                $("#member_id_main").val("");
-                $("#member_name").val("");
-                $("#member_address").val("");
-                $("#member_mobile").val("");
+            // ============================
+
+            function jointHolderFields() {
+                var selectedType = $('input[name="account_holder_type"]:checked').val();
+
+                if (selectedType === 'single') {
+                    $('.jointAccountSection1').hide();
+                    $('.jointAccountSection2').hide();
+                    $('.jointAccountSection3').hide();
+                } else if (selectedType === 'joint') {
+
+                    $('input[name="mode_of_operation"][value="single"]').prop('checked', true);
+
+                    $('.jointAccountSection1').show();
+                    $('.jointAccountSection2').show();
+                    $('.jointAccountSection3').show();
+
+                    $("#firm_d").val("");
+                    // $("#member_id_main").val("");
+                    // $("#member_name").val("");
+                    // $("#member_address").val("");
+                    // $("#member_mobile").val("");
+                }
             }
-        }
 
-        // Initial toggle on page load
-        toggleFirmName();
+            // Initial toggle on page load
+            jointHolderFields();
 
-        // Toggle on change
-        $('input[name="account_type"]').on('change', toggleFirmName);
+            // Toggle on change
+            $('input[name="account_holder_type"]').on('change', jointHolderFields);
 
-        // ============================
-
-        function jointHolderFields() {
-            var selectedType = $('input[name="account_holder_type"]:checked').val();
-
-            if (selectedType === 'single') {
-                $('.jointAccountSection1').hide();
-                $('.jointAccountSection2').hide();
-                $('.jointAccountSection3').hide();
-            } else if (selectedType === 'joint') {
-
-                $('input[name="mode_of_operation"][value="single"]').prop('checked', true);
-
-                $('.jointAccountSection1').show();
-                $('.jointAccountSection2').show();
-                $('.jointAccountSection3').show();
-
-                $("#firm_d").val("");
-                // $("#member_id_main").val("");
-                // $("#member_name").val("");
-                // $("#member_address").val("");
-                // $("#member_mobile").val("");
-            }
-        }
-
-        // Initial toggle on page load
-        jointHolderFields();
-
-        // Toggle on change
-        $('input[name="account_holder_type"]').on('change', jointHolderFields);
-
-        // Fade out alerts after 5 seconds
-        setTimeout(function() {
-            $('#success-alert').fadeOut();
-            $('#error-alert').fadeOut();
-        }, 5000);
+            // Fade out alerts after 5 seconds
+            setTimeout(function() {
+                $('#success-alert').fadeOut();
+                $('#error-alert').fadeOut();
+            }, 5000);
 
 
 
 
-        // Toggle nominee details based on radio selection
-        $('input[name="nominee"]').on('change', function() {
-            if ($(this).val() === 'yes') {
-                $('#nomineeDetails').removeClass('hidden');
-            } else {
-                $('#nomineeDetails').addClass('hidden');
-                // Optionally clear fields
-                $('#nomineeDetails').find('input, select, textarea').val('');
-                $('#additionalNominees').empty();
-            }
-        });
+            // Toggle nominee details based on radio selection
+            $('input[name="nominee"]').on('change', function() {
+                if ($(this).val() === 'yes') {
+                    $('#nomineeDetails').removeClass('hidden');
+                } else {
+                    $('#nomineeDetails').addClass('hidden');
+                    // Optionally clear fields
+                    $('#nomineeDetails').find('input, select, textarea').val('');
+                    $('#additionalNominees').empty();
+                }
+            });
 
-        // Handle Add More Nominee button
-        $('#addMoreNominee').on('click', function() {
-            const index = $('#additionalNominees .nominee-block').length;
+            // Handle Add More Nominee button
+            $('#addMoreNominee').on('click', function() {
+                const index = $('#additionalNominees .nominee-block').length;
 
-            const nomineeBlock = `
+                const nomineeBlock = `
                     <div class="nominee-block border border-gray-300 rounded p-4 mb-4">
                         <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
                         <select name="additional_nominee_relation[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3">
@@ -652,42 +801,42 @@ return [
                     </div>
                     `;
 
-            $('#additionalNominees').append(nomineeBlock);
-        });
+                $('#additionalNominees').append(nomineeBlock);
+            });
 
-        // Remove additional nominee block
-        $(document).on('click', '.removeNominee', function() {
-            $(this).closest('.nominee-block').remove();
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const payModeRadios = document.querySelectorAll('input[name="payment_mode"]');
-        const onlineFields = document.getElementById('onlineFields');
-        const chequeFields = document.getElementById('chequeFields');
-
-        function hideAll() {
-            onlineFields.classList.add('hidden');
-            chequeFields.classList.add('hidden');
-        }
-
-        payModeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                hideAll();
-                if (e.target.value === 'online') {
-                    onlineFields.classList.remove('hidden');
-                } else if (e.target.value === 'cheque') {
-                    chequeFields.classList.remove('hidden');
-                }
+            // Remove additional nominee block
+            $(document).on('click', '.removeNominee', function() {
+                $(this).closest('.nominee-block').remove();
             });
         });
+    </script>
 
-        const checked = document.querySelector('input[name="payment_mode"]:checked');
-        if (checked) {
-            checked.dispatchEvent(new Event("change"));
-        }
-    });
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const payModeRadios = document.querySelectorAll('input[name="payment_mode"]');
+            const onlineFields = document.getElementById('onlineFields');
+            const chequeFields = document.getElementById('chequeFields');
+
+            function hideAll() {
+                onlineFields.classList.add('hidden');
+                chequeFields.classList.add('hidden');
+            }
+
+            payModeRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    hideAll();
+                    if (e.target.value === 'online') {
+                        onlineFields.classList.remove('hidden');
+                    } else if (e.target.value === 'cheque') {
+                        chequeFields.classList.remove('hidden');
+                    }
+                });
+            });
+
+            const checked = document.querySelector('input[name="payment_mode"]:checked');
+            if (checked) {
+                checked.dispatchEvent(new Event("change"));
+            }
+        });
+    </script>
 @endsection

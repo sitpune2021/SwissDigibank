@@ -248,7 +248,7 @@ return [
                 'label' => 'Incorporation Date',
                 'name' => 'incorporation_date',
                 'id' => 'date2',
-                // 'default' => now()->format('D M d Y'),
+                // 'default' => now()->format('d-m-Y'),
                 'type' => 'text',
                 'required' => false,
             ],

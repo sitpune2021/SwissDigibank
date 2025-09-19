@@ -51,9 +51,13 @@
                     <td class="px-6 py-4">{{ ucfirst($scheme->interest_compounding_interval) }}</td>
                     <td class="px-6 py-4 text-center">
                         @if($scheme->active === 'yes')
-                        <span class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Yes</span>
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                            Approved
+                        </span>
                         @else
-                        <span class="px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">No</span>
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-warning/20 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                            Pending
+                        </span>
                         @endif
                     </td>
                     <td class="px-6 py-2">

@@ -33,9 +33,9 @@
                             <td class="px-6 py-5">{{ $shareholding->face_value ?? '-' }}</td>
                             <td class="px-6 py-5">{{ $shareholding->total_consideration ?? '-' }}</td>
                             <td class="px-6 py-5">
-                                {{ \Carbon\Carbon::parse($shareholding->allotment_date)->format('D M d Y') ?? '-' }}</td>
+                                {{ \Carbon\Carbon::parse($shareholding->allotment_date)->format('d-m-Y') ?? '-' }}</td>
                             <td class="px-6 py-5">
-                                {{ \Carbon\Carbon::parse($shareholding->transfer_date)->format('D M d Y') ?? '-' }}</td>
+                                {{ \Carbon\Carbon::parse($shareholding->transfer_date)->format('d-m-Y') ?? '-' }}</td>
                             <td class="px-6 py-5">{{ $shareholding->is_surrendered ? 'Yes' : 'No' }}</td>
                             <td class="px-6 py-5 text-center">
                                 <div class="flex justify-center">

@@ -2,7 +2,7 @@
     <label class="block font-medium block mb-4">{{ $label ?? 'Amount' }}</label>
     <input type="number" name="{{ $name ?? 'amount' }}" id="{{ $id ?? 'amount' }}"
         value="{{ old($name, $value ?? '') }}"
-        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5">
 
     <p id="{{ $id ?? 'amount' }}_words" class="mt-2 text-sm text-error text-gray-600 font-semibold"></p>
 </div>

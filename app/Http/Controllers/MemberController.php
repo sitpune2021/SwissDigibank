@@ -243,11 +243,14 @@ class MemberController extends Controller
             }
 
             MembershipChargeTransaction::create([
+                    'member_id' => $member->id,
+
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
                 'membership_fee' => $request->charges_membership_fee ?? 0, // Default to 0 if null
                 'net_fee_to_collect' => $request->charges_net_fee,
                 'remarks' => $request->charges_remarks ?? null,
                 'charges_pay_mode' => $request->charges_pay_mode,
+                
                 'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
                 'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
                 'cheque_bank_name' => $request->charges_pay_mode === 'cheque' ? $request->cheque_bank_name : null,
@@ -519,11 +522,11 @@ class MemberController extends Controller
             ]);
 
             $request->merge([
-                'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('D M d Y') : null,
-                'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('D M d Y') : null,
-                'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('D M d Y') : null,
-                'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('D M d Y') : null,
-                'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('D M d Y') : null,
+                'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
+                'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('d-m-Y') : null,
+                'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('d-m-Y') : null,
+                'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('d-m-Y') : null,
+                'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('d-m-Y') : null,
             ]);
 
             $member = Member::findOrFail($id);
@@ -773,7 +776,7 @@ class MemberController extends Controller
     public function getMembers()
     {
         try {
-            $members = Member::select('id', 'member_info_first_name')->get();
+            $members = Member::select('id', 'member_info_first_name','member_info_last_name')->get();
             return response()->json($members);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

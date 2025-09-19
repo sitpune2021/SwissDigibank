@@ -4,6 +4,19 @@
     isset($director)  ? (!empty($show)   ? 'View ' . $director->director_name .' Director' : 'Edit ' . $director->director_name . ' Director') : 'Add Director')
 
 @section('content')
+ <head>
+    <style>
+          input[type="radio"] {
+
+            width: 24px;
+
+            height: 24px;
+
+            accent-color: green;
+
+        }
+        </style>
+  </head>
 @include('fields.errormessage')
 <div class="box mb-4 xxxl:mb-6">
     <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">

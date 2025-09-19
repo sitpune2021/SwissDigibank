@@ -55,8 +55,8 @@
                     <td class="px-6 py-4 text-center">{{ $account->collection_advisor_staff ?? 'N/A' }}</td>
                     <td class="px-6 py-4 text-center">—</td>
                     <td class="px-6 py-4 text-center">
-                        <a href="" class="text-primary underline hover:text-primary/80">
-                            {{ $account->id }}
+                        <a href="{{route('rd-accounts.show',$account->id)}}" class="text-primary underline hover:text-primary/80">
+                            {{ $account->id ?? 'N/A' }}
                         </a>
                     </td>
                     <td class="px-6 py-4 text-center">
@@ -89,7 +89,15 @@
                     <td class="px-6 py-4 text-center">Monthly</td>
 
                     <td class="px-6 py-4 text-center">
-                        <span class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Active</span>
+                        @if($account->approve_status === 'Approved')
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                            Active
+                        </span>
+                        @else
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-warning/20 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                            Pending
+                        </span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex justify-center">
