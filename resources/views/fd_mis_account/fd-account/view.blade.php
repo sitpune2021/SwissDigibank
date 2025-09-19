@@ -168,11 +168,11 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Open Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->created_at)->format('d-m-Y') }}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->open_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Maturity Date</td>
-                            <td class="px-4 py-2">{{$fdAccount->maturity_date ?? 'N/A'}}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Tenure of FD/MIS</td>
@@ -272,7 +272,7 @@
                         <tr class="border-t border-b">
                             <td class="px-4 py-2 text-gray-800">Pending for approval</td>
                             <td class="px-4 py-2 text-gray-800">—</td>
-                            <td class="px-4 py-2 text-gray-800">21/08/2025 17:00</td>
+                            <td class="px-4 py-2 text-gray-800">{{ \Carbon\Carbon::parse($fdAccount->updated_at)->format('d-m-Y') }}</td>
                             <td class="px-4 py-2 text-gray-800">—</td>
                         </tr>
                     </tbody>
@@ -352,7 +352,7 @@
                                 </thead>
                                 <tbody class="text-left">
                                     <tr class="border-b hover:bg-gray-50">
-                                        <td class="px-4 py-2 text-sm">31/07/2024 13:32</td>
+                                        <td class="px-4 py-2 text-sm">{{ \Carbon\Carbon::parse($fdAccount->created_at)->format('d-m-Y') }}</td>
                                         <td class="px-4 py-2 text-sm">Credit</td>
                                         <td class="px-4 py-2 text-sm">System</td>
                                         <td class="px-4 py-2 text-sm">10,000.00</td>
@@ -617,69 +617,6 @@
                                     <th class="px-4 py-2 text-center font-semibold text-gray-700 border-b">TO</th>
                                 </tr>
                             </thead>
-                            <!-- <tbody>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">1</td>
-                                    <td class="px-3 py-2">30</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">31</td>
-                                    <td class="px-3 py-2">60</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">61</td>
-                                    <td class="px-3 py-2">90</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">91</td>
-                                    <td class="px-3 py-2">120</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">121</td>
-                                    <td class="px-3 py-2">150</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">151</td>
-                                    <td class="px-3 py-2">180</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">181</td>
-                                    <td class="px-3 py-2">210</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">211</td>
-                                    <td class="px-3 py-2">240</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">241</td>
-                                    <td class="px-3 py-2">270</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">271</td>
-                                    <td class="px-3 py-2">300</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                            </tbody> -->
-
                             <tbody>
                                 @foreach($fdSlabs as $slab)
                                 <tr class="text-center border-t">
@@ -707,7 +644,7 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Maturity Date</td>
-                                <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->maturity_date}}</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount (A)</td>

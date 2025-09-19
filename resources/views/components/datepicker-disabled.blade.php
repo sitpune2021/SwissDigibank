@@ -8,7 +8,7 @@
             id="{{ $inputId ?? 'date_pass' }}"
             name="{{ $name ?? 'issue_date' }}"
             value="{{ $value ?? '' }}"
-            class="datepicker-field w-full px-3 py-2 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10"
+            class="datepicker-field w-full px-3 py-2.5 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10"
             readonly
         />
         {{-- Optional calendar icon --}}

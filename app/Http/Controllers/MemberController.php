@@ -773,7 +773,7 @@ class MemberController extends Controller
     public function getMembers()
     {
         try {
-            $members = Member::select('id', 'member_info_first_name')->get();
+            $members = Member::select('id', 'member_info_first_name','member_info_last_name')->get();
             return response()->json($members);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

@@ -70,7 +70,16 @@
     .slider .switch-off {
         right: 0;
     }
+
+    .input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+
+    }
+    
 </style>
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h3 class="h2">
@@ -299,8 +308,6 @@
             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
             @enderror
         </div>
-
-
     </div>
     <div class="col-span-1 md:col-span-3">
         <div class="flex flex-wrap gap-4 rounded-10 px-3 md:px-4 py-2">

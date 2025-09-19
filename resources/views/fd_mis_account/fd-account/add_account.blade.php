@@ -1,5 +1,15 @@
 @extends('layout.main')
 @section('content')
+<head>
+    <style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+
+        }
+    </style>
+</head>
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -19,7 +29,7 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select member</option>
                         @foreach($members as $member)
-                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
+                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }} {{ $member->member_info_last_name }}</option>
                         @endforeach
                     </select>
                     @error('member_id')
@@ -110,7 +120,7 @@
                         label="Open Date"
                         name="date"
                         value="{{ old('date') }}"
-                        inputId="date" />
+                        inputId="open_date" />
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -340,12 +350,22 @@
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
-                            <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
+                            <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
                                 <option value="">Select Bank</option>
                                 <option value="SBI">SBI</option>
                                 <option value="HDFC">HDFC</option>
                                 <option value="ICICI">ICICI</option>
-                            </select>
+                            </select> -->
+
+                            <x-searchable-dropdown
+                                :items="$banks"
+                                label="Select Bank"
+                                name="pay1_bank"
+                                display-field="name"
+                                value-field="id"
+                                event="Bank-selected"
+                                :selected="null" />
+
                             @error('pay1_bank')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror

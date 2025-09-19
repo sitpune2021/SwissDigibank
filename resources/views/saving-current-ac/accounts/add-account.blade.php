@@ -66,7 +66,7 @@
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                     </option>
 
                     @endforeach
@@ -79,7 +79,7 @@
                 <label for="member_name" class="font-medium block mb-4">Member Name</label>
                 <input type="text" readonly name="member_name" id="member_name"
                     value="{{ old('member_name', $account->member_name ?? '') }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Member name">
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member name">
                 @error('member_name') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
@@ -89,7 +89,7 @@
                 <label for="member_address" class="font-medium block mb-4">Member Address</label>
                 <input type="text" readonly name="member_address" id="member_address"
                     value="{{ old('member_address', $account->member_address ?? '') }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Member address">
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member address">
                 @error('member_address') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
@@ -99,7 +99,7 @@
                 <label for="member_mobile" class="font-medium block mb-4">Member Mobile No.</label>
                 <input type="text" name="member_mobile" readonly id="member_mobile"
                     value="{{ old('member_mobile', $account->member_mobile ?? '') }}"
-                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Mobile number">
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Mobile number">
                 @error('member_mobile') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 
             </div>
@@ -218,7 +218,7 @@
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                     </option>
 
                     @endforeach
@@ -234,7 +234,7 @@
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
                     <option value="{{ $member->id }}" {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ "MEM -". $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
                     </option>
 
                     @endforeach
@@ -324,8 +324,6 @@
 
                 <div id="additionalNominees" class="col-span-2 mt-4"></div>
             </div>
-
-
             <!-- -----------------------nominees--------------- -->
 
             {{-- Section Heading --}}
@@ -360,12 +358,20 @@
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                 class="text-red-500">*</span></label>
-                        <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
+                        <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
                             <option value="">Select Bank</option>
                             <option value="SBI">SBI</option>
                             <option value="HDFC">HDFC</option>
                             <option value="ICICI">ICICI</option>
-                        </select>
+                        </select> -->
+                        <x-searchable-dropdown
+                            :items="$banks"
+                            label="Select Bank"
+                            name="pay1_bank"
+                            display-field="name"
+                            value-field="id"
+                            event="Bank-selected"
+                            :selected="null" />
                         @error('pay1_bank')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -373,7 +379,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Cheque No.<span
                                 class="text-red-500">*</span></label>
-                        <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                        <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-2.5 text-sm bg-white dark:bg-bg3"
                             placeholder="Enter Cheque No.">
                         @error('pay1_cheque_no')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -402,7 +408,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" name="pay1_transfer_utr" class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                        <input type="text" name="pay1_transfer_utr" class="w-full border rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 bg-white"
                             placeholder="Enter Transaction No.">
                     </div>
                     <div>

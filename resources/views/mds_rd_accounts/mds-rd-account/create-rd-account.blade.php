@@ -52,7 +52,7 @@
                         <option value="">Select Member</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">
-                            {{ $member->member_info_first_name }}
+                            {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
                             @endforeach
                     </select>
                     @error('member_id')
@@ -331,7 +331,17 @@
                         <div class="cheque-row flex flex-wrap justify-start gap-4">
                             <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                 <label class="font-medium block mb-1">Bank Name<span class="text-red-500">*</span></label>
-                                <input type="text" name="cheque_bank_name" placeholder="Enter Bank Name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <!-- <input type="text" name="cheque_bank_name" placeholder="Enter Bank Name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"> -->
+
+                                <x-searchable-dropdown
+                                    :items="$banks"
+                                    label="Select Bank"
+                                    name="cheque_bank_name"
+                                    display-field="name"
+                                    value-field="id"
+                                    event="Bank-selected"
+                                    :selected="null" />
+
                                 @error('cheque_bank_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror

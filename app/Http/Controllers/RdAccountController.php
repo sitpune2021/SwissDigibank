@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\AccountNominee;
+use App\Models\Bank;
 use Illuminate\Support\Facades\DB;
 use App\Models\Rdscheme;
 use App\Models\SavingsAccount;
@@ -25,7 +26,7 @@ class RdAccountController extends Controller
     public function index()
     {
 
-        $rdAccounts = RdAccount::with(['member', 'branch', 'minor'])
+        $rdAccounts = RdAccount::with(['member', 'branch', 'minor', 'scheme'])
             ->latest()
             ->paginate(10);
 
@@ -40,11 +41,12 @@ class RdAccountController extends Controller
             'member_info_middle_name',
             'member_info_last_name'
         )->get();
-
+        $banks = Bank::all();
+        $selectedBankId = 'bank_name';
         $schemes = Rdscheme::all();
         $accounts = Account::all();
 
-        return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts'));
+        return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts','banks','selectedBankId'));
     }
 
     // get member for rd creation
@@ -272,7 +274,7 @@ class RdAccountController extends Controller
 
     public function show($id)
     {
-        $rdAccount = RdAccount::with(['member.address', 'branch', 'minor','nominees', 'rdTransactions' => function ($q) {
+        $rdAccount = RdAccount::with(['member.address', 'branch', 'minor', 'nominees', 'rdTransactions' => function ($q) {
             $q->whereIn('approve_status', ['Pending', 'Approved'])
                 ->orderBy('t_date', 'desc')
                 ->limit(5);
@@ -512,7 +514,7 @@ class RdAccountController extends Controller
 
             $lastApproved = RdTransactions::where('rd_account_id', $rdAccount->id)
                 ->where('approve_status', 'Approved')
-                ->orderBy('id', 'desc') 
+                ->orderBy('id', 'desc')
                 ->first();
 
             $currentBalance = $lastApproved ? $lastApproved->balance : 0;
@@ -709,7 +711,7 @@ class RdAccountController extends Controller
                 $maturityDate = (clone $startDate)->addDays($tenureValue);
                 $months = (int) ceil($tenureValue / 30);
             } else {
-           
+
                 $months = $tenureValue;
 
                 $maturityDate = (clone $startDate)->copy();
