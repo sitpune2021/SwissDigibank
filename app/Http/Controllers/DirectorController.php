@@ -106,7 +106,7 @@ class DirectorController extends Controller
             $director = Director::findOrFail($decryptedId);
             // Format the appointment_date only if it exists
             if ($director->appointment_date) {
-                $director->appointment_date = Carbon::parse($director->appointment_date)->format('D M d Y');
+                $director->appointment_date = Carbon::parse($director->appointment_date)->format('d-m-Y');
             }
 
             $dynamicOptions = [

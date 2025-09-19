@@ -4,6 +4,19 @@
 $branch->branch_name . ' Branch') : 'Add Branch')
 
 @section('content')
+ <head>
+    <style>
+          input[type="radio"] {
+
+            width: 24px;
+
+            height: 24px;
+
+            accent-color: green;
+
+        }
+        </style>
+  </head>
 @include('fields.errormessage')
 
 <div class="box mb-4 xxxl:mb-6">
@@ -26,7 +39,7 @@ $branch->branch_name . ' Branch') : 'Add Branch')
         $value = old(
         $name,
         $branch?->$name instanceof \Carbon\Carbon
-        ? $branch?->$name->format('D M d Y')
+        ? $branch?->$name->format('d-m-Y')
         : $branch?->$name ?? ($field['default'] ?? ''),
         );
         }

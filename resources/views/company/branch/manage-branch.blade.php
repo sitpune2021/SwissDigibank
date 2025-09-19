@@ -66,7 +66,7 @@
                             <td class="px-6 py-5 text-center">{{ $branch?->city??'' }}</td>
                             <td class="px-6 py-5 text-center">{{ $branch->State?->name??'' }}</td>
                             <td class="px-6 py-5 text-center">
-                                {{ $branch->open_date->format('D M d Y') }}
+                                {{ $branch->open_date->format('d-m-Y') }}
                             </td>
                             <td class="px-7 py-5 text-center">{{ $branch->Member->count() }}</td>
                             <td class="px-6 py-5  text-center">

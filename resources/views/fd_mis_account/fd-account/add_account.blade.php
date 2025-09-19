@@ -1,5 +1,27 @@
 @extends('layout.main')
 @section('content')
+   <head>
+        <style>
+            input[type="radio"] {
+                width: 24px;
+                height: 24px;
+                accent-color: green;
+            }
+
+            input[type="checkbox"] {
+                width: 28px;
+                height: 28px;
+                accent-color: green;
+                /* For modern browsers */
+            }
+
+            /* Fallback for browsers without accent-color support */
+            input[type="checkbox"]:checked {
+                background-color: green;
+                border: none;
+            }
+        </style>
+    </head>
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -105,16 +127,12 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        Open Date
-                        <span class="text-red-500">*</span>
-                    </label>
 
-                    <input type="text" id="date" name="date" placeholder="DD/MM/YYYY"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-                    @error('date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <x-datepicker-disabled
+                        label="Open Date"
+                        name="date"
+                        value="{{ old('date') }}"
+                        inputId="date" />
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -287,15 +305,12 @@
                         placeholder="0" value="">
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        T. Date
-                        <span class="text-red-500">*</span>
-                    </label>
-
-                    <input type="text" id="date2" name="transaction_date" placeholder="DD/MM/YYYY" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6 
-                            py-3 md:py-3">
+                    <x-datepicker-disabled
+                        label="Effective Date"
+                        name="transaction_date"
+                        value="{{ old('transaction_date') }}"
+                        inputId="transaction_date" />
                 </div>
-
                 <!-- pay mode 1-->
                 <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
                     <!-- Section Title -->
@@ -366,25 +381,36 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Cheque Date <span
+                            <!-- <label class="block text-sm font-medium text-gray-700">Cheque Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date4" name="pay1_cheque_date"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
                                 placeholder="DD/MM/YYYY">
                             @error('pay1_cheque_date')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+                            @enderror -->
+                            <x-datepicker-disabled
+                                label="Cheque Date"
+                                name="pay1_cheque_date"
+                                value="{{ old('pay1_cheque_date') }}"
+                                inputId="pay1_cheque_date" />
                         </div>
                     </div>
 
                     <!-- Online Transaction Fields -->
                     <div id="onlineFields" class="space-y-4 hidden">
                         <div class="mt-3">
-                            <label class="block text-sm font-medium text-gray-700">Transfer Date <span
+                            <!-- <label class="block text-sm font-medium text-gray-700">Transfer Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date3" name="pay1_transfer_date"
                                 class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
-                                placeholder="DD/MM/YYYY">
+                                placeholder="DD/MM/YYYY"> -->
+
+                            <x-datepicker-disabled
+                                label="Transfer Date"
+                                name="pay1_transfer_date"
+                                value="{{ old('pay1_transfer_date') }}"
+                                inputId="pay1_transfer_date" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
@@ -457,7 +483,7 @@
                     Reset
                 </button>
                 <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline"
-                    onclick="window.location.href='{{ route(`fd-mis-schemes.fd_index`) }}'">
+                    onclick="window.location.href='{{ route('fd-mis-schemes.fd_index') }}'">
                     back
                 </button>
             </div>

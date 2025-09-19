@@ -83,8 +83,9 @@ class DdsAccountsController extends Controller
         $minors   = Minor::all();
         $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
+        $membersData = $members->keyBy('id');
 
-        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts'));
+        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData'));
     }
 
     public function show($id)
@@ -457,7 +458,7 @@ class DdsAccountsController extends Controller
     public function getMemberDetails($id)
     {
         Log::info("DdsAccountsController@getMemberDetails called for member ID: $id");
-        $member = Member::with('branch')->findOrFail($id);
+        $member = Member::with('branch', 'minors', 'address')->findOrFail($id);
 
         return response()->json([
             'member_info_first_name' => $member->member_info_first_name,
@@ -467,6 +468,13 @@ class DdsAccountsController extends Controller
             'branch_id'   => $member->branch_id,
             'branch_name' => $member->branch->branch_name ?? '',
             'open_date'              => now()->format('Y-m-d'),
+            'minors' => $member->minors->map(function ($minor) {
+                return [
+                    'id' => $minor->id,
+                    'first_name' => $minor->first_name,
+                    'last_name' => $minor->last_name,
+                ];
+            }),
         ]);
     }
 

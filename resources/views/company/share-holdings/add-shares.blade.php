@@ -11,6 +11,19 @@ Allocated Shares'
 Promoter')
 
 @section('content')
+ <head>
+    <style>
+          input[type="radio"] {
+
+            width: 24px;
+
+            height: 24px;
+
+            accent-color: green;
+
+        }
+        </style>
+  </head>
 @include('fields.errormessage')
 <div class="box mb-4 xxxl:mb-6">
 
@@ -32,7 +45,7 @@ Promoter')
         $value = old(
         $name,
         $shareholding?->$name instanceof \Carbon\Carbon
-        ? $shareholding?->$name->format('D M d Y')
+        ? $shareholding?->$name->format('d-m-Y')
         : $shareholding?->$name ?? ($field['default'] ?? ''),
         );
         }

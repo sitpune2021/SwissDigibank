@@ -941,9 +941,6 @@
                         updateFields(select.options[select.selectedIndex]);
                     });
                 </script>
-
-
-
                 <script>
                     //branch
                     document.addEventListener('DOMContentLoaded', function() {

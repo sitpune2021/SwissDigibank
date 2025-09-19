@@ -136,14 +136,14 @@
                             <input type="text"
                                 class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 value="+91" readonly>
-                            <input type="text" id="memberMobile" name="member_mobile" type ="number", maxlength ="10",
-                                minlength= "10", pattern = "[0-9]{10}"
+                            <input id="memberMobile" name="member_mobile" type="number" , maxlength="10" , minlength="10" ,
+                                pattern=""
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-green-500 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 placeholder="Enter Mobile No" readonly>
                         </div>
                     </div>
+                    {{-- </div> --}}
                     <div class="col-span-2 md:col-span-1"></div>
-
                     <div class="col-span-2 md:col-span-1">
                         <label for="minor_id" class="md:text-lg font-medium block mb-4">
                             Minor (if any)
@@ -161,6 +161,7 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
                     <div class="col-span-2 md:col-span-1">
                         <label for="branch_id" class="md:text-lg font-medium block mb-4">
                             Branch <span class="text-red-500">*</span>
@@ -169,9 +170,8 @@
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Branch</option>
                             @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}"
-                                    {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
-                                    {{ $branch->branch_name }}
+                                {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                {{ $branch->branch_name }}
                                 </option>
                             @endforeach
                         </select>
@@ -276,11 +276,10 @@
                         </label>
                         <div class="w-full md:w-3/4 mt-2">
                             <textarea name="remarks" id="remarks" placeholder="Enter Remarks (if any)"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-10 dark:bg-bg3 bg-secondary/5 resize-none"
-                                maxlength="254" rows="2"></textarea>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-10 dark:bg-bg3 bg-secondary/5 resize-none" maxlength="254"
+                                rows="2"></textarea>
                         </div>
                     </div>
-
                     <div class="col-span-2 md:col-span-1"></div>
                     <!-- TDS -->
                     <div class="col-span-2 md:col-span-1 mt-4">
@@ -515,17 +514,16 @@
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     </div>
-
-
-                    <!-- Buttons -->
-                    <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                        <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
-                        <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
-                        @if (!$isEdit)
-                            <button class="btn-outline" type="reset"
-                                onclick="document.getElementById('DDForm').reset();">Reset</button>
-                        @endif
-                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
+                    <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
+                    <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
+                    @if (!$isEdit)
+                        <button class="btn-outline" type="reset"
+                            onclick="document.getElementById('DDForm').reset();">Reset</button>
+                    @endif
+                </div>
             </form>
         </div>
     </div>
@@ -540,7 +538,7 @@
 
         function addNominee() {
             const container = document.getElementById("nomineeContainer");
-            container.style.display = "flex"; // make visible
+            container.style.display = "flex";
 
             const newNominee = document.createElement("div");
             newNominee.className = "w-full nominee-item columns-4 gap-4 items-end bg-white p-4 rounded dark:bg-bg3";
@@ -664,7 +662,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
+    {{-- <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
             let memberId = this.value;
             let url = this.getAttribute('data-url').replace(':id', memberId);
@@ -678,12 +676,22 @@
                             .member_info_last_name ?? '');
                         document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
                         document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
+                        const branchSelect = document.getElementById('branch_id');
+                        const branchId = String(data.branch_id);
+                        let optionExists = Array.from(branchSelect.options).some(opt => opt.value === branchId);
 
-                        // ✅ Branch auto fill only
-                        if (data.branch_id) {
-                            document.getElementById('branch_id').value = data.branch_id;
+                        if (!optionExists && data.branch_name) {
+                            const newOption = document.createElement('option');
+                            newOption.value = branchId;
+                            newOption.textContent = data.branch_name;
+                            newOption.selected = true;
+                            branchSelect.appendChild(newOption);
+                        } else {
+                            branchSelect.value = branchId;
                         }
-                        // ✅ Open Date auto fill
+
+                        branchSelect.dispatchEvent(new Event('change'));
+
                         document.getElementById('date5').value = data.open_date ?? '';
                     })
                     .catch(err => {
@@ -695,11 +703,82 @@
                 document.getElementById('memberName').value = '';
                 document.getElementById('memberAddress').value = '';
                 document.getElementById('memberMobile').value = '';
-                document.getElementById('branch_id').value = '';
+                document.getElementById('branch_id').selectedIndex = 0; // ✅ reset dropdown
+                document.getElementById('date5').value = '';
+            }
+        });
+    </script> --}}
+    <script>
+        document.getElementById('memberDropdown').addEventListener('change', function() {
+            let memberId = this.value;
+            let url = this.getAttribute('data-url').replace(':id', memberId);
+
+            if (memberId) {
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        // ✅ Auto fill member fields
+                        document.getElementById('memberName').value =
+                            data.member_info_first_name + ' ' + (data.member_info_last_name ?? '');
+                        document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
+                        document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
+                        document.getElementById('date5').value = data.open_date ?? '';
+
+                        // ✅ Branch logic
+                        const branchSelect = document.getElementById('branch_id');
+                        const branchId = String(data.branch_id);
+                        let optionExists = Array.from(branchSelect.options).some(opt => opt.value === branchId);
+
+                        if (!optionExists && data.branch_name) {
+                            const newOption = document.createElement('option');
+                            newOption.value = branchId;
+                            newOption.textContent = data.branch_name;
+                            newOption.selected = true;
+                            branchSelect.appendChild(newOption);
+                        } else {
+                            branchSelect.value = branchId;
+                        }
+
+                        branchSelect.dispatchEvent(new Event('change'));
+
+                        // ✅ Minor (if any) dropdown logic
+                        const minorSelect = document.getElementById('minor_id');
+                        minorSelect.innerHTML = '<option value="">Select Minor</option>';
+
+                        if (data.minors && data.minors.length > 0) {
+                            data.minors.forEach(minor => {
+                                const option = document.createElement('option');
+                                option.value = minor.id;
+                                option.textContent = `${minor.first_name} ${minor.last_name}`;
+                                minorSelect.appendChild(option);
+                            });
+
+                            // ✅ Optionally auto-select first minor
+                            // minorSelect.value = data.minors[0].id;
+                        } else {
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No minors found';
+                            minorSelect.appendChild(option);
+                        }
+
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Member details could not be fetched.');
+                    });
+            } else {
+                // Reset all fields if no member is selected
+                document.getElementById('memberName').value = '';
+                document.getElementById('memberAddress').value = '';
+                document.getElementById('memberMobile').value = '';
+                document.getElementById('branch_id').selectedIndex = 0;
+                document.getElementById('minor_id').innerHTML = '<option value="">Select Minor</option>';
                 document.getElementById('date5').value = '';
             }
         });
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const schemeSelect = document.getElementById('scheme_id');
@@ -729,24 +808,28 @@
             });
         });
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileFields = ['memberMobile'];
+        const mobileFields = ['memberMobile'];
 
-            mobileFields.forEach(function(id) {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('input', function() {
-                        // Allow only digits
-                        this.value = this.value.replace(/\D/g, '');
+        mobileFields.forEach(function(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function() {
+                    // Allow only digits
+                    this.value = this.value.replace(/\D/g, '');
 
-                        // Limit to 10 digits
-                        if (this.value.length > 10) {
-                            this.value = this.value.slice(0, 10);
-                        }
-                    });
-                }
-            });
+                    // Limit to 10 digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+                });
+            }
+        });
+        });
         });
     </script>
+
+
 @endsection

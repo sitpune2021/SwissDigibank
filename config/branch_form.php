@@ -20,7 +20,7 @@ return [
         'name' => 'open_date',
         'id' => 'date',
         'type' => 'text',
-        'default' => now()->format('D M d Y'),
+        'default' => now()->format('d-m-Y'),
         'required' => false,
     ],
     [
