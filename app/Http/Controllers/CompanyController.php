@@ -38,7 +38,7 @@ class CompanyController extends Controller
             $company = Company::findOrFail($id);
          
             $company->incorporation_date = \Carbon\Carbon::parse($company->incorporation_date)
-                                ->format('D M d Y');
+                                ->format('d-m-Y');
 
             $dynamicOptions = [
                 'state' => State::pluck('name', 'id')
@@ -125,7 +125,7 @@ class CompanyController extends Controller
                 'gst_no.regex' => 'GST must be 15 characters: 2 digits, 5 letters, 4 digits, 1 letter, 1 alphanumeric, Z, 1 alphanumeric (e.g., 22AAAAA0000A1Z5).',
             ]);
             if ($request->has('incorporation_date') && $request->incorporation_date) {
-                $incorporationDate = Carbon::createFromFormat('D M d Y', $request->incorporation_date)->format('Y-m-d');
+                $incorporationDate = Carbon::createFromFormat('d-m-Y', $request->incorporation_date)->format('Y-m-d');
                 $request->merge([
                     'incorporation_date' => $incorporationDate,
                 ]);

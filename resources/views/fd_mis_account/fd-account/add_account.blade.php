@@ -1,15 +1,27 @@
 @extends('layout.main')
 @section('content')
-<head>
-    <style>
-        input[type="radio"] {
-            width: 24px;
-            height: 24px;
-            accent-color: green;
+   <head>
+        <style>
+            input[type="radio"] {
+                width: 24px;
+                height: 24px;
+                accent-color: green;
+            }
 
-        }
-    </style>
-</head>
+            input[type="checkbox"] {
+                width: 28px;
+                height: 28px;
+                accent-color: green;
+                /* For modern browsers */
+            }
+
+            /* Fallback for browsers without accent-color support */
+            input[type="checkbox"]:checked {
+                background-color: green;
+                border: none;
+            }
+        </style>
+    </head>
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -299,7 +311,6 @@
                         value="{{ old('transaction_date') }}"
                         inputId="transaction_date" />
                 </div>
-
                 <!-- pay mode 1-->
                 <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
                     <!-- Section Title -->
@@ -784,7 +795,4 @@
         }
     });
 </script>
-
-
-
 @endsection

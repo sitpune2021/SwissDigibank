@@ -15,6 +15,16 @@
             height: 0;
         }
 
+        input[type="radio"] {
+
+            width: 24px;
+
+            height: 24px;
+
+            accent-color: green;
+
+        }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -139,14 +149,14 @@
                                 @if (!empty($field['dynamic']) && !empty($field['options_key']) && isset($dynamicOptions[$field['options_key']]))
                                     @foreach ($dynamicOptions[$field['options_key']] as $optionValue => $optionLabel)
                                         <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}
-                                            {{ !empty($readonly) ? 'readonly' : '' }}>
+                                            {{ !empty($show) ? 'readonly' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
                                 @elseif(!empty($field['options']))
                                     @foreach ($field['options'] as $optionValue => $optionLabel)
                                         <option value="{{ $optionValue }}" {{ $value == $optionValue ? 'selected' : '' }}
-                                            {{ !empty($readonly) ? 'readonly' : '' }}>
+                                            {{ !empty($show) ? 'readonly' : '' }}>
                                             {{ $optionLabel }}
                                         </option>
                                     @endforeach
@@ -158,7 +168,7 @@
                                     <label class="flex items-center space-x-4 class=ml-2 gap-1">
                                         <input type="radio" name="{{ $name }}" value="{{ $optionValue }}"
                                             {{ $value == $optionValue ? 'checked' : '' }}
-                                            {{ isset($readonly) ? 'disabled' : '' }}>
+                                            {{ isset($show) ? 'disabled' : '' }}>
                                         <span>{{ $optionLabel }}</span>
                                     </label>
                                 @endforeach
@@ -176,7 +186,7 @@
                             <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
                                 value="{{ $value }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter {{ strtolower($label) }}" {{ !empty($readonly) ? 'readonly' : '' }} />
+                                placeholder="Enter {{ strtolower($label) }}" {{ !empty($show) ? 'readonly' : '' }} />
                         @endif
 
                         @error($name)
@@ -206,20 +216,29 @@
             </form>
         </div>
     </div>
-@endsection
-@push('script')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const titleRadios = document.querySelectorAll('input[name="title"]');
-            const genderSelect = document.getElementById('gender');
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const titleRadios = document.querySelectorAll('input[name="title"]');
+        const genderRadios = document.querySelectorAll('input[name="gender"]');
 
-            titleRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.value === 'mr') {
-                        genderSelect.value = 'male';
-                    }
+        titleRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const title = this.value.toLowerCase();  // ensure lowercase
+                let genderToSelect = '';
+
+                if (title === 'md' || title === 'mr') {
+                    genderToSelect = 'male';
+                } else if (title === 'ms' || title === 'mrs') {
+                    genderToSelect = 'female';
+                }
+
+                genderRadios.forEach(genderRadio => {
+                    genderRadio.checked = (genderRadio.value === genderToSelect);
                 });
             });
         });
-    </script>
-@endpush
+    });
+</script>
+
+@endsection
+

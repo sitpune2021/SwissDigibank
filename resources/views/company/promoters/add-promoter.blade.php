@@ -83,6 +83,19 @@
       @endpush
 
   @section('content')
+  <head>
+    <style>
+          input[type="radio"] {
+
+            width: 24px;
+
+            height: 24px;
+
+            accent-color: green;
+
+        }
+        </style>
+  </head>
       @include('fields.errormessage')
 
       <div class="box mb-4 xxxl:mb-6">
@@ -154,7 +167,7 @@
                               $value = old(
                                   $name,
                                   $promoter?->$name instanceof \Carbon\Carbon
-                                      ? $promoter?->$name->format('D M d Y')
+                                      ? $promoter?->$name->format('d-m-Y')
                                       : $promoter?->$name ?? ($field['default'] ?? ''),
                               );
                           } else {
