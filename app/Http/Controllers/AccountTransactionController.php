@@ -13,18 +13,19 @@ class AccountTransactionController extends Controller
      */
 
     // view transaction
-
     public function index($id = null)
     {
         try {
+          $id=base64_decode($id);
             $Transactions = Transaction::with(['accounts'])
+                ->where('account_id', $id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
             return view('saving-current-ac.accounts.view-transactions', compact('Transactions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     public function downloadCsvExample()
@@ -140,10 +141,11 @@ class AccountTransactionController extends Controller
         try {
             $decryptedId = base64_decode($id);
             $transactions = Transaction::with('accounts')->findOrFail($decryptedId);
+            
             return view('saving-current-ac.accounts.single-transaction', compact('transactions', 'decryptedId'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -184,6 +186,6 @@ class AccountTransactionController extends Controller
             return view('saving-current-ac.accounts.print', compact('transaction'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 }

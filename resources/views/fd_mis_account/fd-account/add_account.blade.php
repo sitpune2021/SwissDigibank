@@ -1,27 +1,28 @@
 @extends('layout.main')
 @section('content')
-   <head>
-        <style>
-            input[type="radio"] {
-                width: 24px;
-                height: 24px;
-                accent-color: green;
-            }
 
-            input[type="checkbox"] {
-                width: 28px;
-                height: 28px;
-                accent-color: green;
-                /* For modern browsers */
-            }
+<head>
+    <style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
 
-            /* Fallback for browsers without accent-color support */
-            input[type="checkbox"]:checked {
-                background-color: green;
-                border: none;
-            }
-        </style>
-    </head>
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
+
+        /* Fallback for browsers without accent-color support */
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+    </style>
+</head>
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -303,6 +304,7 @@
                     <input type="text" id="final_amount" name="final_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
                         placeholder="0" value="">
+                    <x-number-to-word for="final_amount"/>
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <x-datepicker-disabled

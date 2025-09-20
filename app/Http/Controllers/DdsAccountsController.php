@@ -222,7 +222,7 @@ class DdsAccountsController extends Controller
     public function store(Request $request)
     {
 
-        Log::info('🔹 DdsAccountsController@store called');
+        Log::info('🔹DdsAccountsController@store called');
 
         $validated = $request->validate([
             'member_id' => 'required|integer',

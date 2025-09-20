@@ -73,7 +73,7 @@ class FDController extends Controller
                 'rows.*.payout_type'     => 'nullable|string',
             ]);
 
-            $validated['effective_date'] = \Carbon\Carbon::parse('d/m/Y', $request->effective_date)->format('Y-m-d');
+            $validated['effective_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $request->effective_date)->format('Y-m-d');
             $validated['admin']     = $request->has('admin') ? 1 : 0;
             $validated['associate'] = $request->has('associate') ? 1 : 0;
             $validated['member']    = $request->has('member') ? 1 : 0;

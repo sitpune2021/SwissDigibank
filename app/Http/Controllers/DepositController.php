@@ -14,7 +14,7 @@ class DepositController extends Controller
     public function index() {}
 
     /**
-     * Show the form for creating a new resource.
+     * Saving Account Deposit - create function
      */
     public function create($encodedId)
     {
@@ -27,7 +27,7 @@ class DepositController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Saving Account Deposit - store function
      */
     public function store(Request $request, $encodedId)
     {
@@ -95,7 +95,7 @@ class DepositController extends Controller
                 //     ]);
                 // }
 
-                return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Amount deposited successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
+                return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2).' deposited! Please approve transaction');
             } catch (\Exception $e) {
                 return redirect()->route('accounts.show', base64_encode($account_id))->with('error', 'Deposit failed: ' . $e->getMessage());
             }
