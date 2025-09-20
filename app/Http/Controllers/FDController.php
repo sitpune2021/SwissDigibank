@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\AccountNominee;
+use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\FdAccount;
 use App\Models\FDScheme;
@@ -224,7 +225,10 @@ class FDController extends Controller
                 ];
             });
 
-        return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings'));
+        $banks = Bank::all();
+        $selectedBankId = 'bank_name';
+
+        return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings','banks','selectedBankId'));
     }
 
     public function fd_store(Request $request)
@@ -488,7 +492,7 @@ class FDController extends Controller
             'maturity_amount' => number_format($maturityAmt, 2),
             'maturity_date'   => $maturityDate
         ];
- 
+
         return response()->json([
             'success' => true,
             'summary' => $summary,

@@ -42,6 +42,11 @@ class RdAccount extends Model
         return $this->belongsTo(Member::class);
     }
 
+    public function scheme()
+    {
+        return $this->belongsTo(Rdscheme::class,'scheme', 'id');
+    }
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);

@@ -113,16 +113,22 @@
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->branch->branch_id ?? '-' }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ number_format($mis->mis_amount, 2) }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->open_date)->format('d/m/Y') }}</td>
+                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->open_date)->format('d-m-Y') }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ strtoupper($mis->interest_payout_type) }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->transaction_date)->addYears($mis->tenure_year)->format('d/m/Y') }}</td>
+                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->transaction_date)->addYears($mis->tenure_year)->format('d-m-Y') }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">
                             @if ($mis->status == 0)
-                            Pending
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-warning/20 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Pending
+                            </span>
                             @elseif ($mis->status == 1)
-                            Approve
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Approved
+                            </span>
                             @elseif ($mis->status == 2)
-                            Not Approve
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Rejected
+                            </span>
                             @endif
                         </td>
                         <td class="px-6 py-2">

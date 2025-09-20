@@ -83,11 +83,6 @@
                                 Status
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                Active
-                            </div>
-                        </th>
                         <th class="text-center !py-5" data-sortable="false">Action</th>
                     </tr>
                 </thead>
@@ -103,7 +98,7 @@
                         </td>
                         <td class="px-6 py-3">
                             <a href="{{ $account?->member?->id ? route('member.show', $account->member->id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                              {{ $account->member->id ?? '-' }}
+                                {{ $account->member->id ?? '-' }}
                             </a>
                         </td>
                         <td class="px-6 py-3">{{ $account->member->member_info_first_name ?? '-' }}</td>
@@ -128,9 +123,6 @@
                                 Rejected
                             </span>
                             @endif
-                        </td>
-                        <td class="px-6 py-3">
-                            <span class="text-green-600">Active</span>
                         </td>
                         <td class="py-2 px-6">
                             <div class="flex justify-center">

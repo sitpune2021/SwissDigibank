@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Helpers\AccountsTransactionsHelper;
+use App\Models\Bank;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -52,6 +53,9 @@ class AccountsController extends Controller
             $schemeMinimums = Scheme::pluck('min_opening_balance', 'id');
             $minors = Minor::pluck('first_name', 'id');
 
+            $banks = Bank::all();
+            $selectedBankId = 'bank_name';
+
             $schemes = Scheme::pluck('scheme_name', 'id');
             $advisors = User::pluck('fname', 'id');
 
@@ -75,7 +79,9 @@ class AccountsController extends Controller
                 'formFields',
                 'route',
                 'method',
-                'schemeMinimums'
+                'schemeMinimums',
+                'selectedBankId',
+                'banks'
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

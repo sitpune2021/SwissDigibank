@@ -85,19 +85,246 @@
                     </div>
                 </div>
 
-                {{-- Member Selection --}}
-                <div class="col-span-2 md:col-span-1">
-                    <label for="member_id_main" class="font-medium block mb-4">Member <span
-                            class="text-red-500">*</span></label>
-                    <select name="member_id" id="member_id_main"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
-                        @foreach ($members as $member)
-                            <option value="{{ $member->id }}"
-                                {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                                {{ 'MEM -' . $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
-                            </option>
-                        @endforeach
+            {{-- Member Selection --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="member_id_main" class="font-medium block mb-4">Member <span class="text-red-500">*</span></label>
+                <select name="member_id" id="member_id_main" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option value="">-- Select Member --</option>
+                    @foreach($members as $member)
+                    <option value="{{ $member->id }}" {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                    </option>
+
+                    @endforeach
+                </select>
+                @error('member_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+            </div>
+
+            {{-- Member Name --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="member_name" class="font-medium block mb-4">Member Name</label>
+                <input type="text" readonly name="member_name" id="member_name"
+                    value="{{ old('member_name', $account->member_name ?? '') }}"
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member name">
+                @error('member_name') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+
+            {{-- Member Address --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="member_address" class="font-medium block mb-4">Member Address</label>
+                <input type="text" readonly name="member_address" id="member_address"
+                    value="{{ old('member_address', $account->member_address ?? '') }}"
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member address">
+                @error('member_address') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+
+            {{-- Member Mobile --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="member_mobile" class="font-medium block mb-4">Member Mobile No.</label>
+                <input type="text" name="member_mobile" readonly id="member_mobile"
+                    value="{{ old('member_mobile', $account->member_mobile ?? '') }}"
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Mobile number">
+                @error('member_mobile') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+
+            {{-- Minor --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="minor_id" class="font-medium block mb-4">Minor</label>
+                <select name="minor_id" id="minor_id" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option>-- Select Minor --</option>
+                </select>
+                @error('minor_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+
+            {{-- Branch --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="branch_id" class="font-medium block mb-4">Branch <span class="text-red-500">*</span></label>
+                <select name="branch_id" id="branch_id" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option value="">-- Select Branch --</option>
+                    @foreach($branches as $id => $branchName)
+                    <option value="{{ $id }}" {{ old('branch_id', $account->branch_id ?? '') == $id ? 'selected' : '' }}>
+                        {{ ucfirst($branchName) }}
+                    </option>
+                    @endforeach
+                </select>
+
+                @error('branch_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+
+            {{-- Advisor/Staff --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="advisor_id" class="font-medium block mb-4">Advisor/Staff</label>
+                <select name="advisor_id" id="advisor_id" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option value="">-- Select Branch --</option>
+                    @foreach($advisors as $id => $advisors)
+                    <option value="{{ $id }}" {{ old('advisor_id', $account->advisor_id ?? '') == $id ? 'selected' : '' }}>
+                        {{ $advisors }}
+                    </option>
+                    @endforeach
+                </select>
+                @error('advisor_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+
+            {{-- Scheme --}}
+            <div class="col-span-2 md:col-span-1">
+                <label for="scheme_id" class="font-medium block mb-4">Scheme <span class="text-red-500">*</span></label>
+                <select name="scheme_id" id="scheme_id" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option value="">-- Select Scheme --</option>
+                    @foreach($schemes as $id => $name)
+                    <option value="{{ $id }}" {{ old('scheme_id', $account->scheme_id ?? '') == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                    @endforeach
+                </select>
+                @error('scheme_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                {{-- Minimum amount note --}}
+                <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>
+            </div>
+
+            {{-- Open Date --}}
+            <div class="col-span-2 md:col-span-1">
+                <!-- <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
+                <input type="text" readonly name="open_date" id="open_date"
+                    value="{{ date('D M d Y h:i:s A') }}"
+                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                @error('open_date') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror -->
+
+                <x-datepicker-disabled
+                    label="Open Date"
+                    name="open_date"
+                    value="{{ old('open_date') }}"
+                    inputId="open_date" />
+
+            </div>
+
+            {{-- Amount --}}
+            <div class="col-span-2 md:col-span-1">
+                <x-amount-input name="amount" id="amount" label="Enter Amount" />
+                @error('amount') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+            </div>
+
+            {{-- Section Heading --}}
+            <div class="col-span-2">
+                <hr class="my-4">
+            </div>
+
+            {{-- Account Holder Type --}}
+
+            <div class="col-span-2 md:col-span-1">
+                <label class="font-medium block mb-4">Account Holder Type <span class="text-red-500">*</span></label>
+                <div class="flex gap-5">
+                    <label>
+                        <input type="radio" name="account_holder_type" value="single"
+                            {{ old('account_holder_type', $account->account_holder_type ?? 'single') === 'single' ? 'checked' : '' }}>
+                        Single
+                    </label>
+                    <label>
+                        <input type="radio" name="account_holder_type" value="joint"
+                            {{ old('account_holder_type', $account->account_holder_type ?? '') === 'joint' ? 'checked' : '' }}>
+                        Joint A/C
+                    </label>
+                    @error('account_holder_type') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+                </div>
+            </div>
+
+            <div class="col-span-2 md:col-span-1"></div>
+
+            <!-- // Hidden  section-->
+            {{-- Joint A/c Member 1 --}}
+            <div class="col-span-2 md:col-span-1 hidden jointAccountSection1">
+                <label for="member_id_one_one" class="font-medium block mb-4">Joint A/c Member 1 <span class="text-red-500"></span></label>
+                <select name="member_id_one" id="member_id_one_main" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option value="">-- Select Member --</option>
+                    @foreach($members as $member)
+                    <option value="{{ $member->id }}" {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                    </option>
+
+                    @endforeach
+                </select>
+                @error('member_id_one') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+            </div>
+
+
+            {{-- Joint A/c Member 2 --}}
+            <div class="col-span-2 md:col-span-1 hidden jointAccountSection2">
+                <label for="member_id_two" class="font-medium block mb-4">Joint A/c Member 2 <span class="text-red-500"></span></label>
+                <select name="member_id_two" id="member_id_two_main" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                    <option value="">-- Select Member --</option>
+                    @foreach($members as $member)
+                    <option value="{{ $member->id }}" {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
+                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                    </option>
+
+                    @endforeach
+                </select>
+                @error('member_id_two') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+            </div>
+
+            {{-- Mode of Operation --}}
+            <div class="col-span-2 md:col-span-1 hidden jointAccountSection3" id="mode-operation">
+                <label class="font-medium block mb-4">Mode of Operation <span class="text-red-500">*</span></label>
+                <div class="flex gap-5">
+                    <label>
+                        <input type="radio" name="mode_of_operation" value="single"
+                            {{ old('mode_of_operation', $account->mode_of_operation ?? '') === 'single' ? 'checked' : '' }}>
+                        Single
+                    </label>
+                    <label>
+                        <input type="radio" name="mode_of_operation" value="jointly"
+                            {{ old('mode_of_operation', $account->mode_of_operation ?? '') === 'jointly' ? 'checked' : '' }}>
+                        Jointly
+                    </label>
+                    <label>
+                        <input type="radio" name="mode_of_operation" value="either_or_survivor"
+                            {{ old('mode_of_operation', $account->mode_of_operation ?? '') === 'either_or_survivor' ? 'checked' : '' }}>
+                        Either or Survivor
+                    </label>
+                </div>
+                @error('mode_of_operation') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+            </div>
+            <!-- // Hidden  section-->
+
+            <!-- ------------------nominees-------------------- -->
+            <div class="col-span-2">
+                <hr class="my-4">
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <label class="font-medium block mb-4">Nominee <span class="text-red-500">*</span></label>
+                <div class="flex gap-5">
+                    <label>
+                        <input type="radio" name="nominee" value="no"
+                            {{ (old('nominee', $account->nominee ?? null) === 'no' || old('nominee', $account->nominee ?? null) === null) ? 'checked' : '' }}>
+                        No
+                    </label>
+                    <label>
+                        <input type="radio" name="nominee" value="yes"
+                            {{ old('nominee', $account->nominee ?? null) === 'yes' ? 'checked' : '' }}>
+                        Yes
+                    </label>
+                    @error('nominee') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+
+                </div>
+            </div>
+
+            <div id="nomineeDetails" class="{{ (old('nominee', $account->nominee ?? null) === 'yes') ? '' : 'hidden' }}">
+                <div class="col-span-2 md:col-span-1 mt-4">
+                    <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
+                    <select name="nominee_relation" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                        <option value="">Select Relation</option>
+                        <option value="father" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'father' ? 'selected' : '' }}>Father</option>
+                        <option value="mother" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'mother' ? 'selected' : '' }}>Mother</option>
+                        <option value="spouse" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'spouse' ? 'selected' : '' }}>Spouse</option>
+                        <option value="child" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'child' ? 'selected' : '' }}>Child</option>
+                        <!-- Add more as needed -->
                     </select>
                     @error('member_id')
                         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
@@ -153,233 +380,75 @@
 
                 </div>
 
-                {{-- Branch --}}
-                <div class="col-span-2 md:col-span-1">
-                    <label for="branch_id" class="font-medium block mb-4">Branch <span class="text-red-500">*</span></label>
-                    <select name="branch_id" id="branch_id"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Branch --</option>
-                        @foreach ($branches as $id => $branchName)
-                            <option value="{{ $id }}"
-                                {{ old('branch_id', $account->branch_id ?? '') == $id ? 'selected' : '' }}>
-                                {{ ucfirst($branchName) }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div id="additionalNominees" class="col-span-2 mt-4"></div>
+            </div>
+            <!-- -----------------------nominees--------------- -->
 
-                    @error('branch_id')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
+            {{-- Section Heading --}}
+            <div class="col-span-2">
+                <hr class="my-4">
+                <h4 class="text-lg font-semibold mb-2">Payment Info</h4>
+            </div>
 
+            {{-- Payment Mode --}}
+            <div class="col-span-2 md:col-span-1">
+                <label class="font-medium block mb-4">Payment Mode <span class="text-red-500">*</span></label>
+                <div class="flex gap-5">
+                    <label>
+                        <input type="radio" name="payment_mode" value="cash"
+                            {{ (old('payment_mode', $account->payment_mode ?? '') === 'cash' || old('payment_mode', $account->payment_mode ?? '') === '') ? 'checked' : '' }}>
+                        Cash
+                    </label>
+
+                    <label>
+                        <input type="radio" name="payment_mode" value="online"
+                            {{ old('payment_mode', $account->payment_mode ?? '') === 'online' ? 'checked' : '' }}>
+                        Online Tr.
+                    </label>
+                    <label>
+                        <input type="radio" name="payment_mode" value="cheque"
+                            {{ old('payment_mode', $account->payment_mode ?? '') === 'cheque' ? 'checked' : '' }}>
+                        Cheque
+                    </label>
                 </div>
-
-                {{-- Advisor/Staff --}}
-                <div class="col-span-2 md:col-span-1">
-                    <label for="advisor_id" class="font-medium block mb-4">Advisor/Staff</label>
-                    <select name="advisor_id" id="advisor_id"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Branch --</option>
-                        @foreach ($advisors as $id => $advisors)
-                            <option value="{{ $id }}"
-                                {{ old('advisor_id', $account->advisor_id ?? '') == $id ? 'selected' : '' }}>
-                                {{ $advisors }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('advisor_id')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
-
-                </div>
-
-                {{-- Scheme --}}
-                <div class="col-span-2 md:col-span-1">
-                    <label for="scheme_id" class="font-medium block mb-4">Scheme <span
-                            class="text-red-500">*</span></label>
-                    <select name="scheme_id" id="scheme_id"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Scheme --</option>
-                        @foreach ($schemes as $id => $name)
-                            <option value="{{ $id }}"
-                                {{ old('scheme_id', $account->scheme_id ?? '') == $id ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('scheme_id')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
-                    {{-- Minimum amount note --}}
-                    <span class="text-gray-500 text-xs mt-1 block" style="color:green" id="minAmountNote"></span>
-                </div>
-
-                {{-- Open Date --}}
-                <div class="col-span-2 md:col-span-1">
-                    <!-- <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
-                        <input type="text" readonly name="open_date" id="open_date"
-                            value="{{ date('d-m-Y h:i:s A') }}"
-                            class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        @error('open_date')
-        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-    @enderror -->
-
-                    <x-datepicker-disabled label="Open Date" name="open_date" value="{{ old('open_date') }}"
-                        inputId="open_date" />
-
-                </div>
-
-                {{-- Amount --}}
-                <div class="col-span-2 md:col-span-1">
-                    <x-amount-input name="amount" id="amount" label="Enter Amount" />
-                    @error('amount')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                {{-- Section Heading --}}
-                <div class="col-span-2">
-                    <hr class="my-4">
-                </div>
-
-                {{-- Account Holder Type --}}
-
-                <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4">Account Holder Type <span class="text-red-500">*</span></label>
-                    <div class="flex gap-5">
-                        <label class="flex gap-2">
-                            <input type="radio" name="account_holder_type" value="single"
-                                {{ old('account_holder_type', $account->account_holder_type ?? 'single') === 'single' ? 'checked' : '' }}>
-                            Single
-                        </label>
-                        <label class="flex gap-2">
-                            <input type="radio" name="account_holder_type" value="joint"
-                                {{ old('account_holder_type', $account->account_holder_type ?? '') === 'joint' ? 'checked' : '' }}>
-                            Joint A/C
-                        </label>
-                        @error('account_holder_type')
-                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                <!-- Cheque Fields -->
+                <div id="chequeFields" class="space-y-4 hidden">
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700">Bank Name <span
+                                class="text-red-500">*</span></label>
+                        <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
+                            <option value="">Select Bank</option>
+                            <option value="SBI">SBI</option>
+                            <option value="HDFC">HDFC</option>
+                            <option value="ICICI">ICICI</option>
+                        </select> -->
+                        <x-searchable-dropdown
+                            :items="$banks"
+                            label="Select Bank"
+                            name="pay1_bank"
+                            display-field="name"
+                            value-field="id"
+                            event="Bank-selected"
+                            :selected="null" />
+                        @error('pay1_bank')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-
                     </div>
-                </div>
-
-                <div class="col-span-2 md:col-span-1"></div>
-
-                <!-- // Hidden  section-->
-                {{-- Joint A/c Member 1 --}}
-                <div class="col-span-2 md:col-span-1 hidden jointAccountSection1">
-                    <label for="member_id_one_one" class="font-medium block mb-4">Joint A/c Member 1 <span
-                            class="text-red-500"></span></label>
-                    <select name="member_id_one" id="member_id_one_main"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
-                        @foreach ($members as $member)
-                            <option value="{{ $member->id }}"
-                                {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                                {{ 'MEM -' . $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('member_id_one')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-
-
-                {{-- Joint A/c Member 2 --}}
-                <div class="col-span-2 md:col-span-1 hidden jointAccountSection2">
-                    <label for="member_id_two" class="font-medium block mb-4">Joint A/c Member 2 <span
-                            class="text-red-500"></span></label>
-                    <select name="member_id_two" id="member_id_two_main"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
-                        @foreach ($members as $member)
-                            <option value="{{ $member->id }}"
-                                {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                                {{ 'MEM -' . $member->id . ' - ' . $member->member_info_first_name . ' ' . $member->member_info_last_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('member_id_two')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                {{-- Mode of Operation --}}
-                <div class="col-span-2 md:col-span-1 hidden jointAccountSection3" id="mode-operation">
-                    <label class="font-medium block mb-4">Mode of Operation <span class="text-red-500">*</span></label>
-                    <div class="flex gap-5">
-                        <label>
-                            <input type="radio" name="mode_of_operation" value="single"
-                                {{ old('mode_of_operation', $account->mode_of_operation ?? '') === 'single' ? 'checked' : '' }}>
-                            Single
-                        </label>
-                        <label>
-                            <input type="radio" name="mode_of_operation" value="jointly"
-                                {{ old('mode_of_operation', $account->mode_of_operation ?? '') === 'jointly' ? 'checked' : '' }}>
-                            Jointly
-                        </label>
-                        <label>
-                            <input type="radio" name="mode_of_operation" value="either_or_survivor"
-                                {{ old('mode_of_operation', $account->mode_of_operation ?? '') === 'either_or_survivor' ? 'checked' : '' }}>
-                            Either or Survivor
-                        </label>
-                    </div>
-                    @error('mode_of_operation')
-                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                    @enderror
-
-                </div>
-                <!-- // Hidden  section-->
-
-                <!-- ------------------nominees-------------------- -->
-                <div class="col-span-2">
-                    <hr class="my-4">
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4">Nominee <span class="text-red-500">*</span></label>
-                    <div class="flex gap-5">
-                        <label class="flex gap-2">
-                            <input type="radio" name="nominee" value="no"
-                                {{ old('nominee', $account->nominee ?? null) === 'no' || old('nominee', $account->nominee ?? null) === null ? 'checked' : '' }}>
-                            No
-                        </label>
-                        <label class="flex gap-2">
-                            <input type="radio" name="nominee" value="yes"
-                                {{ old('nominee', $account->nominee ?? null) === 'yes' ? 'checked' : '' }}>
-                            Yes
-                        </label>
-                        @error('nominee')
-                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Cheque No.<span
+                                class="text-red-500">*</span></label>
+                        <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-2.5 text-sm bg-white dark:bg-bg3"
+                            placeholder="Enter Cheque No.">
+                        @error('pay1_cheque_no')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-
                     </div>
-                </div>
-
-                <div id="nomineeDetails"
-                    class="{{ old('nominee', $account->nominee ?? null) === 'yes' ? '' : 'hidden' }}">
-                    <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
-                        <select name="nominee_relation"
-                            class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                            <option value="">Select Relation</option>
-                            <option value="father"
-                                {{ old('nominee_relation', $account->nominee_relation ?? '') === 'father' ? 'selected' : '' }}>
-                                Father</option>
-                            <option value="mother"
-                                {{ old('nominee_relation', $account->nominee_relation ?? '') === 'mother' ? 'selected' : '' }}>
-                                Mother</option>
-                            <option value="spouse"
-                                {{ old('nominee_relation', $account->nominee_relation ?? '') === 'spouse' ? 'selected' : '' }}>
-                                Spouse</option>
-                            <option value="child"
-                                {{ old('nominee_relation', $account->nominee_relation ?? '') === 'child' ? 'selected' : '' }}>
-                                Child</option>
-                            <!-- Add more as needed -->
-                        </select>
-                        @error('nominee_relation')
-                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                        @enderror
+                    <div>
+                        <x-datepicker-disabled
+                            label="Cheque Date"
+                            name="pay1_cheque_date"
+                            value="{{ old('pay1_cheque_date') }}"
+                            inputId="pay1_cheque_date" />
 
                     </div>
 
@@ -441,36 +510,31 @@
                             Cheque
                         </label>
                     </div>
-                    <!-- Cheque Fields -->
-                    <div id="chequeFields" class="space-y-4 hidden">
-                        <div class="mt-3">
-                            <label class="block text-sm font-medium text-gray-700">Bank Name <span
-                                    class="text-red-500">*</span></label>
-                            <select name="pay1_bank"
-                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                <option value="">Select Bank</option>
-                                <option value="SBI">SBI</option>
-                                <option value="HDFC">HDFC</option>
-                                <option value="ICICI">ICICI</option>
-                            </select>
-                            @error('pay1_bank')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Cheque No.<span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="pay1_cheque_no"
-                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                                placeholder="Enter Cheque No.">
-                            @error('pay1_cheque_no')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <x-datepicker-disabled label="Cheque Date" name="pay1_cheque_date"
-                                value="{{ old('pay1_cheque_date') }}" inputId="pay1_cheque_date" />
-
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" name="pay1_transfer_utr" class="w-full border rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 bg-white"
+                            placeholder="Enter Transaction No.">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Transfer Mode <span
+                                class="text-red-500">*</span></label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="transfer_mode" value="IMPS"
+                                    class="text-green-500 focus:ring-green-500">
+                                <span>IMPS</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="transfer_mode" value="VPA"
+                                    class="text-green-500 focus:ring-green-500">
+                                <span>VPA</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="transfer_mode" value="NEFT/RTGS"
+                                    class="text-green-500 focus:ring-green-500">
+                                <span>NEFT/RTGS</span>
+                            </label>
                         </div>
                     </div>
 

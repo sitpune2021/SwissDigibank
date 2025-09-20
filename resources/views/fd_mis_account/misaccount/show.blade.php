@@ -222,13 +222,13 @@
             <tr>
               <td class="font-semibold px-4 py-2">Open Date</td>
               <td class="px-4 py-2">
-                {{ \Carbon\Carbon::parse($misaccount->open_date)->format('d/m/Y') }}
+                {{ \Carbon\Carbon::parse($misaccount->open_date)->format('d-m-Y') }}
               </td>
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2">Maturity Date</td>
               <td class="px-4 py-2">
-                {{ \Carbon\Carbon::parse($misaccount->transaction_date)->format('d/m/Y') }}
+                {{ \Carbon\Carbon::parse($misaccount->transaction_date)->format('d-m-Y') }}
 
               </td>
             </tr>
@@ -386,7 +386,7 @@
                 @forelse($misaccount->transactions as $transaction)
                 <tr class="border-b">
                   <td class="px-4 py-2 text-start text-sm font-semibold">
-                    {{ $transaction->created_at->format('d/m/Y H:i') }}
+                    {{ $transaction->created_at->format('d-m-Y H:i') }}
                   </td>
                   <td class="px-4 py-2 text-start text-sm font-semibold">N/A</td>
                   <td class="px-4 py-2 text-start text-sm font-semibold">{{ ucfirst($transaction->pay_mode) }}</td>

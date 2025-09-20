@@ -1,54 +1,14 @@
 @extends('layout.main')
 
+@section('content')
+
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
         accent-color: green;
-        /* For modern browsers */
     }
 
-    /* Fallback for browsers without accent-color support */
     input[type="checkbox"]:checked {
         background-color: green;
         border: none;
@@ -58,7 +18,6 @@
         width: 24px;
         height: 24px;
         accent-color: green;
-        /* Modern browser support */
     }
 </style>
 
@@ -497,7 +456,7 @@
                         <label class="font-medium block mb-2">
                             T.Date <span class="text-red-500">*</span> </label>
                         @php
-                            $today = \Carbon\Carbon::now()->format('d/m/Y');
+                            $today = \Carbon\Carbon::now()->format('d-m-Y');
                         @endphp
                         <input type="text" name="transaction_date" id="date4"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -772,10 +731,9 @@
             const input = document.getElementById(id);
             if (input) {
                 input.addEventListener('input', function() {
-                    // Allow only digits
+
                     this.value = this.value.replace(/\D/g, '');
 
-                    // Limit to 10 digits
                     if (this.value.length > 10) {
                         this.value = this.value.slice(0, 10);
                     }
