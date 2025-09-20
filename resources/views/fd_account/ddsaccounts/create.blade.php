@@ -662,52 +662,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    {{-- <script>
-        document.getElementById('memberDropdown').addEventListener('change', function() {
-            let memberId = this.value;
-            let url = this.getAttribute('data-url').replace(':id', memberId);
-
-            if (memberId) {
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        // ✅ Auto fill
-                        document.getElementById('memberName').value = data.member_info_first_name + ' ' + (data
-                            .member_info_last_name ?? '');
-                        document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
-                        document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
-                        const branchSelect = document.getElementById('branch_id');
-                        const branchId = String(data.branch_id);
-                        let optionExists = Array.from(branchSelect.options).some(opt => opt.value === branchId);
-
-                        if (!optionExists && data.branch_name) {
-                            const newOption = document.createElement('option');
-                            newOption.value = branchId;
-                            newOption.textContent = data.branch_name;
-                            newOption.selected = true;
-                            branchSelect.appendChild(newOption);
-                        } else {
-                            branchSelect.value = branchId;
-                        }
-
-                        branchSelect.dispatchEvent(new Event('change'));
-
-                        document.getElementById('date5').value = data.open_date ?? '';
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert('Member details could not be fetched.');
-                    });
-            } else {
-                // Reset fields if no member selected
-                document.getElementById('memberName').value = '';
-                document.getElementById('memberAddress').value = '';
-                document.getElementById('memberMobile').value = '';
-                document.getElementById('branch_id').selectedIndex = 0; // ✅ reset dropdown
-                document.getElementById('date5').value = '';
-            }
-        });
-    </script> --}}
+    
     <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
             let memberId = this.value;
