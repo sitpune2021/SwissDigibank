@@ -1,6 +1,16 @@
 @extends('layout.main')
 
 @section('content')
+
+    <head>
+        <style>
+            input[type="radio"] {
+                width: 24px;
+                height: 24px;
+                accent-color: green;
+            }
+        </style>
+    </head>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -11,47 +21,47 @@
             <!-- Image + Button -->
             <!-- @if (isset($show))
     <div class="flex items-center gap-4">
-                    <div
-                        style="width: 90px;height: 90px;border: 2px dashed #ccc;border-radius: 12px;background-color: #f9f9f9;display: flex;align-items: center;justify-content: center;cursor: pointer;">
+                            <div
+                                style="width: 90px;height: 90px;border: 2px dashed #ccc;border-radius: 12px;background-color: #f9f9f9;display: flex;align-items: center;justify-content: center;cursor: pointer;">
 
-                    </div>
-                    <div x-data="{ open: false }">
-                        <button type="button" class="px-2 py-1 text-white rounded-pill btn-primary hover:bg-white-700"
-                            @click="open = true">
-                            Upload Photo
-                        </button>
+                            </div>
+                            <div x-data="{ open: false }">
+                                <button type="button" class="px-2 py-1 text-white rounded-pill btn-primary hover:bg-white-700"
+                                    @click="open = true">
+                                    Upload Photo
+                                </button>
 
-                        <div x-show="open" x-transition
-                            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-                            @click.self="open = false">
+                                <div x-show="open" x-transition
+                                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                    @click.self="open = false">
 
-                            <div class="max-w-md bg-white rounded-lg shadow-lg w-small">
-                                <div class="flex items-center justify-between px-4 py-2 border-b">
-                                    <h5 class="text-lg font-semibold">Upload Image</h5>
-                                    <button class="text-2xl leading-none text-gray-600 hover:text-gray-800"
-                                        @click="open = false">
-                                        &times;
-                                    </button>
-                                </div>
+                                    <div class="max-w-md bg-white rounded-lg shadow-lg w-small">
+                                        <div class="flex items-center justify-between px-4 py-2 border-b">
+                                            <h5 class="text-lg font-semibold">Upload Image</h5>
+                                            <button class="text-2xl leading-none text-gray-600 hover:text-gray-800"
+                                                @click="open = false">
+                                                &times;
+                                            </button>
+                                        </div>
 
-                                <div class="px-4 py-4">
-                                    <input type="file" accept="image/*" class="w-full p-2 border rounded" />
-                                </div>
+                                        <div class="px-4 py-4">
+                                            <input type="file" accept="image/*" class="w-full p-2 border rounded" />
+                                        </div>
 
 
-                                <div class="flex justify-end gap-2 px-4 py-2 border-t">
-                                    <button class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-                                        @click="open = false">
-                                        Cancel
-                                    </button>
-                                    <button class="px-4 py-2 text-white rounded btn-primary">
-                                        Upload
-                                    </button>
+                                        <div class="flex justify-end gap-2 px-4 py-2 border-t">
+                                            <button class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                                                @click="open = false">
+                                                Cancel
+                                            </button>
+                                            <button class="px-4 py-2 text-white rounded btn-primary">
+                                                Upload
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
     @endif -->
         </div>
 
@@ -76,31 +86,31 @@
         <div class="box mb-4 xxxl:mb-6">
             <!-- <div class="flex justify-end gap-2 mb-3">
 
-                    <button class="flex items-center gap-1 px-2 py-1 text-xs text-white rounded "
-                        style="background-color: #f39c12">
-                        <i class="fa-solid fa-id-card-clip"></i> ID Card
-                    </button>
+                            <button class="flex items-center gap-1 px-2 py-1 text-xs text-white rounded "
+                                style="background-color: #f39c12">
+                                <i class="fa-solid fa-id-card-clip"></i> ID Card
+                            </button>
 
-                    <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
-                        style="background-color:#f4f4f4">
-                        <i class="text-xs fa-solid fa-pen"></i>
-                    </button>
+                            <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
+                                style="background-color:#f4f4f4">
+                                <i class="text-xs fa-solid fa-pen"></i>
+                            </button>
 
-                    <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
-                        style="background-color:#f4f4f4">
-                        <i class="text-xs fa-solid fa-rotate-left"></i>
-                    </button>
+                            <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
+                                style="background-color:#f4f4f4">
+                                <i class="text-xs fa-solid fa-rotate-left"></i>
+                            </button>
 
-                    <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
-                        style="background-color:#f4f4f4">
-                        <i class="text-xs fa-solid fa-lock"></i>
-                    </button>
+                            <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
+                                style="background-color:#f4f4f4">
+                                <i class="text-xs fa-solid fa-lock"></i>
+                            </button>
 
-                    <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
-                        style="background-color:#f4f4f4">
-                        <i class="text-xs fa-solid fa-arrow-right"></i>
-                    </button>
-                </div> -->
+                            <button class="flex items-center justify-center rounded text-dark w-7 h-7 "
+                                style="background-color:#f4f4f4">
+                                <i class="text-xs fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div> -->
             <form id="companyForm"
                 action="{{ isset($user) ? ($show ?? false ? '#' : route('users.update', base64_encode($user->id))) : route('users.store') }}"
                 method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
@@ -259,7 +269,6 @@
                     @enderror
                 </div>
 
-
                 <div class="col-span-2 md:col-span-1">
                     <label for="branch" class="md:text-lg font-medium block mb-4">Login on Holidays<span
                             class="text-red-500">*</span></label>
@@ -298,23 +307,32 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="searchable_account" class="md:text-lg font-medium block mb-4">Searchable Accounts<span
-                            class="text-red-500">*</span></label>
-                    <label><input type="radio" name="searchable_account" value="1"
-                            {{ old('searchable_account', '0') == '1' ? 'checked' : '' }}
-                            @if ($isView) disabled @endif> Yes - All</label>
-                    <label><input type="radio" name="searchable_account" value="0"
-                            {{ old('searchable_account', '0') == '0' ? 'checked' : '' }}
-                            @if ($isView) disabled @endif> No - Only Assigned</label>
+                    <label for="searchable_account" class="md:text-lg font-medium block mb-2">
+                        Searchable Accounts <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex gap-4 items-center">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="searchable_account" value="1"
+                                {{ old('searchable_account', '0') == '1' ? 'checked' : '' }}
+                                @if ($isView) disabled @endif>
+                            Yes - All
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="searchable_account" value="0"
+                                {{ old('searchable_account', '0') == '0' ? 'checked' : '' }}
+                                @if ($isView) disabled @endif>
+                            No - Only Assigned
+                        </label>
+                    </div>
                     @error('searchable_account')
-                        <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
+                        <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                        <button class="btn-primary" type="submit">Save</button>
-                        <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">Reset</button>
-                    </div> -->
+                                <button class="btn-primary" type="submit">Save</button>
+                                <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">Reset</button>
+                            </div> -->
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                     {{-- Show Submit button only if not view page --}}
                     @if (empty($isView))

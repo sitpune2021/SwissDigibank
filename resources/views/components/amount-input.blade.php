@@ -4,7 +4,7 @@
         value="{{ old($name, $value ?? '') }}"
         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5">
 
-    <p id="{{ $id ?? 'amount' }}_words" class="mt-2 text-sm text-error text-gray-600 font-semibold"></p>
+    <p id="{{ $id ?? 'amount' }}_words" class="mt-2 text-[4px] text-error text-gray-600 "></p>
 </div>
 
 <script>

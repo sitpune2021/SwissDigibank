@@ -239,6 +239,24 @@
         });
     });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const aadhaarInput = document.getElementById('aadhaar_no');
+    if (!aadhaarInput) return;
+
+    aadhaarInput.addEventListener('input', function () {
+        // Only digits, max 12 characters
+        this.value = this.value.replace(/\D/g, '').slice(0, 12);
+    });
+
+    aadhaarInput.addEventListener('blur', function () {
+        if (this.value && this.value.length !== 12) {
+            alert('Aadhaar number must be exactly 12 digits.');
+            this.focus();
+        }
+    });
+});
+</script>
 
 @endsection
 

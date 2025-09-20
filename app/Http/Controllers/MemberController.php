@@ -246,7 +246,7 @@ class MemberController extends Controller
                     'member_id' => $member->id,
 
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
-                'membership_fee' => $request->charges_membership_fee ?? 0, // Default to 0 if null
+                'membership_fee' => $request->charges_membership_fee ?? 0, 
                 'net_fee_to_collect' => $request->charges_net_fee,
                 'remarks' => $request->charges_remarks ?? null,
                 'charges_pay_mode' => $request->charges_pay_mode,

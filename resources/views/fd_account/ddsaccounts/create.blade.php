@@ -2,24 +2,24 @@
 
 @section('content')
 
-<style>
-    input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
-        accent-color: green;
-    }
+    <style>
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+        }
 
-    input[type="checkbox"]:checked {
-        background-color: green;
-        border: none;
-    }
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
 
-    input[type="radio"] {
-        width: 24px;
-        height: 24px;
-        accent-color: green;
-    }
-</style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
+    </style>
 
 @section('content')
     @php
@@ -462,16 +462,19 @@
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
                         <i
-                            class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
+                            class="absolute -translate-y-1/2 cursor-pointer l ltr:right-4 rtl:left-4 top-1/2"></i>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2">
                             Amount <span class="text-red-500">*</span>
                         </label>
+
                         <input type="number" id="amount" name="amount" placeholder="Enter Amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
         border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        <x-number-to-word for="amount" />
+
                     </div>
                 </div>
                 <!-- Buttons -->
@@ -621,7 +624,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    
+
     <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
             let memberId = this.value;

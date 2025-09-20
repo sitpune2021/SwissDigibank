@@ -83,19 +83,20 @@
       @endpush
 
   @section('content')
-  <head>
-    <style>
-          input[type="radio"] {
 
-            width: 24px;
+      <head>
+          <style>
+              input[type="radio"] {
 
-            height: 24px;
+                  width: 24px;
 
-            accent-color: green;
+                  height: 24px;
 
-        }
-        </style>
-  </head>
+                  accent-color: green;
+
+              }
+          </style>
+      </head>
       @include('fields.errormessage')
 
       <div class="box mb-4 xxxl:mb-6">
@@ -219,25 +220,68 @@
       </div>
   @endsection
   @push('script')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const mobileFields = ['mobile', 'nominee_mobile_no'];
+      <script>
+          document.addEventListener('DOMContentLoaded', () => {
+              const applyDigitValidation = (id, maxLength, exactLength = false) => {
+                  const input = document.getElementById(id);
+                  if (!input) return;
 
-        mobileFields.forEach(function(id) {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', function () {
-                    // Allow only digits
-                    this.value = this.value.replace(/\D/g, '');
+                  input.addEventListener('input', () => {
+                      input.value = input.value.replace(/\D/g, '').slice(0, maxLength);
+                  });
 
-                    // Limit to 10 digits
-                    if (this.value.length > 10) {
-                        this.value = this.value.slice(0, 10);
-                    }
-                });
-            }
-        });
-    });
-</script>
-@endpush
+                  if (exactLength) {
+                      input.addEventListener('blur', () => {
+                          if (input.value.length !== maxLength) {
+                              alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
+                              input.focus();
+                          }
+                      });
+                  }
+              };
 
+              const applyPANValidation = (id) => {
+                  const input = document.getElementById(id);
+                  if (!input) return;
+
+                  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+                  input.addEventListener('input', () => {
+                      input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
+                  });
+              };
+
+              const applyAlphaNumValidation = (id, maxLength = null) => {
+                  const input = document.getElementById(id);
+                  if (!input) return;
+
+                  input.addEventListener('input', () => {
+                      input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                      if (maxLength) {
+                          input.value = input.value.slice(0, maxLength);
+                      }
+                  });
+              };
+
+              const formatLabel = (id) =>
+                  id.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+              // Mobile Numbers (10 digits)
+              ['mobile', 'nominee_mobile_no'].forEach(id => applyDigitValidation(id, 10));
+
+              // Aadhaar Numbers (12 digits exactly)
+              applyDigitValidation('aadhaar_no', 12, true);
+              applyDigitValidation('nominee_aadhaar_no', 12, true);
+
+              // PAN Numbers (Format: AAAAA9999A)
+              applyPANValidation('pan_no');
+              applyPANValidation('nominee_pan_no');
+
+              // Voter ID (alphanumeric, max 10)
+              applyAlphaNumValidation('voter_id_no', 10);
+
+              // Ration Card No. (alphanumeric, max 16)
+              applyAlphaNumValidation('ration_card_no', 16);
+          });
+      </script>
+  @endpush
