@@ -517,22 +517,103 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileFields = ['mobile_no', 'nominee_mobile_no'];
+            // -----------------------------
+            // DIGIT-ONLY FIELDS
+            // -----------------------------
+            const digitFields = [{
+                    id: 'mobile_no',
+                    maxLength: 10
+                },
+                {
+                    id: 'nominee_mobile_no',
+                    maxLength: 10
+                },
+                {
+                    id: 'address_pincode',
+                    maxLength: 6
+                },
+                {
+                    id: 'perm_address_pincode',
+                    maxLength: 6
+                },
+                {
+                    id: 'aadhaar_no',
+                    maxLength: 12
+                },
+                {
+                    id: 'nominee_aadhaar_no',
+                    maxLength: 12
+                },
+            ];
 
-            mobileFields.forEach(function(id) {
+            digitFields.forEach(({
+                id,
+                maxLength
+            }) => {
                 const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('input', function() {
-                        this.value = this.value.replace(/\D/g, '');
+                if (!input) return;
 
-                        if (this.value.length > 10) {
-                            this.value = this.value.slice(0, 10);
-                        }
-                    });
-                }
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').slice(0, maxLength);
+                });
+            });
+
+            // -----------------------------
+            // PAN FORMAT VALIDATION
+            // -----------------------------
+            const panFields = ['member_kyc_pan_no', 'nominee_pan_no'];
+            panFields.forEach(id => {
+                const input = document.getElementById(id);
+                if (!input) return;
+
+                input.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
+                });
+            });
+
+            // -----------------------------
+            // ALPHANUMERIC (A-Z + 0-9) FIELDS
+            // -----------------------------
+            const alphaNumFields = [{
+                    id: 'voter_id_no',
+                    maxLength: 10
+                },
+                {
+                    id: 'nominee_voter_id_no',
+                    maxLength: 10
+                },
+                {
+                    id: 'ration_card_no',
+                    maxLength: 16
+                },
+                {
+                    id: 'nominee_ration_card_no',
+                    maxLength: 16
+                },
+                {
+                    id: 'passport_no',
+                    maxLength: 8
+                },
+            ];
+
+            alphaNumFields.forEach(({
+                id,
+                maxLength
+            }) => {
+                const input = document.getElementById(id);
+                if (!input) return;
+
+                input.addEventListener('input', function() {
+                    this.value = this.value
+                        .toUpperCase()
+                        .replace(/[^A-Z0-9]/g, '')
+                        .slice(0, maxLength);
+                });
             });
         });
     </script>
+
+
     <script>
         const titleRadios = document.querySelectorAll('input[name="member_info_title"]');
         const genderRadios = document.querySelectorAll('input[name="member_info_gender"]');

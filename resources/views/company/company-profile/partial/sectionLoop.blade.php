@@ -38,22 +38,55 @@
     </div>
 @endforeach
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const mobileFields = ['mobile_no'];
+    document.addEventListener('DOMContentLoaded', function() {
+        // Digit-only fields
+        const digitOnlyFields = [{
+                id: 'mobile_no',
+                maxLength: 10
+            },
+            {
+                id: 'landline_no',
+                maxLength: 11
+            },
+            {
+                id: 'pincode',
+                maxLength: 6,
+                exact: true
+            }
+        ];
 
-        mobileFields.forEach(function(id) {
-            const input = document.getElementById(id);
+        digitOnlyFields.forEach(field => {
+            const input = document.getElementById(field.id);
             if (input) {
-                input.addEventListener('input', function () {
-                    // Allow only digits
+                input.addEventListener('input', function() {
                     this.value = this.value.replace(/\D/g, '');
-
-                    // Limit to 10 digits
-                    if (this.value.length > 10) {
-                        this.value = this.value.slice(0, 10);
+                    if (this.value.length > field.maxLength) {
+                        this.value = this.value.slice(0, field.maxLength);
                     }
                 });
+
+                // Validate exact length on blur
+                if (field.exact) {
+                    input.addEventListener('blur', function() {
+                        if (this.value.length !== field.maxLength) {
+                            alert(
+                                `${field.id.replace(/_/g, ' ')} must be exactly ${field.maxLength} digits.`);
+                            this.focus();
+                        }
+                    });
+                }
             }
         });
+
+        // PAN number validation (Format: AAAAA9999A)
+        const panInput = document.getElementById('pan_no');
+        if (panInput) {
+            panInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+            });
+        }
     });
 </script>

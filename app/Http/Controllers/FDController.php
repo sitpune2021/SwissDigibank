@@ -41,9 +41,7 @@ class FDController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         return view('fd_mis_account.fd_scheme.add-scheme');
@@ -123,7 +121,6 @@ class FDController extends Controller
                 ->with('error', 'Something went wrong while creating FD Scheme. Please try again.');
         }
     }
-
 
     /**
      * Display the specified resource.

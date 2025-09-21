@@ -50,9 +50,21 @@ return [
     ],
     // Step 3: KYC Info
     'KYC' => [
-        ['label' => 'Aadhaar No.', 'name' => 'aadhaar_no', 'id' => 'aadhaar_no', 'type' => 'text', 'required' => true],
+        [
+            'label' => 'Aadhaar No.',
+            'name' => 'aadhaar_no',
+            'id' => 'aadhaar_no',
+            'type' => 'text',
+            'required' => true,
+        ],
         ['label' => 'Voter ID No.', 'name' => 'voter_id_no', 'id' => 'voter_id_no', 'type' => 'text', 'required' => false],
-        ['label' => 'PAN.', 'name' => 'pan_no', 'id' => 'pan_no', 'type' => 'text', 'required' => true],
+        [
+            'label' => 'PAN.',
+            'name' => 'pan_no',
+            'id' => 'pan_no',
+            'type' => 'text',
+            'required' => true,
+        ],
         ['label' => 'Ration Card No.', 'name' => 'ration_card_no', 'id' => 'ration_card_no', 'type' => 'text', 'required' => false],
         ['label' => 'Meter No.', 'name' => 'meter_no', 'id' => 'meter_no', 'type' => 'text', 'required' => false],
         ['label' => 'CI No.', 'name' => 'ci_no', 'id' => 'ci_no', 'type' => 'text', 'required' => false],
@@ -100,10 +112,22 @@ return [
             'minlength' => '10',
             'pattern' => '[0-9]{10}',
         ],
-        
-        ['label' => 'Nominee Aadhar No.', 'name' => 'nominee_aadhaar_no', 'id' => 'nominee_aadhaar_no', 'type' => 'text', 'required' => false],
+
+        [
+            'label' => 'Nominee Aadhar No.',
+            'name' => 'nominee_aadhaar_no',
+            'id' => 'nominee_aadhaar_no',
+            'type' => 'text',
+            'required' => false,
+        ],
         ['label' => 'Nominee Voter ID No.', 'name' => 'nominee_voter_id_no', 'id' => 'nominee_voter_id_no', 'type' => 'text', 'required' => false],
-        ['label' => 'Nominee PAN No.', 'name' => 'nominee_pan_no', 'id' => 'nominee_pan_no', 'type' => 'text', 'required' => false],
+        [
+            'label' => 'Nominee PAN No.',
+            'name' => 'nominee_pan_no',
+            'id' => 'nominee_pan_no',
+            'type' => 'text',
+            'required' => false,
+        ],
         ['label' => 'Nominee Address', 'name' => 'nominee_address', 'id' => 'nominee_address', 'type' => 'text', 'required' => false],
     ],
 

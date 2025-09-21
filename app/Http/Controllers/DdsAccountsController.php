@@ -222,11 +222,16 @@ class DdsAccountsController extends Controller
     public function store(Request $request)
     {
 
-        Log::info('🔹DdsAccountsController@store called');
+        Log::info('🔹 DdsAccountsController@store called');
+        Log::info('Request data:', $request->all());
+        if ($request->branch_id === 'null' || $request->branch_id === '') {
+            $request->merge(['branch_id' => null]);
+        }
+
 
         $validated = $request->validate([
             'member_id' => 'required|integer',
-            'branch_id' => 'required|integer',
+            'branch_id' => 'nullable|integer',
             'scheme_id' => 'required|integer|exists:rdschemes,id',
             'open_date' => 'required|date',
             'amount' => 'required|numeric',
