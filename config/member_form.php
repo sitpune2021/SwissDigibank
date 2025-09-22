@@ -161,7 +161,7 @@ return [
         [
             'label' => 'Husband/ Wife DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'datep',
+            'id' => 'date2',
             'type' => 'text',
             'required' => false,
         ],
@@ -328,7 +328,7 @@ return [
         [
             'label' => 'Pincode',
             'name' => 'member_perm_address_pincode',
-            'id' => 'perm_address_pincode', 
+            'id' => 'perm_address_pincode',
             'type' => 'number',
             'required' => false,
         ],

@@ -266,7 +266,7 @@ class PromotorController extends Controller
                 'middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'branch_id' => 'required|exists:branches,id',
-                'date_of_birth' => 'required',
+                'date_of_birth' => 'required|before:today',
                 'occupation' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',

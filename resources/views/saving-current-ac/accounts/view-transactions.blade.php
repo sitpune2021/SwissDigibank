@@ -4,10 +4,10 @@
     <div class="mb-6 flex flex-wrap items-center justify-start gap-4 lg:mb-8">
         <!-- <div class="flex items-center gap-2"> -->
 
-        <a class="btn btn-primary bg-green-600 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded" href="">
+        <a class="btn btn-primary bg-green-600 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded" href="{{route('deposit.create',base64_encode($account->id))}}">
             Deposit Money
         </a>
-        <a class="btn-secondary bg-blue-600 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded" href="">
+        <a class="btn-secondary bg-blue-600 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded" href="{{route('withdraw.create',base64_encode($account->id))}}">
             Withdraw Money
         </a>
         <a class="btn btn-warning bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded" href="">
@@ -48,7 +48,9 @@
                     @foreach($Transactions as $index => $Transaction)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         {{-- Transaction date (transaction_date) --}}
-                        <td class="text-start py-5 px-6">{{ $Transaction->accounts->transaction_date ?? '-' }}</td>
+                        <td class="text-start py-5 px-6">
+                            {{ $Transaction->accounts->transaction_date ? \Carbon\Carbon::parse($Transaction->accounts->transaction_date)->format('d-m-Y') : '-' }}
+                        </td>
 
                         {{-- payment_mode --}}
                         <td class="text-start py-5 px-6">{{ $Transaction->payment_mode ?? '-' }}</td>
@@ -94,7 +96,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn btn-warning inline-flex items-center bg-yellow-700 text-white text-sm py-1 px-3 rounded" href="{{route('export.transaction')}}">
+        <a class="btn btn-warning inline-flex items-center bg-yellow-700 text-white text-sm py-1 px-3 rounded" href="{{route('export.transaction',$account->id)}}">
             <i class="fa fa-download" aria-hidden="true"></i> &nbsp; DOWNLOAD CSV
         </a>
     </div>

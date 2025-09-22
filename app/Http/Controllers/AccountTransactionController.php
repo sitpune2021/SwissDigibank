@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Helpers\CsvExportHelper;
+use App\Models\Account;
 
 class AccountTransactionController extends Controller
 {
@@ -15,22 +16,25 @@ class AccountTransactionController extends Controller
     // view transaction
     public function index($id = null)
     {
+
         try {
-          $id=base64_decode($id);
+            $id = base64_decode($id);
+            //    dd($id);
             $Transactions = Transaction::with(['accounts'])
                 ->where('account_id', $id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
-            return view('saving-current-ac.accounts.view-transactions', compact('Transactions'));
+            $account = Account::findOrFail($id);
+
+            return view('saving-current-ac.accounts.view-transactions', compact('Transactions', 'account'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
 
-    public function downloadCsvExample()
+    public function downloadCsvExample($id)
     {
-
         $headers = [
             'Branch Name',
             'Agent Name',
@@ -70,7 +74,15 @@ class AccountTransactionController extends Controller
             'Customer Gst No'
         ];
 
-        $transactions = Transaction::with('accounts')->get();
+        $transactions = Transaction::with('accounts.scheme')
+            ->where('account_id', $id)
+            ->select('*')
+            ->selectRaw("
+        CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END as credited_amount,
+        CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END as debited_amount
+    ")
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $data = $transactions->map(function ($txn) {
             return [
@@ -82,18 +94,18 @@ class AccountTransactionController extends Controller
                 $txn->group->name ?? '',
                 $txn->collectionCenter->name ?? '',
                 $txn->accounts->members->member_info_first_name ?? '',
-                $txn->accounts->members->code ?? '',
+                $txn->accounts->members->id ?? '',
                 $txn->accounts->account_no  ?? '',
-                $txn->accounts->schemes->scheme_name ?? '',
+                $txn->accounts->scheme->scheme_name ?? '',
                 $txn->accounts->payment_mode ?? '',
                 $txn->accounts->transaction_date,
-                $txn->accounts->transaction_type,
-                $txn->opening_balance,
-                $txn->credit,
-                $txn->debit,
+                $txn->transaction_type,
+                $txn->accounts->opening_balance,
+                $txn->credited_amount,
+                $txn->debited_amount,
                 $txn->closing_balance,
-                $txn->status,
-                $txn->approvedBy->name ?? '',
+                $txn->approve_status,
+                $txn->approvedBy->name ?? 'System',
                 $txn->is_accounted ? 'Yes' : 'No',
                 $txn->message,
                 $txn->tranx,
@@ -141,7 +153,7 @@ class AccountTransactionController extends Controller
         try {
             $decryptedId = base64_decode($id);
             $transactions = Transaction::with('accounts')->findOrFail($decryptedId);
-            
+
             return view('saving-current-ac.accounts.single-transaction', compact('transactions', 'decryptedId'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

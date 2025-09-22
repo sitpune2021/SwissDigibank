@@ -37,6 +37,7 @@
             </div>
 
         </div>
+
         <!-- Transaction Details Table -->
         <table class="w-full text-sm text-left border border-gray-300">
             <tbody>
@@ -50,7 +51,9 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Transaction Date</td>
-                    <td class="px-4 py-2 border border-gray-300">{{$transactions->accounts->transaction_date}}</td>
+                    <td class="px-4 py-2 border border-gray-300">
+                        {{ $transactions->accounts->transaction_date ? \Carbon\Carbon::parse($transactions->accounts->transaction_date)->format('d-m-Y') : '-' }}
+                    </td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Reference Id</td>
@@ -66,7 +69,9 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Transaction Status</td>
-                    <td class="px-4 py-2 text-green-600 border border-gray-300">Approved</td>
+                    <td class="px-4 py-2 text-green-600 border border-gray-300">
+                        {{$transactions->approve_status}}
+                    </td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Payment Mode</td>
@@ -82,11 +87,15 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Created at</td>
-                    <td class="px-4 py-2 border border-gray-300">{{$transactions->created_at}}</td>
+                    <td class="px-4 py-2 border border-gray-300">
+                        {{ $transactions->accounts->created_at ? \Carbon\Carbon::parse($transactions->accounts->created_at)->format('d-m-Y') : '-' }}
+                    </td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Updated at</td>
-                    <td class="px-4 py-2 border border-gray-300">{{$transactions->updated_at}}</td>
+                    <td class="px-4 py-2 border border-gray-300">
+                        {{ $transactions->accounts->updated_at ? \Carbon\Carbon::parse($transactions->accounts->updated_at)->format('d-m-Y') : '-' }}
+                    </td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Is Accounted</td>

@@ -146,7 +146,7 @@
                     </label>
 
                     <input type="text" name="allotment_date" id="date2" placeholder="Select Date"
-                        value="{{ old('allotment_date', isset($shareholding->allotment_date) ? \Carbon\Carbon::parse($shareholding->allotment_date)->format('Y-m-d') : now()->format('Y-m-d')) }}"
+                        value="{{ old('allotment_date', isset($shareholding->allotment_date) ? \Carbon\Carbon::parse($shareholding->allotment_date)->format('d-m-Y') : now()->format('d-m-Y')) }}"
                         class="w-full text-sm bg-gray-100 border border-gray-300 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         @if ($isView) disabled @endif autocomplete="off">
 
