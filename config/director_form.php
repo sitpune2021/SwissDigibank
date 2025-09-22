@@ -39,12 +39,12 @@ return [
     "required"=> true
   ],
   [
-    "label"=> "Resignation Date",
-    "name"=> "resignation_date",
-    "id"=> "date2",
-    "type"=> "text",
-    "required"=> false
-  ],
+    "label" => "Resignation Date",
+    "name" => "resignation_date",
+    "id" => "datep",
+    "type" => "text",
+    "required" => false
+  ],  
   [
     "label"=> "Signature",
     "name"=> "signature",

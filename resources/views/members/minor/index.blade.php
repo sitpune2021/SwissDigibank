@@ -67,7 +67,7 @@
                         <td class="px-6 py-4">{{ $minor->father_name ?? 'N/A' }}</td>
 
                         <td class="px-6 py-4">
-                            {{ $minor->enrollment_date }}
+                            {{ $minor->enrollment_date ? \Carbon\Carbon::parse($minor->enrollment_date)->format('d-m-Y') : 'N/A' }}
                         </td>
                         <td class="py-2 px-6">
                             <div class="flex justify-center">
@@ -83,7 +83,7 @@
                     @endforeach
                 </tbody>
 
-             
+
             </table>
         </div>
     </div>

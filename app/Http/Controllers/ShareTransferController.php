@@ -51,7 +51,7 @@ class ShareTransferController extends Controller
 
     public function transferForm(Request $request)
     {
-        $memberId=$request->input('member_id');
+        $memberId = $request->input('member_id');
         try {
             Log::debug("Starting transferForm method.", ['memberId' => $memberId]);
 
@@ -99,6 +99,7 @@ class ShareTransferController extends Controller
             abort(404);
         }
     }
+
     public function store(Request $request, $memberId = null)
     {
         $validated = $request->validate([
@@ -111,8 +112,16 @@ class ShareTransferController extends Controller
             'total_consideration'    => 'required|numeric|min:0',
         ]);
 
+        Log::info('Share Transfer Request Received', [
+            'request_data' => $validated,
+            'member_id_param' => $memberId
+        ]);
+
         $memberExists = Member::where('id', $validated['member_id'])->exists();
         if (!$memberExists) {
+            Log::warning('Share Transfer Failed: Member not found', [
+                'member_id' => $validated['member_id']
+            ]);
             return redirect()->route('shares-transfer.index')->with('error', 'Selected member does not exist.');
         }
 
@@ -124,33 +133,60 @@ class ShareTransferController extends Controller
                 $promoterTotalShares = Shareholding::where('id', $transferorId)->value('total_share_held');
 
                 if (!$promoterTotalShares || $promoterTotalShares <= 0) {
+                    Log::error('Promoter has no shares', [
+                        'transferor_id' => $transferorId
+                    ]);
                     throw new \Exception('Promoter does not have any shares.');
                 }
+
                 $lastToShare = ShareTransfer::where('transferor_id', $transferorId)
                     ->max('to_share_no');
+
                 $fromShareNo = $lastToShare ? ($lastToShare + 1) : 1;
                 $toShareNo = ($fromShareNo + $newShares) - 1;
 
                 if ($toShareNo > $promoterTotalShares) {
+                    Log::error('Not enough shares left to allocate', [
+                        'transferor_id' => $transferorId,
+                        'requested_shares' => $newShares,
+                        'last_available_share' => $promoterTotalShares
+                    ]);
                     throw new \Exception("Not enough shares left to allocate. Last available share no: {$promoterTotalShares}");
                 }
+
                 ShareTransfer::create([
                     'transferor_id'       => $transferorId,
                     'member_id'           => $validated['member_id'],
                     'business_type'       => $validated['business_type'],
-                    'transfer_date'       => $validated['allotment_date'],
+                    'transfer_date'       => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['allotment_date'])->format('Y-m-d'),
                     'shares'              => $newShares,
                     'face_value'          => $validated['share_nominal'],
                     'total_consideration' => $validated['total_consideration'],
                     'from_share_no'       => $fromShareNo,
                     'to_share_no'         => $toShareNo,
                 ]);
+
+                Log::info('Share Transfer Created', [
+                    'transferor_id' => $transferorId,
+                    'member_id' => $validated['member_id'],
+                    'from_share_no' => $fromShareNo,
+                    'to_share_no' => $toShareNo,
+                    'shares' => $newShares,
+                ]);
             });
+
+            Log::info('Share Transfer Transaction Successful', [
+                'member_id' => $validated['member_id']
+            ]);
 
             return redirect()->route('shareholding', ['id' => $validated['member_id']])
                 ->with('success', 'Share transfer successfully added. Please approve it.');
         } catch (\Exception $e) {
-            return redirect()->route('shares-transfer.index')->with('error', $e->getMessage());
+            Log::error('Share Transfer Failed', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->route('shares-transfer.index')->with('error', 'Something wrong! Please try again');
         }
     }
 

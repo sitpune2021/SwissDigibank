@@ -48,7 +48,7 @@ class WithdrawController extends Controller
                     'transaction_date' => \Carbon\Carbon::parse($request->input('transaction_date'))
                 ]);
 
-                return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Amount withdraw successfully. Balance: ₹' . number_format($balance['total_balance'] ?? 0, 2));
+                return redirect()->route('accounts.show', base64_encode($account_id))->with('success', 'Please approve status for withdrawal');
             } catch (\Exception $e) {
                 return redirect()->route('accounts.show', base64_encode($account_id))->with('error', 'Withdraw failed: ' . $e->getMessage());
             }

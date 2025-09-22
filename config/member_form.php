@@ -161,7 +161,7 @@ return [
         [
             'label' => 'Husband/ Wife DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'datep',
+            'id' => 'date2',
             'type' => 'text',
             'required' => false,
         ],
@@ -284,7 +284,7 @@ return [
         [
             'label' => 'Pincode',
             'name' => 'member_address_pincode',
-            'id' => 'pincode',
+            'id' => 'address_pincode',
             'type' => 'number',
             'required' => true,
         ],
@@ -328,7 +328,7 @@ return [
         [
             'label' => 'Pincode',
             'name' => 'member_perm_address_pincode',
-            'id' => 'pincode',
+            'id' => 'perm_address_pincode',
             'type' => 'number',
             'required' => false,
         ],
@@ -360,7 +360,10 @@ return [
             'id' => 'aadhaar_no',
             'type' => 'text',
             'required' => true,
+            'maxlength' => 12,
+            'pattern' => '\d{12}',
         ],
+
         [
             'label' => 'Voter ID No',
             'name' => 'member_kyc_voter_id_no',
@@ -374,6 +377,8 @@ return [
             'id' => 'pan_no',
             'type' => 'text',
             'required' => true,
+            'maxlength' => 10,
+            'pattern' => '[A-Z]{5}[0-9]{4}[A-Z]{1}',
         ],
         [
             'label' => 'Ration Card No',
@@ -560,6 +565,8 @@ return [
             'id' => 'nominee_pan_no',
             'type' => 'text',
             'required' => false,
+            'maxlength' => 10,
+            'pattern' => '[A-Z]{5}[0-9]{4}[A-Z]{1}',
         ],
         [
             'label' => 'Nominee Ration Card No.',

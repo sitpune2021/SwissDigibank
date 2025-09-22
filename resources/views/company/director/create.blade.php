@@ -1,12 +1,13 @@
 @extends('layout.main')
 
 @section('page-title',
-    isset($director)  ? (!empty($show)   ? 'View ' . $director->director_name .' Director' : 'Edit ' . $director->director_name . ' Director') : 'Add Director')
+isset($director) ? (!empty($show) ? 'View ' . $director->director_name .' Director' : 'Edit ' . $director->director_name . ' Director') : 'Add Director')
 
 @section('content')
- <head>
+
+<head>
     <style>
-          input[type="radio"] {
+        input[type="radio"] {
 
             width: 24px;
 
@@ -15,8 +16,8 @@
             accent-color: green;
 
         }
-        </style>
-  </head>
+    </style>
+</head>
 @include('fields.errormessage')
 <div class="box mb-4 xxxl:mb-6">
     <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
@@ -33,7 +34,14 @@
         $id = $field['id'] ?? $field['name'];
         $required = $field['required'] ?? false;
         $value = old($name, $director[$name] ?? ($field['default'] ?? ''));
-
+        if ($name === 'appointment_date'||$name === 'resignation_date') {
+        $value = old(
+        $name,
+        $director?->$name instanceof \Carbon\Carbon
+        ? $director?->$name->format('d-m-Y')
+        : $director?->$name ?? ($field['default'] ?? ''),
+        );
+        }
         @endphp
         <div class="col-span-2 md:col-span-1">
             @include('fields.label', [
@@ -63,7 +71,8 @@
                 {{ $method === 'PUT' ? 'Update' : 'Save' }} director
             </button>
             @if ($method === 'POST')
-            <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+            <button class="btn-outline" type="reset"
+                onclick="document.getElementById('companyForm').reset();">
                 Reset
             </button>
             @endif

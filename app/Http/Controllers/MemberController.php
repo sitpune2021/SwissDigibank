@@ -246,7 +246,7 @@ class MemberController extends Controller
                     'member_id' => $member->id,
 
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
-                'membership_fee' => $request->charges_membership_fee ?? 0, // Default to 0 if null
+                'membership_fee' => $request->charges_membership_fee ?? 0, 
                 'net_fee_to_collect' => $request->charges_net_fee,
                 'remarks' => $request->charges_remarks ?? null,
                 'charges_pay_mode' => $request->charges_pay_mode,
@@ -408,18 +408,20 @@ class MemberController extends Controller
         }
     }
 
-    public function update(Request $request, string $id)
+   public function update(Request $request, string $id)
     {
         try {
+            $kycId = optional(KycAndNominee::where('member_id', $id)->first())->id;
+            // Validation Rules
             $request->validate([
                 'membership_type' => 'required|in:nominal,regular',
-
+ 
                 // General Info
                 'general_advisor_staff' => 'nullable|string',
                 'general_group' => 'nullable|in:group1,group2',
                 'general_branch' => 'required|string',
                 'general_enrollment_date' => 'nullable',
-
+ 
                 // Member Info
                 'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
                 'member_info_gender' => 'required|in:male,female,other',
@@ -440,7 +442,7 @@ class MemberController extends Controller
                 'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
                 'member_info_religion' => 'nullable|string',
                 'member_info_email' => 'nullable|email',
-
+ 
                 // Member Address
                 'member_address_line_1' => 'nullable|string',
                 'member_address_line_2' => 'nullable|string',
@@ -454,51 +456,50 @@ class MemberController extends Controller
                 'member_address_pincode' => 'nullable|numeric',
                 'member_address_country' => 'required|regex:/^[A-Za-z\s]+$/',
                 'member_address_address' => 'nullable|string',
-
+ 
                 // Permanent Address
                 'member_perm_address_city' => 'nullable|string',
                 'member_perm_address_state' => 'nullable|string',
                 'member_perm_address_pincode' => 'nullable|numeric',
-
+ 
                 // GPS Location
                 'member_gps_location_latitude' => 'nullable|string',
                 'member_gps_location_longitude' => 'nullable|numeric',
-
+ 
                 // KYC Info
                 'member_kyc_aadhaar_no' => [
                     'required',
                     'digits:12',
                     'regex:/^[2-9]{1}[0-9]{11}$/',
-                    Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')->ignore($id),
+                    Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')->ignore($kycId),
                 ],
                 'member_kyc_voter_id_no' => [
                     'nullable',
                     'string',
-                    Rule::unique('kyc_and_nominees', 'member_kyc_voter_id_no')->ignore($id),
+                    Rule::unique('kyc_and_nominees', 'member_kyc_voter_id_no')->ignore($kycId),
                 ],
                 'member_kyc_pan_no' => [
                     'required',
                     'string',
                     'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
-                    Rule::unique('kyc_and_nominees', 'member_kyc_pan_no')->ignore($id),
+                    Rule::unique('kyc_and_nominees', 'member_kyc_pan_no')->ignore($kycId),
                 ],
                 'member_kyc_ration_card_no' => [
                     'nullable',
                     'string',
-                    Rule::unique('kyc_and_nominees', 'member_kyc_ration_card_no')->ignore($id),
+                    Rule::unique('kyc_and_nominees', 'member_kyc_ration_card_no')->ignore($kycId),
                 ],
                 'member_kyc_meter_no' => [
                     'nullable',
                     'string',
-                    Rule::unique('kyc_and_nominees', 'member_kyc_meter_no')->ignore($id),
+                    Rule::unique('kyc_and_nominees', 'member_kyc_meter_no')->ignore($kycId),
                 ],
-
                 'member_kyc_ci_no' => 'nullable|string',
                 'member_kyc_ci_relation' => 'nullable|string',
                 'member_kyc_dl_no' => 'nullable|string',
                 'member_kyc_passport_no' => 'nullable|string',
                 'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
-
+ 
                 // Nominee Info
                 'nominee_name' => 'nullable|string|regex:/^[A-Za-z]+$/',
                 'nominee_relation' => 'nullable|string',
@@ -510,37 +511,62 @@ class MemberController extends Controller
                 'nominee_pan_no' => 'nullable|string',
                 'nominee_ration_card_no' => 'nullable|string',
                 'nominee_address' => 'nullable|string',
-
+ 
                 // Extra Settings
                 'extra_sms' => 'nullable|boolean',
+ 
                 // Membership Charges
-                'transaction_date	' => 'required|date|before_or_equal:today',
+                'charges_transaction_date' => 'required|date|before_or_equal:today',
                 'membership_fee' => 'nullable|numeric',
-                'net_fee_to_collect' => 'required|numeric',
+                'charges_net_fee' => 'required|numeric',
                 'remarks' => 'nullable|string',
                 'charges_pay_mode' => 'required|in:cash,online,cheque',
             ]);
-
+ 
+            // Date Format Standardization
             $request->merge([
-                'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('d-m-Y') : null,
-                'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('d-m-Y') : null,
-                'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('d-m-Y') : null,
-                'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('d-m-Y') : null,
-                'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('d-m-Y') : null,
+                'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
+                'member_info_dob' => $request->member_info_dob ? Carbon::parse($request->member_info_dob)->format('Y-m-d') : null,
+                'member_info_spouse_dob' => $request->member_info_spouse_dob ? Carbon::parse($request->member_info_spouse_dob)->format('Y-m-d') : null,
+                'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
+                'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
             ]);
-
+ 
             $member = Member::findOrFail($id);
             $memberData = $request->only((new Member)->getFillable());
             $addressData = $request->only((new Address)->getFillable());
             $kycData = $request->only((new KycAndNominee)->getFillable());
-
+ 
             $member->update($memberData);
             $member->address()->update($addressData);
             $member->kyc()->update($kycData);
-
+ 
             return redirect()->route('member.index')->with('success', 'Member updated successfully.');
+        } catch (ValidationException $e) {
+            // ✅ Log validation errors clearly
+            Log::error('Member update validation failed', [
+                'member_id' => $id,
+                'errors' => $e->errors(),
+                'input' => $request->only([
+                    'member_kyc_aadhaar_no',
+                    'member_kyc_pan_no',
+                    'member_kyc_voter_id_no',
+                    'member_info_first_name',
+                    'member_info_last_name',
+                    'member_info_dob'
+                ])
+            ]);
+ 
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+            Log::error('Member not found during update', ['member_id' => $id]);
+            abort(404, 'Member not found');
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in member update', [
+                'message' => $e->getMessage(),
+                'member_id' => $id,
+            ]);
+            return back()->with('error', 'Something went wrong. Please try again.')->withInput();
         }
     }
 

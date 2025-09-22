@@ -281,7 +281,7 @@ class ApproveController extends Controller
             if ($transaction->approve_status !== 'pending' || $transaction->reverse_status != 0) {
                 return redirect()->back()->with('error', 'Invalid transaction status.');
             }
-            $transaction->transaction_type = 'credit';
+            $transaction->transaction_type = 'debit';
             $transaction->approve_status = $request->input('transaction_status');
             $transaction->reverse_status = 1;
             $transaction->save();

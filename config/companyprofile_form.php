@@ -140,7 +140,6 @@ return [
                 'type' => 'file',
                 'required' => false,
             ],
-
             [
                 'label' => 'PAN No.',
                 'name' => 'pan_no',
@@ -165,7 +164,7 @@ return [
             ],
             [
                 'label' => 'Upload TAN Certificate',
-                'name' => 'tan_certificate_path',  // updated here
+                'name' => 'tan_certificate_path',  
                 'id' => 'tan_certificate_path',
                 'type' => 'file',
                 'required' => false,

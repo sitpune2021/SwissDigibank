@@ -87,7 +87,9 @@
                         </td>
                         <td class="py-5 px-6">{{ $pending_transaction->amount_deposit ?? '' }}</td>
                         <td class="py-5 px-6">{{ $pending_transaction->payment_mode  ?? '' }}</td>
-                        <td class="py-5 px-6">{{ $pending_transaction->open_date  ?? '' }}</td>
+                        <td class="py-5 px-6">
+                            {{ $pending_transaction->open_date ? \Carbon\Carbon::parse($pending_transaction->open_date)->format('d-m-Y') : '' }}
+                        </td>
                         <form method="POST" action="{{ route('transactions.updateAccountStatus', $pending_transaction->id) }}">
                             @csrf
                             <td class="py-5 px-6">

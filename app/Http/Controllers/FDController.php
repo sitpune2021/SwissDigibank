@@ -41,9 +41,7 @@ class FDController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         return view('fd_mis_account.fd_scheme.add-scheme');
@@ -73,7 +71,7 @@ class FDController extends Controller
                 'rows.*.payout_type'     => 'nullable|string',
             ]);
 
-            $validated['effective_date'] = \Carbon\Carbon::parse('d/m/Y', $request->effective_date)->format('Y-m-d');
+            $validated['effective_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $request->effective_date)->format('Y-m-d');
             $validated['admin']     = $request->has('admin') ? 1 : 0;
             $validated['associate'] = $request->has('associate') ? 1 : 0;
             $validated['member']    = $request->has('member') ? 1 : 0;
@@ -123,7 +121,6 @@ class FDController extends Controller
                 ->with('error', 'Something went wrong while creating FD Scheme. Please try again.');
         }
     }
-
 
     /**
      * Display the specified resource.

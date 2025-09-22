@@ -46,7 +46,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->enrollment_date }}</span>
+                                    <span>{{ $promoter->enrollment_date ? \Carbon\Carbon::parse($promoter->enrollment_date)->format('d-m-Y') : 'N/A' }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -67,7 +67,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->date_of_birth }}</span>
+                                   <span>{{ $promoter->date_of_birth ? \Carbon\Carbon::parse($promoter->date_of_birth)->format('d-m-Y') : 'N/A' }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -618,7 +618,7 @@
                                                         {{ $minors?->last_name ?? '' }}
                                                     </td>
                                                     <td class="border px-4 py-2">
-                                                        {{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}
+                                                        {{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}
                                                     </td>
                                                     <td class="border px-4 py-2">
                                                         <a href="{{ route('minor.show', $minors->id) }}" title="View"
@@ -698,8 +698,8 @@
                                                         <td>{{ $minors?->first_name ?? '' }}
                                                             {{ $minors?->last_name ?? '' }}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
                                                         <td>
                                                             <a href="{{ route('minor.show', $minors->id) }}"
                                                                 title="View"
@@ -832,8 +832,8 @@
                                                         <td>{{ $minors?->first_name ?? '' }}
                                                             {{ $minors?->last_name ?? '' }}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
                                                         <td>
                                                             <a href="{{ route('minor.show', $minors->id) }}"
                                                                 title="View"
@@ -888,8 +888,8 @@
                                                         <td>{{ $minors?->first_name ?? '' }}
                                                             {{ $minors?->last_name ?? '' }}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
                                                         <td>
                                                             <a href="{{ route('minor.show', $minors->id) }}"
                                                                 title="View"
@@ -944,8 +944,8 @@
                                                         <td>{{ $minors?->first_name ?? '' }}
                                                             {{ $minors?->last_name ?? '' }}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
                                                         <td>
                                                             <a href="{{ route('minor.show', $minors->id) }}"
                                                                 title="View"
@@ -1002,8 +1002,8 @@
                                                         <td>{{ $minors?->first_name ?? '' }}
                                                             {{ $minors?->last_name ?? '' }}
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d/m/Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
                                                         <td>
                                                             <a href="{{ route('minor.show', $minors->id) }}"
                                                                 title="View"

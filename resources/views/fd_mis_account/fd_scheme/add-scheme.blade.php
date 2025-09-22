@@ -87,6 +87,8 @@
                 <input type="number" id="min_amount" name="min_amount"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="Enter Minimum FD Amount" value="{{ old('min_amount', $fdScheme->min_amount ?? '') }}">
+
+                <x-number-to-word for="min_amount" />
                 @error('min_amount')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
@@ -140,7 +142,6 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="bonus_rate" class="md:text-lg font-medium block mb-4">
                     Bonus Rate
-                    <span class="text-red-500">*</span>
                 </label>
                 <div class="flex gap-2">
                     {{-- Bonus Type --}}
@@ -189,6 +190,13 @@
                 <select name="penal_charge" id="penal_charge"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     <option value="">0.0</option>
+                    <option value="0.5">0.5%</option>
+                    <option value="1">1%</option>
+                    <option value="1.5">1.5%</option>
+                    <option value="2">2%</option>
+                    <option value="3">3%</option>
+                    <option value="4">4%</option>
+                    <option value="5">5%</option>
                 </select>
             </div>
 

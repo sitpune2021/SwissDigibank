@@ -120,7 +120,7 @@
                     </td>
 
                     <td class="py-3 px-6">
-                        {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d M Y') }}
+                        {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d-m-Y') }}
                     </td>
 
                     <td class="py-3 px-6">

@@ -33,7 +33,7 @@
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Business Type
+                                Business<br>Type
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -66,7 +66,9 @@
                                     {{ $share_transfer->members?->member_info_first_name ?? ''}}
                                 </a>
                             </td>
-                            <td class="py-5 px-6">{{ $share_transfer?->transfer_date ?? ''}}</td>
+                            <td class="py-5 px-6">
+                                {{ $share_transfer && $share_transfer->transfer_date ? \Carbon\Carbon::parse($share_transfer->transfer_date)->format('d-m-Y') : '' }}
+                            </td>
                             <td class="py-5 px-6">{{ $share_transfer?->business_type ??'' }}</td>
                             <td class="py-5 px-6">{{ $share_transfer?->shares ?? '' }}</td>
                             <td class="py-5 px-6">

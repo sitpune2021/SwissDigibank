@@ -183,7 +183,7 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
 
     Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
     Route::resource('transaction', AccountTransactionController::class);
-    Route::get('/export-transaction', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
+    Route::get('/export-transaction/{id}', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
     Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
 });
 

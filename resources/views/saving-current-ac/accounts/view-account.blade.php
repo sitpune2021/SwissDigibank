@@ -80,7 +80,7 @@
                             </tr>
                             <tr class="border-b">
                                 <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
-                                <td class="p-2">{{ $combined_balace }}</td>
+                                <td class="p-2">₹{{ number_format($combined_balace, 2) }}</td>
                             </tr>
                             <tr class="border-b">
                                 <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>

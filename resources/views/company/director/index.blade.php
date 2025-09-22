@@ -78,8 +78,8 @@
                         </a>
                     </td>
                     <td class="px-6 py-4">{{ $director?->din_no??'' }}</td>
-                    <td class="px-6 py-4">{{ $director->appointment_date?->format('d/m/Y') ?? 'N/A' }}</td>
-                    <td class="px-6 py-4">{{ $director->resignation_date?->format('d/m/Y') ?? 'N/A' }}</td>
+                    <td class="px-6 py-4">{{ $director->appointment_date?->format('d-m-Y') ?? 'N/A' }}</td>
+                    <td class="px-6 py-4">{{ $director->resignation_date?->format('d-m-Y') ?? 'N/A' }}</td>
                     <!-- <td class="px-6 py-4">{{ $director->authorized_signatory ? 'Yes' : 'No' }}</td> -->
                     <td class="py-2">
                         @if ($director->authorized_signatory == 'Yes')

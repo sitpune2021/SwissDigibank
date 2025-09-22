@@ -105,7 +105,7 @@
                         </span>
                         @endif
                     </td>
-                    <td class="py-5 px-6">{{ $promotor->enrollment_date->format('d/m/Y') ?? '' }}</td>
+                    <td class="py-5 px-6">{{ $promotor->enrollment_date->format('d-m-Y') ?? '' }}</td>
                     <td class="py-2">
                         @if (optional($promotor->kyc)->kyc_status == 'completed')
                         <span

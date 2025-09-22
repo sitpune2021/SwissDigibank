@@ -223,11 +223,10 @@
                         value="{{ old('mobile_no', $employee->mobile_no ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         @if ($isView) disabled @endif>
-
-                    @error('mobile_no')
-                    <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
                 </div>
+                @error('mobile_no')
+                <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="col-span-2 md:col-span-1">
@@ -274,7 +273,11 @@
 
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
 
-                    value="{{ old('pan_no', $employee->pan_no ?? '') }}" @if($isView) disabled @endif>
+                    value="{{ old('pan_no', $employee->pan_no ?? '') }}" @if($isView) disabled @endif
+                    minlength="10"
+                    maxlength="10"
+                    pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                    title="PAN number must be 10 characters: 5 letters, 4 digits, 1 letter">
 
                 @error('pan_no')
 
@@ -288,7 +291,10 @@
 
                 <label for="aadhar_no" class="md:text-lg font-medium block mb-4">Aadhaar No.</label>
 
-                <input type="text" name="aadhar_no" id="aadhar_no" placeholder="Enter Aadhar No"
+                <input type="text" name="aadhar_no" id="aadhar_no"
+                    placeholder="Enter Aadhar No"
+                    maxlength="12"
+                    inputmode="numeric"
 
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
 
@@ -337,6 +343,8 @@
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
 
                     value="{{ old('monthly_salary', $employee->monthly_salary ?? '') }}" @if($isView) disabled @endif>
+
+                <x-number-to-word for="monthly_salary" />
 
                 @error('monthly_salary')
 

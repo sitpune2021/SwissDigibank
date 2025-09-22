@@ -6,7 +6,7 @@ isset($form15g15h) && $form15g15h->member
 ? ($form15g15h->member->member_info_first_name ?? '') . ' ' .
 ($form15g15h->member->member_info_last_name ?? '') . ' - ' .
 ($form15g15h->financial_year ?? '')
-: 'Add member'
+: ''
 )
 
 @section('content')
@@ -68,11 +68,11 @@ isset($form15g15h) && $form15g15h->member
             </tr>
             <tr>
                 <td class="px-4 py-2 font-semibold border-b bg-gray-50">Created at</td>
-                <td class="px-4 py-2 border-b">{{ $form15g15h->created_at }}</td>
+                <td class="px-4 py-2 border-b">{{ $form15g15h->created_at?->format('d-m-Y') ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="px-4 py-2 font-semibold border-b bg-gray-50">Updated at</td>
-                <td class="px-4 py-2 border-b">{{ $form15g15h->updated_at }}</td>
+                <td class="px-4 py-2 border-b">{{ $form15g15h->updated_at?->format('d-m-Y') ?? 'N/A' }}</td>
             </tr>
 
             <tr>

@@ -47,7 +47,7 @@ class DirectorController extends Controller
             return view('company.director.index', compact('directors'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -63,7 +63,8 @@ class DirectorController extends Controller
             $branch = null;
             $route = route('director.store');
             $method = 'POST';
-            return view('company.director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
+            $director = null;
+            return view('company.director.create', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'director'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -95,7 +96,7 @@ class DirectorController extends Controller
             return redirect()->route('director.index')->with('success', 'Director created successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
@@ -138,7 +139,7 @@ class DirectorController extends Controller
             return view('company.director.create', compact('formFields', 'director', 'route', 'method', 'dynamicOptions'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
@@ -172,7 +173,7 @@ class DirectorController extends Controller
             return redirect()->route('director.index')->with('success', 'Director updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
 
