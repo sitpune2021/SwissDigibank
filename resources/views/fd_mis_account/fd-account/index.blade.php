@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'FD Account')
+@section('page-title', 'FD ACCOUNT')
 @section('action-button')
 <a class="btn-primary" href="{{ route('fd-mis-schemes.fd_create') }}">
     Add
@@ -19,71 +19,71 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Associate
+                                ASSOCIATE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Group
+                                GROUP
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Fd. No
+                                FD. NO
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Member No
+                                MEMBER NO
                             </div>
                         </th>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Member Name
+                                MEMBER NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Minor
+                                MINOR
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Branch
+                                BRANCH
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Scheme
+                                SCHEME
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Principal<br>Amt
+                                PRINCIPAL<br>AMT
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Open<br>Date
+                                OPEN<br>DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Int.<br>Payout
+                                INT.<br>PAYOUT
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Maturity<br>Date
+                                MATURITY<br>DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Status
+                                STATUS
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>

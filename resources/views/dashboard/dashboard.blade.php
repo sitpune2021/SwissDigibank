@@ -21,7 +21,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-home"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['branchesCount'] }}</h4>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-user"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['membersCount'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-business-time"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['promotorCount'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
@@ -108,7 +108,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['savingAccounts'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
@@ -130,7 +130,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['currentAccounts'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['fdCount'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
@@ -174,7 +174,7 @@
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
                     <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['misCount'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
@@ -188,7 +188,7 @@
             </div>
             <div class="flex items-center justify-between">
                 <div>
-                    <h4 class="mb-4 h4"> RS 00</h4>
+                    <h4 class="mb-4 h4">&#8377; 00</h4>
                     <span class="flex items-center gap-1 whitespace-nowrap text-primary">
                         <i class="text-lg las la-arrow-up"></i> 35.7 AVG
                     </span>
@@ -207,7 +207,7 @@
             </div>
             <div class="flex items-center justify-between">
                 <div>
-                    <h4 class="mb-4 h4">$2540 USD</h4>
+                    <h4 class="mb-4 h4">&#8377; 00</h4>
                     <span class="flex items-center gap-1 whitespace-nowrap text-primary">
                         <i class="text-lg las la-arrow-up"></i> 35.7 AVG
                     </span>
@@ -226,7 +226,7 @@
             </div>
             <div class="flex items-center justify-between">
                 <div>
-                    <h4 class="mb-4 h4">$1250 USD</h4>
+                    <h4 class="mb-4 h4">&#8377; 00</h4>
                     <span class="flex items-center gap-1 whitespace-nowrap text-primary">
                         <i class="text-lg las la-arrow-up"></i> 35.7 AVG
                     </span>
@@ -245,7 +245,7 @@
             </div>
             <div class="flex items-center justify-between">
                 <div>
-                    <h4 class="mb-4 h4">$9000 USD</h4>
+                    <h4 class="mb-4 h4">&#8377; 00</h4>
                     <span class="flex items-center gap-1 whitespace-nowrap text-primary">
                         <i class="text-lg las la-arrow-up"></i> 35.7 AVG
                     </span>
@@ -321,7 +321,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-2">Paypal</td>
-                            <td class="px-6 py-2">$1,121,212</td>
+                            <td class="px-6 py-2">&#8377;1,121,212</td>
                         </tr>
                         
                         
@@ -371,7 +371,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">$95,200.00</p>
+                                    <p class="font-medium">&#8377;95,200.00</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -389,7 +389,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">€54,448.54</p>
+                                    <p class="font-medium">&#8377;54,448.54</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -407,7 +407,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">£74,215.32</p>
+                                    <p class="font-medium">&#8377;74,215.32</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -425,7 +425,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">د.ك 67,511.21</p>
+                                    <p class="font-medium">د.ك &#8377;67,511.21</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -443,7 +443,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">¥36,122,54</p>
+                                    <p class="font-medium">&#8377;36,122,54</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -461,7 +461,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">₹75,121,36</p>
+                                    <p class="font-medium">&#8377;75,121,36</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -479,7 +479,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">₽88,125.00</p>
+                                    <p class="font-medium">&#8377;88,125.00</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>
@@ -497,7 +497,7 @@
                             </td>
                             <td class="px-6 py-2">
                                 <div>
-                                    <p class="font-medium">¢96,214.03</p>
+                                    <p class="font-medium">&#8377;96,214.03</p>
                                     <span class="text-xs">Account Balance</span>
                                 </div>
                             </td>

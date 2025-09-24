@@ -1,52 +1,10 @@
 @extends('layout.main')
 
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-</style>
-
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-xl font-semibold">DD- {{ $ddaccount->id ?? 'N/A' }}Installments</h1>
+                <h1 class="text-xl font-semibold">DD- {{ $ddaccount->id ?? 'N/A' }} INSTALLMENTS</h1>
 
 
                 <div class="">

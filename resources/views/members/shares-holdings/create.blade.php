@@ -4,7 +4,7 @@
     <div class="main-inner">
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h4>Transfer Shares</h4>
+            <h3>TRANSFER SHARES</h3>
         </div>
         @if (session('success'))
             <div id="success-alert"

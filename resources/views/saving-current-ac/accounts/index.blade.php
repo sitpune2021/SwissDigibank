@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h2 class="h2">Saving / Current Accounts</h2>
+            <h3 class="h3">SAVING / CURRENT ACCOUNTS</h3>
             <a class="btn-primary" href="{{ route('accounts.create') }}">
                 Add
             </a>
@@ -20,14 +20,14 @@
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             @php
                                 $headers = [
-                                    'Associate',
-                                    'Type',
-                                    'Scheme',
-                                    'A/c No.',
-                                    'Joint A/C',
-                                    'Member Name',
-                                    'Balance',
-                                    'Action',
+                                    'ASSOCIATE',
+                                    'TYPE',
+                                    'SCHEME',
+                                    'A/C NO.',
+                                    'JOINT A/C',
+                                    'MEMBER NAME',
+                                    'BALANCE',
+                                    'ACTION',
                                 ];
                             @endphp
                             @foreach ($headers as $index => $header)

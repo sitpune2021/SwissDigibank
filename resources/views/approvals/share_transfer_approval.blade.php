@@ -2,7 +2,7 @@
 @section('content')
 <div class="main-inner">
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h2 class="h2">Approvals - Share Transfers</h2>
+        <h3 class="h2">APPROVALS - SHARE TRANSFERS</h3>
     </div>
 
     <!-- Latest Transactions -->
@@ -18,40 +18,40 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Branch
+                                BRANCH
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Member
+                                MEMBER
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Date of Transfer
+                                DATE OF<br>TRANSFER
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Business<br>Type
+                                BUSINESS<br>TYPE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                No of Shares
+                                NO OF <br> SHARES
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Status
+                                STATUS
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Remarks
+                                REMARKS
                             </div>
                         </th>
-                        <th class="text-center justify-center !py-5" data-sortable="false">Actions</th>
+                        <th class="text-center justify-center !py-5" data-sortable="false">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>

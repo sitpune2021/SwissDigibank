@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h2 class="h2">User</h2>
+        <h3 class="h2">USER</h3>
         <a class="btn-primary" href="{{route('users.create')}}">
             Add
         </a>
@@ -21,18 +21,18 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                User Name
+                                USER NAME
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Email</th>
+                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">EMAIL</th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Contact
+                                CONTACT
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Active
+                                ACTIVE
                             </div>
                         </th>
                         <!-- <th class="text-start !py-5 cursor-pointer">
@@ -40,7 +40,7 @@
                                 Login On Holidays
                             </div>
                         </th> -->
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,8 +66,6 @@
                             N/A
                             @endif
                         </td>
-
-
                         <td class="py-2 px-6">
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [

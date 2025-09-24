@@ -1,31 +1,31 @@
 @extends('layout.main')
 @section('content')
 
-    <head>
-        <style>
-            input[type="radio"] {
-                width: 24px;
-                height: 24px;
-                accent-color: green;
-            }
+<head>
+    <style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
 
-            input[type="checkbox"] {
-                width: 28px;
-                height: 28px;
-                accent-color: green;
-                /* For modern browsers */
-            }
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
 
-            /* Fallback for browsers without accent-color support */
-            input[type="checkbox"]:checked {
-                background-color: green;
-                border: none;
-            }
-        </style>
-    </head>
+        /* Fallback for browsers without accent-color support */
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+    </style>
+</head>
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h3 class="h2">{{ isset($account) ? 'Edit' : 'Add' }} Account</h3>
+        <h3 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h3>
     </div>
 
     @if (session('success'))
@@ -321,7 +321,15 @@
                         <option value="mother" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'mother' ? 'selected' : '' }}>Mother</option>
                         <option value="spouse" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'spouse' ? 'selected' : '' }}>Spouse</option>
                         <option value="child" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'child' ? 'selected' : '' }}>Child</option>
-                        <!-- Add more as needed -->
+                        <option value="son" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'son' ? 'selected' : '' }}>Son</option>
+                        <option value="daughter" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'daughter' ? 'selected' : '' }}>Daughter</option>
+                        <option value="brother" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'brother' ? 'selected' : '' }}>Brother</option>
+                        <option value="sister" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'sister' ? 'selected' : '' }}>Sister</option>
+                        <option value="grandfather" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'grandfather' ? 'selected' : '' }}>Grandfather</option>
+                        <option value="grandmother" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'grandmother' ? 'selected' : '' }}>Grandmother</option>
+                        <option value="uncle" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'uncle' ? 'selected' : '' }}>Uncle</option>
+                        <option value="aunt" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'aunt' ? 'selected' : '' }}>Aunt</option>
+                        <option value="other" {{ old('nominee_relation', $account->nominee_relation ?? '') === 'other' ? 'selected' : '' }}>Other</option>
                     </select>
                     @error('nominee_relation') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
 

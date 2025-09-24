@@ -3,7 +3,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <!-- <div class="flex items-center gap-2"> -->
-        <h2 class="h2">Approvals - Saving/ FD/ MIS/ RD/ DD</h2>
+        <h3 class="h2">APPROVALS - SAVING/ FD/ MIS/ RD/ DD</h3>
     </div>
     <!-- Latest Transactions -->
     <div class="col-span-12 box lg:col-span-6">
@@ -17,37 +17,37 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Branch
+                                BRANCH
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Member
+                                MEMBER
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                A/C Type
+                                A/C TYPE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                A/C No
+                                A/C NO
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Amount <br>Deposit
+                                AMOUNT <br>DEPOSIT
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Pay<br> mode
+                                PAY<br> MODE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Date
+                                DATE
                             </div>
                         </th>
 
@@ -62,10 +62,10 @@
 
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Remarks
+                                REMARKS
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Actions</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>

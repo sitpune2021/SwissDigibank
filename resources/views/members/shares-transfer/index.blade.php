@@ -3,7 +3,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <!-- <h2 class="h2">Manage share-holdings</h2> -->
-        <h1 class="text-xl font-semibold">Share holdings</h1>
+        <h3 class="text-xl font-semibold">SHARE HOLDINGS</h3>
         <a class="btn-primary" href="{{ route('shareholding.transfer.form') }}">
             Add
         </a>
@@ -20,39 +20,39 @@
             <thead>
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Branch</div>
+                        <div class="flex items-center gap-1">BRANCH</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Transferor</div>
+                        <div class="flex items-center gap-1">TRANSFEROR</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Transferee</div>
+                        <div class="flex items-center gap-1">TRANSFEREE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Share<br>Range</div>
+                        <div class="flex items-center gap-1">SHARE<br>RANGE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Total<br>Shares<br>Held</div>
+                        <div class="flex items-center gap-1">TOTAL<br>SHARES<br>HELD</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Nominal<br>Val.</div>
+                        <div class="flex items-center gap-1">NOMINAL<br>VAL.</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Total<br>Share<br>Val.</div>
+                        <div class="flex items-center gap-1">TOTAL<br>SHARE<br>VAL.</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Allotment<br>Date</div>
+                        <div class="flex items-center gap-1">ALLOTMENT<br>DATE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Transfer<br>Date</div>
+                        <div class="flex items-center gap-1">TRANSFER<br>DATE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Cert. No</div>
+                        <div class="flex items-center gap-1">CERT. NO</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Surrendered</div>
+                        <div class="flex items-center gap-1">SURRENDERED</div>
                     </th>
-                    <th class="text-center !py-5" data-sortable="false">Action</th>
+                    <th class="text-center !py-5" data-sortable="false">ACTION</th>
                 </tr>
             </thead>
             <tbody>

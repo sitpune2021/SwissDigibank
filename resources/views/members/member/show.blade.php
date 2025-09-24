@@ -463,15 +463,14 @@ member')
                 </table>
             </div>
             {{-- Member KYC Info --}}
-            <div x-data="{ open: true }" class="mt-4 rounded-md shadow">
-                <!-- Header -->
+            <!-- <div x-data="{ open: true }" class="mt-4 rounded-md shadow">
+
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
                     @click="open = !open">
                     <span class="font-semibold uppercase">Member KYC Info</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
-                <!-- Content -->
                 <div x-show="open" x-transition class="bg-white rounded-md">
                     <table class="w-full text-sm">
                         <tbody>
@@ -527,9 +526,9 @@ member')
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> -->
             {{-- Member Nominee Info --}}
-            <div x-data="{ open: true }" class="mt-4 rounded shadow">
+            <!-- <div x-data="{ open: true }" class="mt-4 rounded shadow">
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
                     @click="open = !open">
                     <span class="font-semibold uppercase">Member Nominee Info</span>
@@ -598,7 +597,7 @@ member')
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> -->
 
             <div x-data="{ open: true }" class="mt-4 rounded shadow">
                 <!-- Header -->

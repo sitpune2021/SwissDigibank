@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('page-title', 'Director')
+@section('page-title', 'DIRECTOR')
 @section('action-button')
 <a class="btn-primary" href="{{ route('director.create') }}">
     Add
@@ -19,17 +19,17 @@
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Designation
+                            DESIGNATION
                         </div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Member
+                            MEMBER
                         </div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Name
+                            NAME
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -39,22 +39,22 @@
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Appointment Date
+                            APPOINTMENT DATE
                         </div>
                     </th>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Resignation Date
+                            RESIGNATION DATE
                         </div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Authorized Signatory
+                            AUTHORIZED<br>SIGNATORY
                         </div>
                     </th>
                     </th>
-                    <th class="text-center !py-5" data-sortable="false">Action</th>
+                    <th class="text-center !py-5" data-sortable="false">ACTION</th>
                 </tr>
             </thead>
             <tbody>

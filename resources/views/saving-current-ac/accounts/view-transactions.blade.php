@@ -24,15 +24,15 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         @php
                         $headers = [
-                        "T.Date",
-                        "Pay Mode",
-                        "Remarks",
-                        "Status",
-                        "Debit",
-                        "Credit",
-                        "Balance",
-                        "Accounted",
-                        "Action"
+                        "T.DATE",
+                        "PAY MODE",
+                        "REMARKS",
+                        "STATUS",
+                        "DEBIT",
+                        "CREDIT",
+                        "BALANCE",
+                        "ACCOUNTED",
+                        "ACTION"
                         ];
                         @endphp
                         @foreach ($headers as $index => $header)

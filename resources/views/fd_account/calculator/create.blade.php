@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'FD/ MIS Calculator')
+@section('page-title', 'FD/ MIS CALCULATOR')
 
 @section('content')
 

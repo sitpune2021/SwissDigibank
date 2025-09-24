@@ -74,11 +74,11 @@
 @section('page-title',
     isset($member)
     ? (!empty($show)
-    ? 'View ' .
+    ? 'VIEW ' .
     $member['member_info_first_name'] .
-    'Members'
-    : 'Edit ' . $member['member_info_first_name'] . ' Members')
-    : 'Add Members')
+    'MEMBERS'
+    : 'EDIT ' . $member['member_info_first_name'] . ' MEMBERS')
+    : 'ADD MEMBERS')
 
 @section('content')
     @include('fields.errormessage')

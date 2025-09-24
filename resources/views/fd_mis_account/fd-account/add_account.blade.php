@@ -26,7 +26,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">New FD Account</h1>
+            <h1 class="text-xl font-semibold">NEW FD ACCOUNT</h1>
         </div>
     </div>
 

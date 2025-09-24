@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'Promoters')
+@section('page-title', 'PROMOTERS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('promotor.create') }}">
     Add
@@ -49,32 +49,32 @@
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Member No
+                            MEMBER NO
                         </div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Name
+                            NAME
                         </div>
                     </th>
-                    <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Gender</th>
+                    <th class="text-start !py-5 min-w-[100px]" data-sortable="false">GENDER</th>
 
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Senior CTZ.
+                            SENIOR CTZ.
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Enrollment Date
+                            ENROLLMENT DATE
                         </div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
                         <div class="flex items-center gap-1">
-                            KYC Status
+                            KYC STATUS
                         </div>
                     </th>
-                    <th class="text-center !py-5" data-sortable="false">Action</th>
+                    <th class="text-center !py-5" data-sortable="false">ACTION</th>
                 </tr>
             </thead>
             <tbody>

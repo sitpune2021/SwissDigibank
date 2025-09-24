@@ -9,6 +9,14 @@
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <title>Swiss Payment - Digital Banking</title>
+
+    <style>
+    html, body {
+  overflow-x: auto;   /* horizontal scroll allowed */
+  overflow-y: hidden; /* vertical scroll disabled */
+}
+</style>
+
 </head>
 
 <body class="vertical bg-secondary/5 dark:bg-bg3">
@@ -26,11 +34,11 @@
             class="absolute bottom-6 ltr:left-0 rtl:right-0 ltr:sm:left-32 rtl:sm:right-32" alt="ellipse" />
         <a href="{{ route('index1') }}">
             <img src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
-                class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" width="300" />
+                class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" width="300" style="top: 10px;"/>
         </a>
         <!-- <div class="flex items-center justify-center mt-7">
             <div class="relative z-[2] max-w-[1416px] mx-auto px-3 pb-10"> -->
-        <div class="relative z-10 flex justify-center items-center min-h-screen">
+        <div class="relative z-10 flex justify-center items-center min-h-screen" style="top: -75px;">
             <div class="w-full max-w-3xl px-4">
                 <div class="box p-3 md:p-4 xl:p-6 grid grid-cols-12 items-center">
                     <form action="{{ route('log.in') }}" method="post" id="loginForm" class="col-span-12 lg:col-span-12">
@@ -60,7 +68,7 @@
                             </label>
                             <div class="mb-4">
                                 <input type="text" name="email"
-                                    class="w-full text-sm bg-n0 dark:bg-bg4 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3"
+                                    class="w-full text-sm bg-n0 dark:bg-bg4 border border-n30 dark:border-n500 md:px-6 py-2 md:py-3"
                                     placeholder="Enter Your Email" id="email" />
                             </div>
                             <label for="password" class="md:text-lg font-medium block mb-2">
@@ -68,12 +76,12 @@
                             </label>
                             <div class="col-span-2 md:col-span-1">
                                 <div id="passwordfield"
-                                    class="bg-n0 dark:bg-bg4 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-2.5 relative">
+                                    class="bg-n0 dark:bg-bg4 border border-n30 dark:border-n500  md:px-6 py-2 md:py-2.5 relative">
                                     <input type="password" name="password" class="w-11/12 text-sm bg-transparent p-0 border-none"
                                         placeholder="Enter Password" id="password2" />
                                     <span
                                         class="absolute eye-icon ltr:right-5 rtl:left-5 top-1/2 -translate-y-1/2 cursor-pointer"
-                                        id="togglePassword">
+                                        id="togglePassword" style="top:21px";>
                                         <i class="las la-eye" style="display: none;"></i>
                                         <i class="las la-eye-slash"></i>
                                     </span>

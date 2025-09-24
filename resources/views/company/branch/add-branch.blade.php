@@ -1,7 +1,7 @@
 @extends('layout.main')
 
-@section('page-title', isset($branch) ? (!empty($show) ? 'View ' . $branch->branch_name . ' Branch' : 'Edit ' .
-    $branch->branch_name . ' Branch') : 'Add Branch')
+@section('page-title', isset($branch) ? (!empty($show) ? 'VIEW ' . $branch->branch_name . ' BRANCH' : 'Edit ' .
+    $branch->branch_name . ' BRANCH') : 'ADD BRANCH')
 
 @section('content')
 

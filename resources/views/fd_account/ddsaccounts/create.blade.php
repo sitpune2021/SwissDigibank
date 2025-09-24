@@ -30,7 +30,7 @@
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-col  gap-2">
                 <h1 class="text-xl font-semibold">
-                    {{ $isEdit ? 'Update DD Account' : 'Open New DD Account' }}
+                    {{ $isEdit ? 'UPDATE DD ACCOUNT' : 'OPEN NEW DD ACCOUNT' }}
                 </h1>
                 <p class="text-gray-500">
                     <a href="{{ route('dds-accounts.index') }}" class="text-gray-500">Daily Deposits</a> >

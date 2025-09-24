@@ -1,5 +1,5 @@
 <div class="flex items-center gap-1">
-    <label for="{{ $id ?? 'selectAllStatus' }}">{{ $label ?? 'Status' }}</label>
+    <label for="{{ $id ?? 'selectAllStatus' }}">{{ $label ?? 'STATUS' }}</label>
     <input type="checkbox" id="{{ $id ?? 'selectAllStatus' }}">
 </div>
 

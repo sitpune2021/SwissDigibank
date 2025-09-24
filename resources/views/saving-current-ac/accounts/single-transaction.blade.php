@@ -7,7 +7,7 @@
 <div class="main-inner">
     <!-- Page Header -->
     <div class="flex items-center justify-between mb-6 lg:mb-8">
-        <h2 class="font-bold text-gray-800 h2">Transaction</h2>
+        <h3 class="font-bold text-gray-800 h2">TRANSACTION</h3>
     </div>
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />

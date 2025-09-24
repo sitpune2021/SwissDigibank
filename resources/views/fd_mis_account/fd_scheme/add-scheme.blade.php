@@ -36,7 +36,7 @@
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
             <h1 class="text-xl font-semibold">
-                {{ isset($fdScheme) ? 'Edit FD Scheme' : 'Add FD Scheme' }}
+                {{ isset($fdScheme) ? 'EDIT FD SCHEME' : 'ADD FD SCHEME' }}
             </h1>
             <!-- <p class="text-gray-500">
                 <a href="#" class="text-gray-500">Fd Scheme</a> >

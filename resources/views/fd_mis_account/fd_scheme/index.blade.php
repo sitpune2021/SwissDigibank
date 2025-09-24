@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'FD Account Schemes')
+@section('page-title', 'FD ACCOUNT SCHEMES')
 @section('action-button')
 <a class="btn-primary" href="{{ route('fd-mis-schemes.create') }}">
     Add
@@ -18,56 +18,56 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Code
+                                CODE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Scheme Name
+                                SCHEME NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Min.<br>Fd Amt
+                                MIN.<br>FD AMT
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Tenure
+                                TENURE
                             </div>
                         </th>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Interest<br>Payout
+                                INTEREST<br>PAYOUT
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Effective<br>Date
+                                EFFECTIVE<br>DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                A. Interest<br>Rate (%)
+                                A. INTEREST<br>RATE (%)
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Is<br>Chart Type
+                                IS<br>CHART<br>TYPE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Sweep In
+                                SWEEP IN
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Active
+                                ACTIVE
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>
