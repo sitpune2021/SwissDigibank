@@ -40,6 +40,30 @@ use App\Http\Controllers\RdAccountController;
 use App\Http\Controllers\RdschemesController;
 use App\Http\Controllers\PassbookController;
 
+// Clear cache 
+Route::get('/cache-clear', function () {
+    $exitCode = Artisan::call('cache:clear');
+    $exitCode = Artisan::call('config:clear');
+    $exitCode = Artisan::call('view:clear');
+    $exitCode = Artisan::call('route:clear');
+    return 'Success! Cache Cleared';
+});
+
+// Storage link 
+Route::get('/storage-link', function () {
+    $exitCode = Artisan::call('storage:link');
+    return 'Success! Storage link created';
+});
+
+// DB Migrate
+Route::get('/run-migrations', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Success! Migrations have been run.';
+    } catch (\Exception $e) {
+        return 'Migration failed: ' . $e->getMessage();
+    }
+});
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -142,8 +166,8 @@ Route::middleware('auth.user')->group(function () {
         Route::post('{memberId}/transactions', [MemberController::class, 'storeTransaction'])->name('members.storeTransaction');
         Route::post('/members/{id}/transactions/share-amount', [MemberController::class, 'storeShareAmount'])
             ->name('members.transactions.share-amount.store');
-            Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
-    ->name('members.transactions.share-amount.create');
+        Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
+            ->name('members.transactions.share-amount.create');
 
         // Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
@@ -227,7 +251,7 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::get('create-rd-account', [RdAccountController::class, 'create'])->name('mds-rd-accounts.create-rd-account');
     Route::get('rd-dd-calculator', [RdAccountController::class, 'rdDdCalculator'])->name('calculator.rd-dd-calculator');
     Route::get('/members/{id}', [RdAccountController::class, 'getMember'])->name('members.get');
-    
+
     Route::post('/rd-accounts', [RdAccountController::class, 'store'])->name('rd-accounts.store');
     Route::get('/rd-accounts/{id}', [RdAccountController::class, 'show'])->name('rd-accounts.show');
 
