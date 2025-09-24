@@ -17,7 +17,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <!-- <h3 class="h2">Add User</h3> -->
-            <h3 class="h2"> {!! isset($show) && $show ? $user->fname : (isset($user) ? 'Edit User' : 'New User') !!}</h3>
+            <h3 class="h2"> {!! isset($show) && $show ? $user->fname : (isset($user) ? 'EDIT USER' : 'NEW USER') !!}</h3>
             <!-- Image + Button -->
             <!-- @if (isset($show))
     <div class="flex items-center gap-4">
@@ -301,7 +301,7 @@
                         <option value="0"
                             {{ old('user_active', $user->user_active ?? '') == '0' ? 'selected' : '' }}> NO </option>
                     </select>
-                    @error('branch')
+                    @error('user_active')
                         <span class="text-red-500 text-xs ml-52 block">{{ $message }}</span>
                     @enderror
                 </div>

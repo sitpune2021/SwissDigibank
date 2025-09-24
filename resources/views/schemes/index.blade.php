@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-        <h4 class="h2">Schemes</h4>
+        <h4 class="h2">SCHEMES</h4>
         <a class="btn-primary" href="{{ route('schemes.create') }}">
             Add
         </a>
@@ -18,15 +18,15 @@
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead class="custom-thead">
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-2 px-3">Code</th>
-                        <th class="text-start !py-2 px-3">Scheme Name</th>
-                        <th class="text-start !py-2 px-3">Min. Amt. To Open A/c</th>
-                        <th class="text-start !py-2 px-3">Min. Balance/Month</th>
-                        <th class="text-start !py-2 px-3">Lock In Amt.</th>
-                        <th class="text-start !py-2 px-3">Interest Rate (%)</th>
-                        <th class="text-start !py-2 px-3">Interest Payout</th>
-                        <th class="text-start !py-2 px-3">Active</th>
-                        <th class="text-center !py-5">Action</th>
+                        <th class="text-start !py-2 px-3">CODE</th>
+                        <th class="text-start !py-2 px-3">SCHEME NAME</th>
+                        <th class="text-start !py-2 px-3">MIN. AMT.<br>TO OPEN A/C</th>
+                        <th class="text-start !py-2 px-3">MIN.<br> BALANCE/<br>MONTH</th>
+                        <th class="text-start !py-2 px-3">LOCK IN AMT.</th>
+                        <th class="text-start !py-2 px-3">INTEREST <br>RATE (%)</th>
+                        <th class="text-start !py-2 px-3">INTEREST <br>PAYOUT</th>
+                        <th class="text-start !py-2 px-3">ACTIVE</th>
+                        <th class="text-center !py-5">ACTION</th>
                 <tbody>
                     @foreach ($schemes as $scheme)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">

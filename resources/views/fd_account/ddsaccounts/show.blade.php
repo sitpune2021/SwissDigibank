@@ -1,28 +1,5 @@
 @extends('layout.main')
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
     .custom-thead {
         background-color: #e6f4ea;
         color: #14532d;
@@ -130,7 +107,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-2xl font-semibold">
-                    DD Account -DDA{{ $ddaccount->id }}
+                    DD ACCOUNT -DDA{{ $ddaccount->id }}
                 </h1>
                 <p class="text-gray-500">
                     <a href="#" class="text-gray-500">DD Account</a> >
@@ -345,7 +322,7 @@
                         <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED passbook</h3>
                         <button class="btn-primary px-3 py-2 rounded-3xl text-white">
                             <i class="las la-plus"></i>
-                            passbok
+                            Passbook
                         </button>
                     </div>
                 </div>
@@ -414,8 +391,8 @@
                                                     class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
                                                 </div>
                                             </div>
-                                            <span id="smsLabel" class="ml-4 text-sm font-medium text-black">OFF</span>
-                                            </labels>
+                                            <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
+                                            </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->
@@ -433,7 +410,7 @@
                                                     class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
                                                 </div>
                                             </div>
-                                            <span id="tdsLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span>
+                                            <!-- <span id="tdsLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span> -->
                                         </label>
                                     </td>
                                 </tr>
@@ -453,7 +430,7 @@
                                                     class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
                                                 </div>
                                             </div>
-                                            <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span>
+                                            <!-- <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span> -->
                                         </label>
                                     </td>
                                 </tr>
@@ -471,7 +448,7 @@
                                                     class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
                                                 </div>
                                             </div>
-                                            <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span>
+                                            <!-- <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span> -->
                                         </label>
                                     </td>
                                 </tr>
@@ -492,7 +469,7 @@
                                     <input type="text" name="" id=""
                                         class="block w-full bg-secondary/5 px-3 rounded-10 border py-3 dark:text-white"
                                         placeholder="Enter Old DD Number">
-                                    <input type="button" value="update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary">
                                 </div>
                             </form>
                             <form action="" class="mt-2 px-3">
@@ -547,7 +524,7 @@
                                         <option>Option 2</option>
                                     </select>
 
-                                    <input type="button" value="update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary">
 
                                 </div>
                             </form>
@@ -563,7 +540,7 @@
                                         <option>Option 2</option>
                                     </select>
 
-                                    <input type="button" value="update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary">
 
                                 </div>
                             </form>
@@ -583,7 +560,7 @@
                                         <option>Option 2</option>
                                     </select>
 
-                                    <input type="button" value="update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block btn-primary">
 
                                 </div>
                             </form>

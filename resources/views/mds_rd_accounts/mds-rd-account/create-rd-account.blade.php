@@ -25,7 +25,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
-            <h1 class="text-xl font-semibold">Open New RD Account</h1>
+            <h1 class="text-xl font-semibold">OPEN NEW RD ACCOUNT</h1>
             <p class="text-gray-500">
                 <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recuuring Deposits</a> >
                 <a href="#" class="text-gray-500"> New</a>

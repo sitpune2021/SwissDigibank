@@ -46,7 +46,7 @@ return [
         ]
     ],
     [
-        'title' => 'ACCOUNT',
+        'title' => 'SAVING/CURRENT',
         'icon' => 'las la-university',
         'position' => '5',
         'active' => '1',
@@ -56,7 +56,7 @@ return [
         ]
     ],
     [
-        'title' => 'FD/ MIS ACCOUNTS',
+        'title' => 'FD/MIS',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',
@@ -68,7 +68,7 @@ return [
         ]
     ],
     [
-        'title' => 'MDS/RD/DDS ACCOUNTS',
+        'title' => 'MDS/RD/DDS',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',

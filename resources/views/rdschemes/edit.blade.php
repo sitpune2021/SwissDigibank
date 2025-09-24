@@ -27,7 +27,7 @@
             <h1 class="text-xl font-semibold">New RD/ DD Scheme</h1>
             <p class="text-gray-500">
                 <a href="{{route('rdschemes.index')}}" class="text-gray-500">RD/ DD Scheme</a> >
-                <a href="" class="text-gray-500"> Edit</a>
+                <a href="" class="text-gray-500"> EDIT</a>
             </p>
 
         </div>

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="card shadow-sm p-4">
-        <h4 class="mb-4">Transaction - {{ $transaction->id }}</h4>
+        <h4 class="mb-4">TRANSACTION - {{ $transaction->id }}</h4>
 
         <div class="d-flex justify-content-end mb-3">
             <a class="btn btn-success btn-xs"

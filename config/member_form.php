@@ -161,7 +161,7 @@ return [
         [
             'label' => 'Husband/ Wife DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'date2',
+            'id' => 'datep2',
             'type' => 'text',
             'required' => false,
         ],

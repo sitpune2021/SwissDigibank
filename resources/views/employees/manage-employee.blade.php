@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h2 class="h2">Employees </h2>
+        <h2 class="h2">EMPLOYEES </h2>
         <a class="btn-primary" href="{{route('employee.create')}}">
             Add
         </a>
@@ -21,31 +21,31 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Employee Code
+                                EMPLOYEE CODE
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">Name</th>
+                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">NAME</th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Designation
+                                DESIGNATION
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Email
+                                EMAIL
                             </div>
                         </th>
                         <th class="text-start !py-5 cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Joining Date
+                                JOINING DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Leaving Date
+                                LEAVING DATE
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,7 +55,7 @@
                     @forelse($employees as $employee)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">
-                            <a href="" class="text-primary underline hover:text-primary/80">
+                            <a href="{{route('employee.show', base64_encode($employee->id))}}" class="text-primary underline hover:text-primary/80">
                                 {{ $employee->id }}
                             </a>
                         </td>
