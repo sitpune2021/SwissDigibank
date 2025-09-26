@@ -16,7 +16,7 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         <a href="{{ route('members.other-charges', ['id' => $member->id]) }}"
-            class="btn-success rounded-md px-2 py-1 text-white text-sm bg-green-500 hover:bg-green-600">
+            class="btn-primary rounded-10 px-2 py-2 mb-4">
             DEBIT OTHER CHARGES
         </a>
 
@@ -26,7 +26,7 @@
                 'chargeId' => $charge->id ?? '',
             ])
             : '#' }}"
-            class="btn-warning rounded-md px-2 py-1 text-white text-sm bg-yellow-500 hover:bg-yellow-600">
+            class="btn-warning rounded-10 px-2 py-2 mb-4">
             CLEAR DUES
         </a>
         {{-- Table --}}
