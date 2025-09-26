@@ -3,7 +3,7 @@
 namespace App\Services;
  
 use App\Models\Account;
-use App\Models\FDAccount;
+use App\Models\FdAccount;
 use App\Models\Promotor;
 use App\Models\Branch;
 use App\Models\Member;
@@ -22,7 +22,7 @@ class DashboardService
             'promotorCount'     => Promotor::count(),
             'savingAccounts'    => Account::where('account_type', 'SAVING')->count(),
             'currentAccounts'   => Account::where('account_type', 'CURRENT')->count(),
-            'fdCount'=> FDAccount::count(),
+            'fdCount'=> FdAccount::count(),
             'misCount'     => Misaccount::count(),
         ];
     }
