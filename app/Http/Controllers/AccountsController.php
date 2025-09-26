@@ -280,7 +280,7 @@ class AccountsController extends Controller
             $combined_balace = AccountsTransactionsHelper::getAccountBalacec([$decryptedId]);
             $combined_balace = $combined_balace['total_balance'] ?? 0;
 
-       
+
             return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -294,4 +294,9 @@ class AccountsController extends Controller
 
 
     public function destroy(string $id) {}
+
+    public function viewPassbook()
+    {
+        return view('saving-current-ac.accounts.passbook');
+    }
 }

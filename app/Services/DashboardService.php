@@ -9,9 +9,7 @@ use App\Models\Branch;
 use App\Models\Member;
 use App\Models\Misaccount;
 use App\Models\Shareholders;
- 
- 
- 
+  
 class DashboardService
 {
     public static function getDashboardData()

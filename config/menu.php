@@ -80,6 +80,29 @@ return [
         ]
     ],
     [
+        'title' => 'MORTGAGE LOAN',
+        'icon' => 'las la-university',
+        'position' => '8',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'mortgage_schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'mortgage_calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'mortgage_application.index'],
+            ['title' => 'DISBURSEMENT', 'route' => 'mortage_disbursements.index'],
+        ],
+    ],
+       [
+        'title' => 'GOLD LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'gold-loan.schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'gold-loan.calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'gold-loan.applications.index'],
+        ],
+    ],
+    [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',
