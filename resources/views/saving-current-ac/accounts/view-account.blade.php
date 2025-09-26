@@ -16,7 +16,7 @@
         </a>
         <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('deposit.create',base64_encode($account->id))}}">Deposit Money</a>
         <a class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700" href="{{route('withdraw.create',base64_encode($account->id))}}">Withdraw Money</a>
-        <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('saving.passbook')}}">Print Documents</a>
+        <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('saving.passbook', base64_encode($account->id))}}">Print Documents</a>
          
         <!-- <button class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700">Withdraw Money</button> -->
         <!-- <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other Charges</button> -->
