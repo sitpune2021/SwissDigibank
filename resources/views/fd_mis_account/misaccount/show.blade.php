@@ -115,11 +115,24 @@
       </button>
 
       <!-- Dropdown menu -->
-      <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+      <!-- <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
         <a href="#" class="block px-4 py-2 uppercase  hover:bg-warning">change Account info</a>
         <a href="#" class="block px-4 py-2 uppercase hover:bg-warning">Add Nominee</a>
 
-      </div>
+      </div> -->
+
+      <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+    <a href="{{ route('misaccount.changeAccountInfo', $misaccount->id) }}" 
+   class="block px-4 py-2 uppercase hover:bg-warning">
+    Change Account Info
+</a>
+   <a href="{{ route('misaccount.addNominee', $misaccount->id) }}" 
+   class="block px-4 py-2 uppercase hover:bg-warning">
+    Add Nominee
+</a>
+</div>
+
+
     </div>
 
     <!--   RELEASE INTEREStT-->

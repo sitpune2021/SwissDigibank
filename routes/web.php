@@ -247,6 +247,23 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     //Transactions Info
     Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
 
+
+    //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
+   // Show change account info form
+Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
+    ->name('misaccount.changeAccountInfo');
+
+// Update account info (form submit)
+Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
+    ->name('misaccount.updateAccountInfo');
+
+// Add Nominee
+Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
+    ->name('misaccount.addNominee');
+
+Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
+    ->name('misaccount.updateNominee');
+
     //edit and update branches
 
     Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
