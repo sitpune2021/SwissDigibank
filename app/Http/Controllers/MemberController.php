@@ -9,14 +9,18 @@ use App\Models\KycAndNominee;
 use App\Models\State;
 use App\Models\Branch;
 use App\Models\Religion;
+use App\Models\Bank;
 use App\Models\KycDocument;
+use App\Models\MemberOtherCharge;
 use App\Models\ShareTransfer;
 use App\Models\Shareholding;
 use Carbon\Carbon;
+use App\Models\Account;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Models\MembershipChargeTransaction;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
@@ -243,14 +247,14 @@ class MemberController extends Controller
             }
 
             MembershipChargeTransaction::create([
-                    'member_id' => $member->id,
+                'member_id' => $member->id,
 
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
-                'membership_fee' => $request->charges_membership_fee ?? 0, 
+                'membership_fee' => $request->charges_membership_fee ?? 0,
                 'net_fee_to_collect' => $request->charges_net_fee,
                 'remarks' => $request->charges_remarks ?? null,
                 'charges_pay_mode' => $request->charges_pay_mode,
-                
+
                 'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
                 'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
                 'cheque_bank_name' => $request->charges_pay_mode === 'cheque' ? $request->cheque_bank_name : null,
@@ -276,11 +280,20 @@ class MemberController extends Controller
                 'religion' => Religion::pluck('name', 'id')
             ];
 
+            // Fetch the member by ID
             $member = Member::with('address', 'kyc', 'minors')->findOrFail($id);
-            // 👇 Add this line to fetch the shareholdings
+
+            // Fetch the first due charge for this member (or adjust the query as needed)
+            $charge = MemberOtherCharge::where('status', 'DUE')
+                ->first(); // Assuming you want to get the first due charge
+
+            $chargeId = $charge ? $charge->id : null;
+
+            // Fetch shareholdings and documents as before
             $shareholdings = ShareTransfer::where('member_id', $member->id)
                 ->where('status', 'approved')
                 ->get();
+
             $documents = KycDocument::where('member_id', $id)->get();
 
             $sections = config('member_form');
@@ -301,14 +314,14 @@ class MemberController extends Controller
                 'minor',
                 'method',
                 'documents',
-                'shareholdings' // ✅ send documents also
+                'shareholdings', // ✅ Send shareholdings too
+                'chargeId', // Pass the chargeId to the view
+                'charge'
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
-
-
     public function documentShow(string $id)
     {
         try {
@@ -408,20 +421,20 @@ class MemberController extends Controller
         }
     }
 
-   public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $kycId = optional(KycAndNominee::where('member_id', $id)->first())->id;
             // Validation Rules
             $request->validate([
                 'membership_type' => 'required|in:nominal,regular',
- 
+
                 // General Info
                 'general_advisor_staff' => 'nullable|string',
                 'general_group' => 'nullable|in:group1,group2',
                 'general_branch' => 'required|string',
                 'general_enrollment_date' => 'nullable',
- 
+
                 // Member Info
                 'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
                 'member_info_gender' => 'required|in:male,female,other',
@@ -442,7 +455,7 @@ class MemberController extends Controller
                 'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
                 'member_info_religion' => 'nullable|string',
                 'member_info_email' => 'nullable|email',
- 
+
                 // Member Address
                 'member_address_line_1' => 'nullable|string',
                 'member_address_line_2' => 'nullable|string',
@@ -456,16 +469,16 @@ class MemberController extends Controller
                 'member_address_pincode' => 'nullable|numeric',
                 'member_address_country' => 'required|regex:/^[A-Za-z\s]+$/',
                 'member_address_address' => 'nullable|string',
- 
+
                 // Permanent Address
                 'member_perm_address_city' => 'nullable|string',
                 'member_perm_address_state' => 'nullable|string',
                 'member_perm_address_pincode' => 'nullable|numeric',
- 
+
                 // GPS Location
                 'member_gps_location_latitude' => 'nullable|string',
                 'member_gps_location_longitude' => 'nullable|numeric',
- 
+
                 // KYC Info
                 'member_kyc_aadhaar_no' => [
                     'required',
@@ -499,7 +512,7 @@ class MemberController extends Controller
                 'member_kyc_dl_no' => 'nullable|string',
                 'member_kyc_passport_no' => 'nullable|string',
                 'member_kyc_pan_number' => 'nullable|file|mimes:jpeg,png,jpg,pdf',
- 
+
                 // Nominee Info
                 'nominee_name' => 'nullable|string|regex:/^[A-Za-z]+$/',
                 'nominee_relation' => 'nullable|string',
@@ -511,10 +524,10 @@ class MemberController extends Controller
                 'nominee_pan_no' => 'nullable|string',
                 'nominee_ration_card_no' => 'nullable|string',
                 'nominee_address' => 'nullable|string',
- 
+
                 // Extra Settings
                 'extra_sms' => 'nullable|boolean',
- 
+
                 // Membership Charges
                 'charges_transaction_date' => 'required|date|before_or_equal:today',
                 'membership_fee' => 'nullable|numeric',
@@ -522,7 +535,7 @@ class MemberController extends Controller
                 'remarks' => 'nullable|string',
                 'charges_pay_mode' => 'required|in:cash,online,cheque',
             ]);
- 
+
             // Date Format Standardization
             $request->merge([
                 'general_enrollment_date' => $request->general_enrollment_date ? Carbon::parse($request->general_enrollment_date)->format('Y-m-d') : null,
@@ -531,16 +544,16 @@ class MemberController extends Controller
                 'nominee_dob' => $request->nominee_dob ? Carbon::parse($request->nominee_dob)->format('Y-m-d') : null,
                 'charges_transaction_date' => $request->charges_transaction_date ? Carbon::parse($request->charges_transaction_date)->format('Y-m-d') : null,
             ]);
- 
+
             $member = Member::findOrFail($id);
             $memberData = $request->only((new Member)->getFillable());
             $addressData = $request->only((new Address)->getFillable());
             $kycData = $request->only((new KycAndNominee)->getFillable());
- 
+
             $member->update($memberData);
             $member->address()->update($addressData);
             $member->kyc()->update($kycData);
- 
+
             return redirect()->route('member.index')->with('success', 'Member updated successfully.');
         } catch (ValidationException $e) {
             // ✅ Log validation errors clearly
@@ -556,7 +569,7 @@ class MemberController extends Controller
                     'member_info_dob'
                 ])
             ]);
- 
+
             return back()->withErrors($e->errors())->withInput();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Member not found during update', ['member_id' => $id]);
@@ -574,7 +587,6 @@ class MemberController extends Controller
     {
         //
     }
-
 
     public function createMinor(Request $request)
     {
@@ -798,11 +810,10 @@ class MemberController extends Controller
         }
     }
 
-
     public function getMembers()
     {
         try {
-            $members = Member::select('id', 'member_info_first_name','member_info_last_name')->get();
+            $members = Member::select('id', 'member_info_first_name', 'member_info_last_name')->get();
             return response()->json($members);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -815,19 +826,128 @@ class MemberController extends Controller
 
         return response()->json($member);
     }
+    
     public function showTransactions($memberId)
     {
-        // $member = Member::findOrFail($memberId);
-        $member = Member::latest()->first(); // Based on created_at
+        $transactions = DB::select("
+    SELECT * FROM (
+        SELECT 
+            id,
+            member_id,
+            transaction_date,
+            membership_fee AS amount,
+            charges_pay_mode AS pay_mode,
+            type,
+            remarks,
+            CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+            is_accounted,
+            'Membership Charge' AS transaction_source
+        FROM membership_charges_transaction
+        WHERE member_id = ?
+
+        UNION ALL
+
+        SELECT 
+            MAX(id) AS id,
+            member_id,
+            transaction_date,
+            SUM(charges) AS amount,
+            pay_mode,
+            'Normal' AS type,
+            CONCAT('| consolidated transaction :: ', GROUP_CONCAT(clear_due_remarks SEPARATOR ', '), ' (', COUNT(*), ' due)') AS remarks,
+            CASE 
+                WHEN SUM(CASE WHEN status = 'DUE' THEN 1 ELSE 0 END) = COUNT(*) 
+                THEN 'Approved' 
+                ELSE 'Pending' 
+            END AS status,
+            NULL AS is_accounted,
+            'Other Charge' AS transaction_source
+        FROM member_other_charges
+        WHERE member_id = ?
+        GROUP BY member_id, transaction_date, pay_mode
+    ) AS combined_transactions
+    ORDER BY transaction_date DESC
+", [$memberId, $memberId]);
 
 
-        // Fetch transactions in descending order by date
-        $transactions = MembershipChargeTransaction::where('member_id', $member->id)
-            ->orderBy('transaction_date', 'desc')
-            ->paginate(10);
+        return view('members.member.transactions', [
+            'memberId' => $memberId,
+            'transactions' => $transactions,
+        ]);
+    }
 
+    public function showTransactionDetails($id)
+    {
+        $query = "
+        SELECT 
+            id,
+            member_id,
+            transaction_date,
+            membership_fee AS amount,
+            charges_pay_mode AS pay_mode,
+            type,
+            remarks,
+            CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+            is_accounted,
+            'Membership Charge' AS transaction_source,
+            created_at,
+            updated_at
+        FROM 
+            membership_charges_transaction
+        WHERE 
+            id = ?
 
-        return view('members.member.transactions', compact('member', 'transactions'));
+        UNION ALL
+
+        SELECT
+            id,
+            member_id,
+            transaction_date,
+            charges AS amount,
+            pay_mode,
+            'Normal' AS type,
+            CONCAT('| consolidated transaction ::', clear_due_remarks) AS remarks,
+            CASE WHEN status = 'PAID' THEN 'Approved' ELSE 'Pending' END AS status,
+            NULL AS is_accounted,
+            'Other Charge' AS transaction_source,
+            created_at,
+            updated_at
+        FROM
+            member_other_charges
+        WHERE
+            id = ?
+        LIMIT 1
+    ";
+
+        $transaction = DB::selectOne($query, [$id, $id]);
+
+        if (!$transaction) {
+            abort(404, 'Transaction not found.');
+        }
+
+        // Fetch related data
+        $member = Member::find($transaction->member_id);
+        $branch = Branch::latest()->first();
+        $Accounts = Account::latest()->first();
+        return view('members.member.transactionshow', compact('member', 'transaction', 'branch', 'Accounts'));
+    }
+
+    public function softDeleteTransaction($transactionId)
+    {
+        $transaction = MembershipChargeTransaction::findOrFail($transactionId);
+        $memberId = $transaction->member_id;
+        $transaction->delete();
+        return redirect()->route('members.transactions', $memberId);
+    }
+
+    public function printTransaction($id)
+    {
+        $member = Member::latest()->first();
+        $branch = Branch::latest()->first();
+        $Accounts = Account::latest()->first();
+        $transaction = MembershipChargeTransaction::findOrFail($id);
+
+        return view('members.member.transaction-print', compact('member', 'transaction', 'branch', 'Accounts'));
     }
 
     public function storeTransaction(Request $request, $memberId)
@@ -858,14 +978,18 @@ class MemberController extends Controller
     public function createShareAmount($id)
     {
         $member = Member::findOrFail($id);
+        $banks = Bank::all();
+        $selectedBankId = 'bank_name';
+        $savingAccounts = Account::where('member_id', $id)->get();
 
-        return view('members.member.shareAmount', compact('member'));
+        return view('members.member.shareAmount', compact('member', 'banks', 'selectedBankId', 'savingAccounts'));
     }
 
     public function storeShareAmount(Request $request, $id)
     {
         $member = Member::findOrFail($id);
 
+        // Validate the incoming request data
         $validated = $request->validate([
             'transaction_date'     => 'required|date',
             'membership_fee'       => 'required|numeric|min:0',
@@ -874,39 +998,51 @@ class MemberController extends Controller
             'approve_status'       => 'nullable|boolean',
             'is_accounted'         => 'nullable|boolean',
 
-            // Optional fields
-            'online_utr_no'        => 'nullable|regex:/^[a-zA-Z0-9\-]+$/',
+            'online_utr_no'        => 'nullable|regex:/^[a-zA-Z0-9\-]{6,30}$/',
             'transfer_date'        => 'nullable|date',
             'transfer_mode'        => 'nullable|in:IMPS,VPA,NEFT/RTGS',
             'bank_id'              => 'nullable|integer|exists:banks,id',
-            'cheque_no'            => 'nullable|regex:/^\d{6,}$/',
+            'cheque_no'            => 'nullable|regex:/^\d{6}$/',
             'cheque_date'          => 'nullable|date',
-            'saving_account_id'    => 'nullable|integer|exists:saving_accounts,id',
+            'saving_account_id'    => 'nullable|integer',
         ]);
 
+
+        $paymentMode = $validated['charges_pay_mode'];
+        $type = 'Share amount';
+        $remarks = 'N/A';
+        if ($paymentMode === 'saving') {
+            // $paymentMode = 'system';  // Change payment mode to 'system'
+
+            $type = 'Saving to share amount';
+
+            if (!empty($validated['saving_account_id'])) {
+                $remarks = 'Credited from saving a/c - ' . $validated['saving_account_id'];
+            } else {
+                $remarks = 'Saving account ID missing'; // Handle case where saving_account_id is not provided
+            }
+        }
+
         $data = [
-            'transfer_date'     => $validated['transaction_date'],
+            'transaction_date'     => \Carbon\Carbon::parse($validated['transaction_date'])->format('Y-m-d'),
             'membership_fee'       => $validated['membership_fee'],
             'net_fee_to_collect'   => $validated['membership_fee'],
-            'remarks'              => $validated['remarks'] ?? null,
-            'charges_pay_mode'     => $validated['charges_pay_mode'],
-            'type'                 => 'Share amount', // ✅ Hardcoded
+            'remarks'              => $remarks,
+            'charges_pay_mode'     => $paymentMode,
+            'type'                 => $type,
             'approve_status'       => $validated['approve_status'] ?? 0,
             'is_accounted'         => $validated['is_accounted'] ?? 0,
             'member_id'            => $member->id,
         ];
-        $transferDate = \Carbon\Carbon::parse($request->transfer_date)->format('Y-m-d');
 
-        // Add optional fields
         if ($validated['charges_pay_mode'] === 'online') {
-            $data['transfer_date'] = $validated['transfer_date'] ?? null;
             $data['online_utr_no'] = $validated['online_utr_no'] ?? null;
             $data['transfer_mode'] = $validated['transfer_mode'] ?? null;
         }
 
         if ($validated['charges_pay_mode'] === 'cheque') {
             $data['cheque_no'] = $validated['cheque_no'] ?? null;
-            $data['cheque_date'] = $validated['cheque_date'] ?? null;
+            $data['cheque_date'] = $validated['cheque_date'] ? \Carbon\Carbon::createFromFormat('d-m-Y', $validated['cheque_date'])->format('Y-m-d') : null;
             $data['bank_id'] = $validated['bank_id'] ?? null;
         }
 
@@ -924,8 +1060,196 @@ class MemberController extends Controller
             'transaction_id'   => $transaction->id,
         ]);
 
-        return redirect()
-            ->route('members.transactions', $id)
-            ->with('success', 'Transaction added successfully!');
+        return redirect()->route('members.transactions', $id);
+    }
+
+    public function otherChargesList($id)
+    {
+        try {
+            $member = Member::findOrFail($id);
+
+            $charge = MemberOtherCharge::where('status', 'DUE')
+                ->where('member_id', $id)
+                ->first();
+
+            $chargeId = $charge ? $charge->id : null;
+
+            $otherCharge = MemberOtherCharge::where('member_id', $id)->get();
+
+            return view('members.member.otherChargesList', compact('member', 'otherCharge', 'charge', 'chargeId'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Member not found with ID: ' . $id, [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            abort(404);
+        } catch (\Exception $e) {
+            Log::error('Error while fetching other charges for member ID: ' . $id, [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'An unexpected error occurred. Please try again later.');
+        }
+    }
+
+    public function otherCharges($id)
+    {
+        $member = Member::findOrFail($id);
+        $method = 'PUT';
+
+        return view('members.member.otherCharges', compact('member', 'method'));
+    }
+    public function storeOtherCharges(Request $request, $id)
+    {
+        Log::info('storeOtherCharges called for member_id: ' . $id);
+
+        $validated = $request->validate([
+            'charge_type' => 'required|string|max:255',
+            'transaction_date' => 'required|date_format:d-m-Y',
+            'charges' => 'required|numeric|min:0',
+            'remarks' => 'nullable|string',
+        ]);
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
+        Log::info('Validation passed', $validated);
+
+        $charge = MemberOtherCharge::create([
+            'member_id' => $id,
+            'charge_type' => $validated['charge_type'],
+            'transaction_date' => $transactionDate,
+            'charges' => $validated['charges'],
+            'remarks' => $validated['remarks'] ?? null,
+            'state'             => 'DUE',
+        ]);
+        Log::info('Charge saved successfully', ['id' => $charge->id]);
+
+        return redirect()->route('members.other-charges.list', ['id' => $id])->with('success', 'Other charge added successfully.');
+    }
+    public function softDeleteothercharges($id)
+    {
+        $charge = MemberOtherCharge::findOrFail($id);
+
+        if ($charge->state !== 'DUE') {
+            return redirect()->back()->with('error', 'Only DUE charges can be deleted.');
+        }
+
+        $charge->delete();
+
+        return redirect()->back()->with('success', 'Charge deleted successfully.');
+    }
+
+    public function showClearDueForm($id, $chargeId)
+    {
+        // Find member and charge
+        $member = Member::findOrFail($id);
+        $charge = MemberOtherCharge::findOrFail($chargeId);
+        $dueCharges = MemberOtherCharge::where('member_id', $id)
+            ->where('status', 'DUE')
+            ->get();
+
+        // Calculate the total amount for each due charge: Amount + GST
+        foreach ($dueCharges as $charge) {
+            $charge->total_amount = $charge->charges * (1 + $charge->gst_rate / 100);
+        }
+
+        // Sum the total charges due (the 'charges' field)
+        $totalChargesDue = $dueCharges->sum('charges');
+
+        // Calculate the total amount (including GST)
+        $totalAmount = $dueCharges->sum(function ($charge) {
+            return $charge->charges * (1 + $charge->gst_rate / 100);
+        });
+
+        // Handle rounding off and waived amount from the form (use request() to get form input)
+        $roundingOff = (float) request('rounding_off', 0);
+        $waivedAmount = (float) request('waived_amount', 0);
+
+        // Calculate the net amount: Total Amount + Rounding Off - Waived Amount
+        $netAmount = $totalAmount + $roundingOff - $waivedAmount;
+
+        // Return the view with the necessary data
+        return view('members.member.clearDue', [
+            'memberId' => $member->id,
+            'member' => $member,
+            'charge' => $charge,
+            'chargeId' => $charge->id,
+            'dueCharges' => $dueCharges,
+            'totalChargesDue' => $totalChargesDue,
+            'totalAmount' => $totalAmount,
+            'netAmount' => $netAmount,
+        ]);
+    }
+    public function storeChargesDue(Request $request, $id)
+    {
+        try {
+            Log::info("storeChargesDue: Starting DUE clearing for member ID: $id");
+
+            $validated = $request->validate([
+                'transaction_date' => 'required|date_format:d-m-Y',
+                'transfer_date' => 'required|date_format:d-m-Y',
+                'pay_mode' => 'required|in:cash,online,cheque',
+                'rounding_off' => 'nullable|numeric',
+                'waived_amount' => 'required|numeric|min:0',
+                'net_amount' => 'required|numeric|min:0',
+            ]);
+
+            // Format the dates
+            $transactionDate = Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
+            $transferDate = Carbon::createFromFormat('d-m-Y', $validated['transfer_date'])->format('Y-m-d');
+
+            // Fetch all DUE charges for the member
+            $dueCharges = MemberOtherCharge::where('member_id', $id)
+                ->where('status', 'DUE')
+                ->orderBy('transaction_date')
+                ->get();
+
+            if ($dueCharges->isEmpty()) {
+                Log::warning("storeChargesDue: No due charges found for member $id");
+                return redirect()->back()->with('error', 'No due charges found to clear.');
+            }
+
+            $totalChargesDue = $dueCharges->sum('charges');
+            $totalAmount = 0;
+
+            // Calculate total amount including GST for all due charges
+            foreach ($dueCharges as $charge) {
+                $amount = $charge->charges;
+                $gstRate = 18.0;
+                $totalAmount += $amount * (1 + $gstRate / 100);
+            }
+
+            $waivedAmount = $validated['waived_amount'] ?? 0.0;
+            $roundingOff = $validated['rounding_off'] ?? 0.0;
+            $netAmount = round($totalAmount + $roundingOff - $waivedAmount, 2);
+
+            // Update each due charge
+            foreach ($dueCharges as $dueCharge) {
+                $dueCharge->update([
+                    'charges_due' => $totalChargesDue,
+                    'waived_amount' => $waivedAmount,
+                    'total_amount' => $totalAmount,
+                    'rounding_off' => $roundingOff,
+                    'net_amount' => $netAmount,
+                    'clear_due_remarks' => $validated['clear_due_remarks'] ?? 'Locker Charges',
+                    'transaction_date' => $transactionDate,
+                    'pay_mode' => $validated['pay_mode'],
+                    'status' => 'PAID',
+                ]);
+
+                Log::info("storeChargesDue: Cleared due charge", ['charge_id' => $dueCharge->id]);
+            }
+
+            Log::info("storeChargesDue: All dues cleared for member ID: $id");
+
+            return redirect()->route('members.transactions', ['id' => $id])
+                ->with('success', 'All due charges cleared successfully!');
+        } catch (\Exception $e) {
+            Log::error("storeChargesDue: Exception occurred", [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while clearing dues.');
+        }
     }
 }

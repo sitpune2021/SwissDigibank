@@ -1,4 +1,4 @@
-<div class="col-span-2 md:col-span-1  @if($bgColor) bg-secondary/5 @endif p-4 rounded-lg shadow">
+<div class="col-span-2 md:col-span-1  @if($bgColor) bg-secondary/5 @endif p-1 rounded-lg shadow">
 
     <!-- Section Title -->
     <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 @if($hiddenheading) hidden @endif   ">
@@ -9,23 +9,23 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center @if($amountClass) hidden @endif ">
         <label class="text-sm font-medium text-gray-700 ">
-            {{$label ?? 'Amount'}} <span class="text-red-500">*</span>
+            Amount <span class="text-red-500">*</span>
         </label>
         <div class="md:col-span-2">
-            <input type="number" id="{{ $id}}" name="{{$name ?? 'amount'}}" placeholder="Enter Amount"
-                class="w-full border rounded-10 px-3 py-3 text-sm bg-white/5"
+            <input type="number" id="{{ $id}}" name="amount" placeholder="Enter Amount"
+                class="w-full border rounded-10 px-3 py-3 text-sm bg-white/5" 
                 value="{{ old('amount', $amount) }}"
-                @if($readonly ?? false) readonly @endif>
-            <x-number-to-word for="{{ $id}}" />
-
+                  @if($readonly ?? false) readonly @endif >
+                <x-number-to-word for="{{ $id}}"/>
+                 
         </div>
     </div>
-
+  
 
     <!-- Pay Mode -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-start mt-3">
-        <label class="text-sm font-medium text-gray-700 ">
-            Pay Mode
+        <label class="text-sm font-medium text-gray-700 @if($hiddensubhead) hidden @endif ">
+            Pay Mode 
             <span class="text-red-500">*</span>
         </label>
         <div class="md:col-span-2 flex flex-wrap gap-4">
@@ -42,10 +42,10 @@
                 <span class="text-sm text-gray-700">Online Tr.</span>
             </label>
             @if($showSaving)
-            <label class="flex items-center gap-2">
-                <input type="radio" name="pay_mode" value="saving" class="text-green-500 focus:ring-green-500">
-                <span class="text-sm text-gray-700">Saving Ac.</span>
-            </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="pay_mode" value="saving" class="text-green-500 focus:ring-green-500">
+                    <span class="text-sm text-gray-700">Saving Ac.</span>
+                </label>
             @endif
         </div>
     </div>
@@ -62,16 +62,16 @@
                 <option value="">Select Bank</option>
                 @foreach($banks as $bank)
                     <option value="{{ $bank->id }}">{{ $bank->name }}</option>
-            @endforeach
+                @endforeach
             </select> --}}
             <x-searchable-dropdown
-                :items="$banks"
-                label="Select Bank"
-                name="bank_name"
-                display-field="name"
-                value-field="id"
-                event="Bank-selected"
-                :selected="null" />
+                                    :items="$banks"
+                                    label="Select Bank"
+                                    name="bank_id"
+                                    display-field="name"
+                                    value-field="id"
+                                    event="Bank-selected"
+                                    :selected="null" />
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Cheque No. <span class="text-red-500">*</span></label>
@@ -99,7 +99,6 @@
         </div>
         @error('transfer_date') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
-        
         <div>
             <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span class="text-red-500">*</span></label>
             <input type="text" name="utr_no" placeholder="Enter Transaction No."
@@ -147,8 +146,8 @@
         <select id="savingAccountSelect" name="saving_account_id"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-white mt-3">
             <option value="">Select Account</option>
-            @foreach($banks as $bank)
-            <option value="{{ $bank->id }}">{{ $bank->name }}</option>
+             @foreach($banks as $bank)
+                <option value="{{ $bank->id }}">{{ $bank->name }}</option>
             @endforeach
         </select>
         <div id="accountBalanceDiv" class="mt-3 hidden">
@@ -178,7 +177,7 @@
         });
     });
 
-    document.getElementById('savingAccountSelect').addEventListener('change', function() {
+    document.getElementById('savingAccountSelect').addEventListener('change', function () {
         let selectedOption = this.options[this.selectedIndex];
         let balance = selectedOption.getAttribute('data-balance');
         let balanceDiv = document.getElementById('accountBalanceDiv');

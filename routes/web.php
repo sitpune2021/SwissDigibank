@@ -164,15 +164,30 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/minor/create', [MemberController::class, 'createMinor'])->name('member.minor.creates');
         Route::get('/ajax/members/search', [MemberController::class, 'search'])->name('ajax.members.search');
         Route::get('/members/member/{id}/shareholding', [MemberController::class, 'shareholding'])->name('member.shareholding');
-        Route::get('{memberId}/transactions', [MemberController::class, 'showTransactions'])->name('members.transactions');
+        Route::get('{id}/transactions', [MemberController::class, 'showTransactions'])->name('members.transactions');
         Route::post('{memberId}/transactions', [MemberController::class, 'storeTransaction'])->name('members.storeTransaction');
         Route::post('/members/{id}/transactions/share-amount', [MemberController::class, 'storeShareAmount'])
             ->name('members.transactions.share-amount.store');
         Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
             ->name('members.transactions.share-amount.create');
+        Route::get('/members/transactions/{id}', [MemberController::class, 'showTransactionDetails'])->name('transactions.show');
+        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])->name('transactions.softDelete');
+        Route::get('/members/transactions/{id}/print', [MemberController::class, 'printTransaction'])->name('transactions.print');
+        Route::get('/members/{id}/transactions/other-charges/list', [MemberController::class, 'otherChargesList'])->name('members.other-charges.list');
+        Route::delete('/member-other-charges/{id}/delete', [MemberController::class, 'softDeleteothercharges'])->name('transactions.softDelete');
+        // Route to show the form for clearing dues (GET request)
+        Route::get('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'showClearDueForm'])
+            ->name('members.other-charges.clearDue.form');
+        // Route to handle clearing dues (POST request)
+        Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
+            ->name('members.other-charges.clearDue.handle');
 
-        // Route::get('/member/{id}/share-holdings', [MemberController::class, 'getShareHoldings']);
+
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
+        Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
+            ->name('members.other-charges');
+        Route::post('/members/{id}/transactions/other-charges', [MemberController::class, 'storeOtherCharges'])->name('members.other-charges.store');
+
         Route::get('/shareholding/view/{id}', [ShareholdingController::class, 'viewShareholding'])->name('viewShareholding');
         Route::get('/shareholding/{id}', [MemberController::class, 'shareholding'])->name('shareholding');
 

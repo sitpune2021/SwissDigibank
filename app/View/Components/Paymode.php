@@ -17,7 +17,8 @@ class Paymode extends Component
 
     public $bgColor;
     public $hiddenheading;
-    public function __construct($amount = null, $banks = [], $showSaving = false, $id = null, $readonly = false ,$amountClass=true ,$bgColor=true ,$hiddenheading = true)
+    public $hiddensubhead; 
+    public function __construct($amount = null, $banks = [], $showSaving = false, $id = null, $readonly = false ,$amountClass=true ,$bgColor=true ,$hiddenheading = true ,$hiddensubhead  = true)
     {
         $this->amount = $amount;
         $this->banks = $banks;
@@ -27,6 +28,7 @@ class Paymode extends Component
         $this->amountClass =$amountClass;
         $this->bgColor=$bgColor;
         $this->hiddenheading =$hiddenheading;
+        $this->hiddensubhead =$hiddensubhead;
     }
 
     /**
