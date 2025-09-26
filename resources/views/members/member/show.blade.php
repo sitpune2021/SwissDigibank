@@ -517,7 +517,7 @@
                         {{-- Toggle button for showing/hiding sections --}}
                         <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                     </div>
-
+                </div>
                     <!-- Content -->
                     <div x-show="open" x-transition class="bg-white rounded-md">
                         <table class="w-full text-sm">
@@ -575,6 +575,7 @@
                         </table>
                     </div>
                 </div>
+            
                 {{-- Member Nominee Info --}}
                 <div x-data="{ open: true }" class="mt-4 rounded shadow">
                     <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
@@ -894,8 +895,11 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            
         </div>
+
+
+
         <!-- Right Panel -->
         <div class="col-span-12 lg:col-span-6" x-data="{
             showMobile: true,

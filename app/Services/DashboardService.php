@@ -1,7 +1,7 @@
 <?php
  
 namespace App\Services;
- 
+
 use App\Models\Account;
 use App\Models\FdAccount;
 use App\Models\Promotor;
