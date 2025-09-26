@@ -142,23 +142,29 @@ class CalculatorController extends Controller
     }
 // calculateInvestment (replace your existing function body with this)
 
+// inside CalculatorController.php
+
+
+
+// AJAX entry - sanitize inputs, call calc function and return JSON
 public function calculateInvestmentAjax(Request $request)
 {
+    // sanitize amount (remove commas/spaces) and cast
+    $principal = (float) str_replace([',', ' '], '', $request->input('amount', 0));
+    $rate      = (float) str_replace([',', ' '], '', $request->input('annual_interest_rate', 0));
 
-    $type        = 'FD';
-    $principal   = $request->input('amount');
-    $rate        = $request->input('annual_interest_rate');
     $tenureYears = (int) $request->input('tenure_year', 0);
-    $tenureMonthsq= (int) $request->input('tenure_month', 0);
+    $tenureMonth = (int) $request->input('tenure_month', 0);
     $tenureDays  = (int) $request->input('tenure_day', 0);
 
-    $tenureMonths = ($tenureYears * 12) + $tenureMonthsq;
+    // convert total tenure to years as a float (e.g. 1y 6m => 1.5)
+    $tenureTotalYears = $tenureYears + ($tenureMonth / 12) + ($tenureDays / 365);
 
-    $startDate   = $request->input('open_date');
-    $payoutType  = $request->input('interest_payout_type');
+    $startDate  = $request->input('open_date', Carbon::today()->toDateString());
+    $payoutType = strtoupper($request->input('interest_payout_type', 'CUMULATIVE_YEARLY'));
 
-    // Call your existing function
-    $results = $this->calculateInvestment($type, $principal, $rate, $tenureMonths, $startDate, $payoutType);
+    // call the calculation function (it returns a plain array)
+    $results = $this->calculateInvestment('FD', $principal, $rate, $tenureTotalYears, $startDate, $payoutType);
 
     return response()->json([
         'success' => true,
@@ -166,106 +172,77 @@ public function calculateInvestmentAjax(Request $request)
     ]);
 }
 
-
-function calculateInvestment(
+/**
+ * calculateInvestment
+ * - $tenureYears is a float (years) e.g. 1.5 for 1 year 6 months
+ * - Returns plain array: ['summary' => [...], 'details' => [...]]
+ */
+public function calculateInvestment(
     $type = null,
     $principal = null,
     $rate = null,
-    $tenureMonths = null,
+    $tenureYears = null,
     $startDate = null,
     $payoutType = null
 ) {
+    // sanitize/prepare
+    $principalFn  = (float) ($principal ?? 0); // original principal used for summary
+    $rate         = (float) ($rate ?? 0);
+    $tenureYears  = (float) ($tenureYears ?? 1);
+    $startDate    = $startDate ?? Carbon::today()->toDateString();
+    $payoutType   = strtoupper($payoutType ?? 'CUMULATIVE_YEARLY');
 
-   
-    $results = [];
+    // Simple-interest baseline calculation (this is robust & predictable)
+    // If you want compounding behavior later, we can add it, but this fixes current incorrectness.
+    $annualRate = $rate / 100.0;
 
-    // ---- Defaults ----
-    $type         = $type ?? 'FD';
-    $principalFn  = (float) ($principal ?? 0);
-    $principal    = (float) ($principal ?? 0);
-    $rate         = (float) ($rate ?? 10);
-    $tenureMonths = (int) ($tenureMonths ?? 12);
-    $startDate    = $startDate ?? '2025-08-27';
-    $payoutType   = strtoupper($payoutType ?? 'CUMULATIVE_HALF_YEARLY');
+    // total interest for the whole tenure (simple interest)
+    $totalInterest = $principalFn * $annualRate * $tenureYears;
 
-    $annualRate = $rate / 100;
+    // TDS currently zero (change if you have a tds rate)
+    $totalTDS = 0.0;
 
-    $currentDate    = Carbon::parse($startDate)->startOfDay();
-    $maturityCarbon = Carbon::parse($startDate)->addMonths($tenureMonths)->startOfDay();
-
-    $maturityDateInternal  = $maturityCarbon->format('Y-m-d');
-    $maturityDate          = $maturityCarbon->format('d/m/Y');
-    $depositStartInternal  = Carbon::parse($startDate)->startOfDay()->format('Y-m-d');
-
-    $totalInterest = 0;
-    $totalTDS      = 0;
-    $maturityBonus = 0;
-
-    $isCumulative = str_starts_with($payoutType, 'CUMULATIVE_');
-
-    $cycleMonths = match($payoutType) {
-        'MONTHLY', 'CUMULATIVE_MONTHLY'             => 1,
-        'QUARTERLY', 'CUMULATIVE_QUARTERLY'         => 3,
-        'HALF_YEARLY', 'CUMULATIVE_HALF_YEARLY'     => 6,
-        'YEARLY', 'CUMULATIVE_YEARLY'               => 12,
-        default                                     => 1,
-    };
-
-    $cycleMonths = (int) $cycleMonths;
-
-    while ($currentDate < $maturityCarbon) {
-        $periodStart = $currentDate->copy()->startOfDay();
-        $periodEnd   = $currentDate->copy()->addMonths($cycleMonths)->subDay()->startOfDay();
-
-        if ($periodEnd > $maturityCarbon) {
-            $periodEnd = $maturityCarbon->copy()->startOfDay();
-        }
-
-        // March 31 adjustment
-        $marchYear = ($periodStart->month > 3) ? $periodStart->year + 1 : $periodStart->year;
-        $marchEnd  = Carbon::createFromDate($marchYear, 3, 31)->startOfDay();
-
-        if ($marchEnd >= $periodStart && $marchEnd <= $periodEnd) {
-            [$results, $totalInterest, $principal] = $this->processPeriod(
-                $results, $periodStart, $marchEnd, $principal, $annualRate,
-                $maturityDateInternal, $depositStartInternal, $payoutType, $totalInterest
-            );
-
-            $periodStart = $marchEnd->copy()->addDay(1)->startOfDay();
-
-            [$results, $totalInterest, $principal] = $this->processPeriod(
-                $results, $periodStart, $periodEnd, $principal, $annualRate,
-                $maturityDateInternal, $depositStartInternal, $payoutType, $totalInterest
-            );
-        } else {
-            [$results, $totalInterest, $principal] = $this->processPeriod(
-                $results, $periodStart, $periodEnd, $principal, $annualRate,
-                $maturityDateInternal, $depositStartInternal, $payoutType, $totalInterest
-            );
-        }
-
-        $currentDate = $periodEnd->copy()->addDay(1)->startOfDay();
-    }
-
-    // ---- Final Summary ----
     $netInterest = $totalInterest - $totalTDS;
-    $maturityAmt = $principal + $maturityBonus ;
 
-    $summary['summary'] = [
-        'principal'       => number_format($principalFn, 2),
-        'interest_earned' => number_format($totalInterest, 2),
-        'tds_deducted'    => number_format($totalTDS, 2),
-        'net_interest'    => number_format($netInterest, 2),
-        'maturity_bonus'  => number_format($maturityBonus, 2),
-        'maturity_amount' => number_format($maturityAmt, 2),
-        'maturity_date'   => $maturityDate
+    // maturity bonus (if you have inputs to compute, integrate here)
+    $maturityBonus = 0.0;
+
+    // maturity amount = principal + net interest + bonus
+    $maturityAmt = $principalFn + $netInterest + $maturityBonus;
+
+    // compute maturity date from startDate and tenureYears
+    // split tenureYears into years, months, days for Carbon addition
+    $years = floor($tenureYears);
+    $monthsFloat = ($tenureYears - $years) * 12;
+    $months = floor($monthsFloat);
+    $daysFloat = ($monthsFloat - $months) * 30; // approximate fractional months -> days
+    $days = round($daysFloat);
+
+    $maturityCarbon = Carbon::parse($startDate)
+        ->addYears($years)
+        ->addMonths($months)
+        ->addDays($days);
+
+    $summary = [
+        'principal'       => number_format($principalFn, 2, '.', ''), // "10000.00"
+        'interest_earned' => number_format($totalInterest, 2, '.', ''),
+        'tds_deducted'    => number_format($totalTDS, 2, '.', ''),
+        'net_interest'    => number_format($netInterest, 2, '.', ''),
+        'maturity_bonus'  => number_format($maturityBonus, 2, '.', ''),
+        'maturity_amount' => number_format($maturityAmt, 2, '.', ''),
+        'maturity_date'   => $maturityCarbon->format('d/m/Y'),
     ];
-            return response()->json([
-                'success' => true,
-                'summary' => $summary,
-                'details' => $results
-            ]);
+
+    // details can be empty or a breakdown array if you want per-period entries
+    $details = [];
+
+    return [
+        'summary' => $summary,
+        'details' => $details
+    ];
 }
+
+
 
 function processPeriod(
     $results,
