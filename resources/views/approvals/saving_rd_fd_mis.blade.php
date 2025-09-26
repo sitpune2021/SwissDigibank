@@ -69,19 +69,25 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     @foreach ($pending_transactions as $pending_transaction)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">{{ $pending_transaction->branch->branch_name ?? '' }}</td>
-                        <td class="py-5 px-6">
-                            <a href="{{ $pending_transaction->members ? route('member.show', $pending_transaction->members->id) : '#' }}"
-                                class="text-primary underline hover:text-primary/80">
-                                {{ optional($pending_transaction->members)->member_info_first_name . ' ' . optional($pending_transaction->members)->member_info_last_name ?? '' }}
-                            </a>
-                        </td>
+
+                        <td class="py-5 px-6">{{ $pending_transaction->members->member_info_first_name." ".$pending_transaction->members->member_info_last_name  ?? '' }}</td>
                         <td class="py-5 px-6">{{ $pending_transaction->account_type  ?? '' }}</td>
                         <td class="py-5 px-6">
-                            <a href="{{ $pending_transaction->id ? route('accounts.show', base64_encode($pending_transaction->id)) : '#' }}"
-                                class="text-primary underline hover:text-primary/80">
+                            @php
+                         
+                            $url = '#';
+                            if ($pending_transaction->account_type === 'FD') {
+                            $url = route('fd-mis-schemes.fd_show',$pending_transaction->id);
+                            } elseif ($pending_transaction->account_type === 'Saving') {
+                            $url = route('accounts.show', base64_encode($pending_transaction->account_id));
+                            }
+                            @endphp
+
+                            <a href="{{ $url }}" class="text-primary underline hover:text-primary/80">
                                 {{ $pending_transaction->account_no ?? 'N/A' }}
                             </a>
                         </td>
@@ -93,16 +99,17 @@
                         <form method="POST" action="{{ route('transactions.updateAccountStatus', $pending_transaction->id) }}">
                             @csrf
                             <td class="py-5 px-6">
+                                <input type="hidden" name="source_table" value="{{ $pending_transaction->source_table }}">
                                 <input type="hidden" name="account_id" value="{{ $pending_transaction->id }}">
+
                                 <select name="transaction_status" class="form-control width-100 select-transaction-status">
-                                    <option value="1" {{ old('transaction_status', $pending_transaction->transaction_status) == 1 ? 'selected' : '' }}>Approve</option>
-                                    <option value="2" {{ old('transaction_status', $pending_transaction->transaction_status) == 2 ? 'selected' : '' }}>Not Approve</option>
-                                    <option value="0" {{ old('transaction_status', $pending_transaction->transaction_status) == '0' || 
-                                    old('transaction_status', $pending_transaction->transaction_status) === null ? 'selected' : '' }}>Pending</option>
+                                    <option value="1" {{ old('transaction_status') == 'approved' ? 'selected' : '' }}>Approve</option>
+                                    <option value="2" {{ old('transaction_status') == 'disapproved' ? 'selected' : '' }}>Not Approve</option>
+                                    <option value="pending" selected>Pending</option>
                                 </select>
                             </td>
                             <td class="py-5 px-6">
-                                <textarea name="remarks" placeholder="Enter Remarks">{{ old('remarks') }}</textarea>
+                                <textarea name="remarks" placeholder="Enter Remarks"></textarea>
                             </td>
                             <td class="py-5 px-6">
                                 <input type="submit" value="Done"

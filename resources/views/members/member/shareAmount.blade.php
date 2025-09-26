@@ -24,7 +24,7 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        <div class="bg-white dark:bg-bg3 shadow-md rounded-2xl p-6 w-full max-w-2xl mx-auto">
+        <div class="box dark:bg-bg3 shadow-md rounded-2xl p-6 w-1/2 max-w-2xl mx-auto">
             <!-- Title -->
             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6">
 
@@ -46,15 +46,20 @@
                         class="w-full rounded-10 border border-n30 dark:border-n500 px-3 py-2 bg-secondary/5 dark:bg-bg3 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:outline-none">
                 </div>
 
-                <!-- Share Amount -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-
                         Share Amount <span class="text-red-500">*</span>
                     </label>
+
                     <input type="number" step="0.01" name="membership_fee" placeholder="Enter Share Amount"
+                        value="{{ old('membership_fee') }}" {{-- Retain old value on validation error --}}
                         class="w-full rounded-10 border border-n30 dark:border-n500 px-3 py-2 bg-secondary/5 dark:bg-bg3 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:outline-none">
+
+                    @error('membership_fee')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
+
 
                 <!-- Remarks -->
                 <div>
@@ -62,11 +67,10 @@
 
                         Remarks (if any)
                     </label>
-                    <input type="text" name="remarks" placeholder="Enter Remarks"
+                    <input type="text" name="remarks" placeholder="Enter Remarks (if any)"
                         class="w-full rounded-10 border border-n30 dark:border-n500 px-3 py-2 bg-secondary/5 dark:bg-bg3 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:outline-none">
                 </div>
 
-                <!-- Pay Mode -->
                 <!-- Pay Mode -->
                 <div class="mt-3">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -98,12 +102,13 @@
                 <div id="onlineFields" class="space-y-4 mt-2 hidden">
                     <label class="block text-sm font-medium text-gray-700">Transfer Date <span
                             class="text-red-500">*</span></label>
-                    <input type="date" name="transfer_date" id="date2"
+                    <input type="text" name="transfer_date" id="date2"
                         class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
 
                     @error('transfer_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
+
                     <label class="block text-sm font-medium text-gray-700">
                         UTR / Transaction No.
                         <span class="text-red-500">*</span>
@@ -139,9 +144,11 @@
                 <div id="chequeFields" class="space-y-4 mt-2 hidden">
                     <label class="block text-sm font-medium text-gray-700">Bank Name <span
                             class="text-red-500">*</span></label>
-                    <select name="bank_id" class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
-                        <option value="">Select Bank</option>
-                    </select>
+                    {{-- <select name="bank_id" class="w-full border rounded-10 px-3 py-3 bg-secondary/5"> --}}
+                    <option value="">Select Bank</option>
+                    <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_id" display-field="name"
+                        value-field="id" event="Bank-selected" :selected="null" />
+                    {{-- </select> --}}
                     @error('bank_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -163,36 +170,45 @@
                     @enderror
                 </div>
 
-                <!-- Saving Fields -->
-                <div id="savingFields" class="space-y-4 mt-2 hidden">
+                <div id="savingFields"
+                    class="space-y-4 mt-2 {{ old('account_type', $members->account_type ?? '') === 'saving' ? '' : 'hidden' }}">
                     <label class="block text-sm font-medium text-gray-700">Select Saving Account <span
                             class="text-red-500">*</span></label>
                     <select id="savingAccountSelect" name="saving_account_id"
                         class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
                         <option value="">Select Account</option>
+                        @foreach ($savingAccounts as $account)
+                            <option value="{{ $account->id }}"
+                                {{ old('saving_account_id', $member->saving_account_id) == $account->id ? 'selected' : '' }}>
+                                {{ $account->account_no }}
+                                ({{ $account->members->member_info_first_name ?? '-' }}{{ $account->members->member_info_last_name }})
+                                (Bal. {{ number_format($account->balance, 2) }})
+                            </option>
+                        @endforeach
                     </select>
                     @error('saving_account_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
+
                 <!-- Buttons -->
                 <div class="flex gap-4 pt-4">
                     <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg  font-medium">
+                        class="btn-primary justify-center">
 
                         SAVE
                     </button>
                     <a href="{{ url()->previous() }}"
-                        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg  font-medium">
+                        class="btn-outline inline-flex items-center justify-center">
 
-                        CANCEL
+                        Back
                     </a>
                 </div>
             </form>
         </div>
     @endsection
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const chequeFields = document.getElementById("chequeFields");
             const onlineFields = document.getElementById("onlineFields");
@@ -224,6 +240,44 @@
             });
 
             // Trigger correct section on page load
+            const selectedRadio = document.querySelector("input[name='charges_pay_mode']:checked");
+            if (selectedRadio) {
+                selectedRadio.dispatchEvent(new Event("change"));
+            }
+        });
+    </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const chequeFields = document.getElementById("chequeFields");
+            const onlineFields = document.getElementById("onlineFields");
+            const savingFields = document.getElementById("savingFields");
+
+            function hideAllFields() {
+                chequeFields.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+                savingFields.classList.add("hidden");
+            }
+
+            const radios = document.querySelectorAll("input[name='charges_pay_mode']");
+            radios.forEach(radio => {
+                radio.addEventListener("change", function() {
+                    hideAllFields();
+                    switch (this.value) {
+                        case "cheque":
+                            chequeFields.classList.remove("hidden");
+                            break;
+                        case "online":
+                            onlineFields.classList.remove("hidden");
+                            break;
+                        case "saving":
+                            savingFields.classList.remove("hidden");
+                            break;
+                            // Default is "cash" — keep all hidden
+                    }
+                });
+            });
+
+            // Trigger the correct section based on the selected radio on page load
             const selectedRadio = document.querySelector("input[name='charges_pay_mode']:checked");
             if (selectedRadio) {
                 selectedRadio.dispatchEvent(new Event("change"));

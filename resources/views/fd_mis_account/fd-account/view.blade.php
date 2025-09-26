@@ -1,8 +1,7 @@
 @extends('layout.main')
 
-@section('content')
 <style>
-    input[type="checkbox"] {
+       input[type="checkbox"] {
         width: 28px;
         height: 28px;
         accent-color: green;
@@ -85,6 +84,8 @@
         /* 6 * 4px */
     }
 </style>
+
+@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -98,30 +99,56 @@
 
     <div class="flex flex-wrap gap-3">
         <!-- FD Payout Plan -->
-        <button type="" class="btn-primary px-4 py-2 rounded-3xl ">
+        <a href="{{ route('fd-mis-account.fd-payoutplan.fdpayoutplan', $fdAccount->id) }}" class="btn-primary px-4 py-2 rounded-10">
             FD PAYOUT PLAN
-        </button>
+        </a>
 
         <!-- View Transactions -->
-        <button class="btn-primary px-4 py-2 rounded-3xl ">
+        <button class="btn-primary px-4 py-2 rounded-10 ">
             VIEW TRANSACTIONS
         </button>
 
         <!-- Account Details -->
-        <button class="btn-primary px-4 py-2 rounded-3xl ">
+        <!-- <button class="btn-primary px-4 py-2 rounded-10 ">
             ACCOUNT DETAILS
-        </button>
+        </button> -->
 
+        <div x-data="{ open: false }" class="relative inline-block">
+            <a @click="open = !open"
+                class="btn-primary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
+                <span>ACCOUNT DETAILS</span>
+                <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </a>
+            <!-- Dropdown -->
+            <div x-show="open" @click.outside="open = false"
+                class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                <ul class="py-2">
+                    <li>
+                        <a href="{{route('fd.change.account.info',$fdAccount->id)}}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Change A/c Info</a>
+                    </li>
+                    <li>
+                        <a href="{{route('fd.add.nominee',$fdAccount->id)}}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Add Nominee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!-- Print Documents -->
-        <button class="btn-primary px-4 py-2 rounded-3xl ">
+        <button class="btn-primary px-4 py-2 rounded-10 ">
             PRINT DOCUMENTS
         </button>
 
         <!-- Show Audit Trail -->
-        <button class="btn-primary px-4 py-2 rounded-3xl ">
+        <button class="btn-primary px-4 py-2 rounded-10 ">
             SHOW AUDIT TRAIL
         </button>
     </div>
+
+
+
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
         <!-- Left: Details -->
@@ -138,7 +165,7 @@
                             <td class="font-semibold px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary hover:underline">
-                                    {{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
+                                    DEMO-{{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
                                 </a>
                             </td>
                         </tr>
@@ -168,11 +195,11 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Open Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->open_date)->format('d-m-Y') }}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->created_at)->format('d-m-Y') }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Maturity Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}</td>
+                            <td class="px-4 py-2">{{$fdAccount->maturity_date ?? 'N/A'}}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Tenure of FD/MIS</td>
@@ -227,6 +254,7 @@
                     </tbody>
                 </table>
             </div>
+
             <!--MEMBER DETAILS-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                 <!-- Header -->
@@ -257,6 +285,7 @@
                     </table>
                 </div>
             </div>
+
             <!-- Table Wrapper -->
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
                 <table class="w-full text-sm  ">
@@ -272,12 +301,13 @@
                         <tr class="border-t border-b">
                             <td class="px-4 py-2 text-gray-800">Pending for approval</td>
                             <td class="px-4 py-2 text-gray-800">—</td>
-                            <td class="px-4 py-2 text-gray-800">{{ \Carbon\Carbon::parse($fdAccount->updated_at)->format('d-m-Y') }}</td>
+                            <td class="px-4 py-2 text-gray-800">21/08/2025 17:00</td>
                             <td class="px-4 py-2 text-gray-800">—</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
             <!--PASSBOOK-->
             <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                 <!-- Header -->
@@ -289,6 +319,8 @@
                     </button>
                 </div>
             </div>
+
+
             <!--documents-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
@@ -352,7 +384,7 @@
                                 </thead>
                                 <tbody class="text-left">
                                     <tr class="border-b hover:bg-gray-50">
-                                        <td class="px-4 py-2 text-sm">{{ \Carbon\Carbon::parse($fdAccount->created_at)->format('d-m-Y') }}</td>
+                                        <td class="px-4 py-2 text-sm">31/07/2024 13:32</td>
                                         <td class="px-4 py-2 text-sm">Credit</td>
                                         <td class="px-4 py-2 text-sm">System</td>
                                         <td class="px-4 py-2 text-sm">10,000.00</td>
@@ -365,10 +397,15 @@
                         <button class="btn-primary  mt-3">View All</button>
                     </div>
                 </div>
+
             </div>
+
         </div>
+
         <!-- Right: Settings -->
         <div class=" w-full ">
+
+            <!--settings-->
             <!--settings-->
             <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
                 <!-- Header -->
@@ -470,6 +507,7 @@
                                 <option value="REINVEST_PRINCIPAL_AND_INTEREST">REINVEST_PRINCIPAL_AND_INTEREST</option>
                             </select>
                         </div>
+
                         <!-- Submit Button -->
                         <div class="text-center mt-5">
                             <button type="submit" class="btn-primary px-4 py-2 rounded-3xl">
@@ -479,6 +517,9 @@
                     </form>
                 </div>
             </div>
+
+
+            <!---->
             <div class="box dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
                 <!--Old MIS No.-->
                 <form action="" class="mt-3 p-3">
@@ -540,9 +581,12 @@
                         <select class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
        dark:bg-bg3 dark:text-white">
                             <option>Select Commission Chart</option>
+
                             <option>Option 2</option>
                         </select>
+
                         <input type="button" value="update" class="block  btn-primary">
+
                     </div>
                 </form>
             </div>
@@ -592,8 +636,11 @@
                                 <td class="font-bold px-4 py-2">Min. Amount</td>
                                 <td class="px-4 py-2  text-right md:text-left">₹ {{ $fdAccount->fdscheme->min_amount ?? 0}}</td>
                             </tr>
+
                         </tbody>
                     </table>
+
+
                     <!-- Table Wrapper  -->
                     <div class="overflow-x-auto mt-5  bg-white dark:bg-bg3">
                         <table class="min-w-full text-sm ">
@@ -617,6 +664,69 @@
                                     <th class="px-4 py-2 text-center font-semibold text-gray-700 border-b">TO</th>
                                 </tr>
                             </thead>
+                            <!-- <tbody>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">1</td>
+                                    <td class="px-3 py-2">30</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">31</td>
+                                    <td class="px-3 py-2">60</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">61</td>
+                                    <td class="px-3 py-2">90</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">91</td>
+                                    <td class="px-3 py-2">120</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">121</td>
+                                    <td class="px-3 py-2">150</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">151</td>
+                                    <td class="px-3 py-2">180</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">181</td>
+                                    <td class="px-3 py-2">210</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">211</td>
+                                    <td class="px-3 py-2">240</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">241</td>
+                                    <td class="px-3 py-2">270</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                                <tr class="text-center border-t">
+                                    <td class="px-3 py-2">271</td>
+                                    <td class="px-3 py-2">300</td>
+                                    <td class="px-3 py-2">5.0 %</td>
+                                    <td class="px-3 py-2">11.0 %</td>
+                                </tr>
+                            </tbody> -->
+
                             <tbody>
                                 @foreach($fdSlabs as $slab)
                                 <tr class="text-center border-t">
@@ -630,7 +740,10 @@
                         </table>
                     </div>
                 </div>
+
             </div>
+
+
             <!--FD  Maturity Info-->
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
@@ -642,14 +755,17 @@
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Maturity Date</td>
-                                <td class="px-4 py-2 text-right md:text-left">{{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->maturity_date}}</td>
                             </tr>
+
                             <tr>
                                 <td class="font-semibold px-4 py-2">Principal Amount (A)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$fdAccount->fd_amount}}</td>
                             </tr>
+
                             <tr>
                                 <td class="font-semibold px-4 py-2">Total Interest (B)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$totalInterest}}</td>
@@ -678,6 +794,8 @@
                     </table>
                 </div>
             </div>
+
+
             <!--FD Info-->
 
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
@@ -685,8 +803,11 @@
                 <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                     onclick="this.nextElementSibling.classList.toggle('hidden')">
                     <h3 class="text-lg font-semibold uppercase">FD Info</h3>
+
                 </div>
+
                 <!-- Body -->
+
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -708,17 +829,24 @@
                     </table>
                 </div>
             </div>
+
+
             <!--FD  Branch Info-->
+
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                     onclick="this.nextElementSibling.classList.toggle('hidden')">
                     <h3 class="text-lg font-semibold uppercase">FD Branch Info</h3>
+
                 </div>
+
                 <!-- Body -->
+
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Branch</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->branch->branch_name}}</td>
@@ -736,10 +864,17 @@
                         </tbody>
                     </table>
                 </div>
+
+
+
             </div>
+
         </div>
+
     </div>
 
+
+    @endsection
     <script>
         // Label update on toggle
         document.querySelectorAll('.slider-toggle').forEach(toggle => {
@@ -752,5 +887,3 @@
             toggle.dispatchEvent(new Event('change'));
         });
     </script>
-
-    @endsection

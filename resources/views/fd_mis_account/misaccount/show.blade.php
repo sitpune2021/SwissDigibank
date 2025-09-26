@@ -88,9 +88,9 @@
 <div class="main-inner">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
-      <h1 class="text-2xl font-semibold">MIS Account - {{'' . $misaccount->member_id}} </h1>
+      <h1 class="text-2xl font-semibold">MIS ACCOUNT - {{'' . $misaccount->member_id}} </h1>
       <p class="text-gray-500">
-        <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS Account</a> >
+        <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS ACCOUNT</a> >
         <a href="#" class="text-gray-500"> {{'' . $misaccount->member_id}} </a>
       </p>
     </div>
@@ -115,11 +115,24 @@
       </button>
 
       <!-- Dropdown menu -->
-      <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+      <!-- <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
         <a href="#" class="block px-4 py-2 uppercase  hover:bg-warning">change Account info</a>
         <a href="#" class="block px-4 py-2 uppercase hover:bg-warning">Add Nominee</a>
 
-      </div>
+      </div> -->
+
+      <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+    <a href="{{ route('misaccount.changeAccountInfo', $misaccount->id) }}" 
+   class="block px-4 py-2 uppercase hover:bg-warning">
+    Change Account Info
+</a>
+   <a href="{{ route('misaccount.addNominee', $misaccount->id) }}" 
+   class="block px-4 py-2 uppercase hover:bg-warning">
+    Add Nominee
+</a>
+</div>
+
+
     </div>
 
     <!--   RELEASE INTEREStT-->

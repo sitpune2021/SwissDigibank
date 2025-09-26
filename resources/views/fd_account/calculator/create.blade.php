@@ -45,6 +45,26 @@
             border: 1px solid #ccc;
             border-top: none;
         }
+
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+            /* Modern browser support */
+        }
+
     </style>
 </head>
 <div class="main-inner">
@@ -210,76 +230,7 @@
     </div>
 </div>
 
-    <!-- <div id="year1" class="tabcontent">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-max bg-white  rounded-xl shadow-md">
-                <thead class="bg-blue-600 text-white text-sm">
-                    <tr>
-                        <th class="px-4 py-2 text-left font-semibold">PERIOD</th>
-                        <th class="px-4 py-2 text-center font-semibold">DAYS</th>
-                        <th class="px-4 py-2 text-center font-semibold">PRINCIPAL</th>
-                        <th class="px-4 py-2 text-center font-semibold">INTEREST <br>(A)</th>
-                        <th class="px-4 py-2 text-center font-semibold">TDS <br>(B)</th>
-                        <th class="px-4 py-2 text-center font-semibold">NET INTEREST <br>(A - B)</th>
-                        <th class="px-4 py-2 text-center font-semibold">NET INTEREST <br>on DUE DATE</th>
-                        <th class="px-4 py-2 text-center font-semibold">PRINCIPAL AT EOY</th>
-                        <th class="px-4 py-2 text-center font-semibold">DUE BY</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 text-sm">
-                    <tr class="border-b">
-                        <td class="px-4 py-2 text-gray-900">28/08/2025 - 27/09/2025</td>
-                        <td class="px-4 py-2 text-center">31</td>
-                        <td class="px-4 py-2 text-center">100000</td>
-                        <td class="px-4 py-2 text-center">917</td>
-                        <td class="px-4 py-2 text-center">0.0</td>
-                        <td class="px-4 py-2 text-center">917</td>
-                        <td class="px-4 py-2 text-center">917.0</td>
-                        <td class="px-4 py-2 text-center"></td>
-                        <td class="px-4 py-2 text-center">28/09/2025</td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-
-
-    </div>
-
-    <div id="year2" class="tabcontent">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-max  rounded-lg shadow-sm text-center">
-                <thead class="bg-blue-600 text-white text-sm">
-                    <tr>
-                        <th class="px-4 py-2 font-semibold">PERIOD</th>
-                        <th class="px-4 py-2 font-semibold">DAYS</th>
-                        <th class="px-4 py-2 font-semibold">PRINCIPAL</th>
-                        <th class="px-4 py-2 font-semibold">INTEREST <br>(A)</th>
-                        <th class="px-4 py-2 font-semibold">TDS <br>(B)</th>
-                        <th class="px-4 py-2 font-semibold">NET INTEREST <br>(A - B)</th>
-                        <th class="px-4 py-2 font-semibold">NET INTEREST <br>on DUE DATE</th>
-                        <th class="px-4 py-2 font-semibold">PRINCIPAL AT EOY</th>
-                        <th class="px-4 py-2 font-semibold">DUE BY</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 text-sm">
-                    <tr class="border-b">
-                        <td class="px-4 py-2">28/08/2026 - 27/09/2026</td>
-                        <td class="px-4 py-2">31</td>
-                        <td class="px-4 py-2">100000.0</td>
-                        <td class="px-4 py-2">917</td>
-                        <td class="px-4 py-2">0.0</td>
-                        <td class="px-4 py-2">917</td>
-                        <td class="px-4 py-2">917.0</td>
-                        <td class="px-4 py-2">—</td>
-                        <td class="px-4 py-2">28/09/2026</td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-
-    </div> -->
+    
 </div>
 
 
@@ -287,6 +238,7 @@
 
 @push('script')
 <script>
+    console.log(summary);
     function openTab(evt, tabId) {
         var i, tabcontent, tablinks;
 
@@ -311,8 +263,6 @@
     function calculateFD() 
     {
 
-      
-
         let formData = {
             amount: $("#amount").val(),
             open_date: $("#open_date").val(),
@@ -332,28 +282,37 @@
             type: "POST",
             data: formData,
             dataType: "json",
-            success: function(response) {
-                if (response.success) {
-                    let summary = response.results.original.summary.summary;
+           success: function(response) {
+                if (response.success) 
+                {
+                    // new shape: response.results.summary
+                    let summary = response.results.summary;
 
-                    // Update table values
-                    $("#principal").text("INR " + summary.principal);
-                    $("#interest_earned").text("INR " + summary.interest_earned);
-                    $("#tds_deducted").text("INR " + summary.tds_deducted);
-                    $("#net_interest").text("INR " + summary.net_interest);
-                    $("#maturity_bonus").text("INR " + summary.maturity_bonus);
-                    $("#maturity_amount").text("INR " + summary.maturity_amount);
+                    // parse numeric values (server returns formatted strings)
+                    let principal       = parseFloat(summary.principal) || 0;
+                    let interestEarned  = parseFloat(summary.interest_earned) || 0;
+                    let tdsDeducted     = parseFloat(summary.tds_deducted) || 0;
+                    let netInterest     = parseFloat(summary.net_interest) || 0;
+                    let bonus           = parseFloat(summary.maturity_bonus) || 0;
+                    let maturityAmount  = parseFloat(summary.maturity_amount) || 0;
+
+                    // Update UI using server's authoritative values
+                    $("#principal").text("INR " + principal.toFixed(2));
+                    $("#interest_earned").text("INR " + interestEarned.toFixed(2));
+                    $("#tds_deducted").text("INR " + tdsDeducted.toFixed(2));
+                    $("#net_interest").text("INR " + netInterest.toFixed(2));
+                    $("#maturity_bonus").text("INR " + bonus.toFixed(2));
+                    $("#maturity_amount").text("INR " + maturityAmount.toFixed(2));
                     $("#maturity_date").text(summary.maturity_date);
 
-
-                     if(summary.principal != "0.00") {
+                    if (principal > 0) {
                         $("#summaryBox").show();
-                     }
- 
+                    }
                 } else {
                     $("#result").html(`<div class="alert alert-danger">Something went wrong.</div>`);
                 }
             },
+
             error: function(xhr) {
                 console.error(xhr.responseText);
                 $("#result").html(`<div class="alert alert-danger">Server error, please try again.</div>`);

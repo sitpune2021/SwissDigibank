@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Account;
 use App\Models\FDAccount;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ApproveController extends Controller
 {
@@ -86,40 +87,200 @@ class ApproveController extends Controller
      * Start Approved Status
      */
 
+    // public function updateAccountStatus(Request $request, $id)
+    // {
+    //     // Validate the input
+    //     try {
+    //         $validated = $request->validate([
+    //             'transaction_status' => 'required|in:0,1,2',
+    //             'remarks' => 'nullable|string|max:255',
+    //         ]);
+
+    //         // Find the account by ID
+    //         $account = Account::findOrFail($id);
+
+    //         // Update the values
+    //         $account->approve_status = $validated['transaction_status'];
+    //         $account->remarks = $validated['remarks'];
+    //         $account->save();
+
+    //         // Redirect or return response
+    //         return redirect()->back()->with('success', 'Account status updated successfully.');
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
+
+    // public function approveAccounts(Request $request)
+    // {
+    //     try {
+    //         $search = $request->input('search');
+    //         $perPage = $request->input('perPage', 10);
+
+    //         $query = Account::with(['members', 'branch']) // Add other relationships as needed
+    //             ->whereIn('account_type', ['SAVING', 'CURRENT', 'RD', 'FD', 'MIS']) // Filter by account types
+    //             ->where('approve_status', '0'); // Show only pending approval accounts
+
+    //         if ($search) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->where('account_no', 'like', "%{$search}%")
+    //                     ->orWhere('firm_name', 'like', "%{$search}%")
+    //                     ->orWhere('amount_deposit', 'like', "%{$search}%")
+    //                     ->orWhere('payment_mode', 'like', "%{$search}%")
+    //                     ->orWhere('account_holder_type', 'like', "%{$search}%")
+    //                     ->orWhere('mode_of_operation', 'like', "%{$search}%")
+    //                     ->orWhereHas('branch', function ($q2) use ($search) {
+    //                         $q2->where('branch_name', 'like', "%{$search}%");
+    //                     })
+    //                     ->orWhereHas('members', function ($q3) use ($search) {
+    //                         $q3->where('member_info_first_name', 'like', "%{$search}%")
+    //                             ->orWhere('member_info_last_name', 'like', "%{$search}%");
+    //                     });
+    //             });
+    //         }
+
+    //         $pending_transactions = $query->orderBy('created_at', 'desc')
+    //             ->paginate($perPage)
+    //             ->appends($request->all());
+
+    //         return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
+
     public function updateAccountStatus(Request $request, $id)
     {
-        // Validate the input
+
         try {
+            // ✅ Validate the input
             $validated = $request->validate([
                 'transaction_status' => 'required|in:0,1,2',
                 'remarks' => 'nullable|string|max:255',
+                'source_table' => 'required|in:accounts,fd_accounts',
             ]);
 
-            // Find the account by ID
-            $account = Account::findOrFail($id);
+            if ($validated['source_table'] === 'accounts') {
+                // 🔹 For normal accounts
+                $account = Account::findOrFail($id);
+                $account->approve_status = $validated['transaction_status'];
+                $account->remarks = $validated['remarks'];
+                $account->save();
 
-            // Update the values
-            $account->approve_status = $validated['transaction_status'];
-            $account->remarks = $validated['remarks'];
-            $account->save();
+                // 📝 Log the update
+                Log::info('Account status updated', [
+                    'table' => 'accounts',
+                    'id' => $id,
+                    'new_status' => $validated['transaction_status'],
+                    'remarks' => $validated['remarks'],
+                    'updated_by' => Auth::id(),
+                ]);
+            } else {
+                // 🔹 For FD accounts
+                $fdAccount = FdAccount::findOrFail($id);
+                $fdAccount->status = $validated['transaction_status'];
+                $fdAccount->remarks = $validated['remarks'];
+ 
+                $fdAccount->save();
 
-            // Redirect or return response
+                // 📝 Log the update
+                Log::info('FD Account status updated', [
+                    'table' => 'fd_accounts',
+                    'id' => $id,
+                    'new_status' => $validated['transaction_status'],
+                    'remarks' => $validated['remarks'],
+                    'updated_by' => Auth::id(),
+                ]);
+            }
+
+            // ✅ Redirect back with success
             return redirect()->back()->with('success', 'Account status updated successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Account not found', [
+                'id' => $id,
+                'source_table' => $request->input('source_table'),
+                'updated_by' =>  Auth::id(),
+            ]);
             abort(404);
+        } catch (\Exception $e) {
+            Log::error('Error updating account status', [
+                'message' => $e->getMessage(),
+                'id' => $id,
+                'request' => $request->all(),
+                'updated_by' => Auth::id(),
+            ]);
+            return redirect()->back()->withErrors(['error' => 'Something went wrong while updating account status.']);
         }
     }
 
-
     public function approveAccounts(Request $request)
     {
+    
         try {
             $search = $request->input('search');
             $perPage = $request->input('perPage', 10);
 
-            $query = Account::with(['members', 'branch']) // Add other relationships as needed
-                ->whereIn('account_type', ['SAVING', 'CURRENT', 'RD', 'FD', 'MIS']) // Filter by account types
-                ->where('approve_status', '0'); // Show only pending approval accounts
+            $sql = "
+        SELECT 
+            accounts.id,
+            accounts.account_no,
+            accounts.account_type,
+            accounts.firm_name,
+            accounts.amount_deposit,
+            accounts.payment_mode,
+            accounts.account_holder_type,
+            accounts.mode_of_operation,
+            accounts.approve_status,
+            accounts.open_date,
+            accounts.branch_id,
+            accounts.member_id,
+            JSON_OBJECT(
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+              JSON_OBJECT(
+            'branch_name', branches.branch_name
+            ) AS branch,
+            'accounts' AS source_table,
+            accounts.created_at
+        FROM accounts
+        INNER JOIN branches ON accounts.branch_id = branches.id
+        INNER JOIN members ON accounts.member_id = members.id
+        WHERE accounts.account_type IN ('SAVING', 'CURRENT', 'RD', 'MIS')
+          AND accounts.approve_status = '0'
+
+        UNION ALL
+
+        SELECT 
+            fd_accounts.id,
+            fd_accounts.account_no AS account_no,
+            'FD' AS account_type,
+            null,
+            fd_accounts.fd_amount AS amount_deposit,
+            fd_accounts.payment_mode,
+            fd_accounts.account_holder_type,
+            fd_accounts.mode_of_operation,
+            fd_accounts.status AS approve_status,
+            fd_accounts.open_date,
+            fd_accounts.branch_id,
+            fd_accounts.member_id,
+            JSON_OBJECT(
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+            JSON_OBJECT(
+            'branch_name', branches.branch_name
+             ) AS branch,
+            'fd_accounts' AS source_table,
+            fd_accounts.created_at
+        FROM fd_accounts
+        INNER JOIN branches ON fd_accounts.branch_id = branches.id
+        INNER JOIN members ON fd_accounts.member_id = members.id
+        WHERE fd_accounts.status = '0'
+        ";
+
+            $query = DB::table(DB::raw("({$sql}) as combined"))
+                ->orderBy('created_at', 'desc');
 
             if ($search) {
                 $query->where(function ($q) use ($search) {
@@ -129,23 +290,29 @@ class ApproveController extends Controller
                         ->orWhere('payment_mode', 'like', "%{$search}%")
                         ->orWhere('account_holder_type', 'like', "%{$search}%")
                         ->orWhere('mode_of_operation', 'like', "%{$search}%")
-                        ->orWhereHas('branch', function ($q2) use ($search) {
-                            $q2->where('branch_name', 'like', "%{$search}%");
-                        })
-                        ->orWhereHas('members', function ($q3) use ($search) {
-                            $q3->where('member_info_first_name', 'like', "%{$search}%")
-                                ->orWhere('member_info_last_name', 'like', "%{$search}%");
-                        });
+                        ->orWhere('branch_name', 'like', "%{$search}%")
+                        ->orWhereRaw("JSON_EXTRACT(members, '$.member_info_first_name') LIKE ?", ["%{$search}%"])
+                        ->orWhereRaw("JSON_EXTRACT(members, '$.member_info_last_name') LIKE ?", ["%{$search}%"]);
                 });
             }
 
-            $pending_transactions = $query->orderBy('created_at', 'desc')
-                ->paginate($perPage)
-                ->appends($request->all());
+            $pending_transactions = $query->paginate($perPage)->appends($request->all());
+
+            $pending_transactions->getCollection()->transform(function ($item) {
+                $item->members = json_decode($item->members);
+                $item->branch  = json_decode($item->branch);
+                return $item;
+            });
 
             return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        } catch (\Exception $e) {
+            Log::error('Error in approveAccounts: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
+            ]);
+
+            // show friendly error
+            return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
         }
     }
 

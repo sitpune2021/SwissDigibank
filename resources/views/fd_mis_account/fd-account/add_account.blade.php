@@ -1,32 +1,82 @@
 @extends('layout.main')
+
+<style>
+    .breadcrumb {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 14px;
+    }
+
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 8px;
+        color: #888;
+    }
+
+    .breadcrumb li a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .breadcrumb li.active {
+        color: #555;
+    }
+
+    .custom-thead {
+        background-color: #e6f4ea;
+        color: #14532d;
+    }
+
+    .custom-thead th {
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .custom-thead {
+            background-color: #14532d;
+            color: #d1fae5;
+        }
+    }
+
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
+
+    /* Fallback for browsers without accent-color support */
+    input[type="checkbox"]:checked {
+        background-color: green;
+        border: none;
+    }
+
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+        /* Modern browser support */
+    }
+
+    .tableWidth {
+        width: 90%;
+        margin: auto;
+
+    }
+
+    .bg-yellow {
+        background-color: #e17100;
+    }
+</style>
+
 @section('content')
-
-<head>
-    <style>
-        input[type="radio"] {
-            width: 24px;
-            height: 24px;
-            accent-color: green;
-        }
-
-        input[type="checkbox"] {
-            width: 28px;
-            height: 28px;
-            accent-color: green;
-            /* For modern browsers */
-        }
-
-        /* Fallback for browsers without accent-color support */
-        input[type="checkbox"]:checked {
-            background-color: green;
-            border: none;
-        }
-    </style>
-</head>
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW FD ACCOUNT</h1>
+            <h1 class="text-xl font-semibold">New FD Account</h1>
         </div>
     </div>
 
@@ -42,7 +92,7 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select member</option>
                         @foreach($members as $member)
-                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }} {{ $member->member_info_last_name }}</option>
+                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
                         @endforeach
                     </select>
                     @error('member_id')
@@ -128,12 +178,16 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4">
+                        Open Date
+                        <span class="text-red-500">*</span>
+                    </label>
 
-                    <x-datepicker-disabled
-                        label="Open Date"
-                        name="date"
-                        value="{{ old('date') }}"
-                        inputId="open_date" />
+                    <input type="text" id="date" name="date" placeholder="DD/MM/YYYY"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
+                    @error('date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -177,8 +231,6 @@
                     <input type="number" id="fd_amount" name="fd_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3 md:py-3"
                         placeholder="0.0">
-
-                    <x-number-to-word for="fd_amount" />
                     @error('fd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -213,7 +265,7 @@
                             <span>Yes</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="tds_deduction" value="0" checked>
+                            <input type="radio" name="tds_deduction" value="0" selected>
                             <span>No</span>
                         </label>
                     </div>
@@ -240,7 +292,7 @@
 
                     <div class="flex items-center gap-4">
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="account_type" value="single" onclick="toggleSelect(false)" checked> Single
+                            <input type="radio" name="account_type" value="single" onclick="toggleSelect(false)"> Single
                         </label>
                         <label class="flex items-center gap-2">
                             <input type="radio" name="account_type" value="joint" onclick="toggleSelect(true)"> Joint A/C
@@ -278,7 +330,7 @@
                             <input type="radio" name="nominees" value="yes" onclick="toggleAddMore(true)"> Yes
                         </label>
                         <label class=" mt-2 flex items-center  gap-2">
-                            <input type="radio" name="nominees" value="no" onclick="toggleAddMore(false)" checked> No
+                            <input type="radio" name="nominees" value="no" onclick="toggleAddMore(false)"> No
                         </label>
                         @error('nominees')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -304,15 +356,17 @@
                     <input type="text" id="final_amount" name="final_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
                         placeholder="0" value="">
-                    <x-number-to-word for="final_amount"/>
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <x-datepicker-disabled
-                        label="Effective Date"
-                        name="transaction_date"
-                        value="{{ old('transaction_date') }}"
-                        inputId="transaction_date" />
+                    <label for="" class="md:text-lg font-medium block mb-4">
+                        T. Date
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <input type="text" id="date2" name="transaction_date" placeholder="DD/MM/YYYY" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6 
+                            py-3 md:py-3">
                 </div>
+
                 <!-- pay mode 1-->
                 <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
                     <!-- Section Title -->
@@ -363,22 +417,12 @@
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
-                            <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
+                            <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
                                 <option value="">Select Bank</option>
                                 <option value="SBI">SBI</option>
                                 <option value="HDFC">HDFC</option>
                                 <option value="ICICI">ICICI</option>
-                            </select> -->
-
-                            <x-searchable-dropdown
-                                :items="$banks"
-                                label="Select Bank"
-                                name="pay1_bank"
-                                display-field="name"
-                                value-field="id"
-                                event="Bank-selected"
-                                :selected="null" />
-
+                            </select>
                             @error('pay1_bank')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -393,36 +437,25 @@
                             @enderror
                         </div>
                         <div>
-                            <!-- <label class="block text-sm font-medium text-gray-700">Cheque Date <span
+                            <label class="block text-sm font-medium text-gray-700">Cheque Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date4" name="pay1_cheque_date"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
                                 placeholder="DD/MM/YYYY">
                             @error('pay1_cheque_date')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror -->
-                            <x-datepicker-disabled
-                                label="Cheque Date"
-                                name="pay1_cheque_date"
-                                value="{{ old('pay1_cheque_date') }}"
-                                inputId="pay1_cheque_date" />
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Online Transaction Fields -->
                     <div id="onlineFields" class="space-y-4 hidden">
                         <div class="mt-3">
-                            <!-- <label class="block text-sm font-medium text-gray-700">Transfer Date <span
+                            <label class="block text-sm font-medium text-gray-700">Transfer Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date3" name="pay1_transfer_date"
                                 class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
-                                placeholder="DD/MM/YYYY"> -->
-
-                            <x-datepicker-disabled
-                                label="Transfer Date"
-                                name="pay1_transfer_date"
-                                value="{{ old('pay1_transfer_date') }}"
-                                inputId="pay1_transfer_date" />
+                                placeholder="DD/MM/YYYY">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
@@ -502,12 +535,10 @@
         </form>
     </div>
 </div>
-
 </div>
 
 
 <!--nomine -->
-
 <script>
     //nomine
     function toggleSelect(show) {
@@ -602,27 +633,24 @@
 
 <!--payment mode1-->
 <script>
-    //payment mode1
+//payment mode1
     const payModeRadios = document.querySelectorAll('input[name="pay1_mode"]');
     const onlineFields = document.getElementById('onlineFields');
     const chequeFields = document.getElementById('chequeFields');
-    const savingFields = document.getElementById('savingFields');
 
     payModeRadios.forEach(radio => {
         radio.addEventListener('change', () => {
-            // hide all first
+
             onlineFields.classList.add('hidden');
             chequeFields.classList.add('hidden');
             savingFields.classList.add('hidden');
 
-            // show based on selected
             if (radio.value === 'online') onlineFields.classList.remove('hidden');
             if (radio.value === 'cheque') chequeFields.classList.remove('hidden');
             if (radio.value === 'saving') savingFields.classList.remove('hidden');
         });
     });
 </script>
-
 
 <script>
     //pay mode 2
@@ -662,6 +690,7 @@
                     type: "GET",
                     dataType: "json",
                     success: function(savings) {
+                        console.log(savings);
                         let savingSelect = $("#savingAccount");
                         savingSelect.empty().append('<option value="">Select Account</option>');
 
@@ -761,7 +790,7 @@
                         }
                     }
 
-                    // Show balance box if hidden
+                   // Show balance box if hidden
                     $("#balanceBox").removeClass("hidden");
                 },
                 error: function(xhr) {
@@ -797,4 +826,7 @@
         }
     });
 </script>
+
+
+
 @endsection

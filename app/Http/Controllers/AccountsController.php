@@ -280,7 +280,7 @@ class AccountsController extends Controller
             $combined_balace = AccountsTransactionsHelper::getAccountBalacec([$decryptedId]);
             $combined_balace = $combined_balace['total_balance'] ?? 0;
 
-       
+
             return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -294,4 +294,37 @@ class AccountsController extends Controller
 
 
     public function destroy(string $id) {}
+
+    public function viewPassbook($id)
+    {
+        $id=base64_decode($id);
+        $accounts = Account::with('transaction', 'members')->findOrFail($id);
+        return view('saving-current-ac.accounts.passbook', compact('accounts'));
+    }
+    
+    public function passbookSearch(Request $request)
+    {
+        $request->validate([
+            'account_id' => 'required|exists:accounts,id',
+            'from_date' => 'required|date_format:d/m/Y',
+            'to_date'   => 'required|date_format:d/m/Y|after_or_equal:from_date',
+            'print_type' => 'required|in:front,statement,full',
+        ]);
+
+        $accountId = $request->account_id;
+
+        // Convert DD/MM/YYYY to Y-m-d
+        $fromDate = Carbon::createFromFormat('d/m/Y', $request->from_date)->startOfDay();
+        $toDate   = Carbon::createFromFormat('d/m/Y', $request->to_date)->endOfDay();
+
+        $transactions = Transaction::where('account_id', $accountId)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->orderBy('created_at')
+            ->get();
+
+        return view('accounts.passbook_result', [
+            'transactions' => $transactions,
+            'printType' => $request->print_type
+        ]);
+    }
 }
