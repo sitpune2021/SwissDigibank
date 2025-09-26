@@ -611,8 +611,8 @@ public function changeAccountInfo($id)
     $request->validate([
         'member_id'       => 'required|integer',
         'account_type'    => 'required|string',
-        'open_date'       => 'required|date_format:d/m/Y',
-        'mis_joint_date'  => 'required|date_format:d/m/Y',
+        'open_date'       => 'required|date_format:d-m-Y',
+        'mis_joint_date'  => 'required|date_format:d-m-Y',
         'joint_member_id' => 'nullable|integer',
     ]);
 
@@ -621,8 +621,8 @@ public function changeAccountInfo($id)
     $account->member_id       = $request->member_id;
     $account->joint_member_id = $request->joint_member_id; // yaha store hoga dropdown ka id
     $account->account_type    = $request->account_type;
-    $account->open_date       = Carbon::createFromFormat('d/m/Y', $request->open_date)->format('Y-m-d');
-    $account->mis_joint_date  = Carbon::createFromFormat('d/m/Y', $request->mis_joint_date)->format('Y-m-d');
+    $account->open_date       = Carbon::createFromFormat('d-m-Y', $request->open_date)->format('Y-m-d');
+    $account->mis_joint_date  = Carbon::createFromFormat('d-m-Y', $request->mis_joint_date)->format('Y-m-d');
 
     $account->save();
 

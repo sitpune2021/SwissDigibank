@@ -106,11 +106,11 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-xl font-semibold dark:text-white">FD - 03754</h1>
-            <p class="text-gray-500 dark:text-gray-400">
+            <!-- <p class="text-gray-500 dark:text-gray-400">
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Fd Accounts</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">03754</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">change Account Info</a>
-            </p>
+            </p> -->
         </div>
     </div>
 
@@ -249,7 +249,7 @@
                         Open Date <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="open_date" id="date"
-                        value="{{ old('open_date', $account->open_date ? \Carbon\Carbon::parse($account->open_date)->format('d/m/Y') : '') }}"
+                        value="{{ old('open_date', $account->open_date ? \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') : '') }}"
                         placeholder="DD/MM/YYYY"
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" />
                 </div>
@@ -257,8 +257,8 @@
                 <!-- MIS Joint Date -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium">MIS Joint Date <span class="text-red-500">*</span></label>
-                    <input type="text" name="mis_joint_date" id="mis_joint_date"
-                        value="{{ old('mis_joint_date', $account->mis_joint_date ? \Carbon\Carbon::parse($account->mis_joint_date)->format('d/m/Y') : '') }}"
+                    <input type="text" name="mis_joint_date" id="date2"
+                        value="{{ old('mis_joint_date', $account->mis_joint_date ? \Carbon\Carbon::parse($account->mis_joint_date)->format('d-m-Y') : '') }}"
                         placeholder="DD/MM/YYYY"
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" />
                 </div>
