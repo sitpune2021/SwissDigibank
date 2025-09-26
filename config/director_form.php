@@ -41,7 +41,7 @@ return [
   [
     "label" => "Resignation Date",
     "name" => "resignation_date",
-    "id" => "datep",
+    "id" => "datem",
     "type" => "text",
     "required" => false
   ],  
