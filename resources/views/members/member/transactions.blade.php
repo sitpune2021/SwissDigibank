@@ -1,7 +1,11 @@
 @extends('layout.main')
 
-@section('page-title', isset($member)
-    ? 'Members - ' . ($member->member_info_first_name ?? $member->member_code) . ' Transactions'
+@section('page-title',
+    isset($member)
+    ? 'Members - ' .
+    $member->member_info_first_name .
+    '
+    Transactions'
     : 'Members Transactions')
 
 @section('content')
@@ -38,11 +42,11 @@
                         @forelse ($transactions as $transaction)
                             <tr>
                                 <td class="px-6 py-4 text-center">
-                                    {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d/m/Y') }}
+                                    {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ ucfirst($transaction->charges_pay_mode) }}
+                                    {{ ucfirst($transaction->pay_mode ?? 'NA') }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
@@ -50,7 +54,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ number_format($transaction->membership_fee, 2) }}
+                                    {{ number_format($transaction->amount, 2) }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
@@ -58,16 +62,26 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ $transaction->approve_status ? 'Approved' : 'Pending' }}
+                                    {{ $transaction->status == 1 || $transaction->status === '1' ? 'Approved' : 'Pending' }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ $transaction->is_accounted ? 'Yes' : 'No' }}
+                                    {{ isset($transaction->is_accounted) ? ($transaction->is_accounted ? 'Yes' : 'No') : '-' }}
                                 </td>
+                                <td class="py-2 px-6">
+                                    {{-- @php
+                                        dd($transactions);
+                                    @endphp --}}
 
-                                <td class="px-6 py-4 text-center">
-                                    <button class="btn btn-warning">Edit</button>
-                                    <button class="btn btn-danger">Delete</button>
+                                    <div class="flex justify-center">
+                                        @include('partials._vertical-options', [
+                                            'id' => $transaction->id,
+                                            'viewRoute' => 'transactions.show',
+                                            'printRoute' => 'transactions.print',
+                                            'deleteRoute' => 'transactions.softDelete',
+                                        ])
+                                    </div>
+                                </td>
                                 </td>
                             </tr>
                         @empty

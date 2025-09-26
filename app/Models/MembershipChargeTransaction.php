@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class MembershipChargeTransaction extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'membership_charges_transaction'; // Use the plural form here
 
     protected $fillable = [
@@ -14,7 +18,7 @@ class MembershipChargeTransaction extends Model
         'net_fee_to_collect',
         'remarks',
         'charges_pay_mode',
-        'type',  // ✅ Make sure this is present
+        'type',  
         'approve_status',
         'is_accounted',
         'member_id',
@@ -33,4 +37,8 @@ class MembershipChargeTransaction extends Model
         'transfer_date',
         'cheque_date',
     ];
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'saving_account_id');
+    }
 }
