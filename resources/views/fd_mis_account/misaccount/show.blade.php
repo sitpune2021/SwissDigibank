@@ -88,9 +88,9 @@
 <div class="main-inner">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
-      <h1 class="text-2xl font-semibold">MIS Account - {{'' . $misaccount->member_id}} </h1>
+      <h1 class="text-2xl font-semibold">MIS ACCOUNT - {{'' . $misaccount->member_id}} </h1>
       <p class="text-gray-500">
-        <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS Account</a> >
+        <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS ACCOUNT</a> >
         <a href="#" class="text-gray-500"> {{'' . $misaccount->member_id}} </a>
       </p>
     </div>

@@ -45,6 +45,26 @@
             border: 1px solid #ccc;
             border-top: none;
         }
+
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+            /* Modern browser support */
+        }
+
     </style>
 </head>
 <div class="main-inner">
