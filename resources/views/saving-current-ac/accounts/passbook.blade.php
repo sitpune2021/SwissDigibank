@@ -36,16 +36,16 @@
   <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 ">
     <div class="col-span-2 md:col-span-1 box dark:bg-bg3 rounded-2xl p-6">
 
-      <form action="" method="" class="space-y-6">
-        <!-- Scheme -->
+      <form action="" id="passbookForm" method="POST" class="space-y-6">
         @csrf
         <div class="mb-4">
-
           <label for="" class="block font-medium mb-2">Account No <span class="text-red-500">*</span></label>
           <select id="account_id" name="account_id" required
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
-
             <option value="">Select Account</option>
+            @foreach($accounts as $account)
+            <option value="{{ $account->id }}">{{ $account->account_no }}</option>
+            @endforeach
           </select>
         </div>
         <!-- HTML -->
@@ -74,10 +74,7 @@
             <label class="block font-medium mb-2" for="tenure_type">
              Date From <span class="text-red-500">*</span>
             </label>
-            
-
             <div class="flex flex-wrap gap-4">
-
               <input type="text" name="" id="date" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5
                       dark:bg-bg3 " placeholder="DD/MM/YYYY">
 
@@ -87,17 +84,12 @@
             <label class="block font-medium mb-2" for="tenure_type">
              Date To <span class="text-red-500">*</span>
             </label>
-            
-
             <div class="flex flex-wrap gap-4">
-
              <input type="text" name="" id="date2" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5
                       dark:bg-bg3 " placeholder="DD/MM/YYYY">
-
             </div>
           </div> --}}
         <!-- Input -->
-
         <!-- PrintType *-->
         <div class="w-full mt-4 ">
           <label class="block font-medium mb-2" for="tenure_type">
@@ -136,9 +128,8 @@
 
   <div class="box p-4">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 min-h-[46px]">
-
       <!-- Print Button -->
-      <a href="#" class="btn-primary p-3">
+      <a href="#" class="btn-primary p-3" onclick="printPassbook()">
         <i class="las la-print mr-2"></i>
       </a>
 
@@ -170,6 +161,11 @@
                 <th class="px-2 py-2 border w-1/6 text-right">Balance</th>
               </tr>
             </thead>
+            <tbody id="transactionsTable">
+              <tr>
+                <td colspan="6" class="text-center">No data</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -309,5 +305,50 @@
       toPicker.setDate(today);
     });
   });
+
+  function printPassbook() {
+    let printContents = document.getElementById("printableArea").innerHTML;
+    let originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload(); // reload so page returns to normal after print
+  }
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $('#passbookForm').on('submit', function(e) {
+    alert("hi");
+    e.preventDefault();
+
+    $.ajax({
+      url: "{{ route('accounts.passbook.search') }}",
+      type: "POST",
+      data: $(this).serialize(),
+      success: function(res) {
+        let rows = '';
+        if (res.length > 0) {
+          res.forEach(txn => {
+            rows += `
+                        <tr>
+                            <td>${new Date(txn.created_at).toLocaleDateString('en-GB')}</td>
+                            <td>${txn.description ?? '-'}</td>
+                            <td>${txn.cheque_no ?? '-'}</td>
+                            <td class="text-right">${txn.debit_amount ?? '-'}</td>
+                            <td class="text-right">${txn.credit_amount ?? '-'}</td>
+                            <td class="text-right">${txn.balance ?? '-'}</td>
+                        </tr>`;
+          });
+        } else {
+          rows = `<tr><td colspan="6" class="text-center py-4">No transactions found</td></tr>`;
+        }
+        $('#transactionsTable').html(rows);
+      },
+      error: function(xhr) {
+        alert("Error fetching transactions");
+      }
+    });
+  });
+</script>
+
 @endsection

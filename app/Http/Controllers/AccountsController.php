@@ -298,7 +298,7 @@ class AccountsController extends Controller
     public function viewPassbook($id)
     {
         $id=base64_decode($id);
-        $accounts = Account::with('transaction', 'members')->findOrFail($id);
+        $accounts = Account::with('transaction', 'members')->where('id',$id)->get();
         return view('saving-current-ac.accounts.passbook', compact('accounts'));
     }
     
@@ -322,7 +322,7 @@ class AccountsController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        return view('accounts.passbook_result', [
+        return view('accounts.passbook', [
             'transactions' => $transactions,
             'printType' => $request->print_type
         ]);
