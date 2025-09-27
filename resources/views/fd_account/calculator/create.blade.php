@@ -91,6 +91,14 @@
 
         <form id="fdForm" class="grid grid-cols-2 gap-4" onsubmit="event.preventDefault(); calculateFD();">
 
+            <div class="mb-3">
+                <label for="scheme_id" class="form-label">FD Scheme *</label>
+                <select name="scheme_id" id="scheme_id" class="form-select">
+                    <option value="">-- Select Scheme --</option>
+                </select>
+            </div>
+
+
             {{-- Open Date --}}
             <div class="col-span-2 md:col-span-1">
                 <label for="open_date" class="font-medium">Open Date <span class="text-red-500">*</span></label>
@@ -112,17 +120,7 @@
             {{-- Interest Payout Type --}}
             <div class="col-span-2 md:col-span-1">
                 <label for="interest_payout_type" class="font-medium">Interest Payout Type <span class="text-red-500">*</span></label>
-                <!-- <select id="interest_payout_type" class="w-full border rounded px-3 py-2" onchange="calculateFD()">
-                    <option value="">Select Interest Payout Cycle</option>
-                    <option value="CUMULATIVE_YEARLY">Cumulative Yearly</option>
-                    <option value="CUMULATIVE_HALF_YEARLY">Cumulative Half Yearly</option>
-                    <option value="CUMULATIVE_QUARTERLY">Cumulative Quarterly</option>
-                    <option value="CUMULATIVE_MONTHLY">Cumulative Monthly</option>
-                    <option value="MONTHLY">Monthly</option>
-                    <option value="QUARTERLY">Quarterly</option>
-                    <option value="HALF_YEARLY">Half Yearly</option>
-                    <option value="YEARLY">Yearly</option>
-                </select> -->
+                <!-- <select id="interest_payout_type" class="w-full border rounded px-3 py-2" onchange="calculateFD()"> -->
                 <select id="interest_payout_type" class="w-full border rounded px-3 py-2">
                     <option value="">Select Interest Payout Cycle</option>
                     <option value="CUMULATIVE_YEARLY">Cumulative Yearly</option>
@@ -181,7 +179,16 @@
                 <button type="submit" class="btn-primary px-4 py-2 bg-blue-600 text-white rounded">Calculate</button>
             </div>
         </form>
-        <div id="result" class="mt-8"></div>
+        <div id="result" class="mt-8">
+            <div id="scheme-details" class="p-3 mt-3 border rounded bg-gray-50" style="display:none;">
+                <p><strong>Scheme Code:</strong> <span id="d_scheme_code"></span></p>
+                <p><strong>Scheme Name:</strong> <span id="d_scheme_name"></span></p>
+                <p><strong>Tenure:</strong> <span id="d_tenure"></span></p>
+                <p><strong>Minimum Amount:</strong> <span id="d_min_amount"></span></p>
+                <p><strong>Annual Interest Rate (%):</strong> <span id="d_interest_rate"></span></p>
+            </div>
+
+        </div>
 
     </div>
 
@@ -217,6 +224,66 @@
 @endsection
 
 @push('script')
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("{{ route('fd.schemes.fetch') }}")
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                let dropdown = document.getElementById("scheme_id");
+                result.data.forEach(function (scheme) {
+                    let opt = document.createElement("option");
+                    opt.value = scheme.id;
+                    opt.textContent = scheme.scheme_name;
+                    dropdown.appendChild(opt);
+                });
+            }
+        })
+        .catch(err => console.error(err));
+});
+
+document.getElementById("scheme_id").addEventListener("change", function () {
+    let schemeId = this.value;
+
+    if (schemeId) {
+        fetch(`/fetch-scheme/${schemeId}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    let s = result.data;
+                    document.getElementById("d_scheme_code").textContent = s.scheme_code;
+                    document.getElementById("d_scheme_name").textContent = s.scheme_name;
+                    document.getElementById("d_tenure").textContent = s.tenure + " MONTHS";
+                    document.getElementById("d_min_amount").textContent = s.min_amount + " INR";
+                    document.getElementById("d_interest_rate").textContent = s.annual_interest_rate + " %";
+
+                    document.getElementById("scheme-details").style.display = "block";
+
+                    // Auto-fill भी कर सकते हो
+                    document.getElementById("annual_interest_rate").value = s.annual_interest_rate;
+                    document.getElementById("tenure_month").value = s.tenure;
+                    document.getElementById("amount").value = s.min_amount;
+                     // Auto select payout type
+                    let payoutSelect = document.getElementById("interest_payout_type");
+                    if (s.tenure == 6) {
+                        payoutSelect.value = "HALF_YEARLY";
+                    } else if (s.tenure == 12) {
+                        payoutSelect.value = "YEARLY";
+                    } else {
+                        payoutSelect.value = ""; // default
+                    }
+
+                } else {
+                    document.getElementById("scheme-details").style.display = "none";
+                }
+            })
+            .catch(err => console.error(err));
+    } else {
+        document.getElementById("scheme-details").style.display = "none";
+    }
+});
+
+</script>
 <script>
     console.log(summary);
     function openTab(evt, tabId) 

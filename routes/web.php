@@ -110,6 +110,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
         Route::get('/calculator/calculate', [CalculatorController::class, 'calculateInvestment'])->name('calculator.calculate');
         Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
+        Route::get('/fetch-schemes', [CalculatorController::class, 'getSchemes'])->name('fd.schemes.fetch');
+        Route::get('/fetch-scheme/{id}', [CalculatorController::class, 'getSchemeDetails'])->name('fd.scheme.details');
+
     });
 
 
