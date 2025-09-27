@@ -361,14 +361,32 @@ Route::group(['prefix' => 'morgage-loan'], function () {
 
 // Gold Loan
 Route::group(['prefix' => 'gold-loan'], function () {
+        
     Route::get('scheme/index', [GoldLoanController::class, 'index'])
-        ->name('gold-loan.schemes.index');
+            ->name('gold-loan.schemes.index');
 
+    // create form
     Route::get('scheme/create', [GoldLoanController::class, 'create'])
-        ->name('gold-loan.schemes.create');
+    ->name('gold-loan.schemes.create');
 
-    Route::get('scheme/view', [GoldLoanController::class, 'view'])
-        ->name('gold-loan.schemes.view');
+    // store form data
+    Route::post('scheme/store', [GoldLoanController::class, 'store'])
+    ->name('gold-loan.schemes.store');
+
+    // view list
+    Route::get('scheme/{id}', [GoldLoanController::class, 'show'])
+    ->name('gold-loan.schemes.show');
+
+    // edit form
+   Route::get('scheme/{id}/edit', [GoldLoanController::class, 'edit'])
+    ->name('gold-loan.schemes.edit');
+
+    Route::put('scheme/{id}', [GoldLoanController::class, 'update'])
+    ->name('gold-loan.schemes.update');
+
+    Route::get('scheme/view/{id}', [GoldLoanController::class, 'view'])
+    ->name('gold-loan.schemes.view');
+
 
     Route::get('calculator/index', [GoldLoanController::class, 'calculator'])
         ->name('gold-loan.calculator.index');
