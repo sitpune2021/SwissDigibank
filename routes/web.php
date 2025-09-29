@@ -224,7 +224,7 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('schemes', SchemesController::class);
     Route::resource('accounts', AccountsController::class);
     Route::get('/saving/passbook/{id}', [AccountsController::class, 'viewPassbook'])->name('saving.passbook');
-    Route::get('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
+    Route::post('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
 
 
     Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');

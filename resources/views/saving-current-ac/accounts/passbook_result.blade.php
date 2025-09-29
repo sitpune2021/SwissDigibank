@@ -1,40 +1,41 @@
-<div class="box p-4">
-  <p class="mb-2 text-sm text-gray-600">
-    From: {{ $fromDate->format('d-m-Y') }} To: {{ $toDate->format('d-m-Y') }}
-  </p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Passbook Print</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background: #f5f5f5; }
+    </style>
+</head>
+<body onload="window.print()">
+    <h2>Passbook Statement</h2>
+    <p>From: {{ $fromDate }} To: {{ $toDate }}</p>
 
-  @php 
-dd("hi");
-  @endphp
-  <div id="printableArea">
-    <table class="w-full border border-gray-300 text-sm mt-2">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="px-2 py-2 border">Date</th>
-          <th class="px-2 py-2 border">Particulars</th>
-          <th class="px-2 py-2 border">Cheque No</th>
-          <th class="px-2 py-2 border text-right">DR Amount</th>
-          <th class="px-2 py-2 border text-right">CR Amount</th>
-          <th class="px-2 py-2 border text-right">Balance</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($transactions as $txn)
-        <tr>
-          <td class="px-2 py-2 border">{{ $txn->created_at->format('d-m-Y') }}</td>
-          <td class="px-2 py-2 border">{{ $txn->description ?? '-' }}</td>
-          <td class="px-2 py-2 border">{{ $txn->cheque_no ?? '-' }}</td>
-          <td class="px-2 py-2 border text-right">{{ $txn->debit_amount ?? '-' }}</td>
-          <td class="px-2 py-2 border text-right">{{ $txn->credit_amount ?? '-' }}</td>
-          <td class="px-2 py-2 border text-right">{{ $txn->balance ?? '-' }}</td>
-        </tr>
-        @empty
-        <tr>
-          <td colspan="6" class="text-center py-4">No transactions found</td>
-        </tr>
-        @endforelse
-      </tbody>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Cheque No</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($transactions as $txn)
+                <tr>
+                    <td>{{ $txn['date'] }}</td>
+                    <td>{{ $txn['description'] }}</td>
+                    <td>{{ $txn['cheque_no'] }}</td>
+                    <td>{{ $txn['debit_amount'] ?? '-' }}</td>
+                    <td>{{ $txn['credit_amount'] ?? '-' }}</td>
+                    <td>{{ $txn['balance'] }}</td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
-  </div>
-</div>
-
+</body>
+</html>

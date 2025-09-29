@@ -297,34 +297,76 @@ class AccountsController extends Controller
 
     public function viewPassbook($id)
     {
-        $id=base64_decode($id);
-        $accounts = Account::with('transaction', 'members')->where('id',$id)->get();
+        $id = base64_decode($id);
+        $accounts = Account::with('transaction', 'members')->where('id', $id)->get();
         return view('saving-current-ac.accounts.passbook', compact('accounts'));
     }
-    
+
     public function passbookSearch(Request $request)
     {
         $request->validate([
             'account_id' => 'required|exists:accounts,id',
-            'from_date' => 'required|date_format:d/m/Y',
-            'to_date'   => 'required|date_format:d/m/Y|after_or_equal:from_date',
-            'print_type' => 'required|in:front,statement,full',
+            'from_date'  => 'required|date_format:d-m-Y',
+            'to_date'    => 'required|date_format:d-m-Y|after_or_equal:from_date',
+            'print'      => 'required|in:front,statement,full',
         ]);
 
         $accountId = $request->account_id;
 
-        // Convert DD/MM/YYYY to Y-m-d
-        $fromDate = Carbon::createFromFormat('d/m/Y', $request->from_date)->startOfDay();
-        $toDate   = Carbon::createFromFormat('d/m/Y', $request->to_date)->endOfDay();
+        // Convert dates to Carbon
+        $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+        $toDate   = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
 
+        // Fetch transactions within date range
         $transactions = Transaction::where('account_id', $accountId)
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->orderBy('created_at')
+            ->whereBetween('transaction_date', [$fromDate, $toDate])
+            ->orderBy('transaction_date')
             ->get();
 
-        return view('accounts.passbook', [
+        // Get starting balance before from_date
+        $startingBalance = AccountsTransactionsHelper::getAccountBalanceBeforeDate($accountId, $fromDate);
+        $runningBalance = $startingBalance;
+
+        // Transform transactions with running balance
+        $transactions = $transactions->transform(function ($txn) use (&$runningBalance) {
+            if ($txn->transaction_type === 'debit') {
+                $runningBalance -= $txn->amount;
+            } elseif ($txn->transaction_type === 'credit') {
+                $runningBalance += $txn->amount;
+            }
+
+            return [
+                'date'          => $txn->transaction_date ? \Carbon\Carbon::parse($txn->transaction_date)->format('d-m-Y') : null,
+                'description'   => $txn->description ?? '-',
+                'cheque_no'     => $txn->cheque_no ?? '-',
+                'debit_amount'  => $txn->transaction_type === 'debit' ? $txn->amount : null,
+                'credit_amount' => $txn->transaction_type === 'credit' ? $txn->amount : null,
+                'balance'       => $runningBalance,
+            ];
+        });
+
+        // Optional: prepend opening balance row
+        $transactions->prepend([
+            'date' => $fromDate->format('d-m-Y'),
+            'description' => 'Opening Balance',
+            'cheque_no' => '-',
+            'debit_amount' => null,
+            'credit_amount' => null,
+            'balance' => $startingBalance,
+        ]);
+
+        // return view('accounts.passbook-print', [
+        //     'transactions' => $transactions,
+        //     'fromDate' => $request->from_date,
+        //     'toDate' => $request->to_date,
+        // ]);
+
+        return response()->json([
+            'success' => true,
             'transactions' => $transactions,
-            'printType' => $request->print_type
+            'printType' => $request->print,
+            'fromDate' => $request->from_date,
+            'toDate' => $request->to_date,
         ]);
     }
 }
