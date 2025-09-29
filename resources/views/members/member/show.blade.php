@@ -102,11 +102,10 @@
             <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
         </a>
         <a class="btn-danger rounded-md px-2 py-1 text-white  text-sm bg-red-500 hover:bg-red-600">REMOVE MEMBER</a>
-
-        <a class="btn-primary rounded-md px-2 py-1 text-white  text-sm bg-indigo-500 hover:bg-indigo-600">
-            <i class="fa fa-print"></i> APPLICATION FORM
-        </a>
-
+<a href="{{ route('members.application_form', ['id' => $member->id]) }}" 
+   class="btn-primary rounded-md px-2 py-1 text-white text-sm bg-indigo-500 hover:bg-indigo-600">
+    <i class="fa fa-print"></i> APPLICATION FORM
+</a>
         <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHOW AUDIT TRAIL</a>
     </div>
     <div class="grid grid-cols-12 gap-4 xxl:gap-6">

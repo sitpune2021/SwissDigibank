@@ -174,8 +174,8 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
             ->name('members.transactions.share-amount.create');
         Route::get('/members/transactions/{id}', [MemberController::class, 'showTransactionDetails'])->name('transactions.show');
-        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])->name('transactions.softDelete');
-        Route::get('/members/transactions/{id}/print', [MemberController::class, 'printTransaction'])->name('transactions.print');
+        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])
+            ->name('transactions.softDeletetransaction');
         Route::get('/members/{id}/transactions/other-charges/list', [MemberController::class, 'otherChargesList'])->name('members.other-charges.list');
         Route::delete('/member-other-charges/{id}/delete', [MemberController::class, 'softDeleteothercharges'])->name('transactions.softDelete');
         // Route to show the form for clearing dues (GET request)
@@ -184,7 +184,11 @@ Route::middleware('auth.user')->group(function () {
         // Route to handle clearing dues (POST request)
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
+        Route::get('/members/receipt/print/{id}/{type}', [MemberController::class, 'printReceipt'])
+            ->middleware('auth') 
+            ->name('transactions.print-receipt');
 
+        Route::get('/application-form', [MemberController::class, 'applicationForm'])->name('members.application_form');
 
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
@@ -267,20 +271,20 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
 
     //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
-   // Show change account info form
-Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
-    ->name('misaccount.changeAccountInfo');
+    // Show change account info form
+    Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
+        ->name('misaccount.changeAccountInfo');
 
-// Update account info (form submit)
-Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
-    ->name('misaccount.updateAccountInfo');
+    // Update account info (form submit)
+    Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
+        ->name('misaccount.updateAccountInfo');
 
-// Add Nominee
-Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
-    ->name('misaccount.addNominee');
+    // Add Nominee
+    Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
+        ->name('misaccount.addNominee');
 
-Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
-    ->name('misaccount.updateNominee');
+    Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
+        ->name('misaccount.updateNominee');
 
     //edit and update branches
 
