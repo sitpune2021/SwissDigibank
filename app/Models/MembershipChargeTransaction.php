@@ -41,4 +41,8 @@ class MembershipChargeTransaction extends Model
     {
         return $this->belongsTo(Account::class, 'saving_account_id');
     }
+
+    public function members() {
+        return $this->belongsTo(Member::class, 'member_id');
+    }
 }

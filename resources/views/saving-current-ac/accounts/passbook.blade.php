@@ -35,17 +35,16 @@
   </div>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 ">
     <div class="col-span-2 md:col-span-1 box dark:bg-bg3 rounded-2xl p-6">
-
-      <form action="" method="" class="space-y-6">
-        <!-- Scheme -->
+      <form action="" id="passbookForm">
         @csrf
         <div class="mb-4">
-
           <label for="" class="block font-medium mb-2">Account No <span class="text-red-500">*</span></label>
           <select id="account_id" name="account_id" required
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
-
             <option value="">Select Account</option>
+            @foreach($accounts as $account)
+            <option value="{{ $account->id }}">{{ $account->account_no }}</option>
+            @endforeach
           </select>
         </div>
         <!-- HTML -->
@@ -69,35 +68,6 @@
           <button type="button" data-range="custom" class="px-3 py-2 border  rounded-10 btn-primary hover:bg-gray-200">Custom</button>
         </div>
 
-        <!--  Date -->
-        {{-- <div class="w-full mt-4 ">
-            <label class="block font-medium mb-2" for="tenure_type">
-             Date From <span class="text-red-500">*</span>
-            </label>
-            
-
-            <div class="flex flex-wrap gap-4">
-
-              <input type="text" name="" id="date" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5
-                      dark:bg-bg3 " placeholder="DD/MM/YYYY">
-
-            </div>
-          </div>
-            <div class="w-full mt-4 ">
-            <label class="block font-medium mb-2" for="tenure_type">
-             Date To <span class="text-red-500">*</span>
-            </label>
-            
-
-            <div class="flex flex-wrap gap-4">
-
-             <input type="text" name="" id="date2" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5
-                      dark:bg-bg3 " placeholder="DD/MM/YYYY">
-
-            </div>
-          </div> --}}
-        <!-- Input -->
-
         <!-- PrintType *-->
         <div class="w-full mt-4 ">
           <label class="block font-medium mb-2" for="tenure_type">
@@ -105,18 +75,17 @@
           </label>
 
           <div class="flex flex-wrap gap-4">
-
             <label class="flex items-center space-x-2 gap-2">
-              <input type="radio" name="print" value="" required class="text-blue-600 focus:ring-blue-500">
+              <input type="radio" name="print" value="front" class="text-blue-600 focus:ring-blue-500">
               <span> FRONT PAGE</span>
             </label>
 
             <label class="flex items-center space-x-2 gap-2">
-              <input type="radio" name="print" value="" required class="text-blue-600 focus:ring-blue-500">
+              <input type="radio" name="print" value="statement" class="text-blue-600 focus:ring-blue-500">
               <span>STATEMENT</span>
             </label>
             <label class="flex items-center space-x-2 gap-2">
-              <input type="radio" name="print" value="" required checked
+              <input type="radio" name="print" value="full" checked
                 class="text-blue-600 focus:ring-blue-500">
               <span> FULL STATEMENT</span>
             </label>
@@ -136,9 +105,8 @@
 
   <div class="box p-4">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 min-h-[46px]">
-
       <!-- Print Button -->
-      <a href="#" class="btn-primary p-3">
+      <a href="#" class="btn-primary p-3" onclick="printPassbook()">
         <i class="las la-print mr-2"></i>
       </a>
 
@@ -157,7 +125,7 @@
 
     <!-- Printable Area -->
     <div id="printableArea">
-      <div class="print-preview border   shadow-sm">
+      <div class="print-preview border shadow-sm">
         <div class="overflow-x-auto ">
           <table class="w-full border border-gray-300 text-sm mt-8">
             <thead class="bg-gray-100">
@@ -175,7 +143,6 @@
       </div>
     </div>
   </div>
-
 </div>
 <!-- JS -->
 
@@ -213,7 +180,6 @@
     fromSelected = null;
   }
 
-  // Calculate To max date (6 months after From, capped by today)
   function calculateMaxTo(fromDate) {
     const maxTo = new Date(fromDate);
     maxTo.setMonth(maxTo.getMonth() + 6);
@@ -221,7 +187,6 @@
     return maxTo > today ? today : maxTo;
   }
 
-  // Highlight only the 6-month range in To calendar
   function highlightToRange(fromDate) {
     const maxTo = calculateMaxTo(fromDate);
     toPicker.setOptions({
@@ -273,7 +238,6 @@
     btn.addEventListener("click", () => {
       const range = btn.getAttribute("data-range");
       isCustomMode = (range === "custom");
-      console.log("hiii");
 
       if (isCustomMode) {
         resetPickers();
@@ -310,4 +274,175 @@
     });
   });
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  let currentTransactions = [];
+  $('#passbookForm').on('submit', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+      url: "{{ route('accounts.passbook.search') }}",
+      type: "POST",
+      data: $(this).serialize(),
+      success: function(res) {
+        if (res.transactions && res.transactions.length > 0) {
+          currentTransactions = res.transactions; // save data in variable
+        } else {
+          currentTransactions = [];
+          alert("No transactions found!");
+        }
+      },
+      error: function(xhr) {
+        alert("Error fetching transactions");
+      }
+    });
+  });
+
+  function printPassbook() {
+    if (!currentTransactions || currentTransactions.length === 0) {
+      alert("No transactions to print!");
+      return;
+    }
+    
+    let printHtml = `
+    <style>
+        .letterhead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #000;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      width: 120px;
+      text-align: center;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .bank-details {
+      flex: none;
+      text-align: center;
+      padding: 0 15px;
+    }
+
+    .bank-details h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .bank-details p {
+      margin: 3px 0;
+      font-size: 13px;
+    }
+    </style>
+       <div class="letterhead">
+        <!-- Logo -->
+        <div class="logo">
+          <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo">
+        </div>
+        <!-- Bank Details -->
+        <div class="bank-details">
+          <h1>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA <br> LIMITED</h1>
+          <br>
+          <p>SHEGAON SHEGAON Maharashtra - 110012</p>
+          <p>E: sbcglobalbank@gmail.com | L: 0724-2991230 | M: 9922870805</p>
+          <p>CIN: 969/03-04</p>
+        </div>
+        <div class="logo"></div>
+      </div>
+
+
+      <div  style="  text-align: right;
+    padding-bottom: 20px;">Date - {{ now()->format('d/m/Y') }}</div>
+ 
+ 
+<div style="font-weight: bold; margin-top: 15px; text-align: center;"><h3 >Saving Account Statement</h3></div>
+ 
+<table border="1" style=" width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+  <tr>
+    <td style="width: 25%;">Member's Name</td>
+    <td style="width: 25%;">{{ $account->members->member_info_first_name }} {{ $account->members->member_info_last_name }}</td>
+    <td style="width: 25%;">Internal A/c No</td>
+    <td style="width: 25%;">{{ $account->account_no }}</td>
+  </tr>
+  <tr>
+    <td>Virtual A/c No</td>
+    <td></td>
+    <td>IFSC code</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td style="padding: 20px 0;">Address</td>
+<td>
+    @php
+        $address = trim(
+            ($account->members->address->member_address_line_1 ?? '') . ' ' .
+            ($account->members->address->member_address_line_2 ?? '') . ' ' .
+            ($account->members->address->member_address_area ?? '') . ' ' .
+            ($account->members->address->member_address_landmark ?? '') . ' ' .
+            ($account->members->address->member_address_city_district ?? '') . ' ' .
+            ($account->members->address->member_address_state ?? '') . ' ' .
+            ($account->members->address->member_address_pincode ?? '')
+        );
+    @endphp
+
+    {{ $address !== '' ? $address : 'NA' }}
+</td>
+    <td >Scheme</td>
+    <td >{{ $account->scheme->name ?? 'NA' }}</td>
+  </tr>
+  <tr>
+    <td>Opening date</td>
+    <td>{{ \Carbon\Carbon::parse($account->open_date)->format('d/m/Y') }}</td>
+    <td>Interest Rate</td>
+    <td>{{ $account->scheme->interest_rate ?? 0 }}%</td>
+  </tr>
+</table>
+<div style="margin-bottom: 15px; text-align: center;""><p>Statement Period: 29/02/2024  10:26 - 29/09/2024 12:23</p></div>
+
+    <table border="1" cellspacing="0" cellpadding="5" style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Cheque No</th>
+          <th>Debit</th>
+          <th>Credit</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+    currentTransactions.forEach(txn => {
+      printHtml += `
+      <tr>
+        <td>${txn.date ?? '-'}</td>
+        <td>${txn.description ?? '-'}</td>
+        <td>${txn.cheque_no ?? '-'}</td>
+        <td style="text-align:right">${txn.debit_amount ?? '-'}</td>
+        <td style="text-align:right">${txn.credit_amount ?? '-'}</td>
+        <td style="text-align:right">${txn.balance ?? '-'}</td>
+      </tr>`;
+    });
+
+    printHtml += `</tbody></table>`;
+
+    let printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Passbook</title></head><body>');
+    printWindow.document.write(printHtml);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+  }
+</script>
+
 @endsection

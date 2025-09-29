@@ -28,23 +28,9 @@
         <h3 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h3>
     </div>
 
-    @if (session('success'))
-    <div id="success-alert"
-        style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-        <strong>Success:</strong> {{ session('success') }}
-        <span onclick="document.getElementById('success-alert').style.display='none';"
-            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
+    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+        <x-alert />
     </div>
-    @endif
-
-    @if (session('error'))
-    <div id="error-alert"
-        style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-        <strong>Error:</strong> {{ session('error') }}
-        <span onclick="document.getElementById('error-alert').style.display='none';"
-            style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
-    </div>
-    @endif
 
     <div class="box mb-4 xxxl:mb-6">
         <form id="accountForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
@@ -88,10 +74,10 @@
                 <select name="member_id" id="member_id_main" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                     <option value="">-- Select Member --</option>
                     @foreach($members as $member)
-                    <option value="{{ $member->id }}" {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
-                        {{ $member->member_info_first_name . ' ' . $member->member_info_last_name }}
+                    <option value="{{ $member->id }}"
+                        {{ (string) old('member_id', $account->member_id ?? '') === (string) $member->id ? 'selected' : '' }}>
+                        {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
                     </option>
-
                     @endforeach
                 </select>
                 @error('member_id') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
@@ -202,7 +188,7 @@
 
             {{-- Amount --}}
             <div class="col-span-2 md:col-span-1">
-                <x-amount-input name="amount" id="amount" label="Enter Amount" />
+                <x-amount-input name="amount" id="amount" />
                 @error('amount') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
             </div>
 

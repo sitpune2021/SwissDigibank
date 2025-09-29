@@ -112,6 +112,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
         Route::get('/calculator/calculate', [CalculatorController::class, 'calculateInvestment'])->name('calculator.calculate');
         Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
+        Route::get('/fetch-schemes', [CalculatorController::class, 'getSchemes'])->name('fd.schemes.fetch');
+        Route::get('/fetch-scheme/{id}', [CalculatorController::class, 'getSchemeDetails'])->name('fd.scheme.details');
+
     });
 
 
@@ -171,8 +174,8 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
             ->name('members.transactions.share-amount.create');
         Route::get('/members/transactions/{id}', [MemberController::class, 'showTransactionDetails'])->name('transactions.show');
-        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])->name('transactions.softDelete');
-        Route::get('/members/transactions/{id}/print', [MemberController::class, 'printTransaction'])->name('transactions.print');
+        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])
+            ->name('transactions.softDeletetransaction');
         Route::get('/members/{id}/transactions/other-charges/list', [MemberController::class, 'otherChargesList'])->name('members.other-charges.list');
         Route::delete('/member-other-charges/{id}/delete', [MemberController::class, 'softDeleteothercharges'])->name('transactions.softDelete');
         // Route to show the form for clearing dues (GET request)
@@ -181,7 +184,11 @@ Route::middleware('auth.user')->group(function () {
         // Route to handle clearing dues (POST request)
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
+        Route::get('/members/receipt/print/{id}/{type}', [MemberController::class, 'printReceipt'])
+            ->middleware('auth') 
+            ->name('transactions.print-receipt');
 
+        Route::get('/application-form', [MemberController::class, 'applicationForm'])->name('members.application_form');
 
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
@@ -221,7 +228,7 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('schemes', SchemesController::class);
     Route::resource('accounts', AccountsController::class);
     Route::get('/saving/passbook/{id}', [AccountsController::class, 'viewPassbook'])->name('saving.passbook');
-    Route::get('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
+    Route::post('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
 
 
     Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
@@ -264,20 +271,20 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
 
     //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
-   // Show change account info form
-Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
-    ->name('misaccount.changeAccountInfo');
+    // Show change account info form
+    Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
+        ->name('misaccount.changeAccountInfo');
 
-// Update account info (form submit)
-Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
-    ->name('misaccount.updateAccountInfo');
+    // Update account info (form submit)
+    Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
+        ->name('misaccount.updateAccountInfo');
 
-// Add Nominee
-Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
-    ->name('misaccount.addNominee');
+    // Add Nominee
+    Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
+        ->name('misaccount.addNominee');
 
-Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
-    ->name('misaccount.updateNominee');
+    Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
+        ->name('misaccount.updateNominee');
 
     //edit and update branches
 
@@ -358,14 +365,32 @@ Route::group(['prefix' => 'morgage-loan'], function () {
 
 // Gold Loan
 Route::group(['prefix' => 'gold-loan'], function () {
+        
     Route::get('scheme/index', [GoldLoanController::class, 'index'])
-        ->name('gold-loan.schemes.index');
+            ->name('gold-loan.schemes.index');
 
+    // create form
     Route::get('scheme/create', [GoldLoanController::class, 'create'])
-        ->name('gold-loan.schemes.create');
+    ->name('gold-loan.schemes.create');
 
-    Route::get('scheme/view', [GoldLoanController::class, 'view'])
-        ->name('gold-loan.schemes.view');
+    // store form data
+    Route::post('scheme/store', [GoldLoanController::class, 'store'])
+    ->name('gold-loan.schemes.store');
+
+    // view list
+    Route::get('scheme/{id}', [GoldLoanController::class, 'show'])
+    ->name('gold-loan.schemes.show');
+
+    // edit form
+   Route::get('scheme/{id}/edit', [GoldLoanController::class, 'edit'])
+    ->name('gold-loan.schemes.edit');
+
+    Route::put('scheme/{id}', [GoldLoanController::class, 'update'])
+    ->name('gold-loan.schemes.update');
+
+    Route::get('scheme/view/{id}', [GoldLoanController::class, 'view'])
+    ->name('gold-loan.schemes.view');
+
 
     Route::get('calculator/index', [GoldLoanController::class, 'calculator'])
         ->name('gold-loan.calculator.index');

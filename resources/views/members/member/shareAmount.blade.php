@@ -27,15 +27,13 @@
         <div class="box dark:bg-bg3 shadow-md rounded-2xl p-6 w-1/2 max-w-2xl mx-auto">
             <!-- Title -->
             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6">
-
                 Share Amount Collected
             </h2>
 
             <!-- Form -->
-            <form action="{{ route('members.transactions.share-amount.store', ['id' => $member->id]) }}" method="POST">
-
+            <form action="{{ route('members.transactions.share-amount.store', ['id' => $members->id]) }}" method="POST">
                 @csrf
-
+                
                 <!-- Transaction Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -51,20 +49,21 @@
                         Share Amount <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" step="0.01" name="membership_fee" placeholder="Enter Share Amount"
-                        value="{{ old('membership_fee') }}" {{-- Retain old value on validation error --}}
+                    <input type="number" step="0.01" name="membership_fee" id="membership_fee"
+                        placeholder="Enter Share Amount" value="{{ old('membership_fee') }}"
                         class="w-full rounded-10 border border-n30 dark:border-n500 px-3 py-2 bg-secondary/5 dark:bg-bg3 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:outline-none">
+
+                    <!-- Number to word component -->
+                    <x-number-to-word for="membership_fee" />
 
                     @error('membership_fee')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-
                 <!-- Remarks -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-
                         Remarks (if any)
                     </label>
                     <input type="text" name="remarks" placeholder="Enter Remarks (if any)"
@@ -88,10 +87,13 @@
                         <label class="flex items-center gap-2">
                             <input type="radio" name="charges_pay_mode" value="cheque" class="text-green-600"> Cheque
                         </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="charges_pay_mode" value="saving" class="text-green-600"> Saving
-                            Ac.
-                        </label>
+                        @if ($savingAccounts->count() > 0)
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="charges_pay_mode" value="saving" class="text-green-600"> Saving
+                                Ac.
+                            </label>
+                        @endif
+
                     </div>
                     @error('payment_mode')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -137,7 +139,6 @@
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-
                 </div>
 
                 <!-- Cheque Fields -->
@@ -171,18 +172,22 @@
                 </div>
 
                 <div id="savingFields"
-                    class="space-y-4 mt-2 {{ old('account_type', $members->account_type ?? '') === 'saving' ? '' : 'hidden' }}">
-                    <label class="block text-sm font-medium text-gray-700">Select Saving Account <span
-                            class="text-red-500">*</span></label>
+                    class="space-y-4 mt-2 {{ (old('account_type') ?? ($members->account_type ?? '')) == 'saving' ? '' : 'hidden' }}">
+                    <label class="block text-sm font-medium text-gray-700">
+                        Select Saving Account <span class="text-red-500">*</span>
+                    </label>
+                    <!-- Saving Account Select -->
                     <select id="savingAccountSelect" name="saving_account_id"
                         class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
                         <option value="">Select Account</option>
+
                         @foreach ($savingAccounts as $account)
                             <option value="{{ $account->id }}"
-                                {{ old('saving_account_id', $member->saving_account_id) == $account->id ? 'selected' : '' }}>
+                                data-balance="{{ number_format($account->amount_deposit	, 2, '.', '') }}"
+                                {{ old('saving_account_id') == $account->id ? 'selected' : '' }}>
                                 {{ $account->account_no }}
-                                ({{ $account->members->member_info_first_name ?? '-' }}{{ $account->members->member_info_last_name }})
-                                (Bal. {{ number_format($account->balance, 2) }})
+                                ({{ $account->members->member_info_first_name ?? '-' }}{{ $account->members->member_info_last_name ?? '-' }})
+                                (Bal. {{ number_format($account->amount_deposit	, 2) }})
                             </option>
                         @endforeach
                     </select>
@@ -191,16 +196,13 @@
                     @enderror
                 </div>
 
-
                 <!-- Buttons -->
                 <div class="flex gap-4 pt-4">
-                    <button type="submit"
-                        class="btn-primary justify-center">
+                    <button type="submit" class="btn-primary justify-center">
 
                         SAVE
                     </button>
-                    <a href="{{ url()->previous() }}"
-                        class="btn-outline inline-flex items-center justify-center">
+                    <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
 
                         Back
                     </a>
@@ -208,44 +210,7 @@
             </form>
         </div>
     @endsection
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const chequeFields = document.getElementById("chequeFields");
-            const onlineFields = document.getElementById("onlineFields");
-            const savingFields = document.getElementById("savingFields");
 
-            function hideAllFields() {
-                chequeFields.classList.add("hidden");
-                onlineFields.classList.add("hidden");
-                savingFields.classList.add("hidden");
-            }
-
-            const radios = document.querySelectorAll("input[name='charges_pay_mode']");
-            radios.forEach(radio => {
-                radio.addEventListener("change", function() {
-                    hideAllFields();
-                    switch (this.value) {
-                        case "cheque":
-                            chequeFields.classList.remove("hidden");
-                            break;
-                        case "online":
-                            onlineFields.classList.remove("hidden");
-                            break;
-                        case "saving":
-                            savingFields.classList.remove("hidden");
-                            break;
-                            // default is "cash" — keep all hidden
-                    }
-                });
-            });
-
-            // Trigger correct section on page load
-            const selectedRadio = document.querySelector("input[name='charges_pay_mode']:checked");
-            if (selectedRadio) {
-                selectedRadio.dispatchEvent(new Event("change"));
-            }
-        });
-    </script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const chequeFields = document.getElementById("chequeFields");
@@ -284,3 +249,21 @@
             }
         });
     </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const payModes = document.querySelectorAll("input[name='charges_pay_mode']");
+        const savingAccountSelect = document.getElementById("savingAccountSelect");
+
+        form.addEventListener("submit", function (e) {
+            const selectedPayMode = [...payModes].find(r => r.checked)?.value;
+            const selectedAccount = savingAccountSelect.value;
+
+            if (selectedPayMode === "saving" && !selectedAccount) {
+                e.preventDefault();
+                alert("Please select a Saving Account when 'Saving Ac.' is selected.");
+                savingAccountSelect.focus();
+            }
+        });
+    });
+</script>
