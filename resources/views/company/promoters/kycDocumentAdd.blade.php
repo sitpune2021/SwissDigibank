@@ -1,7 +1,7 @@
 @extends('layout.main')
 
- @section('page-title', isset($promoter) ? (!empty($show) ? 'View ' . $promoter->first_name . ' Promoter' : 'Edit ' .
-      $promoter->first_name . ' Promoter') : 'Documents')
+ @section('page-title', isset($promoter) ? (!empty($show) ? 'VIEW ' . $promoter->first_name . ' PROMOTER' : 'EDIT ' .
+      $promoter->first_name . ' PROMOTER') : 'DOCUMENTS')
 
 
 @section('content')

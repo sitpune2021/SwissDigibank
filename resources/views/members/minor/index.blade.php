@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'Minors')
+@section('page-title', 'MINORS')
 @section('content')
 
 <div class="main-inner">
@@ -14,35 +14,35 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Branch
+                                BRANCH
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Minor Name
+                                MINOR NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Member
+                                MEMBER
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Father Name
+                                FATHER NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Enrollment Date
+                                ENROLLMENT DATE
                             </div>
                         </th>
                         {{-- <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    Status
+                                    STATUS
                                 </div>
                             </th> --}}
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>

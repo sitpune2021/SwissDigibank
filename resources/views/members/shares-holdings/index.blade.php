@@ -1,32 +1,9 @@
 @extends('layout.main')
-<style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
 
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-</style>
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-        <h4 class="h3">Share Holdings</h4>
+        <h3 class="h3">SHARE HOLDINGS</h3>
 
         <a class="btn-primary" href="{{ route('shares-holdings.create') }}">
             <i class=" text-base md:text-lg"></i>
@@ -58,38 +35,38 @@
             <thead>
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Branch</div>
+                        <div class="flex items-center gap-1">BRANCH</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Member</div>
+                        <div class="flex items-center gap-1">MEMBER</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Share Range</div>
+                        <div class="flex items-center gap-1">SHARE RANGE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Total Shares Held</div>
+                        <div class="flex items-center gap-1">TOTAL SHARES HELD</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Nominal Val.</div>
+                        <div class="flex items-center gap-1">NOMINAL VAL.</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Total Share Val.</div>
+                        <div class="flex items-center gap-1">TOTAL SHARE VAL.</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Allotment Date</div>
+                        <div class="flex items-center gap-1">ALLOTMENT DATE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Transfer Date</div>
+                        <div class="flex items-center gap-1">TRANSFER DATE</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Cert. No</div>
+                        <div class="flex items-center gap-1">CERT. NO</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Surrendered</div>
+                        <div class="flex items-center gap-1">SURRENDERED</div>
                     </th>
                 </div>
             </th>
-            <th class="text-center !py-5" data-sortable="false">Action</th>
+            <th class="text-center !py-5" data-sortable="false">ACTION</th>
          </tr>
         </thead>
         <tbody>

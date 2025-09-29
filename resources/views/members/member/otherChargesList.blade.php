@@ -15,8 +15,7 @@
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
-        <a href="{{ route('members.other-charges', ['id' => $member->id]) }}"
-            class="btn-primary rounded-10 px-2 py-2 mb-4">
+        <a href="{{ route('members.other-charges', ['id' => $member->id]) }}" class="btn-primary rounded-10 px-2 py-2 mb-4">
             DEBIT OTHER CHARGES
         </a>
 
@@ -82,11 +81,13 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ $otherCharges->created_at }}
+                                    {{ \Carbon\Carbon::parse($otherCharges->created_at)->format('d-m-Y') }}
+
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ $otherCharges->updated_at }}
+                                    {{ \Carbon\Carbon::parse($otherCharges->updated_at)->format('d-m-Y') }}
+
                                 </td>
 
                                 {{-- ✅ Actions Column --}}

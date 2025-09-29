@@ -9,7 +9,7 @@
                     ? 'Edit Allocated Shares'
                     : 'Allocate New Shares to Promoter') !!}
                             </h3> -->
-            <h3 class="h2">Transfer Shares</h3>
+            <h3 class="h3">TRANSFER SHARES</h3>
         </div>
 
         @if (session('success'))

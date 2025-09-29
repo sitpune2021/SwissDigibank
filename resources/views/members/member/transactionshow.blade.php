@@ -20,12 +20,14 @@
             <div class="box overflow-x-auto border rounded-lg dark:bg-bg shadow-md p-4">
                 <div class="flex justify-end gap-2">
                     <div class="flex justify-end mb-4">
-                        <a href="#" onclick="window.print();" class="btn-primary px-2 py-2">
+                        <a href="{{ route('transactions.print-receipt', ['id' => $transaction->id, 'type' => $transaction->transaction_source === 'Membership Charge' ? 'normal' : 'Share amount']) }}"
+                            target="_blank" class="btn-primary px-2 py-2">
                             <i class="las la-print"></i>
                         </a>
+
                     </div>
                     <div class="flex justify-end mb-4">
-                        <form action="{{ route('transactions.softDelete', $transaction->id) }}" method="POST"
+                        <form action="{{ route('transactions.softDeletetransaction', $transaction->id) }}" method="POST"
                             onsubmit="return confirm('Are you sure you want to delete this transaction?')"
                             style="display:inline;">
                             @csrf

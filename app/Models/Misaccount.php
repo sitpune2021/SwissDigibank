@@ -29,7 +29,7 @@ class Misaccount extends Model
         'nominee',
         'final_amount',
         'transaction_date',
-
+        'mis_joint_date',
         'monthly_interest',
         'total_interest',
         'maturity_amount',
@@ -50,6 +50,13 @@ class Misaccount extends Model
     {
         return $this->hasMany(AccountNominee::class, 'account_id');
     }
+
+   public function misnominees()
+{
+    return $this->hasMany(MisaccountNominee::class, 'mis_account_id'); // 👈 fix
+}
+
+
     public function fdScheme()
     {
         return $this->belongsTo(FDScheme::class, 'fd_scheme_id');
@@ -59,33 +66,5 @@ class Misaccount extends Model
         return $this->belongsTo(Branch::class, 'branch_id');
     }
 
-    // protected $appends = ['monthly_dates', 'maturity_date'];
-
-    // // ✅ Computed maturity date
-    // public function getMaturityDateAttribute()
-    // {
-    //     return Carbon::parse($this->open_date)
-    //         ->addYears($this->tenure_year ?? 0)
-    //         ->addMonths($this->tenure_month ?? 0)
-    //         ->addDays($this->tenure_day ?? 0);
-    // }
-
-    // // ✅ Computed monthly dates
-    // public function getMonthlyDatesAttribute()
-    // {
-    //     $dates = [];
-    //     $current = Carbon::parse($this->open_date);
-
-    //     while ($current < $this->maturity_date) {
-    //         $dates[] = [
-    //             'from' => $current->copy()->startOfMonth(),
-    //             'to' => $current->copy()->endOfMonth(),
-    //             'year' => $current->year,
-    //             'days_in_month' => $current->daysInMonth,
-    //         ];
-    //         $current->addMonth();
-    //     }
-
-    //     return $dates;
-    // }
+   
 }

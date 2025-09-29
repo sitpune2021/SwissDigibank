@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'Promoters')
+@section('page-title', 'PROMOTERS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('promotor.create') }}">
     <i class=" md:text-lg"></i>

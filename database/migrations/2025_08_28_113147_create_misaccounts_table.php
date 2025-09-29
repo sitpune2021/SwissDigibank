@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->foreignId('branch_id')->constrained('branches');
             $table->unsignedBigInteger('advisor_id')->nullable();
             $table->unsignedBigInteger('joint_member_id')->nullable();
+            $table->date('mis_joint_date');
             $table->date('open_date');
             $table->integer('tenure_year')->nullable();
             $table->integer('tenure_month')->nullable();
@@ -30,6 +31,12 @@ return new class extends Migration {
             $table->string('senior_citizen');
             $table->string('account_type');
             $table->string('nominee')->nullable(); // now as string
+
+            // Newly added columns
+            $table->string('nominee_relation')->nullable();
+            $table->string('nominee_name')->nullable();
+            $table->text('nominee_address')->nullable();
+
             $table->decimal('final_amount', 12, 2)->nullable();
             $table->date('transaction_date');
             $table->timestamps();
@@ -41,10 +48,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('misaccounts', function (Blueprint $table) {
-            if (Schema::hasColumn('misaccounts', 'nominee')) {
-                $table->dropColumn('nominee');
-            }
-        });
+        // Drop the entire table
+        Schema::dropIfExists('misaccounts');
     }
 };

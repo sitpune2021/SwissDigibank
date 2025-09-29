@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'Permisions /Roles')
+@section('page-title', 'PERMISSIONS / ROLES')
 
 @section('action-button')
 <a class="btn-primary" href="{{ route('roles.create') }}">
@@ -19,24 +19,24 @@
             <thead class="custom-thead">
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Sr No</div>
+                        <div class="flex items-center gap-1">SR NO</div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Role Name</div>
+                        <div class="flex items-center gap-1">ROLE NAME</div>
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">Position</div>
+                        <div class="flex items-center gap-1">POSITION</div>
                     </th>
                     <th class="text-start !py-6 min-w-[130px] cursor-pointer">
-                        <div class="flex items-center gap-1">Active</div>
+                        <div class="flex items-center gap-1">ACTIVE</div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
-                        <div class="flex items-center gap-1">Users</div>
+                        <div class="flex items-center gap-1">USERS</div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
-                        <div class="flex items-center gap-1">Associates</div>
+                        <div class="flex items-center gap-1">ASSOCIATE</div>
                     </th>
-                    <th class="text-center !py-5" data-sortable="false">Actions</th>
+                    <th class="text-center !py-5" data-sortable="false">ACTIONS</th>
                 </tr>
             </thead>
             {{-- Table body should be rendered here with roles data --}}

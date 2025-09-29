@@ -33,7 +33,7 @@ class Account extends Model
         'member_info_middle_name',
         'member_info_last_name',
         'member_address_line_1',
-        
+
     ];
 
     public function members()
@@ -72,4 +72,4 @@ class Account extends Model
     {
         return $this->hasMany(DdTransaction::class, 'saving_account_id');
     }
-}
+   }

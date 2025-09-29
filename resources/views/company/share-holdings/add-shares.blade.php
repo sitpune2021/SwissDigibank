@@ -2,13 +2,13 @@
 @section('page-title',
     isset($shareholding)
     ? (!empty($show)
-    ? 'View ' .
+    ? 'VIEW ' .
     $shareholding->promotor->first_name .
     '
-    Allocated Shares'
-    : 'Edit Allocated Shares')
-    : 'Allocate New Shares to
-    Promoter')
+    ALLOCATED SHARES'
+    : 'EDIT ALLOCATED SHARES')
+    : 'ALLOCATE NEW SHARE TO
+    PROMOTER')
 
 @section('content')
 

@@ -38,8 +38,8 @@
                                         class="menu-btn group bg-n0 dark:!border-n500 dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
                                         type="button"
                                         onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
-                                            this.querySelector('.plus-minus .la-plus').classList.toggle('hidden'); 
-                                            this.querySelector('.plus-minus .la-minus').classList.toggle('hidden');">
+                                            this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
+                                            this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
                                         <span class="flex items-center justify-center gap-2">
                                             <span class="menu-icon">
                                                 <i class="{{ $item->icon }}"></i>
@@ -47,8 +47,8 @@
                                             <span class="menu-title font-medium">{{ $item->title }}</span>
                                         </span>
                                         <span class="plus-minus">
-                                            <i class="las la-plus text-xl {{ $submenuActive ? 'hidden' : '' }}"></i>
-                                            <i class="las la-minus text-xl {{ $submenuActive ? '' : 'hidden' }}"></i>
+                                            <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"></i>
+                                            <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"></i>
                                         </span>
                                     </button>
                                     <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">

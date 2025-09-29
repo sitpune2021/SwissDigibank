@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('page-title',
-isset($director) ? (!empty($show) ? 'View ' . $director->director_name .' Director' : 'Edit ' . $director->director_name . ' Director') : 'Add Director')
+isset($director) ? (!empty($show) ? 'View ' . $director->director_name .' DIRECTOR' : 'EDIT ' . $director->director_name . ' DIRECTOR') : 'ADD DIRECTOR')
 
 @section('content')
 

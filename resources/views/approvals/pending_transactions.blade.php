@@ -3,7 +3,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <!-- <div class="flex items-center gap-2"> -->
-        <h2 class="h2">Approvals - Transactions</h2>
+        <h3 class="h2">APPROVALS - TRANSACTIONS</h3>
     </div>
     <!-- Latest Transactions -->
     <div class="col-span-12 box lg:col-span-6">
@@ -17,63 +17,63 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Branch
+                                BRANCH
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Associate
+                                ASSOCIATE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Member
+                                MEMBER
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                A/C Type
+                                A/C TYPE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                A/C No.
+                                A/C NO.
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Trans.
+                                TRANS.
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Date
+                                DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Amount
+                                AMOUNT
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Pay.<br> Mode
+                                PAY.<br> MODE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Bank <br>A/C
+                                BANK <br>A/C
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Chq<br>Clearing <br>Date
+                                CHQ<br>CLEARING <br>DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex  items-center gap-1">
-                                Payment<br>
-                                Rev/Rel
+                                PAYMENT<br>
+                                REV/REL
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -86,10 +86,10 @@
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Remarks
+                                REMARKS
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Actions</th>
+                        <th class="text-center !py-5" data-sortable="false">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>

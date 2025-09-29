@@ -17,6 +17,8 @@ use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Helpers\AccountsTransactionsHelper;
 use App\Models\Bank;
+use App\Models\MembershipChargeTransaction;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -25,17 +27,19 @@ class AccountsController extends Controller
     /**
      * Display a listing of the resource.
      */
+    
     public function index(Request $request)
     {
-        // $Accounts = Account::orderBy('created_at', 'desc')->paginate(10); // Optional: change to ->get() if no pagination
         try {
             $Accounts = Account::with(['members', 'users', 'minor', 'scheme', 'address'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
-            return view('saving-current-ac.accounts.index', compact('Accounts'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+            $Transactions = MembershipChargeTransaction::orderBy('created_at', 'desc')->get();
+
+            return view('saving-current-ac.accounts.index', compact('Accounts', 'Transactions'));
+        } catch (\Exception $e) {
+            abort(404, 'Data not found.');
         }
     }
 
@@ -280,7 +284,7 @@ class AccountsController extends Controller
             $combined_balace = AccountsTransactionsHelper::getAccountBalacec([$decryptedId]);
             $combined_balace = $combined_balace['total_balance'] ?? 0;
 
-       
+
             return view('saving-current-ac.accounts.view-account', compact('account', 'decryptedId', 'combined_balace'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -294,4 +298,37 @@ class AccountsController extends Controller
 
 
     public function destroy(string $id) {}
+
+    public function viewPassbook($id)
+    {
+        $id = base64_decode($id);
+        $accounts = Account::with('transaction', 'members')->findOrFail($id);
+        return view('saving-current-ac.accounts.passbook', compact('accounts'));
+    }
+
+    public function passbookSearch(Request $request)
+    {
+        $request->validate([
+            'account_id' => 'required|exists:accounts,id',
+            'from_date' => 'required|date_format:d/m/Y',
+            'to_date'   => 'required|date_format:d/m/Y|after_or_equal:from_date',
+            'print_type' => 'required|in:front,statement,full',
+        ]);
+
+        $accountId = $request->account_id;
+
+        // Convert DD/MM/YYYY to Y-m-d
+        $fromDate = Carbon::createFromFormat('d/m/Y', $request->from_date)->startOfDay();
+        $toDate   = Carbon::createFromFormat('d/m/Y', $request->to_date)->endOfDay();
+
+        $transactions = Transaction::where('account_id', $accountId)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->orderBy('created_at')
+            ->get();
+
+        return view('accounts.passbook_result', [
+            'transactions' => $transactions,
+            'printType' => $request->print_type
+        ]);
+    }
 }

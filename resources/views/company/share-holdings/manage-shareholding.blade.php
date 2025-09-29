@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('page-title', 'Promoters Share Holding Details')
+@section('page-title', 'PROMOTERS SHARE HOLDING DETAILS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('shareholding.create') }}">
     Add
@@ -49,35 +49,35 @@
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Promoters
+                            PROMOTERS
                         </div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            First Distinctive No.
+                            FIRST DISTINCTIVE<br> NO.
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Last Distinctive No.
+                            LAST DISTINCTIVE<br>NO.
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Total Shares Held
+                            TOTAL SHARES<br>HELD
                         </div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Share Nominal Val.
+                            SHARE NOMINAL<br>Val.
                         </div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
                         <div class="flex items-center gap-1">
-                            Total Val.
+                            TOTAL VAL.
                         </div>
                     </th>
-                    <th class="text-center !py-5" data-sortable="false">Action</th>
+                    <th class="text-center !py-5" data-sortable="false">ACTION</th>
                 </tr>
             </thead>
             <tbody>

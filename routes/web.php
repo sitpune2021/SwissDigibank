@@ -34,12 +34,38 @@ use App\Http\Controllers\FdCalculatorController;
 use App\Http\Controllers\RDCalculatorController;
 use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
+use App\Http\Controllers\GoldLoanController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
+use App\Http\Controllers\MortgageLoneController;
 use App\Http\Controllers\RdAccountController;
 use App\Http\Controllers\RdschemesController;
 use App\Http\Controllers\PassbookController;
 
+// Clear cache 
+Route::get('/cache-clear', function () {
+    $exitCode = Artisan::call('cache:clear');
+    $exitCode = Artisan::call('config:clear');
+    $exitCode = Artisan::call('view:clear');
+    $exitCode = Artisan::call('route:clear');
+    return 'Success! Cache Cleared';
+});
+
+// Storage link 
+Route::get('/storage-link', function () {
+    $exitCode = Artisan::call('storage:link');
+    return 'Success! Storage link created';
+});
+
+// DB Migrate
+Route::get('/run-migrations', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Success! Migrations have been run.';
+    } catch (\Exception $e) {
+        return 'Migration failed: ' . $e->getMessage();
+    }
+});
 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
@@ -145,8 +171,8 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/members/{id}/transactions/share-amount', [MemberController::class, 'createShareAmount'])
             ->name('members.transactions.share-amount.create');
         Route::get('/members/transactions/{id}', [MemberController::class, 'showTransactionDetails'])->name('transactions.show');
-        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])->name('transactions.softDelete');
-        Route::get('/members/transactions/{id}/print', [MemberController::class, 'printTransaction'])->name('transactions.print');
+        Route::delete('transactions/{id}/soft-delete', [MemberController::class, 'softDeleteTransaction'])
+            ->name('transactions.softDeletetransaction');
         Route::get('/members/{id}/transactions/other-charges/list', [MemberController::class, 'otherChargesList'])->name('members.other-charges.list');
         Route::delete('/member-other-charges/{id}/delete', [MemberController::class, 'softDeleteothercharges'])->name('transactions.softDelete');
         // Route to show the form for clearing dues (GET request)
@@ -155,7 +181,11 @@ Route::middleware('auth.user')->group(function () {
         // Route to handle clearing dues (POST request)
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
+        Route::get('/members/receipt/print/{id}/{type}', [MemberController::class, 'printReceipt'])
+            ->middleware('auth') 
+            ->name('transactions.print-receipt');
 
+        Route::get('/application-form', [MemberController::class, 'applicationForm'])->name('members.application_form');
 
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
@@ -194,6 +224,10 @@ Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPro
 Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('schemes', SchemesController::class);
     Route::resource('accounts', AccountsController::class);
+    Route::get('/saving/passbook/{id}', [AccountsController::class, 'viewPassbook'])->name('saving.passbook');
+    Route::get('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
+
+
     Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
 
     Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
@@ -218,6 +252,12 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::put('/fd/{id}/update-branch', [FDController::class, 'updateBranch'])->name('fd.updateBranch');
 
+    Route::get('/fdpayout/{id}', [FDController::class, 'fdpayout'])->name('fd-mis-account.fd-payoutplan.fdpayoutplan');
+    Route::post('/fd/process-payout', [FdController::class, 'processPayout'])->name('fd.processPayout');
+
+    Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
+    Route::get('/fd-add-nominee/{id}', [FdController::class, 'addNominee'])->name('fd.add.nominee');
+
     Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
     // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
@@ -225,6 +265,23 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     //Transactions Info
     Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
+
+
+    //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
+    // Show change account info form
+    Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
+        ->name('misaccount.changeAccountInfo');
+
+    // Update account info (form submit)
+    Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
+        ->name('misaccount.updateAccountInfo');
+
+    // Add Nominee
+    Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
+        ->name('misaccount.addNominee');
+
+    Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
+        ->name('misaccount.updateNominee');
 
     //edit and update branches
 
@@ -278,6 +335,71 @@ Route::group(['prefix' => 'approvals'], function () {
     Route::put('/reverse-transactions/approve/{id}', [ApproveController::class, 'approveTransaction'])->name('reverse-transaction.approve');
     Route::get('approveAccounts', [ApproveController::class, 'approveAccounts'])->name('approveAccounts');
     Route::post('/approvals/updateAccountStatus/{id}', [ApproveController::class, 'updateAccountStatus'])->name('transactions.updateAccountStatus');
+});
+
+// Mortgage Loan
+Route::group(['prefix' => 'morgage-loan'], function () {
+    Route::get('mortgage-loan/schemes', [MortgageLoneController::class, 'index'])->name('mortgage_schemes.index');
+    Route::get('/create-mortgage-scheme', [MortgageLoneController::class, 'create'])->name('mortgage_schemes.create_mortgage_scheme');
+    Route::get('/edit-mortgage-scheme', [MortgageLoneController::class, 'edit'])->name('mortgage_schemes.edit-mortgage-scheme');
+    Route::get('/view-mortgage-scheme', [MortgageLoneController::class, 'view'])->name('mortgage_schemes.view-mortgage-scheme');
+
+    Route::get('/calculator', [MortgageLoneController::class, 'calculator'])->name('mortgage_calculator.index');
+    Route::get('/calculator/calculation', [MortgageLoneController::class, 'calculation'])->name('mortgage_calculator.calculation');
+    Route::get('/application', [MortgageLoneController::class, 'applications'])->name('mortgage_application.index');
+    // Route::get('/create-applications', [MortgageLoneController::class, 'applications'])->name('mortgage_application.create_application');
+    Route::get('/edit-application', [MortgageLoneController::class, 'editApplication'])->name('mortgage_application.edit-application');
+
+    Route::get('/view-application', [MortgageLoneController::class, 'viewApplication'])->name('mortgage_application.view.view-application');
+    Route::get('/emi-chart', [MortgageLoneController::class, 'emiChart'])->name('mortgage_application.view.emi-chart');
+    Route::get('/upload-documents', [MortgageLoneController::class, 'uploadDocuments'])->name('mortgage_appliction.view.upload-documents');
+    Route::get('/collect-processing-fee', [MortgageLoneController::class, 'collectProcessFee'])->name('mortgage_appliction.view.processing-fee');
+    Route::get('disburse-setting', [MortgageLoneController::class, 'disburseSetting'])->name('mortgage_application.view.disburse-setting');
+    Route::get('/cibil-score', [MortgageLoneController::class, 'cibilScore'])->name('mortgage_application.view.cibil-score');
+    Route::get('/disbursement', [MortgageLoneController::class, 'disbursementIndex'])->name('mortage_disbursements.index');
+    Route::get('/disburse-loan', [MortgageLoneController::class, 'disburseLoan'])->name('mortage_disbursements.disburse-loan');
+});
+
+// Gold Loan
+Route::group(['prefix' => 'gold-loan'], function () {
+    Route::get('scheme/index', [GoldLoanController::class, 'index'])
+        ->name('gold-loan.schemes.index');
+
+    Route::get('scheme/create', [GoldLoanController::class, 'create'])
+        ->name('gold-loan.schemes.create');
+
+    Route::get('scheme/view', [GoldLoanController::class, 'view'])
+        ->name('gold-loan.schemes.view');
+
+    Route::get('calculator/index', [GoldLoanController::class, 'calculator'])
+        ->name('gold-loan.calculator.index');
+
+    Route::get('calculator/calculation', [GoldLoanController::class, 'calculation'])
+        ->name('gold-loan.calculator.calculation');
+
+    Route::get('applications/index', [GoldLoanController::class, 'appindex'])
+        ->name('gold-loan.applications.index');
+
+    Route::get('applications/create', [GoldLoanController::class, 'appcreate'])
+        ->name('gold-loan.applications.create');
+    Route::get('applications/view', [GoldLoanController::class, 'appview'])
+        ->name('gold-loan.applications.view');
+
+
+    Route::get('applications/show-emi-chart', [GoldLoanController::class, 'showEmiChart'])
+        ->name('gold-loan.applications.view-buttons.show-emi-chart');
+
+    Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
+        ->name('gold-loan.applications.view-buttons.disburse-setting');
+
+    Route::get('applications/col_process_fee', [GoldLoanController::class, 'col_process_fee'])
+        ->name('gold-loan.applications.view-buttons.col_process_fee');
+
+    Route::get('applications/upload_documents', [GoldLoanController::class, 'upload_documents'])
+        ->name('gold-loan.applications.upload_documents');
+
+    Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
+        ->name('gold-loan.applications.upload-cibil-score');
 });
 
 Route::group(['prefix' => 'hr-managment'], function () {

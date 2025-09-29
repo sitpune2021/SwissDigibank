@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h1 class="text-xl font-semibold">Share holdings</h1>
+            <h3 class="text-xl font-semibold">SHARE HOLDINGS</h3>
         </div>
         <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
             <x-alert />

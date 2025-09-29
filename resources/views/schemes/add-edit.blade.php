@@ -94,10 +94,10 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h3 class="h2">
             {!! isset($show) && $show
-            ? 'Saving / Current Scheme - ' . $schemes->scheme_name
+            ? 'SAVING / CURRENT SCHEME - ' . $schemes->scheme_name
             : (isset($schemes)
-            ? 'Edit Saving / Current Scheme - ' . $schemes->scheme_name
-            : 'New Saving / Current Scheme
+            ? 'EDIT SAVING / CURRENT SCHEME - ' . $schemes->scheme_name
+            : 'NEW SAVING / CURRENT SCHEME 
             ') !!}
         </h3>
     </div>

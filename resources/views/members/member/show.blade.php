@@ -102,11 +102,10 @@
             <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
         </a>
         <a class="btn-danger rounded-md px-2 py-1 text-white  text-sm bg-red-500 hover:bg-red-600">REMOVE MEMBER</a>
-
-        <a class="btn-primary rounded-md px-2 py-1 text-white  text-sm bg-indigo-500 hover:bg-indigo-600">
-            <i class="fa fa-print"></i> APPLICATION FORM
-        </a>
-
+<a href="{{ route('members.application_form', ['id' => $member->id]) }}" 
+   class="btn-primary rounded-md px-2 py-1 text-white text-sm bg-indigo-500 hover:bg-indigo-600">
+    <i class="fa fa-print"></i> APPLICATION FORM
+</a>
         <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">SHOW AUDIT TRAIL</a>
     </div>
     <div class="grid grid-cols-12 gap-4 xxl:gap-6">
@@ -368,15 +367,14 @@
                 </table>
             </div>
             {{-- Member KYC Info --}}
-            <div x-data="{ open: true }" class="mt-4 rounded-md shadow">
-                <!-- Header -->
+            <!-- <div x-data="{ open: true }" class="mt-4 rounded-md shadow">
+
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
                     @click="open = !open">
                     <span class="font-semibold uppercase">Member KYC Info</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
-                <!-- Content -->
                 <div x-show="open" x-transition class="bg-white rounded-md">
                     <table class="w-full text-sm">
                         <tbody>
@@ -432,9 +430,9 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> -->
             {{-- Member Nominee Info --}}
-            <div x-data="{ open: true }" class="mt-4 rounded shadow">
+            <!-- <div x-data="{ open: true }" class="mt-4 rounded shadow">
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
                     @click="open = !open">
                     <span class="font-semibold uppercase">Member Nominee Info</span>
@@ -503,15 +501,22 @@
                         </tbody>
                     </table>
                 </div>
-                {{-- Member KYC Info --}}
-                <div x-data="{ open: true }" class="mt-4 rounded-md shadow">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
-                        @click="open = !open">
-                        <span class="font-semibold uppercase">Member KYC Info</span>
+            </div> -->
+
+            <div x-data="{ open: true }" class="mt-4 rounded shadow">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
+                    @click="open = !open">
+                    <span class="font-semibold uppercase">Documents</span>
+                    <div class="flex gap-2 space-x-2">
+                        {{-- Link to document edit page --}}
+                        <a href="{{ route('member.document', $member->id) }}">
+                            <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
+                        </a>
+                        {{-- Toggle button for showing/hiding sections --}}
                         <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                     </div>
-
+                </div>
                     <!-- Content -->
                     <div x-show="open" x-transition class="bg-white rounded-md">
                         <table class="w-full text-sm">
@@ -569,6 +574,7 @@
                         </table>
                     </div>
                 </div>
+            
                 {{-- Member Nominee Info --}}
                 <div x-data="{ open: true }" class="mt-4 rounded shadow">
                     <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
@@ -888,8 +894,11 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            
         </div>
+
+
+
         <!-- Right Panel -->
         <div class="col-span-12 lg:col-span-6" x-data="{
             showMobile: true,

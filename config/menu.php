@@ -46,7 +46,7 @@ return [
         ]
     ],
     [
-        'title' => 'ACCOUNT',
+        'title' => 'SAVING/CURRENT',
         'icon' => 'las la-university',
         'position' => '5',
         'active' => '1',
@@ -56,7 +56,7 @@ return [
         ]
     ],
     [
-        'title' => 'FD/ MIS ACCOUNTS',
+        'title' => 'FD/MIS',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',
@@ -68,7 +68,7 @@ return [
         ]
     ],
     [
-        'title' => 'MDS/RD/DDS ACCOUNTS',
+        'title' => 'MDS/RD/DDS',
         'icon' => 'las la-university',
         'position' => '7',
         'active' => '1',
@@ -78,6 +78,29 @@ return [
             ['title' => 'DDS ACCOUNTS', 'route' => 'dds-accounts.index'],
             ['title' => 'MDS / RD ACCOUNTS', 'route' => 'mds-rd-accounts.rd-account-index'],
         ]
+    ],
+    [
+        'title' => 'MORTGAGE LOAN',
+        'icon' => 'las la-university',
+        'position' => '8',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'mortgage_schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'mortgage_calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'mortgage_application.index'],
+            ['title' => 'DISBURSEMENT', 'route' => 'mortage_disbursements.index'],
+        ],
+    ],
+       [
+        'title' => 'GOLD LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'gold-loan.schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'gold-loan.calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'gold-loan.applications.index'],
+        ],
     ],
     [
         'title' => 'APPROVALS',

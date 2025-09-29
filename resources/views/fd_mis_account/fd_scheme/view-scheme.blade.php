@@ -56,7 +56,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col gap-2">
-            <h1 class="text-xl font-semibold">{{ $fdScheme->scheme_name}}</h1><small>FD Scheme</small>
+            <h1 class="text-xl font-semibold">{{ $fdScheme->scheme_name}}</h1><small>FD SCHEME</small>
 
         </div>
     </div>

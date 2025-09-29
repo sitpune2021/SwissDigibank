@@ -30,7 +30,7 @@
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-col  gap-2">
                 <h1 class="text-xl font-semibold">
-                    {{ $isEdit ? 'Update DD Account' : 'Open New DD Account' }}
+                    {{ $isEdit ? 'UPDATE DD ACCOUNT' : 'OPEN NEW DD ACCOUNT' }}
                 </h1>
                 <p class="text-gray-500">
                     <a href="{{ route('dds-accounts.index') }}" class="text-gray-500">Daily Deposits</a> >
@@ -461,8 +461,7 @@
                         <input type="text" name="transaction_date" id="date4"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
-                        <i
-                            class="absolute -translate-y-1/2 cursor-pointer l ltr:right-4 rtl:left-4 top-1/2"></i>
+                        <i class="absolute -translate-y-1/2 cursor-pointer l ltr:right-4 rtl:left-4 top-1/2"></i>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">

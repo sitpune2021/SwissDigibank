@@ -1,4 +1,6 @@
 @extends('layout.main')
+@section('page-title', isset($employee) ? (!empty($show) ? 'VIEW ' . $employee->name . ' EMPLOYEE' : 'EDIT ' .
+$employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 @section('content')
 <style>
     input[type="radio"] {
@@ -13,7 +15,7 @@
 
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
 
-        <h3 class="h2">New Employee</h3>
+        <!-- <h3 class="h2">NEW EMPLOYEE</h3> -->
 
     </div>
 

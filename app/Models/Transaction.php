@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -8,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Transaction extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'account_id',
         'payment_mode',
@@ -31,5 +32,9 @@ class Transaction extends Model
     public function accounts()
     {
         return $this->belongsTo(Account::class, 'account_id');
+    }
+    public function members()
+    {
+        return $this->belongsTo(Member::class, 'member_id');
     }
 }

@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'Branches')
+@section('page-title', 'BRANCHES')
 @section('action-button')
     <a class="btn-primary" href="{{ route('branch.create') }}">
         Add
@@ -16,40 +16,40 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Branch Name
+                                BRANCH NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Branch Code
+                                BRANCH CODE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                City
+                                CITY
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                State
+                                STATE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                Opening Date
+                                OPENING DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1  text-center">
-                                Members
+                                MEMBERS
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="   flex items-center justify-center gap-1">
-                                Is Active
+                                IS ACTIVE
                             </div>
                         </th>
-                        <th class="text-center justify-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center justify-center !py-5" data-sortable="false">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>

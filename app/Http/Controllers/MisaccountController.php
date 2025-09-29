@@ -455,7 +455,7 @@ class MisaccountController extends Controller
 
             $validated['open_date'] = Carbon::parse($validated['open_date'])->format('Y-m-d');
 
-            // ✅ Update MIS account
+            //  Update MIS account
             $misaccount->update($validated);
             Log::info('MIS Account updated', ['misaccount' => $misaccount->toArray()]);
 
@@ -467,7 +467,7 @@ class MisaccountController extends Controller
                 ? Carbon::parse($request->transfer_date)->format('Y-m-d')
                 : null;
 
-            // ✅ Always create new transaction
+            // Always create new transaction
             $transaction = MisTransaction::create([
                 'misaccount_id' => $misaccount->id,
                 'amount' => $request->amount,
@@ -533,8 +533,10 @@ class MisaccountController extends Controller
         $savingAccounts = Account::where('member_id', $misaccount->member_id)
             ->where('account_type', 'SAVING')
             ->get();
+            $account = $misaccount;
+            return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches'));
 
-        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches'));
+        //return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches','account'));
     }
 
     //edit editBranch
@@ -563,4 +565,101 @@ class MisaccountController extends Controller
 
         return view('misaccount.viewbuttons.mispayoutplan.mispayoutplan', compact('misaccounts'));
     }
+
+    // public function changeAccountInfo($id)
+    // {
+    //     // yaha aap db se account fetch kar sakte ho
+    //     $account = Misaccount::findOrFail($id);
+
+    //     return view('fd_mis_account.misaccount.change_account_info', compact('account'));
+    // }
+
+    // public function changeAccountInfo($id)
+    // {
+    //     $account = Misaccount::findOrFail($id);   // DB se account fetch
+    //     $members = Member::pluck('member_info_first_name', 'id'); // dropdown ke liye
+
+    //     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
+    // }
+
+//   public function changeAccountInfo($id)
+// {
+//     $account = Misaccount::findOrFail($id);
+
+//     // Members list fetch -> ['id' => 'member_name']
+//     $members = Member::pluck('member_info_first_name', 'id');
+
+//     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
+// }
+
+
+public function changeAccountInfo($id)
+{
+    $account = Misaccount::findOrFail($id);
+
+    // Members list fetch -> ['id' => 'member_name']
+    $members = Member::pluck('member_info_first_name', 'id');
+
+    // Joint members ke dropdown me se selected member_id hata do
+    $jointMembers = $members->except($account->member_id);
+
+    return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members', 'jointMembers'));
+}
+
+  public function updateAccountInfo(Request $request, $id)
+{
+    $request->validate([
+        'member_id'       => 'required|integer',
+        'account_type'    => 'required|string',
+        'open_date'       => 'required|date_format:d-m-Y',
+        'mis_joint_date'  => 'required|date_format:d-m-Y',
+        'joint_member_id' => 'nullable|integer',
+    ]);
+
+    $account = Misaccount::findOrFail($id);
+
+    $account->member_id       = $request->member_id;
+    $account->joint_member_id = $request->joint_member_id; // yaha store hoga dropdown ka id
+    $account->account_type    = $request->account_type;
+    $account->open_date       = Carbon::createFromFormat('d-m-Y', $request->open_date)->format('Y-m-d');
+    $account->mis_joint_date  = Carbon::createFromFormat('d-m-Y', $request->mis_joint_date)->format('Y-m-d');
+
+    $account->save();
+
+    return redirect()->route('misaccount.show', $id)
+                     ->with('success', 'Account info updated successfully.');
+}
+
+
+
+    public function addNominee($id)
+{
+    $account = Misaccount::findOrFail($id);
+    return view('fd_mis_account.misaccount.add_nominee', compact('account'));
+}
+
+public function updateNominee(Request $request, $id)
+{
+    $account = Misaccount::findOrFail($id);
+
+    if ($request->has('nominees')) {
+        foreach ($request->nominees as $nominee) {
+            if (!empty($nominee['name'])) {
+                $account->misnominees()->create([
+                    'nominee_relation' => $nominee['relation'] ?? null,
+                    'nominee_name'     => $nominee['name'] ?? null,
+                    'nominee_address'  => $nominee['address'] ?? null,
+                ]);
+            }
+        }
+    }
+
+    return redirect()->route('misaccount.show', $id)
+                     ->with('success', 'Nominee details inserted successfully!');
+}
+
+
+
+
+
 }

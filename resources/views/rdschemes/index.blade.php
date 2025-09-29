@@ -4,7 +4,7 @@
 <div class="main-inner">
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h2 class="h2">RD/ DD Schemes</h2>
+        <h3 class="h3">RD/ DD SCHEMES</h3>
         <a class="btn-primary flex items-center gap-2" href="{{route('rdschemes.create')}}">
             Add
         </a>
