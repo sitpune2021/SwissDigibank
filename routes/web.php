@@ -185,7 +185,7 @@ Route::middleware('auth.user')->group(function () {
             ->middleware('auth') 
             ->name('transactions.print-receipt');
 
-        Route::get('/application-form', [MemberController::class, 'applicationForm'])->name('members.application_form');
+Route::get('/members/application-form/{id}', [MemberController::class, 'applicationForm'])->name('members.application_form');
 
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])

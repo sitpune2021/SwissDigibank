@@ -116,4 +116,8 @@ class Member extends Model
     {
         return $this->hasMany(MemberOtherCharge::class, 'member_id');
     }
+     public function kycDocuments()
+    {
+        return $this->hasMany(KycDocument::class, 'member_id');
+    }
 }

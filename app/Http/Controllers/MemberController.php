@@ -1278,11 +1278,15 @@ class MemberController extends Controller
             return back()->with('error', 'Something went wrong while clearing dues.');
         }
     }
-    public function applicationForm()
+
+    public function applicationForm($id)
     {
-        return view('members.member.application-form');
+            $member = Member::with('address', 'kyc', 'minors','kycDocuments')->findOrFail($id);
+            $transaction = MembershipChargeTransaction::findOrFail($id);
+
+        return view('members.member.application-form', compact('member','transaction'));
     }
-    
+
     public function printReceipt($id, $type)
     {
         if ($type == "share-amount") {
