@@ -303,7 +303,7 @@
       alert("No transactions to print!");
       return;
     }
-
+    
     let printHtml = `
     <style>
         .letterhead {
@@ -358,6 +358,55 @@
         </div>
         <div class="logo"></div>
       </div>
+
+
+      <div  style="  text-align: right;
+    padding-bottom: 20px;">Date - {{ now()->format('d/m/Y') }}</div>
+ 
+ 
+<div style="font-weight: bold; margin-top: 15px; text-align: center;"><h3 >Saving Account Statement</h3></div>
+ 
+<table border="1" style=" width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+  <tr>
+    <td style="width: 25%;">Member's Name</td>
+    <td style="width: 25%;">{{ $account->members->member_info_first_name }} {{ $account->members->member_info_last_name }}</td>
+    <td style="width: 25%;">Internal A/c No</td>
+    <td style="width: 25%;">{{ $account->account_no }}</td>
+  </tr>
+  <tr>
+    <td>Virtual A/c No</td>
+    <td></td>
+    <td>IFSC code</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td style="padding: 20px 0;">Address</td>
+<td>
+    @php
+        $address = trim(
+            ($account->members->address->member_address_line_1 ?? '') . ' ' .
+            ($account->members->address->member_address_line_2 ?? '') . ' ' .
+            ($account->members->address->member_address_area ?? '') . ' ' .
+            ($account->members->address->member_address_landmark ?? '') . ' ' .
+            ($account->members->address->member_address_city_district ?? '') . ' ' .
+            ($account->members->address->member_address_state ?? '') . ' ' .
+            ($account->members->address->member_address_pincode ?? '')
+        );
+    @endphp
+
+    {{ $address !== '' ? $address : 'NA' }}
+</td>
+    <td >Scheme</td>
+    <td >{{ $account->scheme->name ?? 'NA' }}</td>
+  </tr>
+  <tr>
+    <td>Opening date</td>
+    <td>{{ \Carbon\Carbon::parse($account->open_date)->format('d/m/Y') }}</td>
+    <td>Interest Rate</td>
+    <td>{{ $account->scheme->interest_rate ?? 0 }}%</td>
+  </tr>
+</table>
+<div style="margin-bottom: 15px; text-align: center;""><p>Statement Period: 29/02/2024  10:26 - 29/09/2024 12:23</p></div>
 
     <table border="1" cellspacing="0" cellpadding="5" style="width:100%;border-collapse:collapse;">
       <thead>

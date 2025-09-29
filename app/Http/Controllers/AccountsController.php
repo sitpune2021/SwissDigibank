@@ -266,154 +266,152 @@ class AccountsController extends Controller
     // }
 
     public function store(Request $request)
-{
-    try {
-        Log::info('Account store request started', ['request_data' => $request->all()]);
+    {
+        try {
+            Log::info('Account store request started', ['request_data' => $request->all()]);
 
-        $rules = [
-            'account_type'  => 'required|in:saving,current',
-            'firm_d'        => 'nullable|required_if:account_type,current|max:255',
-            'member_id'     => 'required|exists:members,id',
-            'branch_id'     => 'required|exists:branches,id',
-            'advisor_id'    => 'nullable|exists:users,id',
-            'scheme_id'     => 'required|integer|exists:schemes,id',
-            'open_date'     => 'required|date',
-            'amount'        => 'required|numeric|min:0',
-            'account_holder_type'   => 'required|in:single,joint',
-            'member_id_one'         => 'nullable|required_if:account_holder_type,joint',
-            'member_id_two'         => 'nullable',
-            'mode_of_operation'     => 'required_if:account_holder_type,joint|in:single,jointly,either_or_survivor',
-            'nominee'               => 'required|in:yes,no',
-            'payment_mode'          => 'required|in:cash,online,cheque',
-            'transaction_date'      => 'nullable|date',
-        ];
+            $rules = [
+                'account_type'  => 'required|in:saving,current',
+                'firm_d'        => 'nullable|required_if:account_type,current|max:255',
+                'member_id'     => 'required|exists:members,id',
+                'branch_id'     => 'required|exists:branches,id',
+                'advisor_id'    => 'nullable|exists:users,id',
+                'scheme_id'     => 'required|integer|exists:schemes,id',
+                'open_date'     => 'required|date',
+                'amount'        => 'required|numeric|min:0',
+                'account_holder_type'   => 'required|in:single,joint',
+                'member_id_one'         => 'nullable|required_if:account_holder_type,joint',
+                'member_id_two'         => 'nullable',
+                'mode_of_operation'     => 'required_if:account_holder_type,joint|in:single,jointly,either_or_survivor',
+                'nominee'               => 'required|in:yes,no',
+                'payment_mode'          => 'required|in:cash,online,cheque',
+                'transaction_date'      => 'nullable|date',
+            ];
 
-        if ($request->input('nominee') === 'yes') {
-            $rules['nominee_relation'] = 'required|string|max:255';
-            $rules['nominee_name'] = 'required|string|max:255';
-            $rules['nominee_address'] = 'required|string|max:500';
-        }
-
-        if ($request->payment_mode === 'online') {
-            $rules['pay1_transfer_utr'] = 'required|string|max:50';
-            $rules['transfer_mode'] = 'nullable|string|max:50';
-            $rules['credited'] = 'nullable|numeric|max:100';
-        }
-
-        if ($request->payment_mode === 'cheque') {
-            $rules['pay1_bank'] = 'required|string|max:50';
-            $rules['pay1_cheque_no'] = 'required|numeric';
-            $rules['pay1_cheque_date'] = 'nullable|date';
-        }
-
-        // Manual validator to include "member share" check
-        $validator = Validator::make($request->all(), $rules);
-
-        $validator->after(function ($validator) use ($request) {
-            $member = Member::with('shareTransfers')->find($request->member_id);
-            if (!$member || $member->shareTransfers->isEmpty()) {
-                $validator->errors()->add('member_id', 'This member has no shares allocated. You cannot open a saving account.');
+            if ($request->input('nominee') === 'yes') {
+                $rules['nominee_relation'] = 'required|string|max:255';
+                $rules['nominee_name'] = 'required|string|max:255';
+                $rules['nominee_address'] = 'required|string|max:500';
             }
-        });
 
-        if ($validator->fails()) {
-            Log::warning('Validation failed', ['errors' => $validator->errors()]);
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+            if ($request->payment_mode === 'online') {
+                $rules['pay1_transfer_utr'] = 'required|string|max:50';
+                $rules['transfer_mode'] = 'nullable|string|max:50';
+                $rules['credited'] = 'nullable|numeric|max:100';
+            }
 
-        $validated = $validator->validated();
+            if ($request->payment_mode === 'cheque') {
+                $rules['pay1_bank'] = 'required|string|max:50';
+                $rules['pay1_cheque_no'] = 'required|numeric';
+                $rules['pay1_cheque_date'] = 'nullable|date';
+            }
 
-        $scheme = \App\Models\Scheme::find($validated['scheme_id']);
-        if ($scheme && $validated['amount'] < $scheme->min_opening_balance) {
-            return back()->withErrors([
-                'amount' => 'Minimum required amount for this scheme is ₹' . $scheme->min_opening_balance,
-            ])->withInput();
-        }
+            // Manual validator to include "member share" check
+            $validator = Validator::make($request->all(), $rules);
 
-        DB::beginTransaction();
-        Log::info('DB transaction started');
+            $validator->after(function ($validator) use ($request) {
+                $member = Member::with('shareTransfers')->find($request->member_id);
+                if (!$member || $member->shareTransfers->isEmpty()) {
+                    $validator->errors()->add('member_id', 'This member has no shares allocated. You cannot open a saving account.');
+                }
+            });
 
-        $account = Account::create([
-            'account_type'          => $request->account_type,
-            'account_no'            => rand(100000, 999999), // Temporary
-            'firm_name'             => $request->firm_d,
-            'member_id'             => $request->member_id,
-            'branch_id'             => $request->branch_id,
-            'advisor_id'            => $request->advisor_id,
-            'scheme_id'             => $request->scheme_id,
-            'open_date'             => Carbon::parse($request->open_date)->format('Y-m-d'),
-            'amount_deposit'        => $request->amount,
-            'account_holder_type'   => $request->account_holder_type,
-            'joint_member1'         => $request->member_id_one,
-            'joint_member2'         => $request->member_id_two,
-            'mode_of_operation'     => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
-            'payment_mode'          => $request->payment_mode,
-            'transaction_date'      => $request->transaction_date ? Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s') : null,
-        ]);
+            if ($validator->fails()) {
+                Log::warning('Validation failed', ['errors' => $validator->errors()]);
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-        // Update account number
-        $account->account_no = 'SA' . str_pad($account->id, 6, '0', STR_PAD_LEFT);
-        $account->save();
+            $validated = $validator->validated();
 
-        // Nominee
-        if ($request->nominee === 'yes') {
-            AccountNominee::create([
-                'account_id' => $account->id,
-                'nominee_name' => $request->nominee_name,
-                'nominee_relation' => $request->nominee_relation,
-                'nominee_address' => $request->nominee_address,
-                'share_percentage' => 100.00,
+            $scheme = \App\Models\Scheme::find($validated['scheme_id']);
+            if ($scheme && $validated['amount'] < $scheme->min_opening_balance) {
+                return back()->withErrors([
+                    'amount' => 'Minimum required amount for this scheme is ₹' . $scheme->min_opening_balance,
+                ])->withInput();
+            }
+
+            DB::beginTransaction();
+            Log::info('DB transaction started');
+
+            $account = Account::create([
+                'account_type'          => $request->account_type,
+                'account_no'            => rand(100000, 999999), // Temporary
+                'firm_name'             => $request->firm_d,
+                'member_id'             => $request->member_id,
+                'branch_id'             => $request->branch_id,
+                'advisor_id'            => $request->advisor_id,
+                'scheme_id'             => $request->scheme_id,
+                'open_date'             => Carbon::parse($request->open_date)->format('Y-m-d'),
+                'amount_deposit'        => $request->amount,
+                'account_holder_type'   => $request->account_holder_type,
+                'joint_member1'         => $request->member_id_one,
+                'joint_member2'         => $request->member_id_two,
+                'mode_of_operation'     => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
+                'payment_mode'          => $request->payment_mode,
+                'transaction_date'      => $request->transaction_date ? Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s') : null,
             ]);
 
-            if (is_array($request->additional_nominee_name)) {
-                foreach ($request->additional_nominee_name as $index => $name) {
-                    if (trim($name) !== '') {
-                        AccountNominee::create([
-                            'account_id' => $account->id,
-                            'nominee_name' => $name,
-                            'nominee_relation' => $request->additional_nominee_relation[$index] ?? '',
-                            'nominee_address' => $request->additional_nominee_address[$index] ?? '',
-                            'share_percentage' => round(100 / (count($request->additional_nominee_name) + 1), 2),
-                        ]);
+            $account->account_no = 'SA' . str_pad($account->id, 5, '0', STR_PAD_LEFT);
+            $account->save();
+
+            if ($request->nominee === 'yes') {
+                AccountNominee::create([
+                    'account_id' => $account->id,
+                    'nominee_name' => $request->nominee_name,
+                    'nominee_relation' => $request->nominee_relation,
+                    'nominee_address' => $request->nominee_address,
+                    'share_percentage' => 100.00,
+                ]);
+
+                if (is_array($request->additional_nominee_name)) {
+                    foreach ($request->additional_nominee_name as $index => $name) {
+                        if (trim($name) !== '') {
+                            AccountNominee::create([
+                                'account_id' => $account->id,
+                                'nominee_name' => $name,
+                                'nominee_relation' => $request->additional_nominee_relation[$index] ?? '',
+                                'nominee_address' => $request->additional_nominee_address[$index] ?? '',
+                                'share_percentage' => round(100 / (count($request->additional_nominee_name) + 1), 2),
+                            ]);
+                        }
                     }
                 }
             }
+
+            // Transaction
+            Transaction::create([
+                'account_id'        => $account->id,
+                'payment_mode'      => $request->payment_mode,
+                'amount'            => $request->amount,
+                'transaction_type'  => 'credit',
+                'transaction_date'  => now(),
+                'approve_status'    => 'pending',
+                'comment'           => 'Opening deposit',
+                'utr_number'        => $request->pay1_transfer_utr ?? null,
+                'transfer_mode'     => $request->transfer_mode ?? null,
+                'transfer_date'     => $request->pay1_transfer_date ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d') : null,
+                'credited_in'       => $request->credited ?? null,
+                'bank_name'         => $request->pay1_bank ?? null,
+                'cheque_no'         => $request->pay1_cheque_no ?? null,
+                'cheque_date'       => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d') : null,
+            ]);
+
+            DB::commit();
+            Log::info('DB transaction committed');
+
+            return redirect()->route('accounts.show', base64_encode($account->id))
+                ->with('success', 'Please approve status!.');
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in store account', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
         }
-
-        // Transaction
-        Transaction::create([
-            'account_id'        => $account->id,
-            'payment_mode'      => $request->payment_mode,
-            'amount'            => $request->amount,
-            'transaction_type'  => 'credit',
-            'transaction_date'  => now(),
-            'approve_status'    => 'pending',
-            'comment'           => 'Opening deposit',
-            'utr_number'        => $request->pay1_transfer_utr ?? null,
-            'transfer_mode'     => $request->transfer_mode ?? null,
-            'transfer_date'     => $request->pay1_transfer_date ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d') : null,
-            'credited_in'       => $request->credited ?? null,
-            'bank_name'         => $request->pay1_bank ?? null,
-            'cheque_no'         => $request->pay1_cheque_no ?? null,
-            'cheque_date'       => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d') : null,
-        ]);
-
-        DB::commit();
-        Log::info('DB transaction committed');
-
-        return redirect()->route('accounts.show', base64_encode($account->id))
-            ->with('success', 'Please approve status!.');
-    } catch (ValidationException $e) {
-        throw $e;
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Error in store account', [
-            'error_message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-        return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
     }
-}
 
 
     /**
@@ -481,21 +479,17 @@ class AccountsController extends Controller
 
         $accountId = $request->account_id;
 
-        // Convert dates to Carbon
         $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
         $toDate   = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
 
-        // Fetch transactions within date range
         $transactions = Transaction::where('account_id', $accountId)
             ->whereBetween('transaction_date', [$fromDate, $toDate])
             ->orderBy('transaction_date')
             ->get();
 
-        // Get starting balance before from_date
         $startingBalance = AccountsTransactionsHelper::getAccountBalanceBeforeDate($accountId, $fromDate);
         $runningBalance = $startingBalance;
 
-        // Transform transactions with running balance
         $transactions = $transactions->transform(function ($txn) use (&$runningBalance) {
             if ($txn->transaction_type === 'debit') {
                 $runningBalance -= $txn->amount;
@@ -513,7 +507,6 @@ class AccountsController extends Controller
             ];
         });
 
-        // Optional: prepend opening balance row
         $transactions->prepend([
             'date' => $fromDate->format('d-m-Y'),
             'description' => 'Opening Balance',
@@ -522,12 +515,6 @@ class AccountsController extends Controller
             'credit_amount' => null,
             'balance' => $startingBalance,
         ]);
-
-        // return view('accounts.passbook-print', [
-        //     'transactions' => $transactions,
-        //     'fromDate' => $request->from_date,
-        //     'toDate' => $request->to_date,
-        // ]);
 
         return response()->json([
             'success' => true,
