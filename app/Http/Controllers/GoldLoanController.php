@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use Illuminate\Http\Request;
 use App\Models\GoldLoanScheme;
+use App\Models\Member;
+use App\Models\Branch;
+use App\Models\Scheme;
 
 class GoldLoanController extends Controller
 {
@@ -76,13 +79,37 @@ class GoldLoanController extends Controller
         public function calculation(){
         return view("gold-loan.calculator.calculation");
     }
+
       public function appindex(){
         return view("gold-loan.applications.index");
     }
-     public function appcreate(){
-        // $banks = Bank::all(); // or your logic here
-        return view("gold-loan.applications.create");
+
+    public function appcreate() {
+        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no')->get();
+        $branch = Branch::select('id', 'branch_name')->get();
+        $scheme = GoldLoanScheme::all();
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+        return view("gold-loan.applications.create", compact('members','branch','scheme','banks'));
     }
+    public function getMemberInfo($id)
+    {
+        $member = Member::select('id', 'member_info_first_name', 'member_info_mobile_no')
+            ->find($id);
+
+        if ($member) {
+            return response()->json([
+                'status' => true,
+                'data' => $member
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Member not found'
+            ]);
+        }
+    }
+
+
       public function appview(){
         // $banks = Bank::all(); // or your logic here
         return view("gold-loan.applications.view");

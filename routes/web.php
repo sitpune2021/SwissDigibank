@@ -154,6 +154,9 @@ Route::middleware('auth.user')->group(function () {
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
+    
+    Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
+
 
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
@@ -399,6 +402,11 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('applications/create', [GoldLoanController::class, 'appcreate'])
         ->name('gold-loan.applications.create');
+
+    Route::get('/members/{id}/info', [GoldLoanController::class, 'getMemberInfo'])
+    ->name('members.info');
+
+
     Route::get('applications/view', [GoldLoanController::class, 'appview'])
         ->name('gold-loan.applications.view');
 
