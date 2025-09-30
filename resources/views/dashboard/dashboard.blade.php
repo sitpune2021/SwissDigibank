@@ -201,7 +201,7 @@
         </div>
         <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
             <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-                <span class="font-medium">Total Spending</span>
+                <span class="font-medium">TOTAL SPENDING</span>
                 @include('partials._horizontal-options')
 
             </div>
@@ -220,7 +220,7 @@
         </div>
         <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
             <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-                <span class="font-medium">Spending Goal</span>
+                <span class="font-medium">SPENDING GOAL</span>
                 @include('partials._horizontal-options')
 
             </div>
@@ -239,7 +239,7 @@
         </div>
         <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
             <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-                <span class="font-medium">Total Transactions</span>
+                <span class="font-medium">TOTAL TRANSACTIONS</span>
                 @include('partials._horizontal-options')
 
             </div>
@@ -288,7 +288,7 @@
         <!-- Latest Transactions -->
         <div class="col-span-12 box lg:col-span-6">
             <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-                <h4 class="h4">Latest Transaction</h4>
+                <h4 class="h4">LATEST TRANSACTION</h4>
                 @include('partials._horizontal-options')
 
             </div>
@@ -340,7 +340,7 @@
         <!-- Transaction account -->
         <div class="col-span-12 box lg:col-span-6">
             <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-                <h4 class="h4">Transaction Account</h4>
+                <h4 class="h4">TRANSACTION ACCOUNT</h4>
                 @include('partials._horizontal-options')
 
             </div>

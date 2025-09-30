@@ -112,4 +112,8 @@ class Member extends Model
     {
         return $this->hasMany(ShareTransfer::class, 'member_id');
     }
+    public function memberOtherCharges()
+    {
+        return $this->hasMany(MemberOtherCharge::class, 'member_id');
+    }
 }

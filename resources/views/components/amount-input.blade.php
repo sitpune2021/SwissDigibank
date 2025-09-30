@@ -1,7 +1,8 @@
 <div>
-    <label class="block font-medium block mb-4">{{ $label ?? 'Amount' }}</label>
+    <label class="block font-medium block mb-4">{{ $label ?? 'Amount' }} <span class="text-red-500">*</span></label>
     <input type="number" name="{{ $name ?? 'amount' }}" id="{{ $id ?? 'amount' }}"
         value="{{ old($name, $value ?? '') }}"
+        placeholder="{{ $placeholder ?? 'Enter amount' }}"
         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5">
 
     <p id="{{ $id ?? 'amount' }}_words" class="mt-2 text-[4px] text-error text-gray-600 "></p>

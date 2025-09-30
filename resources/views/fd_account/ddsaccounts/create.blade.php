@@ -461,8 +461,7 @@
                         <input type="text" name="transaction_date" id="date4"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="DD/MM/YYYY" value="{{ old('t_date', $today) }}">
-                        <i
-                            class="absolute -translate-y-1/2 cursor-pointer l ltr:right-4 rtl:left-4 top-1/2"></i>
+                        <i class="absolute -translate-y-1/2 cursor-pointer l ltr:right-4 rtl:left-4 top-1/2"></i>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
