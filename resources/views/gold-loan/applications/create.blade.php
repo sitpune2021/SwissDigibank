@@ -31,73 +31,74 @@
                 <a href="" class="text-gray-500  capitalize text-sm">New Gold Loan Application </a> >
                 <a href="" class="text-gray-500 capitalize text-sm"> New</a>
             </p>
-
         </div>
-
     </div>
+
     <div class="box">
         <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
             <div class=" rounded-10 flex-1 bg-primary/5 p-2">
-                <div class="w-full col-span-12  px-3 py-1 rounded-10 lg:col-span-12">
-                    <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6" action="" method="">
+                <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
+                   <form method="POST" 
+                        action="{{ isset($application) ? route('gold-loan.applications.update', $application->id) : route('loan-applications.store') }}">
+                        @csrf
+                        @if(isset($application))
+                            @method('PUT')
+                        @endif
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Application Date
-                                <span class="text-red-500">*</span>
+                             {{-- Application Date --}}           
+                            <label class="md:text-lg font-medium block mb-4">
+                                Application Date <span class="text-red-500">*</span>
                             </label>
-
-                            <input type="text" id="date" name=""
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="DD/MM/YYYY ">
-
+                            <input type="date" name="application_date"
+                                value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
                         </div>
+                        
                         <div class="col-span-2 md:col-span-1">
-    <label for="member_id" class="md:text-lg font-medium block mb-4">
-        Member <span class="text-red-500">*</span>
-    </label>
-
-    <select name="member_id" id="member_id"
-    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-    <option value="">Search Member No or Name</option>
-    @foreach($members as $member)
-        <option value="{{ $member->id }}"
-            data-name="{{ $member->member_info_first_name }}"
-            data-mobile="{{ $member->member_info_mobile_no }}">
-            {{ $member->member_info_first_name }}
-        </option>
-    @endforeach
-</select>
-
-</div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                1st Co-Applicant Member
-
+                            <label for="member_id" class="md:text-lg font-medium block mb-4">
+                                Member <span class="text-red-500">*</span>
                             </label>
-
-                           <select name="member_id1" id="member_id1"
+                            
+                            <select name="member_id" id="member_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Member No or Name</option>
                                 @foreach($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
+                                    <option value="{{ $member->id }}"
+                                    {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
+                                        data-name="{{ $member->member_info_first_name }}"
+                                        data-mobile="{{ $member->member_info_mobile_no }}">
+                                        {{ $member->member_info_first_name }}
+                                    </option>
                                 @endforeach
                             </select>
-
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                2nd Co-Applicant Member
-
-                            </label>
-
-                            <select name="member_id2" id="member_id2"
+                                1st Co-Applicant Member</label>
+                           <select name="co_applicant_1_id" id="co_applicant_1_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Member No or Name</option>
                                 @foreach($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
+                                     <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->co_applicant_1_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                2nd Co-Applicant Member</label>
+                            <select name="co_applicant_2_id" id="co_applicant_2_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->co_applicant_2_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -107,98 +108,102 @@
                                 Branch
                                 <span class="text-red-500">*</span>
                             </label>
-
                             <select name="branch_id" id="branch_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Branch No or Name</option>
                                 @foreach($branch as $member)
-                                    <option value="{{ $member->id }}">{{ $member->branch_name }}</option>
+                                <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->branch_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->branch_name }}
+                                    </option>
+                                    
                                 @endforeach
                             </select>
-
                         </div>
+
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                Advisor/ Staff
-
-                            </label>
-
+                                Advisor/ Staff</label>
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 placeholder="Enter Scheme Code">
                                 <option value="">select Advisor/ Staff </option>
                             </select>
-
                         </div>
+
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                Guarantor 1
-                            </label>
-
-                            <select
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                placeholder="Enter Scheme Code">
-                                <option value="">Search Member No or Name </option>
+                                Guarantor 1 </label>
+                            <select name="guarantor_1_id" id="guarantor_1_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                 <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_1_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                   
+                                @endforeach
                             </select>
-
-
-                        </div>
-                        <div class="col-span-2 md:col-span-1">
-
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
-                                    Guarantor 2
-                                </label>
-
-                                <select
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                    placeholder="Enter Scheme Code">
-                                    <option value="">Search Member No or Name </option>
-                                </select>
-
-                            </div>
-
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
                                 <label for="" class="md:text-lg font-medium block mb-4">
-                                    Guarantor 3
-                                </label>
-
-                                <select
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                    placeholder="Enter Scheme Code">
-                                    <option value="">Search Member No or Name </option>
-                                </select>
-
-                            </div>
-                        </div>
-
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
-                                    Guarantor 4
-                                </label>
-
-                                <select
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                    placeholder="Enter Scheme Code">
-                                    <option value="">Search Member No or Name </option>
-                                </select>
-
+                                    Guarantor 2</label>
+                                <select name="guarantor_2_id" id="guarantor_2_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_2_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                             </div>
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
                                 <label for="" class="md:text-lg font-medium block mb-4">
-                                    Scheme
-                                    <span class="text-error">*</span>
-                                </label>
+                                    Guarantor 3 </label>
+                                <select name="guarantor_3_id" id="guarantor_3_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                     <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_3_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
 
-                               <select name="scheme_id" id="scheme_id"
+                        <div class="col-span-2 md:col-span-1">
+                            <div class="col-sm-7">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Guarantor 4 </label>
+                               <select name="guarantor_4_id" id="guarantor_4_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                     <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_4_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <div class="col-sm-7">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Scheme <span class="text-error">*</span>
+                                </label>
+                               <!-- <select name="scheme_id" id="scheme_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Scheme Code</option>
                                 @foreach($scheme as $sc)
@@ -210,16 +215,33 @@
                                         data-limit="{{ $sc->max_loan_limit ?? '-' }}"
                                         data-min="{{ $sc->min_loan_amount ?? '-' }}"
                                         data-interest="{{ $sc->annual_interest_rate ?? '-' }}"
+                                        data-type="{{ $sc->gold_loan_setting ?? '-' }}"                              
+                                        data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
+                                        data-charge="{{ $sc->charge_floting ?? '-' }}">
+                                        {{ $sc->scheme_code }}
+                                    </option>
+                                @endforeach
+                            </select> -->
+                            <select name="scheme_id" id="scheme_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Scheme Code</option>
+                                @foreach($scheme as $sc)
+                                    <option value="{{ $sc->id }}"
+                                        {{ old('scheme_id', $application->scheme_id ?? '') == $sc->id ? 'selected' : '' }}
+                                        data-code="{{ $sc->scheme_code }}"
+                                        data-name="{{ $sc->scheme_name }}"
+                                        data-tenure="{{ $sc->tenure ?? '-' }}"
+                                        data-max="{{ $sc->max_loan_amount ?? '-' }}"
+                                        data-limit="{{ $sc->max_loan_limit ?? '-' }}"
+                                        data-min="{{ $sc->min_loan_amount ?? '-' }}"
+                                        data-interest="{{ $sc->annual_interest_rate ?? '-' }}"
                                         data-type="{{ $sc->gold_loan_setting ?? '-' }}"
-                                        
                                         data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
                                         data-charge="{{ $sc->charge_floting ?? '-' }}">
                                         {{ $sc->scheme_code }}
                                     </option>
                                 @endforeach
                             </select>
-
-
                             </div>
                         </div>
 
@@ -227,9 +249,7 @@
                             {{-- do not remove div --}}
                         </div>
 
-
                         <div class="col-span-2 md:col-span-1">
-
                             <div class="col-sm-7">
                                 <label for="" class="md:text-lg font-medium block mb-4">
                                     Tenure Type
@@ -237,57 +257,47 @@
                                 </label>
                                 <div class="flex">
                                     <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" id="" value="days"
-                                            class="text-green-600 focus:ring-green-500">
+                                        <input type="radio" name="tenure_type" value="days"
+                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'days' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">DAYS</span>
                                     </label>
                                     <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" id="" value="weeks"
-                                            class="text-green-600 focus:ring-green-500">
+                                        <input type="radio" name="tenure_type" value="weeks"
+                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'weeks' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">WEEKS</span>
                                     </label>
                                     <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" id="" value="months"
-                                            class="text-green-600 focus:ring-green-500" checked>
+                                        <input type="radio" name="tenure_type" value="months"
+                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'months' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">MONTHS</span>
                                     </label>
                                 </div>
-
-
                             </div>
-
                         </div>
 
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                Tenure
-                                <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
+                                Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
                                 <span class="text-error">*</span>
                             </label>
-
-                            <input type="number" id="" name=""
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Please Enter Tenure ">
-
+                            <input type="number" id="tenure_value" name="tenure_value"
+                                value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
+                                class="w-full text-sm border px-3 py-2">
                         </div>
-
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                EMI Collection
-                                <span class="text-error">* </span>
+                                EMI Collection <span class="text-error">* </span>
                             </label>
+                            <select name="emi_collection" class="w-full text-sm border px-3 py-2">
+                            <option value="">Please Select</option>
+                            <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
+                            <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
+                            <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
+                            <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
+                        </select>
 
-                            <select
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                placeholder="Enter EMI Collection">
-                                <option value="">Please Select </option>
-                                <option value="Monthaly">Monthaly </option>
-                                <option value="Qaurterly">Qaurterly </option>
-                                <option value="Half_yearly">Half_yearly </option>
-                                <option value="Yearly">Yearly </option>
-                            </select>
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -295,8 +305,7 @@
                                 Credit Period ( EMI Grace Period ) ( Days )
                                 <span class="text-error">*</span>
                             </label>
-
-                            <input type="number" id="" name=""
+                            <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $application->credit_period ?? 0) }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0">
                         </div>
@@ -307,7 +316,7 @@
                             </label>
                             <input type="number" id="loanAmount" name="loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0">
+                                placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -316,7 +325,7 @@
                             </label>
                             <input type="number" id="insuranceAmount" name="insurance_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Insurance Amount (₹)">
+                                placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -325,7 +334,7 @@
                             </label>
                             <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
-                                placeholder="0">
+                                placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
                         </div>
 
                         <div class="col-span-2 md:col-span-1 mb-3">
@@ -334,17 +343,17 @@
                                 <span class="text-error">*</span>
                             </label>
 
-                            <input type="text" id="" name=""
+                            <input type="text" id="purpose_of_loan" name="purpose_of_loan"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Purpose of Loan">
+                                placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
                         </div>
                 </div>
+
+
                 <div class="col-span-12  lg:col-span-12 mb-5">
                     <hr>
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                        Credit Score Details
-
-                    </label>
+                        Credit Score Details </label>
                     <div class="w-full overflow-x-auto">
                         <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
                             <thead class="bg-secondary/5 whitespace-nowrap">
@@ -364,7 +373,6 @@
                                     <th class=" px-2 py-2 md:px-4 md:py-2"></th>
                                 </tr>
                             </thead>
-
                             <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
                                 {{-- Credit Score Details Table --}}
                             </tbody>
@@ -379,8 +387,9 @@
                     {{--calculator checkbox- --}}
                     <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
                         sublabel="(Check this if you want to collect principal amount as EMIs.)" />
-
                 </div>
+
+
                 <div class="col-span-12  lg:col-span-12 ">
                     <hr>
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
@@ -392,23 +401,16 @@
                             <div class="flex  flex-row justify-around items-center gap-3">
                                 <!-- Label -->
                                 <label for="" class="text-sm block font-medium text-gray-700 dark:text-gray-200">
-                                    Total Processing Fee :
-                                </label>
-
-
-                                <input type="text" name="" id="" readonly placeholder="0"
+                                    Total Processing Fee : </label>
+                                <input type="text" name="processing_fee_value" id="processing_fee_value" readonly placeholder="0"
                                     class="w-64 rounded-10 block border dark:bg-bg3 px-3 py-2 text-sm " />
                             </div>
                         </div>
 
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-
-                            Collect Processing Fee :
-                        </label>
+                            Collect Processing Fee :</label>
                         <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                             <tbody>
-
-
                                 <!-- Column Labels -->
                                 <tr class="">
                                     <th class="text-center px-3 py-2 ">Value</th>
@@ -418,7 +420,6 @@
                                     <th class="text-center px-3 py-2 ">IGST</th>
                                     <th class="text-center px-3 py-2 ">Total</th>
                                 </tr>
-
                                 <!-- Input Row -->
                                 <tr class="">
                                     <!-- Value -->
@@ -426,253 +427,245 @@
                                         <input type="text" name="" id="" value="0" readonly
                                             class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                     </td>
-
                                     <!-- GST (%) -->
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="18.0" readonly
+                                        <input type="text" name="processing_fee_gst" id="processing_fee_gst" value="18.0" readonly
                                             class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                     </td>
-
                                     <!-- SGST -->
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="0" readonly
+                                        <input type="text" name="processing_fee_sgst" id="processing_fee_sgst" value="0" readonly
                                             class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                     </td>
-
                                     <!-- CGST -->
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="0" readonly
+                                        <input type="text" name="processing_fee_cgst" id="processing_fee_cgst" value="0" readonly
                                             class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                     </td>
-
                                     <!-- IGST -->
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="0" readonly
+                                        <input type="text" name="processing_fee_igst" id="processing_fee_igst" value="0" readonly
                                             class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                     </td>
-
                                     <!-- Total -->
                                     <td class="px-2 py-2">
-                                        <input type="number" name="" id="" placeholder="0"
+                                        <input type="number" name="processing_fee_total" id="processing_fee_total" placeholder="0"
                                             class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-    Collect Processing Fee :
-</label>
+                            Pay Mode :</label>
+                            <!-- Radio Buttons -->
+                            <div class="mt-3">
+                                <!-- Pay Mode -->
+                                <label class="mr-4">
+                                    <input type="radio" name="fee_mode" value="cash"
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> Cash
+                                </label>
+                                <label class="mr-4">
+                                    <input type="radio" name="fee_mode" value="cheque"
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                </label>
+                                <label>
+                                    <input type="radio" name="fee_mode" value="online"
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                </label>
+                            </div>
 
+                            <!-- Bank + Cheque Fields -->
+                            <div id="bankDropdownWrapper" class="mt-3 hidden">
+                                <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                               <select id="bank_id" name="bank_id"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <option value="">-- Select Bank --</option>
+                                    @foreach($banks as $id => $name)
+                                        <option value="{{ $id }}"
+                                            {{ old('bank_id', $application->bank_id ?? '') == $id ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-<!-- Radio Buttons -->
-<div class="mt-3">
-    <label class="mr-4">
-        <input type="radio" name="fee_mode" value="cash"> Cash
-    </label>
-    <label class="mr-4">
-        <input type="radio" name="fee_mode" value="cheque"> Cheque
-    </label>
-    <label>
-        <input type="radio" name="fee_mode" value="online"> Online Tr.
-    </label>
-</div>
+                                <!-- Cheque No -->
+                                <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                    <input type="text" name="cheque_no"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
+                                </div>
 
-<!-- Bank + Cheque Fields -->
-<div id="bankDropdownWrapper" class="mt-3 hidden">
-    <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
-    <select id="bank_id" name="bank_id"
-        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-        <option value="">-- Select Bank --</option>
-        @foreach($banks as $id => $name)
-            <option value="{{ $id }}">{{ $name }}</option>
-        @endforeach
-    </select>
+                                <!-- Cheque Date -->
+                                <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                </div>
+                            </div>
 
-    <!-- Cheque No -->
-    <div class="mt-3">
-        <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
-        <input type="text" name="cheque_no"
-            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-            placeholder="Enter Cheque No">
-    </div>
+                            <!-- Online Transaction Fields -->
+                            <div id="onlineFields" class="space-y-4 hidden">
+                                <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Transfer Date <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                </div>
 
-    <!-- Cheque Date -->
-    <div class="mt-3">
-        <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-        <input type="date" id="cheque_date" name="cheque_date"
-            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-    </div>
-</div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        UTR / Transaction No. <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                </div>
 
-<!-- Online Transaction Fields -->
-<div id="onlineFields" class="space-y-4 hidden">
-    <div class="mt-3">
-        <label class="block text-sm font-medium text-gray-700">
-            Transfer Date <span class="text-red-500">*</span>
-        </label>
-        <input type="date" id="transfer_date" name="transfer_date"
-            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-    </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Transfer Mode <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-4 mt-2">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="imps"
+    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
+                                            <span>IMPS</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="vpa"
+    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">
-            UTR / Transaction No. <span class="text-red-500">*</span>
-        </label>
-        <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
-            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-    </div>
+                                            <span>VPA</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="neft_rtgs"
+    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
+                                            <span>NEFT/RTGS</span>
+                                        </label>
+                                    </div>
+                                </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">
-            Transfer Mode <span class="text-red-500">*</span>
-        </label>
-        <div class="flex gap-4 mt-2">
-            <label class="flex items-center gap-2">
-                <input type="radio" name="transfer_mode" value="imps">
-                <span>IMPS</span>
-            </label>
-            <label class="flex items-center gap-2">
-                <input type="radio" name="transfer_mode" value="vpa">
-                <span>VPA</span>
-            </label>
-            <label class="flex items-center gap-2">
-                <input type="radio" name="transfer_mode" value="neft_rtgs">
-                <span>NEFT/RTGS</span>
-            </label>
-        </div>
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700">
-            Credited in Company Account <span class="text-red-500">*</span>
-        </label>
-        <div class="flex gap-4 mt-2">
-            <label class="flex items-center gap-2">
-                <input type="radio" name="credited" value="yes">
-                <span>Yes</span>
-            </label>
-            <label class="flex items-center gap-2">
-                <input type="radio" name="credited" value="no">
-                <span>No</span>
-            </label>
-        </div>
-    </div>
-</div>
-
-
-
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Credited in Company Account <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-4 mt-2">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited" value="yes"
+    {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                            <span>Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited" value="no"
+    {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         
                         <p for="" class=" text-error text-sm block mt-3 mb-4">
                             Note: If you wish to collect processing fee at the time of disbursement, then enter 0. Fees
                             will be calculated accordingly.
                         </p>
+
                     </div>
-
                 </div>
-
-
             </div>
-
-
 
 
             <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
                 {{-- Member Info Box --}}
-<div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
-    <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-        <h3 class="text-base capitalize font-semibold md:text-lg">Member Info</h3>
-        <button type="button" class="p-1 rounded transition"
-            onclick="toggleSection(this, 'memberInfoBody')">
-            <span class="toggle-icon text-lg font-bold">−</span>
-        </button>
-    </div>
-    <div id="memberInfoBody" class="px-4 py-3">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                    <tr class="border-b">
-                        <td class="font-semibold py-2 pr-4">Member Name</td>
-                        <td class="py-2 capitalize" id="memberName">-</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="font-semibold py-2 pr-4">Mobile No</td>
-                        <td class="py-2" id="memberMobile">-</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
+                <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
+                    <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
+                        <h3 class="text-base capitalize font-semibold md:text-lg">Member Info</h3>
+                        <button type="button" class="p-1 rounded transition"
+                            onclick="toggleSection(this, 'memberInfoBody')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                    <div id="memberInfoBody" class="px-4 py-3">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                                    <tr class="border-b">
+                                        <td class="font-semibold py-2 pr-4">Member Name</td>
+                                        <td class="py-2 capitalize" id="memberName">-</td>
+                                    </tr>
+                                    <tr class="border-b">
+                                        <td class="font-semibold py-2 pr-4">Mobile No</td>
+                                        <td class="py-2" id="memberMobile">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-
 
                 {{--schemeBox info --}}
                 <div id="schemeBox" class=" mt-5 hidden">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base font-semibold md:text-lg">Scheme Info
-
-                        </h3>
+                        <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'schemeInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
                         </button>
-
                     </div>
-
 
                     <div id="schemeInfoBody" class="px-4 py-3">
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
                                 <tbody>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Scheme Code</td>
-        <td class="py-2" id="schemeCode">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Scheme Name</td>
-        <td class="py-2" id="schemeName">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Max Tenure</td>
-        <td class="py-2" id="schemeTenure">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
-        <td class="py-2" id="schemeMax">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
-        <td class="py-2" id="schemeLimit">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
-        <td class="py-2" id="schemeMin">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
-        <td class="py-2" id="schemeInterest">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Interest Type</td>
-        <td class="py-2" id="schemeType">-</td>
-    </tr>
-   
-    <tr>
-        <td class="font-semibold py-2 pr-4">Active</td>
-        <td class="py-2" id="schemeActive">-</td>
-    </tr>
-    <tr>
-        <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
-        <td class="py-2" id="schemeCharge">-</td>
-    </tr>
-</tbody>
-
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Scheme Code</td>
+                                        <td class="py-2" id="schemeCode">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Scheme Name</td>
+                                        <td class="py-2" id="schemeName">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Max Tenure</td>
+                                        <td class="py-2" id="schemeTenure">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
+                                        <td class="py-2" id="schemeMax">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
+                                        <td class="py-2" id="schemeLimit">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
+                                        <td class="py-2" id="schemeMin">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
+                                        <td class="py-2" id="schemeInterest">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Interest Type</td>
+                                        <td class="py-2" id="schemeType">-</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Active</td>
+                                        <td class="py-2" id="schemeActive">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
+                                        <td class="py-2" id="schemeCharge">-</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -728,7 +721,6 @@
                     </tr>
                 </tfoot>
             </table>
-
         </div>
         <div class="mt-3">
             <button type="button" id="addRowBtn" class="btn-primary rounded-10 px-4 py-2">
@@ -736,11 +728,47 @@
             </button>
         </div>
 
-        <!-- Buttons -->
-        <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-            <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
-                Calculate
-            </button>
+        <!-- Calculation Result Box -->
+        <div id="calculationBox"
+            class="mt-5 p-4 bg-secondary/5 rounded-10 hidden">
+            <h3 class="text-lg font-semibold mb-3">Calculation Result</h3>
+            <table class="w-full text-sm">
+                <tbody>
+                    <tr>
+                        <td class="font-semibold py-1">Net Loan Amount</td>
+                        <td id="resNetLoan">-</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold py-1">Security Value</td>
+                        <td id="resSecurity">-</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold py-1">Max Loan Amount</td>
+                        <td id="resMaxLoan">-</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold py-1">Max Loan Limit</td>
+                        <td id="resLimit">-</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold py-1">Maximum Approvable Amount</td>
+                        <td id="resApprovable">-</td>
+                    </tr>
+                    <tr>
+                        <td class="font-semibold py-1">Approved Loan Amount</td>
+                        <td id="resApproved">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+           <!-- Buttons -->
+            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+                <button type="button" id="calculateBtn"
+                    class="btn-primary rounded-10 px-4 py-2 mt-4">
+                    Calculate
+                </button>
+            </div>
 
             <button class="btn-outline uppercase justify-center" type="reset">
                 <a href="{{route('rdschemes.index')}}"> BAck</a>
@@ -750,7 +778,29 @@
     </form>
 </div>
 
+<script>
+   let isCalculated = false; // flag set karte hain
 
+document.getElementById("calculateBtn").addEventListener("click", function (e) {
+    if (!isCalculated) {
+        //  Pehli click pe calculation karo
+        document.getElementById("calculationBox").classList.remove("hidden");
+
+        // Button ko submit bana do
+        this.textContent = "Submit";
+        this.type = "submit";
+
+        // Flag update karo
+        isCalculated = true;
+
+        // Prevent form submit on first click
+        e.preventDefault();
+    } else {
+        //  Ab button "Submit" hai → normal form submit hone do
+        // Yahan kuch extra code ki zarurat nahi hai
+    }
+});
+</script>
 
 <script>
 document.getElementById('member_id').addEventListener('change', function () {
@@ -876,54 +926,116 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+ <script>
+document.getElementById("calculateBtn").addEventListener("click", function () {
+    let rows = document.querySelectorAll("#itemsBody tr");
+    let totalSecurity = 0;
+
+    rows.forEach(row => {
+        let valuePerGram = parseFloat(row.querySelector(".valuePerGram")?.value) || 0;
+        let netWeight = parseFloat(row.querySelector(".netWeight")?.value) || 0;
+        let tunch = parseFloat(row.querySelector(".tunch")?.value) || 0;
+
+        // Fine Weight (D) = (C% of B)
+        let fineWeight = (netWeight * tunch) / 100;
+
+        // Total Value = A × D
+        let totalValue = valuePerGram * fineWeight;
+
+        // Row ke Total Value column me show karo
+        let totalValueCell = row.querySelector(".totalValue");
+        if (totalValueCell) {
+            totalValueCell.textContent = totalValue.toFixed(2);
+        }
+
+        totalSecurity += totalValue;
+    });
+
+    // Loan amount aur insurance ke input se values lo
+    let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+    let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+    let netLoan = loanAmount - insurance;
+    document.getElementById("netLoanAmount").value = netLoan;
+
+    // Scheme ka data
+    let scheme = document.getElementById("scheme_id");
+    let selected = scheme.options[scheme.selectedIndex];
+    let maxLoan = selected.getAttribute("data-max") || "-";
+    let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+
+    // Maximum approvable amount = (totalSecurity × Limit%) / 100
+    let approvable = (totalSecurity * limit) / 100;
+
+    // Show results
+    document.getElementById("resNetLoan").textContent = netLoan;
+    document.getElementById("resSecurity").textContent = totalSecurity.toFixed(2);
+    document.getElementById("resMaxLoan").textContent = maxLoan;
+    document.getElementById("resLimit").textContent = limit + "%";
+    document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+    document.getElementById("resApproved").textContent = approvable.toFixed(2);
+
+    document.getElementById("calculationBox").classList.remove("hidden");
+});
+</script>
+
+
+
 <script>
     // =====logic for dynamic cibil rows=====
 
     const cibilBody = document.getElementById("cibilBody");
     const addRowBtn = document.getElementById("addRow");
 
-    // Template for new row
-    function newRow() {
-        return `
-                   <tr class="nested-fields border-b">
-                                                    <!-- Cibil Type -->
-                           <td class="px-2 py-2 " style="width:230px;">
-                            <select name="cibil_type[]" required
-                                    class="w-full text-center dark:bg-bg3  rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" >
-                                                        <option value="transunion">TransUnion</option>
-                                                        <option value="equifax">Equifax</option>
-                                                        <option value="experian">Experian</option>
-                                                        <option value="crif_highmark">Crif Highmark</option>
-                                                      </select>
-                            </td>
+   // Template for new row
+function newRow() {
+    // Get current date in DD/MM/YYYY format
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
 
-                                                    <!-- Cibil Score -->
-                                                    <td class="px-2 py-2 ">
-                                                      <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
-                                                        class="w-full text-center dark:bg-bg3  rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
-                                                    </td>
+    return `
+        <tr class="nested-fields border-b">
+            <!-- Cibil Type -->
+            <td class="px-2 py-2" style="width:230px;">
+                <select name="cibil_type[]" required
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                    <option value="transunion">TransUnion</option>
+                    <option value="equifax">Equifax</option>
+                    <option value="experian">Experian</option>
+                    <option value="crif_highmark">Crif Highmark</option>
+                </select>
+            </td>
 
-                                                    <!-- Report Date -->
-                                                    <td class="px-2 py-2  relative">
-                                                      <input type="text" id="date2" name="report_date[]"  placeholder="DD/MM/YYYY"
-                                                        class="w-full text-center dark:bg-bg3  rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
-                                                    </td>
+            <!-- Cibil Score -->
+            <td class="px-2 py-2">
+                <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+            </td>
 
-                                                    <!-- Upload File -->
-                                                    <td class="px-2 py-2 ">
-                                                      <input type="file" name="report_file[]"
-                                                        class="w-full text-center dark:bg-bg3  rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
-                                                    </td>
+            <!-- Report Date -->
+            <td class="px-2 py-2 relative">
+                <input type="text" id="date2" name="report_date[]" value="${formattedDate}"
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+            </td>
 
-                                                    <!-- Remove button -->
-                                                    <td class="px-2 py-2 md:px-4 md:py-2  text-center">
-                                                      <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                                                        <i class="las la-times" aria-hidden="true"></i>
-                                                      </button>
-                                                    </td>
-                                                  </tr>
-                                                `;
-    }
+            <!-- Upload File -->
+            <td class="px-2 py-2">
+                <input type="file" name="report_file[]"
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+            </td>
+
+            <!-- Remove button -->
+            <td class="px-2 py-2 md:px-4 md:py-2 text-center">
+                <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                    <i class="las la-times" aria-hidden="true"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
 
     // Add row
     addRowBtn.addEventListener("click", () => {
