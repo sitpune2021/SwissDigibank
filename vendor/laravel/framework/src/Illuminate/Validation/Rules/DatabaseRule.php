@@ -5,7 +5,6 @@ namespace Illuminate\Validation\Rules;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 use function Illuminate\Support\enum_value;
 
@@ -84,7 +83,7 @@ trait DatabaseRule
      * Set a "where" constraint on the query.
      *
      * @param  \Closure|string  $column
-     * @param  \Illuminate\Contracts\Support\Arrayable|\UnitEnum|\Closure|array|string|int|bool|null  $value
+     * @param  \Illuminate\Contracts\Support\Arrayable|\BackedEnum|\Closure|array|string|int|bool|null  $value
      * @return $this
      */
     public function where($column, $value = null)
@@ -112,7 +111,7 @@ trait DatabaseRule
      * Set a "where not" constraint on the query.
      *
      * @param  string  $column
-     * @param  \Illuminate\Contracts\Support\Arrayable|\UnitEnum|array|string  $value
+     * @param  \Illuminate\Contracts\Support\Arrayable|\BackedEnum|array|string  $value
      * @return $this
      */
     public function whereNot($column, $value)
@@ -232,7 +231,7 @@ trait DatabaseRule
      */
     protected function formatWheres()
     {
-        return (new Collection($this->wheres))->map(function ($where) {
+        return collect($this->wheres)->map(function ($where) {
             return $where['column'].','.'"'.str_replace('"', '""', $where['value']).'"';
         })->implode(',');
     }

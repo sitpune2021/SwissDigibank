@@ -4,7 +4,6 @@
         "app",
         "bootstrap",
         "config",
-        "overrides",
         "resources",
         "vendor"
     ],

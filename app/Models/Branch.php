@@ -15,6 +15,8 @@ class Branch extends Model
         'branch_code',
         'open_date',
         'ifsc_code',
+        'swift_code',
+        'permission_letter',
         'address_line1',
         'address_line2',
         'city',

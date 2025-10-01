@@ -65,7 +65,7 @@ class DynamoDbStoreTest extends TestCase
      * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
         if (! env('DYNAMODB_CACHE_TABLE')) {
             $this->markTestSkipped('DynamoDB not configured.');

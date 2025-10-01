@@ -2,7 +2,6 @@
 
 namespace Illuminate\Tests\Notifications;
 
-use Carbon\Carbon;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\Messages\DatabaseMessage;
 use Illuminate\Notifications\Notification;
@@ -61,7 +60,7 @@ class NotificationDatabaseChannelTest extends TestCase
             'id' => 1,
             'type' => 'MONTHLY',
             'data' => ['invoice_id' => 1],
-            'read_at' => Carbon::now()->toDateTimeString(),
+            'read_at' => null,
             'something' => 'else',
         ]);
 
@@ -88,11 +87,6 @@ class NotificationDatabaseChannelCustomizeTypeTestNotification extends Notificat
     public function databaseType()
     {
         return 'MONTHLY';
-    }
-
-    public function initialDatabaseReadAtValue()
-    {
-        return Carbon::now();
     }
 }
 

@@ -15,18 +15,12 @@
                 </a>
             </li>
         @endisset
-        @isset($printRoute)
-            @if ($type)
-                <a href="{{ route($printRoute, ['id' => $id, 'type' => Str::slug($type)]) }}" target="_blank"
-                    class="single-option">
-                    Print
-                </a>
-            @else
-                <a href="{{ route($printRoute, $id) }}" target="_blank" class="single-option">
-                    Print
-                </a>
-            @endif
+            @isset($printRoute)
+        <a href="{{ route($printRoute, $id) }}" target="_blank" class="single-option">
+            Print
+        </a>
         @endisset
+ 
         @isset($deleteRoute)
             <form action="{{ route($deleteRoute, $id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                 @csrf

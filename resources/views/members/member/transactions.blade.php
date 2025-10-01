@@ -73,7 +73,6 @@
                                     <div class="flex justify-center">
                                         @include('partials._vertical-options', [
                                             'id' => $transaction->id,
-                                            'type' => $transaction->type, 
                                             'viewRoute' => 'transactions.show',
                                             'printRoute' => 'transactions.print-receipt',
                                             'deleteRoute' => 'transactions.softDeletetransaction', 

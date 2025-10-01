@@ -21,10 +21,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot name="foo">
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, []) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, []) \n".' @endslot', trim($result));
     }
 
     public function testInlineSlotsCanBeCompiled()
@@ -33,10 +30,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot:foo>
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, []) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, []) \n".' @endslot', trim($result));
     }
 
     public function testDynamicSlotsCanBeCompiled()
@@ -45,10 +39,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot :name="$foo">
 </x-slot>');
 
-        $this->assertSame(
-            "@slot(\$foo, null, []) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot(\$foo, null, []) \n".' @endslot', trim($result));
     }
 
     public function testDynamicSlotsCanBeCompiledWithKeyOfObjects()
@@ -57,10 +48,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot :name="$foo->name">
 </x-slot>');
 
-        $this->assertSame(
-            "@slot(\$foo->name, null, []) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot(\$foo->name, null, []) \n".' @endslot', trim($result));
     }
 
     public function testSlotsWithAttributesCanBeCompiled()
@@ -69,10 +57,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot name="foo" class="font-bold">
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, ['class' => 'font-bold']) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, ['class' => 'font-bold']) \n".' @endslot', trim($result));
     }
 
     public function testInlineSlotsWithAttributesCanBeCompiled()
@@ -81,10 +66,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot:foo class="font-bold">
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, ['class' => 'font-bold']) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, ['class' => 'font-bold']) \n".' @endslot', trim($result));
     }
 
     public function testSlotsWithDynamicAttributesCanBeCompiled()
@@ -93,10 +75,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot name="foo" :class="$classes">
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, ['class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(\$classes)]) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, ['class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(\$classes)]) \n".' @endslot', trim($result));
     }
 
     public function testSlotsWithClassDirectiveCanBeCompiled()
@@ -105,10 +84,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot name="foo" @class($classes)>
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, ['class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(\Illuminate\Support\Arr::toCssClasses(\$classes))]) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, ['class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(\Illuminate\Support\Arr::toCssClasses(\$classes))]) \n".' @endslot', trim($result));
     }
 
     public function testSlotsWithStyleDirectiveCanBeCompiled()
@@ -117,10 +93,7 @@ class BladeComponentTagCompilerTest extends AbstractBladeTestCase
         $result = $this->compiler()->compileSlots('<x-slot name="foo" @style($styles)>
 </x-slot>');
 
-        $this->assertSame(
-            "@slot('foo', null, ['style' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(\Illuminate\Support\Arr::toCssStyles(\$styles))]) \n".' @endslot',
-            str_replace("\r\n", "\n", trim($result))
-        );
+        $this->assertSame("@slot('foo', null, ['style' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(\Illuminate\Support\Arr::toCssStyles(\$styles))]) \n".' @endslot', trim($result));
     }
 
     public function testBasicComponentParsing()

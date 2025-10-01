@@ -297,7 +297,7 @@ class Container implements ArrayAccess, ContainerContract
             $concrete = $this->getClosure($abstract, $concrete);
         }
 
-        $this->bindings[$abstract] = ['concrete' => $concrete, 'shared' => $shared];
+        $this->bindings[$abstract] = compact('concrete', 'shared');
 
         // If the abstract type was already resolved in this container we'll fire the
         // rebound listener so that any objects which have already gotten resolved
@@ -488,11 +488,9 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Register an existing instance as shared in the container.
      *
-     * @template TInstance of mixed
-     *
      * @param  string  $abstract
-     * @param  TInstance  $instance
-     * @return TInstance
+     * @param  mixed  $instance
+     * @return mixed
      */
     public function instance($abstract, $instance)
     {
@@ -635,13 +633,9 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function rebound($abstract)
     {
-        if (! $callbacks = $this->getReboundCallbacks($abstract)) {
-            return;
-        }
-
         $instance = $this->make($abstract);
 
-        foreach ($callbacks as $callback) {
+        foreach ($this->getReboundCallbacks($abstract) as $callback) {
             $callback($this, $instance);
         }
     }
@@ -721,10 +715,8 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Get a closure to resolve the given type from the container.
      *
-     * @template TClass of object
-     *
-     * @param  string|class-string<TClass>  $abstract
-     * @return ($abstract is class-string<TClass> ? \Closure(): TClass : \Closure(): mixed)
+     * @param  string  $abstract
+     * @return \Closure
      */
     public function factory($abstract)
     {
@@ -734,11 +726,9 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * An alias function name for make().
      *
-     * @template TClass of object
-     *
-     * @param  string|class-string<TClass>|callable  $abstract
+     * @param  string|callable  $abstract
      * @param  array  $parameters
-     * @return ($abstract is class-string<TClass> ? TClass : mixed)
+     * @return mixed
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
@@ -750,11 +740,9 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Resolve the given type from the container.
      *
-     * @template TClass of object
-     *
-     * @param  string|class-string<TClass>  $abstract
+     * @param  string  $abstract
      * @param  array  $parameters
-     * @return ($abstract is class-string<TClass> ? TClass : mixed)
+     * @return mixed
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
@@ -766,10 +754,7 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * {@inheritdoc}
      *
-     * @template TClass of object
-     *
-     * @param  string|class-string<TClass>  $id
-     * @return ($id is class-string<TClass> ? TClass : mixed)
+     * @return mixed
      */
     public function get(string $id)
     {
@@ -787,12 +772,10 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Resolve the given type from the container.
      *
-     * @template TClass of object
-     *
-     * @param  string|class-string<TClass>|callable  $abstract
+     * @param  string|callable  $abstract
      * @param  array  $parameters
      * @param  bool  $raiseEvents
-     * @return ($abstract is class-string<TClass> ? TClass : mixed)
+     * @return mixed
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Illuminate\Contracts\Container\CircularDependencyException
@@ -853,9 +836,7 @@ class Container implements ArrayAccess, ContainerContract
         // Before returning, we will also set the resolved flag to "true" and pop off
         // the parameter overrides for this build. After those two things are done
         // we will be ready to return back the fully constructed class instance.
-        if (! $needsContextualBuild) {
-            $this->resolved[$abstract] = true;
-        }
+        $this->resolved[$abstract] = true;
 
         array_pop($this->with);
 
@@ -932,10 +913,8 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Instantiate a concrete instance of the given type.
      *
-     * @template TClass of object
-     *
-     * @param  \Closure(static, array): TClass|class-string<TClass>  $concrete
-     * @return TClass
+     * @param  \Closure|string  $concrete
+     * @return mixed
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Illuminate\Contracts\Container\CircularDependencyException

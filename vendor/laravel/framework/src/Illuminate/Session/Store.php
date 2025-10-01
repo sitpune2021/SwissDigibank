@@ -5,14 +5,10 @@ namespace Illuminate\Session;
 use Closure;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Uri;
 use Illuminate\Support\ViewErrorBag;
-use RuntimeException;
 use SessionHandlerInterface;
 use stdClass;
 
@@ -270,7 +266,7 @@ class Store implements Session
     {
         $placeholder = new stdClass;
 
-        return ! (new Collection(is_array($key) ? $key : func_get_args()))->contains(function ($key) use ($placeholder) {
+        return ! collect(is_array($key) ? $key : func_get_args())->contains(function ($key) use ($placeholder) {
             return $this->get($key, $placeholder) === $placeholder;
         });
     }
@@ -294,7 +290,7 @@ class Store implements Session
      */
     public function has($key)
     {
-        return ! (new Collection(is_array($key) ? $key : func_get_args()))->contains(function ($key) {
+        return ! collect(is_array($key) ? $key : func_get_args())->contains(function ($key) {
             return is_null($this->get($key));
         });
     }
@@ -307,7 +303,7 @@ class Store implements Session
      */
     public function hasAny($key)
     {
-        return (new Collection(is_array($key) ? $key : func_get_args()))->filter(function ($key) {
+        return collect(is_array($key) ? $key : func_get_args())->filter(function ($key) {
             return ! is_null($this->get($key));
         })->count() >= 1;
     }
@@ -733,32 +729,6 @@ class Store implements Session
     }
 
     /**
-     * Determine if the previous URI is available.
-     *
-     * @return bool
-     */
-    public function hasPreviousUri()
-    {
-        return ! is_null($this->previousUrl());
-    }
-
-    /**
-     * Get the previous URL from the session as a URI instance.
-     *
-     * @return \Illuminate\Support\Uri
-     *
-     * @throws \RuntimeException
-     */
-    public function previousUri()
-    {
-        if ($previousUrl = $this->previousUrl()) {
-            return Uri::of($previousUrl);
-        }
-
-        throw new RuntimeException('Unable to generate URI instance for previous URL. No previous URL detected.');
-    }
-
-    /**
      * Get the previous URL from the session.
      *
      * @return string|null
@@ -786,7 +756,7 @@ class Store implements Session
      */
     public function passwordConfirmed()
     {
-        $this->put('auth.password_confirmed_at', Date::now()->unix());
+        $this->put('auth.password_confirmed_at', time());
     }
 
     /**

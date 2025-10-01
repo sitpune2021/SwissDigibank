@@ -154,6 +154,8 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
+
+                    
                     <label class="block text-sm font-medium text-gray-700">Cheque No. <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="cheque_no" class="w-full border rounded-10 px-3 py-3 bg-secondary/5"

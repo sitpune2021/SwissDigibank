@@ -41,7 +41,7 @@
                     @endif --}}
 
                     <!-- Charge Type -->
-                     <div class="mb-4">
+                    <div class="mb-4">
                         <label for="ChargeType" class="block font-medium mb-2">
                             Charge Type <span class="text-red-500">*</span>
                         </label>
@@ -81,6 +81,8 @@
                         <input type="number" name="charges" id="charges"
                             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
                             placeholder="Enter Amount" value="{{ old('charges') }}">
+                        <x-number-to-word for="charges" />
+
                         @error('charges')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -107,8 +109,8 @@
                             <button type="submit" class="btn-primary">
                                 Debit
                             </button>
-                            <a href="#" class="btn-outline">
-                                Cancel
+                            <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                                Back
                             </a>
                         </div>
                     </div>

@@ -1,23 +1,8 @@
 @extends('layout.main')
-@section('page-title',
-    isset($member)
-    ? 'Members - ' . $member->member_info_first_name . ' Transactions'
-    : 'Members
+
+@section('page-title', isset($member) ? 'Members - ' . $member->member_info_first_name . ' Transactions' : 'Members
     Transactions')
 
-    <head>
-        <style>
-            input[type="radio"] {
-
-                width: 24px !important;
-
-                height: 24px !important;
-
-                accent-color: green !important;
-
-            }
-        </style>
-    </head>
 @section('content')
 
     <div class="main-inner">
@@ -27,6 +12,7 @@
                     <h3 class="text-xl font-semibold mb-4">CHARGES - CLEAR DUES</h3>
                     <hr class="mb-6 border-gray-300">
                 </div>
+
                 <form
                     action="{{ route('members.other-charges.clearDue.form', ['id' => $memberId, 'chargeId' => $chargeId]) }}"
                     method="POST" class="space-y-6">
@@ -48,6 +34,7 @@
                             @enderror
                         </div>
                     </div>
+
                     <!-- Waived Amount -->
                     <div class="w-full mt-4">
                         <label class="block font-medium mb-2" for="waived_amount">
@@ -63,7 +50,6 @@
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Amount / GST / Total Amount Table -->
@@ -79,34 +65,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                        $totalAmount = 0;
-                                        $totalCharges = 0;
-                                        $gstRate = 18; // Assuming GST is 18% for all charges, adjust if dynamic
-                                    @endphp
-
-                                    @foreach ($dueCharges as $charge)
-                                        @php
-                                            $totalCharges += $charge->charges;
-                                            $totalAmount += $charge->charges * (1 + $charge->gst_rate / 100);
-                                        @endphp
-                                    @endforeach
-
-                                    <!-- Single row for total amount -->
                                     <tr>
-                                        <td class="px-2 py-2 border rounded-10 bg-secondary/5 text-center">
-                                            {{ number_format($totalCharges, 2) }}</td>
-                                        <td class="px-2 py-2  border rounded-10 bg-secondary/5 text-center">
-                                            {{ number_format($gstRate, 2) }}</td>
-                                        <td
-                                            class="border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3 text-center">
-                                            {{ number_format($totalAmount, 2) }}</td>
+                                        <td class="px-2 py-2 border rounded-10 bg-secondary/5 text-center" id="amount">
+                                            {{ number_format($totalChargesDue, 2) }}
+                                        </td>
+                                        <td class="px-2 py-2  border rounded-10 bg-secondary/5 text-center" id="gst_rate">
+                                            {{ number_format($gstRate, 2) }}
+                                        </td>
+                                        <td class="border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3 text-center"
+                                            id="total_amount">
+                                            {{ number_format($totalChargesDue * (1 + $gstRate / 100), 2) }}
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
 
                     <!-- Rounding Off -->
                     <div class="w-full mt-4">
@@ -115,14 +89,13 @@
                             <span class="text-red-500">*</span>
                         </label>
                         <div class="flex flex-wrap gap-4">
-                            <input type="number" name="rounding_off" id="rounding_off" value="{{ old('rounding_off') }}"
+                            <input type="number" name="rounding_off" id="rounding_off" value="{{ old('rounding_off', 0) }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
-                                placeholder="0.0">
+                                placeholder="0.0" min="0" readonly>
                             @error('rounding_off')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Net Amount -->
@@ -136,11 +109,12 @@
                                 value="{{ old('net_amount', $netAmount) }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
                                 placeholder="0.0" step="0.01" min="0" readonly>
+                        <p><span id="net_amount_words" class="red-text text-error" >{{ ucfirst($netAmountInWords ?? '') }}</span></p>
+
                             @error('net_amount')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Remarks -->
@@ -155,7 +129,6 @@
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Transaction Date -->
@@ -173,36 +146,104 @@
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Pay Mode -->
                     <div class="w-full">
-                        <div class="mb-4" id="intersetTypeRadio">
-                            <label class="block font-medium mt-3" for="pay_mode">
-                                Pay Mode
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <x-paymode :showSaving="false" id="pay_mode" :readonly="false" :amountClass="true"
-                                :bgColor="false" :hiddenheading="true" :hiddensubhead="true" />
-                            @error('pay_mode')
-                                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <label class="block font-medium mt-3" for="pay_mode">
+                            Pay Mode
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <x-paymode :showSaving="false" id="pay_mode" :readonly="false" :amountClass="true" :bgColor="false"
+                            :hiddenheading="true" :hiddensubhead="true" />
+
+                        @error('pay_mode')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Submit Buttons -->
                     <div class="flex justify-center gap-3 space-x-4 pt-6">
-                        <button type="submit" class="btn-primary rounded-10">
+                        <button type="submit" class="btn-primary">
                             CLEAR DUE
                         </button>
-                        <a href="#" class="btn-outline rounded-10">
-                            CANCEL
+
+                        <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                            Back
                         </a>
                     </div>
                 </form>
             </div>
         </div>
-
     </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chargesDue = parseFloat(document.getElementById('charges_due').value);
+        const gstRate = 18;
+        const waivedInput = document.getElementById('waived_amount');
+        const roundingInput = document.getElementById('rounding_off');
+        const amountTd = document.getElementById('amount');
+        const totalAmountTd = document.getElementById('total_amount');
+        const netAmountInput = document.getElementById('net_amount');
+        const netAmountWords = document.getElementById('net_amount_words');
+
+        // Function to convert number to words
+        function numberToWords(num) {
+            const a = [
+                '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+                'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+            ];
+            const b = [
+                '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+            ];
+            const n = ('000000000' + num).substr(-9).match(/^(\d{3})(\d{3})(\d{3})$/);
+            if (!n) return;
+            const str = (
+                (n[1] != 0 ? a[+n[1]] + ' Hundred ' : '') +
+                (n[2] != 0 ? (n[2] < 20 ? a[+n[2]] : b[+n[2][0]] + ' ' + a[+n[2][1]]) + ' ' : '') +
+                (n[3] != 0 ? (n[3] < 20 ? a[+n[3]] : b[+n[3][0]] + ' ' + a[+n[3][1]]) + ' ' : '')
+            ).replace(/\s+/g, ' ').trim();
+            return str + ' Only';
+        }
+
+        // Calculate the net amount
+        function calculate() {
+            let waived = parseFloat(waivedInput.value) || 0;
+            let rounding = parseInt(roundingInput.value) || 0;
+
+            if (waived >= chargesDue) {
+                alert("Waived amount can't be greater than or equal to Charges Due.");
+                waivedInput.value = "";
+                amountTd.textContent = (chargesDue).toFixed(2);
+                totalAmountTd.textContent = '';
+                netAmountInput.value = '';
+                netAmountWords.textContent = '';
+                return;
+            }
+
+            let amount = chargesDue - waived;
+            amountTd.textContent = amount.toFixed(2);
+
+            let gstAmount = amount * (gstRate / 100);
+            let totalAmount = amount + gstAmount;
+
+            let totalAmountRounded = Math.ceil(totalAmount);
+            totalAmountTd.textContent = totalAmountRounded.toFixed(2);
+
+            let netAmount = totalAmountRounded + rounding;
+            netAmountInput.value = netAmount.toFixed(0);
+
+            // Convert Net Amount to words
+            let netAmountWordsText = numberToWords(netAmount);
+            netAmountWords.textContent = netAmountWordsText;
+        }
+
+        waivedInput.addEventListener('input', calculate);
+        roundingInput.addEventListener('input', calculate);
+
+        calculate(); // Initial calculation
+    });
+</script>
+
 @endsection

@@ -21,12 +21,10 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.2, 8.3]
-        laravel: [10, 11, 12]
+        laravel: [10, 11]
         include:
           - php: 8.4
             laravel: 11
-          - php: 8.4
-            laravel: 12
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
@@ -45,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-           composer update --prefer-dist --no-interaction --no-progress --with=laravel/framework=^${{ matrix.laravel }}
+           composer update --prefer-dist --no-interaction --no-progress --with=illuminate/contracts=^${{ matrix.laravel }}
 
       - name: Execute tests
         run: vendor/bin/pest

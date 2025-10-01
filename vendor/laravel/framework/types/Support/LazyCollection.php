@@ -6,28 +6,21 @@ use Illuminate\Support\LazyCollection;
 
 use function PHPStan\Testing\assertType;
 
-/** @implements Arrayable<int, User> */
-class Users implements Arrayable
-{
-    public function toArray(): array
-    {
-        return [new User()];
-    }
-}
-
 $collection = new LazyCollection([new User]);
-$arrayable = new Users();
+/** @var Arrayable<int, User> $arrayable */
+$arrayable = [];
 /** @var iterable<int, int> $iterable */
-$iterable = [1];
+$iterable = [];
 /** @var Traversable<int, string> $traversable */
-$traversable = new ArrayIterator(['string']);
+$traversable = [];
+/** @var Closure(): Generator<int, User, mixed, void> $generator */
 $generator = function () {
     yield new User();
 };
 
 assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
-assertType("Illuminate\Support\LazyCollection<int, 'string'>", new LazyCollection(['string']));
+assertType('Illuminate\Support\LazyCollection<int, string>', new LazyCollection(['string']));
 assertType('Illuminate\Support\LazyCollection<string, User>', new LazyCollection(['string' => new User]));
 assertType('Illuminate\Support\LazyCollection<int, User>', new LazyCollection($arrayable));
 assertType('Illuminate\Support\LazyCollection<int, int>', new LazyCollection($iterable));
@@ -63,7 +56,7 @@ assertType('Illuminate\Support\LazyCollection<(int|string), User>', $collection-
 assertType('Illuminate\Support\LazyCollection<(int|string), string>', $collection->wrap(['string']));
 assertType('Illuminate\Support\LazyCollection<(int|string), User>', $collection->wrap(['string' => new User]));
 
-assertType("array<0, 'string'>", $collection->unwrap(['string']));
+assertType('array<int, string>', $collection->unwrap(['string']));
 assertType('array<int, User>', $collection->unwrap(
     $collection
 ));
@@ -253,7 +246,7 @@ assertType('Illuminate\Support\LazyCollection<int, User>', $collection->filter(f
     return true;
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->when(true, function ($collection) {
+assertType('bool|Illuminate\Support\LazyCollection<int, User>', $collection->when(true, function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return true;
@@ -261,13 +254,13 @@ assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->whe
 assertType('Illuminate\Support\LazyCollection<int, User>|null', $collection->when(true, function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
-assertType("'string'|Illuminate\Support\LazyCollection<int, User>", $collection->when(true, function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, User>|string', $collection->when(true, function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return 'string';
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->whenEmpty(function ($collection) {
+assertType('bool|Illuminate\Support\LazyCollection<int, User>', $collection->whenEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return true;
@@ -275,13 +268,13 @@ assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->whe
 assertType('Illuminate\Support\LazyCollection<int, User>|null', $collection->whenEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
-assertType("'string'|Illuminate\Support\LazyCollection<int, User>", $collection->whenEmpty(function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, User>|string', $collection->whenEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return 'string';
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->whenNotEmpty(function ($collection) {
+assertType('bool|Illuminate\Support\LazyCollection<int, User>', $collection->whenNotEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return true;
@@ -289,13 +282,13 @@ assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->whe
 assertType('Illuminate\Support\LazyCollection<int, User>|null', $collection->whenNotEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
-assertType("'string'|Illuminate\Support\LazyCollection<int, User>", $collection->whenNotEmpty(function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, User>|string', $collection->whenNotEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return 'string';
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->unless(true, function ($collection) {
+assertType('bool|Illuminate\Support\LazyCollection<int, User>', $collection->unless(true, function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return true;
@@ -303,13 +296,13 @@ assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->unl
 assertType('Illuminate\Support\LazyCollection<int, User>|null', $collection->unless(true, function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
-assertType("'string'|Illuminate\Support\LazyCollection<int, User>", $collection->unless(true, function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, User>|string', $collection->unless(true, function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return 'string';
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->unlessEmpty(function ($collection) {
+assertType('bool|Illuminate\Support\LazyCollection<int, User>', $collection->unlessEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return true;
@@ -317,13 +310,13 @@ assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->unl
 assertType('Illuminate\Support\LazyCollection<int, User>|null', $collection->unlessEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
-assertType("'string'|Illuminate\Support\LazyCollection<int, User>", $collection->unlessEmpty(function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, User>|string', $collection->unlessEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return 'string';
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->unlessNotEmpty(function ($collection) {
+assertType('bool|Illuminate\Support\LazyCollection<int, User>', $collection->unlessNotEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return true;
@@ -331,7 +324,7 @@ assertType('Illuminate\Support\LazyCollection<int, User>|true', $collection->unl
 assertType('Illuminate\Support\LazyCollection<int, User>|null', $collection->unlessNotEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
-assertType("'string'|Illuminate\Support\LazyCollection<int, User>", $collection->unlessNotEmpty(function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, User>|string', $collection->unlessNotEmpty(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return 'string';
@@ -383,27 +376,12 @@ assertType('User|null', $collection->first(function ($user) {
 
     return true;
 }));
-assertType("'string'|User", $collection->first(function ($user) {
+assertType('string|User', $collection->first(function ($user) {
     assertType('User', $user);
 
     return false;
 }, 'string'));
-assertType("'string'|User", $collection->first(null, function () {
-    return 'string';
-}));
-
-assertType('User|null', $collection->last());
-assertType('User|null', $collection->last(function ($user) {
-    assertType('User', $user);
-
-    return true;
-}));
-assertType("'string'|User", $collection->last(function ($user) {
-    assertType('User', $user);
-
-    return false;
-}, 'string'));
-assertType("'string'|User", $collection->last(null, function () {
+assertType('string|User', $collection->first(null, function () {
     return 'string';
 }));
 
@@ -458,10 +436,10 @@ assertType('User|null', $collection->last(function ($user, $int) {
 
     return true;
 }));
-assertType("'string'|User", $collection->last(function () {
+assertType('string|User', $collection->last(function () {
     return true;
 }, 'string'));
-assertType("'string'|User", $collection->last(null, function () {
+assertType('string|User', $collection->last(null, function () {
     return 'string';
 }));
 
@@ -582,17 +560,17 @@ assertType('Illuminate\Support\LazyCollection<int, int|string>', $collection->ma
 assertType('Illuminate\Support\LazyCollection<int, int>|int', $collection->make([1])->random(2));
 assertType('Illuminate\Support\LazyCollection<int, string>|string', $collection->make(['string'])->random());
 
-assertType('1', $collection
+assertType('int', $collection
     ->reduce(function ($null, $user) {
         assertType('User', $user);
-        assertType('1|null', $null);
+        assertType('int|null', $null);
 
         return 1;
     }));
-assertType('1', $collection
+assertType('int', $collection
     ->reduce(function ($int, $user) {
         assertType('User', $user);
-        assertType('0|1', $int);
+        assertType('int', $int);
 
         return 1;
     }, 0));
@@ -761,12 +739,12 @@ assertType('Illuminate\Support\LazyCollection<int, User>', $collection->tap(func
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 }));
 
-assertType('Illuminate\Support\LazyCollection<int, 1>', $collection->pipe(function ($collection) {
+assertType('Illuminate\Support\LazyCollection<int, int>', $collection->pipe(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, User>', $collection);
 
     return new LazyCollection([1]);
 }));
-assertType('1', $collection->make([1])->pipe(function ($collection) {
+assertType('int', $collection->make([1])->pipe(function ($collection) {
     assertType('Illuminate\Support\LazyCollection<int, int>', $collection);
 
     return 1;
@@ -840,8 +818,8 @@ assertType('Illuminate\Support\Collection<int, int>', $collection->make([1])->co
 assertType('array<int, User>', $collection->all());
 
 assertType('User|null', $collection->get(0));
-assertType("'string'|User", $collection->get(0, 'string'));
-assertType("'string'|User", $collection->get(0, function () {
+assertType('string|User', $collection->get(0, 'string'));
+assertType('string|User', $collection->get(0, function () {
     return 'string';
 }));
 
@@ -941,7 +919,6 @@ assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $co
 assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->flatMap);
 assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->groupBy);
 assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->keyBy);
-assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->last);
 assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->map);
 assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->max);
 assertType('Illuminate\Support\HigherOrderCollectionProxy<int, LazyAnimal>', $coll->min);

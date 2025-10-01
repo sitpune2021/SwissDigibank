@@ -18,7 +18,7 @@ class ModelSerializationTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.connections.custom', [
             'driver' => 'sqlite',

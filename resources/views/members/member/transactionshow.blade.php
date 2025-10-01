@@ -20,11 +20,10 @@
             <div class="box overflow-x-auto border rounded-lg dark:bg-bg shadow-md p-4">
                 <div class="flex justify-end gap-2">
                     <div class="flex justify-end mb-4">
-                        <a href="{{ route('transactions.print-receipt', ['id' => $transaction->id, 'type' => $transaction->transaction_source === 'Membership Charge' ? 'normal' : 'Share amount']) }}"
-                            target="_blank" class="btn-primary px-2 py-2">
+                        <a href="{{ route('transactions.print-receipt', ['id' => $transaction->id]) }}" target="_blank"
+                            class="btn-primary px-2 py-2">
                             <i class="las la-print"></i>
                         </a>
-
                     </div>
                     <div class="flex justify-end mb-4">
                         <form action="{{ route('transactions.softDeletetransaction', $transaction->id) }}" method="POST"
@@ -43,9 +42,14 @@
                         <tr>
                             <td class="font-semibold px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
-                                {{ $member->member_info_first_name ?? 'N/A' }}
+                                <a href="{{ route('member.show', $member->id) }}" class="text-primary hover:underline">
+                                  {{$member->id}}  {{ $member->member_info_first_name ?? '' }} {{$member->member_info_last_name ?? ''}}
+                                </a>
                             </td>
+
                         </tr>
+
+
                         <tr class="border-t">
                             <td class="font-semibold px-4 py-2">Transaction Date</td>
                             <td class="px-4 py-2">
@@ -67,7 +71,10 @@
                         <tr class="border-t">
                             <td class="font-semibold px-4 py-2">Amount</td>
                             <td class="px-4 py-2">
-                                ₹{{ number_format($transaction->membership_fee ?? ($transaction->amount ?? 0), 2) }}</td>
+                                ₹{{ number_format($transaction->membership_fee ?? ($transaction->amount ?? 0), 2) }}
+                                @if (!empty($transaction->gst_rate))
+                                    (Incl. {{ number_format($transaction->gst_rate, 1) }} % GST)
+                                @endif
                         </tr>
                         <tr class="border-t">
                             <td class="font-semibold px-4 py-2">Transaction Status</td>

@@ -1702,17 +1702,16 @@ trait Date
     public function setUnitNoOverflow(string $valueUnit, int $value, string $overflowUnit): static
     {
         try {
-            $start = $this->avoidMutation()->startOf($overflowUnit);
-            $end = $this->avoidMutation()->endOf($overflowUnit);
+            $original = $this->avoidMutation();
             /** @var static $date */
             $date = $this->$valueUnit($value);
+            $start = $original->avoidMutation()->startOf($overflowUnit);
+            $end = $original->avoidMutation()->endOf($overflowUnit);
 
             if ($date < $start) {
-                return $date->mutateIfMutable($start);
-            }
-
-            if ($date > $end) {
-                return $date->mutateIfMutable($end);
+                $date = $date->setDateTimeFrom($start);
+            } elseif ($date > $end) {
+                $date = $date->setDateTimeFrom($end);
             }
 
             return $date;
@@ -1836,8 +1835,6 @@ trait Date
 
     /**
      * Set the timezone or returns the timezone name if no arguments passed.
-     *
-     * @return ($value is null ? string : static)
      */
     public function tz(DateTimeZone|string|int|null $value = null): static|string
     {
@@ -2955,19 +2952,5 @@ trait Date
     private static function floorZeroPad(int|float $value, int $length): string
     {
         return str_pad((string) floor($value), $length, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * @template T of CarbonInterface
-     *
-     * @param T $date
-     *
-     * @return T
-     */
-    private function mutateIfMutable(CarbonInterface $date): CarbonInterface
-    {
-        return $this instanceof DateTimeImmutable
-            ? $date
-            : $this->modify('@'.$date->rawFormat('U.u'))->setTimezone($date->getTimezone());
     }
 }

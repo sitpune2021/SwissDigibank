@@ -68,47 +68,37 @@ interface Emitter
     /**
      * @param class-string $testClassName
      */
-    public function beforeFirstTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
+    public function testBeforeFirstTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function beforeFirstTestMethodErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
+    public function testBeforeFirstTestMethodErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function beforeFirstTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
+    public function testBeforeFirstTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function beforeTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
+    public function testBeforeTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function beforeTestMethodErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
+    public function testBeforeTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function beforeTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
+    public function testPreConditionCalled(string $testClassName, ClassMethod $calledMethod): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function preConditionCalled(string $testClassName, ClassMethod $calledMethod): void;
-
-    /**
-     * @param class-string $testClassName
-     */
-    public function preConditionErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
-
-    /**
-     * @param class-string $testClassName
-     */
-    public function preConditionFinished(string $testClassName, ClassMethod ...$calledMethods): void;
+    public function testPreConditionFinished(string $testClassName, ClassMethod ...$calledMethods): void;
 
     public function testPrepared(Code\Test $test): void;
 
@@ -200,9 +190,8 @@ interface Emitter
      * @param non-empty-string $message
      * @param non-empty-string $file
      * @param positive-int     $line
-     * @param non-empty-string $stackTrace
      */
-    public function testTriggeredDeprecation(Code\Test $test, string $message, string $file, int $line, bool $suppressed, bool $ignoredByBaseline, bool $ignoredByTest, IssueTrigger $trigger, string $stackTrace): void;
+    public function testTriggeredDeprecation(Code\Test $test, string $message, string $file, int $line, bool $suppressed, bool $ignoredByBaseline, bool $ignoredByTest, IssueTrigger $trigger): void;
 
     /**
      * @param non-empty-string $message
@@ -259,57 +248,38 @@ interface Emitter
     /**
      * @param class-string $testClassName
      */
-    public function postConditionCalled(string $testClassName, ClassMethod $calledMethod): void;
+    public function testPostConditionCalled(string $testClassName, ClassMethod $calledMethod): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function postConditionErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
+    public function testPostConditionFinished(string $testClassName, ClassMethod ...$calledMethods): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function postConditionFinished(string $testClassName, ClassMethod ...$calledMethods): void;
+    public function testAfterTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function afterTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
+    public function testAfterTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function afterTestMethodErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
+    public function testAfterLastTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
 
     /**
      * @param class-string $testClassName
      */
-    public function afterTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
-
-    /**
-     * @param class-string $testClassName
-     */
-    public function afterLastTestMethodCalled(string $testClassName, ClassMethod $calledMethod): void;
-
-    /**
-     * @param class-string $testClassName
-     */
-    public function afterLastTestMethodErrored(string $testClassName, ClassMethod $calledMethod, Throwable $throwable): void;
-
-    /**
-     * @param class-string $testClassName
-     */
-    public function afterLastTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
+    public function testAfterLastTestMethodFinished(string $testClassName, ClassMethod ...$calledMethods): void;
 
     public function testSuiteFinished(TestSuite $testSuite): void;
 
-    public function testRunnerStartedChildProcess(): void;
+    public function testRunnerTriggeredDeprecation(string $message): void;
 
-    public function testRunnerFinishedChildProcess(string $stdout, string $stderr): void;
-
-    public function testRunnerTriggeredPhpunitDeprecation(string $message): void;
-
-    public function testRunnerTriggeredPhpunitWarning(string $message): void;
+    public function testRunnerTriggeredWarning(string $message): void;
 
     public function testRunnerEnabledGarbageCollection(): void;
 

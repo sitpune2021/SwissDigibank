@@ -35,24 +35,6 @@ class FoundationAuthorizesRequestsTraitTest extends TestCase
         $this->assertTrue($_SERVER['_test.authorizes.trait']);
     }
 
-    public function testAcceptsBackedEnumAsAbility()
-    {
-        unset($_SERVER['_test.authorizes.trait.enum']);
-
-        $gate = $this->getBasicGate();
-
-        $gate->define('baz', function () {
-            $_SERVER['_test.authorizes.trait.enum'] = true;
-
-            return true;
-        });
-
-        $response = (new FoundationTestAuthorizeTraitClass)->authorize(TestAbility::BAZ);
-
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($_SERVER['_test.authorizes.trait.enum']);
-    }
-
     public function testExceptionIsThrownIfGateCheckFails()
     {
         $this->expectException(AuthorizationException::class);
@@ -180,9 +162,4 @@ class FoundationTestAuthorizeTraitClass
     {
         $this->authorize($object);
     }
-}
-
-enum TestAbility: string
-{
-    case BAZ = 'baz';
 }

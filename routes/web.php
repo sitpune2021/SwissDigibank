@@ -181,7 +181,7 @@ Route::middleware('auth.user')->group(function () {
         // Route to handle clearing dues (POST request)
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
-        Route::get('/members/receipt/print/{id}/{type}', [MemberController::class, 'printReceipt'])
+        Route::get('/members/receipt/print/{id}', [MemberController::class, 'printReceipt'])
             ->middleware('auth') 
             ->name('transactions.print-receipt');
 

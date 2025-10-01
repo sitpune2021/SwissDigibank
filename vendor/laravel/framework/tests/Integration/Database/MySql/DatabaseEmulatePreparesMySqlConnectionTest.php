@@ -10,9 +10,9 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 #[RequiresPhpExtension('pdo_mysql')]
 class DatabaseEmulatePreparesMySqlConnectionTest extends DatabaseMySqlConnectionTest
 {
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
-        parent::defineEnvironment($app);
+        parent::getEnvironmentSetUp($app);
 
         $app['config']->set('database.connections.mysql.options', [
             PDO::ATTR_EMULATE_PREPARES => true,

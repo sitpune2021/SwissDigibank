@@ -4,6 +4,7 @@ namespace Illuminate\Routing;
 
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class RouteCollection extends AbstractRouteCollection
 {
@@ -76,9 +77,9 @@ class RouteCollection extends AbstractRouteCollection
      */
     protected function addLookups($route)
     {
-        // If the route has a name, we will add it to the name look-up table, so that we
-        // will quickly be able to find the route associated with a name and not have
-        // to iterate through every route every time we need to find a named route.
+        // If the route has a name, we will add it to the name look-up table so that we
+        // will quickly be able to find any route associate with a name and not have
+        // to iterate through every route every time we need to perform a look-up.
         if ($name = $route->getName()) {
             $this->nameList[$name] = $route;
         }
@@ -170,7 +171,7 @@ class RouteCollection extends AbstractRouteCollection
      */
     public function get($method = null)
     {
-        return is_null($method) ? $this->getRoutes() : ($this->routes[$method] ?? []);
+        return is_null($method) ? $this->getRoutes() : Arr::get($this->routes, $method, []);
     }
 
     /**

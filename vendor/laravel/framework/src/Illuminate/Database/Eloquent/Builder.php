@@ -17,7 +17,6 @@ use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
 use ReflectionClass;
@@ -52,13 +51,6 @@ class Builder implements BuilderContract
      * @var TModel
      */
     protected $model;
-
-    /**
-     * The attributes that should be added to new models created by this builder.
-     *
-     * @var array
-     */
-    public $pendingAttributes = [];
 
     /**
      * The relationships that should be eager loaded.
@@ -128,7 +120,6 @@ class Builder implements BuilderContract
         'insertorignoreusing',
         'max',
         'min',
-        'numericaggregate',
         'raw',
         'rawvalue',
         'sum',
@@ -156,13 +147,6 @@ class Builder implements BuilderContract
      * @var array
      */
     protected $afterQueryCallbacks = [];
-
-    /**
-     * The callbacks that should be invoked on clone.
-     *
-     * @var array
-     */
-    protected $onCloneCallbacks = [];
 
     /**
      * Create a new Eloquent query builder instance.
@@ -324,8 +308,6 @@ class Builder implements BuilderContract
         if ($column instanceof Closure && is_null($operator)) {
             $column($query = $this->model->newQueryWithoutRelationships());
 
-            $this->eagerLoad = array_merge($this->eagerLoad, $query->getEagerLoads());
-
             $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
             $this->query->where(...func_get_args());
@@ -475,21 +457,6 @@ class Builder implements BuilderContract
         }
 
         return $this->whereKey($id)->first($columns);
-    }
-
-    /**
-     * Find a sole model by its primary key.
-     *
-     * @param  mixed  $id
-     * @param  array|string  $columns
-     * @return TModel
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
-     */
-    public function findSole($id, $columns = ['*'])
-    {
-        return $this->whereKey($id)->sole($columns);
     }
 
     /**
@@ -649,25 +616,6 @@ class Builder implements BuilderContract
         return tap($this->firstOrCreate($attributes, $values), function ($instance) use ($values) {
             if (! $instance->wasRecentlyCreated) {
                 $instance->fill($values)->save();
-            }
-        });
-    }
-
-    /**
-     * Create a record matching the attributes, or increment the existing record.
-     *
-     * @param  array  $attributes
-     * @param  string  $column
-     * @param  int|float  $default
-     * @param  int|float  $step
-     * @param  array  $extra
-     * @return TModel
-     */
-    public function incrementOrCreate(array $attributes, string $column = 'count', $default = 1, $step = 1, array $extra = [])
-    {
-        return tap($this->firstOrCreate($attributes, [$column => $default]), function ($instance) use ($column, $step, $extra) {
-            if (! $instance->wasRecentlyCreated) {
-                $instance->increment($column, $step, $extra);
             }
         });
     }
@@ -997,10 +945,10 @@ class Builder implements BuilderContract
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Eloquent models.
-        if (! $this->model->hasAnyGetMutator($column) &&
+        if (! $this->model->hasGetMutator($column) &&
             ! $this->model->hasCast($column) &&
             ! in_array($column, $this->model->getDates())) {
-            return $this->applyAfterQueryCallbacks($results);
+            return $results;
         }
 
         return $this->applyAfterQueryCallbacks(
@@ -1018,7 +966,7 @@ class Builder implements BuilderContract
      * @param  string  $pageName
      * @param  int|null  $page
      * @param  \Closure|int|null  $total
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      *
      * @throws \InvalidArgumentException
      */
@@ -1028,7 +976,10 @@ class Builder implements BuilderContract
 
         $total = value($total) ?? $this->toBase()->getCountForPagination();
 
-        $perPage = value($perPage, $total) ?: $this->model->getPerPage();
+        $perPage = ($perPage instanceof Closure
+            ? $perPage($total)
+            : $perPage
+        ) ?: $this->model->getPerPage();
 
         $results = $total
             ? $this->forPage($page, $perPage)->get($columns)
@@ -1105,13 +1056,13 @@ class Builder implements BuilderContract
         };
 
         if ($shouldReverse) {
-            $this->query->orders = (new BaseCollection($this->query->orders))->map($reverseDirection)->toArray();
-            $this->query->unionOrders = (new BaseCollection($this->query->unionOrders))->map($reverseDirection)->toArray();
+            $this->query->orders = collect($this->query->orders)->map($reverseDirection)->toArray();
+            $this->query->unionOrders = collect($this->query->unionOrders)->map($reverseDirection)->toArray();
         }
 
         $orders = ! empty($this->query->unionOrders) ? $this->query->unionOrders : $this->query->orders;
 
-        return (new BaseCollection($orders))
+        return collect($orders)
             ->filter(fn ($order) => Arr::has($order, 'direction'))
             ->values();
     }
@@ -1127,17 +1078,6 @@ class Builder implements BuilderContract
         return tap($this->newModelInstance($attributes), function ($instance) {
             $instance->save();
         });
-    }
-
-    /**
-     * Save a new model and return the instance without raising model events.
-     *
-     * @param  array  $attributes
-     * @return TModel
-     */
-    public function createQuietly(array $attributes = [])
-    {
-        return Model::withoutEvents(fn () => $this->create($attributes));
     }
 
     /**
@@ -1564,7 +1504,7 @@ class Builder implements BuilderContract
      */
     protected function groupWhereSliceForScope(QueryBuilder $query, $whereSlice)
     {
-        $whereBooleans = (new BaseCollection($whereSlice))->pluck('boolean');
+        $whereBooleans = collect($whereSlice)->pluck('boolean');
 
         // Here we'll check if the given subset of where clauses contains any "or"
         // booleans and in this case create a nested where expression. That way
@@ -1650,8 +1590,6 @@ class Builder implements BuilderContract
      */
     public function newModelInstance($attributes = [])
     {
-        $attributes = array_merge($this->pendingAttributes, $attributes);
-
         return $this->model->newInstance($attributes)->setConnection(
             $this->query->getConnection()->getName()
         );
@@ -1778,8 +1716,12 @@ class Builder implements BuilderContract
     {
         return [explode(':', $name)[0], static function ($query) use ($name) {
             $query->select(array_map(static function ($column) use ($query) {
+                if (str_contains($column, '.')) {
+                    return $column;
+                }
+
                 return $query instanceof BelongsToMany
-                        ? $query->getRelated()->qualifyColumn($column)
+                        ? $query->getRelated()->getTable().'.'.$column
                         : $column;
             }, explode(',', explode(':', $name)[1])));
         }];
@@ -1810,30 +1752,6 @@ class Builder implements BuilderContract
         }
 
         return $results;
-    }
-
-    /**
-     * Specify attributes that should be added to any new models created by this builder.
-     *
-     * The given key / value pairs will also be added as where conditions to the query.
-     *
-     * @param  \Illuminate\Contracts\Database\Query\Expression|array|string  $attributes
-     * @param  mixed  $value
-     * @return $this
-     */
-    public function withAttributes(Expression|array|string $attributes, $value = null)
-    {
-        if (! is_array($attributes)) {
-            $attributes = [$attributes => $value];
-        }
-
-        foreach ($attributes as $column => $value) {
-            $this->where($this->qualifyColumn($column), $value);
-        }
-
-        $this->pendingAttributes = array_merge($this->pendingAttributes, $attributes);
-
-        return $this;
     }
 
     /**
@@ -1872,8 +1790,8 @@ class Builder implements BuilderContract
     protected function getUnionBuilders()
     {
         return isset($this->query->unions)
-            ? (new BaseCollection($this->query->unions))->pluck('query')
-            : new BaseCollection;
+            ? collect($this->query->unions)->pluck('query')
+            : collect();
     }
 
     /**
@@ -2190,19 +2108,6 @@ class Builder implements BuilderContract
     }
 
     /**
-     * Register a closure to be invoked on a clone.
-     *
-     * @param  \Closure  $callback
-     * @return $this
-     */
-    public function onClone(Closure $callback)
-    {
-        $this->onCloneCallbacks[] = $callback;
-
-        return $this;
-    }
-
-    /**
      * Force a clone of the underlying query builder when cloning.
      *
      * @return void
@@ -2210,9 +2115,5 @@ class Builder implements BuilderContract
     public function __clone()
     {
         $this->query = clone $this->query;
-
-        foreach ($this->onCloneCallbacks as $onCloneCallback) {
-            $onCloneCallback($this);
-        }
     }
 }
