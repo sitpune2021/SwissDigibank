@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\RDScheme;
 
 class RDCalculatorController extends Controller
 {
@@ -14,12 +15,46 @@ class RDCalculatorController extends Controller
 
     public function create()
     {
-        return view('mds_rd_accounts.calculators.create');
+        $schemes = RDScheme::select('scheme_code', 'scheme_name')->get(); 
+        return view('mds_rd_accounts.calculators.create', compact('schemes'));
     }
+
+    public function getScheme($scheme_code)
+    {
+        $scheme = RDScheme::where('scheme_code', $scheme_code)->first();
+
+        if ($scheme) {
+            return response()->json([
+                'status' => true,
+                'data'   => [
+                    'scheme_code'                => $scheme->scheme_code,
+                    'scheme_name'                => $scheme->scheme_name,
+                    'deposit_frequency'          => $scheme->deposit_frequency,
+                    'min_rd_dd_amount'           => $scheme->min_rd_dd_amount,
+                    'lock_in_period'             => $scheme->lock_in_period,
+                    'anuual_interest_rate'       => $scheme->anuual_interest_rate,
+                    'interest_compounding_interval' => $scheme->interest_compounding_interval,
+                    'rd_dd_frequency'            => $scheme->rd_dd_frequency,
+                    'tenure_of_rd'            => $scheme->tenure_of_rd,
+                    'cancellation_charges_value' => $scheme->cancellation_charges_value,
+                    'penal_charges'              => $scheme->penal_charges,
+                    'bonus_rate'                 => $scheme->bonus_rate,
+                    'penalty_charges_value'      => $scheme->penalty_charges_value,
+                    'is_active'                  => $scheme->is_active,
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Scheme not found'
+        ]);
+    }
+
 
     public function store(Request $request)
     {
-        // ✅ Validation
+        // Validation
         $request->validate([
             'scheme'        => 'required',
             'open_date'     => 'required|date',
@@ -32,7 +67,7 @@ class RDCalculatorController extends Controller
             'bonus'         => 'required|numeric|min:0',
         ]);
 
-        // ✅ Inputs
+        //  Inputs
         $amount        = $request->amount;
         $frequency     = strtoupper($request->frequency);
         $compInterval  = strtoupper($request->comp_interval);
@@ -42,7 +77,7 @@ class RDCalculatorController extends Controller
         $bonusInput    = $request->bonus;
         $openDate      = Carbon::parse($request->open_date);
 
-        // ✅ Frequency map
+        //  Frequency map
         $freqMap = [
             'DAILY'      => 365,
             'WEEKLY'     => 52,
@@ -54,7 +89,7 @@ class RDCalculatorController extends Controller
         ];
         $paymentsPerYear = $freqMap[$frequency] ?? 12;
 
-        // ✅ Compounding map
+        //  Compounding map
         $compMap = [
             'MONTHLY'     => 12,
             'QUARTERLY'   => 4,
@@ -63,7 +98,7 @@ class RDCalculatorController extends Controller
         ];
         $compounding = $compMap[$compInterval] ?? 4;
 
-        // ✅ Convert tenure to days
+        //  Convert tenure to days
         $days = match ($tenureUnit) {
             'DAYS'   => $tenure,
             'WEEKS'  => $tenure * 7,
@@ -72,7 +107,7 @@ class RDCalculatorController extends Controller
             default  => $tenure,
         };
 
-        // ✅ Number of installments based on frequency
+        //  Number of installments based on frequency
         $totalInstallments = match ($frequency) {
             'DAILY'   => $days,
             'WEEKLY'  => floor($days / 7),
@@ -81,16 +116,16 @@ class RDCalculatorController extends Controller
             default   => $days,
         };
 
-        // ✅ Total deposit
+        //  Total deposit
         $totalDeposits = $amount * $totalInstallments;
 
-        // ✅ Tenure in years
+        // Tenure in years
         $tenureInYears = $days / 365;
 
-        // ✅ Maturity date
+        // Maturity date
         $maturityDate = $openDate->copy()->addDays($days)->format('d/m/Y');
 
-        // ✅ Interest earned (skip if < 30 days)
+        // Interest earned (skip if < 30 days)
         $interestEarned = 0;
         if ($days >= 30) {
             $r = $interestRate / 100;
@@ -104,10 +139,10 @@ class RDCalculatorController extends Controller
             $interestEarned = $FV - $totalDeposits;
         }
 
-        // ✅ Bonus
+        //  Bonus
         $bonusAmount = ($bonusInput / 100) * $totalDeposits;
 
-        // ✅ Final maturity
+        //  Final maturity
         $maturityAmount = $totalDeposits + $interestEarned + $bonusAmount;
 
         return back()->with([

@@ -188,9 +188,10 @@
         <div class=" w-full  overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
-                    <a href="#" class=" p-2 btn-primary">
+                   <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
+
                     <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
                     </a>
@@ -201,26 +202,34 @@
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
-                                <a href="" class="text-primary  capitalize hover:underline">
-                                    DEMO-04428 - shreepad page
+                                <a href="{{ url('members/member/'. $application->member->id) }}" 
+                                class="text-primary capitalize hover:underline">
+                                {{ $application->member->member_no }} - {{ $application->member->member_info_first_name }}
                                 </a>
                             </td>
                         </tr>
+
                         <tr class="border-b">
-                            <td class="font-semibold  px-4 py-2">1st Co-Applicant Member</td>
-                            <td class="px-4 py-2 capitalize  text-primary">DEMO-04391 - sam butler</td>
+                            <td class="font-semibold px-4 py-2">1st Co-Applicant Member</td>
+                            <td class="px-4 py-2 capitalize text-primary">
+                                {{ optional($application->coApplicant1)->member_no }} - {{ optional($application->coApplicant1)->member_info_first_name }}
+                            </td>
                         </tr>
+
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
-                            <td class="px-4 py-2 capitalize text-primary">DEMO-04431 - ram patil</td>
+                            <td class="px-4 py-2 capitalize text-primary">
+                                {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
+                            </td>
                         </tr>
+
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2">00591</td>
+                            <td class="px-4 py-2">{{ $application->id }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application Date</td>
-                            <td class="px-4 py-2">18/09/2025</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Loan Account No.</td>
@@ -228,7 +237,9 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Gold Loan Scheme</td>
-                            <td class="px-4 py-2">Suvarna shree yojana flat advanced interest deduction</td>
+                           <td class="text-start !py-5 px-6">
+                                {{ $application->scheme->scheme_name ?? 'N/A' }}
+                            </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Amount Approved</td>
@@ -597,68 +608,57 @@
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
-                                    Scheme Name
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    Gold Loan Assureplus Flat Advanced Interest Deduction
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->scheme_name ?? '-' }}
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">Scheme Code</td>
-                                <td class="px-4 py-2 text-right md:text-left">GLSAP003</td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2">Scheme Code</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->scheme_code ?? '-' }}
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Maximum Loan Amount
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2">Maximum Loan Amount</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
+        </td>
+    </tr>
 
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 100000.0
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2">Maximum Loan Limit</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->max_loan_limit ?? 0 }} %
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Maximum Loan Limit
+    <tr class="border-b">
+        <td class="font-bold px-4 py-2">Interest Type</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->interest_type ?? '-' }}
+        </td>
+    </tr>
 
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    90.0 %
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-bold px-4 py-2">Interest Rate</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->annual_interest_rate ?? 0 }} %
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Interest Type</td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    Flat Advanced Interest Deduction
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
-                                    Interest Rate
-                                </td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    19.5 %
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Processing Fee</td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    100.0 ₹
-                                </td>
-                            </tr>
-                            <tr class=" text-center">
-                                <td class="font-bold px-4 py-2" colspan="2">
-                                    Per EMI Charges
-                                </td>
+    <tr class="border-b">
+        <td class="font-bold px-4 py-2">Processing Fee</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            ₹ {{ $application->scheme->processing_fee ?? 0 }}
+        </td>
+    </tr>
 
-                            </tr>
+</tbody>
 
-                        </tbody>
                     </table>
                 </div>
             </div>

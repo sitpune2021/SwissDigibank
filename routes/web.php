@@ -154,6 +154,9 @@ Route::middleware('auth.user')->group(function () {
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
+    
+    Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
+
 
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
@@ -403,8 +406,25 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('applications/create', [GoldLoanController::class, 'appcreate'])
         ->name('gold-loan.applications.create');
-    Route::get('applications/view', [GoldLoanController::class, 'appview'])
-        ->name('gold-loan.applications.view');
+    
+    Route::post('/loan-applications/store', [GoldLoanController::class, 'storeLoanApplication'])->name('loan-applications.store');
+
+    Route::get('/members/{id}/info', [GoldLoanController::class, 'getMemberInfo'])
+    ->name('members.info');
+
+
+    // Route::get('applications/view', [GoldLoanController::class, 'appview'])
+    //     ->name('gold-loan.applications.view');
+    Route::get('gold-loan/applications/view/{id}', [GoldLoanController::class, 'appview'])
+    ->name('gold-loan.applications.view');
+
+    // Edit form
+    Route::get('/gold-loan/applications/{id}/edit', [GoldLoanController::class, 'appedit'])
+        ->name('gold-loan.applications.edit');
+
+    // Update
+    Route::put('/gold-loan/applications/{id}', [GoldLoanController::class, 'appupdate'])
+        ->name('gold-loan.applications.update');
 
 
     Route::get('applications/show-emi-chart', [GoldLoanController::class, 'showEmiChart'])
