@@ -25,7 +25,7 @@
             <div class="space-y-4">
                 <!-- Scheme -->
                 <div>
-                    <label class="font-medium block mb-2">
+                    <label class="font-medium block mb-2 uppercase">
                         Scheme <span class="text-red-500">*</span>
                     </label>
                     <select id="scheme" required
@@ -43,14 +43,14 @@
 
                 <!-- Open Date -->
                 <div>
-                    <label class="font-medium block mb-2">Open Date<span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Open Date<span class="text-red-500">*</span></label>
                     <input type="text" id="date2" placeholder="dd/mm/yyyy"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 </div>
 
                 <!-- RD / DD Amount -->
                 <div>
-                    <label class="font-medium block mb-2">RD / DD Amount <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">RD / DD Amount <span class="text-red-500">*</span></label>
                     <input type="number" id="amount"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter amount">
@@ -58,7 +58,7 @@
 
                 <!-- Frequency -->
                 <div>
-                    <label class="font-medium block mb-2">RD / DD Frequency <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">RD / DD Frequency <span class="text-red-500">*</span></label>
                     <select id="frequency"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option>Select RD / DD Frequency </option>
@@ -74,7 +74,7 @@
 
                 <!-- Interest Compounding -->
                 <div>
-                    <label class="font-medium block mb-2">Interest Comp. Interval <span
+                    <label class="font-medium block mb-2 uppercase">Interest Comp. Interval <span
                             class="text-red-500">*</span></label>
                     <select id="compInterval"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -88,7 +88,7 @@
 
                 <!-- Interest Rate -->
                 <div>
-                    <label class="font-medium block mb-2">Interest Rate <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Interest Rate <span class="text-red-500">*</span></label>
                     <input type="number" id="interestRate"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Interest Rate">
@@ -96,7 +96,7 @@
 
                 <!-- Tenure -->
                 <div>
-                    <label class="font-medium block mb-2">Tenure of RD / DD <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Tenure of RD / DD <span class="text-red-500">*</span></label>
                     <div class="flex gap-1">
                         <input type="text" id="tenure_type" name="tenure_type" value="DAYS"
                             class="w-full text-sm bg-primary/5 dark:bg-bg3 border 
@@ -110,7 +110,7 @@
 
                 <!-- Bonus -->
                 <div>
-                    <label class="font-medium block mb-2">Bonus<span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Bonus<span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
                         <select id="bonusSelect" required
                             class="w-auto text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -135,19 +135,19 @@
                 <table class="w-full border-separate border-spacing-y-2 border-t mt-6">
                     <tbody>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Total Deposit </td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Total Deposit </td>
                             <td class="text-gray-700 px-4 py-2 border-b">234.00</td>
                         </tr>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Interest Earned</td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Interest Earned</td>
                             <td class="text-gray-700 px-4 py-2 border-b">85.00</td>
                         </tr>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Bonus</td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Bonus</td>
                             <td class="text-gray-700 px-4 py-2 border-b">0.00</td>
                         </tr>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Maturity</td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Maturity</td>
                             <td class="text-gray-700 px-4 py-2 border-b">450.00</td>
                         </tr>
                     </tbody>
@@ -160,7 +160,7 @@
             <div class="mt-6">
                 <!-- Header -->
                 <div
-                    class=" bg-Secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center cursor-pointer">
+                    class=" bg-Secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center cursor-pointer uppercase">
                     <span>Scheme Info</span>
                     <button id="toggleButton" class="text-white text-xl font-bold focus:outline-none">-</button>
                 </div>
@@ -173,60 +173,60 @@
                         <table class="min-w-full border-separate border-spacing-y-2">
                             <tbody>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Scheme Code</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Scheme Code</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">001 JEWELLERS</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Scheme Name</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Scheme Name</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">Rj</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Deposit Frequency</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Deposit Frequency</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">MONTHLY</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Min. Amount</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Min. Amount</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">5,000.00</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Minimum Lock in Period</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Minimum Lock in Period</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">6 Months</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Interest (%)</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Interest (%)</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">7.15 %</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Interest Comp. Interval</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Interest Comp. Interval</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">QUARTERLY</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Interest Lock in Period</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Interest Lock in Period</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">0 Months</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Tenure of RD</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Tenure of RD</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">60 MONTHS</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Cancellation Charges</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Cancellation Charges</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">2.00 %</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Penal Charges (%)</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Penal Charges (%)</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">2.00 %</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Bonus Rate</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Bonus Rate</td>
                                     <td class="text-gray-700 px-4 py-2 border-b">2.50 %</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Penalty Charges (After Grace Period)
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Penalty Charges (After Grace Period)
                                     </td>
                                     <td class="text-gray-700 px-4 py-2 border-b">2.0 %</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Active</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Active</td>
                                     <td class="px-4 py-2 border-b">
                                         <span
                                             class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Yes</span>

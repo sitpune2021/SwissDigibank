@@ -34,46 +34,6 @@
         }
     </style>
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -129,7 +89,7 @@
 
                 <!-- Member -->
                 <div class="mt-4">
-                    <label class="block font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Member <span class="text-red-500">*</span>
                     </label>
                     <select name="member_id"
@@ -143,26 +103,9 @@
                     </select>
                 </div>
 
-                <!-- Account Type -->
-                <!-- <div class="mt-4">
-                    <label class="block text-sm font-medium">Account Type <span class="text-red-500">*</span></label>
-                    <div class="mt-2 flex gap-6">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="account_type" value="single" 
-                                {{ $account->account_type == 'single' ? 'checked' : '' }}>
-                            <span>Single</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="account_type" value="joint" 
-                                {{ $account->account_type == 'joint' ? 'checked' : '' }}>
-                            <span>Joint A/C</span>
-                        </label>
-                    </div>
-                </div> -->
-
                    <!-- Account Type -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium">Account Type <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium uppercase">Account Type <span class="text-red-500">*</span></label>
                     <div class="mt-2 flex gap-6">
                         <label class="flex items-center gap-2">
                             <input type="radio" name="account_type" value="single"
@@ -178,43 +121,10 @@
                         </label>
                     </div>
                 </div>
- 
-
-                <!-- Joint Account Member -->
-                <!-- <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Joint Account Member
-                    </label>
-                    <select name="joint_member_id"
-                        class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
-                        <option value="">-- Select Joint Member --</option>
-                        @foreach($members as $id => $name)
-                            <option value="{{ $id }}" {{ $account->joint_member_id == $id ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div> -->
-
-                <!-- Joint Account Member -->
-                <!-- <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Joint Account Member
-                    </label>
-                    <select name="joint_member_id"
-                        class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
-                        <option value="">-- Select Joint Member --</option>
-                        @foreach($jointMembers as $id => $name)
-                            <option value="{{ $id }}" {{ $account->joint_member_id == $id ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div> -->
 
                    <!-- Joint Account Member -->
                 <div class="mt-4" id="jointAccountInput">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Joint Account Member
                     </label>
                     <select name="joint_member_id"
@@ -228,12 +138,9 @@
                     </select>
                 </div>
  
- 
-
-
                 <!-- Minor -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Minor
                     </label>
                     <select name="minor_id"
@@ -245,7 +152,7 @@
 
                 <!-- Open Date -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Open Date <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="open_date" id="date"
@@ -256,7 +163,7 @@
 
                 <!-- MIS Joint Date -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium">MIS Joint Date <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium uppercase">MIS Joint Date <span class="text-red-500">*</span></label>
                     <input type="text" name="mis_joint_date" id="date2"
                         value="{{ old('mis_joint_date', $account->mis_joint_date ? \Carbon\Carbon::parse($account->mis_joint_date)->format('d-m-Y') : '') }}"
                         placeholder="DD/MM/YYYY"
@@ -265,7 +172,7 @@
 
                 <!-- Buttons -->
                 <div class="flex mt-6 gap-3">
-                    <button type="submit" class="btn-primary">Change account info</button>
+                    <button type="submit" class="btn-primary uppercase">Change account info</button>
                     <a href="{{ route('misaccount.show', $account->id) }}" class="btn-outline">Back</a>
                 </div>
             </form>
@@ -277,13 +184,13 @@
         <!-- Right Side: Account Info -->
         <div class="w-full lg:w-1/3 box dark:bg-bg3 rounded-xl shadow overflow-hidden">
             <div class="bg-secondary/5 text-black px-4 py-3 flex justify-between  rounded-10 items-center">
-                <h3 class="font-semibold">Account Info</h3>
+                <h3 class="font-semibold uppercase">Account Info</h3>
             </div>
             <div class="p-4">
                 <table class="w-full text-sm">
                     <tbody>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Member</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Member</td>
                             <td class="py-2">
                                 <a href="#" class="text-green-600 hover:underline">
                                     DEMO-01231 - PRATIK
@@ -291,23 +198,23 @@
                             </td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">PAN No</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">PAN No</td>
                             <td class="py-2"></td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Account No</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Account No</td>
                             <td class="py-2">03754</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Open Date</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Open Date</td>
                             <td class="py-2">13/08/2025</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Status</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Status</td>
                             <td class="py-2">Active</td>
                         </tr>
                         <tr>
-                            <td class="py-2 font-semibold dark:text-gray-300">Available Balance</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Available Balance</td>
                             <td class="py-2">45,000.00</td>
                         </tr>
                     </tbody>

@@ -1308,6 +1308,7 @@ class MemberController extends Controller
                 'printed_on'             => now()->format('d/m/Y H:i'),
                 'printed_by'             => optional(Auth::user())->name ?? 'System',
             ];
+
             $pdf = Pdf::loadView('members.member.receipt', $data)
                 ->setPaper([0, 0, 238.346, 1000], 'portrait');
 

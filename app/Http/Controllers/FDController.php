@@ -205,7 +205,6 @@ class FDController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        // dd( $accounts);
         return view('fd_mis_account.fd-account.index', compact('accounts'));
     }
 
@@ -281,8 +280,6 @@ class FDController extends Controller
             ]);
             Log::info('Validation passed', ['validated' => $validated]);
 
-            // dd( $validated);
-
             DB::beginTransaction();
 
             Log::info('Transaction started');
@@ -299,7 +296,7 @@ class FDController extends Controller
             $summary = $calc->getData(true)['summary']['summary'] ?? [];
 
             $transactionDate = $request->transaction_date
-                ? Carbon::createFromFormat('D M d Y', $request->transaction_date)->format('Y-m-d')
+                ? Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d')
                 : null;
 
             $fdAccount = FdAccount::create([
@@ -308,7 +305,7 @@ class FDController extends Controller
                 'branch_id'             => $request->branch_id,
                 'minor_id'              => $request->minor_id,
                 'staff_id'              => $request->advisor_staff,
-                'open_date'             => $request->date ? Carbon::parse($request->date)->format('Y-m-d') : null,
+                'open_date'             => $request->date ? Carbon::createFromFormat('d-m-Y', $request->date)->format('Y-m-d') : null,
                 'tenure_year'           => $request->tenure_year,
                 'tenure_month'          => $request->tenure_month,
                 'tenure_days'           => $request->tenure_day,
@@ -328,13 +325,12 @@ class FDController extends Controller
                 'total_interest'        => isset($summary['interest_earned']) ? (float) str_replace(',', '', $summary['interest_earned']) : 0,
                 'monthly_interest'      => 0, // will calculate below
                 'maturity_date'         => isset($summary['maturity_date'])
-                    ? Carbon::createFromFormat('d/m/Y', $summary['maturity_date'])->format('Y-m-d')
+                    ? Carbon::createFromFormat('d-m-Y', $summary['maturity_date'])->format('Y-m-d')
                     : null,
-
-
             ]);
 
-            $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 6, '0', STR_PAD_LEFT);
+
+            $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
             $fdAccount->save();
 
             Log::info('FD Account created', ['fd_account_id' => $fdAccount->id]);
@@ -360,14 +356,14 @@ class FDController extends Controller
             $fdTransaction = FdTransaction::create([
                 'fd_account_id'   => $fdAccount->id,
                 'transaction_date' => $request->pay1_transfer_date
-                    ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d')
+                    ? Carbon::createFromFormat('d-m-Y', $request->pay1_transfer_date)->format('Y-m-d')
                     : now(),
                 'amount'          => $request->pay1_amount,
                 'mode'            => $request->pay1_mode,
                 'bank'            => $request->pay1_bank ?? null,
                 'cheque_no'       => $request->pay1_cheque_no ?? null,
                 'cheque_date'     => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date) : null,
-                'transfer_date'   => $request->pay1_transfer_date ? Carbon::parse($request->pay1_transfer_date) : null,
+                'transfer_date'   => $request->pay1_transfer_date ? Carbon::createFromFormat('d-m-Y', $request->pay1_transfer_date) : null,
                 'transaction_no'  => $request->pay1_transfer_utr ?? null,
                 'transfer_mode'   => $request->transferMode ?? null,
                 'credited'        => $request->credited === "yes" ? true : false,
@@ -413,7 +409,7 @@ class FDController extends Controller
         $maturityCarbon = Carbon::parse($startDate)->addMonths($tenureMonths)->startOfDay();
 
         $maturityDateInternal  = $maturityCarbon->format('Y-m-d');
-        $maturityDate          = $maturityCarbon->format('d/m/Y');
+        $maturityDate          = $maturityCarbon->format('d-m-Y');
         $depositStartInternal  = Carbon::parse($startDate)->startOfDay()->format('Y-m-d');
 
         $totalInterest = 0;
@@ -708,6 +704,7 @@ class FDController extends Controller
         $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
             ->findOrFail($id);
 
+
         $totalDays = ($fdAccount->tenure_year * 365)
             + ($fdAccount->tenure_month * 30)
             + $fdAccount->tenure_days;
@@ -716,6 +713,7 @@ class FDController extends Controller
             ->where('day_from', '<=', $totalDays)
             ->where('day_to', '>=', $totalDays)
             ->first();
+
 
         $principal     = $fdAccount->fd_amount;
         $rate          = $slab->interest_rate ?? 0;
@@ -736,6 +734,7 @@ class FDController extends Controller
 
             $days = round($current->diffInDays($next));
             $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+
             $tds = 0;
             $net = $interest - $tds;
             $dueDate = $next->format('Y-m-d');
@@ -791,7 +790,6 @@ class FDController extends Controller
             'status'          => 'Yes',
             'processed'       => 1,
         ];
-
         $transaction = FdTransaction::create($payoutData);
 
         return response()->json([
@@ -801,100 +799,6 @@ class FDController extends Controller
             'processed' => $transaction->processed
         ]);
     }
-
-    // public function fdPayout($id)
-    // {
-    //     $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
-    //         ->findOrFail($id);
-
-    //     $totalDays = ($fdAccount->tenure_year * 365)
-    //         + ($fdAccount->tenure_month * 30)
-    //         + $fdAccount->tenure_days;
-
-    //     $slab = $fdAccount->fdscheme->fdslabs
-    //         ->where('day_from', '<=', $totalDays)
-    //         ->where('day_to', '>=', $totalDays)
-    //         ->first();
-
-    //     $principal     = $fdAccount->fd_amount;
-    //     $rate          = $slab->interest_rate ?? 0;
-    //     $startDate     = \Carbon\Carbon::parse($fdAccount->start_date);
-    //     $maturityDate  = \Carbon\Carbon::parse($fdAccount->maturity_date);
-
-    //     $transactions = FdTransaction::where('fd_account_id', $id)->get()->keyBy('due_date');
-
-    //     $payouts   = [];
-    //     $period    = 1;
-    //     $current   = $startDate;
-
-    //     while ($current->lt($maturityDate)) {
-    //         $next = $current->copy()->addMonth();
-
-    //         if ($next->gt($maturityDate)) {
-    //             $next = $maturityDate;
-    //         }
-
-    //         $days = round($current->diffInDays($next));
-
-    //         $interest = round(($principal * $rate * $days) / (365 * 100), 2);
-
-    //         $tds = 0; // Example 10% TDS
-    //         $net      = $interest - $tds;
-    //         $dueDate = $next->format('Y-m-d');
-
-    //         $transaction = $transactions->get($dueDate);
-    //         $payouts[] = [
-    //             // 'year'        => ceil($period / 12),
-    //             'period'      => $period,
-    //             'from'        => $current->format('d M y'),
-    //             'to'          => $next->copy()->subDay()->format('d M y'),
-    //             'days'        => $days,
-    //             'principal'   => number_format($principal, 2),
-    //             'interest'    => number_format($interest, 2),
-    //             'tds'         => number_format($tds, 2),
-    //             'net_interest' => number_format($net, 2),
-    //             'due_date'    => $next->format('Y-m-d'),
-    //             'processed'    => $transaction->processed ?? 0,
-    //             'status'       => $transaction->status ?? 'No',
-    //         ];
-
-    //         $period++;
-    //         $current = $next->copy()->addDay();
-    //     }
-
-    //     return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
-    // }
-
-    // public function processPayout(Request $request)
-    // {
-    //     $fdAccountId = $request->fd_account_id;
-    //     $period      = $request->period;
-
-    //     // Get FD account and payout details
-    //     $fdAccount = FdAccount::findOrFail($fdAccountId);
-    //     // dd($request->all());
-    //     $payoutData = [
-    //         'fd_account_id' => $fdAccountId,
-    //         'transaction_date' => now(),
-    //         'amount'     => $request->interest,
-    //         'interest'      => $request->interest,
-    //         'tds'           => $request->tds,
-    //         'net_interest'  => $request->net_interest,
-    //         'due_date'      => $request->due_date,
-    //         'status'         => 'Yes',
-    //         'processed'     => 1,
-    //     ];
-
-    //     // Insert into fdtransactions table
-    //     $transaction = FdTransaction::create($payoutData);
-    //     return response()->json([
-    //         'success' => true,
-    //         'processed_label' => 'Yes',
-    //         'state' => 'Paid',
-    //         'processed' => $transaction['processed']
-    //     ]);
-    // }
-
 
     // Change Account Info
     public function changeAccountInfo($id)
@@ -916,5 +820,4 @@ class FDController extends Controller
     {
         return view('fd_mis_account.fd-account.fd-accountnominee');
     }
-
 }

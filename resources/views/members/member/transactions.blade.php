@@ -69,11 +69,10 @@
                                     {{ isset($transaction->is_accounted) ? ($transaction->is_accounted ? 'Yes' : 'No') : '-' }}
                                 </td>
                                 <td class="py-2 px-6">
-                                   
+                                  
                                     <div class="flex justify-center">
                                         @include('partials._vertical-options', [
                                             'id' => $transaction->id,
-                                            'type' => $transaction->type, 
                                             'viewRoute' => 'transactions.show',
                                             'printRoute' => 'transactions.print-receipt',
                                             'deleteRoute' => 'transactions.softDeletetransaction', 

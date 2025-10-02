@@ -39,7 +39,7 @@
 
                 @php $isView = !empty($show); @endphp
                 <div class="col-span-2 md:col-span-1">
-                    <label for="transferor" class="md:text-lg font-medium block mb-4">Transferor<span
+                    <label for="transferor" class="md:text-lg font-medium block mb-4">TRANSFEROR<span
                             class="text-red-500">*</span></label>
                     <input type="text" name="transferor" id="transferor"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -52,7 +52,7 @@
 
                 {{-- <div class="col-span-2 md:col-span-1">
                     <label for="promoterDropdown" class="md:text-lg font-medium block mb-4">
-                        Member<span class="text-red-500">*</span>
+                        MEMBER<span class="text-red-500">*</span>
                     </label>
 
                     <input type="hidden" id="selectedId" name="selected_member_id"
@@ -83,21 +83,18 @@
                 </div> --}}
                 <div class="col-span-2 md:col-span-1">
                     <label for="promoterDropdown" class="md:text-lg font-medium block mb-4">
-                        Member<span class="text-red-500">*</span>
+                        MEMBER<span class="text-red-500">*</span>
                     </label>
 
-                    {{-- जर member_id URL मध्ये असेल (म्हणजे selectedMember सेट असेल) --}}
                     @if ($selectedMember)
-                        {{-- फक्त नाव दाखवा (read-only) --}}
+
                         <input type="text" disabled
     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
     value="{{ $members[$selectedMember->id] ?? '' }}">
 
-
-                        {{-- फॉर्म मध्ये member_id सबमिट होण्यासाठी hidden input --}}
                         <input type="hidden" name="member_id" value="{{ $selectedMember->id }}">
                     @else
-                        {{-- जर URL मध्ये member_id नाही, तर dropdown दाखवा --}}
+
                         <select name="member_id" id="promoterDropdown"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Member</option>
@@ -124,7 +121,7 @@
 
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="business_type" class="md:text-lg font-medium block mb-4">Business Type<span
+                    <label for="business_type" class="md:text-lg font-medium block mb-4">BUSINESS TYPE<span
                             class="text-red-500">*</span></label>
                     <select name="business_type" id="business_type"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -142,7 +139,7 @@
 
                 <div class="col-span-2 md:col-span-1 relative">
                     <label for="allotment_date" class="md:text-lg font-medium block mb-4">
-                        Transfer Date <span class="text-red-500">*</span>
+                        TRANSFER DATE <span class="text-red-500">*</span>
                     </label>
 
                     <input type="text" name="allotment_date" id="date2" placeholder="Select Date"
@@ -159,7 +156,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="share_no" class="md:text-lg font-medium block mb-4">Shares<span
+                    <label for="share_no" class="md:text-lg font-medium block mb-4">SHARES<span
                             class="text-red-500">*</span></label>
                     <input name="share_no" id="share_no" value="0"
                         class=" w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -171,7 +168,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="share_nominal" class="md:text-lg font-medium block mb-4">Face Value</label>
+                    <label for="share_nominal" class="md:text-lg font-medium block mb-4">FACE VALUE</label>
                     <input type="text" name="share_nominal" id="share_nominal"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="100.0" value="{{ old('share_nominal', '100.0') }}" readonly
@@ -182,7 +179,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="total_consideration" class="md:text-lg font-medium block mb-4">Total Consideration</label>
+                    <label for="total_consideration" class="md:text-lg font-medium block mb-4">TOTAL CONSIDERATION</label>
                     <div class="w-full">
                         <input name="total_consideration" id="total_consideration"
                             value="{{ old('total_consideration', $shareholding->total_share_value ?? '') }}"

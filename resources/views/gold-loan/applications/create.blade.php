@@ -42,7 +42,7 @@
                     <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6" action="" method="">
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Application Date
                                 <span class="text-red-500">*</span>
                             </label>
@@ -53,7 +53,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Member
                                 <span class="text-red-500">*</span>
                             </label>
@@ -67,7 +67,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 1st Co-Applicant Member
 
                             </label>
@@ -81,7 +81,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 2nd Co-Applicant Member
 
                             </label>
@@ -94,7 +94,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Branch
                                 <span class="text-red-500">*</span>
                             </label>
@@ -107,7 +107,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Advisor/ Staff
 
                             </label>
@@ -120,7 +120,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Guarantor 1
                             </label>
 
@@ -135,7 +135,7 @@
                         <div class="col-span-2 md:col-span-1">
 
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Guarantor 2
                                 </label>
 
@@ -151,7 +151,7 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Guarantor 3
                                 </label>
 
@@ -167,7 +167,7 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Guarantor 4
                                 </label>
 
@@ -182,7 +182,7 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Scheme
                                     <span class="text-error">*</span>
                                 </label>
@@ -204,7 +204,7 @@
                         <div class="col-span-2 md:col-span-1">
 
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Tenure Type
                                     <span class="text-error">*</span>
                                 </label>
@@ -225,15 +225,10 @@
                                         <span class="text-gray-70 capitalize">MONTHS</span>
                                     </label>
                                 </div>
-
-
-                            </div>
-
+                           </div>
                         </div>
-
-
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Tenure
                                 <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
                                 <span class="text-error">*</span>
@@ -245,9 +240,8 @@
 
                         </div>
 
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                       <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 EMI Collection
                                 <span class="text-error">* </span>
                             </label>
@@ -260,7 +254,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Credit Period ( EMI Grace Period ) ( Days )
                                 <span class="text-error">*</span>
                             </label>
@@ -271,7 +265,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Loan Amount (₹)
                                 <span class="text-error">*</span>
                             </label>
@@ -282,7 +276,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Insurance Amount (₹)
                                 <span class="text-error">*</span>
                             </label>
@@ -293,7 +287,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Net Loan Amount (₹)
                                 <span class="text-error">*</span>
                             </label>
@@ -303,7 +297,7 @@
                                 placeholder="0">
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-3">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Purpose of Loan
                                 <span class="text-error">*</span>
                             </label>
@@ -315,7 +309,7 @@
                 </div>
                 <div class="col-span-12  lg:col-span-12 mb-5">
                     <hr>
-                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                    <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                         Credit Score Details
 
                     </label>
@@ -323,16 +317,16 @@
                         <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
                             <thead class="bg-secondary/5 whitespace-nowrap">
                                 <tr class="bg-gray-100">
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                    <th class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                         Cibil Type
                                     </th>
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                    <th class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                         Cibil Score
                                     </th>
-                                    <th class="text-center  px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                    <th class="text-center  px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                         Report Date
                                     </th>
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                    <th class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                         Upload File
                                     </th>
                                     <th class=" px-2 py-2 md:px-4 md:py-2"></th>
@@ -357,7 +351,7 @@
                 </div>
                 <div class="col-span-12  lg:col-span-12 ">
                     <hr>
-                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                    <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                         Collect Advance Processing Fee
                     </label>
                     <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
@@ -365,7 +359,7 @@
                         <div class="w-full">
                             <div class="flex  flex-row justify-around items-center gap-3">
                                 <!-- Label -->
-                                <label for="" class="text-sm block font-medium text-gray-700 dark:text-gray-200">
+                                <label for="" class="text-sm block font-medium text-gray-700 dark:text-gray-200 uppercase">
                                     Total Processing Fee :
                                 </label>
 
@@ -375,22 +369,19 @@
                             </div>
                         </div>
 
-                        <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-
+                        <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                             Collect Processing Fee :
                         </label>
                         <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                             <tbody>
-
-
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
+                                    <th class="text-center px-3 py-2 uppercase">Value</th>
+                                    <th class="text-center px-3 py-2 uppercase">GST (%)</th>
+                                    <th class="text-center px-3 py-2 uppercase">SGST</th>
+                                    <th class="text-center px-3 py-2 uppercase">CGST</th>
+                                    <th class="text-center px-3 py-2 uppercase">IGST</th>
+                                    <th class="text-center px-3 py-2 uppercase">Total</th>
                                 </tr>
 
                                 <!-- Input Row -->
@@ -454,7 +445,7 @@
             <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
                 {{--memberBox info --}}
                 <div id="memberBox" class="w-full">
-                    <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
+                    <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3 uppercase">
                         <h3 class="text-base capitalize font-semibold md:text-lg">
                             Member Info
 
@@ -470,15 +461,15 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Member Name</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Member Name</td>
                                         <td class="py-2 capitalize">Demo</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Mobile No</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Mobile No</td>
                                         <td class="py-2">5555555555</td>
                                     </tr>
                                     <tr class="">
-                                        <td class="font-semibold py-2 pr-4">Address</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Address</td>
                                         <td class="py-2">Madhya Pradesh</td>
                                     </tr>
 
@@ -492,7 +483,7 @@
                 {{--schemeBox info --}}
                 <div id="schemeBox" class=" mt-5">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base font-semibold md:text-lg">Scheme Info
+                        <h3 class="text-base font-semibold md:text-lg uppercase">Scheme Info
 
                         </h3>
                         <button type="button" class="p-1 rounded transition"
@@ -508,43 +499,43 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Scheme Code</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td>
                                         <td class="py-2">SSY17</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Scheme Name</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td>
                                         <td class="py-2">Suvarna shree yojana no emi</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Max Tenure</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td>
                                         <td class="py-2">12 Months</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td>
                                         <td class="py-2">₹ 100,000.00</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against Security</td>
                                         <td class="py-2">80.0 %</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td>
                                         <td class="py-2">₹ 10,000.00</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td>
                                         <td class="py-2">20.0 %</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Interest Type</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
                                         <td class="py-2">No Emi</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Credit Period</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Credit Period</td>
                                         <td class="py-2">1 Days</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Active</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Active</td>
                                         <td class="py-2">
                                             <span
                                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -553,7 +544,7 @@
                                         </td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
+                                        <td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td>
                                         <td class="py-2">₹</td>
                                     </tr>
                                 </tbody>
@@ -569,26 +560,26 @@
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="text-center px-2 py-2 bg-secondary/5">#</th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Item Type <span class="text-red-500">*</span>
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Type <span class="text-red-500">*</span>
                         </th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Item Name <span class="text-red-500">*</span>
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Name <span class="text-red-500">*</span>
                         </th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">No of Item <span class="text-red-500">*</span>
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">No of Item <span class="text-red-500">*</span>
                         </th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Value per Gram (A) (₹) <span
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Value per Gram (A) (₹) <span
                                 class="text-red-500">*</span></th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Gross Weight (gm) <span
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Gross Weight (gm) <span
                                 class="text-red-500">*</span></th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Net Weight (B) (gm) <span
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Net Weight (B) (gm) <span
                                 class="text-red-500">*</span></th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Tunch (C) (%)<span
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Tunch (C) (%)<span
                                 class="text-red-500">*</span></th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">
                             Fine Weight *(D = C% of B) (gm)
                             <span class="text-red-500">*</span>
                         </th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Total Value (A * D)(₹)</th>
-                        <th class="text-center px-2 py-2 bg-secondary/5">Item Image</th>
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Total Value (A * D)(₹)</th>
+                        <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Image</th>
                         <th class="px-2 py-2 bg-secondary/5"></th>
                     </tr>
                 </thead>

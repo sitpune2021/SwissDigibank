@@ -92,7 +92,7 @@
         <form id="fdForm" class="grid grid-cols-2 gap-4" onsubmit="event.preventDefault(); calculateFD();">
 
             <div class="mb-3">
-                <label for="scheme_id" class="form-label">FD Scheme *</label>
+                <label for="scheme_id" class="form-label uppercase">FD Scheme *</label>
                 <select name="scheme_id" id="scheme_id" class="form-select">
                     <option value="">-- Select Scheme --</option>
                 </select>
@@ -101,14 +101,14 @@
 
             {{-- Open Date --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="open_date" class="font-medium">Open Date <span class="text-red-500">*</span></label>
+                <label for="open_date" class="font-medium uppercase">Open Date <span class="text-red-500">*</span></label>
                 <input type="date" id="open_date" value="{{ \Carbon\Carbon::today()->toDateString() }}"
                     class="w-full border rounded px-3 py-2">
             </div>
 
             {{-- Amount --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="amount" class="font-medium">Amount (₹) <span class="text-red-500">*</span></label>
+                <label for="amount" class="font-medium uppercase">Amount (₹) <span class="text-red-500">*</span></label>
                 <input type="number" id="amount" placeholder="Enter amount"
                     class="w-full border rounded px-3 py-2" oninput="updateAmountInWords();">
                      <!-- <input type="number" id="amount" placeholder="Enter amount"
@@ -119,7 +119,7 @@
 
             {{-- Interest Payout Type --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="interest_payout_type" class="font-medium">Interest Payout Type <span class="text-red-500">*</span></label>
+                <label for="interest_payout_type" class="font-medium uppercase">Interest Payout Type <span class="text-red-500">*</span></label>
                 <!-- <select id="interest_payout_type" class="w-full border rounded px-3 py-2" onchange="calculateFD()"> -->
                 <select id="interest_payout_type" class="w-full border rounded px-3 py-2">
                     <option value="">Select Interest Payout Cycle</option>
@@ -137,14 +137,14 @@
 
             {{-- Annual Interest Rate --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="annual_interest_rate" class="font-medium">Annual Interest Rate (%) <span class="text-red-500">*</span></label>
+                <label for="annual_interest_rate" class="font-medium uppercase">Annual Interest Rate (%) <span class="text-red-500">*</span></label>
                 <input type="number" step="0.01" id="annual_interest_rate"
                     class="w-full border rounded px-3 py-2" placeholder="Enter Rate">
             </div>
 
             {{-- Tenure --}}
             <div class="col-span-2 md:col-span-1">
-                <label class="font-medium">Tenure Period <span class="text-red-500">*</span></label>
+                <label class="font-medium uppercase">Tenure Period <span class="text-red-500">*</span></label>
                 <div class="flex gap-3">
                     <input type="number" id="tenure_year" placeholder="Year" class="w-1/3 border rounded px-2 py-1" >
                     <input type="number" id="tenure_month" placeholder="Month" class="w-1/3 border rounded px-2 py-1">
@@ -154,7 +154,7 @@
 
             {{-- Bonus --}}
             <div class="col-span-2 md:col-span-1">
-                <label for="bonus" class="font-medium">Bonus</label>
+                <label for="bonus" class="font-medium uppercase">Bonus</label>
                 <div class="flex gap-3">
                     <select id="bonus_type" class="w-1/3 border rounded px-2 py-1" >
                         <option value="%">%</option>
@@ -167,7 +167,7 @@
 
             {{-- TDS Deduction --}}
             <div class="col-span-2 md:col-span-1">
-                <label class="font-medium">TDS Deduction</label>
+                <label class="font-medium uppercase">TDS Deduction</label>
                 <div class="flex gap-4">
                     <label><input type="radio" name="tds_deduction" value="1" onchange="calculateFD()"> Yes</label>
                     <label><input type="radio" name="tds_deduction" value="0" checked onchange="calculateFD()"> No</label>
@@ -199,7 +199,7 @@
     <h2 class="mt-5">Tabs</h2>
     <div class="tab mt-5 flex gap-2" id="tabButtons">
         <!-- JS tabs inject करेगा -->
-        <button class="tablinks active" onclick="openTab(event, 'finalpayment')">Final Payment</button>
+        <button class="tablinks active " onclick="openTab(event, 'finalpayment')">Final Payment</button>
     </div>
 
     <!-- Default Final Payment tab content -->

@@ -22,6 +22,10 @@ class FdTransaction extends Model
         'transfer_mode',
         'credited',
         'saving_account',
+        'processed',
+        'status',
+        'due_date',
+        
     ];
 
     public function fdAccount()

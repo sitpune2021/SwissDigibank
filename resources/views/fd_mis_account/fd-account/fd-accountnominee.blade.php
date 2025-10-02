@@ -43,7 +43,7 @@
 
     <div class="flex box flex-col lg:flex-col gap-6">
         <div>
-            <h3>Update Nominee Details</h3>
+            <h4 class="uppercase">Update Nominee Details</h4>
         </div>
 
         <div>

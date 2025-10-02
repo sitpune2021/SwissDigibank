@@ -43,7 +43,7 @@
 
           <!-- Scheme -->
           <div class="mb-4">
-            <label for="" class="block font-medium mb-2">Scheme <span class="text-red-500">*</span></label>
+            <label for="" class="block font-medium mb-2 uppercase">Scheme <span class="text-red-500">*</span></label>
             <select id="schemes" name="" 
               class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
               <option value="">Select Scheme</option>
@@ -65,7 +65,7 @@
           <div id="manualFields" class=" hidden bg-secondary/5 rounded-10 p-3 mt-3 dark:bg-bg3">
             <div class="grid grid-cols-2 gap-4 mt-3 xl:mt-3 xxxxxl:gap-6 ">
               <div class="col-span-2 md:col-span-2">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                   Max. Tenure
                 </label>
 
@@ -96,7 +96,7 @@
                 </div>
               </div>
               <div class="col-span-2 md:col-span-2">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                   Maximum Loan Limit (%)
                 </label>
 
@@ -127,7 +127,7 @@
             {{--intersetTypeRadio --}}
             <div class="w-full mt-3">
               <div class="mb-4" id="intersetTypeRadio">
-                <label class="md:text-lg font-medium block mb-2">
+                <label class="md:text-lg font-medium block mb-2 uppercase">
                   Interest Type <span class="text-red-600">*</span>
                 </label>
 
@@ -165,7 +165,7 @@
 
             <div class="grid grid-cols-2 gap-4  mt-1 xl:mt-1  xxxxxl:gap-6 ">
               <div class="col-span-2 md:col-span-2">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                   Annual Interest Rate (%)
                   <span class="text-red-500">*</span>
                 </label>
@@ -175,7 +175,7 @@
                   placeholder="Enter Annual Interest Rate">
               </div>
               <div class="col-span-2 md:col-span-2">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                   Processing Fee
 
                 </label>
@@ -196,7 +196,7 @@
                 </div>
               </div>
               <div class="col-span-2 md:col-span-2">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                   Stamp Duty Charge
                 </label>
 
@@ -215,7 +215,7 @@
               </div>
 
               <div class="col-span-2 md:col-span-2">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                   Insurance Charges
                 </label>
 
@@ -239,7 +239,7 @@
               <div class="col-span-2 md:col-span-2">
 
                 <div class="col-sm-7">
-                  <label for="" class="md:text-lg font-medium block mb-4">
+                  <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                     Fore Closure Charges
                   </label>
 
@@ -265,7 +265,7 @@
             <div class="w-full my-4">
               <hr class="border-gray-300">
               <h4
-                class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
+                class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2 uppercase">
                 Per EMI Charges
 
               </h4>
@@ -275,7 +275,7 @@
 
               <!-- SMS Charges Block -->
               <div class=" col-span-2 md:col-span-2 ">
-                <label class="md:text-lg font-medium mb-2">
+                <label class="md:text-lg font-medium mb-2 uppercase">
                   SMS Charges
                 </label>
 
@@ -293,7 +293,7 @@
 
               <!-- Fuel Charges Block -->
               <div class=" col-span-2 md:col-span-2">
-                <label class="md:text-lg font-medium mb-2">
+                <label class="md:text-lg font-medium mb-2 uppercase">
                   Fuel Charges
                 </label>
 
@@ -317,7 +317,7 @@
 
               <!-- Stationary Charges Block -->
               <div class="col-span-2 md:col-span-2">
-                <label class="md:text-lg font-medium mb-2">
+                <label class="md:text-lg font-medium mb-2 uppercase">
                   Stationary Charges
                 </label>
 
@@ -335,7 +335,7 @@
 
               <!-- Maintenance Charges  Block -->
               <div class="col-span-2 md:col-span-2">
-                <label class="md:text-lg font-medium mb-2">
+                <label class="md:text-lg font-medium mb-2 uppercase">
                   Maintenance Charges
                 </label>
 
@@ -358,7 +358,7 @@
 
               <!--Collection Charges  #007bffBlock -->
               <div class=" col-span-2 md:col-span-2">
-                <label class="md:text-lg font-medium mb-2">
+                <label class="md:text-lg font-medium mb-2 uppercase">
                   Collection Charges
                 </label>
 
@@ -384,7 +384,7 @@
 
           <!-- Enter Tenure Type *-->
           <div class="w-full mt-4 ">
-            <label class="block font-medium mb-2" for="tenure_type">
+            <label class="block font-medium mb-2 uppercase" for="tenure_type">
               Tenure Type <span class="text-red-500">*</span>
             </label>
 
@@ -409,7 +409,7 @@
 
           <!--  Tenure ( MONTHS ) -->
           <div class="w-full mt-4 ">
-            <label class="block font-medium mb-2" for="tenure_type">
+            <label class="block font-medium mb-2 uppercase" for="tenure_type">
               Tenure ( MONTHS ) <span class="text-red-500">*</span>
             </label>
 
@@ -423,7 +423,7 @@
 
           <!-- EMI Payout  -->
           <div class="mt-4">
-            <label for="" class="block font-medium mb-2">EMI Payout <span class="text-red-500">*</span></label>
+            <label for="" class="block font-medium mb-2 uppercase">EMI Payout <span class="text-red-500">*</span></label>
             <select id="" name="" required
               class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
               <option value="">Select EMI Payout </option>
@@ -433,7 +433,7 @@
 
           <!--  Requested Loan Amount (₹) -->
           <div class="w-full mt-4 ">
-            <label class="block font-medium mb-2" for="tenure_type">
+            <label class="block font-medium mb-2 uppercase" for="tenure_type">
               Requested Loan Amount (₹) <span class="text-red-500">*</span>
             </label>
 
@@ -466,7 +466,7 @@
       <!--Scheme Info Table-->
       <div id="schemeBox" class="hidden col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
         <div class="flex bg-secondary/5 items-center justify-between rounded-10 px-4 py-3 dark:bg-bg3">
-          <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
+          <h3 class="text-base font-semibold md:text-lg uppercase" >Scheme Info</h3>
           <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'schemeInfoBody')">
             <span class="toggle-icon text-lg font-bold">−</span>
           </button>
@@ -478,43 +478,43 @@
             <table class=" text-sm text-left whitespace-nowrap ">
               <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Scheme Code</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td>
                   <td class="py-2">SSY17</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Scheme Name</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td>
                   <td class="py-2">Suvarna shree yojana no emi</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Max Tenure</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td>
                   <td class="py-2">12 Months</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td>
                   <td class="py-2">₹ 100,000.00</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against Security</td>
                   <td class="py-2">80.0 %</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td>
                   <td class="py-2">₹ 10,000.00</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td>
                   <td class="py-2">20.0 %</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Interest Type</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
                   <td class="py-2">No Emi</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Credit Period</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Credit Period</td>
                   <td class="py-2">1 Days</td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Active</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Active</td>
                   <td class="py-2">
                     <span class="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                       Yes
@@ -522,7 +522,7 @@
                   </td>
                 </tr>
                 <tr class="border-b">
-                  <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
+                  <td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td>
                   <td class="py-2">₹</td>
                 </tr>
               </tbody>

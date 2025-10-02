@@ -18,77 +18,77 @@
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Associate
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Group
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Fd. No
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Member No
                             </div>
                         </th>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Member Name
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Minor
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Branch
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Scheme
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Principal<br>Amt
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Open<br>Date
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Int.<br>Payout
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Maturity<br>Date
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Status
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 uppercase">
                                 Active
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5 uppercase" data-sortable="false">Action</th>
                     </tr>
                 </thead>
                 <tbody>

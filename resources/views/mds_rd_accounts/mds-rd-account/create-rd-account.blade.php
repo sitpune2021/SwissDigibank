@@ -43,7 +43,7 @@
             @csrf
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Member
                         <span class="text-red-500">*</span>
                     </label>
@@ -61,7 +61,7 @@
 
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Member Name
                     </label>
 
@@ -70,7 +70,7 @@
                         placeholder="Member Name" value="" readonly>
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="city" class="md:text-lg font-medium block mb-4">
+                    <label for="city" class="md:text-lg font-medium block mb-4 uppercase">
                         Member Address
                     </label>
 
@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="frequency" class="md:text-lg font-medium block mb-4">
+                    <label for="frequency" class="md:text-lg font-medium block mb-4 uppercase">
                         Member Mobile No
                     </label>
                     <div class="flex gap-2">
@@ -93,14 +93,14 @@
                 <div class="col-span-2 md:col-span-1"></div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2"> Minor (if any) </label>
+                    <label class="font-medium block mb-2 uppercase"> Minor (if any) </label>
                     <select id="minor_id" name="minor_id" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" placeholder="Minor">
                     </select>
 
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">Branch <span class="text-red-500 text-sm">*</span> </label>
+                    <label class="font-medium block mb-2 uppercase">Branch <span class="text-red-500 text-sm">*</span> </label>
                     <select id="branch_id" name="branch_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">ALL</option>
@@ -111,7 +111,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">Advisor/ Staff </label>
+                    <label class="font-medium block mb-2 uppercase">Advisor/ Staff </label>
                     <select id="" name="advisor_staff"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">ALL</option>
@@ -122,7 +122,7 @@
                 <div class="col-span-2 md:col-span-1"></div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">Collection Advisor/ Staff </label>
+                    <label class="font-medium block mb-2 uppercase">Collection Advisor/ Staff </label>
                     <select id="" name="collection_advisor_staff"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">Select Collection Advisor Staff</option>
@@ -132,7 +132,7 @@
 
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">Scheme <span class="text-red-500">*</span>
+                    <label class="font-medium block mb-2 uppercase">Scheme <span class="text-red-500">*</span>
                         :</label>
                     <select id="" name="scheme"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -147,7 +147,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">RD Amount <span class="text-red-500">*</span>
+                    <label class="font-medium block mb-2 uppercase">RD Amount <span class="text-red-500">*</span>
                         :</label>
                     <input type="number" id="rdAmount" name="rd_amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -172,7 +172,7 @@
 
                 <!-- TDS -->
                 <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">TDS Deduction<span class="text-red-500">*</span></label>
                     <div class="flex items-center  gap-2">
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds" value="yes"> Yes</label>
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds" value="no" checked> No</label>
@@ -185,7 +185,7 @@
                 <div class="col-span-2 md:col-span-1"></div>
 
                 <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Account Type <span class="text-red-500">*</span></label>
                     <div class="flex items-center gap-4">
                         <label class="flex items-center gap-2">
                             <input type="radio" name="accountType" value="single" onclick="toggleAccountType('single')" class="accent-primary" checked>
@@ -206,7 +206,7 @@
 
                 <div class="col-span-2 md:col-span-1 mt-4">
                     <div id="joint" class="hidden mt-4">
-                        <label class="font-medium block mb-1">Select Saving Account<span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-1 uppercase">Select Saving Account<span class="text-red-500">*</span></label>
                         <select id="savingAccountJoint" name="savings_account" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                        rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Account</option>
@@ -232,7 +232,7 @@
             <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
 
                 <div class="col-span-1 mt-4">
-                    <label class="block font-medium mb-2">
+                    <label class="block font-medium mb-2 uppercase">
                         Payment Mode <span class="text-red-500">*</span>
                     </label>
 
@@ -277,7 +277,7 @@
 
                         <!-- UTR / Transaction No -->
                         <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">UTR / Transaction No <span class="text-red-500">*</span></label>
+                            <label class="font-medium block mb-1 uppercase">UTR / Transaction No <span class="text-red-500">*</span></label>
                             <input type="text" name="transaction_no" placeholder="Enter UTR / Transaction No"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('transaction_no')
@@ -287,7 +287,7 @@
 
                         <!-- Transfer Mode -->
                         <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">Transfer Mode <span class="text-red-500">*</span></label>
+                            <label class="font-medium block mb-1 uppercase">Transfer Mode <span class="text-red-500">*</span></label>
                             <div class="flex flex-wrap gap-4 mt-2">
                                 <label class="flex items-center gap-2">
                                     <input type="radio" name="transfer_mode" value="IMPS" class="accent-primary">
@@ -309,7 +309,7 @@
 
                         <!-- Credited in Company Account -->
                         <div class="col-span-2 md:col-span-1 mt-4">
-                            <label class="font-medium block mb-1">Credited in Company Account? <span class="text-red-500">*</span></label>
+                            <label class="font-medium block mb-1 uppercase">Credited in Company Account? <span class="text-red-500">*</span></label>
                             <div class="flex items-center gap-4 mt-1">
                                 <label class="flex items-center gap-2">
                                     <input type="radio" name="credited" value="yes"> <span>Yes</span>
@@ -324,13 +324,11 @@
 
                         </div>
                     </div>
-
-
                     <!-- Cheque Fields -->
                     <div id="cheque" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 mt-4">
                         <div class="cheque-row flex flex-wrap justify-start gap-4">
                             <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                                <label class="font-medium block mb-1">Bank Name<span class="text-red-500">*</span></label>
+                                <label class="font-medium block mb-1 uppercase">Bank Name<span class="text-red-500">*</span></label>
                                 <!-- <input type="text" name="cheque_bank_name" placeholder="Enter Bank Name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"> -->
 
                                 <x-searchable-dropdown
@@ -349,7 +347,7 @@
 
 
                             <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                                <label class="font-medium block mb-1">Cheque No<span class="text-red-500">*</span></label>
+                                <label class="font-medium block mb-1 uppercase">Cheque No<span class="text-red-500">*</span></label>
                                 <input type="text" placeholder="Enter Cheque No" name="cheque_no" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 @error('cheque_no')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -357,7 +355,7 @@
                             </div>
 
                             <x-datepicker-disabled
-                                label="Cheque Date"
+                                label="CHEQUE DATE"
                                 name="cheque_date"
                                 value="{{ old('cheque_date') }}"
                                 inputId="cheque_date" />
@@ -367,7 +365,7 @@
 
                     <!-- Saving Account Fields -->
                     <div id="savingAcc" class="space-y-4 mt-3 hidden">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label class="block text-sm font-medium text-gray-700 uppercase">
                             Select Saving Account <span class="text-red-500">*</span>
                         </label>
 
@@ -393,14 +391,14 @@
                 <div class="col-span-2 md:col-span-1 relative">
 
                     <x-datepicker-disabled
-                        label="T. Date"
+                        label="T. DATE"
                         name="t_date"
                         value="{{ old('t_date') }}"
                         inputId="tdate" />
                 </div>
 
                 <div class=" col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-2">
+                    <label class="font-medium block mb-2 uppercase">
                         Amount <span class="text-red-500">*</span> </label>
                     <input type="number" name="amount" placeholder="Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">

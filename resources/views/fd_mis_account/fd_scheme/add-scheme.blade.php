@@ -52,7 +52,7 @@
             @method('PUT')
             @endif
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                     Scheme Name
                     <span class="text-red-500">*</span>
                 </label>
@@ -65,7 +65,7 @@
                 @enderror
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                     Scheme Code
                     <span class="text-red-500">*</span>
                 </label>
@@ -79,7 +79,7 @@
                 @enderror
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="city" class="md:text-lg font-medium block mb-4">
+                <label for="city" class="md:text-lg font-medium block mb-4 uppercase">
                     Min. FD/ MIS Amount
                     <span class="text-red-500">*</span>
                 </label>
@@ -95,7 +95,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                     FD/ MIS Lock In Period
                     <span class="text-red-500">*</span>
                 </label>
@@ -114,7 +114,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="pincode" class="md:text-lg font-medium block mb-4">
+                <label for="pincode" class="md:text-lg font-medium block mb-4 uppercase">
                     Interest Lock In Period
                     <span class="text-red-500">*</span>
                 </label>
@@ -140,7 +140,7 @@
                     10.0 % TDS will be deducted, if the Interest exceeds ₹ 40000 per annually.</p>
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="bonus_rate" class="md:text-lg font-medium block mb-4">
+                <label for="bonus_rate" class="md:text-lg font-medium block mb-4 uppercase">
                     Bonus Rate
                 </label>
                 <div class="flex gap-2">
@@ -166,7 +166,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="cancellation_type" class="md:text-lg font-medium block mb-4">
+                <label for="cancellation_type" class="md:text-lg font-medium block mb-4 uppercase">
                     Cancellation Charges (if any)
                 </label>
                 <div class="flex gap-2">
@@ -184,7 +184,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="contact_email" class="md:text-lg font-medium block mb-4">
+                <label for="contact_email" class="md:text-lg font-medium block mb-4 uppercase">
                     Penal Charges (%)
                 </label>
                 <select name="penal_charge" id="penal_charge"
@@ -202,14 +202,14 @@
 
             <div class="col-span-2 md:col-span-1">
                 <x-datepicker-disabled
-                    label="Effective Date"
+                    label="EFFECTIVE DATE"
                     name="effective_date"
                     value="{{ old('effective_date') }}"
                     inputId="effective_date" />
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="stationary_fee" class="md:text-lg font-medium block mb-4">
+                <label for="stationary_fee" class="md:text-lg font-medium block mb-4 uppercase">
                     Stationary Fee
                 </label>
                 <input
@@ -222,7 +222,7 @@
                 <x-number-to-word for="stationary_fee" />
             </div>
 
-            <div class="col-span-2 md:col-span-1"> <label for="contact_email" class="md:text-lg font-medium block mb-4"> App Type <span class="text-red-500">*</span> </label>
+            <div class="col-span-2 md:col-span-1"> <label for="contact_email" class="md:text-lg font-medium block mb-4 uppercase"> App Type <span class="text-red-500">*</span> </label>
                 <div class="flex flex-row pt-3 mt-5 gap-6"> <label class="flex items-center gap-3">
                         <input type="checkbox" name="admin" class="w-6 h-6 accent-green-500" checked>
                         <span>Admin</span> </label>
@@ -238,7 +238,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="active" class="md:text-lg font-medium block mb-4">
+                <label for="active" class="md:text-lg font-medium block mb-4 uppercase">
                     Active
                     <span class="text-red-500">*</span>
                 </label>
