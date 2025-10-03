@@ -530,18 +530,18 @@
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="transfer_mode" value="imps"
-    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
                                             <span>IMPS</span>
                                         </label>
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="transfer_mode" value="vpa"
-    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
 
                                             <span>VPA</span>
                                         </label>
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="transfer_mode" value="neft_rtgs"
-    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
                                             <span>NEFT/RTGS</span>
                                         </label>
                                     </div>
@@ -554,12 +554,12 @@
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="credited" value="yes"
-    {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                                {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
                                             <span>Yes</span>
                                         </label>
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="credited" value="no"
-    {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                                {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
                                             <span>No</span>
                                         </label>
                                     </div>

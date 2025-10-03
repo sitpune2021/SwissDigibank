@@ -111,7 +111,7 @@
 
             <!-- Principal Amount -->
             <td class="text-start !py-5 px-6">
-                {{ number_format($application->loan_amount, 2) }}
+                {{ number_format($application->net_loan_amount, 2) }}
             </td>
 
             <!-- Status -->
