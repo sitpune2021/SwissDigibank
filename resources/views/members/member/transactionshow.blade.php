@@ -118,7 +118,6 @@
             </div>
         </div>
 
-
         <!-- Audit Trail -->
         <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg mt-4">
             <!-- Header -->
