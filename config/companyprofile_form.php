@@ -2,45 +2,45 @@
 return [
 
     'company' => [
-        'heading' => 'Company ',
+        'heading' => 'COMPANY ',
         'fields' => [
             [
-                'label' => 'Company Website',
+                'label' => 'COMPANY WEBSITE',
                 'name' => 'company_website',
                 'id' => 'company_website',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Company Name',
+                'label' => 'COMPANY NAME',
                 'name' => 'company_name',
                 'id' => 'company_name',
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'label' => 'Short Name',
+                'label' => 'SHORT NAME',
                 'name' => 'short_name',
                 'id' => 'short_name',
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'label' => 'About Company',
+                'label' => 'ABOUT COMPANY',
                 'name' => 'about_company',
                 'id' => 'about_company',
                 'type' => 'textarea',
                 'required' => false,
             ],
             [
-                'label' => 'Company Category',
+                'label' => 'COMPANY CATEGORY',
                 'name' => 'company_category',
                 'id' => 'company_category',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Company Class',
+                'label' => 'COMPANY CLASS',
                 'name' => 'company_class',
                 'id' => 'company_class',
                 'type' => 'text',
@@ -49,31 +49,31 @@ return [
         ],
     ],
     'registered_office' => [
-        'heading' => 'Registered Office Details',
+        'heading' => 'REGISTERED OFFICE DETAILS',
         'fields' => [
             [
-                'label' => 'Reg. Office Address Line 1',
+                'label' => 'REG. OFFICE ADDRESS LINE 1',
                 'name' => 'address_line1',
                 'id' => 'address_line1',
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'label' => 'Reg. Office Address Line 2',
+                'label' => 'REG. OFFICE ADDRESS LINE 2',
                 'name' => 'address_line2',
                 'id' => 'address_line2',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'City',
+                'label' => 'CITY',
                 'name' => 'city',
                 'id' => 'city',
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'label' => 'State',
+                'label' => 'STATE',
                 'name' => 'state',
                 'id' => 'state',
                 'type' => 'select',
@@ -83,21 +83,21 @@ return [
 
             ],
             [
-                'label' => 'Pincode',
+                'label' => 'PINCODE',
                 'name' => 'pincode',
                 'id' => 'pincode',
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'label' => 'Country',
+                'label' => 'COUNTRY',
                 'name' => 'country',
                 'id' => 'country',
                 'type' => 'text',
                 'required' => true,
             ],
             [
-                'label' => 'Mobile No',
+                'label' => 'MOBILE NO.',
                 'name' => 'mobile_no',
                 'id' => 'mobile_no',
                 'type' => 'number',
@@ -107,14 +107,14 @@ return [
                 'required' => true,
             ],
             [
-                'label' => 'Landline No',
+                'label' => 'LANDLINE NO.',
                 'name' => 'landline_no',
                 'id' => 'landline_no',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Contact Email',
+                'label' => 'CONTACT EMAIL',
                 'name' => 'contact_email',
                 'id' => 'contact_email',
                 'type' => 'email',
@@ -124,31 +124,31 @@ return [
     ],
 
     'legal_info' => [
-        'heading' => 'Legal & Incorporation Details',
+        'heading' => 'LEGAL & INCORPORATION DETAILS',
         'fields' => [
             [
-                'label' => 'CIN No.',
+                'label' => 'CIN NO.',
                 'name' => 'cin_no',
                 'id' => 'cin_no',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload CIN Certificate',
+                'label' => 'UPLOAD CIN CERTIFICATE',
                 'name' => 'cin_certificate_path',
                 'id' => 'cin_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
             [
-                'label' => 'PAN No.',
+                'label' => 'PAN NO.',
                 'name' => 'pan_no',
                 'id' => 'pan_no',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload PAN Certificate',
+                'label' => 'UPLOAD PAN CERTIFICATE',
                 'name' => 'pan_certificate_path',
                 'id' => 'pan_certificate_path',
                 'type' => 'file',
@@ -156,28 +156,28 @@ return [
             ],
 
             [
-                'label' => 'TAN No.',
+                'label' => 'TAN NO.',
                 'name' => 'tan_no',
                 'id' => 'tan_no',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload TAN Certificate',
+                'label' => 'UPLOAD TAN CERTIFICATE',
                 'name' => 'tan_certificate_path',  
                 'id' => 'tan_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
             [
-                'label' => 'GST No.',
+                'label' => 'GST NO.',
                 'name' => 'gst_no',
                 'id' => 'gst_no',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload GST Certificate',
+                'label' => 'UPLOAD GST CERTIFICATE',
                 'name' => 'gst_certificate_path',  // updated here
                 'id' => 'gst_certificate_path',
                 'type' => 'file',
@@ -186,14 +186,14 @@ return [
 
 
             [
-                'label' => 'ISO Certification',
+                'label' => 'ISO CERTIFICATION',
                 'name' => 'iso_certification',
                 'id' => 'iso_certification',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload ISO Certificate',
+                'label' => 'UPLOAD ISO CERTIFICATE',
                 'name' => 'iso_certificate_path',  // updated here
                 'id' => 'iso_certificate_path',
                 'type' => 'file',
@@ -201,14 +201,14 @@ return [
             ],
 
             [
-                'label' => 'BIS Certification',
+                'label' => 'BIS CERTIFICATION',
                 'name' => 'bis_certification',
                 'id' => 'bis_certification',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload BIS Certificate',
+                'label' => 'UPLOAD BIS CERTIFICATE',
                 'name' => 'bis_certificate_path',  // updated here
                 'id' => 'bis_certificate_path',
                 'type' => 'file',
@@ -216,35 +216,35 @@ return [
             ],
 
             [
-                'label' => 'PF Number',
+                'label' => 'PF NUMBER',
                 'name' => 'pf_number',
                 'id' => 'pf_number',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload PF Certificate',
+                'label' => 'UPLOAD PF CERTIFICATE',
                 'name' => 'pf_certificate_path',  // updated here
                 'id' => 'pf_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
             [
-                'label' => 'ESIC Number',
+                'label' => 'ESIC NUMBER',
                 'name' => 'esic_number',
                 'id' => 'esic_number',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Upload ESIC Certificate',
+                'label' => 'UPLOAD ESIC CERTIFICATE',
                 'name' => 'esic_certificate_path',  // updated here
                 'id' => 'esic_certificate_path',
                 'type' => 'file',
                 'required' => false,
             ],
             [
-                'label' => 'Incorporation Date',
+                'label' => 'INCORPORATION DATE',
                 'name' => 'incorporation_date',
                 'id' => 'date2',
                 // 'default' => now()->format('d-m-Y'),
@@ -252,7 +252,7 @@ return [
                 'required' => false,
             ],
             [
-                'label' => 'Incorporation State',
+                'label' => 'INCORPORATION STATE',
                 'name' => 'incorporation_state',
                 'id' => 'incorporation_state',
                 'type' => 'select',
@@ -261,21 +261,21 @@ return [
                 'options_key' => 'state',
             ],
             [
-                'label' => 'Incorporation Country',
+                'label' => 'INCORPORATION COUNTRY',
                 'name' => 'incorporation_country',
                 'id' => 'incorporation_country',
                 'type' => 'text',
                 'required' => false,
             ],
             [
-                'label' => 'Authorized Capital',
+                'label' => 'AUTHORIZED CAPITAL',
                 'name' => 'authorized_capital',
                 'id' => 'authorized_capital',
                 'type' => 'number',
                 'required' => false,
             ],
             [
-                'label' => 'Paid Up Capital',
+                'label' => 'PAID UP CAPITAL',
                 'name' => 'paid_up_capital',
                 'id' => 'paid_up_capital',
                 'type' => 'number',

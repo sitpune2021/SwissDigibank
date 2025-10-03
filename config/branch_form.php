@@ -2,21 +2,21 @@
 
 return [
     [
-        'label' => 'Branch Name',
+        'label' => 'BRANCH NAME',
         'name' => 'branch_name',
         'id' => 'branch_name',
         'type' => 'text',
         'required' => true,
     ],
     [
-        'label' => 'Branch Code',
+        'label' => 'BRANCH CODE',
         'name' => 'branch_code',
         'id' => 'branch_code',
         'type' => 'text',
         'required' => true,
     ],
     [
-        'label' => 'Open Date',
+        'label' => 'OPEN DATE',
         'name' => 'open_date',
         'id' => 'date',
         'type' => 'text',
@@ -24,28 +24,35 @@ return [
         'required' => false,
     ],
     [
-        'label' => 'IFSC Code',
+        'label' => 'IFSC CODE',
         'name' => 'ifsc_code',
         'id' => 'ifsc_code',
         'type' => 'text',
         'required' => false,
     ],
+     [
+        'label' => 'Swift  Code',
+        'name' => 'swift_code',
+        'id' => 'swift_code',
+        'type' => 'text',
+        'required' => false,
+    ],
     [
-        'label' => 'Address Line 1',
+        'label' => 'ADDRESS LINE 1',
         'name' => 'address_line1',
         'id' => 'address_line1',
         'type' => 'text',
         'required' => true,
     ],
     [
-        'label' => 'Address Line 2',
+        'label' => 'ADDRESS LINE 2',
         'name' => 'address_line2',
         'id' => 'address_line2',
         'type' => 'text',
         'required' => false,
     ],
     [
-        'label' => 'Country',
+        'label' => 'COUNTRY',
         'name' => 'country',
         'id' => 'country',
         'type' => 'text',
@@ -53,7 +60,7 @@ return [
         'default' => 'India',
     ],
     [
-        'label' => 'State',
+        'label' => 'STATE',
         'name' => 'state',
         'id' => 'stateDropdown',
         'type' => 'select',
@@ -62,28 +69,28 @@ return [
         'options_key' => 'states', // 👈 used to match controller data
     ],
     [
-        'label' => 'City',
+        'label' => 'CITY',
         'name' => 'city',
         'id' => 'city',
         'type' => 'text',
         'required' => true,
     ],
     [
-        'label' => 'Pincode',
+        'label' => 'PINCODE',
         'name' => 'pincode',
         'id' => 'pincode',
         'type' => 'text',
         'required' => true,
     ],
     [
-        'label' => 'Email Id',
+        'label' => 'EMAIL ID',
         'name' => 'contact_email',
         'id' => 'contact_email',
         'type' => 'email',
         'required' => false,
     ],
     [
-        'label' => 'Contact No.',
+        'label' => 'CONTACT NO.',
         'name' => 'mobile_no',
         'id' => 'mobile_no',
         'type' => 'number',
@@ -94,21 +101,28 @@ return [
     ],
 
     [
-        'label' => 'Landline No.',
+        'label' => 'LANDLINE NO.',
         'name' => 'landline_no',
         'id' => 'landline_no',
         'type' => 'text',
         'required' => false,
     ],
     [
-        'label' => 'GST No.',
+        'label' => 'GST NO.',
         'name' => 'gst_no',
         'id' => 'gst_no',
         'type' => 'text',
         'required' => false,
     ],
     [
-        'label' => 'Disable Recharge / Bill Payment',
+        'label' => 'PERMISSION LETTER',
+        'name' => 'permission_letter',
+        'id' => 'permission_letter',
+        'type' => 'file',  
+        'required' => false,
+    ],
+    [
+        'label' => 'DISABLE RECHARGE / BILL PAYMENT',
         'name' => 'disable_recharge',
         'id' => 'disable_recharge',
         'type' => 'radio',
@@ -120,7 +134,7 @@ return [
         ],
     ],
     [
-        'label' => 'Disable NEFT',
+        'label' => 'DISABLE NEFT',
         'name' => 'disable_neft',
         'type' => 'radio',
         'id' => 'disable_neft',
@@ -131,4 +145,5 @@ return [
             'no' => 'No',
         ],
     ],
+       
 ];

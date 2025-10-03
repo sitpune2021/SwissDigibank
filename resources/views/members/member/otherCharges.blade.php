@@ -23,10 +23,10 @@
 </style>
 @section('page-title',
     isset($member)
-    ? 'Members - ' .
+    ? 'MEMBERS - ' .
     ($member->member_info_first_name ?? $member->member_code) .
     '
-    Transactions'
+    TRANSACTIONS'
     : 'Members Transactions')
 @section('content')
     <div class="main-inner">
@@ -41,8 +41,8 @@
                     @endif --}}
 
                     <!-- Charge Type -->
-                     <div class="mb-4">
-                        <label for="ChargeType" class="block font-medium mb-2">
+                    <div class="mb-4">
+                        <label for="ChargeType" class="block font-medium mb-2 uppercase">
                             Charge Type <span class="text-red-500">*</span>
                         </label>
                         <select id="ChargeType" name="charge_type"
@@ -61,7 +61,7 @@
 
                     <!-- Transaction Date -->
                     <div class="w-full mt-4">
-                        <label class="block font-medium mb-2" for="date2">
+                        <label class="block font-medium mb-2 uppercase" for="date2">
                             Transaction Date <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="transaction_date" id="date"
@@ -75,19 +75,21 @@
 
                     <!-- Charges -->
                     <div class="w-full mt-4">
-                        <label class="block font-medium mb-2" for="charges">
+                        <label class="block font-medium mb-2 uppercase" for="charges">
                             Charges <span class="text-red-500">*</span>
                         </label>
                         <input type="number" name="charges" id="charges"
                             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
                             placeholder="Enter Amount" value="{{ old('charges') }}">
+                        <x-number-to-word for="charges" />
+
                         @error('charges')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <!-- Remarks -->
                     <div class="w-full mt-4">
-                        <label class="block font-medium mb-2">
+                        <label class="block font-medium mb-2 uppercase">
                             Remarks (if any)
                         </label>
                         <input type="text" name="remarks" placeholder="Enter Remarks (if any)"
@@ -107,8 +109,8 @@
                             <button type="submit" class="btn-primary">
                                 Debit
                             </button>
-                            <a href="#" class="btn-outline">
-                                Cancel
+                            <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                                Back
                             </a>
                         </div>
                     </div>

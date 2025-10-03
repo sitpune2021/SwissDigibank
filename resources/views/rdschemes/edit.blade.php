@@ -24,7 +24,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
-            <h1 class="text-xl font-semibold">New RD/ DD Scheme</h1>
+            <h1 class="text-xl font-semibold uppercase">New RD/ DD Scheme</h1>
             <p class="text-gray-500">
                 <a href="{{route('rdschemes.index')}}" class="text-gray-500">RD/ DD Scheme</a> >
                 <a href="" class="text-gray-500"> EDIT</a>
@@ -48,7 +48,7 @@
             @csrf
             @method('PUT')
             <div class="col-span-2 md:col-span-1">
-                <label for="scheme_name" class="md:text-lg font-medium block mb-4">
+                <label for="scheme_name" class="md:text-lg font-medium block mb-4 uppercase">
                     Scheme Name
                     <span class="text-red-500">*</span>
                 </label>
@@ -61,7 +61,7 @@
                 @enderror
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="scheme_code" class="md:text-lg font-medium block mb-4">
+                <label for="scheme_code" class="md:text-lg font-medium block mb-4 uppercase">
                     Scheme Code
                     <span class="text-red-500">*</span>
                 </label>
@@ -73,7 +73,7 @@
 
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="min_rd_dd_amount" class="md:text-lg font-medium block mb-4">
+                <label for="min_rd_dd_amount" class="md:text-lg font-medium block mb-4 uppercase">
                     Min. RD/ DD Amount
                     <span class="text-red-500">*</span>
                 </label>
@@ -86,7 +86,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="rd_dd_frequency" class="md:text-lg font-medium block mb-4">
+                <label for="rd_dd_frequency" class="md:text-lg font-medium block mb-4 uppercase">
                     RD/ DD Frequency
                     <span class="text-red-500">*</span>
                 </label>
@@ -129,7 +129,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="anuual_interest_rate" class="md:text-lg font-medium block mb-4">
+                <label for="anuual_interest_rate" class="md:text-lg font-medium block mb-4 uppercase">
                     Anuual Interest Rate(%)
                     <span class="text-red-500">*</span>
                 </label>
@@ -141,7 +141,7 @@
                 @error('anuual_interest_rate') <span class="text-error">{{ $message }}</span> @enderror
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="sr_citizen_add_on_interest_rate" class="md:text-lg font-medium block mb-4">
+                <label for="sr_citizen_add_on_interest_rate" class="md:text-lg font-medium block mb-4 uppercase">
                     Sr. Citizen Add-on Interest Rate (%)
                     <span class="text-red-500">*</span>
                 </label>
@@ -153,7 +153,7 @@
                 @error('sr_citizen_add_on_interest_rate') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
             <div class="col-span-2 md:col-span-1">
-                <label for="bonus_rate_type" class="md:text-lg font-medium block mb-4">
+                <label for="bonus_rate_type" class="md:text-lg font-medium block mb-4 uppercase">
                     Bonus Rate
                     <span class="text-red-500">*</span>
                 </label>
@@ -174,14 +174,6 @@
                             value="{{ old('scheme_name', $scheme->bonus_rate_value) }}"
                             class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
-
-
-                        <!-- Info Toggle 
-                                                                <button type="button" onclick="alert('This is your bonus rate information')"
-                                                                    class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 p-2 hover:bg-primary/10">
-                                                                    <i class="las la-info-circle text-lg text-gray-500"></i>
-                                                                </button> -->
-
                     </div>
                     @error('bonus_rate_value') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -189,7 +181,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="interest_compounding_interval" class="md:text-lg font-medium block mb-4">
+                <label for="interest_compounding_interval" class="md:text-lg font-medium block mb-4 uppercase">
                     Interest Compounding Interval
                     <span class="text-red-500">*</span>
                 </label>
@@ -213,7 +205,7 @@
 
 
             <div class="col-span-2 md:col-span-1">
-                <label for="rd_dd_lock_in_period" class="md:text-lg font-medium block mb-4">
+                <label for="rd_dd_lock_in_period" class="md:text-lg font-medium block mb-4 uppercase">
                     RD/ DD Lock In Period <span class="text-red-500">*</span>
                 </label>
 
@@ -234,7 +226,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="interest_lock_in_period" class="md:text-lg font-medium block mb-4">
+                <label for="interest_lock_in_period" class="md:text-lg font-medium block mb-4 uppercase">
                     Interest Lock In Period <span class="text-red-500">*</span>
                 </label>
 
@@ -255,7 +247,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="tenure_of_rd_dd_type" class="md:text-lg font-medium block mb-4">
+                <label for="tenure_of_rd_dd_type" class="md:text-lg font-medium block mb-4 uppercase">
                     Tenure of RD/ DD
                     <span class="text-red-500">*</span>
                 </label>
@@ -277,13 +269,6 @@
                             value="{{ old('scheme_name', $scheme->tenure_of_rd_dd_value) }}"
                             class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Tenure of RD/ DD">
-
-
-                        <!-- 
-                                                                <button type="button" onclick="alert('This is your bonus rate information')"
-                                                                    class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 p-2 hover:bg-primary/10">
-                                                                    <i class="las la-info-circle text-lg text-gray-500"></i>
-                                                                </button> -->
                     </div>
                     @error('tenure_of_rd_dd_value') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -295,7 +280,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="cancellation_charges_type" class="md:text-lg font-medium block mb-4">
+                <label for="cancellation_charges_type" class="md:text-lg font-medium block mb-4 uppercase">
                     Cancellation Charges
                 </label>
                 <div class="col-sm-7">
@@ -315,18 +300,13 @@
                             class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Cancellation Charges">
 
-
-                        <!-- <button type="button" onclick="alert('This is your bonus rate information')"
-                                                                            class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 p-2 hover:bg-primary/10">
-                                                                            <i class="las la-info-circle text-lg text-gray-500"></i>
-                                                                        </button> -->
                     </div>
                     @error('cancellation_charges_value') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="stationary_charges" class="md:text-lg font-medium block mb-4">
+                <label for="stationary_charges" class="md:text-lg font-medium block mb-4 uppercase">
                     Stationary Charges
                 </label>
 
@@ -338,7 +318,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="penalty_charges" class="md:text-lg font-medium block mb-4">
+                <label for="penalty_charges" class="md:text-lg font-medium block mb-4 uppercase">
                     Penalty Charges
                 </label>
                 <div class="col-sm-7">
@@ -364,7 +344,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="penal_charges" class="md:text-lg font-medium block mb-4">
+                <label for="penal_charges" class="md:text-lg font-medium block mb-4 uppercase">
                     Penal Charges (%)
                     <span class="text-red-500">*</span>
                 </label>
@@ -393,7 +373,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="app_type" class="md:text-lg font-medium block mb-4">
+                <label for="app_type" class="md:text-lg font-medium block mb-4 uppercase">
                     App Type
                     <span class="text-red-500">*</span>
                 </label>
@@ -422,7 +402,7 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                     Active
                     <span class="text-red-500">*</span>
                 </label>

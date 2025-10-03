@@ -2,7 +2,7 @@
 
 return [
     [
-        'label' => 'Promoter',
+        'label' => 'PROMOTER',
         'required' => true,
         'type' => 'select',
         'name' => 'promotor_id',
@@ -11,7 +11,7 @@ return [
         'options_key' => 'promoter'
     ],
     [
-        'label' => 'Allotment Date',
+        'label' => 'ALLOTMENT DATE',
         'required' => true,
         'type' => 'text',
         'name' => 'allotment_date',
@@ -19,21 +19,21 @@ return [
         'html' => '<i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>'
     ],
     [
-        'label' => 'First Distinctive No.',
+        'label' => 'FIRST DISTINCTIVE NO.',
         'required' => true,
         'type' => 'text',
         'name' => 'first_share',
         'id' => 'first_share',
     ],
     [
-        'label' => 'Last Distinctive No.',
+        'label' => 'LAST DISTINCTIVE NO.',
         'required' => true,
         'type' => 'text',
         'name' => 'share_no',
         'id' => 'share_no',
     ],
     [
-        'label' => 'Share Nominal Value',
+        'label' => 'SHARE NOMINAL VALUE',
         'required' => false,
         'type' => 'text',
         'name' => 'nominal_value',
@@ -42,28 +42,28 @@ return [
         'default' => '100.0',
     ],
     [
-        'label' => 'Total Shares Held',
+        'label' => 'TOTAL SHARES HELD',
         'required' => false,
         'type' => 'text',
         'name' => 'total_share_held',
         'id' => 'total_share_held',
     ],
     [
-        'label' => 'Total Shares Value',
+        'label' => 'TOTAL SHARES VALUE',
         'required' => true,
         'type' => 'text',
         'name' => 'total_share_value',
         'id' => 'total_share_value',
     ],
     [
-        'label' => 'Certificate No',
+        'label' => 'CERTIFICATE NO.',
         'required' => false,
         'type' => 'text',
         'name' => 'certificate_no',
         'id' => 'certificate_no',
     ],
     [
-        'label' => 'Transaction Date',
+        'label' => 'TRANSACTION DATE',
         'required' => true,
         'type' => 'text',
         'name' => 'transaction_date',
@@ -71,21 +71,21 @@ return [
         'html' => '<i class="las la-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" style="top:30px"></i>'
     ],
     [
-        'label' => 'Amount',
+        'label' => 'AMOUNT',
         'required' => true,
         'type' => 'text',
         'name' => 'amount',
         'id' => 'amount',
     ],
     [
-        'label' => 'Remarks',
+        'label' => 'REMARKS',
         'required' => false,
         'type' => 'text',
         'name' => 'remarks',
         'id' => 'remarks',
     ],
     [
-        'label' => 'Pay Mode',
+        'label' => 'PAY MODE',
         'required' => true,
         'type' => 'radio',
         'name' => 'pay_mode',

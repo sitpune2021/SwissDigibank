@@ -120,7 +120,7 @@
                 @endif
                 @php $isView = !empty($show); @endphp
                 <div class="col-span-2 md:col-span-1">
-                    <label for="rate" class="md:text-lg font-medium block mb-4">Employee
+                    <label for="rate" class="md:text-lg font-medium block mb-4 uppercase">Employee
                         <select name="employee" id="employeeDropdown"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             @if ($isView) disabled @endif>
@@ -141,7 +141,7 @@
                 <div class="col-span-2 md:col-span-1"></div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="designation" class="md:text-lg font-medium block mb-4">Designation</label>
+                    <label for="designation" class="md:text-lg font-medium block mb-4 uppercase">Designation</label>
                     <input type="text" name="designation" id="designation"
                         value="{{ old('designation', $user->designation ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -152,7 +152,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="user_name" class="md:text-lg font-medium block mb-4">Login User Name <span
+                    <label for="user_name" class="md:text-lg font-medium block mb-4 uppercase">Login User Name <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="user_name" id="user_name"
                         value="{{ old('user_name', $user->username ?? '') }}"
@@ -164,7 +164,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="first_name" class="md:text-lg font-medium block mb-4">First Name<span
+                    <label for="first_name" class="md:text-lg font-medium block mb-4 uppercase">First Name<span
                             class="text-red-500">*</span></label>
                     <input name="first_name" id="first_name" value="{{ old('first_name', $user->fname ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -175,7 +175,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="last_name" class="md:text-lg font-medium block mb-4">Last Name</label>
+                    <label for="last_name" class="md:text-lg font-medium block mb-4 uppercase">Last Name</label>
                     <input type="text" name="last_name" id="last_name"
                         value="{{ old('last_name', $user->lname ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -186,7 +186,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="email" class="md:text-lg font-medium block mb-4">Email <span
+                    <label for="email" class="md:text-lg font-medium block mb-4 uppercase">Email <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="email" value="{{ old('email', $user->email ?? '') }}" id="email"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -197,7 +197,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="mobile_no" class="md:text-lg font-medium block mb-4">
+                    <label for="mobile_no" class="md:text-lg font-medium block mb-4 uppercase">
                         Mobile No. <span class="text-red-500">*</span>
                     </label>
 
@@ -220,7 +220,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="back_date" class="md:text-lg font-medium block mb-4">Back Date Entry Days <span
+                    <label for="back_date" class="md:text-lg font-medium block mb-4 uppercase">Back Date Entry Days <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="back_date" id="back_date" placeholder="Enter Days"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -232,7 +232,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="permission_role" class="md:text-lg font-medium block mb-4">Permissions / Roles <span
+                    <label for="permission_role" class="md:text-lg font-medium block mb-4 uppercase">Permissions / Roles <span
                             class="text-red-500">*</span></label>
                     <select name="permission_role" id="roleDropdown"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -251,7 +251,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="branch" class="md:text-lg font-medium block mb-4">Branch<span
+                    <label for="branch" class="md:text-lg font-medium block mb-4 uppercase">Branch<span
                             class="text-red-500">*</span></label>
                     <select name="branch" id="branchDropdown"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -270,7 +270,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="branch" class="md:text-lg font-medium block mb-4">Login on Holidays<span
+                    <label for="branch" class="md:text-lg font-medium block mb-4 uppercase">Login on Holidays<span
                             class="text-red-500">*</span></label>
                     <select name="login_on_holidays" id="login_on_holidays"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -290,7 +290,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="user_active" class="md:text-lg font-medium block mb-4">User Active<span
+                    <label for="user_active" class="md:text-lg font-medium block mb-4 uppercase">User Active<span
                             class="text-red-500">*</span></label>
                     <select name="user_active" id="user_active"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -307,7 +307,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="searchable_account" class="md:text-lg font-medium block mb-2">
+                    <label for="searchable_account" class="md:text-lg font-medium block mb-2 uppercase">
                         Searchable Accounts <span class="text-red-500">*</span>
                     </label>
                     <div class="flex gap-4 items-center">

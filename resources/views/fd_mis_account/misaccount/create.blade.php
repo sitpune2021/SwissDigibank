@@ -64,7 +64,7 @@
             @endif
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Member
                         <span class="text-red-500">*</span>
                     </label>
@@ -90,7 +90,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_name" class="md:text-lg font-medium block mb-4">Member Name</label>
+                    <label for="member_name" class="md:text-lg font-medium block mb-4 uppercase">Member Name</label>
                     <input type="text" id="selected_member_name" name="member_name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3 capitalize"
                         placeholder="Member Name" readonly>
@@ -99,7 +99,7 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
                 <div class="col-span-2 md:col-span-1">
-                    <label for="city" class="md:text-lg font-medium block mb-4">
+                    <label for="city" class="md:text-lg font-medium block mb-4 uppercase">
                         Member Address
                     </label>
 
@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Mobile No.
                         <span class="text-red-500">*</span>
                     </label>
@@ -130,7 +130,7 @@
                     @enderror
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="minor_id" class="md:text-lg font-medium block mb-4">
+                    <label for="minor_id" class="md:text-lg font-medium block mb-4 uppercase">
                         Minor
 
                     </label>
@@ -153,7 +153,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1 pt-3">
-                    <label for="fd_scheme_id" class="md:text-lg font-medium block mb-4">
+                    <label for="fd_scheme_id" class="md:text-lg font-medium block mb-4 uppercase">
                         Schemes
                     </label>
                     <div class="flex items-center gap-1">
@@ -174,7 +174,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Branch
                         <span class="text-red-500">*</span>
                     </label>
@@ -196,7 +196,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Advisor/ Staff
 
                     </label>
@@ -241,14 +241,14 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <x-datepicker-disabled label="Open Date" name="open_date" value="{{ old('open_date') }}"
+                    <x-datepicker-disabled label="OPEN DATE" name="open_date" value="{{ old('open_date') }}"
                         inputId="open_date" />
                 </div>
 
                 @if (!isset($misaccount))
                     <!-- Show Tenure fields ONLY in Create form -->
                     <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Tenure Period
                             <span class="text-red-500">*</span>
                         </label>
@@ -285,7 +285,7 @@
                 @enderror
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="misAmount" class="md:text-lg font-medium block mb-4">
+                    <label for="misAmount" class="md:text-lg font-medium block mb-4 uppercase">
                         MIS Amount <span class="text-red-500">*</span>
                     </label>
                     <input type="number" id="misAmount" name="mis_amount"
@@ -302,7 +302,7 @@
 
                 @if (!isset($misaccount))
                     <div class="col-span-2 md:col-span-1">
-                        <label for="interest_payout_type" class="md:text-lg font-medium block mb-4">
+                        <label for="interest_payout_type" class="md:text-lg font-medium block mb-4 uppercase">
                             Interest Payout Type
                             <span class="text-error ">*</span>
                         </label>
@@ -328,7 +328,7 @@
                     </div>
                 @endif
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         TDS Deduction
                         <span class="text-red-500">*</span>
                     </label>
@@ -353,7 +353,7 @@
                 </div>
                 @if (!isset($misaccount))
                     <div class="col-span-2 md:col-span-1">
-                        <label class="md:w-1/3 font-medium">Senior Citizen</label>
+                        <label class="md:w-1/3 font-medium uppercase">Senior Citizen</label>
                         <div class="md:w-2/3 my-2">
                             <!-- Hidden ensures "no" is submitted if unchecked -->
                             <input type="hidden" name="senior_citizen" value="no" checked>
@@ -375,7 +375,7 @@
 
                 <div class="col-span-2 md:col-span-1">
                     <!--  Account Type -->
-                    <label class="md:text-lg font-medium block mb-4">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">
                         Account Type <span class="text-red-500">*</span>
                     </label>
 
@@ -397,7 +397,7 @@
                     <!-- Select list (shown only if Joint A/C) -->
                     <div id="accountSelect"
                         class="{{ isset($misaccount) && $misaccount->joint_member_id ? '' : 'hidden' }} mt-4">
-                        <label for="joint_member_id" class="md:text-lg font-medium block mb-4">
+                        <label for="joint_member_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Joint A/C Member <span class="text-red-500">*</span>
                         </label>
 
@@ -425,7 +425,7 @@
                 </div>
                 <!--  Nominee  -->
                 <div class="mt-4 col-span-2 md:col-span-1">
-                    <p class="font-medium">
+                    <p class="font-medium uppercase">
                         Nominee <span class="text-red-500">*</span>
                     </p>
 
@@ -460,7 +460,7 @@
 
                             <!-- Relation -->
                             <div class="flex-1 min-w-[200px]">
-                                <label class="font-medium mb-2 block">Relation <span class="text-red-500">*</span></label>
+                                <label class="font-medium mb-2 block uppercase">Relation <span class="text-red-500">*</span></label>
                                 <select name="nominee_relation[]"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3 capitalize">
                                     <option value="">Select Relation</option>
@@ -504,14 +504,14 @@
 
                             <!-- Name -->
                             <div class="flex-1 min-w-[200px]">
-                                <label class="font-medium mb-2 block">Name <span class="text-red-500">*</span></label>
+                                <label class="font-medium mb-2 block uppercase">Name <span class="text-red-500">*</span></label>
                                 <input type="text" name="nominee_name[]" value="{{ $nominee->nominee_name }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3 capitalize">
                             </div>
 
                             <!-- Address -->
                             <div class="flex-1 min-w-[250px]">
-                                <label class="font-medium mb-2 block">Address <span class="text-red-500">*</span></label>
+                                <label class="font-medium mb-2 block uppercase">Address <span class="text-red-500">*</span></label>
                                 <input type="text" name="nominee_address[]" value="{{ $nominee->nominee_address }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3 capitalize">
                             </div>
@@ -530,7 +530,7 @@
             {{-- previous transaction table --}}
             @if (isset($misaccount) && $misaccount->transactions->count() > 0)
                 <div id="transactions-fields" class="w-full mt-6">
-                    <h4 class="text-lg font-semibold mb-3">Previous Transactions:</h4>
+                    <h4 class="text-lg font-semibold mb-3 uppercase">Previous Transactions:</h4>
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse min-w-[600px]">
                             <thead>
@@ -573,7 +573,7 @@
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                 @if (!isset($misaccount))
                     <div class="col-span-2 md:col-span-1">
-                        <label for="finalAmount" class="md:text-lg font-medium block mb-4">
+                        <label for="finalAmount" class="md:text-lg font-medium block mb-4 uppercase">
                             Final Amount
                         </label>
                         <input type="text" id="finalAmount" name="final_amount"
@@ -602,7 +602,7 @@
                 <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
 
                     <!-- Section Title -->
-                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Pay Mode </h4>
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode </h4>
 
                     <!-- Amount Field -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
@@ -619,7 +619,7 @@
 
                     <!-- Pay Mode -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
-                        <label class="text-sm font-medium text-gray-700">
+                        <label class="text-sm font-medium text-gray-700 uppercase">
                             Pay Mode <span class="text-red-500">*</span>
                         </label>
                         <div class="md:col-span-2 flex flex-wrap gap-4">

@@ -63,7 +63,11 @@
                             <td class="py-5 px-6">{{ $share_transfer->shareholdings?->promotor?->branch?->branch_name ??'' }}</td>
                             <td class="py-5 px-6">
                                 <a href="{{ $share_transfer->members ? route('member.show', $share_transfer->members->id) : '#' }}" class="text-primary hover:underline">
-                                    {{ $share_transfer->members?->member_info_first_name ?? ''}}
+                                    {{
+    $share_transfer->members?->member_no 
+        ?? ($share_transfer->members?->id ? str_pad($share_transfer->members->id, 6, '0', STR_PAD_LEFT) : '') 
+}}
+                                    - {{ $share_transfer->members?->member_info_first_name ?? ''}}
                                 </a>
                             </td>
                             <td class="py-5 px-6">

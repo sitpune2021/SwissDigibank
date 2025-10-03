@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Tests\Integration\Database\DatabaseTestCase;
 use Orchestra\Testbench\Attributes\WithConfig;
 use Orchestra\Testbench\Attributes\WithMigration;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Throwable;
@@ -30,10 +29,9 @@ class QueueTransactionTest extends DatabaseTestCase
         }
     }
 
-    #[DataProvider('timeoutJobs')]
-    public function testItCanHandleTimeoutJob($job)
+    public function testItCanHandleTimeoutJob()
     {
-        dispatch($job);
+        dispatch(new Fixtures\TimeOutJobWithTransaction);
 
         $this->assertSame(1, DB::table('jobs')->count());
         $this->assertSame(0, DB::table('failed_jobs')->count());
@@ -50,15 +48,5 @@ class QueueTransactionTest extends DatabaseTestCase
 
         $this->assertSame(0, DB::table('jobs')->count());
         $this->assertSame(1, DB::table('failed_jobs')->count());
-    }
-
-    public static function timeoutJobs(): array
-    {
-        return [
-            [new Fixtures\TimeOutJobWithTransaction()],
-            [new Fixtures\TimeOutJobWithNestedTransactions()],
-            [new Fixtures\TimeOutNonBatchableJobWithTransaction()],
-            [new Fixtures\TimeOutNonBatchableJobWithNestedTransactions()],
-        ];
     }
 }

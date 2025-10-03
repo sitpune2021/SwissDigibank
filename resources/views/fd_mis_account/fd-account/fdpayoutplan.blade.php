@@ -170,7 +170,7 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script>
+  <!-- <script>
     $(document).ready(function() {
       $('.process-btn').click(function() {
         var btn = $(this);
@@ -209,9 +209,9 @@
         });
       });
     });
-  </script>
+  </script> -->
 
-  <!-- <script>
+  <script>
     $(document).ready(function() {
       $('.process-btn').click(function() {
         var index = $(this).data('index');
@@ -255,4 +255,4 @@
         });
       });
     });
-  </script> -->
+  </script>

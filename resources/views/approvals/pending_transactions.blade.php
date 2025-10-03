@@ -104,7 +104,12 @@
                                 <a href="{{ $pending_transaction->accounts?->members?->id 
                  ? route('member.show', $pending_transaction->accounts->members->id) 
                  : '#' }}"
-                                    class="text-primary underline hover:text-primary/80">{{ $pending_transaction->accounts?->members?->member_info_first_name ?? ''  }}</a>
+                                    class="text-primary underline hover:text-primary/80">{{
+    ($pending_transaction->accounts?->members?->member_no 
+        ?? ($pending_transaction->accounts?->members?->id ? str_pad($pending_transaction->accounts->members->id, 6, '0', STR_PAD_LEFT) : '-'))
+    . ' - ' . 
+    ($pending_transaction->accounts?->members?->member_info_first_name ?? 'N/A')
+}}</a>
                             </td>
                             <td class="py-5 px-6">{{ $pending_transaction?->accounts?->account_type?? '' }}</td>
                             <td class="py-5 px-6">

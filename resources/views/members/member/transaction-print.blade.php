@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Transaction Print</title>
+    <title>TRANSACTION PRINT</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,13 +35,13 @@
 <body>
     <div class="print-container">
         <div class="header">
-            <h2>Transaction Details</h2>
+            <h2 class="uppercase">Transaction Details</h2>
         </div>
 
         <p><strong>ID:</strong> {{ $transaction->id }}</p>
-        <p><strong>Date:</strong> {{ $transaction->created_at->format('d-m-Y') }}</p>
-        <p><strong>Amount:</strong> ₹{{ $transaction->membership_fee }}</p>
-        <p><strong>Status:</strong> {{ ucfirst($transaction->status) }}</p>
+        <p><strong class="uppercase">Date:</strong> {{ $transaction->created_at->format('d-m-Y') }}</p>
+        <p><strong class="uppercase">Amount:</strong> ₹{{ $transaction->membership_fee }}</p>
+        <p><strong class="uppercase">Status:</strong> {{ ucfirst($transaction->status) }}</p>
 
         <!-- Add more transaction fields as needed -->
 

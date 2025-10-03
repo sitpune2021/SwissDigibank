@@ -10,9 +10,9 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 #[RequiresPhpExtension('pdo_mysql')]
 class DatabaseEmulatePreparesMariaDbConnectionTest extends DatabaseMariaDbConnectionTest
 {
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
-        parent::defineEnvironment($app);
+        parent::getEnvironmentSetUp($app);
 
         $app['config']->set('database.connections.mariadb.options', [
             PDO::ATTR_EMULATE_PREPARES => true,

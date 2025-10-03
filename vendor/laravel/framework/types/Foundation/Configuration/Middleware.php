@@ -6,13 +6,13 @@ use Illuminate\Http\Request;
 $middleware = new Middleware();
 
 $middleware->convertEmptyStringsToNull(except: [
-    fn (Request $request): bool => $request->has('skip-all-1'),
-    fn (Request $request): bool => $request->has('skip-all-2'),
+    fn ($request) => $request->has('skip-all-1'),
+    fn ($request) => $request->has('skip-all-2'),
 ]);
 
 $middleware->trimStrings(except: [
     'aaa',
-    fn (Request $request): bool => $request->has('skip-all'),
+    fn ($request) => $request->has('skip-all'),
 ]);
 
 $middleware->trustProxies(at: '*');

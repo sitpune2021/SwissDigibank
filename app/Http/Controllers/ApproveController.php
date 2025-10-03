@@ -180,7 +180,7 @@ class ApproveController extends Controller
                 $fdAccount = FdAccount::findOrFail($id);
                 $fdAccount->status = $validated['transaction_status'];
                 $fdAccount->remarks = $validated['remarks'];
- 
+
                 $fdAccount->save();
 
                 // 📝 Log the update
@@ -215,7 +215,7 @@ class ApproveController extends Controller
 
     public function approveAccounts(Request $request)
     {
-    
+
         try {
             $search = $request->input('search');
             $perPage = $request->input('perPage', 10);
@@ -235,6 +235,8 @@ class ApproveController extends Controller
             accounts.branch_id,
             accounts.member_id,
             JSON_OBJECT(
+             'id', members.id,
+             'member_no', members.member_no,
                 'member_info_first_name', members.member_info_first_name,
                 'member_info_last_name', members.member_info_last_name
             ) AS members,
@@ -265,6 +267,8 @@ class ApproveController extends Controller
             fd_accounts.branch_id,
             fd_accounts.member_id,
             JSON_OBJECT(
+             'id', members.id,
+             'member_no', members.member_no,
                 'member_info_first_name', members.member_info_first_name,
                 'member_info_last_name', members.member_info_last_name
             ) AS members,

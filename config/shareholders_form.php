@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'basic_details' => [
+    'BASIC_DETAILS' => [
           [
-            'label' => 'Transferor',
+            'label' => 'TRANSFEROR',
             'name' => 'transferor',
             'id' => 'transferor',
             'type' => 'text',
@@ -12,7 +12,7 @@ return [
              'readonly' => true,
         ],
         [
-        'label' => 'Member',
+        'label' => 'MEMBER',
         'name' => 'member_id',
         'id' => 'member',
         'type' => 'select',
@@ -22,7 +22,7 @@ return [
         'create' => true
     ],
         [
-            'label' => 'Business Type',
+            'label' => 'BUSINESS TYPE',
             'name' => 'business_type',
             'id' => 'business_type',
             'type' => 'select',
@@ -35,7 +35,7 @@ return [
             ],
         ],
         [
-            'label' => 'Transfer Date',
+            'label' => 'TRANSFER DATE',
             'name' => 'transfer_date',
             'id' => 'date',
             'type' => 'text',
@@ -44,7 +44,7 @@ return [
         ],
 
         [
-            'label' => 'Shares',
+            'label' => 'SHARES',
             'name' => 'shares',
             'id' => 'shares',
             'type' => 'text',
@@ -54,7 +54,7 @@ return [
 
         ],
         [
-            'label' => 'Face Value',
+            'label' => 'FACE VALUE',
             'name' => 'nominal_value',
             'id' => 'face_value',
             'type' => 'text',
@@ -64,7 +64,7 @@ return [
         ],
 
         [
-            'label' => 'Total Consideration',
+            'label' => 'TOTAL CONSIDERATION',
             'name' => 'total_consideration',
             'id' => 'total_consideration',
             'required' => false,

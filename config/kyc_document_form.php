@@ -4,7 +4,7 @@ return [
 
     'member_KYC_documents' => [
         [
-            'label' => 'Photo',
+            'label' => 'PHOTO',
             'name' => 'member_kyc_photo',
             'id' => 'photo',
             'type' => 'file',
@@ -14,7 +14,7 @@ return [
             'types' => [], // no subtypes
         ],
         [
-            'label' => 'Signature',
+            'label' => 'SIGNATURE',
             'name' => 'member_kyc_signature',
             'id' => 'signature',
             'type' => 'file',
@@ -24,7 +24,7 @@ return [
             'types' => [], // no subtypes
         ],
         [
-            'label' => 'ID Proof',
+            'label' => 'ID PROOF',
             'name' => 'member_kyc_id_proof',
             'id' => 'id_proof',
             'type' => 'file',
@@ -34,7 +34,7 @@ return [
             'types' => ['Aadhaar Card', 'Passport', 'Driving License', 'Voter ID'],
         ],
         [
-            'label' => 'ID Proof Back',
+            'label' => 'ID PROOF BACK',
             'name' => 'member_kyc_id_proof_back',
             'id' => 'id_proof_back',
             'type' => 'file',
@@ -44,7 +44,7 @@ return [
             'types' => ['Aadhaar Card', 'Passport', 'Driving License', 'Voter ID'],
         ],
         [
-            'label' => 'Address Proof',
+            'label' => 'ADDRESS PROOF',
             'name' => 'member_kyc_address_proof',
             'id' => 'address_proof',
             'type' => 'file',
@@ -54,7 +54,7 @@ return [
             'types' => ['Aadhaar Card', 'Passport', 'Driving License', 'Utility Bill'],
         ],
         [
-            'label' => 'Address Proof Back',
+            'label' => 'ADDRESS PROOF BACK',
             'name' => 'member_kyc_address_proof_back',
             'id' => 'address_proof_back',
             'type' => 'file',

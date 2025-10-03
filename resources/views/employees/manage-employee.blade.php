@@ -56,18 +56,18 @@
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">
                             <a href="{{route('employee.show', base64_encode($employee->id))}}" class="text-primary underline hover:text-primary/80">
-                                {{ $employee->id }}
+                              EMP- {{ $employee->id ?? '' }}
                             </a>
                         </td>
                         <td class="py-5 px-6">
                             <div>
-                                <p class="font-medium mb-1"> {{ $employee->name }}</p>
+                                <p class="font-medium mb-1"> {{ $employee->name??'' }}</p>
                             </div>
                         </td>
-                        <td class="py-5 px-6">{{ $employee->designation }}</td>
-                        <td class="py-5 px-6">{{ $employee->email }}</td>
+                        <td class="py-5 px-6">{{ $employee->designation??'' }}</td>
+                        <td class="py-5 px-6">{{ $employee->email??'' }}</td>
                         <td class="py-5 px-6">
-                            {{ \Carbon\Carbon::parse($employee->joining_date)->format('d-m-Y') }}
+                            {{ \Carbon\Carbon::parse($employee->joining_date)->format('d-m-Y')??'' }}
                         </td>
                         <td class="py-5 px-6">
                         </td>

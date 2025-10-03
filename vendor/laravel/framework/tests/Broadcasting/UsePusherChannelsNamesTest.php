@@ -30,19 +30,6 @@ class UsePusherChannelsNamesTest extends TestCase
         );
     }
 
-    public function testChannelNamePatternMatching()
-    {
-        $broadcaster = new FakeBroadcasterUsingPusherChannelsNames;
-
-        $this->assertEquals(
-            0,
-            $broadcaster->testChannelNameMatchesPattern(
-                'TestChannel',
-                'Test.{id}'
-            )
-        );
-    }
-
     #[DataProvider('channelsProvider')]
     public function testIsGuardedChannel($requestChannelName, $_, $guarded)
     {
@@ -115,10 +102,5 @@ class FakeBroadcasterUsingPusherChannelsNames extends Broadcaster
     public function broadcast(array $channels, $event, array $payload = [])
     {
         //
-    }
-
-    public function testChannelNameMatchesPattern($channel, $pattern)
-    {
-        return $this->channelNameMatchesPattern($channel, $pattern);
     }
 }

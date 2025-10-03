@@ -1,46 +1,6 @@
 @extends('layout.main')
 
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -80,48 +40,45 @@
             </p>
         </div>
     </div>
-    
 
-<div class="box dark:bg-bg3 shadow-md rounded-lg p-6">
-  <!-- Heading -->
-  <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-    Remove FD and its details and transactions.
-  </h3>
-  <hr class="my-4 border-gray-300 dark:border-gray-600">
 
-  <!-- Description -->
-  <p class="text-lg md:text-base text-black dark:text-white">
-    Remove FD will delete the following details:
-  </p>
+    <div class="box dark:bg-bg3 shadow-md rounded-lg p-6">
+        <!-- Heading -->
+        <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+            Remove FD and its details and transactions.
+        </h3>
+        <hr class="my-4 border-gray-300 dark:border-gray-600">
 
-  <!-- Warning List -->
-  <ul class="list-disc list-inside space-y-1 text-sm md:text-base text-gray-700 dark:text-gray-300 mt-3">
-    <li>Remove FD and all its transactions.</li>
-    <li>Remove transactions from accounting module.</li>
-    <li>Remove all the tracking if any.</li>
-    <li>Sequence numbers will get unused in future.</li>
-    <li>May lead to data corruption if any inter link account transactions are present.</li>
-    <li>No data backup will be provided for this action.</li>
-  </ul>
+        <!-- Description -->
+        <p class="text-lg md:text-base text-black dark:text-white">
+            Remove FD will delete the following details:
+        </p>
 
-  <!-- Form -->
-  <form class="mt-6" >
+        <!-- Warning List -->
+        <ul class="list-disc list-inside space-y-1 text-sm md:text-base text-gray-700 dark:text-gray-300 mt-3">
+            <li>Remove FD and all its transactions.</li>
+            <li>Remove transactions from accounting module.</li>
+            <li>Remove all the tracking if any.</li>
+            <li>Sequence numbers will get unused in future.</li>
+            <li>May lead to data corruption if any inter link account transactions are present.</li>
+            <li>No data backup will be provided for this action.</li>
+        </ul>
 
-   
-    <!-- Buttons -->
-    <div class="flex flex-col mt-6 sm:flex-row  gap-3 justify-center">
-                    <button type="submit"
-                        class="w-1/2 sm:w-auto btn-primary uppercase justify-center">
-                        Remove Account
-                    </button>
-                    <a href="#"
-                        class="w-1/2 sm:w-auto btn-outline uppercase justify-center">
-                        back
-                    </a>
-                </div>
-  </form>
-</div>
+        <!-- Form -->
+        <form class="mt-6">
 
-    
+            <!-- Buttons -->
+            <div class="flex flex-col mt-6 sm:flex-row  gap-3 justify-center">
+                <button type="submit"
+                    class="w-1/2 sm:w-auto btn-primary uppercase justify-center">
+                    Remove Account
+                </button>
+                <a href="#"
+                    class="w-1/2 sm:w-auto btn-outline uppercase justify-center">
+                    back
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection

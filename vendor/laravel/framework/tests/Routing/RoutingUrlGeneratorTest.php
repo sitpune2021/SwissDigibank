@@ -684,36 +684,18 @@ class RoutingUrlGeneratorTest extends TestCase
         $url->route('foo', $parameters);
     }
 
-    public function testSetAssetUrl()
+    public function testForceRootUrl()
     {
         $url = new UrlGenerator(
             $routes = new RouteCollection,
             Request::create('http://www.foo.com/')
         );
 
-        $url->useOrigin('https://www.bar.com');
-        $this->assertSame('http://www.bar.com/foo/bar', $url->to('foo/bar'));
-        $this->assertSame('http://www.bar.com/foo/bar', $url->asset('foo/bar'));
-
-        $url->useAssetOrigin('https://www.foo.com');
-        $this->assertNotSame('https://www.foo.com/foo/bar', $url->to('foo/bar'));
-        $this->assertSame('https://www.foo.com/foo/bar', $url->asset('foo/bar'));
-        $this->assertSame('https://www.foo.com/foo/bar', $url->asset('foo/bar', true));
-        $this->assertSame('https://www.foo.com/foo/bar', $url->asset('foo/bar', false));
-    }
-
-    public function testUseRootUrl()
-    {
-        $url = new UrlGenerator(
-            $routes = new RouteCollection,
-            Request::create('http://www.foo.com/')
-        );
-
-        $url->useOrigin('https://www.bar.com');
+        $url->forceRootUrl('https://www.bar.com');
         $this->assertSame('http://www.bar.com/foo/bar', $url->to('foo/bar'));
 
         // Ensure trailing slash is trimmed from root URL as UrlGenerator already handles this
-        $url->useOrigin('http://www.foo.com/');
+        $url->forceRootUrl('http://www.foo.com/');
         $this->assertSame('http://www.foo.com/bar', $url->to('/bar'));
 
         /*
@@ -730,22 +712,8 @@ class RoutingUrlGeneratorTest extends TestCase
 
         $this->assertSame('https://www.foo.com/foo', $url->route('plain'));
 
-        $url->useOrigin('https://www.bar.com');
+        $url->forceRootUrl('https://www.bar.com');
         $this->assertSame('https://www.bar.com/foo', $url->route('plain'));
-    }
-
-    public function testForceHttps()
-    {
-        $url = new UrlGenerator(
-            $routes = new RouteCollection,
-            Request::create('http://www.foo.com/')
-        );
-
-        $url->forceHttps();
-        $route = new Route(['GET'], '/foo', ['as' => 'plain']);
-        $routes->add($route);
-
-        $this->assertSame('https://www.foo.com/foo', $url->route('plain'));
     }
 
     public function testPrevious()

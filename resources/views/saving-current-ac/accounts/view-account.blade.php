@@ -34,71 +34,72 @@
                 {{-- Account Info Table --}}
                 <div class="bg-white rounded shadow">
                     <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                        <span>Account Info - {{ $account->account_no }} </span>
+                        <span class="uppercase">Account Info - {{ $account->account_no }} </span>
                         <span x-text="open ? '−' : '+'">−</span>
                     </div>
                     <table class="w-full text-sm">
                         <tbody>
                             <tr class="border-b">
-                                <th class="w-1/2 p-2 font-medium text-gray-700">Member</th>
-                                <td class="p-2">{{ ucfirst($account->members->member_info_first_name)." ".ucfirst($account->members->member_info_last_name) }}</td>
+                                <th class="w-1/2 p-2 font-medium text-gray-700 uppercase">Member</th>
+                                <td class="p-2">{{ $account->members->member_no 
+    ?? ($account->members->id ? str_pad($account->members->id, 6, '0', STR_PAD_LEFT) : '-') }}-{{ ucfirst($account->members->member_info_first_name)." ".ucfirst($account->members->member_info_last_name) }}</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Created On</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Created On</th>
                                 <td class="p-2">Admin App</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Created By</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Created By</th>
                                 <td class="p-2">Admin</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Account No.</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Account No.</th>
                                 <td class="p-2"> {{ $account->account_no }}</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Old Account No.</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Old Account No.</th>
                                 <td class="p-2">-</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Scheme Name</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Scheme Name</th>
                                 <td class="p-2"> {{ $account->scheme->scheme_name }}</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Open Date</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Open Date</th>
                                 <td class="p-2">{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Status</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Status</th>
                                 <td class="p-2"> Active </td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Lock Balance (A)</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Lock Balance (A)</th>
                                 <td class="p-2">0.00</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Hold Balance (B)</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Hold Balance (B)</th>
                                 <td class="p-2">0.00</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Available Balance (C)</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Available Balance (C)</th>
                                 <td class="p-2">₹{{ number_format($combined_balace, 2) }}</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Sweep In Balance (D)</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Sweep In Balance (D)</th>
                                 <td class="p-2">₹0.00</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Combined Balance (A+B+C+D)</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Combined Balance (A+B+C+D)</th>
                                 <td class="p-2" style="color: green; font-size: 15px; font-weight: bold;">
                                     ₹{{ number_format($combined_balace, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Penalty Dues</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Penalty Dues</th>
                                 <td class="p-2">₹0.00</td>
                             </tr>
                             <tr class="border-b">
-                                <th class="p-2 font-medium text-gray-700">Special Account</th>
+                                <th class="p-2 font-medium text-gray-700 uppercase">Special Account</th>
                                 <td class="p-2">
                                     <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">No</span>
                                 </td>
@@ -110,7 +111,7 @@
                 {{-- Allocated Passbook --}}
                 <div class="bg-white rounded shadow">
                     <div class="flex items-center justify-between px-3 py-2 bg-green-100 border-b-2 border-green-600">
-                        <span class="font-semibold text-green-700">Allocated Passbook</span>
+                        <span class="font-semibold text-green-700 uppercase">Allocated Passbook</span>
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">+ PASSBOOK</button>
                     </div>
                 </div>
@@ -155,7 +156,7 @@
                 <div class="bg-white rounded shadow" x-data="{ open: true }">
                     <div class="flex items-center justify-between px-3 py-2 text-white bg-green-600 cursor-pointer"
                         @click="open=!open">
-                        <span>Transaction Info</span>
+                        <span class="uppercase">Transaction Info</span>
                         <span x-text="open ? '−' : '+'"></span>
                     </div>
                     <div x-show="open" class="border-t">
@@ -168,11 +169,11 @@
                         <table class="w-full text-sm">
                             <thead class="bg-gray-100">
                                 <tr>
-                                    <th class="p-2">Date</th>
-                                    <th class="p-2">Type</th>
-                                    <th class="p-2">Payment Mode</th>
-                                    <th class="p-2">Status</th>
-                                    <th class="p-2">Amount</th>
+                                    <th class="p-2 uppercase">Date</th>
+                                    <th class="p-2 uppercase">Type</th>
+                                    <th class="p-2 uppercase">Payment Mode</th>
+                                    <th class="p-2 uppercase">Status</th>
+                                    <th class="p-2 uppercase">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -199,7 +200,7 @@
 
                 {{-- Settings --}}
                 <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
-                    <span>Settings Info</span>
+                    <span class="uppercase">Settings Info</span>
                     <span x-text="open ? '−' : '+'">−</span>
                 </div>
                 <div class="p-3 space-y-2 bg-white rounded shadow">
@@ -208,15 +209,15 @@
                         <input type="checkbox" disabled>
                     </div>
                     <div class="flex justify-between">
-                        <label>Account on Hold</label>
+                        <label class="uppercase">Account on Hold</label>
                         <input type="checkbox" disabled>
                     </div>
                     <div class="flex justify-between">
-                        <label>Change Account Type to Current</label>
+                        <label class="uppercase">Change Account Type to Current</label>
                         <input type="checkbox" disabled>
                     </div>
                     <div class="flex justify-between">
-                        <label>Deduct Charges</label>
+                        <label  class="uppercase">Deduct Charges</label>
                         <input type="checkbox" disabled>
                     </div>
                 </div>
@@ -225,18 +226,18 @@
                 <div class="bg-white rounded shadow" x-data="{ open: false }">
                     <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer"
                         @click="open=!open">
-                        <span>Branch Info</span>
+                        <span class="uppercase">Branch Info</span>
                         <span x-text="open ? '−' : '+'"></span>
                     </div>
                     <div x-show="open" class="border-t">
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr class="border-b">
-                                    <th class="p-2 text-gray-700">Branch</th>
+                                    <th class="p-2 text-gray-700 uppercase">Branch</th>
                                     <td class="p-2">{{ $account->branch->branch_name }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="p-2 text-gray-700">Joint Account</th>
+                                    <th class="p-2 text-gray-700 uppercase">Joint Account</th>
                                     <td class="p-2">
                                         <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">{{ $account->account_holder_type }}</span>
                                     </td>
@@ -248,13 +249,13 @@
 
                 {{-- Sweep-In Settings --}}
                 <div class="p-3 space-y-3 bg-white rounded shadow">
-                    <h3 class="mb-2 text-lg font-semibold text-gray-700">Sweep-In Settings</h3>
+                    <h3 class="mb-2 text-lg font-semibold text-gray-700 uppercase">Sweep-In Settings</h3>
                     <div>
-                        <label class="mr-2 font-semibold text-gray-700">Sweep-In:</label>
+                        <label class="mr-2 font-semibold text-gray-700 uppercase">Sweep-In:</label>
                         <input type="checkbox" disabled>
                     </div>
                     <div class="flex items-center gap-2">
-                        <label class="font-semibold text-gray-700 w-28">Saving Scheme</label>
+                        <label class="font-semibold text-gray-700 w-28 uppercase">Saving Scheme</label>
                         <select class="w-48 px-2 py-1 text-sm border border-gray-300 rounded" disabled>
                             <option value="{{ $account->scheme->id }}" selected>
                                 {{ $account->scheme->scheme_name }}
@@ -268,39 +269,39 @@
                 {{-- Setup & Settings --}}
                 <div class="p-3 space-y-2 bg-white rounded shadow">
                     <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Member</label>
+                        <label class="w-32 font-semibold text-gray-700 uppercase">Member</label>
                         <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
                             value="{{ $account->members->member_info_first_name.' '.$account->members->member_info_last_name }}" readonly>
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Old Account No</label>
+                        <label class="w-32 font-semibold text-gray-700 uppercase">Old Account No</label>
                         <input type="text" readonly class="flex-1 px-2 py-1 border border-gray-300 rounded"
                             placeholder="Enter Old Account No">
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Branch</label>
+                        <label class="w-32 font-semibold text-gray-700 uppercase">Branch</label>
                         <select class="flex-1 px-2 py-1 border border-gray-300 rounded" disabled>
                             <option>{{ $account->branch->branch_name }}</option>
                         </select>
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Open Date</label>
+                        <label class="w-32 font-semibold text-gray-700 uppercase">Open Date</label>
                         <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded"
                             value="{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}">
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
-                        <label class="w-32 font-semibold text-gray-700">Advisor/ Staff</label>
+                        <label class="w-32 font-semibold text-gray-700 uppercase">Advisor/ Staff</label>
                         <select class="flex-1 px-2 py-1 border border-gray-300 rounded" disabled>
                             <option> {{ isset($account->users) ? $account->users->fname.' '.$account->users->lname : '-' }}</option>
                         </select>
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
                     <div class="flex items-center gap-2">
-                        <label class="w-32 font-semibold text-gray-700">Lock Amount</label>
+                        <label class="w-32 font-semibold text-gray-700 uppercase">Lock Amount</label>
                         <input type="text" class="flex-1 px-2 py-1 border border-gray-300 rounded" value="0.0" readonly>
                         <button class="px-3 py-1 text-xs text-white bg-green-600 rounded">UPDATE</button>
                     </div>
@@ -310,17 +311,17 @@
                 <div class="bg-white rounded shadow" x-data="{ open: true }">
                     <div class="flex items-center justify-between px-3 py-2 font-semibold text-white bg-green-600 cursor-pointer"
                         @click="open=!open">
-                        <span>Nominee Info</span>
+                        <span class="uppercase">Nominee Info</span>
                         <span x-text="open ? '−' : '+'"></span>
                     </div>
                     <div x-show="open" class="border-t">
                         <table class="w-full text-sm border-collapse">
                             <thead class="bg-gray-100">
                                 <tr>
-                                    <th class="p-2 text-left border-b">Name</th>
-                                    <th class="p-2 text-left border-b">Relation</th>
-                                    <th class="p-2 text-left border-b">Address</th>
-                                    <th class="p-2 text-left border-b">Percentage</th>
+                                    <th class="p-2 text-left border-b uppercase">Name</th>
+                                    <th class="p-2 text-left border-b uppercase">Relation</th>
+                                    <th class="p-2 text-left border-b uppercase">Address</th>
+                                    <th class="p-2 text-left border-b uppercase">Percentage</th>
                                 </tr>
                             </thead>
                             <tbody>

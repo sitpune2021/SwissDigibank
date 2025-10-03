@@ -60,7 +60,8 @@
                 <tr>
                     <td class="px-6 py-5">{{ $shareholding->members->branch->branch_name ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->promotor->first_name ?? '-' }}</td>
-                    <td class="px-6 py-5">{{ $shareholding->members->member_info_first_name ?? '-' }}</td>
+                    <td class="px-6 py-5"> {{ $shareholding->members->member_no 
+        ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : '-') }}-{{ $shareholding->members->member_info_first_name ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->from_share_no.'-'. $shareholding->to_share_no ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->shares ?? '-' }}</td>
                     <td class="px-6 py-5">{{ $shareholding->face_value ?? '-' }}</td>

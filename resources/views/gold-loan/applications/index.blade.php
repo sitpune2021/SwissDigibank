@@ -15,11 +15,7 @@
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                   ASSOCIATE
-                                </div>
-                            </th>
+                            
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                    	APPLICATION NO.
@@ -73,76 +69,72 @@
                         </tr>
                     </thead>
                     <tbody>
+    @foreach($applications as $application)
+        <tr class="border-b dark:border-bg3">
+          
+            <!-- Application No. -->
+           <td class="text-start !py-5 px-6">
+                <a href="{{ route('gold-loan.applications.view', $application->id) }}" 
+                class="text-blue-600 hover:underline">
+                    {{ $application->id }}
+                </a>
+            </td>
 
-                        <tr class="border-b dark:border-bg3">
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 text-secondary uppercase">
-                                 
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 Capitalize">
-                                    00591
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    18/09/2025
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                  DEMO-04428
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                  shreepad page
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                   Chas Bokaro
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                   Suvarna shree yojana flat advanced interest deduction
-                                </div>
-                            </td>
-                              <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                  100,000.00
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                             DISBURSED
-                                </div>
-                            </td>
+            <!-- Application Date -->
+            <td class="text-start !py-5 px-6">
+                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
+            </td>
 
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex justify-center">
-                                    <div class="relative">
-                                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                        <ul class="horiz-option popover-content">
-                                            <li><a href="" class="single-option capitalize">View</a></li>
-                                            <li><a href="" class="single-option capitalize">Edit</a></li>
-                                             <li><a href="" class="single-option capitalize">disburse settings</a></li>
-                                            
-                                        </ul>
+            <!-- Member No -->
+            <td class="text-start !py-5 px-6">
+                <a href="{{ url('members/member/' . $application->member_id) }}" 
+                class="text-blue-600 hover:underline">
+                    {{ $application->member_id??'' }}
+                </a>
+            </td>
 
-                                        {{-- @include('partials._vertical-options', [
-                                        /* 'id' =>base64_encode($director->id),
-                                        'viewRoute' => 'director.show',
-                                        'editRoute' => 'director.edit'*/
-                                        ]) --}}
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
 
-                    </tbody>
+            <!-- Member Name (अगर relation है तो member->name, अभी के लिए member_id ही दिखा रहा हूँ) -->
+            <td class="text-start !py-5 px-6">
+                {{ $application->member->member_info_first_name ?? 'N/A' }}
+            </td>
+
+            <!-- Branch -->
+            <td class="text-start !py-5 px-6">
+                {{ $application->branch->branch_name ?? 'N/A' }}
+            </td>
+
+            <!-- Scheme -->
+            <td class="text-start !py-5 px-6">
+                {{ $application->scheme->scheme_name ?? 'N/A' }}
+            </td>
+
+            <!-- Principal Amount -->
+            <td class="text-start !py-5 px-6">
+                {{ number_format($application->loan_amount, 2) }}
+            </td>
+
+            <!-- Status -->
+            <td class="text-start !py-5 px-6">
+                {{ $application->credited ?? 'PENDING' }}
+            </td>
+
+            <!-- Actions -->
+            <td class="text-start !py-5 px-6">
+                <div class="flex justify-center">
+                    <div class="relative">
+                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                        <ul class="horiz-option popover-content">
+                            <li><a href="{{ route('gold-loan.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
 
                 </table>
             </div>

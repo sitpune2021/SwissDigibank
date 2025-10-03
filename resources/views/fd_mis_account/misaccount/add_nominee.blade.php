@@ -1,46 +1,6 @@
 @extends('layout.main')
 @section('content')
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -98,7 +58,7 @@
 
     <!-- Nominee Yes/No -->
     <div>
-      <label class="block text-lg mt-3 font-medium text-gray-700">Nominee <span class="text-red-500">*</span></label>
+      <label class="block text-lg mt-3 font-medium text-gray-700 uppercase">Nominee <span class="text-red-500">*</span></label>
       <div class="mt-2 flex gap-6">
         <label class="flex items-center gap-2">
           <input type="radio" name="has_nominee" value="yes" class="nominee-radio"> Yes
@@ -151,7 +111,7 @@
         <div class="flex flex-col md:flex-row gap-6">
           <!-- Relation -->
           <div class="flex-1">
-            <label class="block text-lg mt-3 font-medium text-gray-700">
+            <label class="block text-lg mt-3 font-medium text-gray-700 uppercase">
               Relation <span class="text-red-500">*</span>
             </label>
             <select name="nominees[${index}][relation]" 

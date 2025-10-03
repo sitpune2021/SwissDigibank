@@ -57,6 +57,9 @@
                             @if ($minor->member)
                             <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}"
                                 class="text-primary hover:underline">
+                                {{ $minor->member->member_no 
+    ?? ($minor->member->id ? str_pad($minor->member->id, 6, '0', STR_PAD_LEFT) : 'N/A') }}
+                                -
                                 {{ $minor->member->member_info_first_name ?? 'N/A' }}
                             </a>
                             @else

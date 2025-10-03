@@ -72,6 +72,7 @@
                                     value-field="id"
                                     event="Bank-selected"
                                     :selected="null" />
+                                    
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Cheque No. <span class="text-red-500">*</span></label>

@@ -11,14 +11,14 @@
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start py-5 px-6 cursor-pointer">Share Range</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Total Shares</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Nominal Value</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Total Value</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Allotment Date</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Transfer Date</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Is Surrendered</th>
-                        <th class="text-start py-5 px-6 cursor-pointer">Actions</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Share Range</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Total Shares</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Nominal Value</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Total Value</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Allotment Date</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Transfer Date</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Is Surrendered</th>
+                        <th class="text-start py-5 px-6 cursor-pointer uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="shareHoldingsBody">

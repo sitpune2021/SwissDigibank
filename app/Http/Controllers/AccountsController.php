@@ -351,7 +351,8 @@ class AccountsController extends Controller
                 'transaction_date'      => $request->transaction_date ? Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s') : null,
             ]);
 
-            $account->account_no = 'SA' . str_pad($account->id, 5, '0', STR_PAD_LEFT);
+            $account->account_no = 'SBC111' . str_pad($account->id, 9, '0', STR_PAD_LEFT);
+
             $account->save();
 
             if ($request->nominee === 'yes') {
@@ -452,8 +453,6 @@ class AccountsController extends Controller
             abort(404);
         }
     }
-
-
     public function edit(string $id) {}
 
     public function update(Request $request, string $id) {}
@@ -464,7 +463,7 @@ class AccountsController extends Controller
     public function viewPassbook($id)
     {
         $id = base64_decode($id);
-        $accounts = Account::with('transaction', 'members')->where('id', $id)->get();
+        $accounts = Account::with('transaction', 'members', 'branch', 'address', 'nominee')->where('id', $id)->get();
         return view('saving-current-ac.accounts.passbook', compact('accounts'));
     }
 
@@ -478,6 +477,9 @@ class AccountsController extends Controller
         ]);
 
         $accountId = $request->account_id;
+
+        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address'])
+            ->find($accountId);
 
         $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
         $toDate   = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
@@ -518,6 +520,7 @@ class AccountsController extends Controller
 
         return response()->json([
             'success' => true,
+            'account' => $account,   
             'transactions' => $transactions,
             'printType' => $request->print,
             'fromDate' => $request->from_date,

@@ -1,34 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/serializable-closure/compare/v2.0.3...2.x)
-
-## [v2.0.3](https://github.com/laravel/serializable-closure/compare/v2.0.2...v2.0.3) - 2025-02-11
-
-* Fix unable to serialize PHP8.4 object with virtual property by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/serializable-closure/pull/108
-
-## [v2.0.2](https://github.com/laravel/serializable-closure/compare/v2.0.1...v2.0.2) - 2025-01-24
-
-* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/serializable-closure/pull/105
-
-## [v2.0.1](https://github.com/laravel/serializable-closure/compare/v2.0.0...v2.0.1) - 2024-12-16
-
-* Fix broken code for ternary operator with class instantiation with omitted parentheses by [@panzer-punk](https://github.com/panzer-punk) in https://github.com/laravel/serializable-closure/pull/102
-
-## [v2.0.0](https://github.com/laravel/serializable-closure/compare/v1.3.6...v2.0.0) - 2024-11-19
-
-* [2.x] Fix namespaced closures being considered first class callables by [@nunomaduro](https://github.com/nunomaduro) in https://github.com/laravel/serializable-closure/pull/97
-* [2.x] Cleanup phpunit.xml by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/serializable-closure/pull/95
-* [2.x] PHP 8.4 support by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/serializable-closure/pull/90
-* [2.x] Supports PHPStan 2 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/serializable-closure/pull/100
-* Prepare `2.0.0` release by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/serializable-closure/pull/99
-
-## [v1.3.6](https://github.com/laravel/serializable-closure/compare/v1.3.5...v1.3.6) - 2024-11-11
-
-* Fix repeated word "the" in code comment by [@caendesilva](https://github.com/caendesilva) in https://github.com/laravel/serializable-closure/pull/98
-
-## [v1.3.5](https://github.com/laravel/serializable-closure/compare/v1.3.4...v1.3.5) - 2024-09-23
-
-* CI Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/serializable-closure/pull/94
+## [Unreleased](https://github.com/laravel/serializable-closure/compare/v1.3.4...master)
 
 ## [v1.3.4](https://github.com/laravel/serializable-closure/compare/v1.3.3...v1.3.4) - 2024-08-02
 

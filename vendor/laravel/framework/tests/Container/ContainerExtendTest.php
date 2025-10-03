@@ -187,43 +187,6 @@ class ContainerExtendTest extends TestCase
 
         $this->assertSame('foo', $container->make('foo'));
     }
-
-    public function testExtendContextualBinding()
-    {
-        $container = new Container();
-        $container->when(ContainerExtendConsumesInterfaceStub::class)
-            ->needs(ContainerExtendInterfaceStub::class)
-            ->give(fn () => new ContainerExtendInterfaceImplementationStub('foo'));
-
-        $container->extend(ContainerExtendInterfaceStub::class, function ($instance) {
-            self::assertInstanceOf(ContainerExtendInterfaceImplementationStub::class, $instance);
-            self::assertSame('foo', $instance->value);
-
-            return new ContainerExtendInterfaceImplementationStub('bar');
-        });
-
-        self::assertSame('bar', $container->make(ContainerExtendConsumesInterfaceStub::class)->stub->value);
-    }
-
-    // https://github.com/laravel/framework/issues/53501
-    public function testExtendContextualBindingAfterResolution()
-    {
-        $container = new Container();
-        $container->when(ContainerExtendConsumesInterfaceStub::class)
-            ->needs(ContainerExtendInterfaceStub::class)
-            ->give(fn () => new ContainerExtendInterfaceImplementationStub('foo'));
-
-        $container->make(ContainerExtendConsumesInterfaceStub::class);
-
-        $container->extend(ContainerExtendInterfaceStub::class, function ($instance) {
-            self::assertInstanceOf(ContainerExtendInterfaceImplementationStub::class, $instance);
-            self::assertSame('foo', $instance->value);
-
-            return new ContainerExtendInterfaceImplementationStub('bar');
-        });
-
-        self::assertSame('bar', $container->make(ContainerExtendConsumesInterfaceStub::class)->stub->value);
-    }
 }
 
 class ContainerLazyExtendStub
@@ -233,25 +196,5 @@ class ContainerLazyExtendStub
     public function init()
     {
         static::$initialized = true;
-    }
-}
-
-interface ContainerExtendInterfaceStub
-{
-}
-
-class ContainerExtendInterfaceImplementationStub implements ContainerExtendInterfaceStub
-{
-    public function __construct(
-        public string $value,
-    ) {
-    }
-}
-
-class ContainerExtendConsumesInterfaceStub
-{
-    public function __construct(
-        public ContainerExtendInterfaceStub $stub,
-    ) {
     }
 }

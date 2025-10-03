@@ -2,6 +2,7 @@
 layout: default
 title: Front Matter Extension
 description: The Front Matter extension automatically parses YAML front matter from your Markdown.
+redirect_from: /extensions/front-matter/
 ---
 
 # Front Matter Extension
@@ -67,8 +68,7 @@ Configure your `Environment` as usual and add the `FrontMatterExtension`:
 
 ```php
 use League\CommonMark\Environment\Environment;
-use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
-use League\CommonMark\Extension\FrontMatter\FrontMatterExtension;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;use League\CommonMark\Extension\FrontMatter\FrontMatterExtension;
 use League\CommonMark\Extension\FrontMatter\Output\RenderedContentWithFrontMatter;
 use League\CommonMark\MarkdownConverter;
 

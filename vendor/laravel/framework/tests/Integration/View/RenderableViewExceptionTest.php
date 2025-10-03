@@ -21,7 +21,7 @@ class RenderableViewExceptionTest extends TestCase
         $response->assertSee('This is a renderable exception.');
     }
 
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('view.paths', [__DIR__.'/templates']);
     }

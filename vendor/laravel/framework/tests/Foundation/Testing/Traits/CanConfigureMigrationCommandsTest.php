@@ -17,10 +17,12 @@ class CanConfigureMigrationCommandsTest extends TestCase
 
     private function __reflectAndSetupAccessibleForProtectedTraitMethod($methodName)
     {
-        return new ReflectionMethod(
+        $migrateFreshUsingReflection = new ReflectionMethod(
             get_class($this->traitObject),
             $methodName
         );
+
+        return $migrateFreshUsingReflection;
     }
 
     public function testMigrateFreshUsingDefault(): void

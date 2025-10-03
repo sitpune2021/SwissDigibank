@@ -38,8 +38,8 @@
       <form action="" id="passbookForm">
         @csrf
         <div class="mb-4">
-          <label for="" class="block font-medium mb-2">Account No <span class="text-red-500">*</span></label>
-          <select id="account_id" name="account_id" required
+          <label for="" class="block font-medium mb-2 uppercase">Account No <span class="text-red-500">*</span></label>
+          <select id="account_id" name="account_id"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
             <option value="">Select Account</option>
             @foreach($accounts as $account)
@@ -49,13 +49,13 @@
         </div>
         <!-- HTML -->
         <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Date From <span class="text-red-500">*</span></label>
+          <label class="block font-medium mb-2 uppercase">Date From <span class="text-red-500">*</span></label>
           <input type="text" id="from_date" name="from_date" placeholder="DD/MM/YYYY" autocomplete="off"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
         </div>
 
         <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Date To <span class="text-red-500">*</span></label>
+          <label class="block font-medium mb-2 uppercase">Date To <span class="text-red-500">*</span></label>
           <input type="text" id="to_date" name="to_date" placeholder="DD/MM/YYYY" autocomplete="off"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
         </div>
@@ -70,11 +70,11 @@
 
         <!-- PrintType *-->
         <div class="w-full mt-4 ">
-          <label class="block font-medium mb-2" for="tenure_type">
+          <label class="block font-medium mb-2 uppercase" for="tenure_type">
             Print <span class="text-red-500">*</span>
           </label>
 
-          <div class="flex flex-wrap gap-4">
+          <div class="flex flex-wrap gap-4" id="resultContainer">
             <label class="flex items-center space-x-2 gap-2">
               <input type="radio" name="print" value="front" class="text-blue-600 focus:ring-blue-500">
               <span> FRONT PAGE</span>
@@ -97,7 +97,6 @@
           <button type="submit" class="btn-primary rounded-10 uppercase">
             Search
           </button>
-
         </div>
       </form>
     </div>
@@ -126,8 +125,8 @@
     <!-- Printable Area -->
     <div id="printableArea">
       <div class="print-preview border shadow-sm">
-        <div class="overflow-x-auto ">
-          <table class="w-full border border-gray-300 text-sm mt-8">
+        <div class="overflow-x-auto w-full justify-center ">
+          <!-- <table class="w-full border border-gray-300 text-sm mt-8">
             <thead class="bg-gray-100">
               <tr>
                 <th class="px-2 py-2 border w-1/6 text-left">Date</th>
@@ -138,7 +137,7 @@
                 <th class="px-2 py-2 border w-1/6 text-right">Balance</th>
               </tr>
             </thead>
-          </table>
+          </table> -->
         </div>
       </div>
     </div>
@@ -277,6 +276,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   let currentTransactions = [];
+  let accountData = {};
+
   $('#passbookForm').on('submit', function(e) {
     e.preventDefault();
 
@@ -285,11 +286,17 @@
       type: "POST",
       data: $(this).serialize(),
       success: function(res) {
-        if (res.transactions && res.transactions.length > 0) {
-          currentTransactions = res.transactions; // save data in variable
+        console.log(res.transactions);
+
+        accountData = res.account ?? {};
+        currentTransactions = res.transactions ?? [];
+
+        if (res.printType === "front") {
+          $("#printableArea").html(renderFrontPage(res.account));
+        } else if (res.printType === "statement") {
+          $("#printableArea").html(renderStatement(res.transactions));
         } else {
-          currentTransactions = [];
-          alert("No transactions found!");
+          $("#printableArea").html(renderFullStatement(res.account, res.transactions));
         }
       },
       error: function(xhr) {
@@ -298,147 +305,327 @@
     });
   });
 
+  // 🔹 Print Button Function
   function printPassbook() {
-    if (!currentTransactions || currentTransactions.length === 0) {
+    const printType = $("input[name='print']:checked").val();
+    let html = "";
+    if (printType === "front") {
+
+      html = renderFrontPage(accountData);
+    } else if (printType === "statement") {
+      html = renderStatement(currentTransactions);
+    } else if (printType === "full") {
+      html = renderFullStatement(accountData, currentTransactions);
+    } else {
+      alert("Please select a print option!");
+      return;
+    }
+
+    showPrintWindow(html);
+  }
+
+  function renderFullStatement(accountData, transactions) {
+    if (!transactions || transactions.length === 0) {
       alert("No transactions to print!");
       return;
     }
+
+    let html = `
     
-    let printHtml = `
-    <style>
-        .letterhead {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #000;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
-    }
 
-    .logo {
-      width: 120px;
-      text-align: center;
-    }
+<body style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; display: flex; flex-direction:column; justify-content: center; align-items: flex-start; padding-top: 20px;">
 
-    .logo img {
-      width: 100%;
-      height: 100%;
-    }
+  <div style=" padding: 18px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
 
-    .bank-details {
-      flex: none;
-      text-align: center;
-      padding: 0 15px;
-    }
+    <!-- Main Content -->
+    <div style="display: flex; justify-content: space-between; gap: 20px;">
 
-    .bank-details h1 {
-      font-size: 18px;
-      margin: 0;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    .bank-details p {
-      margin: 3px 0;
-      font-size: 13px;
-    }
-    </style>
-       <div class="letterhead">
-        <!-- Logo -->
-        <div class="logo">
-          <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo">
+      <!-- Left Section -->
+      <div style="flex: 1;">
+        <div>
+          <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Logo" style="height: 100px; width: auto;">
         </div>
-        <!-- Bank Details -->
-        <div class="bank-details">
-          <h1>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA <br> LIMITED</h1>
-          <br>
-          <p>SHEGAON SHEGAON Maharashtra - 110012</p>
-          <p>E: sbcglobalbank@gmail.com | L: 0724-2991230 | M: 9922870805</p>
-          <p>CIN: 969/03-04</p>
+        <div style="border: 1px solid black; padding: 12px; font-size: 13px; line-height: 1.4;">
+          <div style="font-weight: bold; margin-bottom: 6px;">
+
+            ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''}
+          </div>
+          <div>
+            ${[
+            accountData.address?.member_address_line_1,
+            accountData.address?.member_address_line_2,
+            accountData.address?.member_address_area,
+            accountData.address?.member_address_landmark,
+            accountData.address?.member_address_city_district,
+            accountData.address?.member_address_state,
+            accountData.address?.member_address_pincode
+            ].filter(Boolean).join(', ') || '-' }
+          </div>
+          <div style="margin-top: 10px; font-weight: bold;">
+
+            JOINT HOLDER : ${accountData.joint_holder_name ?? '–'}
+          </div>
         </div>
-        <div class="logo"></div>
       </div>
 
+      <!-- Right Section -->
+      <div style="flex: 1; font-size: 13px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="width: 40%; font-weight: bold; padding: 3px 4px; vertical-align: top;">Customer ID</td>
+            <td style="width: 2%; text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="width: 58%; padding: 3px 4px; vertical-align: top;">${accountData.members?.id ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Branch Name</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.branch_name ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Account Type</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.account_holder_type ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Branch Code</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.branch_code ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Account Number</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.account_no ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">IFSC Code</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.ifsc_code ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Branch Address</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.address_line1 ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Joint A/c Holder Name</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.joint_holder_name ?? '–'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Phone</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Mode of Operation</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.operation_mode ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Date of Issue</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.issue_date ?? '-'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Nominee Name</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.nominee?.nominee_name ?? 'Not Reg.'}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Phone</td>
+            <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
+            <td style="padding: 3px 4px; vertical-align: top;">0000000000</td>
+          </tr>
+        </table>
+      </div>
+    </div>
 
-      <div  style="  text-align: right;
-    padding-bottom: 20px;">Date - {{ now()->format('d/m/Y') }}</div>
+  </div>
+</body>
  
- 
-<div style="font-weight: bold; margin-top: 15px; text-align: center;"><h3 >Saving Account Statement</h3></div>
- 
-<table border="1" style=" width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-  <tr>
-    <td style="width: 25%;">Member's Name</td>
-    <td style="width: 25%;">{{ $account->members->member_info_first_name }} {{ $account->members->member_info_last_name }}</td>
-    <td style="width: 25%;">Internal A/c No</td>
-    <td style="width: 25%;">{{ $account->account_no }}</td>
-  </tr>
-  <tr>
-    <td>Virtual A/c No</td>
-    <td></td>
-    <td>IFSC code</td>
-    <td>NA</td>
-  </tr>
-  <tr>
-    <td style="padding: 20px 0;">Address</td>
-<td>
-    @php
-        $address = trim(
-            ($account->members->address->member_address_line_1 ?? '') . ' ' .
-            ($account->members->address->member_address_line_2 ?? '') . ' ' .
-            ($account->members->address->member_address_area ?? '') . ' ' .
-            ($account->members->address->member_address_landmark ?? '') . ' ' .
-            ($account->members->address->member_address_city_district ?? '') . ' ' .
-            ($account->members->address->member_address_state ?? '') . ' ' .
-            ($account->members->address->member_address_pincode ?? '')
-        );
-    @endphp
 
-    {{ $address !== '' ? $address : 'NA' }}
-</td>
-    <td >Scheme</td>
-    <td >{{ $account->scheme->name ?? 'NA' }}</td>
-  </tr>
-  <tr>
-    <td>Opening date</td>
-    <td>{{ \Carbon\Carbon::parse($account->open_date)->format('d/m/Y') }}</td>
-    <td>Interest Rate</td>
-    <td>{{ $account->scheme->interest_rate ?? 0 }}%</td>
-  </tr>
-</table>
-<div style="margin-bottom: 15px; text-align: center;""><p>Statement Period: 29/02/2024  10:26 - 29/09/2024 12:23</p></div>
-
-    <table border="1" cellspacing="0" cellpadding="5" style="width:100%;border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Description</th>
-          <th>Cheque No</th>
-          <th>Debit</th>
-          <th>Credit</th>
-          <th>Balance</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-    currentTransactions.forEach(txn => {
-      printHtml += `
+  <table class="transactions" style="width:100%; text-align:left; border:1px solid black; border-collapse:collapse; margin-top:15px;" border="1">
+    <thead>
       <tr>
-        <td>${txn.date ?? '-'}</td>
-        <td>${txn.description ?? '-'}</td>
-        <td>${txn.cheque_no ?? '-'}</td>
-        <td style="text-align:right">${txn.debit_amount ?? '-'}</td>
-        <td style="text-align:right">${txn.credit_amount ?? '-'}</td>
-        <td style="text-align:right">${txn.balance ?? '-'}</td>
-      </tr>`;
+        <th style="border:1px solid black; border-collapse:collapse;">Date</th>
+        <th style="border:1px solid black; border-collapse:collapse;">Description</th>
+        <th style="border:1px solid black; border-collapse:collapse;">Cheque No</th>
+        <th style="border:1px solid black; border-collapse:collapse;">Debit</th>
+        <th style="border:1px solid black; border-collapse:collapse;">Credit</th>
+        <th style="border:1px solid black; border-collapse:collapse;">Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+    `;
+
+    transactions.forEach(txn => {
+      html += `
+          <tr style="border:1px solid black; border-collapse:collapse;">
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.date ?? '-'}</td>
+            <td style="text-align:left border:1px solid black; border-collapse:collapse;">${txn.description ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.cheque_no ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.debit_amount ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.credit_amount ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.balance ?? '-'}</td>
+          </tr>
+        `;
     });
+    html += `
+        </tbody>
+      </table>
+        </div>
+    `;
 
-    printHtml += `</tbody></table>`;
 
+    return html;
+  }
+
+  function renderFrontPage(accountData) {
+    return ` 
+<body style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 20px;">
+  <style>
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+      }
+      .passbook {
+        width: 100%;
+        height: auto !important;   /* remove fixed height */
+        padding: 0;
+        box-sizing: border-box;
+        font-size: 11px;          /* slightly smaller font */
+        border-bottom:1px solid black;
+      }
+      table {
+        page-break-inside: auto;
+      }
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+    }
+  </style>
+
+  <div class="passbook" style="width: 100%; padding: 15px 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+    <table style="width: 100%; border-collapse: collapse; flex-grow: 1; margin-top: 37px;">
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Customer ID</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.id ?? '-'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Branch Name</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.branch_name ?? '-'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Account Type</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.account_holder_type ?? '-'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Branch Code</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.branch_code ?? '-'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Account Number</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.account_no ?? '-'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">IFSC Code</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.ifsc_code ?? '-'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Account Holder Name</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? '-'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Branch Address</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.address_line1 ?? '-'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Joint A/c Holder Name</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? '–'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Phone</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Mode of Operation</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.operation_mode ?? '-'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Date of Issue</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;"></td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Address</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">
+          ${accountData.address?.member_address_line_1 ?? '-'}
+        </td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Nominee Name</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.nominee?.nominee_name ?? 'Not Reg.'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Phone</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">0000000000</td>
+      </tr>
+    </table>
+    <div style="margin-top: 6px; text-align: right; font-weight: bold; font-size: 12px;">Authorized Signatory</div>
+  </div>
+</body>
+  `;
+  }
+
+  // ✅ Render Statement
+  function renderStatement(transactions) {
+    if (!currentTransactions.length) {
+      return `<p style="color:red; text-align:center;">No transactions found!</p>`;
+    }
+    let html = `
+    <div class="statement" style="width:794px; padding:18px 20px; box-sizing:border-box; font-family:Arial, sans-serif; font-size:12px;">
+      <table class="transactions" style="width:100%; text-align:left; border:1px solid black; border-collapse:collapse; margin-top:15px;" border="1">
+        <thead >
+          <tr>
+            <th style="border:1px solid black; border-collapse:collapse;">Date</th>
+            <th style="border:1px solid black; border-collapse:collapse;">Description</th>
+            <th style="border:1px solid black; border-collapse:collapse;">Cheque No</th>
+            <th style="border:1px solid black; border-collapse:collapse;">Debit</th>
+            <th style="border:1px solid black; border-collapse:collapse;">Credit</th>
+            <th style="border:1px solid black; border-collapse:collapse;">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    transactions.forEach(txn => {
+      html += `
+          <tr style="border:1px solid black; border-collapse:collapse;">
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.date ?? '-'}</td>
+            <td style="text-align:left border:1px solid black; border-collapse:collapse;">${txn.description ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.cheque_no ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.debit_amount ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.credit_amount ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.balance ?? '-'}</td>
+          </tr>
+        `;
+    });
+    html += `
+        </tbody>
+      </table>
+        </div>
+    `;
+    return html;
+
+  }
+
+  function showPrintWindow(content) {
     let printWindow = window.open('', '', 'height=600,width=800');
     printWindow.document.write('<html><head><title>Passbook</title></head><body>');
-    printWindow.document.write(printHtml);
+    printWindow.document.write(content);
     printWindow.document.write('</body></html>');
     printWindow.document.close();
     printWindow.print();

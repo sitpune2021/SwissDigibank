@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 <style>
-       input[type="checkbox"] {
+    input[type="checkbox"] {
         width: 28px;
         height: 28px;
         accent-color: green;
@@ -162,72 +162,74 @@
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr>
-                            <td class="font-semibold px-4 py-2 w-1/3">Member</td>
+                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary hover:underline">
-                                    DEMO-{{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
+                                    {{ $fdAccount->member->member_no 
+    ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} - {{$fdAccount->member?->member_info_first_name ?? 'NA' }}
+                                   
                                 </a>
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold  px-4 py-2">Create on</td>
+                            <td class="font-semibold  px-4 py-2 uppercase">Create on</td>
                             <td class="px-4 py-2">Admin App</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Created by</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Created by</td>
                             <td class="px-4 py-2">Test Test</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">FD No.</td>
+                            <td class="font-semibold px-4 py-2 uppercase">FD No.</td>
                             <td class="px-4 py-2">FD-{{$fdAccount->id}}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Old FD No.</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Old FD No.</td>
                             <td class="px-4 py-2">—</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Scheme</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
                             <td class="px-4 py-2">{{$fdAccount->fdscheme->scheme_name}}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Principal Amount</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Principal Amount</td>
                             <td class="px-4 py-2">₹ {{$fdAccount->fd_amount}}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Open Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Open Date</td>
                             <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdAccount->created_at)->format('d-m-Y') }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Maturity Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
                             <td class="px-4 py-2">{{$fdAccount->maturity_date ?? 'N/A'}}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Tenure of FD/MIS</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Tenure of FD/MIS</td>
                             <td class="px-4 py-2">{{$fdAccount->tenure_year}}Y,{{$fdAccount->tenure_month}}M,{{$fdAccount->tenure_days}}D</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Interest Payout Type</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Interest Payout Type</td>
                             <td class="px-4 py-2">{{$fdAccount->interest_payout_type}}</td>
                         </tr>
 
                         <tr>
-                            <td class="font-semibold px-4 py-2">Close Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
                             <td class="px-4 py-2">—</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                             <td class="px-4 py-2">{{ $fdAnnualIntrest }} %</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Balance Available</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Balance Available</td>
                             <td class="px-4 py-2">₹ {{$fdAccount->fd_amount}}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Status</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Status</td>
                             <td class="px-4 py-2">Fore close approved</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">TDS Deduction</td>
+                            <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
                             <td class="px-4 py-2">
                                 @if($fdAccount->tds_deduction == 1)
                                 <span class="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-600">Yes</span>
@@ -237,17 +239,17 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Special Account</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Special Account</td>
                             <td class="px-4 py-2"><span
                                     class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">IS Lien</td>
+                            <td class="font-semibold px-4 py-2 uppercase">IS Lien</td>
                             <td class="px-4 py-2"><span
                                     class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Sweep In</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Sweep In</td>
                             <td class="px-4 py-2"><span
                                     class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
                         </tr>
@@ -267,17 +269,20 @@
                     <table class="min-w-full text-sm text-left">
                         <tbody class="divide-y divide-gray-200">
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/3">Member Name</td>
-                                <td class="px-4 py-2">{{$fdAccount->member->member_info_first_name??''}}</td>
+                                <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member Name</td>
+                                <td class="px-4 py-2">
+                                  {{ $fdAccount->member->member_no 
+    ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} -   
+                                {{$fdAccount->member->member_info_first_name??''}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Mobile No</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Mobile No</td>
                                 <td class="px-4 py-2">{{$fdAccount->member->member_info_mobile_no??''}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Address</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Address</td>
                                 <td class="px-4 py-2">{{$fdAccount->member->address->member_address_line_1??''}}</td>
                             </tr>
 
@@ -291,10 +296,10 @@
                 <table class="w-full text-sm  ">
                     <thead class="bg-gray-100  text-start">
                         <tr class="text-start">
-                            <th class="px-4 py-2 font-semibold text-start text-gray-700">Status</th>
-                            <th class="px-4 py-2 font-semibold text-start text-gray-700">Remarks</th>
-                            <th class="px-4 py-2 font-semibold text-start text-gray-700">Updated at</th>
-                            <th class="px-4 py-2 font-semibold text-start text-gray-700">Approved By</th>
+                            <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Status</th>
+                            <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Remarks</th>
+                            <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Updated at</th>
+                            <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Approved By</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -315,7 +320,7 @@
                     <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED passbook</h3>
                     <button class="btn-primary px-3 py-2 rounded-3xl text-white">
                         <i class="las la-plus"></i>
-                        passbok
+                        Passbok
                     </button>
                 </div>
             </div>
@@ -523,7 +528,7 @@
             <div class="box dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
                 <!--Old MIS No.-->
                 <form action="" class="mt-3 p-3">
-                    <label for="" class="block ">Old FD No.</label>
+                    <label for="" class="block uppercase">Old FD No.</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <input type="text" name="" id=""
                             class="block w-full bg-secondary/5 px-3 rounded-10 border py-3 dark:text-white"
@@ -537,7 +542,7 @@
                     @csrf
                     @method('PUT')
 
-                    <label for="branch_id" class="block">Branch</label>
+                    <label for="branch_id" class="block uppercase">Branch</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select name="branch_id" id="branch_id"
                             class="w-full rounded-10 border px-3 py-3 bg-secondary/5 dark:bg-bg3 dark:text-white">
@@ -555,7 +560,7 @@
 
                 <!--Advisor/ Staff-->
                 <form action="" class="mt-2 px-3">
-                    <label for="" class="block ">Advisor/ Staff</label>
+                    <label for="" class="block uppercase">Advisor/ Staff</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
        dark:bg-bg3 dark:text-white">
@@ -570,13 +575,13 @@
                 </form>
 
                 <div class=" px-6 flex py-4 flex-row items-start gap-6">
-                    <p class="w-full text-lg  ">Current Chart</p>
+                    <p class="w-full text-lg  uppercase">Current Chart</p>
                     <a href="#" class="text-primary w-full uppercase">None </a>
                 </div>
 
                 <!--Commission Chart-->
                 <form action="" class="mt-2 px-3 pb-4">
-                    <label for="" class="block ">Commission Chart</label>
+                    <label for="" class="block uppercase">Commission Chart</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 border  px-3 py-3  bg-secondary/5
        dark:bg-bg3 dark:text-white">
@@ -603,37 +608,37 @@
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->scheme_name??'NA'}}</td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2">Scheme Code</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->scheme_name}}{{ $fdAccount->fdscheme->id}}</td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2">Minimum Locking Period</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Minimum Locking Period</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->lock_in_period ?? 0}}Months</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Interest Locking Period</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Interest Locking Period</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->fdscheme->interest_lock_in ?? 0}} Months</td>
                             </tr>
 
                             <tr class="bg-gray-50 dark:bg-bg3">
-                                <td class="font-bold px-4 py-2">Bonus Rate</td>
+                                <td class="font-bold px-4 py-2 uppercase">Bonus Rate</td>
                                 <td class="px-4 py-2  text-right md:text-left">{{ $fdAccount->fdscheme->bonus_rate ?? 0.0}} %</td>
                             </tr>
                             <tr class="bg-gray-50 dark:bg-bg3">
-                                <td class="font-bold px-4 py-2">Cancellation Charges</td>
+                                <td class="font-bold px-4 py-2 uppercase">Cancellation Charges</td>
                                 <td class="px-4 py-2  text-right md:text-left">₹ {{ $fdAccount->fdscheme->cancellation_charge ?? 0}}</td>
                             </tr>
                             <tr class="bg-gray-50 dark:bg-bg3">
-                                <td class="font-bold px-4 py-2">Penal Charges (%)</td>
+                                <td class="font-bold px-4 py-2 uppercase">Penal Charges (%)</td>
                                 <td class="px-4 py-2   text-right md:text-left">{{ $fdAccount->fdscheme->penal_charge ?? 0.0}} %</td>
                             </tr>
                             <tr class="bg-gray-50 dark:bg-bg3">
-                                <td class="font-bold px-4 py-2">Min. Amount</td>
+                                <td class="font-bold px-4 py-2 uppercase">Min. Amount</td>
                                 <td class="px-4 py-2  text-right md:text-left">₹ {{ $fdAccount->fdscheme->min_amount ?? 0}}</td>
                             </tr>
 
@@ -664,69 +669,6 @@
                                     <th class="px-4 py-2 text-center font-semibold text-gray-700 border-b">TO</th>
                                 </tr>
                             </thead>
-                            <!-- <tbody>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">1</td>
-                                    <td class="px-3 py-2">30</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">31</td>
-                                    <td class="px-3 py-2">60</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">61</td>
-                                    <td class="px-3 py-2">90</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">91</td>
-                                    <td class="px-3 py-2">120</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">121</td>
-                                    <td class="px-3 py-2">150</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">151</td>
-                                    <td class="px-3 py-2">180</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">181</td>
-                                    <td class="px-3 py-2">210</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">211</td>
-                                    <td class="px-3 py-2">240</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">241</td>
-                                    <td class="px-3 py-2">270</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                                <tr class="text-center border-t">
-                                    <td class="px-3 py-2">271</td>
-                                    <td class="px-3 py-2">300</td>
-                                    <td class="px-3 py-2">5.0 %</td>
-                                    <td class="px-3 py-2">11.0 %</td>
-                                </tr>
-                            </tbody> -->
-
                             <tbody>
                                 @foreach($fdSlabs as $slab)
                                 <tr class="text-center border-t">
@@ -757,37 +699,37 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Maturity Date</td>
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Maturity Date</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->maturity_date}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Principal Amount (A)</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Principal Amount (A)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$fdAccount->fd_amount}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Total Interest (B)</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Total Interest (B)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$totalInterest}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Total TDS Deducted (C)</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Total TDS Deducted (C)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$tds}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Maturity Bonus Amount (D)</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Maturity Bonus Amount (D)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$bonus}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Maturity Amount (A + B + D)</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (A + B + D)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$maturityAmount}}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Net Maturity Amount (A + B + D - C)</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Net Maturity Amount (A + B + D - C)</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{$netMaturityAmount}}</td>
                             </tr>
                         </tbody>
@@ -812,17 +754,17 @@
                     <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Interest Credited</td>
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Interest Credited</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{ number_format($fdAccount->interest_credited ?? 0, 2) }}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Interest Released</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Interest Released</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{ number_format($fdAccount->interest_released ?? 0, 2) }}</td>
                             </tr>
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">TDS Deducted</td>
+                                <td class="font-semibold px-4 py-2 uppercase">TDS Deducted</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ number_format($fdAccount->tds_deducted ?? 0, 2) }}</td>
                             </tr>
                         </tbody>
@@ -848,11 +790,11 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Branch</td>
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Branch</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->branch->branch_name}}</td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2">Joint Account</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Joint Account</td>
                                 <td class="px-4 py-2 text-right md:text-left">
                                     @if(!empty($fdAccount->joint_member_id))
                                     <span class="text-green-600 font-semibold">Yes</span>

@@ -6,14 +6,15 @@ namespace Brick\Math\Tests\Internal\Calculator;
 
 use Brick\Math\Internal\Calculator\NativeCalculator;
 use Brick\Math\Tests\AbstractTestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit tests for class NativeCalculator.
  */
 class NativeCalculatorTest extends AbstractTestCase
 {
-    #[DataProvider('providerAdd')]
+    /**
+     * @dataProvider providerAdd
+     */
     public function testAdd(string $a, string $b, string $expectedValue) : void
     {
         $nativeCalculator = new NativeCalculator();
@@ -33,7 +34,9 @@ class NativeCalculatorTest extends AbstractTestCase
         ];
     }
 
-    #[DataProvider('providerMul')]
+    /**
+     * @dataProvider providerMul
+     */
     public function testMul(string $a, string $b, string $expectedValue) : void
     {
         $nativeCalculator = new NativeCalculator();
@@ -58,7 +61,9 @@ class NativeCalculatorTest extends AbstractTestCase
         ];
     }
 
-    #[DataProvider('providerPow')]
+    /**
+     * @dataProvider providerPow
+     */
     public function testPow(string $a, int $b, string $expectedValue) : void
     {
         $nativeCalculator = new NativeCalculator();

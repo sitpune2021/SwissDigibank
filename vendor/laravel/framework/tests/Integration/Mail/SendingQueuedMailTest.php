@@ -11,7 +11,7 @@ use Orchestra\Testbench\TestCase;
 
 class SendingQueuedMailTest extends TestCase
 {
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('mail.driver', 'array');
 
