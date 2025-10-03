@@ -2,7 +2,7 @@
 
 @section('page-title',
     isset($member)
-    ? 'MEMBERS - ' .
+    ? 'CUSTOMERS - ' .
     $member->member_info_first_name .
     '
     TRANSACTIONS'
@@ -67,7 +67,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    {{ $otherCharges->remarks ?? 'N/A' }}
+                                    {{ $otherCharges->remarks ?? '' }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
@@ -90,7 +90,6 @@
 
                                 </td>
 
-                                {{-- ✅ Actions Column --}}
                                 <td class="px-6 py-4 text-center">
                                     @if ($otherCharges->status === 'DUE')
                                         <div class="flex justify-center">

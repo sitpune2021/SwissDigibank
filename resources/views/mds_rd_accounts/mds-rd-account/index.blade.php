@@ -27,8 +27,8 @@
                     <th class="px-6 py-3 text-center">COLLECTOR</th>
                     <th class="px-6 py-3 text-center">GROUP</th>
                     <th class="px-6 py-3 text-center">RD NO</th>
-                    <th class="px-6 py-3 text-center">MEMBER NO</th>
-                    <th class="px-6 py-3 text-center">MEMBER NAME</th>
+                    <th class="px-6 py-3 text-center">CUSTOMER NO</th>
+                    <th class="px-6 py-3 text-center">CUSTOMER NAME</th>
                     <th class="px-6 py-3 text-center">MINOR</th>
                     <th class="px-6 py-3 text-center">BRANCH</th>
                     <th class="px-6 py-3 text-center">SCHEME</th>

@@ -2,11 +2,11 @@
 
 @section('page-title',
     isset($member)
-    ? 'MEMBERS - ' .
+    ? 'CUSTOMERS - ' .
     $member->member_info_first_name .
     '
     TRANSACTIONS'
-    : 'MEMBERS TRANSACTIONS')
+    : 'CUSTOMERS TRANSACTIONS')
 
 @section('content')
     <div class="main-inner">
@@ -40,6 +40,9 @@
                     </thead>
                     <tbody>
                         @forelse ($transactions as $transaction)
+                        {{-- @php
+                        dd($transactions);
+@endphp --}}
                             <tr>
                                 <td class="px-6 py-4 text-center">
                                     {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}

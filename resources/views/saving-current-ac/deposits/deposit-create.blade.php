@@ -38,21 +38,21 @@
                     @csrf
 
                     <div class="col-span-2 md:col-span-1">
-                        <label for="pan_no" class="block mb-1 font-semibold text-gray-700 uppercase">Member's PAN No</label>
+                        <label for="pan_no" class="block mb-1 font-semibold text-gray-700 uppercase">Customer's PAN No</label>
                         <div class="px-2 py-1 mt-2 text-sm text-green-700 border border-green-500 rounded w-fit">Yes</div>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="block mb-1 font-semibold text-gray-700 uppercase">Member's Sign</label>
+                        <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Sign</label>
                         <div class="p-2 text-sm text-gray-500 border border-yellow-300 rounded bg-yellow-50">
-                            No Signature Present<br>(Upload in Member Documents)
+                            No Signature Present<br>(Upload in Customer Documents)
                         </div>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="block mb-1 font-semibold text-gray-700 uppercase">Member's Photo</label>
+                        <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Photo</label>
                         <div class="p-2 text-sm text-gray-500 border border-yellow-300 rounded bg-yellow-50">
-                            No Photo Present<br>(Upload in Member Documents)
+                            No Photo Present<br>(Upload in Customer Documents)
                         </div>
                     </div>
 
@@ -236,7 +236,7 @@
                 <!-- Content -->
                 <div x-show="open" x-transition class="p-4 text-sm bg-white">
                     <ul class="space-y-2">
-                        <li class="flex justify-between"><strong class="uppercase">Member:</strong><span>{{ $member->accounts->members->member_no 
+                        <li class="flex justify-between"><strong class="uppercase">Customer:</strong><span>{{ $member->accounts->members->member_no 
     ?? ($member->accounts->members->id ? str_pad($member->accounts->members->id, 6, '0', STR_PAD_LEFT) : 'NA') }}-{{ $member->accounts->members->member_info_first_name ?? "NA"}}</span></li>
                         <hr class="my-2 border-gray-300">
                         <li class="flex justify-between"><strong class="uppercase">PAN No.:</strong><span>{{$member->accounts->members?->kyc?->member_kyc_pan_no??'NA'}}</span></li>

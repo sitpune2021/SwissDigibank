@@ -20,7 +20,7 @@
 
         <table class="table table-borderless">
             <tr>
-                <th>Member</th>
+                <th>Customer</th>
                 <td class="font-semibold px-4 py-2">
                     <a href="{{ route('member.show', $ddsAccount->member->id) }}" class="text-primary hover:underline">
                         {{ $ddsAccount->member->id }} -

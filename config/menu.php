@@ -32,12 +32,12 @@ return [
         ],
     ],
     [
-        'title' => 'MEMBER',
+        'title' => 'CUSTOMER',
         'icon' => 'las la-piggy-bank',
         'position' => '4',
         'active' => '1',
         'submenu' => [
-            ['title' => 'MEMBERS', 'route' => 'member.index'],
+            ['title' => 'CUSTOMERS', 'route' => 'member.index'],
             ['title' => 'MINORS', 'route' => 'minor.index'],
             ['title' => 'SHARE HOLDING', 'route' => 'shares-transfer.index'],
             // ['title' => 'Share Certificates', 'route' => 'share-certificates.index'],

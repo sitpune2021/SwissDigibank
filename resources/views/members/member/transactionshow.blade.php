@@ -5,7 +5,7 @@
     $member->member_info_first_name .
     '
     '
-    : 'MEMBERS ')
+    : 'CUSTOMERS ')
 @section('content')
     <div class="main-inner">
         <!-- Header -->
@@ -40,7 +40,7 @@
                 <table class="w-full whitespace-nowrap text-sm text-left">
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         <tr>
-                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
+                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
                             <td class="px-4 py-2">
                                 <a href="{{ route('member.show', $member->id) }}" class="text-primary hover:underline">
                                   {{ $member->id ? str_pad($member->id, 6, '0', STR_PAD_LEFT) : '-' }} - {{ $member->member_info_first_name ?? '' }} {{$member->member_info_last_name ?? ''}}
@@ -118,12 +118,11 @@
             </div>
         </div>
 
-
         <!-- Audit Trail -->
         <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg mt-4">
             <!-- Header -->
             <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-t-lg">
-                <h3 class="text-black font-semibold text-lg">MEMBER ACCOUNT TRANSACTION AUDIT TRAIL</h3>
+                <h3 class="text-black font-semibold text-lg">CUSTOMER ACCOUNT TRANSACTION AUDIT TRAIL</h3>
                 <!-- Toggle Button -->
                 <button class="p-1 rounded transition" onclick="toggleSection(this)">
                     <span class="toggle-icon text-lg font-bold">+</span>

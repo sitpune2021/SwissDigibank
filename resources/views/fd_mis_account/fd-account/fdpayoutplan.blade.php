@@ -170,47 +170,6 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <!-- <script>
-    $(document).ready(function() {
-      $('.process-btn').click(function() {
-        var btn = $(this);
-        var fdId = btn.data('id');
-        var dueDate = btn.data('due');
-
-        var row = btn.closest('tr');
-        var principal = row.find('td:eq(3)').text().replace(/,/g, '');
-        var interest = row.find('td:eq(4)').text().replace(/,/g, '');
-        var tds = row.find('td:eq(5)').text().replace(/,/g, '');
-        var net = row.find('td:eq(6)').text().replace(/,/g, '');
-
-        $.ajax({
-          url: "{{ route('fd.processPayout') }}",
-          type: "POST",
-          data: {
-            _token: "{{ csrf_token() }}",
-            fd_account_id: fdId,
-            due_date: dueDate,
-            principal: principal,
-            interest: interest,
-            tds: tds,
-            net_interest: net
-          },
-          success: function(response) {
-            if (response.success) {
-              // reload page to show next period button
-              location.reload();
-            } else {
-              alert(response.message);
-            }
-          },
-          error: function(err) {
-            alert('Something went wrong!');
-          }
-        });
-      });
-    });
-  </script> -->
-
   <script>
     $(document).ready(function() {
       $('.process-btn').click(function() {

@@ -65,13 +65,13 @@
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                        Member
+                        Customer
                         <span class="text-red-500">*</span>
                     </label>
 
                     <select id="member_id" name="member_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3 capitalize">
-                        <option value="">Select member name</option>
+                        <option value="">Select Customer name</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id', $misaccount->member_id ?? '') == $member->id ? 'selected' : '' }}
@@ -90,22 +90,22 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_name" class="md:text-lg font-medium block mb-4 uppercase">Member Name</label>
+                    <label for="member_name" class="md:text-lg font-medium block mb-4 uppercase">Customer Name</label>
                     <input type="text" id="selected_member_name" name="member_name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3 capitalize"
-                        placeholder="Member Name" readonly>
+                        placeholder="Customer Name" readonly>
                 </div>
                 @error('member_name')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
                 <div class="col-span-2 md:col-span-1">
                     <label for="city" class="md:text-lg font-medium block mb-4 uppercase">
-                        Member Address
+                        Customer Address
                     </label>
 
                     <input type="text" id="selected_member_address" name="member_address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3 capitalize"
-                        placeholder="Member Address" value="" readonly>
+                        placeholder="Customer Address" value="" readonly>
                     @error('member_address')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -398,12 +398,12 @@
                     <div id="accountSelect"
                         class="{{ isset($misaccount) && $misaccount->joint_member_id ? '' : 'hidden' }} mt-4">
                         <label for="joint_member_id" class="md:text-lg font-medium block mb-4 uppercase">
-                            Joint A/C Member <span class="text-red-500">*</span>
+                            Joint A/C Customer <span class="text-red-500">*</span>
                         </label>
 
                         <select name="joint_member_id"
                             class="text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 w-full">
-                            <option value="">Select member or name</option>
+                            <option value="">Select customer or name</option>
                             @foreach ($members as $member)
                                 <option value="{{ $member->id }}" data-fullname="{{ $member->full_name }}"
                                     data-address="{{ $member->address->member_address_line_1 ?? '' }}"

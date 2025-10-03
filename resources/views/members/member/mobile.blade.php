@@ -76,9 +76,9 @@
     ? (!empty($show)
     ? 'VIEW ' .
     $member['member_info_first_name'] .
-    'MEMBERS'
-    : 'EDIT ' . $member['member_info_first_name'] . ' MEMBERS')
-    : 'ADD MEMBERS')
+    'CUSTOMERS'
+    : 'EDIT ' . $member['member_info_first_name'] . ' CUSTOMERS')
+    : 'ADD CUSTOMERS')
 
 @section('content')
     @include('fields.errormessage')

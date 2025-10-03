@@ -23,7 +23,7 @@
 </style>
 @section('page-title',
     isset($member)
-    ? 'MEMBERS - ' .
+    ? 'CUSTOMERS - ' .
     ($member->member_info_first_name ?? $member->member_code) .
     '
     TRANSACTIONS'

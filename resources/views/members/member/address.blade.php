@@ -76,9 +76,9 @@
     ? (!empty($show)
     ? 'VIEW ' .
     $member['member_info_first_name'] .
-    'MEMBERS'
-    : 'EDIT ' . $member['member_info_first_name'] . ' MEMBERS')
-    : 'ADD MEMBERS')
+    'CUSTOMERS'
+    : 'EDIT ' . $member['member_info_first_name'] . ' CUSTOMERS')
+    : 'ADD CUSTOMERS')
 
 @section('content')
     @include('fields.errormessage')
@@ -148,7 +148,7 @@
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (isset($method))
                     <button class="btn-primary" type="submit">
-                        {{ $method === 'PUT' ? 'Update' : 'Save' }} Member
+                        {{ $method === 'PUT' ? 'Update' : 'Save' }} Customer
                     </button>
                 @endif
                 <a href="{{ route('member.index') }}" class="btn-outline inline-flex items-center justify-center">

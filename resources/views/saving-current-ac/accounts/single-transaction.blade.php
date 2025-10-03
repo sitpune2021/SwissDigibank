@@ -42,7 +42,7 @@
         <table class="w-full text-sm text-left border border-gray-300">
             <tbody>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Member</td>
+                    <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Customer</td>
                     <td class="px-4 py-2 text-blue-600 border border-gray-300">{{$transactions->accounts->members->member_info_first_name}}</td>
                 </tr>
                 <tr>

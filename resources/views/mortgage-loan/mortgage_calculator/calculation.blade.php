@@ -1,67 +1,4 @@
 @extends('layout.main')
-
-<style>
-  .breadcrumb {
-    list-style: none;
-    display: flex;
-    padding: 0;
-    margin-bottom: 1rem;
-    font-size: 14px;
-  }
-
-  .breadcrumb li+li::before {
-    content: "/";
-    padding: 0 8px;
-    color: #888;
-  }
-
-  .breadcrumb li a {
-    text-decoration: none;
-    color: #007bff;
-  }
-
-  .breadcrumb li.active {
-    color: #555;
-  }
-
-  .custom-thead {
-    background-color: #e6f4ea;
-    color: #14532d;
-  }
-
-  .custom-thead th {
-    font-weight: 600;
-    border-bottom: 1px solid #ccc;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .custom-thead {
-      background-color: #14532d;
-      color: #d1fae5;
-    }
-  }
-
-  input[type="checkbox"] {
-    width: 28px;
-    height: 28px;
-    accent-color: green;
-    /* For modern browsers */
-  }
-
-  /* Fallback for browsers without accent-color support */
-  input[type="checkbox"]:checked {
-    background-color: green;
-    border: none;
-  }
-
-  input[type="radio"] {
-    width: 24px;
-    height: 24px;
-    accent-color: green;
-    /* Modern browser support */
-  }
-</style>
-
 @section('content')
 
 
@@ -80,53 +17,53 @@
       <!-- Table Body -->
       <tbody class="divide-y divide-gray-200 ">
         <tr class="border">
-          <td class="px-4 py-2  border font-medium">Disburse Date</td>
+          <td class="px-4 py-2  border font-medium uppercase">Disburse Date</td>
           <td class="px-4 py-2 border">19/09/2025</td>
-          <td class="px-4 py-2 border font-medium">Loan Amount</td>
+          <td class="px-4 py-2 border font-medium uppercase">Loan Amount</td>
           <td class="px-4 py-2 border">₹20,000.00</td>
         </tr>
 
         <tr class="border">
-          <td class="px-4 py-2 border font-medium">Interest Type</td>
+          <td class="px-4 py-2 border font-medium uppercase">Interest Type</td>
           <td class="px-4 py-2 border">No Emi</td>
-          <td class="px-4 py-2 border font-medium">Processing Charges</td>
+          <td class="px-4 py-2 border font-medium uppercase">Processing Charges</td>
           <td class="px-4 py-2 border">0 (Incl. 18.0 % GST)</td>
         </tr>
 
         <tr class="border">
-          <td class="px-4 py-2 border font-medium">Insurance Charges</td>
+          <td class="px-4 py-2 border font-medium uppercase">Insurance Charges</td>
           <td class="px-4 py-2 border">0 (Incl. 18.0 % GST)</td>
-          <td class="px-4 py-2 border font-medium">Stamp Duty</td>
+          <td class="px-4 py-2 border font-medium uppercase">Stamp Duty</td>
           <td class="px-4 py-2 border">0 (Incl. 18.0 % GST)</td>
         </tr>
 
         <tr class="border">
-          <td class="px-4 py-2 border font-medium">EMI Payout</td>
+          <td class="px-4 py-2 border font-medium uppercase">EMI Payout</td>
           <td class="px-4 py-2 border">MONTHLY</td>
-          <td class="px-4 py-2 border font-medium">EMI Count</td>
+          <td class="px-4 py-2 border font-medium uppercase">EMI Count</td>
           <td class="px-4 py-2 border">12</td>
         </tr>
 
         <tr class="border">
-          <td class="px-4 py-2 border font-medium">Tenure</td>
+          <td class="px-4 py-2 border font-medium uppercase">Tenure</td>
           <td class="px-4 py-2 border">12 MONTHS</td>
-          <td class="px-4 py-2 border font-medium">Interest Rate (Annually)</td>
+          <td class="px-4 py-2 border font-medium uppercase">Interest Rate (Annually)</td>
           <td class="px-4 py-2 border">20.0 %</td>
         </tr>
 
         <tr class="border">
-          <td class="px-4 py-2 border font-medium">Loan In Ratio</td>
+          <td class="px-4 py-2 border font-medium uppercase">Loan In Ratio</td>
           <td class="px-4 py-2 border">yes No</td>
 
         </tr>
 
         <tr  class="border" >
-          <td class="px-4 py-2 font-medium ">
+          <td class="px-4 py-2 font-medium uppercase">
             First 5 EMIs will Recover 80 % of loan amount.
           </td>
            <td class="px-4 py-2 border-r"></td>
 
-          <td class="px-4 py-2 font-medium ">
+          <td class="px-4 py-2 font-medium uppercase">
             Remaining 7 EMIs will Recover 20 % of loan amount.
           </td>
         </tr>
@@ -140,7 +77,7 @@
     <table class="w-full divide-y divide-gray-300">
       <thead class="">
         <tr class="bg-secondary/5 text-black ">
-          <th colspan="8" class="text-center rounded-10 px-4 py-2 text-lg font-semibold">
+          <th colspan="8" class="text-center rounded-10 px-4 py-2 text-lg font-semibold uppercase">
             EMI CHART
           </th>
         </tr>

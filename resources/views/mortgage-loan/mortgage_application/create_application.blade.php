@@ -1,5 +1,7 @@
 @extends('layout.main')
 
+@section('content')
+
 <style>
     input[type="checkbox"] {
         width: 28px;
@@ -21,10 +23,6 @@
         /* Modern browser support */
     }
 </style>
-
-@section('content')
-
-
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -43,7 +41,7 @@
                 <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10 lg:col-span-12">
                     <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Application Date
                                 <span class="text-red-500">*</span>
                             </label>
@@ -54,40 +52,40 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Member
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                Customer
                                 <span class="text-red-500">*</span>
                             </label>
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 placeholder="Enter Scheme Code">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                             </select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                1st Co-Applicant Member
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                1st Co-Applicant Customer
                             </label>
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 placeholder="Enter Scheme Code">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                             </select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                2nd Co-Applicant Member
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                2nd Co-Applicant Customer
 
                             </label>
 
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 placeholder="Enter Scheme Code">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                             </select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Branch
                                 <span class="text-red-500">*</span>
                             </label>
@@ -100,7 +98,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Advisor/ Staff
 
                             </label>
@@ -113,7 +111,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Guarantor 1
                             </label>
 
@@ -125,7 +123,7 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Guarantor 2
                                 </label>
 
@@ -140,7 +138,7 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Guarantor 3
                                 </label>
                                 <select
@@ -153,7 +151,7 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Guarantor 4
                                 </label>
 
@@ -167,7 +165,7 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Scheme
                                     <span class="text-error">*</span>
                                 </label>
@@ -185,7 +183,7 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Tenure Type
                                     <span class="text-error">*</span>
                                 </label>
@@ -212,7 +210,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Tenure
                                 <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
                                 <span class="text-error">*</span>
@@ -224,7 +222,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 EMI Collection
                                 <span class="text-error">* </span>
                             </label>
@@ -236,7 +234,7 @@
                             </select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Credit Period( EMI Grace Period )(Days)
                                 <span class="text-error">*</span>
                             </label>
@@ -245,7 +243,7 @@
                                 placeholder="0">
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Loan Amount (₹)
                                 <span class="text-error">*</span>
                             </label>
@@ -255,7 +253,7 @@
                                 placeholder="0">
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Insurance Amount (₹)
                                 <span class="text-error">*</span>
                             </label>
@@ -265,7 +263,7 @@
                                 placeholder="Enter Insurance Amount (₹)">
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Net Loan Amount (₹)
                                 <span class="text-error">*</span>
                             </label>
@@ -275,7 +273,7 @@
                                 placeholder="0">
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-3">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                 Purpose of Loan
                                 <span class="text-error">*</span>
                             </label>
@@ -288,7 +286,7 @@
                     <!-- Credit Score Details -->
                     <div class="col-span-12 lg:col-span-12 mb-5">
                         <hr>
-                        <label class="md:text-lg font-medium block mt-3 mb-4">
+                        <label class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                             Credit Score Details
                         </label>
                         <x-credit-score-details /> {{-- :scores="$cibilScores" --}}
@@ -296,7 +294,7 @@
                     <!-- Collect Advance Processing Fee -->
                     <div class="col-span-12  lg:col-span-12">
                         <hr>
-                        <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                        <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                             Collect Advance Processing Fee
                         </label>
                         <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 mb-2 p-3">
@@ -310,7 +308,7 @@
                                         class="w-64 rounded-10 block border dark:bg-bg3 px-3 py-2 text-sm " />
                                 </div>
                             </div>
-                            <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                            <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                                 Collect Processing Fee :
                             </label>
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
@@ -381,7 +379,7 @@
                     {{--memberBox info --}}
                     <div id="memberBox" class="w-full">
                         <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                            <h3 class="text-base capitalize font-semibold md:text-lg">
+                            <h3 class="text-base font-semibold md:text-lg uppercase">
                                 Member Info
                             </h3>
                             <button type="button" class="p-1 rounded transition"
@@ -394,15 +392,15 @@
                                 <table class="w-full text-sm text-left">
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Member Name</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Member Name</td>
                                             <td class="py-2 capitalize">Demo</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Mobile No</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Mobile No</td>
                                             <td class="py-2">5555555555</td>
                                         </tr>
                                         <tr class="">
-                                            <td class="font-semibold py-2 pr-4">Address</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Address</td>
                                             <td class="py-2">Madhya Pradesh</td>
                                         </tr>
 
@@ -415,7 +413,7 @@
                     {{--schemeBox info --}}
                     <div id="schemeBox" class=" mt-5">
                         <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                            <h3 class="text-base font-semibold md:text-lg">
+                            <h3 class="text-base font-semibold md:text-lg uppercase">
                                 Scheme Info
                             </h3>
                             <button type="button" class="p-1 rounded transition"
@@ -428,43 +426,43 @@
                                 <table class="w-full text-sm text-left">
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Scheme Code</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td>
                                             <td class="py-2">SSY17</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Scheme Name</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td>
                                             <td class="py-2">Suvarna shree yojana no emi</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Max Tenure</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td>
                                             <td class="py-2">12 Months</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td>
                                             <td class="py-2">₹ 100,000.00</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against Security</td>
                                             <td class="py-2">80.0 %</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td>
                                             <td class="py-2">₹ 10,000.00</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td>
                                             <td class="py-2">20.0 %</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Interest Type</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
                                             <td class="py-2">No Emi</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Credit Period</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Credit Period</td>
                                             <td class="py-2">1 Days</td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Active</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Active</td>
                                             <td class="py-2">
                                                 <span class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
                                                     Yes
@@ -472,7 +470,7 @@
                                             </td>
                                         </tr>
                                         <tr class="border-b">
-                                            <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
+                                            <td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td>
                                             <td class="py-2">₹</td>
                                         </tr>
                                     </tbody>
@@ -487,7 +485,7 @@
             <div id="itemsContainer"></div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="" class="md:text-lg font-medium block mb-4">
+                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                     Total Security Amount
                 </label>
 
@@ -613,7 +611,7 @@
     <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
                 <div class="flex flex-wrap gap-6">
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Property Type
                             <span class="text-error">*</span>
                         </label>
@@ -629,7 +627,7 @@
                         </select>
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Doc Number
                         </label>
 
@@ -638,7 +636,7 @@
                             placeholder="Enter Doc Number">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Registrar Name
                         </label>
 
@@ -647,7 +645,7 @@
                             placeholder="Enter Registrar Name">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Owner Name
                         </label>
 
@@ -656,7 +654,7 @@
                             placeholder="Enter Owner Name">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Parent Name
                         </label>
                         <input type="text" id="" name=""
@@ -664,7 +662,7 @@
                             placeholder="Enter Property Owner's Parent Name">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Plot No
                         </label>
                         <input type="number" id="" name=""
@@ -672,7 +670,7 @@
                             placeholder="Enter Plot No/ House No">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Tehsil
                         </label>
 
@@ -681,7 +679,7 @@
                             placeholder="Enter Tehsil">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             District
                         </label>
 
@@ -690,7 +688,7 @@
                             placeholder="Enter District">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Area (SQ FT)
                         </label>
 
@@ -706,7 +704,7 @@
                 </label>
                 <div class="flex flex-wrap mt-4 gap-6">
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             East
                         </label>
 
@@ -715,7 +713,7 @@
                             placeholder="Enter East">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             West
                         </label>
 
@@ -724,7 +722,7 @@
                             placeholder="Enter West">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             North
                         </label>
 
@@ -733,7 +731,7 @@
                             placeholder="Enter North">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             South
                         </label>
                         <input type="text" id="" name=""
@@ -743,12 +741,12 @@
 
                 </div>
 
-                 <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                 <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                     Boundaries  as per Technical
                 </label>
                 <div class="flex flex-wrap mt-4 gap-6">
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             East
                         </label>
 
@@ -757,7 +755,7 @@
                             placeholder="Enter East">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             West
                         </label>
 
@@ -766,7 +764,7 @@
                             placeholder="Enter West">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             North
                         </label>
 
@@ -775,7 +773,7 @@
                             placeholder="Enter North">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             South
                         </label>
                         <input type="text" id="" name=""
@@ -783,7 +781,7 @@
                             placeholder="Enter South">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Expected Value
                             <span class="text-red-500" >*</span>
                         </label>
@@ -792,7 +790,7 @@
                             placeholder="Enter Expected Value">
                     </div>
                     <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Registered
                         </label>
                         <select
@@ -803,7 +801,7 @@
                         </select>
                     </div>
                      <div class="w-1/2 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                            Action
                         </label>
                             <button class="btn-error text-white justify-center rounded-10 px-4 py-2 remove-item"><i class="las la-times"></i>Remove</button>

@@ -57,7 +57,7 @@
                 <!-- Member -->
                 <div class="mt-4">
                     <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
-                        Member <span class="text-red-500">*</span>
+                        Customer <span class="text-red-500">*</span>
                     </label>
                     <select class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         {{-- First show selected member --}}
@@ -102,14 +102,19 @@
                 <!-- Joint Account Member -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
-                        Joint Account Member
+                        Joint Account Customer
                     </label>
                     <select
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         <option value="">Please Select Member</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">
-                            Demo-{{ $member->id }} - {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
+                            {{
+    $member->member_no 
+        ?? ($member->id 
+            ? str_pad($member->id, 6, '0', STR_PAD_LEFT) 
+            : '')
+}} - {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
                         </option>
                         @endforeach
                     </select>
@@ -158,10 +163,10 @@
                 <table class="w-full text-sm">
                     <tbody>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Member</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Customer</td>
                             <td class="py-2">
                                 <a href="#" class="text-green-600 hover:underline">
-                                   {{ $fdAccountDetail->member->member_info_first_name }}
+                                    {{ $fdAccountDetail->member->member_info_first_name }}
                                 </a>
                             </td>
                         </tr>

@@ -162,7 +162,7 @@
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr>
-                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
+                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">CUSTOMER</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary hover:underline">
                                     {{ $fdAccount->member->member_no 
@@ -261,7 +261,7 @@
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b px-4 py-3 bg-red-100">
-                    <h3 class="text-lg font-semibold text-blacj">MEMBER DETAILS</h3>
+                    <h3 class="text-lg font-semibold text-blacj">CUSTOMER DETAILS</h3>
                 </div>
 
                 <!-- Body -->
@@ -269,7 +269,7 @@
                     <table class="min-w-full text-sm text-left">
                         <tbody class="divide-y divide-gray-200">
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member Name</td>
+                                <td class="font-semibold px-4 py-2 w-1/3 uppercase">CUSTOMER Name</td>
                                 <td class="px-4 py-2">
                                   {{ $fdAccount->member->member_no 
     ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} -   

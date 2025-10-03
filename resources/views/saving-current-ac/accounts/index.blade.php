@@ -25,7 +25,7 @@
                         'SCHEME',
                         'A/C NO.',
                         'JOINT A/C',
-                        'MEMBER NAME',
+                        'CUSTOMER NAME',
                         'BALANCE',
                         'ACTION',
                         ];

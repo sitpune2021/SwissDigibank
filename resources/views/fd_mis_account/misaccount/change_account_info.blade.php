@@ -90,11 +90,11 @@
                 <!-- Member -->
                 <div class="mt-4">
                     <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
-                        Member <span class="text-red-500">*</span>
+                        Customer <span class="text-red-500">*</span>
                     </label>
                     <select name="member_id"
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach($members as $id => $name)
                             <option value="{{ $id }}" {{ $account->member_id == $id ? 'selected' : '' }}>
                                 {{ $name }}
@@ -125,11 +125,11 @@
                    <!-- Joint Account Member -->
                 <div class="mt-4" id="jointAccountInput">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
-                        Joint Account Member
+                        Joint Account Customer
                     </label>
                     <select name="joint_member_id"
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
-                        <option value="">-- Select Joint Member --</option>
+                        <option value="">-- Select Joint Customer --</option>
                         @foreach($jointMembers as $id => $name)
                             <option value="{{ $id }}" {{ $account->joint_member_id == $id ? 'selected' : '' }}>
                                 {{ $name }}
@@ -190,7 +190,7 @@
                 <table class="w-full text-sm">
                     <tbody>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Member</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Customer</td>
                             <td class="py-2">
                                 <a href="#" class="text-green-600 hover:underline">
                                     DEMO-01231 - PRATIK
