@@ -23,13 +23,10 @@ use Symfony\Component\Console\Output\StreamOutput;
  */
 class ProcOutputPager extends StreamOutput implements OutputPager
 {
-    /** @var ?resource */
-    private $proc = null;
-    /** @var ?resource */
-    private $pipe = null;
-    /** @var resource */
+    private $proc;
+    private $pipe;
     private $stream;
-    private string $cmd;
+    private $cmd;
 
     /**
      * Constructor.
@@ -56,13 +53,9 @@ class ProcOutputPager extends StreamOutput implements OutputPager
         $pipe = $this->getPipe();
         if (false === @\fwrite($pipe, $message.($newline ? \PHP_EOL : ''))) {
             // @codeCoverageIgnoreStart
-            // When the message is sufficiently long, writing to the pipe fails
-            // if the pager process is closed before the entire message is read.
-            //
-            // This is a normal condition, so we just close the pipe and return.
+            // should never happen
             $this->close();
-
-            return;
+            throw new \RuntimeException('Unable to write output');
             // @codeCoverageIgnoreEnd
         }
 

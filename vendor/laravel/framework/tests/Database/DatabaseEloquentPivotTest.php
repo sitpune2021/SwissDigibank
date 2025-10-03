@@ -35,7 +35,6 @@ class DatabaseEloquentPivotTest extends TestCase
         $this->assertSame('connection', $pivot->getConnectionName());
         $this->assertSame('table', $pivot->getTable());
         $this->assertTrue($pivot->exists);
-        $this->assertSame($parent, $pivot->pivotParent);
     }
 
     public function testMutatorsAreCalledFromConstructor()

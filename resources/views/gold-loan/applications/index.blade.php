@@ -89,7 +89,7 @@
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $application->member_id }}
+                    {{ $application->member_id??'' }}
                 </a>
             </td>
 

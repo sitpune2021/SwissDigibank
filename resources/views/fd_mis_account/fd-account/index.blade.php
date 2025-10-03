@@ -94,14 +94,16 @@
                 <tbody>
 
                     @foreach ($accounts as $account)
-
+        
                     <tr>
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
                         <td class="px-6 py-3">
                             <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:blue;">{{ "FD-".$account->id }}</a>
                         </td>
-                        <td class="px-6 py-3">{{ $account->member->id ?? '-' }}</td>
+                        <td class="px-6 py-3">{{ $account->member->member_no 
+                         ?? ($account->member->id ? str_pad($account->member->id, 6, '0', STR_PAD_LEFT) : '-') }}
+                        </td>
                         <td class="px-6 py-3">{{ $account->member->member_info_first_name ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->minor_id ? 'Yes' : 'No' }}</td>
                         <td class="px-6 py-3">{{ $account->branch->branch_name ?? '-' }}</td>

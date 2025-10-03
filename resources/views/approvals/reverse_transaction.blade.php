@@ -17,7 +17,7 @@
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                            BRANCH
+                                BRANCH
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -77,7 +77,14 @@
                             <td class="py-5 px-6">{{ $transaction->accounts?->branches?->branch_name ?? '' }}</td>
                             <!-- <td class="py-5 px-6"></td> -->
                             <td class="py-5 px-6">
-                                <a href="#" class="text-blue-600 hover:text-blue-800 underline">{{ $transaction->accounts?->members?->member_info_first_name ?? ''  }}</a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 underline">{{
+    ($transaction->accounts?->members?->member_no 
+        ?? ($transaction->accounts?->members?->id 
+            ? str_pad($transaction->accounts->members->id, 6, '0', STR_PAD_LEFT) 
+            : '-'))
+    . ' - ' . 
+    ($transaction->accounts?->members?->member_info_first_name ?? 'N/A')
+}}</a>
                             </td>
                             <td class="py-5 px-6">{{ $transaction?->accounts?->account_type?? '' }}</td>
                             <td class="py-5 px-6">

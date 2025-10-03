@@ -11,17 +11,18 @@ use App\Models\Branch;
 use App\Models\Scheme;
 use App\Models\LoanApplication;
 use App\Models\LoanCreditScore;
+use Illuminate\Support\Facades\Log;
 
 class GoldLoanController extends Controller
 {
-    
-     public function index()
+
+    public function index()
     {
         // saare gold loan schemes fetch karenge
         $schemes = GoldLoanScheme::all();
         return view("gold-loan.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
 
     public function create()
     {
@@ -40,11 +41,30 @@ class GoldLoanController extends Controller
             'annual_interest_rate' => 'required|numeric',
         ]);
 
-        // save data
-        GoldLoanScheme::create($request->all());
+        try {
+            // Add is_active = 0
+            $data = array_merge($validated, ['is_active' => 0]);
 
-        return redirect()->route('gold-loan.schemes.index')
-                         ->with('success', 'Scheme created successfully!');
+            // Save data
+            $scheme = GoldLoanScheme::create($data);
+
+            // Log success
+            Log::info('Gold Loan Scheme created successfully', [
+                'scheme_id' => $scheme->id,
+                'scheme_code' => $scheme->scheme_code
+            ]);
+
+            return redirect()->route('gold-loan.schemes.index')
+                ->with('success', 'Scheme created successfully!');
+        } catch (\Exception $e) {
+            // Log error
+            Log::error('Error creating Gold Loan Scheme: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+                'exception' => $e
+            ]);
+
+            return back()->withErrors(['error' => 'An error occurred while creating the scheme. Please try again.']);
+        }
     }
 
     public function show($id)
@@ -66,24 +86,26 @@ class GoldLoanController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('gold-loan.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
 
-    
+
     public function view($id)
     {
         $scheme = GoldLoanScheme::findOrFail($id);
         return view("gold-loan.schemes.view", compact('scheme'));
     }
 
-        public function calculator(){
+    public function calculator()
+    {
         return view("gold-loan.calculator.index");
     }
-        public function calculation(){
+    public function calculation()
+    {
         return view("gold-loan.calculator.calculation");
     }
 
-     // GoldLoanController.php
+    // GoldLoanController.php
     public function appindex()
     {
         // सभी loan applications fetch करें
@@ -93,15 +115,16 @@ class GoldLoanController extends Controller
     }
 
 
-    public function appcreate() {
+    public function appcreate()
+    {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no')->get();
         $branch = Branch::all();
         $scheme = GoldLoanScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("gold-loan.applications.create", compact('members','branch','scheme','banks'));
+        return view("gold-loan.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-   
+
     public function storeLoanApplication(Request $request)
     {
         // Loan Application Save
@@ -157,8 +180,8 @@ class GoldLoanController extends Controller
                     'cibil_type'       => $type,
                     'cibil_score'      => $request->cibil_score[$index] ?? null,
                     'report_date'      => isset($request->report_date[$index])
-                                            ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
-                                            : null,
+                        ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                        : null,
                     'report_file_path' => $filePath,
                 ]);
             }
@@ -201,7 +224,7 @@ class GoldLoanController extends Controller
     }
 
 
-   public function appedit($id)
+    public function appedit($id)
     {
         $application = LoanApplication::with(['member', 'scheme'])->findOrFail($id);
 
@@ -212,7 +235,7 @@ class GoldLoanController extends Controller
         $scheme = GoldLoanScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view('gold-loan.applications.create', compact('application', 'members', 'schemes','branch', 'scheme','banks'));
+        return view('gold-loan.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks'));
     }
 
     public function appupdate(Request $request, $id)
@@ -234,27 +257,30 @@ class GoldLoanController extends Controller
     }
 
 
-     public function showEmiChart(){
+    public function showEmiChart()
+    {
         // $banks = Bank::all(); // or your logic here
         return view("gold-loan.applications.view-buttons.show-emi-chart");
     }
-     public function showdisbursesetting(){
-        
+    public function showdisbursesetting()
+    {
+
         return view("gold-loan.applications.view-buttons.disburse-setting");
     }
 
-     public function col_process_fee(){
-        
+    public function col_process_fee()
+    {
+
         return view("gold-loan.applications.view-buttons.col_process_fee");
     }
-    public function upload_documents(){
-        
+    public function upload_documents()
+    {
+
         return view("gold-loan.applications.upload_documents");
     }
-     public function upload_cibil_score(){
-        
+    public function upload_cibil_score()
+    {
+
         return view("gold-loan.applications.upload-cibil-score");
     }
-
-    
 }

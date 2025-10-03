@@ -35,7 +35,8 @@
                             @if ($item->member)
                             <a href="{{ route('member.show', $item?->member?->id??'') }}"
                                 class="text-primary hover:underline">
-                                {{ $item->member?->member_info_first_name ??'' }}
+                               {{ $item->member?->member_no 
+    ?? ($item->member?->id ? str_pad($item->member->id, 6, '0', STR_PAD_LEFT) : '') }}- {{ $item->member?->member_info_first_name ??'' }}
                             </a>
                             @else
                             <a href="{{ route('promotor.show',  base64_encode($item?->promotor?->id??'')) }}"

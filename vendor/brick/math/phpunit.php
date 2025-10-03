@@ -6,7 +6,10 @@ use Brick\Math\Internal\Calculator;
 
 require __DIR__ . '/vendor/autoload.php';
 
-function getCalculatorImplementation(): Calculator
+/**
+ * @return Calculator
+ */
+function getCalculatorImplementation()
 {
     switch ($calculator = \getenv('CALCULATOR')) {
         case 'GMP':

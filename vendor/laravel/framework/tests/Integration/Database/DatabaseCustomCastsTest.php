@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Stringable;
+use Illuminate\Support\Str;
 
 class DatabaseCustomCastsTest extends DatabaseTestCase
 {
@@ -42,7 +42,7 @@ class DatabaseCustomCastsTest extends DatabaseTestCase
         $model->array_object = ['name' => 'Taylor'];
         $model->array_object_json = ['name' => 'Taylor'];
         $model->collection = collect(['name' => 'Taylor']);
-        $model->stringable = new Stringable('Taylor');
+        $model->stringable = Str::of('Taylor');
         $model->password = Hash::make('secret');
 
         $model->save();
@@ -90,7 +90,7 @@ class DatabaseCustomCastsTest extends DatabaseTestCase
             'array_object' => ['name' => 'Taylor'],
             'array_object_json' => ['name' => 'Taylor'],
             'collection' => collect(['name' => 'Taylor']),
-            'stringable' => new Stringable('Taylor'),
+            'stringable' => Str::of('Taylor'),
             'password' => Hash::make('secret'),
         ]);
 

@@ -24,7 +24,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableSetsRecipientsCorrectly()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new WelcomeMailableStub;
         $mailable->to('taylor@laravel.com');
@@ -108,7 +114,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableSetsCcRecipientsCorrectly()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new WelcomeMailableStub;
         $mailable->cc('taylor@laravel.com');
@@ -199,7 +211,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableSetsBccRecipientsCorrectly()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new WelcomeMailableStub;
         $mailable->bcc('taylor@laravel.com');
@@ -290,7 +308,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableSetsReplyToCorrectly()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new WelcomeMailableStub;
         $mailable->replyTo('taylor@laravel.com');
@@ -370,7 +394,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableSetsFromCorrectly()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new WelcomeMailableStub;
         $mailable->from('taylor@laravel.com');
@@ -600,7 +630,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableMetadataGetsSent()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $view = m::mock(Factory::class);
 
@@ -635,7 +671,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableTagGetsSent()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $view = m::mock(Factory::class);
 
@@ -787,7 +829,13 @@ class MailMailableTest extends TestCase
 
     public function testHasAttachmentWithEnvelopeAttachments()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
         $mailable = new class extends Mailable
         {
             public function envelope()
@@ -986,7 +1034,13 @@ class MailMailableTest extends TestCase
 
     public function testAssertHasAttachment()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new class() extends Mailable
         {
@@ -1016,7 +1070,13 @@ class MailMailableTest extends TestCase
 
     public function testAssertHasAttachedData()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new class() extends Mailable
         {
@@ -1074,7 +1134,13 @@ class MailMailableTest extends TestCase
 
     public function testAssertHasSubject()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new class() extends Mailable
         {
@@ -1128,7 +1194,13 @@ class MailMailableTest extends TestCase
 
     public function testMailableAttributesInBuild()
     {
-        $this->stubMailer();
+        Container::getInstance()->instance('mailer', new class
+        {
+            public function render()
+            {
+                //
+            }
+        });
 
         $mailable = new class() extends Mailable
         {
@@ -1154,32 +1226,6 @@ class MailMailableTest extends TestCase
         $mailable->assertHasMetadata('origin', 'test-suite');
         $mailable->assertHasMetadata('user_id', 1);
         $mailable->assertHasSubject('test subject');
-    }
-
-    public function testMailablesCanBeTapped()
-    {
-        $this->stubMailer();
-
-        $mail = new WelcomeMailableStub;
-
-        $mail->tap(fn ($mailable) => $mailable->to('taylor@laravel.com', 'Taylor Otwell'));
-        $mail->tap(fn ($mailable) => $mailable->subject('Test Subject!'));
-
-        $mail->tap(function ($mailable) {
-            $mailable->assertTo('taylor@laravel.com')
-                ->assertHasSubject('Test Subject!');
-        });
-    }
-
-    protected function stubMailer()
-    {
-        Container::getInstance()->instance('mailer', new class
-        {
-            public function render()
-            {
-                //
-            }
-        });
     }
 }
 
@@ -1209,7 +1255,7 @@ class WelcomeMailableStub extends Mailable
     public function build()
     {
         $this->with('first_name', 'Taylor')
-            ->withLastName('Otwell');
+             ->withLastName('Otwell');
     }
 }
 

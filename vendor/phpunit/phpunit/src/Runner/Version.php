@@ -16,7 +16,9 @@ use function implode;
 use function str_contains;
 use SebastianBergmann\Version as VersionId;
 
-
+/**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ */
 final class Version
 {
     private static string $pharVersion = '';
@@ -32,7 +34,7 @@ final class Version
         }
 
         if (self::$version === '') {
-            self::$version = (new VersionId('11.5.27', dirname(__DIR__, 2)))->asString();
+            self::$version = (new VersionId('11.4.2', dirname(__DIR__, 2)))->asString();
         }
 
         return self::$version;

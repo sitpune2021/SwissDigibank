@@ -3,7 +3,6 @@
 namespace Illuminate\Tests\Database;
 
 use BadMethodCallException;
-use Carbon\Carbon;
 use Closure;
 use DateTime;
 use Illuminate\Contracts\Database\Query\ConditionExpression;
@@ -630,134 +629,6 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([0 => '22:00'], $builder->getBindings());
     }
 
-    public function testWherePast()
-    {
-        Carbon::setTestNow('2022-04-20 23:45:06.123456');
-
-        $testDate = Carbon::create('2022-04-20 23:45:06.123456');
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->wherePast('published_at');
-        $this->assertSame('select * from "posts" where "published_at" < ?', $builder->toSql());
-        $this->assertEquals([0 => $testDate], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWherePast('published_at');
-        $this->assertSame('select * from "posts" where "id" = ? or "published_at" < ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => $testDate], $builder->getBindings());
-    }
-
-    public function testWherePastUsesArray()
-    {
-        Carbon::setTestNow('2022-04-20 12:34:56.123456');
-
-        $testDate = Carbon::create('2022-04-20 12:34:56.123456');
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->wherePast(['published_at', 'held_at']);
-        $this->assertSame('select * from "posts" where "published_at" < ? and "held_at" < ?', $builder->toSql());
-        $this->assertEquals([0 => $testDate, 1 => $testDate], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWherePast(['published_at', 'held_at']);
-        $this->assertSame('select * from "posts" where "id" = ? or "published_at" < ? or "held_at" < ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => $testDate, 2 => $testDate], $builder->getBindings());
-    }
-
-    public function testWhereTodayMySQL()
-    {
-        Carbon::setTestNow('2022-04-20 12:34:56.123456');
-
-        $builder = $this->getMySqlBuilder();
-        $builder->select('*')->from('posts')->whereToday('published_at');
-        $this->assertSame('select * from `posts` where date(`published_at`) = ?', $builder->toSql());
-        $this->assertEquals([0 => '2022-04-20'], $builder->getBindings());
-
-        $builder = $this->getMySqlBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWhereToday('published_at');
-        $this->assertSame('select * from `posts` where `id` = ? or date(`published_at`) = ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => '2022-04-20'], $builder->getBindings());
-    }
-
-    public function testPassingArrayToWhereTodayMySQL()
-    {
-        Carbon::setTestNow('2022-04-20 12:34:56.123456');
-
-        $builder = $this->getMySqlBuilder();
-        $builder->select('*')->from('posts')->whereToday(['published_at', 'held_at']);
-        $this->assertSame('select * from `posts` where date(`published_at`) = ? and date(`held_at`) = ?', $builder->toSql());
-        $this->assertEquals([0 => '2022-04-20', 1 => '2022-04-20'], $builder->getBindings());
-
-        $builder = $this->getMySqlBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWhereToday(['published_at', 'held_at']);
-        $this->assertSame('select * from `posts` where `id` = ? or date(`published_at`) = ? or date(`held_at`) = ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => '2022-04-20', 2 => '2022-04-20'], $builder->getBindings());
-    }
-
-    public function testWhereTodaySqlServer()
-    {
-        Carbon::setTestNow('2022-04-20 12:34:56.123456');
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('posts')->whereToday('published_at');
-        $this->assertSame('select * from [posts] where cast([published_at] as date) = ?', $builder->toSql());
-        $this->assertEquals([0 => '2022-04-20'], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWhereToday('published_at');
-        $this->assertSame('select * from [posts] where [id] = ? or cast([published_at] as date) = ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => '2022-04-20'], $builder->getBindings());
-    }
-
-    public function testPassingArrayToWhereTodaySqlServer()
-    {
-        Carbon::setTestNow('2022-04-20 12:34:56.123456');
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('posts')->whereToday(['published_at', 'held_at']);
-        $this->assertSame('select * from [posts] where cast([published_at] as date) = ? and cast([held_at] as date) = ?', $builder->toSql());
-        $this->assertEquals([0 => '2022-04-20', 1 => '2022-04-20'], $builder->getBindings());
-
-        $builder = $this->getSqlServerBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWhereToday(['published_at', 'held_at']);
-        $this->assertSame('select * from [posts] where [id] = ? or cast([published_at] as date) = ? or cast([held_at] as date) = ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => '2022-04-20', 2 => '2022-04-20'], $builder->getBindings());
-    }
-
-    public function testWhereFuture()
-    {
-        Carbon::setTestNow('2022-04-22 21:01:23.123456');
-
-        $testDate = Carbon::create('2022-04-22 21:01:23.123456');
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->whereFuture('published_at');
-        $this->assertSame('select * from "posts" where "published_at" > ?', $builder->toSql());
-        $this->assertEquals([0 => $testDate], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWhereFuture('published_at');
-        $this->assertSame('select * from "posts" where "id" = ? or "published_at" > ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => $testDate], $builder->getBindings());
-    }
-
-    public function testPassingArrayToWhereFuture()
-    {
-        Carbon::setTestNow('2022-04-22 01:23:45.123456');
-
-        $testDate = Carbon::create('2022-04-22 01:23:45.123456');
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->whereFuture(['published_at', 'held_at']);
-        $this->assertSame('select * from "posts" where "published_at" > ? and "held_at" > ?', $builder->toSql());
-        $this->assertEquals([0 => $testDate, 1 => $testDate], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('posts')->where('id', '=', 1)->orWhereFuture(['published_at', 'held_at']);
-        $this->assertSame('select * from "posts" where "id" = ? or "published_at" > ? or "held_at" > ?', $builder->toSql());
-        $this->assertEquals([0 => 1, 1 => $testDate, 2 => $testDate], $builder->getBindings());
-    }
-
     public function testWhereLikePostgres()
     {
         $builder = $this->getPostgresBuilder();
@@ -1381,27 +1252,27 @@ class DatabaseQueryBuilderTest extends TestCase
     public function testWhereFulltextMySql()
     {
         $builder = $this->getMySqlBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World');
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World');
         $this->assertSame('select * from `users` where match (`body`) against (? in natural language mode)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getMySqlBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World', ['expanded' => true]);
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World', ['expanded' => true]);
         $this->assertSame('select * from `users` where match (`body`) against (? in natural language mode with query expansion)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getMySqlBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', '+Hello -World', ['mode' => 'boolean']);
+        $builder->select('*')->from('users')->whereFulltext('body', '+Hello -World', ['mode' => 'boolean']);
         $this->assertSame('select * from `users` where match (`body`) against (? in boolean mode)', $builder->toSql());
         $this->assertEquals(['+Hello -World'], $builder->getBindings());
 
         $builder = $this->getMySqlBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', '+Hello -World', ['mode' => 'boolean', 'expanded' => true]);
+        $builder->select('*')->from('users')->whereFulltext('body', '+Hello -World', ['mode' => 'boolean', 'expanded' => true]);
         $this->assertSame('select * from `users` where match (`body`) against (? in boolean mode)', $builder->toSql());
         $this->assertEquals(['+Hello -World'], $builder->getBindings());
 
         $builder = $this->getMySqlBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText(['body', 'title'], 'Car,Plane');
+        $builder->select('*')->from('users')->whereFulltext(['body', 'title'], 'Car,Plane');
         $this->assertSame('select * from `users` where match (`body`, `title`) against (? in natural language mode)', $builder->toSql());
         $this->assertEquals(['Car,Plane'], $builder->getBindings());
     }
@@ -1409,37 +1280,37 @@ class DatabaseQueryBuilderTest extends TestCase
     public function testWhereFulltextPostgres()
     {
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World');
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World');
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body")) @@ plainto_tsquery(\'english\', ?)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World', ['language' => 'simple']);
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World', ['language' => 'simple']);
         $this->assertSame('select * from "users" where (to_tsvector(\'simple\', "body")) @@ plainto_tsquery(\'simple\', ?)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World', ['mode' => 'plain']);
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World', ['mode' => 'plain']);
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body")) @@ plainto_tsquery(\'english\', ?)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World', ['mode' => 'phrase']);
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World', ['mode' => 'phrase']);
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body")) @@ phraseto_tsquery(\'english\', ?)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', '+Hello -World', ['mode' => 'websearch']);
+        $builder->select('*')->from('users')->whereFulltext('body', '+Hello -World', ['mode' => 'websearch']);
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body")) @@ websearch_to_tsquery(\'english\', ?)', $builder->toSql());
         $this->assertEquals(['+Hello -World'], $builder->getBindings());
 
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText('body', 'Hello World', ['language' => 'simple', 'mode' => 'plain']);
+        $builder->select('*')->from('users')->whereFulltext('body', 'Hello World', ['language' => 'simple', 'mode' => 'plain']);
         $this->assertSame('select * from "users" where (to_tsvector(\'simple\', "body")) @@ plainto_tsquery(\'simple\', ?)', $builder->toSql());
         $this->assertEquals(['Hello World'], $builder->getBindings());
 
         $builder = $this->getPostgresBuilderWithProcessor();
-        $builder->select('*')->from('users')->whereFullText(['body', 'title'], 'Car Plane');
+        $builder->select('*')->from('users')->whereFulltext(['body', 'title'], 'Car Plane');
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body") || to_tsvector(\'english\', "title")) @@ plainto_tsquery(\'english\', ?)', $builder->toSql());
         $this->assertEquals(['Car Plane'], $builder->getBindings());
     }
@@ -3493,17 +3364,6 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([1 => 'bar', 10 => 'baz'], $results->all());
     }
 
-    public function testPluckAvoidsDuplicateColumnSelection()
-    {
-        $builder = $this->getBuilder();
-        $builder->getConnection()->shouldReceive('select')->once()->with('select "foo" from "users" where "id" = ?', [1], true)->andReturn([['foo' => 'bar']]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [['foo' => 'bar']])->andReturnUsing(function ($query, $results) {
-            return $results;
-        });
-        $results = $builder->from('users')->where('id', '=', 1)->pluck('foo', 'foo');
-        $this->assertEquals(['bar' => 'bar'], $results->all());
-    }
-
     public function testImplode()
     {
         // Test without glue.
@@ -3718,9 +3578,9 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $builder = $this->getBuilder()->select('*')->from('users')->where('email', '=', function ($q) {
             $q->select(new Raw('max(id)'))
-                ->from('users')->where('email', '=', 'bar')
-                ->orderByRaw('email like ?', '%.com')
-                ->groupBy('id')->having('id', '=', 4);
+              ->from('users')->where('email', '=', 'bar')
+              ->orderByRaw('email like ?', '%.com')
+              ->groupBy('id')->having('id', '=', 4);
         })->orWhere('id', '=', 'foo')->groupBy('id')->having('id', '=', 5);
         $this->assertEquals([0 => 'bar', 1 => 4, 2 => '%.com', 3 => 'foo', 4 => 5], $builder->getBindings());
     }
@@ -4215,9 +4075,9 @@ class DatabaseQueryBuilderTest extends TestCase
         $result = $builder->from('users')
             ->join('orders', function ($join) {
                 $join->on('users.id', '=', 'orders.user_id')
-                    ->where('users.id', '=', 1);
+                   ->where('users.id', '=', 1);
             })->where('name', 'baz')
-            ->updateFrom(['email' => 'foo', 'name' => 'bar']);
+           ->updateFrom(['email' => 'foo', 'name' => 'bar']);
         $this->assertEquals(1, $result);
     }
 
@@ -4567,11 +4427,11 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $connection = $this->createMock(ConnectionInterface::class);
         $connection->expects($this->once())
-            ->method('update')
-            ->with(
-                'update `users` set `name` = json_set(`name`, \'$."first_name"\', ?), `name` = json_set(`name`, \'$."last_name"\', ?) where `active` = ?',
-                ['John', 'Doe', 1]
-            );
+                    ->method('update')
+                    ->with(
+                        'update `users` set `name` = json_set(`name`, \'$."first_name"\', ?), `name` = json_set(`name`, \'$."last_name"\', ?) where `active` = ?',
+                        ['John', 'Doe', 1]
+                    );
 
         $builder = new Builder($connection, $grammar, $processor);
 
@@ -4585,11 +4445,11 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $connection = $this->createMock(ConnectionInterface::class);
         $connection->expects($this->once())
-            ->method('update')
-            ->with(
-                'update `users` set `meta` = json_set(`meta`, \'$."name"."first_name"\', ?), `meta` = json_set(`meta`, \'$."name"."last_name"\', ?) where `active` = ?',
-                ['John', 'Doe', 1]
-            );
+                    ->method('update')
+                    ->with(
+                        'update `users` set `meta` = json_set(`meta`, \'$."name"."first_name"\', ?), `meta` = json_set(`meta`, \'$."name"."last_name"\', ?) where `active` = ?',
+                        ['John', 'Doe', 1]
+                    );
 
         $builder = new Builder($connection, $grammar, $processor);
 
@@ -4603,16 +4463,16 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $connection = $this->createMock(ConnectionInterface::class);
         $connection->expects($this->once())
-            ->method('update')
-            ->with(
-                'update `users` set `options` = ?, `meta` = json_set(`meta`, \'$."tags"\', cast(? as json)), `group_id` = 45, `created_at` = ? where `active` = ?',
-                [
-                    json_encode(['2fa' => false, 'presets' => ['laravel', 'vue']]),
-                    json_encode(['white', 'large']),
-                    new DateTime('2019-08-06'),
-                    1,
-                ]
-            );
+                    ->method('update')
+                    ->with(
+                        'update `users` set `options` = ?, `meta` = json_set(`meta`, \'$."tags"\', cast(? as json)), `group_id` = 45, `created_at` = ? where `active` = ?',
+                        [
+                            json_encode(['2fa' => false, 'presets' => ['laravel', 'vue']]),
+                            json_encode(['white', 'large']),
+                            new DateTime('2019-08-06'),
+                            1,
+                        ]
+                    );
 
         $builder = new Builder($connection, $grammar, $processor);
         $builder->from('users')->where('active', 1)->update([
@@ -4630,14 +4490,14 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $connection = $this->createMock(ConnectionInterface::class);
         $connection->expects($this->once())
-            ->method('update')
-            ->with(
-                'update `users` set `options` = json_set(`options`, \'$[1]."2fa"\', false), `meta` = json_set(`meta`, \'$."tags"[0][2]\', ?) where `active` = ?',
-                [
-                    'large',
-                    1,
-                ]
-            );
+                    ->method('update')
+                    ->with(
+                        'update `users` set `options` = json_set(`options`, \'$[1]."2fa"\', false), `meta` = json_set(`meta`, \'$."tags"[0][2]\', ?) where `active` = ?',
+                        [
+                            'large',
+                            1,
+                        ]
+                    );
 
         $builder = new Builder($connection, $grammar, $processor);
         $builder->from('users')->where('active', 1)->update([
@@ -4653,11 +4513,11 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $connection = m::mock(ConnectionInterface::class);
         $connection->shouldReceive('update')
-            ->once()
-            ->with(
-                'update `users` set `options` = json_set(`options`, \'$."enable"\', false), `updated_at` = ? where `id` = ?',
-                ['2015-05-26 22:02:06', 0]
-            );
+                    ->once()
+                    ->with(
+                        'update `users` set `options` = json_set(`options`, \'$."enable"\', false), `updated_at` = ? where `id` = ?',
+                        ['2015-05-26 22:02:06', 0]
+                    );
         $builder = new Builder($connection, $grammar, $processor);
         $builder->from('users')->where('id', '=', 0)->update(['options->enable' => false, 'updated_at' => '2015-05-26 22:02:06']);
 

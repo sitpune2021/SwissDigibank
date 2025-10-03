@@ -1,11 +1,11 @@
 @extends('layout.main')
 @section('page-title',
     isset($member)
-    ? 'Transaction - ' .
+    ? 'TRANSACTIONS - ' .
     $member->member_info_first_name .
     '
     '
-    : 'Members ')
+    : 'MEMBERS ')
 @section('content')
     <div class="main-inner">
         <!-- Header -->
@@ -20,11 +20,10 @@
             <div class="box overflow-x-auto border rounded-lg dark:bg-bg shadow-md p-4">
                 <div class="flex justify-end gap-2">
                     <div class="flex justify-end mb-4">
-                        <a href="{{ route('transactions.print-receipt', ['id' => $transaction->id, 'type' => $transaction->transaction_source === 'Membership Charge' ? 'normal' : 'Share amount']) }}"
-                            target="_blank" class="btn-primary px-2 py-2">
+                        <a href="{{ route('transactions.print-receipt', ['id' => $transaction->id]) }}" target="_blank"
+                            class="btn-primary px-2 py-2">
                             <i class="las la-print"></i>
                         </a>
-
                     </div>
                     <div class="flex justify-end mb-4">
                         <form action="{{ route('transactions.softDeletetransaction', $transaction->id) }}" method="POST"
@@ -41,69 +40,77 @@
                 <table class="w-full whitespace-nowrap text-sm text-left">
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         <tr>
-                            <td class="font-semibold px-4 py-2 w-1/3">Member</td>
+                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
                             <td class="px-4 py-2">
-                                {{ $member->member_info_first_name ?? 'N/A' }}
+                                <a href="{{ route('member.show', $member->id) }}" class="text-primary hover:underline">
+                                  {{ $member->id ? str_pad($member->id, 6, '0', STR_PAD_LEFT) : '-' }} - {{ $member->member_info_first_name ?? '' }} {{$member->member_info_last_name ?? ''}}
+                                </a>
                             </td>
+
                         </tr>
+
+
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Transaction Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Transaction Date</td>
                             <td class="px-4 py-2">
                                 {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}
                             </td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Reference Id</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Reference Id</td>
                             <td class="px-4 py-2">RD{{ $transaction->id }}</td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Type</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Type</td>
                             <td class="px-4 py-2">{{ $transaction->type ?? 'N/A' }}</td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Transaction Type</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Transaction Type</td>
                             <td class="px-4 py-2">{{ $transaction->transaction_type ?? 'N/A' }}</td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Amount</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Amount</td>
                             <td class="px-4 py-2">
-                                ₹{{ number_format($transaction->membership_fee ?? ($transaction->amount ?? 0), 2) }}</td>
+                                ₹{{ number_format($transaction->membership_fee ?? ($transaction->amount ?? 0), 2) }}
+                                @if (!empty($transaction->gst_rate))
+                                    (Incl. {{ number_format($transaction->gst_rate, 1) }} % GST)
+                                @endif
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Transaction Status</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Transaction Status</td>
                             <td class="px-4 py-2">
                                 {{ $transaction->status == 1 || strtolower($transaction->status) == 'approved' ? 'Approved' : 'Pending' }}
                             </td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Payment Mode</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Payment Mode</td>
                             <td class="px-4 py-2">
                                 {{ ucfirst($transaction->charges_pay_mode ?? ($transaction->pay_mode ?? 'N/A')) }}</td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Remarks</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Remarks</td>
                             <td class="px-4 py-2">{{ $transaction->remarks ?? 'N/A' }}</td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Created At</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Created At</td>
                             <td class="px-4 py-2">
                                 {{ \Carbon\Carbon::parse($transaction->created_at)->format('d-m-Y') }}
                             </td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Updated At</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Updated At</td>
                             <td class="px-4 py-2">
                                 {{ \Carbon\Carbon::parse($transaction->updated_at)->format('d-m-Y') }}
                             </td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Is Accounted</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Is Accounted</td>
                             <td class="px-4 py-2">
                                 {{ $transaction->is_accounted ? 'Yes' : 'No' }}
                             </td>
                         </tr>
                         <tr class="border-t">
-                            <td class="font-semibold px-4 py-2">Branch</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Branch</td>
                             <td class="px-4 py-2"> {{ $branch->branch_name ?? 'N/A' }}</td>
                         </tr>
                     </tbody>

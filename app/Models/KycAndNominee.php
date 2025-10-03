@@ -25,7 +25,6 @@ class KycAndNominee extends Model
         'member_kyc_address_proof', 
         'member_kyc_address_proof_back', 
         'member_kyc_pan_number',
-
         'nominee_name',
         'nominee_relation',
          'nominee_mobile_no', 

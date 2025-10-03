@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 <style>
-       input[type="checkbox"] {
+    input[type="checkbox"] {
         width: 28px;
         height: 28px;
         accent-color: green;
@@ -165,7 +165,9 @@
                             <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary hover:underline">
-                                    DEMO-{{$fdAccount->id}} - {{$fdAccount->member_id ?? ''}}
+                                    {{ $fdAccount->member->member_no 
+    ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} - {{$fdAccount->member?->member_info_first_name ?? 'NA' }}
+                                   
                                 </a>
                             </td>
                         </tr>
@@ -268,7 +270,10 @@
                         <tbody class="divide-y divide-gray-200">
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member Name</td>
-                                <td class="px-4 py-2">{{$fdAccount->member->member_info_first_name??''}}</td>
+                                <td class="px-4 py-2">
+                                  {{ $fdAccount->member->member_no 
+    ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} -   
+                                {{$fdAccount->member->member_info_first_name??''}}</td>
                             </tr>
 
                             <tr>

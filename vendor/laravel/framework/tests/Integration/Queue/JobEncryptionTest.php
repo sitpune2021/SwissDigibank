@@ -21,9 +21,9 @@ class JobEncryptionTest extends DatabaseTestCase
 {
     use DatabaseMigrations;
 
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
-        parent::defineEnvironment($app);
+        parent::getEnvironmentSetUp($app);
 
         $app['config']->set('app.key', Str::random(32));
         $app['config']->set('queue.default', 'database');

@@ -450,23 +450,23 @@ test('from static callable namespaces', function () {
     expect($f(new Model))->toBeInstanceOf(Model::class);
 })->with('serializers');
 
-test('serializes used dates', function ($date, $_) {
+test('serializes used dates', function ($_, $date) {
     $closure = function () use ($date) {
         return $date;
     };
 
-    $u = s($closure, $_());
+    $u = s($closure);
     $r = $u();
 
     expect($r)->toEqual($date);
-})->with([
+})->with('serializers')->with([
     new DateTime,
     new DateTimeImmutable,
     new Carbon,
     new CarbonImmutable,
-])->with('serializers');
+]);
 
-test('serializes with used object date properties', function ($date, $_) {
+test('serializes with used object date properties', function ($_, $date) {
     $obj = new ObjSelf;
     $obj->o = $date;
 
@@ -474,16 +474,16 @@ test('serializes with used object date properties', function ($date, $_) {
         return $obj;
     };
 
-    $u = s($closure, $_());
+    $u = s($closure);
     $r = $u();
 
     expect($r->o)->toEqual($date);
-})->with([
+})->with('serializers')->with([
     new DateTime,
     new DateTimeImmutable,
     new Carbon,
     new CarbonImmutable,
-])->with('serializers');
+]);
 
 function serializer_php_74_switch_statement_test_is_two($a)
 {

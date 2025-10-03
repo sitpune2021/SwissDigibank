@@ -1,19 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/pail/compare/v1.2.2...main)
-
-## [v1.2.2](https://github.com/laravel/pail/compare/v1.2.1...v1.2.2) - 2025-01-28
-
-* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pail/pull/49
-
-## [v1.2.1](https://github.com/laravel/pail/compare/v1.2.0...v1.2.1) - 2024-10-23
-
-* Use `testbench-core` instead of `testbench` by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pail/pull/46
-
-## [v1.2.0](https://github.com/laravel/pail/compare/v1.1.5...v1.2.0) - 2024-10-21
-
-* [1.x] Supports PHP 8.4 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pail/pull/44
-* [1.x] Adds `--timeout` option by [@nunomaduro](https://github.com/nunomaduro) in https://github.com/laravel/pail/pull/45
+## [Unreleased](https://github.com/laravel/pail/compare/v1.1.5...main)
 
 ## [v1.1.5](https://github.com/laravel/pail/compare/v1.1.4...v1.1.5) - 2024-10-15
 

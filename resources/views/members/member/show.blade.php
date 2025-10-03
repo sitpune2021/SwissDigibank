@@ -10,8 +10,8 @@
 @section('page-title',
     isset($member)
     ? $member->member_info_first_name . ' ' . $member->member_info_last_name
-    : 'Add
-    member')
+    : 'ADD
+    MEMBER')
 
 @section('content')
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
@@ -102,7 +102,8 @@
             <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
         </a>
         <a class="btn-danger rounded-md px-2 py-1 text-white  text-sm bg-red-500 hover:bg-red-600">REMOVE MEMBER</a>
-<a href="{{ route('members.application_form', ['id' => $member->id]) }}" 
+
+<a href="{{ route('members.application_form', $member->id) }}" 
    class="btn-primary rounded-md px-2 py-1 text-white text-sm bg-indigo-500 hover:bg-indigo-600">
     <i class="fa fa-print"></i> APPLICATION FORM
 </a>
@@ -115,7 +116,7 @@
                     <tbody>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Membership Type</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Membership Type</span></div>
                             </th>
                             <td
                                 class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-9">
@@ -125,7 +126,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Create on</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Create on</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>Admin App</span></div>
@@ -133,7 +134,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Created by</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Created by</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ auth()->user()->name }}</span></div>
@@ -141,7 +142,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Status</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Status</span></div>
                             </th>
                             <td>
                                 <span
@@ -153,7 +154,7 @@
 
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Branch</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Branch</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->branch->branch_name }}</span></div>
@@ -161,7 +162,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Advisor/ Staff</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Advisor/ Staff</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->general_advisor_staff }}</span></div>
@@ -169,7 +170,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Old Member No</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Old Member No</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_old_member_no }}</span></div>
@@ -177,7 +178,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Enrollment Date</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Enrollment Date</span></div>
                             </th>
                             <td class="p-2">
                                 <div>
@@ -188,7 +189,7 @@
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
 
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Name</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Name</span></div>
                             </th>
                             <td class="p-2">
                                 <div>
@@ -205,7 +206,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>DOB</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>DOB</span></div>
                             </th>
                             <td class="p-2">
                                 <div>
@@ -218,7 +219,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Age</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Age</span></div>
                             </th>
                             <td class="p-2">
                                 <div>
@@ -228,7 +229,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Senior Citizen</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Senior Citizen</span></div>
                             </th>
 
                             @php
@@ -254,7 +255,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Gender</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Gender</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_gender }}</span></div>
@@ -262,7 +263,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Folio No.</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Folio No.</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->folio_no }}</span></div>
@@ -270,7 +271,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Father Name</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Father Name</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_middle_name }}</span></div>
@@ -278,7 +279,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Mother Name</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Mother Name</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_mother_name }}</span></div>
@@ -286,7 +287,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Marital Status</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Marital Status</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_marital_status }}</span></div>
@@ -294,7 +295,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Religion</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Religion</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_religion?->name ?? 'N/A' }}</span></div>
@@ -302,7 +303,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Qualification</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Qualification</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_qualification }}</span></div>
@@ -310,7 +311,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Husband/ Wife Name </span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Husband/ Wife Name </span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_spouse_name }}</span></div>
@@ -318,7 +319,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Husband/ Wife D.O.B</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Husband/ Wife D.O.B</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_spouse_dob }}</span></div>
@@ -326,7 +327,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Occupation</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Occupation</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_occupation }}</span></div>
@@ -334,7 +335,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Monthly Income</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Monthly Income</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_monthly_income }}</span></div>
@@ -343,7 +344,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Collection Time</span></div>
+                                <div class="flex items-center gap-3 uppercase"><span>Collection Time</span></div>
                             </th>
                             <td class="p-2">
                                 <div><span>{{ $member->member_info_collection_time }}</span></div>
@@ -352,7 +353,7 @@
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <th class="py-2 px-6">
-                                <div class="flex items-center gap-3"><span>Form 15G/ 15H Uploaded<br>(FY 2025 -
+                                <div class="flex items-center gap-3 uppercase"><span>Form 15G/ 15H Uploaded<br>(FY 2025 -
                                         2026)</span></div>
                             </th>
                             <td class="p-2">
@@ -522,52 +523,52 @@
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Aadhaar No.</th>
                                     <td class="flex items-center justify-between px-6 py-2" text-start>
                                         <span>{{ $member->kyc?->member_kyc_aadhaar_no ?? '' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Voter ID No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Voter ID No.</th>
                                     <td class="flex items-center justify-between px-6 py-2" text-start>
                                         {{ $member->kyc?->member_kyc_voter_id_no ?? '' }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Pan No.</th>
                                     <td class="flex items-center justify-between px-6 py-2" text-start>
                                         <span>{{ $member->kyc?->member_kyc_pan_no ?? '' }}</span>
                                         <i class="text-green-600 fa fa-check-circle"></i>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Ration Card No.</th>
                                     <td class="flex items-center justify-between px-6 py-2" text-start>
                                         <span>{{ $member->kyc?->member_kyc_ration_card_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Meter No.</th>
                                     <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">CI No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">CI No.</th>
                                     <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">CI Relation</th>
                                     <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">DL No</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">DL No</th>
                                     <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">CKYC No</th>
                                     {{-- <td class="px-6 py-2">{{$member->kyc?->member_kyc_ci_no??''}}</td> --}}
                                 </tr>
                                 <tr>
-                                    <th class="px-6 py-2 font-semibold text-start">CKYC Updated At</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">CKYC Updated At</th>
                                     <td class="px-6 py-2">-</td>
                                 </tr>
                             </tbody>
@@ -587,58 +588,58 @@
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Name</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Name</th>
                                     <td class="flex items-center justify-between px-6 py-2">
                                         <span>{{ $member->kyc?->nominee_name ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">DOB</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">DOB</th>
                                     <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Gender</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Gender</th>
                                     <td class="flex items-center justify-between px-6 py-2">
                                         <span>{{ $member->kyc?->nominee_gender ?? '' }}</span>
 
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Relation</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Relation</th>
                                     <td class="px-6 py-2">
                                         <span>{{ $member->kyc?->nominee_relation ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Mobile No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Mobile No.</th>
                                     <td class="px-6 py-2">
                                         <span>{{ $member->kyc?->nominee_mobile_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Aadhaar No.</th>
                                     <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Voter ID No. </th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Voter ID No. </th>
                                     <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Pan No.</th>
                                     <td class="px-6 py-2">
                                         <span>{{ $member->kyc?->nominee_pan_no ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Address</th>
                                     <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address ?? '' }}</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Ration Card No.</th>
                                     <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no ?? '' }}</span>
                                     </td>
                                 </tr>
@@ -668,7 +669,7 @@
                             <tbody>
                                 {{-- Photo --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Photo (Photo)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $photo = $documents->where('document_category', 'photo')->first(); @endphp
                                         @if ($photo && $photo->file_path)
@@ -682,7 +683,7 @@
 
                                 {{-- Signature --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Signature (Signature)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Signature (Signature)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
                                         @if ($signature && $signature->file_path)
@@ -696,7 +697,7 @@
 
                                 {{-- ID Proof --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">ID Proof (Passport)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">ID Proof (Passport)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $idProof = $documents->where('document_category', 'id_proof')->first(); @endphp
                                         @if ($idProof && $idProof->file_path)
@@ -710,7 +711,7 @@
 
                                 {{-- ID Proof Back --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">ID Proof Back (Aadhar Card)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">ID Proof Back (Aadhar Card)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $idProofBack = $documents->where('document_category', 'id_proof_back')->first(); @endphp
                                         @if ($idProofBack && $idProofBack->file_path)
@@ -724,7 +725,7 @@
 
                                 {{-- Address Proof --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof (Passport)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Address Proof (Passport)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $addressProof = $documents->where('document_category', 'address_proof')->first(); @endphp
                                         @if ($addressProof && $addressProof->file_path)
@@ -738,7 +739,7 @@
 
                                 {{-- Address Proof Back --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">Address Proof Back (Aadhar Card)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">Address Proof Back (Aadhar Card)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $addressProofBack = $documents->where('document_category', 'address_proof_back')->first(); @endphp
                                         @if ($addressProofBack && $addressProofBack->file_path)
@@ -752,7 +753,7 @@
 
                                 {{-- PAN --}}
                                 <tr class="border-b">
-                                    <th class="px-6 py-2 font-semibold text-start">PAN Number (PAN)</th>
+                                    <th class="px-6 py-2 font-semibold text-start uppercase">PAN Number (PAN)</th>
                                     <td class="px-6 py-2 text-start">
                                         @php $pan = $documents->where('document_category', 'pan_number')->first(); @endphp
                                         @if ($pan && $pan->file_path)
@@ -789,11 +790,11 @@
                         <table class="w-full text-sm text-left border-collapse">
                             <thead class="border-b">
                                 <tr>
-                                    <th class="px-4 py-2 font-semibold">Account Type</th>
-                                    <th class="px-4 py-2 font-semibold">Account No.</th>
-                                    <th class="px-4 py-2 font-semibold">Open Date</th>
-                                    <th class="px-4 py-2 font-semibold">Status</th>
-                                    <th class="px-4 py-2 font-semibold">State</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Account Type</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Account No.</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Open Date</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Status</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">State</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -823,11 +824,11 @@
                         <table class="w-full text-sm text-left border-collapse">
                             <thead class="border-b">
                                 <tr>
-                                    <th class="px-4 py-2 font-semibold">Account Type</th>
-                                    <th class="px-4 py-2 font-semibold">Account No.</th>
-                                    <th class="px-4 py-2 font-semibold">Open Date</th>
-                                    <th class="px-4 py-2 font-semibold">Status</th>
-                                    <th class="px-4 py-2 font-semibold">State</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Account Type</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Account No.</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Open Date</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Status</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">State</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -857,11 +858,11 @@
                         <table class="w-full text-sm text-left border-collapse">
                             <thead class="border-b">
                                 <tr>
-                                    <th class="px-4 py-2 font-semibold">Account Type</th>
-                                    <th class="px-4 py-2 font-semibold">Account No.</th>
-                                    <th class="px-4 py-2 font-semibold">Open Date</th>
-                                    <th class="px-4 py-2 font-semibold">Status</th>
-                                    <th class="px-4 py-2 font-semibold">State</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Account Type</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Account No.</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Open Date</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">Status</th>
+                                    <th class="px-4 py-2 font-semibold uppercase">State</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -956,21 +957,21 @@
                 <!-- Settings Section -->
                 <div class="mt-4 overflow-hidden border rounded shadow">
                     <div class="h-1 bg-red-500"></div>
-                    <div class="px-4 py-2 font-semibold uppercase bg-white border-b">Settings</div>
+                    <div class="px-4 py-2 font-semibold uppercase bg-white border-b uppercase">Settings</div>
                     <div class="p-4 space-y-4 bg-white">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between uppercase">
                             <span>Internet Banking / Mob App Enabled</span>
                             <input type="checkbox" class="w-5 h-5 accent-blue-600">
                         </div>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between uppercase">
                             <span>Money Transfer</span>
                             <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
                         </div>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between uppercase">
                             <span>Account Locked</span>
                             <input type="checkbox" class="w-5 h-5 accent-blue-600">
                         </div>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between uppercase">
                             <span>SMS</span>
                             <input type="checkbox" class="w-5 h-5 accent-blue-600" checked>
                         </div>
@@ -1035,11 +1036,11 @@
                             </div>
                             <div class="p-4 text-sm bg-white" x-show="showMobile" x-transition>
                                 <div class="flex justify-between py-2 border-b">
-                                    <span class="font-medium">Mobile No</span>
+                                    <span class="font-medium uppercase">Mobile No</span>
                                     <span>{{ $member->member_info_mobile_no }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b">
-                                    <span class="font-medium">Email</span>
+                                    <span class="font-medium uppercase">Email</span>
                                     <span>{{ $member->member_info_email }}</span>
                                 </div>
                             </div>
@@ -1139,13 +1140,13 @@
                             </div>
                         </div>
                         <div class="p-4 space-y-4 text-sm bg-white" x-show="showAddress" x-transition>
-                            <h5 class="mb-2 font-semibold text-center">Correspondence Address</h5>
+                            <h5 class="mb-2 font-semibold text-center uppercase">Correspondence Address</h5>
                             <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Address</span>
+                                <span class="font-medium uppercase">Address</span>
                                 <span>{{ $member->address?->member_address_line_1 ?? '' }}</span>
                             </div>
                             <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Para/ Ward/ Panchayat/ Area</span>
+                                <span class="font-medium uppercase">Para/ Ward/ Panchayat/ Area</span>
                                 <span>
                                     {{ $member->address?->member_address_para ?? '' }}/
                                     {{ $member->address?->member_address_ward ?? '' }}/
@@ -1154,28 +1155,28 @@
                                 </span>
                             </div>
                             <div class="flex justify-between py-2">
-                                <span class="font-medium">Landmark</span>
+                                <span class="font-medium uppercase">Landmark</span>
                                 <span>{{ $member->address?->member_address_landmark ?? '' }}</span>
                             </div>
 
-                            <h5 class="mb-2 font-semibold text-center">Permanent Address</h5>
+                            <h5 class="mb-2 font-semibold text-center uppercase">Permanent Address</h5>
                             <div class="flex justify-between py-2 border-b">
-                                <span class="font-medium">Address</span>
+                                <span class="font-medium uppercase">Address</span>
                                 <span>{{ $member->address?->member_address_address ?? '' }}</span>
                             </div>
-                            <div class="flex justify-between py-2 border-b">
+                            <div class="flex justify-between py-2 border-b uppercase">
                                 <span class="font-medium">City / District</span>
                                 <span>{{ $member->address?->member_perm_address_city ?? '' }}/
                                     {{ $member->address?->member_address_city_district ?? '' }}
                                 </span>
                             </div>
-                            <div class="flex justify-between py-2 border-b">
+                            <div class="flex justify-between py-2 border-b uppercase">
                                 <span class="font-medium">State</span>
                                 <span>{{ $member->address?->state?->name ?? 'N/A' }}</span>
                             </div>
 
                             <div class="flex justify-between py-2">
-                                <span class="font-medium">GPS Lat/ Log</span>
+                                <span class="font-medium uppercase">GPS Lat/ Log</span>
                                 <span>{{ $member->address?->member_gps_location_latitude ?? '' }}
                                     {{ $member->address?->member_gps_location_latitude ?? '' }}
                                 </span>
@@ -1184,7 +1185,7 @@
                         <!-- BANK DETAILS -->
                         <div class="mt-4 bg-green-500 border rounded shadow">
                             <div class="flex items-center justify-between px-4 py-2 text-white bg-orange-500 rounded-t">
-                                <span class="font-semibold uppercase">Bank Details</span>
+                                <span class="font-semibold uppercase uppercase">Bank Details</span>
                                 <div class="flex gap-2 space-x-2">
                                     <i class="cursor-pointer fa fa-pencil"></i>
                                     <i class="cursor-pointer fa" :class="showBank ? 'fa-minus' : 'fa-plus'"
@@ -1193,19 +1194,19 @@
                             </div>
                             <div class="p-4 text-sm bg-white" x-show="showBank" x-transition>
                                 <div class="flex justify-between py-2 border-b">
-                                    <span class="font-medium">Bank Name</span>
+                                    <span class="font-medium uppercase">Bank Name</span>
                                     <span>{{ $member->branch?->branch_name ?? '' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b">
-                                    <span class="font-medium">IFSC Code</span>
+                                    <span class="font-medium uppercase">IFSC Code</span>
                                     <span>{{ $member->branch?->ifsc_code ?? '' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b">
-                                    <span class="font-medium">Account Type</span>
+                                    <span class="font-medium uppercase">Account Type</span>
                                     {{-- <span>{{ $member->accounts?->account_type??'' }}</span> --}}
                                 </div>
                                 <div class="flex justify-between py-2">
-                                    <span class="font-medium">Account No.</span>
+                                    <span class="font-medium uppercase">Account No.</span>
                                     {{-- <span>{{ $member->accounts?->account_no??'' }}</span> --}}
                                 </div>
                             </div>
@@ -1213,7 +1214,7 @@
 
                         <!-- MEMBER ACCOUNTS -->
                         <div class="mt-4 bg-green-500 border rounded shadow">
-                            <div class="px-4 py-2 font-semibold text-white uppercase bg-green-600 rounded-t">
+                            <div class="px-4 py-2 font-semibold text-white uppercase bg-green-600 rounded-t ">
                                 Member Accounts
                             </div>
                             <div class="flex bg-white border-b">
@@ -1230,10 +1231,10 @@
                                 <table class="w-full text-sm text-left border-collapse">
                                     <thead class="border-b">
                                         <tr>
-                                            <th class="px-4 py-2 font-semibold">Account Type</th>
-                                            <th class="px-4 py-2 font-semibold">Account No.</th>
-                                            <th class="px-4 py-2 font-semibold">Open Date</th>
-                                            <th class="px-4 py-2 font-semibold">Status</th>
+                                            <th class="px-4 py-2 font-semibold uppercase">Account Type</th>
+                                            <th class="px-4 py-2 font-semibold uppercase">Account No.</th>
+                                            <th class="px-4 py-2 font-semibold uppercase">Open Date</th>
+                                            <th class="px-4 py-2 font-semibold uppercase">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>

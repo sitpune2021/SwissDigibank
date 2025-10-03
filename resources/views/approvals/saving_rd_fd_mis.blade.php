@@ -73,12 +73,16 @@
                     @foreach ($pending_transactions as $pending_transaction)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                         <td class="py-5 px-6">{{ $pending_transaction->branch->branch_name ?? '' }}</td>
-
-                        <td class="py-5 px-6">{{ $pending_transaction->members->member_info_first_name." ".$pending_transaction->members->member_info_last_name  ?? '' }}</td>
+                        <td class="py-5 px-6">{{
+                          $pending_transaction->members?->member_no 
+                          ?? ($pending_transaction->members?->id 
+                          ? str_pad($pending_transaction->members->id, 7, '0', STR_PAD_LEFT) 
+                          : '-')    
+                        }}-{{ $pending_transaction->members->member_info_first_name." ".$pending_transaction->members->member_info_last_name  ?? '' }}</td>
                         <td class="py-5 px-6">{{ $pending_transaction->account_type  ?? '' }}</td>
                         <td class="py-5 px-6">
                             @php
-                         
+
                             $url = '#';
                             if ($pending_transaction->account_type === 'FD') {
                             $url = route('fd-mis-schemes.fd_show',$pending_transaction->id);

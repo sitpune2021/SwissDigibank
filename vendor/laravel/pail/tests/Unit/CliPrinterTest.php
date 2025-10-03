@@ -1,13 +1,5 @@
 <?php
 
-beforeEach(function () {
-    $_ENV['PAIL_TESTS'] = true;
-});
-
-afterEach(function () {
-    unset($_ENV['PAIL_TESTS']);
-});
-
 test('output', function () {
     $output = output([
         'message' => 'Hello World',

@@ -12,11 +12,7 @@ use Stringable;
 use Traversable;
 
 /**
- * @template TKey of array-key
- *
- * @template-covariant TValue
- *
- * @mixin \Illuminate\Support\Collection<TKey, TValue>
+ * @mixin \Illuminate\Support\Collection
  */
 abstract class AbstractPaginator implements Htmlable, Stringable
 {
@@ -25,7 +21,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * All of the items being paginated.
      *
-     * @var \Illuminate\Support\Collection<TKey, TValue>
+     * @var \Illuminate\Support\Collection
      */
     protected $items;
 
@@ -159,9 +155,9 @@ abstract class AbstractPaginator implements Htmlable, Stringable
      */
     public function getUrlRange($start, $end)
     {
-        return Collection::range($start, $end)
-            ->mapWithKeys(fn ($page) => [$page => $this->url($page)])
-            ->all();
+        return collect(range($start, $end))->mapWithKeys(function ($page) {
+            return [$page => $this->url($page)];
+        })->all();
     }
 
     /**
@@ -314,7 +310,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Get the slice of items being paginated.
      *
-     * @return array<TKey, TValue>
+     * @return array
      */
     public function items()
     {
@@ -653,7 +649,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Get an iterator for the items.
      *
-     * @return \ArrayIterator<TKey, TValue>
+     * @return \ArrayIterator
      */
     public function getIterator(): Traversable
     {
@@ -693,7 +689,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Get the paginator's underlying collection.
      *
-     * @return \Illuminate\Support\Collection<TKey, TValue>
+     * @return \Illuminate\Support\Collection
      */
     public function getCollection()
     {
@@ -703,7 +699,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Set the paginator's underlying collection.
      *
-     * @param  \Illuminate\Support\Collection<TKey, TValue>  $collection
+     * @param  \Illuminate\Support\Collection  $collection
      * @return $this
      */
     public function setCollection(Collection $collection)
@@ -726,7 +722,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Determine if the given item exists.
      *
-     * @param  TKey  $key
+     * @param  mixed  $key
      * @return bool
      */
     public function offsetExists($key): bool
@@ -737,8 +733,8 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Get the item at the given offset.
      *
-     * @param  TKey  $key
-     * @return TValue|null
+     * @param  mixed  $key
+     * @return mixed
      */
     public function offsetGet($key): mixed
     {
@@ -748,8 +744,8 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Set the item at the given offset.
      *
-     * @param  TKey|null  $key
-     * @param  TValue  $value
+     * @param  mixed  $key
+     * @param  mixed  $value
      * @return void
      */
     public function offsetSet($key, $value): void
@@ -760,7 +756,7 @@ abstract class AbstractPaginator implements Htmlable, Stringable
     /**
      * Unset the item at the given key.
      *
-     * @param  TKey  $key
+     * @param  mixed  $key
      * @return void
      */
     public function offsetUnset($key): void

@@ -32,9 +32,8 @@ class DNSCheckValidationTest extends TestCase
             ['"Fred\ Bloggs"@ietf.org'],
             ['"Joe.\\Blow"@ietf.org'],
 
-            // unicode
-            ['info@ñandu.cl'],
-            ['ñandu@ñandu.cl'],
+            // unicide
+            ['ñandu.cl'],
         ];
     }
 

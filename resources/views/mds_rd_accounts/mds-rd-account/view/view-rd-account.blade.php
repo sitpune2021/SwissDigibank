@@ -265,7 +265,10 @@
                         <tr>
                             <td class="font-semibold px-4 py-2">Member</td>
                             <td class="px-4 py-2">
-                                {{ $rdAccount->member->id ?? 'N/A' }} -
+                                {{$rdAccount->member?->member_no
+        ?? ($rdAccount->member?->id 
+            ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT) 
+            : 'N/A') }} -
                                 {{ $rdAccount->member->member_info_first_name ?? '' }}
                                 {{ $rdAccount->member->member_info_last_name ?? '' }}
                             </td>
@@ -396,6 +399,10 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2">Member Name</td>
                                 <td class="px-4 py-2">
+                                    {{$rdAccount->member?->member_no
+        ?? ($rdAccount->member?->id 
+            ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT) 
+            : 'N/A')}}-
                                     {{ $rdAccount->member->member_info_first_name ?? '' }}
                                     {{ $rdAccount->member->member_info_last_name ?? '' }}
                                 </td>

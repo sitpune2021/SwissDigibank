@@ -11,11 +11,11 @@
 
 @section('page-title',
     isset($member)
-    ? 'Members - ' .
+    ? 'MEMBERS - ' .
     ($member->member_info_first_name ?? $member->member_code) .
     '
-    Transactions'
-    : 'Members Transactions')
+    TRANSACTIONS'
+    : 'MEMBERS TRANSACTIONS')
 
 @section('content')
     <div class="main-inner">
@@ -36,7 +36,7 @@
                 
                 <!-- Transaction Date -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
 
                         Transaction Date <span class="text-red-500">*</span>
                     </label>
@@ -45,7 +45,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
                         Share Amount <span class="text-red-500">*</span>
                     </label>
 
@@ -63,7 +63,7 @@
 
                 <!-- Remarks -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
                         Remarks (if any)
                     </label>
                     <input type="text" name="remarks" placeholder="Enter Remarks (if any)"
@@ -72,7 +72,7 @@
 
                 <!-- Pay Mode -->
                 <div class="mt-3">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Pay Mode <span class="text-red-500">*</span>
                     </label>
                     <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
@@ -102,7 +102,7 @@
 
                 <!-- Online Fields -->
                 <div id="onlineFields" class="space-y-4 mt-2 hidden">
-                    <label class="block text-sm font-medium text-gray-700">Transfer Date <span
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="transfer_date" id="date2"
                         class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
@@ -111,7 +111,7 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label class="block text-sm font-medium text-gray-700 uppercase">
                         UTR / Transaction No.
                         <span class="text-red-500">*</span>
                     </label>
@@ -120,7 +120,7 @@
                     @error('online_utr_no')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label class="block text-sm font-medium text-gray-700 uppercase">
                         Transfer Mode
                         <span class="text-red-500">*</span>
                     </label>
@@ -143,7 +143,7 @@
 
                 <!-- Cheque Fields -->
                 <div id="chequeFields" class="space-y-4 mt-2 hidden">
-                    <label class="block text-sm font-medium text-gray-700">Bank Name <span
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
                             class="text-red-500">*</span></label>
                     {{-- <select name="bank_id" class="w-full border rounded-10 px-3 py-3 bg-secondary/5"> --}}
                     <option value="">Select Bank</option>
@@ -154,7 +154,9 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
-                    <label class="block text-sm font-medium text-gray-700">Cheque No. <span
+
+                    
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No. <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="cheque_no" class="w-full border rounded-10 px-3 py-3 bg-secondary/5"
                         placeholder="Enter Cheque No.">
@@ -162,7 +164,7 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
-                    <label class="block text-sm font-medium text-gray-700">Cheque Date <span
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
                             class="text-red-500">*</span></label>
                     <input type="text" id="date3" name="cheque_date" placeholder="DD/MM/YYYY"
                         class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
@@ -173,7 +175,7 @@
 
                 <div id="savingFields"
                     class="space-y-4 mt-2 {{ (old('account_type') ?? ($members->account_type ?? '')) == 'saving' ? '' : 'hidden' }}">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label class="block text-sm font-medium text-gray-700 uppercase">
                         Select Saving Account <span class="text-red-500">*</span>
                     </label>
                     <!-- Saving Account Select -->

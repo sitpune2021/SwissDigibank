@@ -763,7 +763,7 @@
     <!-- Buttons -->
     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
         <button type="button" id="calculateBtn"
-            class="btn-primary rounded-10 px-4 py-2 mt-4">
+            class="btn-outline justify-center">
             Calculate
         </button>
         <button class="btn-outline justify-center" type="reset">

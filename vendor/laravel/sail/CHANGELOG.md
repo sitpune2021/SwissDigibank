@@ -1,62 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/sail/compare/v1.43.1...1.x)
-
-## [v1.43.1](https://github.com/laravel/sail/compare/v1.43.0...v1.43.1) - 2025-05-19
-
-* Add missing rabbitmq volume by [@kostamilorava](https://github.com/kostamilorava) in https://github.com/laravel/sail/pull/798
-
-## [v1.43.0](https://github.com/laravel/sail/compare/v1.42.0...v1.43.0) - 2025-05-13
-
-* Fix rabbitmq volumes by [@kiani01lab](https://github.com/kiani01lab) in https://github.com/laravel/sail/pull/793
-* Add the hostname for RabbitMQ by [@kiani01lab](https://github.com/kiani01lab) in https://github.com/laravel/sail/pull/796
-* Add Laravel's official vscode extension to devcontainer stub by [@eamirgh](https://github.com/eamirgh) in https://github.com/laravel/sail/pull/797
-
-## [v1.42.0](https://github.com/laravel/sail/compare/v1.41.1...v1.42.0) - 2025-04-29
-
-* Add the RabbitMQ service by [@kiani01lab](https://github.com/kiani01lab) in https://github.com/laravel/sail/pull/790
-
-## [v1.41.1](https://github.com/laravel/sail/compare/v1.41.0...v1.41.1) - 2025-04-22
-
-* Update logo and socialcard by [@iamdavidhill](https://github.com/iamdavidhill) in https://github.com/laravel/sail/pull/781
-* Fix `DB_DATABASE` replacement in `phpunit.xml` by [@choowx](https://github.com/choowx) in https://github.com/laravel/sail/pull/783
-* Added configurable user for shell commands by [@fkrzski](https://github.com/fkrzski) in https://github.com/laravel/sail/pull/785
-* fix: typesense healthcheck by [@Barbapapazes](https://github.com/Barbapapazes) in https://github.com/laravel/sail/pull/788
-
-## [v1.41.0](https://github.com/laravel/sail/compare/v1.40.0...v1.41.0) - 2025-01-24
-
-* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/sail/pull/771
-* Add `sail run` command by [@rojtjo](https://github.com/rojtjo) in https://github.com/laravel/sail/pull/770
-
-## [v1.40.0](https://github.com/laravel/sail/compare/v1.39.1...v1.40.0) - 2025-01-13
-
-* enable swoole php 8.4 by [@ariaieboy](https://github.com/ariaieboy) in https://github.com/laravel/sail/pull/766
-* Add Valkey support by [@ariaieboy](https://github.com/ariaieboy) in https://github.com/laravel/sail/pull/767
-* Update Ondrej PPA key by [@binaryfire](https://github.com/binaryfire) in https://github.com/laravel/sail/pull/768
-
-## [v1.39.1](https://github.com/laravel/sail/compare/v1.39.0...v1.39.1) - 2024-11-27
-
-* [1.x] Remove the default `ubuntu` user by [@rojtjo](https://github.com/rojtjo) in https://github.com/laravel/sail/pull/762
-
-## [v1.39.0](https://github.com/laravel/sail/compare/v1.38.0...v1.39.0) - 2024-11-25
-
-* [1.x] Use Ubuntu 24.04 and Node 22 by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/sail/pull/758
-
-## [v1.38.0](https://github.com/laravel/sail/compare/v1.37.1...v1.38.0) - 2024-11-11
-
-* fix: Use xdg-open if open does not exist by [@rqpt](https://github.com/rqpt) in https://github.com/laravel/sail/pull/744
-* Add MongoDB extension and service by [@GromNaN](https://github.com/GromNaN) in https://github.com/laravel/sail/pull/748
-* fix: Sail share 504 timeout fix for linux hosts by [@rqpt](https://github.com/rqpt) in https://github.com/laravel/sail/pull/709
-* Use equals sign (=) instead of space as ENV variable separator by [@jpkleemans](https://github.com/jpkleemans) in https://github.com/laravel/sail/pull/753
-
-## [v1.37.1](https://github.com/laravel/sail/compare/v1.37.0...v1.37.1) - 2024-10-29
-
-* Update typesense.stub to 27.1 by [@Braunson](https://github.com/Braunson) in https://github.com/laravel/sail/pull/741
-* Update typesense.stub to correct version tag by [@Braunson](https://github.com/Braunson) in https://github.com/laravel/sail/pull/742
-
-## [v1.37.0](https://github.com/laravel/sail/compare/v1.36.0...v1.37.0) - 2024-10-21
-
-* Add php 8.4 to the list of runtimes by [@jobvink](https://github.com/jobvink) in https://github.com/laravel/sail/pull/740
+## [Unreleased](https://github.com/laravel/sail/compare/v1.36.0...1.x)
 
 ## [v1.36.0](https://github.com/laravel/sail/compare/v1.35.0...v1.36.0) - 2024-10-10
 

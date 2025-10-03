@@ -122,15 +122,15 @@
       </div> -->
 
       <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
-    <a href="{{ route('misaccount.changeAccountInfo', $misaccount->id) }}" 
-   class="block px-4 py-2 uppercase hover:bg-warning">
-    Change Account Info
-</a>
-   <a href="{{ route('misaccount.addNominee', $misaccount->id) }}" 
-   class="block px-4 py-2 uppercase hover:bg-warning">
-    Add Nominee
-</a>
-</div>
+        <a href="{{ route('misaccount.changeAccountInfo', $misaccount->id) }}"
+          class="block px-4 py-2 uppercase hover:bg-warning">
+          Change Account Info
+        </a>
+        <a href="{{ route('misaccount.addNominee', $misaccount->id) }}"
+          class="block px-4 py-2 uppercase hover:bg-warning">
+          Add Nominee
+        </a>
+      </div>
 
 
     </div>
@@ -204,7 +204,8 @@
               <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
               <td class="px-4 py-2">
                 <a href="" class="text-primary hover:underline">
-                  {{ '' . $misaccount->member_id}} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
+                  {{ $misaccount->member->member_no 
+    ?? ($misaccount->member_id ? str_pad($misaccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
                 </a>
               </td>
             </tr>
@@ -305,7 +306,13 @@
               <tr>
                 <td class="font-semibold px-4 py-2 w-1/3">Member Name</td>
                 <td class="px-4 py-2">
-                  {{ $misaccount->member->full_name ?? 'N/A' }}
+                  {{
+    ($misaccount->member->member_no ?? ($misaccount->member->id ? str_pad($misaccount->member->id, 6, '0', STR_PAD_LEFT) : '-')) 
+    . ' - ' . 
+    (($misaccount->member->member_info_first_name || $misaccount->member->member_info_last_name) 
+        ? ucfirst($misaccount->member->member_info_first_name) . ' ' . ucfirst($misaccount->member->member_info_last_name) 
+        : 'N/A')
+}}
                 </td>
               </tr>
 

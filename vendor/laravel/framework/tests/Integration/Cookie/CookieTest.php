@@ -42,7 +42,7 @@ class CookieTest extends TestCase
         $this->assertEquals(Carbon::now()->getTimestamp() + 60, $response->headers->getCookies()[1]->getExpiresTime());
     }
 
-    protected function defineEnvironment($app)
+    protected function getEnvironmentSetUp($app)
     {
         $app->instance(
             ExceptionHandler::class,

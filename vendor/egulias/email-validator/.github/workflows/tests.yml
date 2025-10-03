@@ -1,10 +1,13 @@
-name: unit-tests
+name: build
 
 on:
   push:
     branches:
+      - master
       - '*.x'
   pull_request:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   tests:
@@ -24,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -35,7 +38,7 @@ jobs:
           coverage: xdebug
 
       - name: Install dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v2
         with:
           dependency-versions: ${{ matrix.deps }}
 
@@ -44,10 +47,15 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover build/logs/clover.xml --exclude-group flaky
+      - name: Coverage
+        if: ${{ matrix.php == '8.1' && matrix.deps == 'lowest' }}
+        shell: bash
+        env:
+            CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r build/logs/clover.xml
 
       - name: Store artifacts
-        if: ${{ matrix.php == '8.1' && matrix.deps == 'lowest' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: clover.xml
-          path: build/logs
+          name: logs
+          path: build/logs      

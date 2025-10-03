@@ -38,7 +38,7 @@
       <form action="" id="passbookForm">
         @csrf
         <div class="mb-4">
-          <label for="" class="block font-medium mb-2">Account No <span class="text-red-500">*</span></label>
+          <label for="" class="block font-medium mb-2 uppercase">Account No <span class="text-red-500">*</span></label>
           <select id="account_id" name="account_id"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
             <option value="">Select Account</option>
@@ -49,13 +49,13 @@
         </div>
         <!-- HTML -->
         <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Date From <span class="text-red-500">*</span></label>
+          <label class="block font-medium mb-2 uppercase">Date From <span class="text-red-500">*</span></label>
           <input type="text" id="from_date" name="from_date" placeholder="DD/MM/YYYY" autocomplete="off"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
         </div>
 
         <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Date To <span class="text-red-500">*</span></label>
+          <label class="block font-medium mb-2 uppercase">Date To <span class="text-red-500">*</span></label>
           <input type="text" id="to_date" name="to_date" placeholder="DD/MM/YYYY" autocomplete="off"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
         </div>
@@ -70,7 +70,7 @@
 
         <!-- PrintType *-->
         <div class="w-full mt-4 ">
-          <label class="block font-medium mb-2" for="tenure_type">
+          <label class="block font-medium mb-2 uppercase" for="tenure_type">
             Print <span class="text-red-500">*</span>
           </label>
 

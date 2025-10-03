@@ -2,11 +2,11 @@
 
 @section('page-title',
     isset($member)
-    ? 'Members - ' .
+    ? 'MEMBERS - ' .
     $member->member_info_first_name .
     '
-    Transactions'
-    : 'Members Transactions')
+    TRANSACTIONS'
+    : 'MEMBERS TRANSACTIONS')
 
 @section('content')
     <div class="main-inner">
@@ -28,14 +28,14 @@
                 <table class="w-full border border-n30 rounded-lg overflow-hidden">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
-                            <th class="px-6 py-3 text-center">Transaction Date</th>
-                            <th class="px-6 py-3 text-center">Payment Mode</th>
-                            <th class="px-6 py-3 text-center">Type</th>
-                            <th class="px-6 py-3 text-center">Amount</th>
-                            <th class="px-6 py-3 text-center">Remarks</th>
-                            <th class="px-6 py-3 text-center">Status</th>
-                            <th class="px-6 py-3 text-center">Is Accounted</th>
-                            <th class="px-6 py-3 text-center">Actions</th>
+                            <th class="px-6 py-3 text-center uppercase">Transaction Date</th>
+                            <th class="px-6 py-3 text-center uppercase">Payment Mode</th>
+                            <th class="px-6 py-3 text-center uppercase">Type</th>
+                            <th class="px-6 py-3 text-center uppercase">Amount</th>
+                            <th class="px-6 py-3 text-center uppercase">Remarks</th>
+                            <th class="px-6 py-3 text-center uppercase">Status</th>
+                            <th class="px-6 py-3 text-center uppercase">Is Accounted</th>
+                            <th class="px-6 py-3 text-center uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

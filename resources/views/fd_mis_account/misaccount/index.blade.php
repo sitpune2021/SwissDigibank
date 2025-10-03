@@ -105,7 +105,8 @@
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">
                             <a href="{{ $mis?->member_id ? route('member.show', $mis->member_id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                                {{''. $mis->member_id ?? '-' }}
+                                {{ $mis->member->member_no 
+    ?? ($mis->member_id ? str_pad($mis->member_id, 6, '0', STR_PAD_LEFT) : '-') }}
                             </a>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->member->full_name  ?? '-' }}</td>

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Payment Receipt</title>
+    <title>PAYMENT RECEIPT</title>
     <style>
         @page {
             margin: 12mm;
@@ -110,57 +110,57 @@
         <div class="title">Payment Receipt</div>
 
         <div class="row">
-            <div class="label">Reg No :</div>
+            <div class="label uppercase">Reg No :</div>
             <div class="value">{{ $reg_no }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Name :</div>
+            <div class="label uppercase">Name :</div>
 <div class="value multiline">{{ $member_info_first_name }}</div>
 <div class="value multiline">{{ $member_info_middle_name ?? ''}}</div>
 <div class="value multiline">{{ $member_info_last_name }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Phone :</div>
+            <div class="label uppercase">Phone :</div>
             <div class="value">{{ $member_info_mobile_no }}</div>
         </div>
 
         <hr>
 
         <div class="row">
-            <div class="label">Date :</div>
+            <div class="label uppercase">Date :</div>
             <div class="value">{{ $transaction_date }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Ref Id :</div>
+            <div class="label uppercase" >Ref Id :</div>
             <div class="value">{{ $ref_id }}</div>
         </div>
 
 
         <div class="row">
-            <div class="label">Amount :</div>
+            <div class="label uppercase">Amount :</div>
             <div class="value">{{ $amount }} {{ $amount_suffix }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Mode :</div>
+            <div class="label uppercase">Mode :</div>
             <div class="value">{{ $mode }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Status:</div>
+            <div class="label uppercase">Status:</div>
             <div class="value">{{ $status }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Type:</div>
+            <div class="label uppercase">Type:</div>
             <div class="value">{{ $type }}</div>
         </div>
 
         <div class="row">
-            <div class="label">Remarks:</div>
+            <div class="label uppercase">Remarks:</div>
             <div class="value multiline">{{ $remarks }}</div>
         </div>
 

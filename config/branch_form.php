@@ -30,6 +30,13 @@ return [
         'type' => 'text',
         'required' => false,
     ],
+     [
+        'label' => 'Swift  Code',
+        'name' => 'swift_code',
+        'id' => 'swift_code',
+        'type' => 'text',
+        'required' => false,
+    ],
     [
         'label' => 'ADDRESS LINE 1',
         'name' => 'address_line1',
@@ -108,6 +115,13 @@ return [
         'required' => false,
     ],
     [
+        'label' => 'PERMISSION LETTER',
+        'name' => 'permission_letter',
+        'id' => 'permission_letter',
+        'type' => 'file',  
+        'required' => false,
+    ],
+    [
         'label' => 'DISABLE RECHARGE / BILL PAYMENT',
         'name' => 'disable_recharge',
         'id' => 'disable_recharge',
@@ -131,4 +145,5 @@ return [
             'no' => 'No',
         ],
     ],
+       
 ];
