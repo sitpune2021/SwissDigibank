@@ -1,6 +1,17 @@
 @extends('layout.main')
-
-@section('page-title', isset($member) ? 'Members - ' . $member->member_info_first_name . ' Transactions' : 'Members
+@push('style')
+    <style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
+    </style>
+@endpush
+@section('page-title',
+    isset($member)
+    ? 'Members - ' . $member->member_info_first_name . ' Transactions'
+    : 'Members
     Transactions')
 
 @section('content')
@@ -109,7 +120,8 @@
                                 value="{{ old('net_amount', $netAmount) }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
                                 placeholder="0.0" step="0.01" min="0" readonly>
-                        <p><span id="net_amount_words" class="red-text text-error" >{{ ucfirst($netAmountInWords ?? '') }}</span></p>
+                            <p><span id="net_amount_words"
+                                    class="red-text text-error">{{ ucfirst($netAmountInWords ?? '') }}</span></p>
 
                             @error('net_amount')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
@@ -148,18 +160,127 @@
                         </div>
                     </div>
 
-                    <!-- Pay Mode -->
-                    <div class="w-full">
-                        <label class="block font-medium mt-3" for="pay_mode">
-                            Pay Mode
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <x-paymode :showSaving="false" id="pay_mode" :readonly="false" :amountClass="true" :bgColor="false"
-                            :hiddenheading="true" :hiddensubhead="true" />
+                    <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
+                        <div class="col-span-1 mt-4">
+                            <label class="block font-medium mb-2">
+                                Payment Mode <span class="text-red-500">*</span>
+                            </label>
 
-                        @error('pay_mode')
-                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                        @enderror
+                            <!-- Payment Mode Radios -->
+                            <div class="flex flex-wrap gap-4 mt-4">
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="radio" name="pay_mode" value="Cash"
+                                        onclick="togglePaymentMode('Cash')" checked>
+                                    <span>Cash</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="pay_mode" value="Online"
+                                        onclick="togglePaymentMode('Online')">
+                                    <span>Online Tr.</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="pay_mode" value="Cheque"
+                                        onclick="togglePaymentMode('Cheque')">
+                                    <span>Cheque</span>
+                                </label>
+                            </div>
+
+                            <!-- Cash (no fields) -->
+                            <div id="Cash" class="hidden"></div>
+
+                            <!-- Online Transfer Fields -->
+                            <div id="Online" class="hidden grid grid-cols-2 gap-4 xl:mt-8 2xl:gap-6 mt-4">
+                                <!-- Transfer Date -->
+                                <x-datepicker-disabled label="Transfer Date" name="transfer_date"
+                                    value="{{ old('transfer_date') }}" inputId="transfer_date" />
+
+                                <!-- UTR / Transaction No -->
+                                <div class="col-span-2 md:col-span-1 mt-4">
+                                    <label class="font-medium block mb-1">UTR / Transaction No <span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" name="utr_no" placeholder="Enter UTR / Transaction No"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    @error('utr_no')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Transfer Mode -->
+                                <div class="col-span-2 md:col-span-1 mt-4">
+                                    <label class="font-medium block mb-1">Transfer Mode <span
+                                            class="text-red-500">*</span></label>
+                                    <div class="flex flex-wrap gap-4 mt-2">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="IMPS"
+                                                class="accent-primary">
+                                            <span>IMPS</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="VPA"
+                                                class="accent-primary">
+                                            <span>VPA</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="NEFT/RTGS"
+                                                class="accent-primary">
+                                            <span>NEFT/RTGS</span>
+                                        </label>
+                                    </div>
+                                    @error('transfer_mode')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-span-2 md:col-span-1 mt-4">
+                                    <label class="font-medium block mb-1">
+                                        Credited in Company Account? <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex items-center gap-4 mt-1">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited_in_account" value="1"
+                                                {{ old('credited_in_account', $model->credited_in_account ?? '') == '1' ? 'checked' : '' }}>
+                                            <span>Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited_in_account" value="0"
+                                                {{ old('credited_in_account', $model->credited_in_account ?? '') == '0' ? 'checked' : '' }}>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                    @error('credited_in_account')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+
+                            </div>
+
+                            <!-- Cheque Fields -->
+                            <div id="Cheque" class="hidden mt-2 flex flex-col md:flex-row flex-wrap gap-4 mt-4">
+                                <div class="cheque-row flex flex-wrap justify-start gap-4">
+                                    <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                                        <label class="font-medium block mb-1">Bank Name<span
+                                                class="text-red-500">*</span></label>
+                                        <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_id"
+                                            display-field="name" value-field="id" event="Bank-selected"
+                                            :selected="null" />
+                                        @error('bank_id')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                                        <label class="font-medium block mb-1">Cheque No<span
+                                                class="text-red-500">*</span></label>
+                                        <input type="text" placeholder="Enter Cheque No" name="cheque_no"
+                                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                        @error('cheque_no')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <x-datepicker-disabled label="Cheque Date" name="cheque_date"
+                                        value="{{ old('cheque_date') }}" inputId="cheque_date" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Submit Buttons -->
@@ -177,73 +298,112 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const chargesDue = parseFloat(document.getElementById('charges_due').value);
-        const gstRate = 18;
-        const waivedInput = document.getElementById('waived_amount');
-        const roundingInput = document.getElementById('rounding_off');
-        const amountTd = document.getElementById('amount');
-        const totalAmountTd = document.getElementById('total_amount');
-        const netAmountInput = document.getElementById('net_amount');
-        const netAmountWords = document.getElementById('net_amount_words');
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const chargesDue = parseFloat(document.getElementById('charges_due').value);
+            const gstRate = 18;
+            const waivedInput = document.getElementById('waived_amount');
+            const roundingInput = document.getElementById('rounding_off');
+            const amountTd = document.getElementById('amount');
+            const totalAmountTd = document.getElementById('total_amount');
+            const netAmountInput = document.getElementById('net_amount');
+            const netAmountWords = document.getElementById('net_amount_words');
 
-        // Function to convert number to words
-        function numberToWords(num) {
-            const a = [
-                '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
-                'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
-            ];
-            const b = [
-                '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
-            ];
-            const n = ('000000000' + num).substr(-9).match(/^(\d{3})(\d{3})(\d{3})$/);
-            if (!n) return;
-            const str = (
-                (n[1] != 0 ? a[+n[1]] + ' Hundred ' : '') +
-                (n[2] != 0 ? (n[2] < 20 ? a[+n[2]] : b[+n[2][0]] + ' ' + a[+n[2][1]]) + ' ' : '') +
-                (n[3] != 0 ? (n[3] < 20 ? a[+n[3]] : b[+n[3][0]] + ' ' + a[+n[3][1]]) + ' ' : '')
-            ).replace(/\s+/g, ' ').trim();
-            return str + ' Only';
-        }
+            // Function to convert number to words
+            function numberToWords(num) {
+                const a = [
+                    '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+                    'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
+                    'Seventeen', 'Eighteen', 'Nineteen'
+                ];
+                const b = [
+                    '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+                ];
 
-        // Calculate the net amount
-        function calculate() {
-            let waived = parseFloat(waivedInput.value) || 0;
-            let rounding = parseInt(roundingInput.value) || 0;
+                function inWords(n) {
+                    if (n < 20) return a[n];
+                    if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '');
+                    if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' + inWords(n % 100) :
+                        '');
+                    return '';
+                }
 
-            if (waived >= chargesDue) {
-                alert("Waived amount can't be greater than or equal to Charges Due.");
-                waivedInput.value = "";
-                amountTd.textContent = (chargesDue).toFixed(2);
-                totalAmountTd.textContent = '';
-                netAmountInput.value = '';
-                netAmountWords.textContent = '';
-                return;
+                if (num === 0) return 'Zero Only';
+
+                let crore = Math.floor(num / 10000000);
+                let lakh = Math.floor((num % 10000000) / 100000);
+                let thousand = Math.floor((num % 100000) / 1000);
+                let hundred = Math.floor((num % 1000));
+
+                let result = '';
+                if (crore > 0) result += inWords(crore) + ' Crore ';
+                if (lakh > 0) result += inWords(lakh) + ' Lakh ';
+                if (thousand > 0) result += inWords(thousand) + ' Thousand ';
+                if (hundred > 0) result += inWords(hundred);
+
+                return result.trim() + ' Only';
             }
 
-            let amount = chargesDue - waived;
-            amountTd.textContent = amount.toFixed(2);
+            // Calculate the net amount
+            function calculate() {
+                let waived = parseFloat(waivedInput.value) || 0;
+                let rounding = parseInt(roundingInput.value) || 0;
 
-            let gstAmount = amount * (gstRate / 100);
-            let totalAmount = amount + gstAmount;
+                if (waived >= chargesDue) {
+                    alert("Waived amount can't be greater than or equal to Charges Due.");
+                    waivedInput.value = "";
+                    amountTd.textContent = (chargesDue).toFixed(2);
+                    totalAmountTd.textContent = '';
+                    netAmountInput.value = '';
+                    netAmountWords.textContent = '';
+                    return;
+                }
 
-            let totalAmountRounded = Math.ceil(totalAmount);
-            totalAmountTd.textContent = totalAmountRounded.toFixed(2);
+                let amount = chargesDue - waived;
+                amountTd.textContent = amount.toFixed(2);
 
-            let netAmount = totalAmountRounded + rounding;
-            netAmountInput.value = netAmount.toFixed(0);
+                let gstAmount = amount * (gstRate / 100);
+                let totalAmount = amount + gstAmount;
 
-            // Convert Net Amount to words
-            let netAmountWordsText = numberToWords(netAmount);
-            netAmountWords.textContent = netAmountWordsText;
+                let totalAmountRounded = Math.ceil(totalAmount);
+                totalAmountTd.textContent = totalAmountRounded.toFixed(2);
+
+                let netAmount = totalAmountRounded + rounding;
+                netAmountInput.value = netAmount.toFixed(0);
+
+                // Convert Net Amount to words
+                let netAmountWordsText = numberToWords(netAmount);
+                netAmountWords.textContent = netAmountWordsText;
+            }
+
+            waivedInput.addEventListener('input', calculate);
+            roundingInput.addEventListener('input', calculate);
+
+            calculate(); // Initial calculation
+        });
+    </script>
+
+    <script>
+        function togglePaymentMode(type) {
+            // Hide all sections first
+            const sections = ['Cash', 'Online', 'Cheque'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            // Show the selected section based on payment mode
+            const selectedSection = document.getElementById(type);
+            if (selectedSection) {
+                selectedSection.classList.remove('hidden');
+            }
         }
 
-        waivedInput.addEventListener('input', calculate);
-        roundingInput.addEventListener('input', calculate);
-
-        calculate(); // Initial calculation
-    });
-</script>
-
+        // Initialize the visibility on page load for the default selected payment mode
+        window.addEventListener('DOMContentLoaded', function() {
+            const selectedMode = document.querySelector('input[name="pay_mode"]:checked')?.value;
+            if (selectedMode) {
+                togglePaymentMode(selectedMode);
+            }
+        });
+    </script>
 @endsection

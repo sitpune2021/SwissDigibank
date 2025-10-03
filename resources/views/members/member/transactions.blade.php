@@ -40,6 +40,9 @@
                     </thead>
                     <tbody>
                         @forelse ($transactions as $transaction)
+                        {{-- @php
+                        dd($transactions);
+@endphp --}}
                             <tr>
                                 <td class="px-6 py-4 text-center">
                                     {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}

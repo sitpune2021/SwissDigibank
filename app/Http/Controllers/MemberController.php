@@ -583,11 +583,7 @@ class MemberController extends Controller
         }
     }
 
-    public function destroy(string $id)
-    {
-        //
-    }
-
+    
     public function createMinor(Request $request)
     {
         try {
@@ -829,6 +825,7 @@ class MemberController extends Controller
     //Transaction index page 
     public function showTransactions($memberId)
     {
+
         $transactions = DB::select("
         SELECT * FROM (
             -- Membership Charges
@@ -899,10 +896,11 @@ class MemberController extends Controller
             'transactions' => $transactions,
         ]);
     }
+
     public function showTransactionDetails($id)
     {
         $query = "
-    SELECT 
+    SELECT
         id,
         member_id,
         transaction_date,
@@ -931,13 +929,15 @@ class MemberController extends Controller
         NULL AS bank_id,
         NULL AS cheque_no,
         NULL AS cheque_date
-    FROM 
+    FROM
         membership_charges_transaction
-    WHERE 
+    WHERE
         id = ?
+            AND type = 'Share amount'
 
+ 
     UNION ALL
-
+ 
     SELECT
         id,
         member_id,
@@ -971,6 +971,8 @@ class MemberController extends Controller
         member_other_charges
     WHERE
         id = ? AND deleted_at IS NULL
+            AND type = 'Normal'
+
     LIMIT 1
     ";
 
@@ -1000,7 +1002,6 @@ class MemberController extends Controller
         $transaction->delete();
         return redirect()->route('members.transactions', $memberId);
     }
-
 
     public function storeTransaction(Request $request, $memberId)
     {
@@ -1167,7 +1168,6 @@ class MemberController extends Controller
         }
     }
 
-
     public function otherCharges($id)
     {
         $member = Member::findOrFail($id);
@@ -1255,26 +1255,39 @@ class MemberController extends Controller
 
     public function storeChargesDue(Request $request, $id)
     {
+        // dd($request->all());
         try {
             $validated = $request->validate([
                 'transaction_date' => 'required|date_format:d-m-Y',
                 'transfer_date' => 'required|date_format:d-m-Y',
-                'pay_mode' => 'required|in:cash,online,cheque',
+                'pay_mode' => 'required|in:Cash,Online,Cheque',
                 'rounding_off' => 'nullable|numeric',
                 'waived_amount' => 'required|numeric|min:0',
                 'net_amount' => 'required|numeric|min:0',
                 'clear_due_remarks' => 'nullable|string|max:255',
+                'cheque_no' => 'nullable|required_if:pay_mode,Cheque|max:50',
+                'cheque_date' => 'nullable|required_if:pay_mode,Cheque|date_format:d-m-Y',
+                'bank_id' => 'nullable|required_if:pay_mode,Cheque|exists:banks,id',
+
             ]);
+
+            // Log the validated data for debugging purposes
+            Log::info('Validated data:', $validated);
 
             $transactionDate = Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
             $transferDate = Carbon::createFromFormat('d-m-Y', $validated['transfer_date'])->format('Y-m-d');
+
+            // Log the formatted dates
+            Log::info('Transaction Date: ' . $transactionDate . ' | Transfer Date: ' . $transferDate);
 
             $dueCharges = MemberOtherCharge::where('member_id', $id)
                 ->where('status', 'DUE')
                 ->orderBy('transaction_date')
                 ->get();
 
+            // If no due charges are found, log and return error
             if ($dueCharges->isEmpty()) {
+                Log::warning('No due charges found for member_id: ' . $id);
                 return redirect()->back()->with('error', 'No due charges found to clear.');
             }
 
@@ -1282,50 +1295,63 @@ class MemberController extends Controller
             $waivedAmount = $validated['waived_amount'];
 
             if ($waivedAmount >= $totalChargesDue) {
+                Log::warning('Waived amount is greater than or equal to charges due for member_id: ' . $id);
                 return redirect()->back()
                     ->withErrors(['waived_amount' => "Waived amount can't be greater than or equal to Charges Due."])
                     ->withInput();
             }
 
             $gstRate = 18.0;
-
-            // Calculate after waived amount
             $amountAfterWaive = $totalChargesDue - $waivedAmount;
             $gstAmount = $amountAfterWaive * ($gstRate / 100);
             $totalAmount = $amountAfterWaive + $gstAmount;
 
-            // Round total amount up
+            // Round total amount and log the calculation
             $totalAmountRounded = ceil($totalAmount);
+            Log::info('Total amount before rounding: ' . $totalAmount . ' | After rounding: ' . $totalAmountRounded);
 
-            // Rounding off (integer)
             $roundingOff = isset($validated['rounding_off']) ? (int)$validated['rounding_off'] : 0;
-
             $netAmountRaw = $totalAmountRounded + $roundingOff;
-
             $netAmountRounded = ceil($netAmountRaw);
+
+            // Log net amount calculation
+            Log::info('Net amount before rounding off: ' . $netAmountRaw . ' | After rounding off: ' . $netAmountRounded);
 
             // Update charges status
             foreach ($dueCharges as $dueCharge) {
-                $dueCharge->update([
-                    'charges_due' => $totalChargesDue,
-                    'waived_amount' => $waivedAmount,
-                    'total_amount' => $totalAmountRounded,
-                    'rounding_off' => $roundingOff,
-                    'net_amount' => $netAmountRounded,
-                    'clear_due_remarks' => $validated['clear_due_remarks'] ?? 'Locker Charges',
-                    'transaction_date' => $transactionDate,
-                    'pay_mode' => $validated['pay_mode'],
-                    'status' => 'PAID',
-                ]);
+                try {
+                    $dueCharge->update([
+                        'charges_due' => $totalChargesDue,
+                        'waived_amount' => $waivedAmount,
+                        'total_amount' => $totalAmountRounded,
+                        'rounding_off' => $roundingOff,
+                        'net_amount' => $netAmountRounded,
+                        'clear_due_remarks' => $validated['clear_due_remarks'] ?? 'Locker Charges',
+                        'transaction_date' => $transactionDate,
+                        'pay_mode' => $validated['pay_mode'],
+                        'utr_no' => $validated['utr_no'] ?? null, // Store UTR No if available
+                        'transfer_mode' => $validated['transfer_mode'] ?? null, // Store transfer mode if available
+                        'credited_in_account' => $validated['credited_in_account'] ?? null,
+                        'cheque_no' => $validated['cheque_no'] ?? null,
+                        'cheque_date' => $chequeDate ?? null,
+                        'bank_id' => $validated['bank_id'] ?? null, // Store credited in account if available
+                        'status' => 'PAID',
+                    ]);
+                    Log::info('Due charge updated for member_id: ' . $id . ' | Charge ID: ' . $dueCharge->id);
+                } catch (\Exception $e) {
+                    // Log the error for each update failure
+                    Log::error('Error updating charge for member_id: ' . $id . ' | Charge ID: ' . $dueCharge->id . ' | Error: ' . $e->getMessage());
+                }
             }
 
-            return redirect()->route('members.transactions', ['id' => $id])
-                ->with('success', 'Due cleared successfully.');
+            return redirect()->route('members.transactions', ['id' => $id]);
         } catch (\Exception $e) {
+            // Log the general exception
+            Log::error('Error in storeChargesDue method for member_id: ' . $id . ' | Error: ' . $e->getMessage());
             return back()->with('error', 'Something went wrong while clearing dues.');
         }
     }
-    
+
     public function applicationForm($id)
     {
         $member = Member::with('address', 'kyc', 'minors', 'kycDocuments')->findOrFail($id);
@@ -1335,89 +1361,92 @@ class MemberController extends Controller
     }
     public function printReceipt($id)
     {
-        $query = "
-        SELECT 
-            id,
-            member_id,
-            transaction_date,
-            membership_fee AS amount,
-            charges_pay_mode AS pay_mode,
-            'Share amount' AS type,
-            remarks,
-            CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
-            is_accounted,
-            'Membership Charge' AS transaction_source,
-            created_at,
-            updated_at,
-            NULL AS charge_type,
-            NULL AS clearance_id,
-            NULL AS charges_due,
-            NULL AS waived_amount,
-            NULL AS gst_rate,
-            NULL AS total_amount,
-            NULL AS rounding_off,
-            NULL AS net_amount,
-            NULL AS clear_due_remarks,
-            NULL AS transfer_date,
-            NULL AS utr_no,
-            NULL AS transfer_mode,
-            NULL AS credited_in_account,
-            NULL AS bank_id,
-            NULL AS cheque_no,
-            NULL AS cheque_date
-        FROM 
-            membership_charges_transaction
-        WHERE 
-            id = ?
+        // Try to find in membership_charges_transaction first
+        $membershipTransaction = DB::table('membership_charges_transaction')
+            ->where('id', $id)
+            ->first();
 
-        UNION ALL
+        if ($membershipTransaction) {
+            $transaction = (object) [
+                'id'                 => $membershipTransaction->id,
+                'member_id'          => $membershipTransaction->member_id,
+                'transaction_date'   => $membershipTransaction->transaction_date,
+                'amount'             => $membershipTransaction->membership_fee,
+                'pay_mode'           => $membershipTransaction->charges_pay_mode,
+                'type'               => 'Share amount',
+                'remarks'            => $membershipTransaction->remarks,
+                'status'             => $membershipTransaction->approve_status == 1 ? 'Approved' : 'Pending',
+                'is_accounted'       => $membershipTransaction->is_accounted,
+                'transaction_source' => 'Membership Charge',
+                'created_at'         => $membershipTransaction->created_at,
+                'updated_at'         => $membershipTransaction->updated_at,
 
-        SELECT
-            id,
-            member_id,
-            transaction_date,
-            charges AS amount,
-            pay_mode,
-            type,
-            CONCAT('| consolidated transaction ::', IFNULL(clear_due_remarks, '')) AS remarks,
-            CASE WHEN status = 'PAID' THEN 'Approved' ELSE 'Pending' END AS status,
-            NULL AS is_accounted,
-            'Other Charge' AS transaction_source,
-            created_at,
-            updated_at,
-            charge_type,
-            clearance_id,
-            charges_due,
-            waived_amount,
-            gst_rate,
-            total_amount,
-            rounding_off,
-            net_amount,
-            clear_due_remarks,
-            transfer_date,
-            utr_no,
-            transfer_mode,
-            credited_in_account,
-            bank_id,
-            cheque_no,
-            cheque_date
-        FROM
-            member_other_charges
-        WHERE
-            id = ? AND deleted_at IS NULL
-        LIMIT 1
-    ";
+                // null values
+                'charge_type' => null,
+                'clearance_id' => null,
+                'charges_due' => null,
+                'waived_amount' => null,
+                'gst_rate' => null,
+                'total_amount' => null,
+                'rounding_off' => null,
+                'net_amount' => null,
+                'clear_due_remarks' => null,
+                'transfer_date' => null,
+                'utr_no' => null,
+                'transfer_mode' => null,
+                'credited_in_account' => null,
+                'bank_id' => null,
+                'cheque_no' => null,
+                'cheque_date' => null,
+            ];
+        } else {
+            // Otherwise try to find in member_other_charges
+            $otherCharge = DB::table('member_other_charges')
+                ->where('id', $id)
+                ->whereNull('deleted_at')
+                ->first();
 
-        $transaction = DB::selectOne($query, [$id, $id]);
+            if (!$otherCharge) {
+                abort(404, 'Transaction not found.');
+            }
 
-        if (!$transaction) {
-            abort(404, 'Transaction not found.');
+            $transaction = (object) [
+                'id'                 => $otherCharge->id,
+                'member_id'          => $otherCharge->member_id,
+                'transaction_date'   => $otherCharge->transaction_date,
+                'amount'             => $otherCharge->charges,
+                'pay_mode'           => $otherCharge->pay_mode,
+                'type'               => $otherCharge->type,
+                'remarks'            => '| consolidated transaction :: ' . ($otherCharge->clear_due_remarks ?? ''),
+                'status'             => $otherCharge->status == 'PAID' ? 'Approved' : 'Pending',
+                'is_accounted'       => null,
+                'transaction_source' => 'Other Charge',
+                'created_at'         => $otherCharge->created_at,
+                'updated_at'         => $otherCharge->updated_at,
+
+                // extra fields
+                'charge_type'         => $otherCharge->charge_type,
+                'clearance_id'        => $otherCharge->clearance_id,
+                'charges_due'         => $otherCharge->charges_due,
+                'waived_amount'       => $otherCharge->waived_amount,
+                'gst_rate'            => $otherCharge->gst_rate,
+                'total_amount'        => $otherCharge->total_amount,
+                'rounding_off'        => $otherCharge->rounding_off,
+                'net_amount'          => $otherCharge->net_amount,
+                'clear_due_remarks'   => $otherCharge->clear_due_remarks,
+                'transfer_date'       => $otherCharge->transfer_date,
+                'utr_no'              => $otherCharge->utr_no,
+                'transfer_mode'       => $otherCharge->transfer_mode,
+                'credited_in_account' => $otherCharge->credited_in_account,
+                'bank_id'             => $otherCharge->bank_id,
+                'cheque_no'           => $otherCharge->cheque_no,
+                'cheque_date'         => $otherCharge->cheque_date,
+            ];
         }
 
-        // Fetch related member info
+        // Then continue with the rest of your PDF logic
         $member = Member::find($transaction->member_id);
 
-        // Prepare data for PDF, common fields + conditional fields
         $data = [
             'reg_no'                 => $member->reg_no ?? 'N/A',
             'member_info_first_name' => $member->member_info_first_name ?? 'N/A',
@@ -1429,14 +1458,14 @@ class MemberController extends Controller
             'amount'                 => number_format($transaction->amount, 2),
             'amount_suffix'          => 'CR',
             'member_info_mobile_no'  => $member->member_info_mobile_no ?? '',
-            'mode'                   => $transaction->pay_mode ?? $transaction->charges_pay_mode ?? 'N/A',
+            'mode'                   => $transaction->pay_mode ?? 'N/A',
             'status'                 => $transaction->status ?? 'Pending',
             'type'                   => $transaction->type ?? 'Membership Fee',
             'remarks'                => $transaction->remarks ?? '',
             'printed_on'             => now()->format('d/m/Y H:i'),
             'printed_by'             => optional(Auth::user())->name ?? 'System',
 
-            // You can also pass additional fields from member_other_charges here if needed, e.g.
+            // Additional fields
             'charge_type'            => $transaction->charge_type,
             'clearance_id'           => $transaction->clearance_id,
             'charges_due'            => $transaction->charges_due,
