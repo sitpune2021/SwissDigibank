@@ -54,21 +54,21 @@
 
                 <!-- Tranx Id -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tranx Id :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Tranx Id :</label>
                     <input type="text" name="q[tranx_id_cont]" placeholder="Search Tranx Id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
 
                 <!-- Remarks -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Remarks :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Remarks :</label>
                     <input type="text" name="q[message_cont]" placeholder="Search Remarks"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
 
                 <!-- Transaction Date From -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Date
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Transaction Date
                         From:</label>
                     <input type="text" name="q[transaction_date_gteq]" placeholder="DD/MM/YYYY"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
@@ -76,7 +76,7 @@
 
                 <!-- Transaction Date To -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Date
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Transaction Date
                         To:</label>
                     <input type="text" name="q[transaction_date_lteq]" placeholder="DD/MM/YYYY"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
@@ -84,14 +84,14 @@
 
                 <!-- Amount From -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount From :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Amount From :</label>
                     <input type="text" name="q[amount_gteq]" placeholder="From Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
 
                 <!-- Amount To -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount To :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Amount To :</label>
                     <input type="text" name="q[amount_lteq]" placeholder="To Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>

@@ -79,17 +79,17 @@
 
                     <!-- Member Signature -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Member's Sign</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer's Sign</label>
                         <div class=" text-gray-600 dark:text-gray-400 text-sm">
-                            No Signature Present <br> (Upload in Member Documents)
+                            No Signature Present <br> (Upload in Customer Documents)
                         </div>
                     </div>
 
                     <!-- Member Photo -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Member's Photo</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer's Photo</label>
                         <div class=" text-gray-600 dark:text-gray-400 text-sm">
-                            No Photo Present <br> (Upload in Member Documents)
+                            No Photo Present <br> (Upload in Customer Documents)
                         </div>
                     </div>
 

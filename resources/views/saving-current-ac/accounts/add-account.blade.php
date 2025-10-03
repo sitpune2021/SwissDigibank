@@ -87,11 +87,11 @@
 
                 {{-- Member Selection --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_id_main" class="font-medium block mb-4 uppercase">Member <span
+                    <label for="member_id_main" class="font-medium block mb-4 uppercase">Customer <span
                             class="text-red-500">*</span></label>
                     <select name="member_id" id="member_id_main"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -106,7 +106,7 @@
 
                 {{-- Member Name --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_name" class="font-medium block mb-4 uppercase">Member Name</label>
+                    <label for="member_name" class="font-medium block mb-4 uppercase">Customer Name</label>
                     <input type="text" readonly name="member_name" id="member_name"
                         value="{{ old('member_name', $account->member_name ?? '') }}"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member name">
@@ -118,7 +118,7 @@
 
                 {{-- Member Address --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_address" class="font-medium block mb-4 uppercase">Member Address</label>
+                    <label for="member_address" class="font-medium block mb-4 uppercase">Customer Address</label>
                     <input type="text" readonly name="member_address" id="member_address"
                         value="{{ old('member_address', $account->member_address ?? '') }}"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member address">
@@ -130,7 +130,7 @@
 
                 {{-- Member Mobile --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_mobile" class="font-medium block mb-4 uppercase">Member Mobile No.</label>
+                    <label for="member_mobile" class="font-medium block mb-4 uppercase">Customer Mobile No.</label>
                     <input type="text" name="member_mobile" readonly id="member_mobile"
                         value="{{ old('member_mobile', $account->member_mobile ?? '') }}"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Mobile number">
@@ -230,7 +230,7 @@
 
                 {{-- Amount --}}
                 <div class="col-span-2 md:col-span-1">
-                    <x-amount-input name="amount" id="amount" label="Enter Amount" />
+                    <x-amount-input name="amount" id="amount" label="AMOUNT" />
                     @error('amount')
                         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                     @enderror
@@ -268,11 +268,11 @@
                 <!-- // Hidden  section-->
                 {{-- Joint A/c Member 1 --}}
                 <div class="col-span-2 md:col-span-1 hidden jointAccountSection1">
-                    <label for="member_id_one_one" class="font-medium block mb-4 uppercase">Joint A/c Member 1 <span
+                    <label for="member_id_one_one" class="font-medium block mb-4 uppercase">Joint A/c Customer 1 <span
                             class="text-red-500"></span></label>
                     <select name="member_id_one" id="member_id_one_main"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -288,11 +288,11 @@
 
                 {{-- Joint A/c Member 2 --}}
                 <div class="col-span-2 md:col-span-1 hidden jointAccountSection2">
-                    <label for="member_id_two" class="font-medium block mb-4 uppercase">Joint A/c Member 2 <span
+                    <label for="member_id_two" class="font-medium block mb-4 uppercase">Joint A/c Customer 2 <span
                             class="text-red-500"></span></label>
                     <select name="member_id_two" id="member_id_two_main"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>

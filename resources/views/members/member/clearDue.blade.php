@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('page-title', isset($member) ? 'MEMBERS - ' . $member->member_info_first_name . ' TRANSACTIONS' : 'MEMBERS
+@section('page-title', isset($member) ? 'CUSTOMERS - ' . $member->member_info_first_name . ' TRANSACTIONS' : 'CUSTOMERS
     TRANSACTIONS')
 
 @section('content')

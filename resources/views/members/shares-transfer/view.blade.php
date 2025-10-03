@@ -44,7 +44,7 @@
         <table class="w-full text-sm text-left">
             <tbody>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Member</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Customer</td>
                     <td class="px-4 py-2 border-b">
                         <a href="{{ route('member.show', $shareholding->members->id) }}" class="text-primary hover:underline">
                             {{ $shareholding->members->member_no 

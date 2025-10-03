@@ -3,11 +3,11 @@
 @section('page-title',
     isset($member)
     ? (!empty($show)
-    ? 'VIEW ' . $member['member_info_first_name'] . 'MEMBERS'
+    ? 'VIEW ' . $member['member_info_first_name'] . 'CUSTOMERS'
     : 'EDIT
     ' .
     $member['member_info_first_name'] .
-    ' MEMBERS')
+    ' CUSTOMERS')
     : '')
 
 @section('content')

@@ -52,7 +52,7 @@
 
                 {{-- <div class="col-span-2 md:col-span-1">
                     <label for="promoterDropdown" class="md:text-lg font-medium block mb-4">
-                        MEMBER<span class="text-red-500">*</span>
+                        CUSTOMER<span class="text-red-500">*</span>
                     </label>
 
                     <input type="hidden" id="selectedId" name="selected_member_id"
@@ -60,7 +60,7 @@
 
                     <select name="member_id" id="promoterDropdown"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Member</option>
+                        <option value="">Select Customer</option>
                         @foreach ($members as $key => $mem)
                             <option value="{{ $key }}"
                                 {{ $selectedMember && $selectedMember->id == $key ? 'selected' : '' }}>
@@ -79,11 +79,11 @@
                         @endif
                     </div>
 
-                    <a href="{{ route('member.create') }}" style="color: blue; font-size: 13px;">Add New Member</a>
+                    <a href="{{ route('member.create') }}" style="color: blue; font-size: 13px;">Add New Customer</a>
                 </div> --}}
                 <div class="col-span-2 md:col-span-1">
                     <label for="promoterDropdown" class="md:text-lg font-medium block mb-4">
-                        MEMBER<span class="text-red-500">*</span>
+                        CUSTOMER<span class="text-red-500">*</span>
                     </label>
 
                     @if ($selectedMember)
@@ -97,7 +97,7 @@
 
                         <select name="member_id" id="promoterDropdown"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Member</option>
+                            <option value="">Select Customer</option>
                             @foreach ($members as $key => $mem)
                                 <option value="{{ $key }}">{{ $mem }}</option>
                             @endforeach
@@ -112,11 +112,11 @@
                     {{-- Member shares info --}}
                     <div id="memberSharesInfo" class="mt-2 text-sm">
                         @if (isset($selectedMemberShares))
-                            This member currently has <strong>{{ $selectedMemberShares }}</strong> shares.
+                            This customer currently has <strong>{{ $selectedMemberShares }}</strong> shares.
                         @endif
                     </div>
 
-                    <a href="{{ route('member.create') }}" style="color: blue; font-size: 13px;">Add New Member</a>
+                    <a href="{{ route('member.create') }}" style="color: blue; font-size: 13px;">Add New Customer</a>
                 </div>
 
 

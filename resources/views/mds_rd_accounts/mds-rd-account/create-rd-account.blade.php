@@ -44,12 +44,12 @@
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                        Member
+                        Customer
                         <span class="text-red-500">*</span>
                     </label>
                     <select id="memberDropdown" name="member_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Member</option>
+                        <option value="">Select Customer</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">
                             {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
@@ -62,7 +62,7 @@
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                        Member Name
+                        Customer Name
                     </label>
 
                     <input type="text" id="memberName" name="member_name"
@@ -71,7 +71,7 @@
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="city" class="md:text-lg font-medium block mb-4 uppercase">
-                        Member Address
+                        Customer Address
                     </label>
 
                     <input type="text" id="memberAddress" name="member_address"
@@ -81,7 +81,7 @@
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="frequency" class="md:text-lg font-medium block mb-4 uppercase">
-                        Member Mobile No
+                        Customer Mobile No
                     </label>
                     <div class="flex gap-2">
 
@@ -161,7 +161,7 @@
 
                 <div class="col-span-2 md:col-span-1 relative">
                     <x-datepicker-disabled
-                        label="Open Date"
+                        label="OPEN DATE"
                         name="open_date"
                         value="{{ old('open_date') }}"
                         inputId="date_pass" />

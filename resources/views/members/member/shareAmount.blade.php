@@ -11,11 +11,11 @@
 
 @section('page-title',
     isset($member)
-    ? 'MEMBERS - ' .
+    ? 'CUSTOMERS - ' .
     ($member->member_info_first_name ?? $member->member_code) .
     '
     TRANSACTIONS'
-    : 'MEMBERS TRANSACTIONS')
+    : 'CUSTOMERS TRANSACTIONS')
 
 @section('content')
     <div class="main-inner">
@@ -26,7 +26,7 @@
 
         <div class="box dark:bg-bg3 shadow-md rounded-2xl p-6 w-1/2 max-w-2xl mx-auto">
             <!-- Title -->
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 uppercase">
                 Share Amount Collected
             </h2>
 

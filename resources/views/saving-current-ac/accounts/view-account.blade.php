@@ -40,7 +40,7 @@
                     <table class="w-full text-sm">
                         <tbody>
                             <tr class="border-b">
-                                <th class="w-1/2 p-2 font-medium text-gray-700 uppercase">Member</th>
+                                <th class="w-1/2 p-2 font-medium text-gray-700 uppercase">Customer</th>
                                 <td class="p-2">{{ $account->members->member_no 
     ?? ($account->members->id ? str_pad($account->members->id, 6, '0', STR_PAD_LEFT) : '-') }}-{{ ucfirst($account->members->member_info_first_name)." ".ucfirst($account->members->member_info_last_name) }}</td>
                             </tr>

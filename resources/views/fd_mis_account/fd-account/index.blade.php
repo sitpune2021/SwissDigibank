@@ -34,13 +34,13 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                Member No
+                                Customer No
                             </div>
                         </th>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                Member Name
+                                Customer Name
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">

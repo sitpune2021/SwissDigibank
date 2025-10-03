@@ -168,7 +168,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member</td>
+                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
                             <td class="px-4 py-2">
                                 <a href="{{ route('member.show', $ddaccount->member->id) }}"
                                     class="text-primary hover:underline">
@@ -299,7 +299,7 @@
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b px-4 py-3 bg-red-100">
-                    <h3 class="text-lg font-semibold text-blacj">MEMBER DETAILS</h3>
+                    <h3 class="text-lg font-semibold text-blacj">CUSTOMER DETAILS</h3>
                 </div>
 
                 <!-- Body -->
@@ -308,7 +308,7 @@
                         <tbody class="divide-y divide-gray-200">
 
                             <tr>
-                                <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member Name</td>
+                                <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer Name</td>
                                 <td class="px-4 py-2">{{($ddaccount->member?->member_no
         ?? ($ddaccount->member?->id 
             ? str_pad($ddaccount->member->id, 6, '0', STR_PAD_LEFT) 
@@ -491,7 +491,7 @@
                             </div>
                         </form>
                         <form action="" class="mt-2 px-3">
-                            <label for="memberDropdown" class="block uppercase">Member</label>
+                            <label for="memberDropdown" class="block uppercase">Customer</label>
                             <div class="mt-2 flex flex-row items-center gap-3 justify-between">
                                 <select id="memberDropdown" name="member_id"
                                     class="w-full rounded-10 border px-3 py-3 bg-secondary/5 dark:bg-bg3 dark:text-white">

@@ -55,7 +55,7 @@ return [
 
     ],
 
-    'MEMBER_INFO' => [
+    'CUSTOMER_INFO' => [
         [
             'label' => 'TITLE',
             'name' => 'member_info_title',
@@ -131,7 +131,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'OLD MEMBER NO (IF ANY)',
+            'label' => 'OLD CUSTOMER NO (IF ANY)',
             'name' => 'member_info_old_member_no',
             'id' => 'old_member_no',
             'type' => 'text',
@@ -197,7 +197,7 @@ return [
             ],
         ],
         [
-            'label' => 'MEMBER RELIGION',
+            'label' => 'CUSTOMER RELIGION',
             'name' => 'member_info_religion',
             'id' => 'religion',
             'type' => 'select',
@@ -215,7 +215,7 @@ return [
     ],
 
     // Member Address
-    'MEMBER_CORRESPONDENCE_ADDRESS' => [
+    'CUSTOMER_CORRESPONDENCE_ADDRESS' => [
         [
             'label' => 'ADDRESS LINE 1',
             'name' => 'member_address_line_1',
@@ -301,7 +301,7 @@ return [
     ],
 
     // Permanent Address
-    'MEMBER_PERMANENT_ADDRESS' => [
+    'CUSTOMER_PERMANENT_ADDRESS' => [
         [
             'label' => 'Address',
             'name' => 'member_address_address',
@@ -335,7 +335,7 @@ return [
     ],
 
     // GPS Location
-    'MEMBER_ADDRESS_GPS_LOCATION' => [
+    'CUSTOMER_ADDRESS_GPS_LOCATION' => [
         [
             'label' => 'LOCATION LATITUDE',
             'name' => 'member_gps_location_latitude',
@@ -353,7 +353,7 @@ return [
     ],
 
     // KYC Info
-    'MEMBER_KYC' => [
+    'CUSTOMER_KYC' => [
         [
             'label' => 'AADHAAR NO.',
             'name' => 'member_kyc_aadhaar_no',
@@ -425,7 +425,7 @@ return [
     ],
 
     // KYC Documents
-    'MEMBER_KYC_DOCUMENTS' => [
+    'CUSTOMER_KYC_DOCUMENTS' => [
         [
             'label' => 'PHOTO',
             'name' => 'member_kyc_photo',

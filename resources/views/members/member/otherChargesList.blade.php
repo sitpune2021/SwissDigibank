@@ -2,7 +2,7 @@
 
 @section('page-title',
     isset($member)
-    ? 'MEMBERS - ' .
+    ? 'CUSTOMERS - ' .
     $member->member_info_first_name .
     '
     TRANSACTIONS'

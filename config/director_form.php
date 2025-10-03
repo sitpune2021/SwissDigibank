@@ -9,7 +9,7 @@ return [
     "required"=> false
   ],
   [
-    "label"=> "MEMBER",
+    "label"=> "CUSTOMER",
     "name"=> "member_id",
     "id"=> "member",
     "type"=> "select",

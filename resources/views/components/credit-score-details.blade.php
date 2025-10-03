@@ -4,16 +4,16 @@
         <table class="w-full border border-gray-300 rounded-lg whitespace-nowrap" id="cibilTable">
             <thead class="bg-secondary/5">
                 <tr class="bg-gray-100">
-                    <th class="text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
+                    <th class="uppercase text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
                         Cibil Type
                     </th>
-                    <th class="text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
+                    <th class="uppercase text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
                         Cibil Score
                     </th>
-                    <th class="text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
+                    <th class="uppercase text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
                         Report Date
                     </th>
-                    <th class="text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
+                    <th class="uppercase text-center px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-sm md:text-base">
                         Upload File
                     </th>
                     <th class="border border-gray-300 px-2 py-2 md:px-4 md:py-2"></th>
