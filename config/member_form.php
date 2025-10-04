@@ -303,7 +303,7 @@ return [
     // Permanent Address
     'CUSTOMER_PERMANENT_ADDRESS' => [
         [
-            'label' => 'Address',
+            'label' => 'ADDRESS',
             'name' => 'member_address_address',
             'id' => 'address',
             'type' => 'text',
@@ -598,7 +598,7 @@ return [
     // Membership Charges
     'MEMBERSHIP_CHARGES_ (IF ANY) ' => [
         [
-            'label' => 'Transaction Date',
+            'label' => 'TRANSACTION DATE',
             'name' => 'charges_transaction_date',
             'id' => 'date5',
             'type' => 'string',
