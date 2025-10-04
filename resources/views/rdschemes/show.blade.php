@@ -6,9 +6,9 @@
     <h2 class="text-xl font-semibold mb-4">
         {{ $scheme->scheme_name ??''}}
     </h2>
-    <p class="text-sm text-gray-500 mb-6">
+    <!-- <p class="text-sm text-gray-500 mb-6">
         <a href="{{route('rdschemes.index')}}">RD/ DD SCHEME</a> &gt; {{ $scheme->scheme_name ??''}}
-    </p>
+    </p> -->
 
     <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
         <div class="col-span-2 md:col-span-1">

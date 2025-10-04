@@ -650,7 +650,7 @@
 
               <tr>
                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Fore Close Date</td>
-                <td class="px-4 py-2">02/04/2025</td>
+                <td class="px-4 py-2">02-04-2025</td>
               </tr>
 
               <tr>

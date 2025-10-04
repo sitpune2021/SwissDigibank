@@ -27,13 +27,7 @@
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
             <h3 class="text-xl font-semibold">NEW RD/ DD SCHEME</h3>
-            <p class="text-gray-500">
-                <a href="{{route('rdschemes.index')}}" class="text-gray-500">RD/ DD Scheme</a> >
-                <a href="" class="text-gray-500"> New</a>
-            </p>
-
         </div>
-
     </div>
 
     <div class="col-span-12 box lg:col-span-12">

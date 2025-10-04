@@ -27,10 +27,7 @@
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
             <h1 class="text-xl font-semibold">NEW GOLD LOAN APPLICATION</h1>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500  capitalize text-sm">New Gold Loan Application </a> >
-                <a href="" class="text-gray-500 capitalize text-sm"> New</a>
-            </p>
+
         </div>
     </div>
 

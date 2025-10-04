@@ -93,8 +93,7 @@
                 </thead>
                 <tbody>
 
-                    @foreach ($accounts as $account)
-        
+                    @foreach($accounts as $account)        
                     <tr>
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
@@ -109,9 +108,11 @@
                         <td class="px-6 py-3">{{ $account->branch->branch_name ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->account_type??'-' }}</td>
                         <td class="px-6 py-3">{{ number_format($account->fd_amount, 2) }}</td>
-                        <td class="px-6 py-3">{{ $account->open_date??'-' }}</td>
+                        <td class="px-6 py-3">{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->interest_payout_type??'-' }}</td>
-                        <td class="px-6 py-3">{{ $account->maturity_date ?? '-' }}</td>
+                        <td class="px-6 py-3">
+                            {{ \Carbon\Carbon::parse($account->maturity_date)->format('d-m-Y') ?? '-' }}
+                        </td>
                         <td class="px-6 py-3">
                             @if ($account->status == 0)
                             <span class="block w-28 rounded-[30px] border border-n30 bg-warning/20 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">

@@ -16,7 +16,7 @@ isset($form15g15h) && $form15g15h->member
 <div class="main-inner">
     <!-- Page Header -->
     <div class="flex items-center justify-between mb-6 lg:mb-8">
-        <h5 class="font-bold text-gray-800 h2">Form 15G/ 15H</h5>
+        <h5 class="font-bold text-gray-800 h2 uppercase">Form 15G/ 15H</h5>
     </div>
     <div class="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
         <!-- Member Name -->
@@ -45,14 +45,14 @@ isset($form15g15h) && $form15g15h->member
     <table class="w-full text-sm text-left border-t border-gray-300">
         <tbody>
             {{-- <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Customer</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Customer</td>
                     <td class="px-4 py-2 border-b">
                         {{ $form15g15h->member->member_info_first_name }}
             {{ $form15g15h->member->member_info_last_name }}
             </td>
             </tr> --}}
             <tr>
-                <td class="px-4 py-2 font-semibold border-b bg-gray-50">Customer</td>
+                <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Customer</td>
                 <td class="px-4 py-2 border-b">
                     <a href="{{ $form15g15h->member?->id ? route('member.show', $form15g15h->member->id) : '' }}" class="text-blue-600 underline">
                         {{ $form15g15h->member?->member_info_first_name ?? '' }}
@@ -62,20 +62,20 @@ isset($form15g15h) && $form15g15h->member
             </tr>
 
             <tr>
-                <td class="px-4 py-2 font-semibold border-b bg-gray-50">Financial Year</td>
+                <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Financial Year</td>
                 <td class="px-4 py-2 border-b"> {{ $form15g15h->financial_year }}
                 </td>
             </tr>
             <tr>
-                <td class="px-4 py-2 font-semibold border-b bg-gray-50">Created at</td>
+                <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Created at</td>
                 <td class="px-4 py-2 border-b">{{ $form15g15h->created_at?->format('d-m-Y') ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td class="px-4 py-2 font-semibold border-b bg-gray-50">Updated at</td>
+                <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Updated at</td>
                 <td class="px-4 py-2 border-b">{{ $form15g15h->updated_at?->format('d-m-Y') ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td class="px-4 py-2 font-semibold border-b bg-gray-50">Form 15G/ 15H</td>
+                <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Form 15G/ 15H</td>
                 <td class="px-4 py-2 border-b">
                     @if (!empty($form15g15h['form_15_upload']))
                     @php

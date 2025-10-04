@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('scheme_name');
             $table->string('scheme_code')->unique();
             $table->decimal('min_amount', 12, 2);
-            $table->integer('tenure')->after('scheme_code'); 
-            $table->decimal('annual_interest_rate', 5, 2)->after('tenure'); 
+            $table->integer('tenure'); 
+            $table->decimal('annual_interest_rate', 5, 2); 
             $table->integer('lock_in_period'); 
             $table->integer('interest_lock_in'); 
             $table->decimal('bonus_rate', 5, 2)->nullable();

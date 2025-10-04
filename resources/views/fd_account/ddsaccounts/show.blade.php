@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('content')
 <style>
     .custom-thead {
         background-color: #e6f4ea;
@@ -102,17 +103,12 @@
     }
 </style>
 
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">
                 DD ACCOUNT -DDA{{ $ddaccount->id }}
             </h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500">DD Account</a> >
-                <a href="#" class="text-gray-500"> 1706</a>
-            </p>
         </div>
     </div>
 

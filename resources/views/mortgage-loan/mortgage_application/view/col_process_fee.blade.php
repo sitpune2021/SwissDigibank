@@ -16,11 +16,6 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold capitalize">LOAN APPLICATION- 100118</h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500">Loan Against Property Application</a> >
-                <a href="#" class="text-gray-500">100118</a>
-                <a href="#" class="text-gray-500">new-transction</a>
-            </p>
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -38,12 +33,12 @@
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
+                                    <th class="text-center px-3 py-2 uppercase">Value</th>
+                                    <th class="text-center px-3 py-2 uppercase">GST (%)</th>
+                                    <th class="text-center px-3 py-2 uppercase">SGST</th>
+                                    <th class="text-center px-3 py-2 uppercase">CGST</th>
+                                    <th class="text-center px-3 py-2 uppercase">IGST</th>
+                                    <th class="text-center px-3 py-2 uppercase">Total</th>
                                 </tr>
 
                                 <!-- Input Row -->
@@ -89,7 +84,7 @@
                     </div>
 
                     <x-datepicker-disabled
-                        label="Transaction Date"
+                        label="TRANSACTION DATE"
                         inputId="tran_date"
                         name="transaction_date" />
 
@@ -103,11 +98,11 @@
                     <!-- Buttons -->
                     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                         <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
-                            SUBMIT
+                            Submit
                         </button>
 
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                            <a href="#"> Back</a>
                         </button>
                     </div>
                 </form>
@@ -119,7 +114,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg"> Loan Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg uppercase"> Loan Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -135,75 +130,75 @@
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Branch</td>
+                                <td class="font-semibold px-3 py-2 w-1/3 uppercase">Branch</td>
                                 <td class="px-3 py-2">Kalyanadurgam</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Advisor/ Staff</td>
+                                <td class="font-semibold px-3 py-2 w-1/3 uppercase">Advisor/ Staff</td>
                                 <td class="px-3 py-2">Rahul</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Requested</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Amount Requested</td>
                                 <td class="px-3 py-2">₹ 10,000.00</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approvable</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Amount Approvable</td>
                                 <td class="px-3 py-2"> ₹ 61,562.00</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approved</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Amount Approved</td>
                                 <td class="px-3 py-2">₹ 10,000.00</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Amount</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Interest Amount</td>
                                 <td class="px-3 py-2"> ₹ 1,117.00</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Annual Interest Rate</td>
                                 <td class="px-3 py-2">20.0 %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annualized Percentage Rate (APR)</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Annualized Percentage Rate (APR)</td>
                                 <td class="px-3 py-2"> 34.24 % | %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Credit Period</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Credit Period</td>
                                 <td class="px-3 py-2">
                                     1 Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
                                     ₹ 11,117.00
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">EMI Payout</td>
+                                <td class="font-semibold px-3 py-2 uppercase">EMI Payout</td>
                                 <td class="px-3 py-2">
                                     MONTHLY
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">EMI Amount</td>
+                                <td class="font-semibold px-3 py-2 uppercase">EMI Amount</td>
                                 <td class="px-3 py-2">
                                     ₹ 956.00
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">No. of EMIs</td>
+                                <td class="font-semibold px-3 py-2 uppercase">No. of EMIs</td>
                                 <td class="px-3 py-2">
                                     12
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure of Loan</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Tenure of Loan</td>
                                 <td class="px-3 py-2">
                                     12 MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest As First EMI</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Interest As First EMI</td>
                                 <td class="px-3 py-2">
                                     <span class="block w-20 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
                                         No
@@ -211,7 +206,7 @@
                                 </td>
                             </tr>
                             <tr >
-                                <td class="font-semibold px-3 py-2">Processing Fee</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Processing Fee</td>
                                 <td class="px-3 py-2">
                                     ₹ 236.00 (Incl. 18.0 % GST)
                                 </td>

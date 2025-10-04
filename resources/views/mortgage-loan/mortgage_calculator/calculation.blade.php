@@ -18,7 +18,7 @@
       <tbody class="divide-y divide-gray-200 ">
         <tr class="border">
           <td class="px-4 py-2  border font-medium uppercase">Disburse Date</td>
-          <td class="px-4 py-2 border">19/09/2025</td>
+          <td class="px-4 py-2 border">19-09-2025</td>
           <td class="px-4 py-2 border font-medium uppercase">Loan Amount</td>
           <td class="px-4 py-2 border">₹20,000.00</td>
         </tr>
@@ -105,8 +105,8 @@
         </tr>
         <tr class="border-b">
           <td class="py-2 px-2 text-start">1</td>
-          <td class="py-2 px-2 text-start">19/10/2025</td>
-          <td class="py-2 px-2 text-start">20/10/2025</td>
+          <td class="py-2 px-2 text-start">19-10-2025</td>
+          <td class="py-2 px-2 text-start">20-10-2025</td>
           <td class="py-2 px-2 text-end">12222.0</td>
           <td class="py-2 px-2 text-start"></td>
           <td class="py-2 px-2 text-start"></td>
@@ -115,8 +115,8 @@
         </tr>
         <tr class="border-b">
           <td class="py-2 px-2 text-start">2</td>
-          <td class="py-2 px-2 text-start">19/11/2025</td>
-          <td class="py-2 px-2 text-start">20/11/2025</td>
+          <td class="py-2 px-2 text-start">19-11-2025</td>
+          <td class="py-2 px-2 text-start">20-11-2025</td>
           <td class="py-2 px-2 text-end">12222.0</td>
           <td class="py-2 px-2 text-start"></td>
           <td class="py-2 px-2 text-start"></td>
@@ -125,8 +125,8 @@
         </tr>
         <tr class="border-b">
           <td class="py-2 px-2 text-start">3</td>
-          <td class="py-2 px-2 text-start">19/12/2025</td>
-          <td class="py-2 px-2 text-start">20/12/2025</td>
+          <td class="py-2 px-2 text-start">19-12-2025</td>
+          <td class="py-2 px-2 text-start">20-12-2025</td>
           <td class="py-2 px-2 text-end">12222.0</td>
           <td class="py-2 px-2 text-start"></td>
           <td class="py-2 px-2 text-start"></td>
@@ -135,8 +135,8 @@
         </tr>
         <tr class="border-b">
           <td class="py-2 px-2 text-start">4</td>
-          <td class="py-2 px-2 text-start">19/12/2025</td>
-          <td class="py-2 px-2 text-start">20/12/2025</td>
+          <td class="py-2 px-2 text-start">19-12-2025</td>
+          <td class="py-2 px-2 text-start">20-12-2025</td>
           <td class="py-2 px-2 text-end">12222.0</td>
           <td class="py-2 px-2 text-start"></td>
           <td class="py-2 px-2 text-start"></td>

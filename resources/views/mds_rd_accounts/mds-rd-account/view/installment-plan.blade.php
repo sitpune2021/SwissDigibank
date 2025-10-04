@@ -6,11 +6,11 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">RD - {{ $rdAccount->id }} - Installments</h1>
-            <p class="text-gray-500">
+            <!-- <p class="text-gray-500">
                 <a href="{{ route('mds-rd-account.index') }}" class="text-gray-500">Recurring Deposits</a> >
                 <a href="#" class="text-gray-500">{{ $rdAccount->id }}</a> >
                 <span class="text-gray-500">Installments</span>
-            </p>
+            </p> -->
         </div>
     </div>
 
