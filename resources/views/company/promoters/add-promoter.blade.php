@@ -259,7 +259,7 @@
               if (exactLength) {
                   input.addEventListener('blur', () => {
                       if (input.value.length !== maxLength) {
-                        //   alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
+                          alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
                           input.focus();
                       }
                   });
@@ -308,6 +308,10 @@
 
           // Ration Card No. (alphanumeric, max 16)
           applyAlphaNumValidation('ration_card_no', 16);
+          applyAlphaNumValidation('meter_no', 16); // ✅ Added
+          applyAlphaNumValidation('ci_no', 16); // ✅ Added
+          applyAlphaNumValidation('dl_no', 16); // ✅ Added
+          applyAlphaNumValidation('ci_relation', 20);
       });
   </script>
 
