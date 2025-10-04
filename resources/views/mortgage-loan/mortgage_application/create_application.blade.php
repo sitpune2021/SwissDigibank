@@ -235,7 +235,7 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Credit Period( EMI Grace Period )(Days)
+                                Credit Period(EMI Grace Period)(Days)
                                 <span class="text-error">*</span>
                             </label>
                             <input type="number" id="" name=""
