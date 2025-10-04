@@ -1,5 +1,8 @@
 @extends('layout.main')
 
+@section('content')
+
+
 <style>
     input[type="checkbox"] {
         width: 28px;
@@ -22,17 +25,14 @@
     }
 </style>
 
-@section('content')
-
-
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold uppercase">New Gold Loan Scheme</h1>
-            <p class="text-gray-500">
+            <h1 class="text-xl font-semibold uppercase">New Mortage Loan Scheme</h1>
+            <!-- <p class="text-gray-500">
                 <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
                 <a href="" class="text-gray-500 text-sm"> New</a>
-            </p>
+            </p> -->
 
         </div>
 
@@ -705,12 +705,12 @@
 
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-            <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
+            <button class="btn-primary justify-center" type="submit" name="save_scheme">
                 Save Scheme
             </button>
 
-            <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{ route('mortgage_schemes.index') }}"> BAck</a>
+            <button class="btn-outline justify-center" type="reset">
+                <a href="{{ route('mortgage_schemes.index') }}"> Back</a>
             </button>
         </div>
     </div>

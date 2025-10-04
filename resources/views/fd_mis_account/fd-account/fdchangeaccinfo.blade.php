@@ -34,12 +34,12 @@
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-xl font-semibold dark:text-white">FD - {{$fdAccountDetail->id}}</h1>
 
-
+<!-- 
             <p class="text-gray-500 dark:text-gray-400">
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm ">Fd Accounts</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">{{$fdAccountDetail->id}}</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">change Account Info</a>
-            </p>
+            </p> -->
         </div>
     </div>
 
@@ -106,7 +106,7 @@
                     </label>
                     <select
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
-                        <option value="">Please Select Member</option>
+                        <option value="">Please Select Customer</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">
                             {{
@@ -136,7 +136,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Open Date <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="date" placeholder="DD/MM/YYYY" value="{{ \Carbon\Carbon::now()->format('d/m/Y') }}"
+                    <input type="text" id="date" placeholder="DD/MM/YYYY" value="{{ \Carbon\Carbon::now()->format('d-m-Y') }}"
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" />
                 </div>
 
@@ -180,7 +180,7 @@
                         </tr>
                         <tr class="border-b dark:border-gray-700">
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Open Date</td>
-                            <td class="py-2">{{$fdAccountDetail->open_date}}</td>
+                            <td class="py-2">{{ $fdAccountDetail->open_date ? \Carbon\Carbon::parse($fdAccountDetail->open_date)->format('d-m-Y') : '' }}</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Status</td>
