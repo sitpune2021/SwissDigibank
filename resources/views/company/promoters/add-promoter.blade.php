@@ -259,7 +259,7 @@
               if (exactLength) {
                   input.addEventListener('blur', () => {
                       if (input.value.length !== maxLength) {
-                          alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
+                        //   alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
                           input.focus();
                       }
                   });

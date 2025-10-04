@@ -56,12 +56,12 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="member_id" class="md:text-lg font-medium block mb-4 uppercase">
-                                Member <span class="text-red-500">*</span>
+                                Customer <span class="text-red-500">*</span>
                             </label>
 
                             <select name="member_id" id="member_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                                 @foreach($members as $member)
                                 <option value="{{ $member->id }}"
                                     {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
@@ -75,10 +75,10 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                1st Co-Applicant Member</label>
+                                1st Co-Applicant Customer</label>
                             <select name="co_applicant_1_id" id="co_applicant_1_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                                 @foreach($members as $member)
                                 <option value="{{ $member->id }}"
                                     {{ old('member_id', $application->co_applicant_1_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -90,10 +90,10 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                2nd Co-Applicant Member</label>
+                                2nd Co-Applicant Customer</label>
                             <select name="co_applicant_2_id" id="co_applicant_2_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                                 @foreach($members as $member)
                                 <option value="{{ $member->id }}"
                                     {{ old('member_id', $application->co_applicant_2_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -136,7 +136,7 @@
                                 Guarantor 1 </label>
                             <select name="guarantor_1_id" id="guarantor_1_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                                 @foreach($members as $member)
                                 <option value="{{ $member->id }}"
                                     {{ old('member_id', $application->guarantor_1_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -153,7 +153,7 @@
                                     Guarantor 2</label>
                                 <select name="guarantor_2_id" id="guarantor_2_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Member No or Name</option>
+                                    <option value="">Search Customer No or Name</option>
                                     @foreach($members as $member)
                                     <option value="{{ $member->id }}"
                                         {{ old('member_id', $application->guarantor_2_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -170,7 +170,7 @@
                                     Guarantor 3 </label>
                                 <select name="guarantor_3_id" id="guarantor_3_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Member No or Name</option>
+                                    <option value="">Search Customer No or Name</option>
                                     @foreach($members as $member)
                                     <option value="{{ $member->id }}"
                                         {{ old('member_id', $application->guarantor_3_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -187,7 +187,7 @@
                                     Guarantor 4 </label>
                                 <select name="guarantor_4_id" id="guarantor_4_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Member No or Name</option>
+                                    <option value="">Search Customer No or Name</option>
                                     @foreach($members as $member)
                                     <option value="{{ $member->id }}"
                                         {{ old('member_id', $application->guarantor_4_id ?? '') == $member->id ? 'selected' : '' }}>

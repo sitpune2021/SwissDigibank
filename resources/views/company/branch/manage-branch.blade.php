@@ -41,7 +41,7 @@
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1  text-center">
-                                MEMBERS
+                                CUSTOMERS
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">

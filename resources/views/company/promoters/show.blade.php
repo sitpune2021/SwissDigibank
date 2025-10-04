@@ -208,7 +208,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
                     @click="open = !open">
-                    <span class="font-semibold uppercase">Member KYC Info</span>
+                    <span class="font-semibold uppercase">Customer KYC Info</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
                 <!-- Content -->

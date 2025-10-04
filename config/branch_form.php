@@ -31,7 +31,7 @@ return [
         'required' => false,
     ],
      [
-        'label' => 'Swift  Code',
+        'label' => 'SWIFT CODE',
         'name' => 'swift_code',
         'id' => 'swift_code',
         'type' => 'text',
