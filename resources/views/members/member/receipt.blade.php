@@ -1,178 +1,86 @@
+</html>
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <title>Payment Receipt</title>
-    <style>
-        @page {
-            margin: 12mm;
-        }
-
-        body {
-            font-family: "Courier New", Courier, monospace;
-            font-size: 13px;
-            color: #222;
-            margin: 0;
-            line-height: 1.25;
-        }
-
-        .container {
-            max-width: 320px;
-            margin: 0 auto;
-            padding: 8px 6px;
-        }
-
-        .heading-bank {
-            text-align: center;
-            font-weight: 800;
-        }
-
-        .heading-bank h2 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 800;
-
-        }
-
-        .heading-bank p {
-            margin: 2px 0 8px;
-            font-size: 8px;
-        }
-
-        hr {
-            border-top: 1px solid #ddd;
-            margin: 8px 0;
-        }
-
-        .title {
-            font-weight: 900;
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .row {
-            display: flex;
-            align-items: flex-start;
-            /* align top for multiline values */
-            margin-bottom: 4px;
-        }
-
-        .label {
-            flex: 0 0 35%;
-            /* fixed width for labels */
-            font-weight: 900;
-            color: #555;
-        }
-
-        .value {
-            flex: 1;
-            /* take remaining space */
-            text-align: right;
-            font-weight: 800;
-            color: #555;
-        }
-
-        .value.multiline {
-            white-space: pre-wrap;
-            word-break: break-word;
-            text-align: right;
-        }
-
-        .printed {
-            margin-top: 12px;
-            font-size: 11px;
-            color: #444;
-            font-weight: 800;
-        }
-
-        .thankyou {
-            margin-top: 8px;
-            color: #444;
-            font-weight: 800;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="container">
-        <div class="heading-bank">
-            <h2>
-                SHRI SAMARTH<br>
-                NAGRI SAHKARI<br>
-                PAT SANSTHA<br>
-                LIMITED
-            </h2>
-            <p>969/03-04</p>
+<body style="font-family:'Courier New', Courier, monospace; font-size:13px; color:#222; margin:0; line-height:1.25;">
+    <div style="max-width:80mm; margin:0 auto; padding:8px 6px;">
+
+        <div style="text-align:center; font-weight:800;">
+            <h2 style="margin:0; font-size:16px; font-weight:800;">SBC GLOBAL</h2>
+            <p style="margin:2px 0 8px; font-size:8px;">969/03-04</p>
         </div>
 
-        <hr>
-        <div class="title">Payment Receipt</div>
+        <hr style="border-top:1px dashed #999; margin:6px 0;">
 
-        <div class="row">
-            <div class="label">Reg No :</div>
-            <div class="value">{{ $reg_no }}</div>
+        <div style="font-weight:900; font-size:16px; margin-bottom:8px; text-align:center;">
+            Payment Receipt
         </div>
 
-        <div class="row">
-            <div class="label">Name :</div>
-<div class="value multiline">{{ $member_info_first_name }}</div>
-<div class="value multiline">{{ $member_info_middle_name ?? ''}}</div>
-<div class="value multiline">{{ $member_info_last_name }}</div>
-        </div>
+        <table style="width:100%; border-collapse:collapse; font-size:12px;">
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Reg No :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $id }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Name :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $member_info_first_name }} {{ $member_info_middle_name ?? '' }} {{ $member_info_last_name }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Phone :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $member_info_mobile_no }}</td>
+            </tr>
 
-        <div class="row">
-            <div class="label">Phone :</div>
-            <div class="value">{{ $member_info_mobile_no }}</div>
-        </div>
+            <tr>
+                <td colspan="2" style="padding:4px 2px;">
+                    <hr style="border-top:1px dashed #999; margin:6px 0;">
+                </td>
+            </tr>
 
-        <hr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Date :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $transaction_date }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Ref Id :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $ref_id }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Amount :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $amount }} {{ $amount_suffix }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Mode :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $mode }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Status :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $status }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Type :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $type }}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Remarks :</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $remarks }}</td>
+            </tr>
+        </table>
 
-        <div class="row">
-            <div class="label">Date :</div>
-            <div class="value">{{ $transaction_date }}</div>
-        </div>
+        <hr style="border-top:1px dashed #999; margin:6px 0;">
 
-        <div class="row">
-            <div class="label">Ref Id :</div>
-            <div class="value">{{ $ref_id }}</div>
-        </div>
-
-
-        <div class="row">
-            <div class="label">Amount :</div>
-            <div class="value">{{ $amount }} {{ $amount_suffix }}</div>
-        </div>
-
-        <div class="row">
-            <div class="label">Mode :</div>
-            <div class="value">{{ $mode }}</div>
-        </div>
-
-        <div class="row">
-            <div class="label">Status:</div>
-            <div class="value">{{ $status }}</div>
-        </div>
-
-        <div class="row">
-            <div class="label">Type:</div>
-            <div class="value">{{ $type }}</div>
-        </div>
-
-        <div class="row">
-            <div class="label">Remarks:</div>
-            <div class="value multiline">{{ $remarks }}</div>
-        </div>
-
-        <hr>
-
-        <div class="printed">
+        <div style="margin-top:12px; font-size:11px; color:#444; font-weight:800;">
             Printed on: {{ $printed_on }}<br>
             By: {{ $printed_by }}
         </div>
 
-
-        <div class="thankyou">Thank you for your business!</div>
+        <div style="margin-top:8px; color:#444; font-weight:800; text-align:center;">
+            Thank you for your business!
+        </div>
     </div>
 </body>
 
