@@ -111,7 +111,7 @@ return [
             ['title' => 'PENDING TRANSACTIONS', 'route' => 'pending-transaction.index'],
             ['title' => 'SHARE TRANSFER/ ALLOCATION', 'route' => 'share-transfer-approval.approve_transfer'],
             ['title' => 'REVERSED TRANSACTIONS', 'route' => 'reverse-transaction.reverse_transaction'],
-            ['title' => 'ACCOUNT APPROVALS', 'route' => 'approveAccounts'],
+            ['title' => 'ACCOUNT APPROVALS', 'route' => 'approveAccounts.index'],
 
             // ['title' => 'Share Surrender', 'route' => 'share-surrender.index'],
         ]

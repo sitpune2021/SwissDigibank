@@ -1,5 +1,6 @@
 @extends('layout.main')
-
+@section('page-title', isset($misaccount) ? (!empty($show) ? 'VIEW ' . $misaccount->name . '  MIS ACCOUNT' : 'EDIT ' .
+$misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
 @section('content')
 
     <style>
@@ -36,15 +37,15 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
-                <h1 class="text-xl font-semibold">NEW MIS ACCOUNT</h1>
-                <p class="text-gray-500">
+                <!-- <h1 class="text-xl font-semibold">NEW MIS ACCOUNT</h1> -->
+                <!-- <p class="text-gray-500">
                     <a href="{{ route('misaccount.index') }}" class="text-gray-500 text-sm">MIS Accounts</a> >
                     @if (isset($misaccount))
                         <a href="#" class="text-gray-500  text-sm"> edit</a>
                     @else
                         <a href="#" class="text-gray-500  text-sm"> New</a>
                     @endif
-                </p>
+                </p> -->
 
             </div>
 
