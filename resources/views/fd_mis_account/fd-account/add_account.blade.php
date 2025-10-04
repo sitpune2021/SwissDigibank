@@ -1,46 +1,6 @@
 @extends('layout.main')
-
+@section('content')
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -72,7 +32,6 @@
     }
 </style>
 
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -85,14 +44,14 @@
             @csrf
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">
                         Member <span class="text-red-500">*</span>
                     </label>
                     <select id="member_id" name="member_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select member</option>
                         @foreach($members as $member)
-                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
+                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }} {{ $member->member_info_last_name }}</option>
                         @endforeach
                     </select>
                     @error('member_id')
@@ -101,7 +60,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">Member Name</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Member Name</label>
                     <input type="text" id="member_name"
                         placeholder="Enter Name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" disabled>
@@ -111,7 +70,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">Member Address</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Member Address</label>
                     <input type="text" id="member_address"
                         placeholder="Enter Address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" disabled>
@@ -121,7 +80,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">Member Mobile No.</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Member Mobile No.</label>
                     <div class="flex gap-2">
                         <input type="text" class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" value="+91" disabled>
                         <input type="text" id="member_mobile"
@@ -134,7 +93,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4">Minor</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Minor</label>
                     <select id="minor_id" name="minor_id" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select minor</option>
                     </select>
@@ -149,13 +108,13 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Branch
                         <span class="text-red-500">*</span>
                     </label>
                     <select name="branch_id" id="branch_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6  py-3 md:py-3">
-                        <option value="">select branch</option>
+                        <!-- <option value="">select branch</option> -->
                     </select>
                     @error('branch_id')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -163,7 +122,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Advisor/ Staff
                     </label>
                     <select name="advisor_staff" id="advisor_staff"
@@ -178,7 +137,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Open Date
                         <span class="text-red-500">*</span>
                     </label>
@@ -191,7 +150,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Tenure Period
                         <span class="text-red-500">*</span>
                     </label>
@@ -207,7 +166,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Scheme
                         <span class="text-red-500">*</span>
                     </label>
@@ -224,20 +183,15 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        FD Amount
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="fd_amount" name="fd_amount"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3 md:py-3"
-                        placeholder="0.0">
+
+                    <x-amount-input name="fd_amount" id="fd_amount" label="FD Amount" />
                     @error('fd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Interest Payout Type
                     </label>
 
@@ -255,7 +209,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         TDS Deduction
                         <span class="text-red-500">*</span>
                     </label>
@@ -275,7 +229,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:w-1/3 font-medium">Senior Citizen <span class="text-red-500 ">*</span></label>
+                    <label class="md:w-1/3 font-medium uppercase">Senior Citizen <span class="text-red-500 ">*</span></label>
                     <div class="md:w-2/3 my-2 ">
                         <input type="checkbox" name="senior_citizen" value="1" class="w-5 h-5" checked>
                     </div>
@@ -286,7 +240,7 @@
 
                 <div class="col-span-2 md:col-span-1">
                     <!-- Step 1 -->
-                    <label class="md:text-lg font-medium block mb-4">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">
                         Account Type <span class="text-red-500">*</span>
                     </label>
 
@@ -301,7 +255,7 @@
 
                     <!-- Select list (shown only if Joint A/C) -->
                     <div id="accountSelect" class="hidden mt-4">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Joint A/C Member <span class="text-red-500">*</span>
                         </label>
                         <select name="joint_member_id"
@@ -321,7 +275,7 @@
                 <!--  Nominee  -->
                 <div class="mt-4 col-span-2 md:col-span-1 ">
 
-                    <p class="font-medium">
+                    <p class="font-medium uppercase">
                         Nominee
                         <span class="text-red-500">*</span>
                     </p>
@@ -349,7 +303,7 @@
 
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Final Amount
                     </label>
 
@@ -358,7 +312,7 @@
                         placeholder="0" value="">
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         T. Date
                         <span class="text-red-500">*</span>
                     </label>
@@ -370,7 +324,7 @@
                 <!-- pay mode 1-->
                 <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
                     <!-- Section Title -->
-                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Pay Mode 1</h4>
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode</h4>
                     <!-- Amount Field -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
                         <label for="" class="text-sm font-medium text-gray-700">
@@ -633,7 +587,7 @@
 
 <!--payment mode1-->
 <script>
-//payment mode1
+    //payment mode1
     const payModeRadios = document.querySelectorAll('input[name="pay1_mode"]');
     const onlineFields = document.getElementById('onlineFields');
     const chequeFields = document.getElementById('chequeFields');
@@ -790,7 +744,7 @@
                         }
                     }
 
-                   // Show balance box if hidden
+                    // Show balance box if hidden
                     $("#balanceBox").removeClass("hidden");
                 },
                 error: function(xhr) {

@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('scheme_code');
             $table->integer('min_rd_dd_amount');
             $table->string('rd_dd_frequency');
+            $table->string('tenure_of_rd');
             $table->integer('anuual_interest_rate');
             $table->decimal('sr_citizen_add_on_interest_rate', 8, 2)->nullable();
             $table->string('bonus_rate_type');

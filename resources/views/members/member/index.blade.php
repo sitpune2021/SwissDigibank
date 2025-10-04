@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('page-title', 'MEMBERS')
+@section('page-title', 'CUSTOMERS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('member.create') }}">
     ADD
@@ -18,7 +18,7 @@
                     </th>
                     <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1 text-center">
-                            MEMBER NO
+                            CUSTOMER NO
                         </div>
                     </th>
                     <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -82,7 +82,7 @@
 
                     <td class="py-3 px-6 text-center ">
                         <a href="{{ $item?->id ? route('member.show', $item->id) : '#' }}" class="text-primary hover:underline">
-                            {{ $item->id ?? 'N/A' }}
+                            {{ $item->member_no ?? 'N/A' }}
                         </a>
                     </td>
                     <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>

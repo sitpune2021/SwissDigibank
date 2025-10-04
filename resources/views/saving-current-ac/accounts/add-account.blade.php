@@ -55,7 +55,7 @@
 
                 {{-- Account Type --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4">Account Type <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase">Account Type <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="account_type" value="saving"
@@ -73,7 +73,7 @@
                 {{-- Firm Name --}}
                 <div class="col-span-2 md:col-span-1 firm-field-wrapper">
                     <div id="firmNameDiv" class="hidden">
-                        <label for="firm_d" class="font-medium block mb-4">Firm Name <span
+                        <label for="firm_d" class="font-medium block mb-4 uppercase">Firm Name <span
                                 class="text-red-500">*</span></label>
                         <input type="text" name="firm_d" id="firm_d"
                             value="{{ old('firm_d', $account->firm_d ?? '') }}"
@@ -87,11 +87,11 @@
 
                 {{-- Member Selection --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_id_main" class="font-medium block mb-4">Member <span
+                    <label for="member_id_main" class="font-medium block mb-4 uppercase">Customer <span
                             class="text-red-500">*</span></label>
                     <select name="member_id" id="member_id_main"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -106,7 +106,7 @@
 
                 {{-- Member Name --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_name" class="font-medium block mb-4">Member Name</label>
+                    <label for="member_name" class="font-medium block mb-4 uppercase">Customer Name</label>
                     <input type="text" readonly name="member_name" id="member_name"
                         value="{{ old('member_name', $account->member_name ?? '') }}"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member name">
@@ -118,7 +118,7 @@
 
                 {{-- Member Address --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_address" class="font-medium block mb-4">Member Address</label>
+                    <label for="member_address" class="font-medium block mb-4 uppercase">Customer Address</label>
                     <input type="text" readonly name="member_address" id="member_address"
                         value="{{ old('member_address', $account->member_address ?? '') }}"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Member address">
@@ -130,7 +130,7 @@
 
                 {{-- Member Mobile --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="member_mobile" class="font-medium block mb-4">Member Mobile No.</label>
+                    <label for="member_mobile" class="font-medium block mb-4 uppercase">Customer Mobile No.</label>
                     <input type="text" name="member_mobile" readonly id="member_mobile"
                         value="{{ old('member_mobile', $account->member_mobile ?? '') }}"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-2.5" placeholder="Mobile number">
@@ -142,7 +142,7 @@
 
                 {{-- Minor --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="minor_id" class="font-medium block mb-4">Minor</label>
+                    <label for="minor_id" class="font-medium block mb-4 uppercase">Minor</label>
                     <select name="minor_id" id="minor_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                         <option>-- Select Minor --</option>
@@ -155,7 +155,7 @@
 
                 {{-- Branch --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="branch_id" class="font-medium block mb-4">Branch <span class="text-red-500">*</span></label>
+                    <label for="branch_id" class="font-medium block mb-4 uppercase">Branch <span class="text-red-500">*</span></label>
                     <select name="branch_id" id="branch_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                         <option value="">-- Select Branch --</option>
@@ -175,7 +175,7 @@
 
                 {{-- Advisor/Staff --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="advisor_id" class="font-medium block mb-4">Advisor/Staff</label>
+                    <label for="advisor_id" class="font-medium block mb-4 uppercase">Advisor/Staff</label>
                     <select name="advisor_id" id="advisor_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                         <option value="">-- Select Branch --</option>
@@ -194,7 +194,7 @@
 
                 {{-- Scheme --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="scheme_id" class="font-medium block mb-4">Scheme <span
+                    <label for="scheme_id" class="font-medium block mb-4 uppercase">Scheme <span
                             class="text-red-500">*</span></label>
                     <select name="scheme_id" id="scheme_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
@@ -223,14 +223,14 @@
         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
     @enderror -->
 
-                    <x-datepicker-disabled label="Open Date" name="open_date" value="{{ old('open_date') }}"
+                    <x-datepicker-disabled label="OPEN DATE" name="open_date" value="{{ old('open_date') }}"
                         inputId="open_date" />
 
                 </div>
 
                 {{-- Amount --}}
                 <div class="col-span-2 md:col-span-1">
-                    <x-amount-input name="amount" id="amount" label="Enter Amount" />
+                    <x-amount-input name="amount" id="amount" label="AMOUNT" />
                     @error('amount')
                         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                     @enderror
@@ -244,7 +244,7 @@
                 {{-- Account Holder Type --}}
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4">Account Holder Type <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase">Account Holder Type <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="account_holder_type" value="single"
@@ -268,11 +268,11 @@
                 <!-- // Hidden  section-->
                 {{-- Joint A/c Member 1 --}}
                 <div class="col-span-2 md:col-span-1 hidden jointAccountSection1">
-                    <label for="member_id_one_one" class="font-medium block mb-4">Joint A/c Member 1 <span
+                    <label for="member_id_one_one" class="font-medium block mb-4 uppercase">Joint A/c Customer 1 <span
                             class="text-red-500"></span></label>
                     <select name="member_id_one" id="member_id_one_main"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id_one', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -288,11 +288,11 @@
 
                 {{-- Joint A/c Member 2 --}}
                 <div class="col-span-2 md:col-span-1 hidden jointAccountSection2">
-                    <label for="member_id_two" class="font-medium block mb-4">Joint A/c Member 2 <span
+                    <label for="member_id_two" class="font-medium block mb-4 uppercase">Joint A/c Customer 2 <span
                             class="text-red-500"></span></label>
                     <select name="member_id_two" id="member_id_two_main"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Member --</option>
+                        <option value="">-- Select Customer --</option>
                         @foreach ($members as $member)
                             <option value="{{ $member->id }}"
                                 {{ old('member_id_two', $account->member_id ?? '') == $member->id ? 'selected' : '' }}>
@@ -307,7 +307,7 @@
 
                 {{-- Mode of Operation --}}
                 <div class="col-span-2 md:col-span-1 hidden jointAccountSection3" id="mode-operation">
-                    <label class="font-medium block mb-4">Mode of Operation <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase">Mode of Operation <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="mode_of_operation" value="single"
@@ -337,7 +337,7 @@
                     <hr class="my-4">
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4">Nominee <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase">Nominee <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="nominee" value="no"
@@ -359,7 +359,7 @@
                 <div id="nomineeDetails"
                     class="{{ old('nominee', $account->nominee ?? null) === 'yes' ? '' : 'hidden' }}">
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Relation <span class="text-red-500">*</span></label>
                         <select name="nominee_relation"
                             class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                             <option value="">Select Relation</option>
@@ -410,7 +410,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Name <span class="text-red-500">*</span></label>
                         <input type="text" name="nominee_name"
                             value="{{ old('nominee_name', $account->nominee_name ?? '') }}"
                             class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
@@ -422,7 +422,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Address <span class="text-red-500">*</span></label>
                         <textarea name="nominee_address" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
                             placeholder="Enter Nominee Address">{{ old('nominee_address', $account->nominee_address ?? '') }}</textarea>
                         @error('nominee_address')
@@ -441,12 +441,12 @@
                 {{-- Section Heading --}}
                 <div class="col-span-2">
                     <hr class="my-4">
-                    <h4 class="text-lg font-semibold mb-2">Payment Info</h4>
+                    <h4 class="text-lg font-semibold mb-2 uppercase">Payment Info</h4>
                 </div>
 
                 {{-- Payment Mode --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4">Payment Mode <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase" >Payment Mode <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="payment_mode" value="cash"
@@ -476,7 +476,7 @@
                                 <option value="HDFC">HDFC</option>
                                 <option value="ICICI">ICICI</option>
                             </select> -->
-                            <x-searchable-dropdown :items="$bank" label="Select Bank" name="pay1_bank"
+                            <x-searchable-dropdown :items="$banks" label="Select Bank" name="pay1_bank"
                                 display-field="name" value-field="id" event="Bank-selected" :selected="null" />
                             @error('pay1_bank')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -554,7 +554,7 @@
                 </div>
                 {{-- Transaction Date --}}
                 <div class="col-span-2 md:col-span-1">
-                    <x-datepicker-disabled label="Transaction Date" name="transaction_date"
+                    <x-datepicker-disabled label="TRANSACTION DATE" name="transaction_date"
                         value="{{ old('transaction_date') }}" inputId="transaction_date" />
                 </div>
 

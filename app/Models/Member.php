@@ -9,6 +9,7 @@ class Member extends Model
 {
     protected $fillable = [
         'membership_type',
+        'member_no',
         'general_advisor_staff',
         'general_group',
         'general_branch',

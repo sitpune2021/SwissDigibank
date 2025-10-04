@@ -11,7 +11,7 @@
     <div style="max-width:80mm; margin:0 auto; padding:8px 6px;">
 
         <div style="text-align:center; font-weight:800;">
-            <h2 style="margin:0; font-size:16px; font-weight:800;">SBC GLOBAL</h2>
+            <h2 style="margin:0; font-size:16px; font-weight:800;">SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</h2>
             <p style="margin:2px 0 8px; font-size:8px;">969/03-04</p>
         </div>
 
@@ -24,7 +24,7 @@
         <table style="width:100%; border-collapse:collapse; font-size:12px;">
             <tr>
                 <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Reg No :</td>
-                <td style="padding:4px 2px; vertical-align:top;">{{ $id }}</td>
+                <td style="padding:4px 2px; vertical-align:top;">{{ $member_no }}</td>
             </tr>
             <tr>
                 <td style="padding:4px 2px; vertical-align:top; font-weight:bold; width:40%;">Name :</td>
@@ -72,7 +72,6 @@
         </table>
 
         <hr style="border-top:1px dashed #999; margin:6px 0;">
-
         <div style="margin-top:12px; font-size:11px; color:#444; font-weight:800;">
             Printed on: {{ $printed_on }}<br>
             By: {{ $printed_by }}

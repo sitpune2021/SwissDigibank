@@ -4,7 +4,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h1 class=" flex text-xl block font-semibold">
+        <h1 class=" flex text-xl block font-semibold uppercase">
             Loan Against Property Schemes
         </h1>
         <a href="{{ route('mortgage_schemes.create_mortgage_scheme') }}" class="btn-primary capitalize ">
@@ -12,13 +12,7 @@
         </a>
     </div>
 
-
-
     <div class="col-span-12 box lg:col-span-12">
-
-
-
-
         <div class="pb-4 overflow-x-auto lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" >
                 <thead>

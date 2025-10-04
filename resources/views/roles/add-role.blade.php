@@ -16,7 +16,7 @@
         <form class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
             <div class="col-span-2 md:col-span-1">
                 <label for="name" class="mb-4 md:text-lg font-medium block">
-                    Role Name
+                    ROLE NAME
                 </label>
                 <input type="text"
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -24,7 +24,7 @@
             </div>
             <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
                 <label for="role_position" class="mb-4 md:text-lg font-medium block">
-                    Role Position/ Weight-age
+                    ROLE POSITION/ WEIGHT-AGE
                 </label>
                 <input type="text"
                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -32,7 +32,7 @@
             </div>
             <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
                 <label for="permission_type" class="mb-4 md:text-lg font-medium block">
-                    Permission Type
+                    PERMISSION TYPE
                 </label>
                 <div class="flex flex-wrap gap-4 items-center">
                     <div class="flex items-center relative">
@@ -72,7 +72,7 @@
             </div>
             <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
                 <label for="active" class="mb-4 md:text-lg font-medium block">
-                    Active
+                    ACTIVE
                 </label>
                 <div class="flex flex-wrap gap-4 items-center">
                     <div class="flex items-center relative">

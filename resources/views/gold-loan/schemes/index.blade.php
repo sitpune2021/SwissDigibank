@@ -58,67 +58,74 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                   <tbody>
+    @forelse($schemes as $scheme)
+        <tr class="border-b dark:border-bg3">
+            <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1 text-secondary uppercase">
+                    <a href="{{ route('gold-loan.schemes.view', $scheme->id) }}" class="single-option">
+                        {{ $scheme->scheme_code }}
+                    </a>
+                </div>
+            </td>
 
-                        <tr class="border-b dark:border-bg3">
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 text-secondary uppercase">
-                                    SSY17
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 Capitalize">
-                                    Suvarna shree yojana no emi
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    12 Months
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    100000.0
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    No Emi
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    20.0 %
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                 <span  class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                    Yes
-                                </span> 
-                                </div>
-                            </td>
+            <td class="text-start !py-5 px-6 capitalize">
+                <div class="flex items-center gap-1">
+                    {{ $scheme->scheme_name }}
+                </div>
+            </td>
+            <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1">
+                    {{ $scheme->tenure }} Months
+                </div>
+            </td>
+            <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1">
+                    {{ number_format($scheme->max_loan_amount, 2) }}
+                </div>
+            </td>
+            <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1 capitalize">
+                    {{ str_replace('_',' ', $scheme->gold_loan_setting) }}
+                </div>
+            </td>
+            <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1">
+                    {{ $scheme->annual_interest_rate }} %
+                </div>
+            </td>
+            <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1">
+                    @if($scheme->is_active)
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                            Yes
+                        </span>
+                    @else
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                            No
+                        </span>
+                    @endif
+                </div>
+            </td>
+            <td class="text-start !py-5 px-6">
+                <div class="flex justify-center">
+                    <div class="relative">
+                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                        <ul class="horiz-option popover-content">
+                            <li><a href="{{ route('gold-loan.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
+                            <li><a href="{{ route('gold-loan.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="8" class="text-center py-5">No Schemes Found</td>
+        </tr>
+    @endforelse
+</tbody>
 
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex justify-center">
-                                    <div class="relative">
-                                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                        <ul class="horiz-option popover-content">
-                                            <li><a href="" class="single-option">View</a></li>
-                                            <li><a href="" class="single-option">Edit</a></li>
-                                        </ul>
-
-                                        {{-- @include('partials._vertical-options', [
-                                        /* 'id' =>base64_encode($director->id),
-                                        'viewRoute' => 'director.show',
-                                        'editRoute' => 'director.edit'*/
-                                        ]) --}}
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
 
                 </table>
             </div>

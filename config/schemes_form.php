@@ -5,14 +5,14 @@ return [
 
     [
         [
-            'label'    => 'Scheme Name',
+            'label'    => 'SCHEME NAME',
             'name'     => 'scheme_name',
             'id'       => 'scheme_name',
             'type'     => 'text',
             'required' => true
         ],
         [
-            'label'    => 'Scheme Code',
+            'label'    => 'SCHEME CODE',
             'name'     => 'scheme_code',
             'id'       => 'scheme_code',
             'type'     => 'text',
@@ -20,7 +20,7 @@ return [
         ],
 
         [
-            'label'    => 'Min. Opening Balance',
+            'label'    => 'MIN. OPENING BALANCE',
             'name'     => 'min_opening_balance',
             'id'       => 'min_opening_balance',
             'type'     => 'number',
@@ -28,7 +28,7 @@ return [
 
         ],
         [
-            'label'    => 'Min. Monthly Avg. Balance',
+            'label'    => 'MIN. MONTHLY AVG. BALANCE',
             'name'     => 'min_monthly_avg_balance',
             'id'       => 'min_monthly_avg_balance',
             'type'     => 'number',
@@ -37,7 +37,7 @@ return [
         ],
 
         [
-            'label'    => 'Annual Interest Rate (%)',
+            'label'    => 'ANNUAL INTEREST RATE (%)',
             'name'     => 'annual_int_rate',
             'id'       => 'annual_interest_rate',
             'type'     => 'number',
@@ -45,7 +45,7 @@ return [
 
         ],
         [
-            'label'    => 'Sr. Citizen Add-on Interest Rate (%)',
+            'label'    => 'SR. CITIZEN ADD-ON INTEREST RATE (%)',
             'name'     => 'sr_citizen_add_on_int_rate',
             'id'       => 'sr_citizen_add_on_interest_rate',
             'type'     => 'number',
@@ -54,7 +54,7 @@ return [
 
         ],
         [
-            'label'         => 'Interest Payout',
+            'label'         => 'INTEREST PAYOUT',
             'name'          => 'interest_pay_cycle',
             'id'            => 'interestpayoutDropdown',
             'type'          => 'select',
@@ -68,14 +68,14 @@ return [
         ],
 
         [
-            'label'    => 'Lock In Amount',
+            'label'    => 'LOCK IN AMOUNT',
             'name'     => 'lock_in_amount',
             'id'       => 'lock_in_amount',
             'type'     => 'number',
             'required' => true,
         ],
         [
-            'label'    => 'Min. Monthly Avg. Balance Charge',
+            'label'    => 'MIN. MONTHLY AVG. BALANCE CHARGE',
             'name'     => 'min_monthly_avg_bal_charge',
             'id'       => 'min_monthly_avg_bal_charge',
             'type'     => 'number',
@@ -83,9 +83,9 @@ return [
         ],
 
     ],
-    'Service Charges' => [
+    'SERVICE CHARGES' => [
         [
-            'label'        => 'Charge Frequency',
+            'label'        => 'CHARGE FREQUENCY',
             'name'         => 'service_charge_freq',
             'id'           => 'charge_frequency',
             'type'         => 'select',
@@ -106,7 +106,7 @@ return [
         ],
 
         [
-            'label'     => 'Service Charges',
+            'label'     => 'SERVICE CHARGES',
             'name'      => 'service_charges',
             'id'        => 'service_charges',
             'type'      => 'number',
@@ -117,9 +117,9 @@ return [
 
     ],
 
-    'SMS Charges' => [
+    'SMS CHARGES' => [
         [
-            'label'        => 'Charge Frequency',
+            'label'        => 'CHARGE FREQUENCY',
             'name'         => 'sms_charge_freq',
             'id'           => 'charge_frequency',
             'type'         => 'select',
@@ -139,16 +139,16 @@ return [
             ]
         ],
         [
-            'label'    => 'SMS Charges',
+            'label'    => 'SMS CHARGES',
             'name'     => 'sms_charges',
             'id'       => 'sms_charges',
             'type'     => 'number',
             'required' => false,
         ]
     ],
-    'free ifsc collection per month' => [
+    'FREE IFSC COLLECTION PER MONTH' => [
         [
-            'label'       => 'Free IFSC Collection per Month',
+            'label'       => 'FREE IFSC COLLECTION PER MONTH',
             'name'        => 'free_ifsc_collection_per_month',
             'id'          => 'free_ifsc_collection_per_month',
             'type'        => 'select',
@@ -162,10 +162,10 @@ return [
             ]
         ]
     ],
-    'free imps/ neft transactions per month' =>
+    'FREE IMPS/ NEFT TRANSACTIONS PER MONTH' =>
     [
         [
-            'label'    => 'Free Transfers per Month',
+            'label'    => 'FREE TRANSFERS PER MONTH',
             'name'     => 'free_transfers_per_month',
             'id'       => 'free_transfers_per_month',
             'type'     => 'select',
@@ -179,7 +179,7 @@ return [
             ]
         ],
         [
-            'label'    => 'Single Transaction Limit',
+            'label'    => 'SINGLE TRANSACTION LIMIT',
             'name'     => 'single_transaction_limit',
             'id'       => 'single_transaction_limit',
             'type'     => 'number',
@@ -187,65 +187,5 @@ return [
             'default'  => '',
         ]
         // rem 3 colum
-    ],
-
-    'IMPS Charges' => [
-        ['label' => 'IMPS upto 1000', 'name' => 'imps_upto_1000', 'id' => 'imps_upto_1000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 2500', 'name' => 'imps_upto_2500', 'id' => 'imps_upto_2500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 5000', 'name' => 'imps_upto_5000', 'id' => 'imps_upto_5000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 7500', 'name' => 'imps_upto_7500', 'id' => 'imps_upto_7500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 10000', 'name' => 'imps_upto_10000', 'id' => 'imps_upto_10000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 17500', 'name' => 'imps_upto_17500', 'id' => 'imps_upto_17500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 25000', 'name' => 'imps_upto_25000', 'id' => 'imps_upto_25000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 37500', 'name' => 'imps_upto_37500', 'id' => 'imps_upto_37500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 50000', 'name' => 'imps_upto_50000', 'id' => 'imps_upto_50000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 75000', 'name' => 'imps_upto_75000', 'id' => 'imps_upto_75000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 100000', 'name' => 'imps_upto_100000', 'id' => 'imps_upto_100000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 150000', 'name' => 'imps_upto_150000', 'id' => 'imps_upto_150000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 200000', 'name' => 'imps_upto_200000', 'id' => 'imps_upto_200000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 300000', 'name' => 'imps_upto_300000', 'id' => 'imps_upto_300000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 400000', 'name' => 'imps_upto_400000', 'id' => 'imps_upto_400000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 500000', 'name' => 'imps_upto_500000', 'id' => 'imps_upto_500000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'IMPS upto 1000000', 'name' => 'imps_upto_1000000', 'id' => 'imps_upto_1000000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-    ],
-
-    'NEFT Charges' => [
-        ['label' => 'NEFT upto 1000', 'name' => 'neft_upto_1000', 'id' => 'neft_upto_1000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 2500', 'name' => 'neft_upto_2500', 'id' => 'neft_upto_2500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 5000', 'name' => 'neft_upto_5000', 'id' => 'neft_upto_5000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 7500', 'name' => 'neft_upto_7500', 'id' => 'neft_upto_7500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 10000', 'name' => 'neft_upto_10000', 'id' => 'neft_upto_10000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 17500', 'name' => 'neft_upto_17500', 'id' => 'neft_upto_17500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 25000', 'name' => 'neft_upto_25000', 'id' => 'neft_upto_25000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 37500', 'name' => 'neft_upto_37500', 'id' => 'neft_upto_37500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 50000', 'name' => 'neft_upto_50000', 'id' => 'neft_upto_50000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 75000', 'name' => 'neft_upto_75000', 'id' => 'neft_upto_75000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 100000', 'name' => 'neft_upto_100000', 'id' => 'neft_upto_100000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 150000', 'name' => 'neft_upto_150000', 'id' => 'neft_upto_150000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 200000', 'name' => 'neft_upto_200000', 'id' => 'neft_upto_200000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 300000', 'name' => 'neft_upto_300000', 'id' => 'neft_upto_300000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 400000', 'name' => 'neft_upto_400000', 'id' => 'neft_upto_400000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 500000', 'name' => 'neft_upto_500000', 'id' => 'neft_upto_500000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'NEFT upto 1000000', 'name' => 'neft_upto_1000000', 'id' => 'neft_upto_1000000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-    ],
-
-    'UPI Charges' => [
-        ['label' => 'UPI upto 1000', 'name' => 'upi_upto_1000', 'id' => 'upi_upto_1000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 2500', 'name' => 'upi_upto_2500', 'id' => 'upi_upto_2500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 5000', 'name' => 'upi_upto_5000', 'id' => 'upi_upto_5000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 7500', 'name' => 'upi_upto_7500', 'id' => 'upi_upto_7500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 10000', 'name' => 'upi_upto_10000', 'id' => 'upi_upto_10000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 17500', 'name' => 'upi_upto_17500', 'id' => 'upi_upto_17500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 25000', 'name' => 'upi_upto_25000', 'id' => 'upi_upto_25000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 37500', 'name' => 'upi_upto_37500', 'id' => 'upi_upto_37500', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 50000', 'name' => 'upi_upto_50000', 'id' => 'upi_upto_50000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 75000', 'name' => 'upi_upto_75000', 'id' => 'upi_upto_75000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 100000', 'name' => 'upi_upto_100000', 'id' => 'upi_upto_100000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 150000', 'name' => 'upi_upto_150000', 'id' => 'upi_upto_150000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 200000', 'name' => 'upi_upto_200000', 'id' => 'upi_upto_200000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 300000', 'name' => 'upi_upto_300000', 'id' => 'upi_upto_300000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 400000', 'name' => 'upi_upto_400000', 'id' => 'upi_upto_400000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 500000', 'name' => 'upi_upto_500000', 'id' => 'upi_upto_500000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-        ['label' => 'UPI upto 1000000', 'name' => 'upi_upto_1000000', 'id' => 'upi_upto_1000000', 'type' => 'decimal', 'required' => false, 'step' => '0.01', 'min' => 0],
-    ],
+    ]
 ];

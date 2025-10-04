@@ -112,6 +112,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/calculator/store', [CalculatorController::class, 'store'])->name('calculator.store');
         Route::get('/calculator/calculate', [CalculatorController::class, 'calculateInvestment'])->name('calculator.calculate');
         Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
+        Route::get('/fetch-schemes', [CalculatorController::class, 'getSchemes'])->name('fd.schemes.fetch');
+        Route::get('/fetch-scheme/{id}', [CalculatorController::class, 'getSchemeDetails'])->name('fd.scheme.details');
+
     });
 
 
@@ -151,6 +154,9 @@ Route::middleware('auth.user')->group(function () {
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
+    
+    Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
+
 
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
@@ -225,7 +231,7 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('schemes', SchemesController::class);
     Route::resource('accounts', AccountsController::class);
     Route::get('/saving/passbook/{id}', [AccountsController::class, 'viewPassbook'])->name('saving.passbook');
-    Route::get('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
+    Route::post('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
 
 
     Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
@@ -362,14 +368,32 @@ Route::group(['prefix' => 'morgage-loan'], function () {
 
 // Gold Loan
 Route::group(['prefix' => 'gold-loan'], function () {
+        
     Route::get('scheme/index', [GoldLoanController::class, 'index'])
-        ->name('gold-loan.schemes.index');
+            ->name('gold-loan.schemes.index');
 
+    // create form
     Route::get('scheme/create', [GoldLoanController::class, 'create'])
-        ->name('gold-loan.schemes.create');
+    ->name('gold-loan.schemes.create');
 
-    Route::get('scheme/view', [GoldLoanController::class, 'view'])
-        ->name('gold-loan.schemes.view');
+    // store form data
+    Route::post('scheme/store', [GoldLoanController::class, 'store'])
+    ->name('gold-loan.schemes.store');
+
+    // view list
+    Route::get('scheme/{id}', [GoldLoanController::class, 'show'])
+    ->name('gold-loan.schemes.show');
+
+    // edit form
+   Route::get('scheme/{id}/edit', [GoldLoanController::class, 'edit'])
+    ->name('gold-loan.schemes.edit');
+
+    Route::put('scheme/{id}', [GoldLoanController::class, 'update'])
+    ->name('gold-loan.schemes.update');
+
+    Route::get('scheme/view/{id}', [GoldLoanController::class, 'view'])
+    ->name('gold-loan.schemes.view');
+
 
     Route::get('calculator/index', [GoldLoanController::class, 'calculator'])
         ->name('gold-loan.calculator.index');
@@ -382,8 +406,25 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('applications/create', [GoldLoanController::class, 'appcreate'])
         ->name('gold-loan.applications.create');
-    Route::get('applications/view', [GoldLoanController::class, 'appview'])
-        ->name('gold-loan.applications.view');
+    
+    Route::post('/loan-applications/store', [GoldLoanController::class, 'storeLoanApplication'])->name('loan-applications.store');
+
+    Route::get('/members/{id}/info', [GoldLoanController::class, 'getMemberInfo'])
+    ->name('members.info');
+
+
+    // Route::get('applications/view', [GoldLoanController::class, 'appview'])
+    //     ->name('gold-loan.applications.view');
+    Route::get('gold-loan/applications/view/{id}', [GoldLoanController::class, 'appview'])
+    ->name('gold-loan.applications.view');
+
+    // Edit form
+    Route::get('/gold-loan/applications/{id}/edit', [GoldLoanController::class, 'appedit'])
+        ->name('gold-loan.applications.edit');
+
+    // Update
+    Route::put('/gold-loan/applications/{id}', [GoldLoanController::class, 'appupdate'])
+        ->name('gold-loan.applications.update');
 
 
     Route::get('applications/show-emi-chart', [GoldLoanController::class, 'showEmiChart'])

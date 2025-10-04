@@ -1,46 +1,6 @@
 @extends('layout.main')
 
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
-        }
-    }
-
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -68,7 +28,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold capitalize">New Gold Loan Scheme</h1>
+            <h1 class="text-xl font-semibold uppercase">New Gold Loan Scheme</h1>
             <p class="text-gray-500">
                 <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
                 <a href="" class="text-gray-500 text-sm"> New</a>
@@ -82,7 +42,7 @@
             <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6" action="" method="">
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="scheme_name" class="md:text-lg font-medium block mb-4">
+                    <label for="scheme_name" class="md:text-lg font-medium block mb-4 uppercase">
                         Scheme Name
                         <span class="text-red-500">*</span>
                     </label>
@@ -93,7 +53,7 @@
 
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="scheme_code" class="md:text-lg font-medium block mb-4">
+                    <label for="scheme_code" class="md:text-lg font-medium block mb-4 uppercase">
                         Scheme Code
                         <span class="text-red-500">*</span>
                     </label>
@@ -106,7 +66,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Maximum Loan Amount (₹)
                         <span class="text-red-500">*</span>
                     </label>
@@ -117,7 +77,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
@@ -129,7 +89,7 @@
                     <x-number-to-word for="maxLoanLimit" />
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Max. Tenure <span class="text-red-500">*</span>
                     </label>
 
@@ -155,7 +115,7 @@
 
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Annual Interest Rate (%)
                         <span class="text-red-500">*</span>
                     </label>
@@ -166,7 +126,7 @@
 
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Overdue Interest Rate (%)
                         <span class="text-red-500">*</span>
                     </label>
@@ -191,7 +151,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Penalty Charges
 
                     </label>
@@ -215,7 +175,7 @@
 
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Processing Fee
 
                     </label>
@@ -238,7 +198,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Stamp Duty Charge
 
                     </label>
@@ -261,7 +221,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Insurance Fee
                     </label>
 
@@ -286,7 +246,7 @@
                 <div class="col-span-2 md:col-span-1">
 
                     <div class="col-sm-7">
-                        <label for="" class="md:text-lg font-medium block mb-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Fore Closure Charges
                         </label>
 
@@ -310,7 +270,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Credit Period
 
                     </label>
@@ -326,7 +286,7 @@
         {{--intersetTypeRadio --}}
         <div class="w-full">
             <div class="mb-4" id="intersetTypeRadio">
-                <label class="md:text-lg font-medium block mb-2">
+                <label class="md:text-lg font-medium block mb-2 uppercase">
                     Interest Type <span class="text-red-600">*</span>
                 </label>
 
@@ -359,7 +319,7 @@
         {{-- Active field Yes/No --}}
         <div class="w-full">
             <div class="mb-4">
-                <label class="md:text-lg font-medium block mb-2">
+                <label class="md:text-lg font-medium block mb-2 uppercase">
                     Active <span class="text-red-600">*</span>
                 </label>
 
@@ -387,7 +347,7 @@
             <div class="w-full my-4">
                 <hr class="border-gray-300">
                 <h4
-                    class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
+                    class="uppercase text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
                     Charges Per EMI
                     <i class="las la-info-circle"></i>
                     </button>
@@ -398,7 +358,7 @@
 
                 <!-- SMS Charges (if any)Block -->
                 <div class=" col-span-2 md:col-span-1 ">
-                    <label class="md:text-lg font-medium mb-2">
+                    <label class="md:text-lg font-medium mb-2 uppercase">
                         SMS Charges (if any)
                     </label>
 
@@ -416,7 +376,7 @@
 
                 <!-- Fuel Charges Block -->
                 <div class=" col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium mb-2">
+                    <label class="md:text-lg font-medium mb-2 uppercase">
                         Fuel Charges (if any)
                     </label>
 
@@ -440,7 +400,7 @@
 
                 <!-- Stationary Charges (if any)Block -->
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium mb-2">
+                    <label class="md:text-lg font-medium mb-2 uppercase">
                         Stationary Charges (if any)
                     </label>
 
@@ -458,7 +418,7 @@
 
                 <!-- Maintenance Charges (if any) Block -->
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium mb-2">
+                    <label class="md:text-lg font-medium mb-2 uppercase">
                         Maintenance Charges (if any)
                     </label>
 
@@ -481,7 +441,7 @@
 
                 <!--Collection Charges (if any) #007bffBlock -->
                 <div class=" col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium mb-2">
+                    <label class="md:text-lg font-medium mb-2 uppercase">
                         Collection Charges (if any)
                     </label>
 
@@ -511,7 +471,7 @@
         {{-- No-EMI Inputs --}}
         <div id="no-emi" hidden>
             <div class="mt-4 ">
-                <label class="md:text-lg font-medium block mb-2 capitalize">
+                <label class="md:text-lg font-medium block mb-2 uppercase">
                     Charge Floating Interest Rate Per Slab
                     <span class="text-red-600">*</span>
                 </label>

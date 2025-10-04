@@ -5,7 +5,7 @@ return [
     // Membership Type (unnamed section)
     [
         [
-            'label' => 'Membership Type',
+            'label' => 'MEMBERSHIP TYPE',
             'name' => 'membership_type',
             'id' => 'membership_type',
             'type' => 'select',
@@ -18,14 +18,14 @@ return [
         ],
 
         [
-            'label' => 'Advisor/ Staff',
+            'label' => 'ADVISOR/ STAFF',
             'name' => 'general_advisor_staff',
             'id' => 'advisor_staff',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Group',
+            'label' => 'GROUP',
             'name' => 'general_group',
             'id' => 'group',
             'type' => 'select',
@@ -36,7 +36,7 @@ return [
             ],
         ],
         [
-            'label' => 'Branch',
+            'label' => 'BRANCH',
             'name' => 'general_branch',
             'id' => 'branch',
             'type' => 'select',
@@ -45,7 +45,7 @@ return [
             'options_key' => 'branch',
         ],
         [
-            'label' => 'Enrollment Date',
+            'label' => 'ENROLLMENT DATE',
             'name' => 'general_enrollment_date',
             'id' => 'date',
             'type' => 'text',
@@ -55,9 +55,9 @@ return [
 
     ],
 
-    'member_info' => [
+    'CUSTOMER_INFO' => [
         [
-            'label' => 'Title',
+            'label' => 'TITLE',
             'name' => 'member_info_title',
             'id' => 'title',
             'type' => 'radio',
@@ -70,7 +70,7 @@ return [
             ],
         ],
         [
-            'label' => 'Gender',
+            'label' => 'GENDER',
             'name' => 'member_info_gender',
             'id' => 'gender',
             'type' => 'radio',
@@ -82,91 +82,91 @@ return [
             ],
         ],
         [
-            'label' => 'First Name',
+            'label' => 'FIRST NAME',
             'name' => 'member_info_first_name',
             'id' => 'first_name',
             'type' => 'text',
             'required' => true,
         ],
         [
-            'label' => 'Middle Name',
+            'label' => 'MIDDLE NAME',
             'name' => 'member_info_middle_name',
             'id' => 'middle_name',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Last Name',
+            'label' => 'LAST NAME',
             'name' => 'member_info_last_name',
             'id' => 'last_name',
             'type' => 'text',
             'required' => true,
         ],
         [
-            'label' => 'Date of Birth',
+            'label' => 'DATE OF BIRTH',
             'name' => 'member_info_dob',
             'id' => 'datep',
             'type' => 'text',
             'required' => true,
         ],
         [
-            'label' => 'Qualification',
+            'label' => 'QUALIFICATION',
             'name' => 'member_info_qualification',
             'id' => 'qualification',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Occupation',
+            'label' => 'OCCUPATION',
             'name' => 'member_info_occupation',
             'id' => 'occupation',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Monthly Income',
+            'label' => 'MONTHLY INCOME',
             'name' => 'member_info_monthly_income',
             'id' => 'monthly_income',
             'type' => 'number',
             'required' => false,
         ],
         [
-            'label' => 'Old Member No (if any)',
+            'label' => 'OLD CUSTOMER NO (IF ANY)',
             'name' => 'member_info_old_member_no',
             'id' => 'old_member_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Father Name',
+            'label' => 'FATHER NAME',
             'name' => 'member_info_father_name',
             'id' => 'father_name',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Mother Name',
+            'label' => 'MOTHER NAME',
             'name' => 'member_info_mother_name',
             'id' => 'mother_name',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Husband/ Wife Name',
+            'label' => 'HUSBAND/ WIFE NAME',
             'name' => 'member_info_spouse_name',
             'id' => 'spouse_name',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Husband/ Wife DOB',
+            'label' => 'HUSBAND/ WIFE DOB',
             'name' => 'member_info_spouse_dob',
             'id' => 'datep2',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Mobile No',
+            'label' => 'MOBILE NO',
             'name' => 'member_info_mobile_no',
             'id' => 'mobile_no',
             'type' => 'number',
@@ -176,14 +176,14 @@ return [
             'required' => true,
         ],
         [
-            'label' => 'Collection Time',
+            'label' => 'COLLECTION TIME',
             'name' => 'member_info_collection_time',
             'id' => 'collection_time',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Marital Status',
+            'label' => 'MARITAL STATUS',
             'name' => 'member_info_marital_status',
             'id' => 'marital_status',
             'type' => 'select',
@@ -197,7 +197,7 @@ return [
             ],
         ],
         [
-            'label' => 'Member Religion',
+            'label' => 'CUSTOMER RELIGION',
             'name' => 'member_info_religion',
             'id' => 'religion',
             'type' => 'select',
@@ -206,7 +206,7 @@ return [
             'options_key' => 'religion',
         ],
         [
-            'label' => 'Email',
+            'label' => 'EMAIL',
             'name' => 'member_info_email',
             'id' => 'email',
             'type' => 'email',
@@ -215,65 +215,65 @@ return [
     ],
 
     // Member Address
-    'Member_Correspondence_Address' => [
+    'CUSTOMER_CORRESPONDENCE_ADDRESS' => [
         [
-            'label' => 'Address Line 1',
+            'label' => 'ADDRESS LINE 1',
             'name' => 'member_address_line_1',
             'id' => 'address_line_1',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Address Line 2',
+            'label' => 'ADDRESS LINE 2',
             'name' => 'member_address_line_2',
             'id' => 'address_line_2',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Para',
+            'label' => 'PARA',
             'name' => 'member_address_para',
             'id' => 'para',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Ward',
+            'label' => 'WARD',
             'name' => 'member_address_ward',
             'id' => 'ward',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Panchayat',
+            'label' => 'PANCHAYAT',
             'name' => 'member_address_panchayat',
             'id' => 'panchayat',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Area',
+            'label' => 'AREA',
             'name' => 'member_address_area',
             'id' => 'area',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Landmark',
+            'label' => 'LANDMARK',
             'name' => 'member_address_landmark',
             'id' => 'landmark',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'City/ District',
+            'label' => 'CITY / DISTRICT',
             'name' => 'member_address_city_district',
             'id' => 'city_district',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'State',
+            'label' => 'STATE',
             'name' => 'member_address_state',
             'id' => 'stateDropdown',
             'type' => 'select',
@@ -282,14 +282,14 @@ return [
             'options_key' => 'states',
         ],
         [
-            'label' => 'Pincode',
+            'label' => 'PINCODE',
             'name' => 'member_address_pincode',
             'id' => 'address_pincode',
             'type' => 'number',
             'required' => true,
         ],
         [
-            'label' => 'Country',
+            'label' => 'COUNTRY',
             'name' => 'member_address_country',
             'id' => 'country',
             'type' => 'text',
@@ -301,7 +301,7 @@ return [
     ],
 
     // Permanent Address
-    'member_permanent_address' => [
+    'CUSTOMER_PERMANENT_ADDRESS' => [
         [
             'label' => 'Address',
             'name' => 'member_address_address',
@@ -310,14 +310,14 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'City',
+            'label' => 'CITY',
             'name' => 'member_perm_address_city',
             'id' => 'city',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'State',
+            'label' => 'STATE',
             'name' => 'member_perm_address_state',
             'id' => 'state',
             'type' => 'select',
@@ -326,7 +326,7 @@ return [
             'options_key' => 'states',
         ],
         [
-            'label' => 'Pincode',
+            'label' => 'PINCODE',
             'name' => 'member_perm_address_pincode',
             'id' => 'perm_address_pincode',
             'type' => 'number',
@@ -335,16 +335,16 @@ return [
     ],
 
     // GPS Location
-    'member_address_gps_location' => [
+    'CUSTOMER_ADDRESS_GPS_LOCATION' => [
         [
-            'label' => 'Location Latitude',
+            'label' => 'LOCATION LATITUDE',
             'name' => 'member_gps_location_latitude',
             'id' => 'location_latitude',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Location Longitude',
+            'label' => 'LOCATION LONGITUDE',
             'name' => 'member_gps_location_longitude',
             'id' => 'location_longitude',
             'type' => 'number',
@@ -353,9 +353,9 @@ return [
     ],
 
     // KYC Info
-    'member_kyc' => [
+    'CUSTOMER_KYC' => [
         [
-            'label' => 'Aadhaar No',
+            'label' => 'AADHAAR NO.',
             'name' => 'member_kyc_aadhaar_no',
             'id' => 'aadhaar_no',
             'type' => 'text',
@@ -365,7 +365,7 @@ return [
         ],
 
         [
-            'label' => 'Voter ID No',
+            'label' => 'VOTER ID NO.',
             'name' => 'member_kyc_voter_id_no',
             'id' => 'voter_id_no',
             'type' => 'text',
@@ -381,42 +381,42 @@ return [
             'pattern' => '[A-Z]{5}[0-9]{4}[A-Z]{1}',
         ],
         [
-            'label' => 'Ration Card No',
+            'label' => 'RATION CARD NO.',
             'name' => 'member_kyc_ration_card_no',
             'id' => 'ration_card_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Meter No',
+            'label' => 'METER NO.',
             'name' => 'member_kyc_meter_no',
             'id' => 'meter_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'CI No',
+            'label' => 'CI NO.',
             'name' => 'member_kyc_ci_no',
             'id' => 'ci_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'CI Relation',
+            'label' => 'CI RELATION',
             'name' => 'member_kyc_ci_relation',
             'id' => 'ci_relation',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'DL No',
+            'label' => 'DL NO.',
             'name' => 'member_kyc_dl_no',
             'id' => 'dl_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Passport No',
+            'label' => 'PASSPORT NO.',
             'name' => 'member_kyc_passport_no',
             'id' => 'passport_no',
             'type' => 'text',
@@ -425,9 +425,9 @@ return [
     ],
 
     // KYC Documents
-    'member_KYC_documents' => [
+    'CUSTOMER_KYC_DOCUMENTS' => [
         [
-            'label' => 'Photo',
+            'label' => 'PHOTO',
             'name' => 'member_kyc_photo',
             'id' => 'photo',
             'type' => 'file',
@@ -435,7 +435,7 @@ return [
             'accept' => 'image/*',
         ],
         [
-            'label' => 'Signature',
+            'label' => 'SIGNATURE',
             'name' => 'member_kyc_signature',
             'id' => 'signature',
             'type' => 'file',
@@ -443,7 +443,7 @@ return [
             'accept' => 'image/*',
         ],
         [
-            'label' => 'Id Proof',
+            'label' => 'ID PROOF',
             'name' => 'member_kyc_id_proof',
             'id' => 'id_proof',
             'type' => 'file',
@@ -451,7 +451,7 @@ return [
             'accept' => 'image/*,.pdf',
         ],
         [
-            'label' => 'Id Proof Back',
+            'label' => 'ID PROOF BACK',
             'name' => 'member_kyc_id_proof_back',
             'id' => 'id_proof_back',
             'type' => 'file',
@@ -459,7 +459,7 @@ return [
             'accept' => 'image/*,.pdf',
         ],
         [
-            'label' => 'Address Proof',
+            'label' => 'ADDRESS PROOF',
             'name' => 'member_kyc_address_proof',
             'id' => 'address_proof',
             'type' => 'file',
@@ -467,7 +467,7 @@ return [
             'accept' => 'image/*,.pdf',
         ],
         [
-            'label' => 'Address Proof Back',
+            'label' => 'ADDRESS PROOF BACK',
             'name' => 'member_kyc_address_proof_back',
             'id' => 'address_proof_back',
             'type' => 'file',
@@ -485,16 +485,16 @@ return [
     ],
 
     // Nominee Info
-    'nominee_info' => [
+    'NOMINEE_INFO' => [
         [
-            'label' => 'Nominee Name',
+            'label' => 'NOMINEE NAME',
             'name' => 'nominee_name',
             'id' => 'nominee_name',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Nominee Relation',
+            'label' => 'NOMINEE RELATION',
             'name' => 'nominee_relation',
             'id' => 'nominee_relation',
             'type' => 'select', // changed from 'text' to 'select'
@@ -521,7 +521,7 @@ return [
         ],
 
         [
-            'label' => 'Nominee Mobile No',
+            'label' => 'NOMINEE MOBILE NO.',
             'name' => 'nominee_mobile_no',
             'id' => 'nominee_mobile_no',
             'type' => 'number',
@@ -531,7 +531,7 @@ return [
             'required' => false,
         ],
         [
-            'label' => 'Gender',
+            'label' => 'GENDER',
             'name' => 'nominee_gender',
             'id' => 'nominee_gender',
             'type' => 'radio',
@@ -539,28 +539,28 @@ return [
             'options' => ["Male" => 'Male', "Female" => 'Female', "Other" => 'Other'],
         ],
         [
-            'label' => 'Nominee DOB',
+            'label' => 'NOMINEE DOB',
             'name' => 'nominee_dob',
             'id' => 'datep4',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Nominee Aadhaar No.',
+            'label' => 'NOMINEE AADHAAR NO.',
             'name' => 'nominee_aadhaar_no',
             'id' => 'nominee_aadhaar_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Nominee Voter ID No.',
+            'label' => 'NOMINEE VOTER ID NO.',
             'name' => 'nominee_voter_id_no',
             'id' => 'nominee_voter_id_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Nominee PAN',
+            'label' => 'NOMINEE PAN',
             'name' => 'nominee_pan_no',
             'id' => 'nominee_pan_no',
             'type' => 'text',
@@ -569,14 +569,14 @@ return [
             'pattern' => '[A-Z]{5}[0-9]{4}[A-Z]{1}',
         ],
         [
-            'label' => 'Nominee Ration Card No.',
+            'label' => 'NOMINEE RATION CARD NO.',
             'name' => 'nominee_ration_card_no',
             'id' => 'nominee_ration_card_no',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Nominee Address',
+            'label' => 'NOMINEE ADDRESS',
             'name' => 'nominee_address',
             'id' => 'nominee_address',
             'type' => 'text',
@@ -584,7 +584,7 @@ return [
         ],
     ],
     // Extra Settings
-    'extra_settings' => [
+    'EXTRA_SETTINGS' => [
         [
             'label' => 'SMS',
             'name' => 'extra_sms',
@@ -596,7 +596,7 @@ return [
     ],
 
     // Membership Charges
-    'membership_charges_ (if any) ' => [
+    'MEMBERSHIP_CHARGES_ (IF ANY) ' => [
         [
             'label' => 'Transaction Date',
             'name' => 'charges_transaction_date',
@@ -608,14 +608,14 @@ return [
         ],
 
         [
-            'label' => 'Membership Fee',
+            'label' => 'MEMBERSHIP FEE',
             'name' => 'charges_membership_fee',
             'id' => 'membership_fee',
             'type' => 'number',
             'required' => false,
         ],
         [
-            'label' => 'Net Fee to Collect',
+            'label' => 'NET FEE TO COLLECT',
             'name' => 'charges_net_fee',
             'id' => 'net_fee',
             'type' => 'number',
@@ -623,14 +623,14 @@ return [
             'default' => 10, // Default value set to 100
         ],
         [
-            'label' => 'Remarks(if any) ',
+            'label' => 'REMARKS(IF ANY) ',
             'name' => 'charges_remarks',
             'id' => 'remarks',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Payment Mode',
+            'label' => 'PAYMENT MODE',
             'name' => 'charges_pay_mode',
             'id' => 'pay_mode',
             'type' => 'radio',
@@ -645,7 +645,7 @@ return [
 
     'online Tr' => [
         [
-            'label' => 'Transfer Date ',
+            'label' => 'TRANSFER DATE ',
             'name' => 'online_transfer_date',
             'id' => 'date',
             'type' => 'text',
@@ -653,7 +653,7 @@ return [
             'default' =>  now()->format('d-m-Y'),
         ],
         [
-            'label' => 'UTR/ Transaction No ',
+            'label' => 'UTR/ TRANSACTION NO. ',
             'name' => 'online_utr_no',
             'id' => 'online_utr_no',
             'type' => 'text',
@@ -661,7 +661,7 @@ return [
             'placeholder' => 'Enter UTR/ Transaction No',
         ],
         [
-            'label' => 'Transfer Mode ',
+            'label' => 'TRANSFER MODE ',
             'name' => 'online_transfer_mode',
             'id' => 'online_transfer_mode',
             'type' => 'select',
@@ -676,7 +676,7 @@ return [
 
     'cheque' => [
         [
-            'label' => 'Bank Name ',
+            'label' => 'BANK NAME ',
             'name' => 'cheque_bank_name',
             'id' => 'cheque_bank_name',
             'type' => 'text',
@@ -684,7 +684,7 @@ return [
             'placeholder' => 'Enter Bank Name',
         ],
         [
-            'label' => 'Cheque No. ',
+            'label' => 'CHEQUE NO. ',
             'name' => 'cheque_no',
             'id' => 'cheque_no',
             'type' => 'text',
@@ -692,7 +692,7 @@ return [
             'placeholder' => 'Enter Cheque No.',
         ],
         [
-            'label' => 'Cheque Date ',
+            'label' => 'CHEQUE DATE ',
             'name' => 'cheque_date',
             'id' => 'cheque_date',
             'id' => 'date',

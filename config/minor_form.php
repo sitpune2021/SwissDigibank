@@ -3,7 +3,7 @@
 return 
 [
     [
-        'label' => 'Enrollment Date',
+        'label' => 'ENROLLMENT DATE',
         'name' => 'enrollment_date',
         'id' => 'date',
         'type' => 'text', // or 'date' if using a date picker
@@ -11,7 +11,7 @@ return
         'default' => now()->format('d-m-Y'),
     ],
     [
-        'label' => 'Title',
+        'label' => 'TITLE',
         'name' => 'title',
         'id' => 'title',
         'type' => 'radio',
@@ -24,7 +24,7 @@ return
         ],
     ],
     [
-        'label' => 'Gender',
+        'label' => 'GENDER',
         'name' => 'gender',
         'id' => 'gender',
         'type' => 'radio',
@@ -36,7 +36,7 @@ return
         ],
     ],
     [
-        'label' => 'First Name',
+        'label' => 'FIRST NAME',
         'name' => 'first_name',
         'id' => 'first_name',
         'type' => 'text',
@@ -44,7 +44,7 @@ return
         'placeholder' => 'Enter First Name',
     ],
     [
-        'label' => 'Last Name',
+        'label' => 'LAST NAME',
         'name' => 'last_name',
         'id' => 'last_name',
         'type' => 'text',
@@ -52,14 +52,14 @@ return
         'placeholder' => 'Enter Last Name',
     ],
     [
-        'label' => 'Date of Birth',
+        'label' => 'DATE OF BIRTH',
         'name' => 'dob',
         'id' => 'datep4',
         'type' => 'text', 
         'required' => true,
     ],
     [
-        'label' => 'Father Name',
+        'label' => 'FATHER NAME',
         'name' => 'father_name',
         'id' => 'father_name',
         'type' => 'text',
@@ -67,7 +67,7 @@ return
         'placeholder' => 'Enter Father Name',
     ],
     [
-        'label' => 'Aadhaar No.',
+        'label' => 'AADHAAR NO.',
         'name' => 'aadhaar_no',
         'id' => 'aadhaar_no',
         'type' => 'text',
@@ -75,7 +75,7 @@ return
         'placeholder' => 'Enter Aadhaar No.',
     ],
     [
-        'label' => 'Address',
+        'label' => 'ADDRESS',
         'name' => 'address',
         'id' => 'address',
         'type' => 'text',

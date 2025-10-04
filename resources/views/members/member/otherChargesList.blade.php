@@ -2,10 +2,10 @@
 
 @section('page-title',
     isset($member)
-    ? 'Members - ' .
+    ? 'CUSTOMERS - ' .
     $member->member_info_first_name .
     '
-    Transactions'
+    TRANSACTIONS'
     : 'Members Transactions')
 
 @section('content')
@@ -40,15 +40,15 @@
                 <table class="w-full border border-n30 rounded-lg overflow-hidden">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
-                            <th class="px-6 py-3 text-center">Date</th>
-                            <th class="px-6 py-3 text-center">Charge Type</th>
-                            <th class="px-6 py-3 text-center">Amount</th>
-                            <th class="px-6 py-3 text-center">Remarks</th>
-                            <th class="px-6 py-3 text-center">Status</th>
-                            <th class="px-6 py-3 text-center">Created at</th>
-                            <th class="px-6 py-3 text-center">Updated at</th>
+                            <th class="px-6 py-3 text-center uppercase">Date</th>
+                            <th class="px-6 py-3 text-center uppercase">Charge Type</th>
+                            <th class="px-6 py-3 text-center uppercase">Amount</th>
+                            <th class="px-6 py-3 text-center uppercase">Remarks</th>
+                            <th class="px-6 py-3 text-center uppercase">Status</th>
+                            <th class="px-6 py-3 text-center uppercase">Created at</th>
+                            <th class="px-6 py-3 text-center uppercase">Updated at</th>
 
-                            <th class="px-6 py-3 text-center">Actions</th>
+                            <th class="px-6 py-3 text-center uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

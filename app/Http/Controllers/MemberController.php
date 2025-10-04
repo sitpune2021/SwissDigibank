@@ -205,7 +205,7 @@ class MemberController extends Controller
         ]);
 
         try {
-            // Format date fields into Y-m-d format
+            // Format date fields into Y-m-d
             $dates = [
                 'general_enrollment_date',
                 'member_info_dob',
@@ -220,20 +220,26 @@ class MemberController extends Controller
                 }
             }
 
-            // Create Member
+            // Generate padded member_no
+            $nextId = (Member::max('id') ?? 0) + 1;
+            $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
+
+            // Create Member (only once ✅)
             $memberData = $request->only((new Member)->getFillable());
+            $memberData['member_no'] = $memberNo;
             $member = Member::create($memberData);
-            Log::info('Member created successfully', ['member_id' => $member->id]);
+
+            Log::info('Member created successfully', ['member_id' => $member->id, 'member_no' => $member->member_no]);
 
             // Create Address
             $addressData = $request->only((new Address)->getFillable());
             $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
 
-            // Create KYC & Nominee (if any)
+            // Create KYC & Nominee
             $kycData = $request->only((new KycAndNominee)->getFillable());
             $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
 
-            // Handle Documents
+            // Store KYC documents
             if ($request->has('documents')) {
                 foreach ($request->documents as $doc) {
                     if (isset($doc['file']) && $doc['file'] instanceof \Illuminate\Http\UploadedFile) {
@@ -248,15 +254,14 @@ class MemberController extends Controller
                 }
             }
 
+            // Store Membership Charge Transaction
             MembershipChargeTransaction::create([
                 'member_id' => $member->id,
-
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
                 'membership_fee' => $request->charges_membership_fee ?? 0,
                 'net_fee_to_collect' => $request->charges_net_fee,
                 'remarks' => $request->charges_remarks ?? null,
                 'charges_pay_mode' => $request->charges_pay_mode,
-
                 'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
                 'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
                 'cheque_bank_name' => $request->charges_pay_mode === 'cheque' ? $request->cheque_bank_name : null,

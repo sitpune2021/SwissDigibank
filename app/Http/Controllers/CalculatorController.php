@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\FdMaturityStatement;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CalculatorController extends Controller
 {
@@ -142,9 +143,6 @@ class CalculatorController extends Controller
     }
 // calculateInvestment (replace your existing function body with this)
 
-// inside CalculatorController.php
-
-
 
 // AJAX entry - sanitize inputs, call calc function and return JSON
 public function calculateInvestmentAjax(Request $request)
@@ -172,11 +170,33 @@ public function calculateInvestmentAjax(Request $request)
     ]);
 }
 
-/**
- * calculateInvestment
- * - $tenureYears is a float (years) e.g. 1.5 for 1 year 6 months
- * - Returns plain array: ['summary' => [...], 'details' => [...]]
- */
+
+public function getSchemes()
+{
+    // fd_schemes table से id और scheme_name लाकर dropdown के लिए भेज रहे हैं
+    $schemes = \DB::table('fd_schemes')->select('id', 'scheme_name')->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $schemes
+    ]);
+}
+
+public function getSchemeDetails($id)
+{
+    $scheme = \DB::table('fd_schemes')
+        ->select('id', 'scheme_name', 'scheme_code', 'min_amount', 'tenure', 'annual_interest_rate')
+        ->where('id', $id)
+        ->first();
+
+    if ($scheme) {
+        return response()->json(['success' => true, 'data' => $scheme]);
+    } else {
+        return response()->json(['success' => false, 'message' => 'Scheme not found']);
+    }
+}
+
+
 public function calculateInvestment(
     $type = null,
     $principal = null,
@@ -185,56 +205,98 @@ public function calculateInvestment(
     $startDate = null,
     $payoutType = null
 ) {
-    // sanitize/prepare
-    $principalFn  = (float) ($principal ?? 0); // original principal used for summary
+    $principalFn  = (float) ($principal ?? 0);
     $rate         = (float) ($rate ?? 0);
     $tenureYears  = (float) ($tenureYears ?? 1);
     $startDate    = $startDate ?? Carbon::today()->toDateString();
     $payoutType   = strtoupper($payoutType ?? 'CUMULATIVE_YEARLY');
 
-    // Simple-interest baseline calculation (this is robust & predictable)
-    // If you want compounding behavior later, we can add it, but this fixes current incorrectness.
     $annualRate = $rate / 100.0;
 
-    // total interest for the whole tenure (simple interest)
-    $totalInterest = $principalFn * $annualRate * $tenureYears;
+    $totalInterest = 0;
+    $maturityAmt   = 0;
 
-    // TDS currently zero (change if you have a tds rate)
-    $totalTDS = 0.0;
+    // ---------- Final maturity calculation ----------
+    switch ($payoutType) {
+        case "CUMULATIVE_YEARLY":
+            $maturityAmt = $principalFn * pow((1 + ($annualRate / 1)), 1 * $tenureYears);
+            break;
+        case "CUMULATIVE_HALF_YEARLY":
+            $maturityAmt = $principalFn * pow((1 + ($annualRate / 2)), 2 * $tenureYears);
+            break;
+        case "CUMULATIVE_QUARTERLY":
+            $maturityAmt = $principalFn * pow((1 + ($annualRate / 4)), 4 * $tenureYears);
+            break;
+        case "CUMULATIVE_MONTHLY":
+            $maturityAmt = $principalFn * pow((1 + ($annualRate / 12)), 12 * $tenureYears);
+            break;
+        default:
+            $totalInterest = $principalFn * $annualRate * $tenureYears;
+            $maturityAmt   = $principalFn + $totalInterest;
+            break;
+    }
 
-    $netInterest = $totalInterest - $totalTDS;
+    if (in_array($payoutType, ["CUMULATIVE_YEARLY","CUMULATIVE_HALF_YEARLY","CUMULATIVE_QUARTERLY","CUMULATIVE_MONTHLY"])) {
+        $totalInterest = $maturityAmt - $principalFn;
+    }
 
-    // maturity bonus (if you have inputs to compute, integrate here)
-    $maturityBonus = 0.0;
-
-    // maturity amount = principal + net interest + bonus
-    $maturityAmt = $principalFn + $netInterest + $maturityBonus;
-
-    // compute maturity date from startDate and tenureYears
-    // split tenureYears into years, months, days for Carbon addition
-    $years = floor($tenureYears);
-    $monthsFloat = ($tenureYears - $years) * 12;
-    $months = floor($monthsFloat);
-    $daysFloat = ($monthsFloat - $months) * 30; // approximate fractional months -> days
-    $days = round($daysFloat);
-
-    $maturityCarbon = Carbon::parse($startDate)
-        ->addYears($years)
-        ->addMonths($months)
-        ->addDays($days);
-
-    $summary = [
-        'principal'       => number_format($principalFn, 2, '.', ''), // "10000.00"
-        'interest_earned' => number_format($totalInterest, 2, '.', ''),
-        'tds_deducted'    => number_format($totalTDS, 2, '.', ''),
-        'net_interest'    => number_format($netInterest, 2, '.', ''),
-        'maturity_bonus'  => number_format($maturityBonus, 2, '.', ''),
-        'maturity_amount' => number_format($maturityAmt, 2, '.', ''),
-        'maturity_date'   => $maturityCarbon->format('d/m/Y'),
-    ];
-
-    // details can be empty or a breakdown array if you want per-period entries
+    // ---------- Year-wise breakdown ----------
     $details = [];
+    $tempPrincipal = $principalFn;
+
+    for ($year = 1; $year <= floor($tenureYears); $year++) 
+    {
+        // Ek saal ke liye maturity nikalo
+        switch ($payoutType) 
+        {
+            case "CUMULATIVE_YEARLY":
+                $yearMaturity = $tempPrincipal * pow((1 + ($annualRate / 1)), 1);
+                break;
+            case "CUMULATIVE_HALF_YEARLY":
+                $yearMaturity = $tempPrincipal * pow((1 + ($annualRate / 2)), 2);
+                break;
+            case "CUMULATIVE_QUARTERLY":
+                $yearMaturity = $tempPrincipal * pow((1 + ($annualRate / 4)), 4);
+                break;
+            case "CUMULATIVE_MONTHLY":
+                $yearMaturity = $tempPrincipal * pow((1 + ($annualRate / 12)), 12);
+                break;
+            default:
+                $yearMaturity = $tempPrincipal + ($tempPrincipal * $annualRate);
+                break;
+        }
+
+        $interest = $yearMaturity - $tempPrincipal;
+        $tds = 0; // अभी 0
+        $netInterest = $interest - $tds;
+        $bonus = 0; // अभी 0
+        $maturity = $tempPrincipal + $netInterest + $bonus;
+
+        $details[] = [
+            'year'           => $year,
+            'principal'      => number_format($tempPrincipal, 2, '.', ''),
+            'interestEarned' => number_format($interest, 2, '.', ''),
+            'tds'            => number_format($tds, 2, '.', ''),
+            'netInterest'    => number_format($netInterest, 2, '.', ''),
+            'bonus'          => number_format($bonus, 2, '.', ''),
+            'maturity'       => number_format($maturity, 2, '.', ''),
+            'date'           => Carbon::parse($startDate)->addYears($year)->format('d/m/Y'),
+        ];
+
+        $tempPrincipal = $maturity;
+
+    }
+
+    // ---------- Final summary ----------
+    $summary = [
+        'principal'       => number_format($principalFn, 2, '.', ''),
+        'interest_earned' => number_format($totalInterest, 2, '.', ''),
+        'tds_deducted'    => number_format(0, 2, '.', ''),
+        'net_interest'    => number_format($totalInterest, 2, '.', ''),
+        'maturity_bonus'  => number_format(0, 2, '.', ''),
+        'maturity_amount' => number_format($maturityAmt, 2, '.', ''),
+        'maturity_date'   => Carbon::parse($startDate)->addYears($tenureYears)->format('d/m/Y'),
+    ];
 
     return [
         'summary' => $summary,

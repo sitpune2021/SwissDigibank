@@ -263,9 +263,12 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Member</td>
+                            <td class="font-semibold px-4 py-2">Customer</td>
                             <td class="px-4 py-2">
-                                {{ $rdAccount->member->id ?? 'N/A' }} -
+                                {{$rdAccount->member?->member_no
+        ?? ($rdAccount->member?->id 
+            ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT) 
+            : 'N/A') }} -
                                 {{ $rdAccount->member->member_info_first_name ?? '' }}
                                 {{ $rdAccount->member->member_info_last_name ?? '' }}
                             </td>
@@ -385,7 +388,7 @@
             <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b px-4 py-3 bg-red-100">
-                    <h3 class="text-lg font-semibold text-black">MEMBER DETAILS</h3>
+                    <h3 class="text-lg font-semibold text-black">CUSTOMER DETAILS</h3>
                 </div>
 
                 <!-- Body -->
@@ -394,8 +397,12 @@
                         <tbody class="divide-y divide-gray-200">
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Member Name</td>
+                                <td class="font-semibold px-4 py-2">Customer Name</td>
                                 <td class="px-4 py-2">
+                                    {{$rdAccount->member?->member_no
+        ?? ($rdAccount->member?->id 
+            ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT) 
+            : 'N/A')}}-
                                     {{ $rdAccount->member->member_info_first_name ?? '' }}
                                     {{ $rdAccount->member->member_info_last_name ?? '' }}
                                 </td>
@@ -627,11 +634,11 @@
 
                 <!--Member-->
                 <form class="mt-2 px-3">
-                    <label for="branch" class="block mb-2">Member</label>
+                    <label for="branch" class="block mb-2">Customer</label>
                     <div class="flex flex-row items-center gap-3 justify-between">
                         <select name="member_id" id="member_id"
                             class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
-                            <option value="">Select member</option>
+                            <option value="">Select Customer</option>
                             <option value="1">Vishaka-Pune</option>
                         </select>
 

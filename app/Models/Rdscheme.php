@@ -14,6 +14,7 @@ class Rdscheme extends Model
         'scheme_code',
         'min_rd_dd_amount',
         'rd_dd_frequency',
+        'tenure_of_rd',
         'anuual_interest_rate',
         'sr_citizen_add_on_interest_rate',
         'bonus_rate_type',

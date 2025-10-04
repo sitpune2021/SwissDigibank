@@ -44,10 +44,11 @@
         <table class="w-full text-sm text-left">
             <tbody>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Member</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Customer</td>
                     <td class="px-4 py-2 border-b">
                         <a href="{{ route('member.show', $shareholding->members->id) }}" class="text-primary hover:underline">
-                            {{ $shareholding->members->id ?? 'N/A' }} -
+                            {{ $shareholding->members->member_no 
+    ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : 'N/A') }} -
                             {{ $shareholding->members->member_info_first_name ?? '' }}{{ $shareholding->members->member_info_middle_name }}
                             {{ $shareholding->members->member_info_last_name }}
                         </a>
@@ -132,7 +133,8 @@
                         <td class="px-4 py-2 text-blue-600 border-0">
                             <a href="{{ route('member.show', $shareholding->members->id) }}"
                                 class="text-primary hover:underline">
-                                {{ $shareholding->members->id ?? 'N/A' }} -
+                             {{ $shareholding->members->member_no 
+    ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : 'N/A') }} -
                                 {{ $shareholding->members->member_info_first_name ?? '' }}{{ $shareholding->members->member_info_middle_name }}
                                 {{ $shareholding->members->member_info_last_name }}
                             </a>

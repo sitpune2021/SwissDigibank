@@ -34,7 +34,7 @@ class AccountsTransactionsHelper
 
     public static function deposit($account_id, $amount, $details = [])
     {
-   
+
         // Step 1: Insert credit transaction
         \App\Models\Transaction::create([
             'account_id'       => $account_id,
@@ -105,5 +105,24 @@ class AccountsTransactionsHelper
         // Step 4: Return updated balance
         $updated_balances = self::getAccountBalacec([$account_id]);
         return $updated_balances[array_key_first($updated_balances)] ?? 0;
+    }
+
+
+    public static function getAccountBalanceBeforeDate($accountId, $date)
+    {
+        // Get total credits before the date
+        $totalCredit = \App\Models\Transaction::where('account_id', $accountId)
+            ->where('transaction_type', 'credit')
+            ->where('created_at', '<', $date)
+            ->sum('amount');
+
+        // Get total debits before the date
+        $totalDebit = \App\Models\Transaction::where('account_id', $accountId)
+            ->where('transaction_type', 'debit')
+            ->where('created_at', '<', $date)
+            ->sum('amount');
+
+        // Balance = total credits - total debits
+        return $totalCredit - $totalDebit;
     }
 }

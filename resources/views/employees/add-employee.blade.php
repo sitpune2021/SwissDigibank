@@ -57,7 +57,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
             @endif
             @php $isView = !empty($show); @endphp
             <div class="col-span-2 md:col-span-1">
-                <label for="member" class="md:text-lg font-medium block mb-4">Link Member Profile
+                <label for="member" class="md:text-lg font-medium block mb-4 uppercase">Link Member Profile
                     <input type="hidden" id="selectedMemberId" value="{{ isset($employee) ? $employee->member_id : '' }}">
                     @if(isset($isView) && $isView)
                     {{-- View Mode: Just display the member name --}}
@@ -78,7 +78,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="branch" class="md:text-lg font-medium block mb-4">Branch<span
+                <label for="branch" class="md:text-lg font-medium block mb-4 uppercase">Branch<span
 
                         class="text-red-500">*</span></label>
                 <input type="hidden" id="selectedBranchId" value="{{ isset($employee) ? $employee->branch_id : '' }}">
@@ -124,7 +124,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
                 @enderror -->
 
                 <x-datepicker-disabled
-                    label="Joining Date"
+                    label="JOINING DATE"
                     name="joining_date"
                     value="{{ old('joining_date') }}"
                     inputId="joining_date" />
@@ -134,7 +134,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="name" class="md:text-lg font-medium block mb-4">Designation</span></label>
+                <label for="name" class="md:text-lg font-medium block mb-4 uppercase">Designation</span></label>
 
                 <input type="text" name="designation" id="designation" placeholder="Enter Designation like 'Executive'"
                     value="{{ old('designation', $employee->designation ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
@@ -149,7 +149,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="name" class="md:text-lg font-medium block mb-4">Name</span><span
+                <label for="name" class="md:text-lg font-medium block mb-4 uppercase">Name</span><span
 
                         class="text-red-500">*</span></label>
 
@@ -165,7 +165,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="gender" class="block mb-4 font-medium md:text-lg">
+                <label for="gender" class="block mb-4 font-medium md:text-lg uppercase">
                     Gender <span class="text-red-500">*</span>
                 </label>
                 <div class="flex flex-wrap gap-4 mt-4">
@@ -190,7 +190,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
                 <x-datepicker-disabled
-                    label="Date of Birth"
+                    label="DATE OF BIRTH"
                     name="dob"
                     value="{{ old('dob') }}"
                     inputId="dob" />
@@ -200,7 +200,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="email" class="md:text-lg font-medium block mb-4">Email</span></label>
+                <label for="email" class="md:text-lg font-medium block mb-4 uppercase">Email</span></label>
 
                 <input type="text" name="email" placeholder="Enter Email" id="email" value="{{ old('email', $employee->email ?? '') }}" class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
 
@@ -214,7 +214,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="mobile_no" class="md:text-lg font-medium block mb-4">Mobile No.<span
+                <label for="mobile_no" class="md:text-lg font-medium block mb-4 uppercase">Mobile No.<span
                         class="text-red-500">*</span></label>
                 <div class="flex gap-2">
                     <input type="text"
@@ -233,7 +233,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="address" class="md:text-lg font-medium block mb-4">Address</label>
+                <label for="address" class="md:text-lg font-medium block mb-4 uppercase">Address</label>
 
                 <input type="text" name="address" id="address" placeholder="Enter Address"
 
@@ -251,7 +251,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="father_name" class="md:text-lg font-medium block mb-4">Father Name</label>
+                <label for="father_name" class="md:text-lg font-medium block mb-4 uppercase">Father Name</label>
 
                 <input type="text" name="father_name" id="father_name" placeholder="Enter Father Name"
 
@@ -269,7 +269,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="pan_no" class="md:text-lg font-medium block mb-4">PAN No.</label>
+                <label for="pan_no" class="md:text-lg font-medium block mb-4 uppercase">PAN No.</label>
 
                 <input type="text" name="pan_no" id="pan_no" placeholder="Enter PAN No"
 
@@ -291,7 +291,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="aadhar_no" class="md:text-lg font-medium block mb-4">Aadhaar No.</label>
+                <label for="aadhar_no" class="md:text-lg font-medium block mb-4 uppercase">Aadhaar No.</label>
 
                 <input type="text" name="aadhar_no" id="aadhar_no"
                     placeholder="Enter Aadhar No"
@@ -312,7 +312,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="blood_group" class="md:text-lg font-medium block mb-4">Blood Group</label>
+                <label for="blood_group" class="md:text-lg font-medium block mb-4 uppercase">Blood Group</label>
                 <input type="hidden" id="selectedBloodId" value="{{ isset($employee) ? $employee->blood_group : '' }}">
                 @if(isset($isView) && $isView)
                 {{-- View Mode: Just display the member name --}}
@@ -338,7 +338,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="monthly_salary" class="md:text-lg font-medium block mb-4">Monthly Salary</label>
+                <label for="monthly_salary" class="md:text-lg font-medium block mb-4 uppercase">Monthly Salary</label>
 
                 <input type="number" name="monthly_salary" id="monthly_salary" placeholder="Enter Monthly Salary"
 
@@ -358,7 +358,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="location" class="md:text-lg font-medium block mb-4">Location</label>
+                <label for="location" class="md:text-lg font-medium block mb-4 uppercase">Location</label>
 
                 <input type="text" name="location" id="location" placeholder="Enter Location"
 
@@ -373,10 +373,10 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
                 @enderror
 
             </div>
-            <h4>Bank Info</h4> <br>
+            <h4 class="uppercase">Bank Info</h4> <br>
             <div class="col-span-2 md:col-span-1">
 
-                <label for="account_holder" class="md:text-lg font-medium block mb-4">Bank A/c Holder's Name</label>
+                <label for="account_holder" class="md:text-lg font-medium block mb-4 uppercase">Bank A/c Holder's Name</label>
 
                 <input type="text" name="account_holder" id="account_holder" placeholder="Enter Account Holder"
 
@@ -394,7 +394,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="bank_name" class="md:text-lg font-medium block mb-4">Bank Name</label>
+                <label for="bank_name" class="md:text-lg font-medium block mb-4 uppercase">Bank Name</label>
                 @if(isset($isView) && $isView)
                 {{-- View Mode: Just display the member name --}}
                 <input type="text" value="{{ $employee->bankname->name ?? 'N/A' }}" @if($isView) disabled @endif
@@ -418,7 +418,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="account_no" class="md:text-lg font-medium block mb-4">Bank Account No</label>
+                <label for="account_no" class="md:text-lg font-medium block mb-4 uppercase">Bank Account No</label>
 
                 <input type="number" name="account_no" id="account_holder" placeholder="Enter Bank A/C No"
 
@@ -436,7 +436,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="ifsc" class="md:text-lg font-medium block mb-4">Bank IFSC</label>
+                <label for="ifsc" class="md:text-lg font-medium block mb-4 uppercase">Bank IFSC</label>
 
                 <input type="text" name="ifsc" id="ifsc" placeholder="Enter IFSC Code"
 
@@ -452,11 +452,11 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             </div>
 
-            <h4>Nominee Info</h4><br>
+            <h4 class="uppercase">Nominee Info</h4><br>
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="nominee_name" class="md:text-lg font-medium block mb-4">Nominee Name</label>
+                <label for="nominee_name" class="md:text-lg font-medium block mb-4 uppercase">Nominee Name</label>
 
                 <input type="text" name="nominee_name" id="nominee_name" placeholder="Enter Nominee Name"
 
@@ -474,7 +474,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="nominee_relation" class="md:text-lg font-medium block mb-4">Nominee Relation</label>
+                <label for="nominee_relation" class="md:text-lg font-medium block mb-4 uppercase">Nominee Relation</label>
                 <input type="hidden" id="selectedRelationId" value="{{ isset($employee) ? $employee->nominee_relation  : '' }}">
 
                 @if(isset($isView) && $isView)
@@ -501,7 +501,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="nominee_address" class="md:text-lg font-medium block mb-4">Nominee Address</label>
+                <label for="nominee_address" class="md:text-lg font-medium block mb-4 uppercase">Nominee Address</label>
 
                 <input type="text" name="nominee_address" id="nominee_address" placeholder="Enter Nominee Address"
 
@@ -518,11 +518,11 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
             </div>
             <br>
 
-            <h4>Link With Software Accounting</h4><br>
+            <h4 class="uppercase">Link With Software Accounting</h4><br>
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="nominee_address" class="md:text-lg font-medium block mb-4">Auto Generate Payable Ledger</label>
+                <label for="nominee_address" class="md:text-lg font-medium block mb-4 uppercase">Auto Generate Payable Ledger</label>
 
                 <input type="checkbox" name="auto_generate" id="auto_generate_checkbox"
 
@@ -545,7 +545,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
                 <input type="hidden" id="selectedledgerId" value="{{ isset($employee) ? $employee->payable_ledger : '' }}">
 
 
-                <label for="payable_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Payable Ledger</label>
+                <label for="payable_ledger" class="md:text-lg font-medium block mb-4 uppercase">Linked Accounting Payable Ledger</label>
                 @if(isset($isView) && $isView)
                 <input type="text" value="{{ $employee?->payableLedgers?->name ?? 'N/A' }}" @if($isView) disabled @endif
                     class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -568,7 +568,7 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
 
             <div class="col-span-2 md:col-span-1">
 
-                <label for="expense_ledger" class="md:text-lg font-medium block mb-4">Linked Accounting Expense Ledger</label>
+                <label for="expense_ledger" class="md:text-lg font-medium block mb-4 uppercase">Linked Accounting Expense Ledger</label>
                 @if(isset($isView) && $isView)
                 <input type="text" value="{{ $employee->payableExpenses?->name ?? 'N/A' }}" @if($isView) disabled @endif
                     class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">

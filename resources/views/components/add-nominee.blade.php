@@ -1,4 +1,4 @@
-<label class="font-medium block mb-2">
+<label class="font-medium block mb-2 uppercase">
     Nominee <span class="text-red-500">*</span>
 </label>
 <div class="flex items-center gap-4">
@@ -41,7 +41,7 @@
 
                 <!-- Relation -->
                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                    <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Relation <span class="text-red-500">*</span></label>
                     <select name="nominees[{{ $index }}][relation]"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">Select Relation</option>
@@ -58,7 +58,7 @@
 
                 <!-- Name -->
                 <div class="flex-1 min-w-[300px] max-w-full">
-                    <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Name <span class="text-red-500">*</span></label>
                     <input type="text" name="nominees[{{ $index }}][name]" value="{{ $nominee->nominee_name }}"
                         placeholder="Enter Nominee Name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -66,7 +66,7 @@
 
                 <!-- Address -->
                 <div class="flex-1 min-w-[300px] max-w-full">
-                    <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Address <span class="text-red-500">*</span></label>
                     <input type="text" name="nominees[{{ $index }}][address]" value="{{ $nominee->nominee_address }}"
                         placeholder="Enter Nominee Address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">

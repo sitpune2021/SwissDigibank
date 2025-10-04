@@ -70,47 +70,47 @@
                 <table class="w-full table-auto text-sm text-gray-700">
                     <tbody>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2 w-1/2">Scheme Code</td>
+                            <td class="font-bold px-4 py-2 w-1/2 uppercase">Scheme Code</td>
                             <td class="px-4 py-2">{{ $fdScheme->scheme_code}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Scheme Name</td>
+                            <td class="font-bold px-4 py-2 uppercase">Scheme Name</td>
                             <td class="px-4 py-2">{{ $fdScheme->scheme_name}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Min. Amount</td>
+                            <td class="font-bold px-4 py-2 uppercase">Min. Amount</td>
                             <td class="px-4 py-2">{{ $fdScheme->min_amount}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">FD Lock in Period</td>
+                            <td class="font-bold px-4 py-2 uppercase">FD Lock in Period</td>
                             <td class="px-4 py-2">{{ $fdScheme->lock_in_period}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Effective / Start Date</td>
+                            <td class="font-bold px-4 py-2 uppercase">Effective / Start Date</td>
                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($fdScheme->effective_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Bonus Rate</td>
+                            <td class="font-bold px-4 py-2 uppercase">Bonus Rate</td>
                             <td class="px-4 py-2">{{ $fdScheme->bonus_rate}} %</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Cancellation Charges</td>
+                            <td class="font-bold px-4 py-2 uppercase">Cancellation Charges</td>
                             <td class="px-4 py-2">{{ $fdScheme->cancellation_charge	}} ₹</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Penal Charges (%)</td>
+                            <td class="font-bold px-4 py-2 uppercase">Penal Charges (%)</td>
                             <td class="px-4 py-2">{{ $fdScheme->penal_charge }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Stationery Charges</td>
+                            <td class="font-bold px-4 py-2 uppercase">Stationery Charges</td>
                             <td class="px-4 py-2">{{ $fdScheme->stationary_fee }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Interest Lock in Period</td>
+                            <td class="font-bold px-4 py-2 uppercase">Interest Lock in Period</td>
                             <td class="px-4 py-2"> {{ $slab->months ?? '0' }} Months</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Active</td>
+                            <td class="font-bold px-4 py-2 uppercase">Active</td>
                             <td class="px-4 py-2">
                                 @if($fdScheme->is_active==1)
                                 <span
@@ -126,7 +126,7 @@
                             </td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Sweep In Scheme</td>
+                            <td class="font-bold px-4 py-2 uppercase">Sweep In Scheme</td>
                             <td class="px-4 py-2">
                                 @if($fdScheme->is_active==1)
                                 <span
@@ -141,15 +141,15 @@
 
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Created at</td>
+                            <td class="font-bold px-4 py-2 uppercase">Created at</td>
                             <td class="px-4 py-2">{{ optional($fdScheme->created_at)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Updated at</td>
+                            <td class="font-bold px-4 py-2 uppercase">Updated at</td>
                             <td class="px-4 py-2">{{ optional($fdScheme->updated_at)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Admin Type Scheme</td>
+                            <td class="font-bold px-4 py-2 uppercase">Admin Type Scheme</td>
                             <td class="px-4 py-2">
                                 @if($fdScheme->admin==1)
                                 <span
@@ -161,7 +161,7 @@
                             </td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-bold px-4 py-2">Agent Type Scheme</td>
+                            <td class="font-bold px-4 py-2 uppercase">Agent Type Scheme</td>
                             <td class="px-4 py-2">
                                 @if($fdScheme->associate==1)
                                 <span
@@ -173,7 +173,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-bold px-4 py-2">Member Type Scheme</td>
+                            <td class="font-bold px-4 py-2 uppercase">Member Type Scheme</td>
                             <td class="px-4 py-2">
                                 @if($fdScheme->member==1)
                                 <span
@@ -194,11 +194,11 @@
                 <table class="w-full text-sm text-black">
                     <tbody>
                         <tr class="border-b">
-                            <td class="font-bold text-center px-4 py-2">Current Chart</td>
+                            <td class="font-bold text-center px-4 py-2 uppercase">Current Chart</td>
                             <td class="px-4 py-2">none</td>
                         </tr>
                         <tr>
-                            <td class="font-bold text-center px-4 py-2">Commission Chart</td>
+                            <td class="font-bold text-center px-4 py-2 uppercase">Commission Chart</td>
                             <td class="px-4 py-2">
                                 <form class="flex flex-col sm:flex-row gap-2" method="post"> <select
                                         class="w-full bg-secondary/5 border border-green-500 rounded-10 px-3 py-3 focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -277,10 +277,10 @@
                 <table class="w-full min-w-[600px]   text-sm md:text-base">
                     <thead class="bg-gray-100 text-start text-gray-700">
                         <tr>
-                            <th class="px-4 py-2  border-b whitespace-nowrap">Creator</th>
-                            <th class="px-4 py-2  border-b whitespace-nowrap">Event</th>
-                            <th class="px-4 py-2  border-b whitespace-nowrap">Create On</th>
-                            <th class="px-4 py-2  border-b whitespace-nowrap">Change Logs</th>
+                            <th class="px-4 py-2  border-b whitespace-nowrap uppercase">Creator</th>
+                            <th class="px-4 py-2  border-b whitespace-nowrap uppercase">Event</th>
+                            <th class="px-4 py-2  border-b whitespace-nowrap uppercase">Create On</th>
+                            <th class="px-4 py-2  border-b whitespace-nowrap uppercase">Change Logs</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">

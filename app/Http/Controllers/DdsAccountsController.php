@@ -513,6 +513,7 @@ class DdsAccountsController extends Controller
         $startDate = null,
         $schemeTenureMonths = null
     ) {
+
         if (!in_array($frequency, ['daily', 'weekly'])) {
             throw new InvalidArgumentException("Only 'daily' and 'weekly' frequencies are supported.");
         }

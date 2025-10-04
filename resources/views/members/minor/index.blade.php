@@ -24,7 +24,7 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                MEMBER
+                                CUSTOMER
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
@@ -57,6 +57,9 @@
                             @if ($minor->member)
                             <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}"
                                 class="text-primary hover:underline">
+                                {{ $minor->member->member_no 
+                                ?? ($minor->member->id ? str_pad($minor->member->id, 6, '0', STR_PAD_LEFT) : 'N/A') }}
+                                -
                                 {{ $minor->member->member_info_first_name ?? 'N/A' }}
                             </a>
                             @else
@@ -82,11 +85,8 @@
                     </tr>
                     @endforeach
                 </tbody>
-
-
             </table>
         </div>
     </div>
-
 </div>
 @endsection

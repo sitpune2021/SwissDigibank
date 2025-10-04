@@ -2,14 +2,14 @@
 
 return [
   [
-    "label"=> "Designation",
+    "label"=> "DESIGNATION",
     "name"=> "designation",
     "id"=> "designation",
     "type"=> "text",
     "required"=> false
   ],
   [
-    "label"=> "Member",
+    "label"=> "CUSTOMER",
     "name"=> "member_id",
     "id"=> "member",
     "type"=> "select",
@@ -18,35 +18,35 @@ return [
     'options_key' => 'member', // 👈 used to match controller data
   ],
   [
-    "label"=> "Director Name",
+    "label"=> "DIRECTOR NAME",
     "name"=> "director_name",
     "id"=> "director_name",
     "type"=> "text",
     "required"=> true
   ],
   [
-    "label"=> "DIN No",
+    "label"=> "DIN NO.",
     "name"=> "din_no",
     "id"=> "din_no",
     "type"=> "text",
     "required"=> true
   ],
   [
-    "label"=> "Appointment Date",
+    "label"=> "APPOINTMENT DATE",
     "name"=> "appointment_date",
     "id"=> "date",
     "type"=> "text",
     "required"=> true
   ],
   [
-    "label" => "Resignation Date",
+    "label" => "RESIGNATION DATE",
     "name" => "resignation_date",
     "id" => "datem",
     "type" => "text",
     "required" => false
   ],  
   [
-    "label"=> "Signature",
+    "label"=> "SIGNATURE",
     "name"=> "signature",
     "id"=> "signature",
     "type"=> "file",
@@ -54,7 +54,7 @@ return [
     "accept"=> "image/*"
   ],
   [
-    "label"=> "Authorized Signatory",
+    "label"=> "AUTHORIZED SIGNATORY",
     "name"=> "authorized_signatory",
     "id"=> "authorized_signatory",
     "type"=> "radio",

@@ -36,7 +36,7 @@
 
 
             <p class="text-gray-500 dark:text-gray-400">
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Fd Accounts</a> >
+                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm ">Fd Accounts</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">{{$fdAccountDetail->id}}</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">change Account Info</a>
             </p>
@@ -56,8 +56,8 @@
 
                 <!-- Member -->
                 <div class="mt-4">
-                    <label class="block font-medium text-gray-700 dark:text-gray-300">
-                        Member <span class="text-red-500">*</span>
+                    <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        Customer <span class="text-red-500">*</span>
                     </label>
                     <select class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         {{-- First show selected member --}}
@@ -82,7 +82,7 @@
 
                 <!-- Account Type -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Account Type <span class="text-red-500">*</span>
                     </label>
                     <div class="mt-2 flex gap-6">
@@ -101,15 +101,20 @@
 
                 <!-- Joint Account Member -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Joint Account Member
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        Joint Account Customer
                     </label>
                     <select
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         <option value="">Please Select Member</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">
-                            Demo-{{ $member->id }} - {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
+                            {{
+    $member->member_no 
+        ?? ($member->id 
+            ? str_pad($member->id, 6, '0', STR_PAD_LEFT) 
+            : '')
+}} - {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
                         </option>
                         @endforeach
                     </select>
@@ -117,7 +122,7 @@
 
                 <!-- Minor -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Minor
                     </label>
                     <select
@@ -128,7 +133,7 @@
 
                 <!-- Open Date -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Open Date <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="date" placeholder="DD/MM/YYYY" value="{{ \Carbon\Carbon::now()->format('d/m/Y') }}"
@@ -152,37 +157,37 @@
         <!-- Right Side: Account Info -->
         <div class="w-full lg:w-1/3 box dark:bg-bg3 rounded-xl shadow overflow-hidden">
             <div class="bg-secondary/5 text-black px-4 py-3 flex justify-between  rounded-10 items-center">
-                <h3 class="font-semibold">Account Info</h3>
+                <h3 class="font-semibold uppercase">Account Info</h3>
             </div>
             <div class="p-4">
                 <table class="w-full text-sm">
                     <tbody>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Member</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Customer</td>
                             <td class="py-2">
                                 <a href="#" class="text-green-600 hover:underline">
-                                   {{ $fdAccountDetail->member->member_info_first_name }}
+                                    {{ $fdAccountDetail->member->member_info_first_name }}
                                 </a>
                             </td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">PAN No</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">PAN No</td>
                             <td class="py-2"> {{$fdAccountDetail->member?->kyc?->member_kyc_pan_no??'N/A'}} </td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Account No</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Account No</td>
                             <td class="py-2">{{$fdAccountDetail->id}}</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Open Date</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Open Date</td>
                             <td class="py-2">{{$fdAccountDetail->open_date}}</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="py-2 font-semibold dark:text-gray-300">Status</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Status</td>
                             <td class="py-2">Active</td>
                         </tr>
                         <tr>
-                            <td class="py-2 font-semibold dark:text-gray-300">Available Balance</td>
+                            <td class="py-2 font-semibold dark:text-gray-300 uppercase">Available Balance</td>
                             <td class="py-2">45,000.00</td>
                         </tr>
                     </tbody>

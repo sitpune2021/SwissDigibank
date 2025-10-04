@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Membership Application Form</title>
+  <title>MEMBERSHIP APPLICATION FORM</title>
   <style>
     body {
       font-family: Arial, sans-serif;

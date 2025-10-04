@@ -25,15 +25,20 @@
             <div class="space-y-4">
                 <!-- Scheme -->
                 <div>
-                    <label class="font-medium block mb-2">
+                    <label class="font-medium block mb-2 uppercase">
                         Scheme <span class="text-red-500">*</span>
                     </label>
-                    <select id="scheme" required
+                    <select id="scheme" name="scheme_code" required
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">Select Scheme</option>
-                        <option value="001">001 JEWELLERS - Rj</option>
+                        @foreach($schemes as $scheme)
+                        <option value="{{ $scheme->scheme_code }}">
+                            {{ $scheme->scheme_code }} - {{ $scheme->scheme_name }}
+                        </option>
+                        @endforeach
                     </select>
                 </div>
+
 
                 <!-- Enter Values Manually -->
                 <div class="flex items-center gap-2">
@@ -43,14 +48,14 @@
 
                 <!-- Open Date -->
                 <div>
-                    <label class="font-medium block mb-2">Open Date<span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Open Date<span class="text-red-500">*</span></label>
                     <input type="text" id="date2" placeholder="dd/mm/yyyy"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 </div>
 
                 <!-- RD / DD Amount -->
                 <div>
-                    <label class="font-medium block mb-2">RD / DD Amount <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">RD / DD Amount <span class="text-red-500">*</span></label>
                     <input type="number" id="amount"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter amount">
@@ -58,7 +63,7 @@
 
                 <!-- Frequency -->
                 <div>
-                    <label class="font-medium block mb-2">RD / DD Frequency <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">RD / DD Frequency <span class="text-red-500">*</span></label>
                     <select id="frequency"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option>Select RD / DD Frequency </option>
@@ -74,7 +79,7 @@
 
                 <!-- Interest Compounding -->
                 <div>
-                    <label class="font-medium block mb-2">Interest Comp. Interval <span
+                    <label class="font-medium block mb-2 uppercase">Interest Comp. Interval <span
                             class="text-red-500">*</span></label>
                     <select id="compInterval"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -88,7 +93,7 @@
 
                 <!-- Interest Rate -->
                 <div>
-                    <label class="font-medium block mb-2">Interest Rate <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Interest Rate <span class="text-red-500">*</span></label>
                     <input type="number" id="interestRate"
                         class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Interest Rate">
@@ -96,7 +101,7 @@
 
                 <!-- Tenure -->
                 <div>
-                    <label class="font-medium block mb-2">Tenure of RD / DD <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Tenure of RD / DD <span class="text-red-500">*</span></label>
                     <div class="flex gap-1">
                         <input type="text" id="tenure_type" name="tenure_type" value="DAYS"
                             class="w-full text-sm bg-primary/5 dark:bg-bg3 border 
@@ -110,7 +115,7 @@
 
                 <!-- Bonus -->
                 <div>
-                    <label class="font-medium block mb-2">Bonus<span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Bonus<span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
                         <select id="bonusSelect" required
                             class="w-auto text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -135,19 +140,19 @@
                 <table class="w-full border-separate border-spacing-y-2 border-t mt-6">
                     <tbody>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Total Deposit </td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Total Deposit </td>
                             <td class="text-gray-700 px-4 py-2 border-b">234.00</td>
                         </tr>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Interest Earned</td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Interest Earned</td>
                             <td class="text-gray-700 px-4 py-2 border-b">85.00</td>
                         </tr>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Bonus</td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Bonus</td>
                             <td class="text-gray-700 px-4 py-2 border-b">0.00</td>
                         </tr>
                         <tr>
-                            <td class="font-medium px-4 py-2 border-b">Maturity</td>
+                            <td class="font-medium px-4 py-2 border-b uppercase">Maturity</td>
                             <td class="text-gray-700 px-4 py-2 border-b">450.00</td>
                         </tr>
                     </tbody>
@@ -160,282 +165,375 @@
             <div class="mt-6">
                 <!-- Header -->
                 <div
-                    class=" bg-Secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center cursor-pointer">
+                    class=" bg-Secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center cursor-pointer uppercase">
                     <span>Scheme Info</span>
                     <button id="toggleButton" class="text-white text-xl font-bold focus:outline-none">-</button>
                 </div>
 
                 <!-- Collapsible Table -->
                 <div id="schemeContent"
-                    class="bg-white dark:bg-bg rounded-10 shadow overflow-hidden transition-all duration-500"
-                    style="max-height: 1000px; opacity: 1;">
+                    class="bg-white dark:bg-bg rounded-10 shadow overflow-hidden transition-all duration-500 hidden">
                     <div class="p-6 bg-white dark:bg-bg3 rounded-lg shadow-md">
                         <table class="min-w-full border-separate border-spacing-y-2">
                             <tbody>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Scheme Code</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">001 JEWELLERS</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Scheme Code</td>
+                                    <td id="sc_code" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Scheme Name</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">Rj</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Scheme Name</td>
+                                    <td id="sc_name" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Deposit Frequency</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">MONTHLY</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Deposit Frequency</td>
+                                    <td id="deposit_frequency" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Min. Amount</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">5,000.00</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Min. Amount</td>
+                                    <td id="min_rd_dd_amount" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Minimum Lock in Period</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">6 Months</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Minimum Lock in Period</td>
+                                    <td id="lock_in_period" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Interest (%)</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">7.15 %</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Interest (%)</td>
+                                    <td id="anuual_interest_rate" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Interest Comp. Interval</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">QUARTERLY</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Interest Comp. Interval</td>
+                                    <td id="interest_compounding_interval" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Interest Lock in Period</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">0 Months</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Tenure of RD</td>
+                                    <td id="tenure_of_rd" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Tenure of RD</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">60 MONTHS</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Cancellation Charges</td>
+                                    <td id="cancellation_charges_value" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Cancellation Charges</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">2.00 %</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Penal Charges (%)</td>
+                                    <td id="penal_charges" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Penal Charges (%)</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">2.00 %</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Bonus Rate</td>
+                                    <td id="bonus_rate" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Bonus Rate</td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">2.50 %</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Penalty Charges (After Grace Period)</td>
+                                    <td id="penalty_charges_value" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Penalty Charges (After Grace Period)
-                                    </td>
-                                    <td class="text-gray-700 px-4 py-2 border-b">2.0 %</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium px-4 py-2 border-b">Active</td>
+                                    <td class="font-medium px-4 py-2 border-b uppercase">Active</td>
                                     <td class="px-4 py-2 border-b">
-                                        <span
-                                            class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">Yes</span>
+                                        <span id="is_active" class="px-3 py-1 text-xs font-semibold text-white rounded-full"></span>
                                     </td>
-                                </tr>
-
                                 </tr>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
 
-    </div>
-</div>
-@endsection
+                @endsection
 
-@push('script')
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // ----- set today's date -----
-        const dateInput = document.getElementById("date2");
-        const today = new Date();
-        dateInput.value = today.toLocaleDateString("en-GB"); // dd/mm/yyyy
+                @push('script')
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        // ----- set today's date -----
+                        const dateInput = document.getElementById("date2");
+                        const today = new Date();
+                        dateInput.value = today.toLocaleDateString("en-GB"); // dd/mm/yyyy
 
-        // ----- element refs -----
-        const els = {
-            manualCheckbox: document.getElementById('manualCheckbox'),
-            scheme: document.getElementById('scheme'),
-            frequency: document.getElementById('frequency'),
-            compInterval: document.getElementById('compInterval'),
-            interestRate: document.getElementById('interestRate'),
-            tenureText: document.getElementById('tenureText'),
-            tenureNumber: document.getElementById('tenureNumber'),
-            bonusSelect: document.getElementById('bonusSelect'),
-            bonusInput: document.getElementById('bonusInput'),
-            schemeInfo: document.getElementById('schemeInfo'),
-            schemeContent: document.getElementById('schemeContent'),
-            toggleButton: document.getElementById('toggleButton'),
-            calculateBtn: document.getElementById('calculateBtn'),
-            resultSection: document.getElementById('resultSection'),
-            amount: document.getElementById('amount'),
-            tenureType: document.getElementById('tenure_type'),
-        };
+                        // ----- element refs -----
+                        const els = {
+                            manualCheckbox: document.getElementById('manualCheckbox'),
+                            scheme: document.getElementById('scheme'),
+                            frequency: document.getElementById('frequency'),
+                            compInterval: document.getElementById('compInterval'),
+                            interestRate: document.getElementById('interestRate'),
+                            tenureText: document.getElementById('tenureText'),
+                            tenureNumber: document.getElementById('tenureNumber'),
+                            bonusSelect: document.getElementById('bonusSelect'),
+                            bonusInput: document.getElementById('bonusInput'),
+                            schemeInfo: document.getElementById('schemeInfo'),
+                            schemeContent: document.getElementById('schemeContent'),
+                            toggleButton: document.getElementById('toggleButton'),
+                            calculateBtn: document.getElementById('calculateBtn'),
+                            resultSection: document.getElementById('resultSection'),
+                            amount: document.getElementById('amount'),
+                            tenureType: document.getElementById('tenure_type'),
+                        };
 
-        // ----- scheme info -----
-        let isOpen = true;
+                        // ----- scheme info -----
+                        let isOpen = true;
 
-        function toggleSchemeInfo() {
-            const {
-                schemeContent,
-                toggleButton
-            } = els;
-            schemeContent.style.maxHeight = isOpen ? '0' : '1000px';
-            schemeContent.style.opacity = isOpen ? '0' : '1';
-            toggleButton.textContent = isOpen ? '+' : '-';
-            isOpen = !isOpen;
-        }
-        els.toggleButton.addEventListener('click', toggleSchemeInfo);
-
-        els.scheme.addEventListener('change', function() {
-            const {
-                schemeInfo,
-                schemeContent,
-                toggleButton
-            } = els;
-            if (this.value) {
-                schemeInfo.classList.remove('hidden');
-                schemeContent.style.maxHeight = '1000px';
-                schemeContent.style.opacity = '1';
-                toggleButton.textContent = '-';
-                isOpen = true;
-            } else {
-                schemeInfo.classList.add('hidden');
-                schemeContent.style.maxHeight = '0';
-                schemeContent.style.opacity = '0';
-                toggleButton.textContent = '+';
-                isOpen = false;
-            }
-        });
-
-        // ----- manual toggle -----
-        els.manualCheckbox.addEventListener('change', () => {
-            const disabled = !els.manualCheckbox.checked;
-            [
-                els.scheme, els.frequency, els.compInterval,
-                els.interestRate, els.tenureText, els.tenureNumber,
-                els.bonusSelect, els.bonusInput
-            ].forEach(el => el.disabled = disabled && el !== els.scheme);
-        });
-        els.manualCheckbox.dispatchEvent(new Event('change'));
-
-        // ----- auto change tenure_type based on frequency -----
-        els.frequency.addEventListener('change', function() {
-            let freq = this.value.toUpperCase();
-            if (freq === "DAILY") {
-                els.tenureType.value = "DAYS";
-            } else if (freq === "WEEKLY") {
-                els.tenureType.value = "WEEKS";
-            } else if (freq === "BI_WEEKLY") {
-                els.tenureType.value = "WEEKS"; // still in weeks
-            } else if (freq === "MONTHLY") {
-                els.tenureType.value = "MONTHS";
-            } else if (freq === "QUARTERLY") {
-                els.tenureType.value = "MONTHS"; // quarters → months
-            } else if (freq === "HALF-YEARLY") {
-                els.tenureType.value = "MONTHS"; // half-year → months
-            } else if (freq === "YEARLY") {
-                els.tenureType.value = "MONTHS";
-            }
-        });
+                        function toggleSchemeInfo() {
+                            const {
+                                schemeContent,
+                                toggleButton
+                            } = els;
+                            schemeContent.style.maxHeight = isOpen ? '0' : '1000px';
+                            schemeContent.style.opacity = isOpen ? '0' : '1';
+                            toggleButton.textContent = isOpen ? '+' : '-';
+                            isOpen = !isOpen;
+                        }
+                        els.toggleButton.addEventListener('click', toggleSchemeInfo);
 
 
-        // ----- helpers -----
-        const toNum = v =>
-            typeof v === "number" ? v :
-            typeof v === "string" ? (parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, "")) || 0) : 0;
 
-        const formatINR = n => n.toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
 
-        // ----- RD calculation -----
-        function calcRD({
-            amount,
-            frequency,
-            tenureUnit,
-            tenureValue,
-            interestRate,
-            compInterval,
-            bonusRate
-        }) {
-            const amt = parseFloat(amount) || 0;
-            const freq = (frequency || "DAILY").toUpperCase().trim();
-            const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
-            const tVal = parseInt(tenureValue) || 0;
-            const rate = (parseFloat(interestRate) || 0) / 100;
-            const bonusPct = parseFloat(bonusRate) || 0;
-            const comp = (compInterval || "MONTHLY").toUpperCase().trim();
+                        // ----- scheme info fetch -----
+                        els.scheme.addEventListener('change', function() {
+                            const schemeCode = this.value;
+                            if (schemeCode) {
+                                fetch(`/rd-schemes/${schemeCode}`)
+                                    .then(res => res.json())
+                                    .then(res => {
+                                        if (res.status) {
+                                            const s = res.data;
 
-            // ---- deposits calculation ----
-            let deposits = 0;
-            if (freq === "DAILY" && unit === "DAYS") deposits = tVal;
+                                            els.schemeInfo.classList.remove('hidden');
+                                            els.schemeContent.classList.remove('hidden');
 
-            const totalDeposit = amt * deposits;
+                                            // Table values
+                                            document.querySelector('#sc_code').textContent = s.scheme_code;
+                                            document.querySelector('#sc_name').textContent = s.scheme_name;
+                                            document.querySelector('#deposit_frequency').textContent = s.deposit_frequency;
+                                            document.querySelector('#min_rd_dd_amount').textContent = s.min_rd_dd_amount;
+                                            document.querySelector('#lock_in_period').textContent = s.lock_in_period;
+                                            document.querySelector('#anuual_interest_rate').textContent = s.anuual_interest_rate + ' %';
+                                            document.querySelector('#interest_compounding_interval').textContent = s.interest_compounding_interval;
+                                            //  YAHAN PE ADD KARNA HAI
+                                            if (s.rd_dd_frequency) {
+                                                const freq = s.rd_dd_frequency.trim().toUpperCase();
+                                                const freqDropdown = document.querySelector('#frequency');
+                                                if (freqDropdown) {
+                                                    for (let i = 0; i < freqDropdown.options.length; i++) {
+                                                        if (freqDropdown.options[i].value.toUpperCase() === freq) {
+                                                            freqDropdown.selectedIndex = i;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //document.querySelector('#tenure_of_rd').textContent = s.tenure_of_rd + ' Months';
+                                            // RD/DD frequency (table me show karne ke liye)
+                                            document.querySelector('#tenure_of_rd').textContent = s.tenure_of_rd;
 
-            // ---- compounding months ----
-            const compMonths = {
-                MONTHLY: 1,
-                QUARTERLY: 3,
-                "HALF-YEARLY": 6,
-                YEARLY: 12
-            } [comp] || 1;
+                                            // --- tenure input fields auto-fill ---
+                                            if (s.tenure_of_rd) {
+                                                // Example: "365 Days" OR "12 Months"
+                                                const parts = s.tenure_of_rd.trim().split(" ");
+                                                const numberPart = parts[0] || '';
+                                                const unitPart = (parts[1] || '').toUpperCase();
 
-            let maturity = 0;
-            let interestEarned = 0;
-            if (unit === "DAYS") {
-                // ---- Daily RD/DD logic ----
-                for (let i = 0; i < deposits; i++) {
-                    let daysLeft = tVal - i; // e.g. 29, 28 ... 1
-                    // rate is already decimal (0.10 for 10%)
-                    let effInterest = amt * rate * (daysLeft / 365);
+                                                els.tenureNumber.value = numberPart;
 
-                    maturity += amt + effInterest;
-                    interestEarned += effInterest;
-                }
-            } else {
-                // ---- Existing monthly compounding logic ----
-                for (let i = 1; i <= deposits; i++) {
-                    const monthsLeft = months - (i - 1) * (months / deposits);
-                    const n = monthsLeft / compMonths;
-                    const effRate = Math.pow(1 + rate / (12 / compMonths), n);
-                    maturity += amt * effRate;
-                }
+                                                // Map units safely
+                                                if (unitPart.startsWith("DAY")) {
+                                                    els.tenureType.value = "DAYS";
+                                                } else if (unitPart.startsWith("MONTH")) {
+                                                    els.tenureType.value = "MONTHS";
+                                                } else if (unitPart.startsWith("WEEK")) {
+                                                    els.tenureType.value = "WEEKS";
+                                                } else if (unitPart.startsWith("YEAR")) {
+                                                    els.tenureType.value = "YEARS";
+                                                } else {
+                                                    els.tenureType.value = unitPart; // fallback
+                                                }
+                                            }
 
-                interestEarned = maturity - totalDeposit;
-            }
+                                            document.querySelector('#cancellation_charges_value').textContent = s.cancellation_charges_value + ' %';
+                                            document.querySelector('#penal_charges').textContent = s.penal_charges + ' %';
+                                            document.querySelector('#bonus_rate').textContent = s.bonus_rate + ' %';
+                                            document.querySelector('#penalty_charges_value').textContent = s.penalty_charges_value + ' %';
 
-            const bonus = totalDeposit * (bonusPct / 100);
-            const maturityFinal = maturity + bonus;
+                                            // Active badge
+                                            const activeEl = document.querySelector('#is_active');
+                                            if (s.is_active) {
+                                                activeEl.textContent = 'Yes';
+                                                activeEl.classList.add('bg-green-500');
+                                                activeEl.classList.remove('bg-red-500');
+                                            } else {
+                                                activeEl.textContent = 'No';
+                                                activeEl.classList.add('bg-red-500');
+                                                activeEl.classList.remove('bg-green-500');
+                                            }
 
-            return {
-                totalDeposit: totalDeposit.toFixed(2),
-                interestEarned: interestEarned.toFixed(2), // <-- gives 129.00
-                bonus: bonus.toFixed(2),
-                maturity: maturityFinal.toFixed(2)
-            };
-        }
+                                            //  Input fields auto-fill
+                                            els.interestRate.value = s.anuual_interest_rate || '';
 
-        // ----- calculate button -----
-        els.calculateBtn.addEventListener("click", () => {
-            const out = calcRD({
-                amount: els.amount.value,
-                frequency: els.frequency.value,
-                tenureUnit: els.tenureType.value,
-                tenureValue: els.tenureNumber.value,
-                interestRate: els.interestRate.value,
-                compInterval: els.compInterval.value,
-                bonusRate: els.bonusInput.value
-            });
+                                            // Dropdown me value set karte waqt case mismatch avoid karo
+                                            els.compInterval.value = (s.interest_compounding_interval || 'MONTHLY').trim().toUpperCase();
+                                            // -------- FIX: auto-enable inputs when scheme is selected --------
+                                            [
+                                                els.frequency, els.compInterval, els.interestRate,
+                                                els.tenureText, els.tenureNumber,
+                                                els.bonusSelect, els.bonusInput
+                                            ].forEach(el => el.disabled = false);
 
-            const rows = els.resultSection.querySelectorAll("tr td:nth-child(2)");
-            [out.totalDeposit, out.interestEarned, out.bonus, out.maturity]
-            .forEach((val, i) => rows[i].textContent = formatINR(val));
+                                        }
+                                    });
+                            } else {
+                                els.schemeInfo.classList.add('hidden');
+                                els.schemeContent.classList.add('hidden');
+                                document.querySelector('#schemeContent').classList.add('hidden');
+                                document.querySelector('#frequency').selectedIndex = 0; // reset dropdown
+                                // reset input fields bhi
+                                els.interestRate.value = '';
+                                els.compInterval.value = 'MONTHLY'; // default
 
-            els.resultSection.classList.remove("hidden");
-        });
-    });
-</script>
-@endpush
+                                els.tenureNumber.value = '';
+                                els.tenureType.value = 'DAYS'; // default
+
+
+                            }
+                        });
+
+
+
+
+
+                        // ----- manual toggle -----
+                        els.manualCheckbox.addEventListener('change', () => {
+                            const disabled = !els.manualCheckbox.checked;
+                            [
+                                els.scheme, els.frequency, els.compInterval,
+                                els.interestRate, els.tenureText, els.tenureNumber,
+                                els.bonusSelect, els.bonusInput
+                            ].forEach(el => el.disabled = disabled && el !== els.scheme);
+                        });
+                        els.manualCheckbox.dispatchEvent(new Event('change'));
+
+                        // ----- auto change tenure_type based on frequency -----
+                        els.frequency.addEventListener('change', function() {
+                            let freq = this.value.toUpperCase();
+                            if (freq === "DAILY") {
+                                els.tenureType.value = "DAYS";
+                            } else if (freq === "WEEKLY") {
+                                els.tenureType.value = "WEEKS";
+                            } else if (freq === "BI_WEEKLY") {
+                                els.tenureType.value = "WEEKS"; // still in weeks
+                            } else if (freq === "MONTHLY") {
+                                els.tenureType.value = "MONTHS";
+                            } else if (freq === "QUARTERLY") {
+                                els.tenureType.value = "MONTHS"; // quarters → months
+                            } else if (freq === "HALF-YEARLY") {
+                                els.tenureType.value = "MONTHS"; // half-year → months
+                            } else if (freq === "YEARLY") {
+                                els.tenureType.value = "MONTHS";
+                            }
+                        });
+
+
+                        // ----- helpers -----
+                        const toNum = v =>
+                            typeof v === "number" ? v :
+                            typeof v === "string" ? (parseFloat(v.replace(/,/g, "").replace(/[^\d.]/g, "")) || 0) : 0;
+
+                        const formatINR = n => n.toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                        // ----- RD calculation -----
+                        // ----- RD calculation -----
+                        function calcRD({
+                            amount,
+                            frequency,
+                            tenureUnit,
+                            tenureValue,
+                            interestRate,
+                            compInterval,
+                            bonusRate
+                        }) {
+                            const amt = parseFloat(amount) || 0;
+                            const freq = (frequency || "MONTHLY").toUpperCase().trim();
+                            const unit = (tenureUnit || "MONTHS").toUpperCase().trim();
+                            const tVal = parseInt(tenureValue) || 0;
+                            const rate = (parseFloat(interestRate) || 0) / 100;
+                            const bonusPct = parseFloat(bonusRate) || 0;
+                            const comp = (compInterval || "MONTHLY").toUpperCase().trim();
+
+                            // ---- convert tenure to months ----
+                            let months = 0;
+                            if (unit === "DAYS") months = tVal / 30; // approx
+                            else if (unit === "WEEKS") months = tVal / 4; // approx
+                            else if (unit === "MONTHS") months = tVal;
+                            else if (unit === "YEARS") months = tVal * 12;
+
+                            // ---- number of deposits ----
+                            let deposits = 0;
+                            if (freq === "DAILY") deposits = months * 30;
+                            else if (freq === "WEEKLY") deposits = months * 4;
+                            else if (freq === "BI_WEEKLY") deposits = months * 2;
+                            else if (freq === "MONTHLY") deposits = months;
+                            else if (freq === "QUARTERLY") deposits = months / 3;
+                            else if (freq === "HALF-YEARLY") deposits = months / 6;
+                            else if (freq === "YEARLY") deposits = months / 12;
+
+                            deposits = Math.floor(deposits);
+
+                            const totalDeposit = amt * deposits;
+
+                            // ---- compounding months ----
+                            const compMonths = {
+                                MONTHLY: 1,
+                                QUARTERLY: 3,
+                                "HALF-YEARLY": 6,
+                                YEARLY: 12
+                            } [comp] || 1;
+
+                            // ---- maturity & interest ----
+                            let maturity = 0;
+                            for (let i = 1; i <= deposits; i++) {
+                                const monthsLeft = months - (i - 1) * (months / deposits);
+                                const n = monthsLeft / compMonths;
+                                const effRate = Math.pow(1 + rate / (12 / compMonths), n);
+                                maturity += amt * effRate;
+                            }
+
+                            const interestEarned = maturity - totalDeposit;
+                            const bonus = totalDeposit * (bonusPct / 100);
+                            const maturityFinal = maturity + bonus;
+
+                            return {
+                                totalDeposit: totalDeposit.toFixed(2),
+                                interestEarned: interestEarned.toFixed(2),
+                                bonus: bonus.toFixed(2),
+                                maturity: maturityFinal.toFixed(2)
+                            };
+                        }
+                        // ----- calculate button click -----
+                        els.calculateBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+
+                            const values = {
+                                amount: els.amount.value,
+                                frequency: els.frequency.value,
+                                tenureUnit: els.tenureType.value,
+                                tenureValue: els.tenureNumber.value,
+                                interestRate: els.interestRate.value,
+                                compInterval: els.compInterval.value,
+                                bonusRate: els.bonusInput.value || 0,
+                            };
+
+                            const result = calcRD(values);
+
+                            // Result section show karo
+                            els.resultSection.classList.remove('hidden');
+
+                            // Update result table
+                            const rows = els.resultSection.querySelectorAll('tbody tr td:last-child');
+                            rows[0].textContent = result.totalDeposit;
+                            rows[1].textContent = result.interestEarned;
+                            rows[2].textContent = result.bonus;
+                            rows[3].textContent = result.maturity;
+                        });
+
+
+                    });
+                </script>
+                @endpush

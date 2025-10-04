@@ -49,7 +49,7 @@
 
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1">
-                        <label for="memberDropdown" class="md:text-lg font-medium block mb-4">
+                        <label for="memberDropdown" class="md:text-lg font-medium block mb-4 uppercase">
                             Member <span class="text-red-500">*</span>
                         </label>
                         <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
@@ -70,7 +70,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label for="memberName" class="md:text-lg font-medium block mb-4">
+                        <label for="memberName" class="md:text-lg font-medium block mb-4 uppercase">
                             Member Name
                         </label>
                         <input type="text" id="memberName" name="member_name"
@@ -79,7 +79,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label for="memberAddress" class="md:text-lg font-medium block mb-4">
+                        <label for="memberAddress" class="md:text-lg font-medium block mb-4 uppercase">
                             Member Address
                         </label>
                         <input type="text" id="memberAddress" name="member_address"
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label for="memberMobile" class="md:text-lg font-medium block mb-4">
+                        <label for="memberMobile" class="md:text-lg font-medium block mb-4 uppercase">
                             Member Mobile No
                         </label>
                         <div class="flex gap-2">
@@ -104,7 +104,7 @@
                     {{-- </div> --}}
                     <div class="col-span-2 md:col-span-1"></div>
                     <div class="col-span-2 md:col-span-1">
-                        <label for="minor_id" class="md:text-lg font-medium block mb-4">
+                        <label for="minor_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Minor (if any)
                         </label>
                         <select id="minor_id" name="minor_id"
@@ -122,7 +122,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label for="branch_id" class="md:text-lg font-medium block mb-4">
+                        <label for="branch_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Branch <span class="text-red-500">*</span>
                         </label>
                         <select id="branch_id" name="branch_id"
@@ -139,7 +139,7 @@
                         @enderror
                     </div>
                     <div class="col-span-2 md:col-span-1">
-                        <label for="advisor_id" class="md:text-lg font-medium block mb-4">
+                        <label for="advisor_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Advisor / Staff
                         </label>
                         <select id="advisor_id" name="advisor_id"
@@ -166,7 +166,7 @@
                     <div class="col-span-2 md:col-span-1"></div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">Collection Advisor/ Staff </label>
+                        <label class="font-medium block mb-2 uppercase">Collection Advisor/ Staff </label>
                         <select id="" name="collection_advisor_id"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
                             <option value="">Select Collection Advisor Staff</option>
@@ -175,7 +175,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label for="scheme_id" class="font-medium block mb-2">
+                        <label for="scheme_id" class="font-medium block mb-2 uppercase">
                             Scheme <span class="text-red-500">*</span> :
                         </label>
                         <select id="scheme_id" name="scheme_id"
@@ -195,7 +195,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
+                        <label class="font-medium block mb-2 uppercase">
                             DD Amount <span class="text-red-500">*</span>:
                         </label>
                         <input type="number" id="dd_amount" name="dd_amount"
@@ -213,7 +213,7 @@
 
 
                     <div class="col-span-2 md:col-span-1 relative">
-                        <label class="font-medium block mb-2">
+                        <label class="font-medium block mb-2 uppercase">
                             Open Date <span class="text-red-500">*</span> :
                         </label>
                         <input type="text" id="date5" name="open_date"
@@ -230,7 +230,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1 relative">
-                        <label for="remarks" class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0">
+                        <label for="remarks" class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0 uppercase">
                             Remarks (if any)
                         </label>
                         <div class="w-full md:w-3/4 mt-2">
@@ -242,7 +242,7 @@
                     <div class="col-span-2 md:col-span-1"></div>
                     <!-- TDS -->
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">TDS Deduction<span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">TDS Deduction<span class="text-red-500">*</span></label>
                         <div class="flex items-center  gap-2">
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
                                     value="yes"> Yes</label>
@@ -256,7 +256,7 @@
                     <div class="col-span-2 md:col-span-1"></div>
 
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2">Account Type <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Account Type <span class="text-red-500">*</span></label>
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="account_type" value="single"
@@ -275,7 +275,7 @@
 
                     <div class="col-span-2 md:col-span-1 mt-4">
                         <div id="joint" class="hidden mt-4">
-                            <label class="font-medium block mb-1">Joint A/C Member <span
+                            <label class="font-medium block mb-1 uppercase">Joint A/C Member <span
                                     class="text-red-500">*</span></label>
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
@@ -294,7 +294,7 @@
                 <div class="col-span-2 md:col-span-1"></div>
                 <!-- Nominee -->
                 <div class="col-span-2 md:col-span-1 mt-4">
-                    <label class="font-medium block mb-2">Nominee <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Nominee <span class="text-red-500">*</span></label>
                     <div class="flex items-center  gap-2">
                         <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="nominee"
                                 value="yes" onclick="toggleAddMore(true)">Yes</label>
@@ -321,7 +321,7 @@
                 <div class="grid grid-cols-1 gap-4 mt-6 xl:mt-8 2xl:gap-6">
 
                     <div class="col-span-1 mt-4">
-                        <label class="block font-medium mb-2">
+                        <label class="block font-medium mb-2 uppercase">
                             Payment Mode <span class="text-red-500">*</span>
                         </label>
 
