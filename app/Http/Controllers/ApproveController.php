@@ -316,7 +316,7 @@ class ApproveController extends Controller
             ]);
 
             // show friendly error
-            return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
+            return redirect()->route('approveAccounts')->withErrors(['error' => 'Something went wrong, please check logs.']);
         }
     }
 

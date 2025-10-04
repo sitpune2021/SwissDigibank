@@ -7,7 +7,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">Transaction - RD{{ $transaction->id }}</h1>
-            <p class="text-gray-500">
+            <!-- <p class="text-gray-500">
                 <a href="#" class="text-gray-500">Recurring Deposits</a> >
                 <a href="{{ route('rd-accounts.show', $rdAccount->id) }}" class="text-gray-500">
                     {{ $rdAccount->id }}
@@ -16,7 +16,7 @@
                     Transactions
                 </a> >
                 <a href="#" class="text-gray-500">RD{{ $transaction->id }}</a>
-            </p>
+            </p> -->
         </div>
     </div>
 

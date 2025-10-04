@@ -20,16 +20,10 @@
     }
 </style>
 
-
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
             <h1 class="text-xl font-semibold uppercase">New RD/ DD Scheme</h1>
-            <p class="text-gray-500">
-                <a href="{{route('rdschemes.index')}}" class="text-gray-500">RD/ DD Scheme</a> >
-                <a href="" class="text-gray-500"> EDIT</a>
-            </p>
-
         </div>
 
     </div>

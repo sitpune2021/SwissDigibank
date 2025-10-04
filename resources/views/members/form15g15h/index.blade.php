@@ -25,7 +25,7 @@
                                 FY
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">Action</th>
+                        <th class="text-center !py-5 uppercase" data-sortable="false">Action</th>
                     </tr>
                 </thead>
                 <tbody>

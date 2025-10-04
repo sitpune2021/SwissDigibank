@@ -1,5 +1,5 @@
 @extends('layout.main')
-
+@section('content')
 <style>
     input[type="checkbox"] {
         width: 28px;
@@ -84,8 +84,6 @@
         /* 6 * 4px */
     }
 </style>
-
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -167,7 +165,7 @@
                                 <a href="" class="text-primary hover:underline">
                                     {{ $fdAccount->member->member_no 
     ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} - {{$fdAccount->member?->member_info_first_name ?? 'NA' }}
-                                   
+
                                 </a>
                             </td>
                         </tr>
@@ -201,7 +199,9 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
-                            <td class="px-4 py-2">{{$fdAccount->maturity_date ?? 'N/A'}}</td>
+                            <td class="px-4 py-2">
+                                {{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}
+                            </td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Tenure of FD/MIS</td>
@@ -271,9 +271,10 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">CUSTOMER Name</td>
                                 <td class="px-4 py-2">
-                                  {{ $fdAccount->member->member_no 
-    ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} -   
-                                {{$fdAccount->member->member_info_first_name??''}}</td>
+                                    {{ $fdAccount->member->member_no 
+    ?? ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} -
+                                    {{$fdAccount->member->member_info_first_name??''}}
+                                </td>
                             </tr>
 
                             <tr>
@@ -700,7 +701,7 @@
 
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Maturity Date</td>
-                                <td class="px-4 py-2 text-right md:text-left">{{$fdAccount->maturity_date}}</td>
+                                <td class="px-4 py-2 text-right md:text-left">   {{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}</td>
                             </tr>
 
                             <tr>

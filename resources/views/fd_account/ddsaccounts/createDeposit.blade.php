@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('content')
 
 <style>
     .custom-thead {
@@ -44,19 +45,13 @@
         background-color: #F1BA07;
     }
 </style>
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-3 ">
                 <h1 class="text-2xl font-semibold dark:text-white">DD - {{ $ddAccount->id }}</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Deposit Money (Installments)</p>
+                <!-- <p class="text-sm text-gray-500 dark:text-gray-400">Deposit Money (Installments)</p> -->
             </div>
-            <p class="text-gray-500 dark:text-gray-400">
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Daily Deposits </a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">DDA03621 </a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Deposit Money</a>
-            </p>
         </div>
     </div>
 
@@ -95,7 +90,7 @@
 
                     <!-- Collected By -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium dark:bg-bg3">Collected By</label>
+                        <label class="block text-sm font-medium dark:bg-bg3 uppercase">Collected By</label>
                         <select name="collected_by"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                             <option value="">Select Advisor / Staff</option>
@@ -106,7 +101,7 @@
                     </div>
 
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                             Amount to Deposit <span class="text-red-500">*</span>
                         </label>
                         <input type="number" min="0" name="amount" id="amountToDeposit"
@@ -122,7 +117,7 @@
 
                     <!-- Remarks -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3">Remarks (if
+                        <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3 uppercase">Remarks (if
                             any)</label>
                         <textarea name="remarks" placeholder="Enter Remarks"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"></textarea>
@@ -130,7 +125,7 @@
 
                     <!-- Transaction Date -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                             Transaction Date <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="transaction_date" placeholder="DD/MM/YYYY" id="date"
@@ -141,7 +136,7 @@
 
                     <!-- Receipt -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">T. Receipt</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">T. Receipt</label>
                         <input type="file" name="t_receipt" disabled
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
 
@@ -150,7 +145,7 @@
 
                     <!-- Pay Mode -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                             Pay Mode <span class="text-red-500">*</span>
                         </label>
                         <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
@@ -251,14 +246,14 @@
             <div class="w-full box">
                 <div
                     class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 border-b border-green-200 dark:bg-bg3">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white dark:bg-bg3">DD Info</h3>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white dark:bg-bg3 uppercase">DD Info</h3>
 
                 </div>
                 <div class="p-4">
                     <table class="w-full text-sm">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3  ">Member</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Member</td>
                                 <td>{{ ($ddAccount->member?->member_no 
         ?? ($ddAccount->member?->id 
             ? str_pad($ddAccount->member->id, 6, '0', STR_PAD_LEFT) 
@@ -267,33 +262,33 @@
     . ' - ' . $ddAccount->member->member_info_first_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">DD No.</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">DD No.</td>
                                 <td> DDA{{ $ddAccount->id ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">Scheme</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Scheme</td>
                                 <td>{{ $ddAccount->scheme->scheme_name ?? '-' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">Tenure</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Tenure</td>
                                 <td>{{ $ddAccount->scheme->tenure_of_rd_dd_value }}
                                     {{ $ddAccount->scheme->tenure_of_rd_dd_type }}
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">Frequency</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Frequency</td>
                                 <td>{{ $ddAccount->scheme->rd_dd_frequency ?? '-' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">Principal Amt.</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Principal Amt.</td>
                                 <td>{{ number_format($ddAccount->dd_amount, 2) }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">Amount Received</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Amount Received</td>
                                 <td>{{ number_format($installmentReceived, 2) }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3 ">Balance Available</td>
+                                <td class="font-semibold pr-4 py-3 uppercase">Balance Available</td>
                                 <td>{{ number_format($balanceAvailable, 2) }}</td>
                             </tr>
                         </tbody>

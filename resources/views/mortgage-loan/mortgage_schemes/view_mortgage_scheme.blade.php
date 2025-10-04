@@ -99,17 +99,16 @@
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3 uppercase">Created at</td>
-                            <td class="p-3">17/09/2025 12:29</td>
+                            <td class="p-3">17-09-2025 12:29</td>
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3 uppercase">Updated at</td>
-                            <td class="p-3">17/09/2025 12:29</td>
+                            <td class="p-3">17-09-2025 12:29</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 
 
