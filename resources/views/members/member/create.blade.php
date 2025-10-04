@@ -80,12 +80,12 @@
 @section('page-title',
     isset($member)
     ? (!empty($show)
-    ? 'VIEW ' . $member['member_info_first_name'] . 'CUSTOMERS'
+    ? 'VIEW ' . $member['member_info_first_name'] . 'CUSTOMER'
     : 'EDIT
     ' .
     $member['member_info_first_name'] .
-    ' CUSTOMERS')
-    : 'ADD CUSTOMERS')
+    ' CUSTOMER')
+    : 'ADD CUSTOMER')
 
 @section('content')
     @include('fields.errormessage')
