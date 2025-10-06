@@ -32,10 +32,6 @@
                 <h1 class="text-xl font-semibold">
                     {{ $isEdit ? 'UPDATE DD ACCOUNT' : 'OPEN NEW DD ACCOUNT' }}
                 </h1>
-                <p class="text-gray-500">
-                    <a href="{{ route('dds-accounts.index') }}" class="text-gray-500">Daily Deposits</a> >
-                    <span class="text-gray-500">{{ $isEdit ? 'Edit' : 'New' }}</span>
-                </p>
             </div>
         </div>
 
@@ -50,13 +46,13 @@
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberDropdown" class="md:text-lg font-medium block mb-4 uppercase">
-                            Member <span class="text-red-500">*</span>
+                            Customer <span class="text-red-500">*</span>
                         </label>
                         <select id="memberDropdown" name="member_id" data-url="{{ route('ajax.members.show', ':id') }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
                border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3
                @error('member_id') border-red-500 @enderror">
-                            <option value="">Search Member No or Name</option>
+                            <option value="">Search Customer No or Name</option>
                             @foreach ($members as $member)
                                 <option value="{{ $member->id }}" {{ old('member_id') == $member->id ? 'selected' : '' }}>
                                     {{ $member->member_info_first_name }} {{ $member->member_info_last_name }}
@@ -71,16 +67,16 @@
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberName" class="md:text-lg font-medium block mb-4 uppercase">
-                            Member Name
+                            Customer Name
                         </label>
                         <input type="text" id="memberName" name="member_name"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Member Name" value="" readonly>
+                            placeholder="Customer Name" value="" readonly>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberAddress" class="md:text-lg font-medium block mb-4 uppercase">
-                            Member Address
+                            Customer Address
                         </label>
                         <input type="text" id="memberAddress" name="member_address"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -89,7 +85,7 @@
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="memberMobile" class="md:text-lg font-medium block mb-4 uppercase">
-                            Member Mobile No
+                            Customer Mobile No
                         </label>
                         <div class="flex gap-2">
                             <input type="text"
@@ -181,12 +177,25 @@
                         <select id="scheme_id" name="scheme_id"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Scheme</option>
+                            @php
+                                $allowedFrequencies = ['daily', 'weekly', 'bi_weekly'];
+                            @endphp
+
                             @foreach ($schemes as $scheme)
-                                <option data-min="{{ $scheme->min_rd_dd_amount }}" value="{{ $scheme->id }}"
-                                    {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
-                                    {{ $scheme->scheme_name }}
-                                </option>
+                                @php
+                                    $frequency = strtolower(trim($scheme->rd_dd_frequency));
+                                @endphp
+
+                                @if (in_array($frequency, $allowedFrequencies))
+                                    <option data-min="{{ $scheme->min_rd_dd_amount }}"
+                                        data-frequency="{{ $frequency }}" value="{{ $scheme->id }}"
+                                        {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
+                                        {{ $scheme->scheme_name }}
+                                    </option>
+                                @endif
                             @endforeach
+
+
                         </select>
                         @error('scheme_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -230,7 +239,8 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1 relative">
-                        <label for="remarks" class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0 uppercase">
+                        <label for="remarks"
+                            class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0 uppercase">
                             Remarks (if any)
                         </label>
                         <div class="w-full md:w-3/4 mt-2">
@@ -242,7 +252,8 @@
                     <div class="col-span-2 md:col-span-1"></div>
                     <!-- TDS -->
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">TDS Deduction<span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">TDS Deduction<span
+                                class="text-red-500">*</span></label>
                         <div class="flex items-center  gap-2">
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
                                     value="yes"> Yes</label>
@@ -256,7 +267,8 @@
                     <div class="col-span-2 md:col-span-1"></div>
 
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">Account Type <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Account Type <span
+                                class="text-red-500">*</span></label>
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="account_type" value="single"
@@ -280,7 +292,7 @@
                             <select
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                        rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                <option value="">Search Member No or Name</option>
+                                <option value="">Search Customer No or Name</option>
                                 @foreach ($members as $member)
                                     <option value="{{ $member->id }}"
                                         {{ old('member_id') == $member->id ? 'selected' : '' }}>
@@ -412,14 +424,8 @@
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Bank Name<span
                                             class="text-red-500">*</span></label>
-                                             <x-searchable-dropdown
-                                    :items="$banks"
-                                    label="Select Bank"
-                                    name="bank_name"
-                                    display-field="name"
-                                    value-field="id"
-                                    event="Bank-selected"
-                                    :selected="null" />
+                                    <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_name"
+                                        display-field="name" value-field="id" event="Bank-selected" :selected="null" />
                                     {{-- <input type="text" name="bank_name" placeholder="Enter Bank Name"
                                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"> --}}
                                 </div>
@@ -461,7 +467,7 @@
                 <!-- Date & Amount -->
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
+                        <label class="font-medium block mb-2 uppercase">
                             T.Date <span class="text-red-500">*</span> </label>
                         @php
                             $today = \Carbon\Carbon::now()->format('d-m-Y');
@@ -473,7 +479,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2">
+                        <label class="font-medium block mb-2 uppercase">
                             Amount <span class="text-red-500">*</span>
                         </label>
 
@@ -689,7 +695,7 @@
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Member details could not be fetched.');
+                        alert('Customer details could not be fetched.');
                     });
             } else {
                 // Reset all fields if no member is selected
@@ -735,22 +741,22 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const mobileFields = ['memberMobile'];
+            const mobileFields = ['memberMobile'];
 
-        mobileFields.forEach(function(id) {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', function() {
+            mobileFields.forEach(function(id) {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        // Remove non-digits
+                        this.value = this.value.replace(/\D/g, '');
 
-                    this.value = this.value.replace(/\D/g, '');
-
-                    if (this.value.length > 10) {
-                        this.value = this.value.slice(0, 10);
-                    }
-                });
-            }
-        });
-        });
+                        // Limit to 10 digits
+                        if (this.value.length > 10) {
+                            this.value = this.value.slice(0, 10);
+                        }
+                    });
+                }
+            });
         });
     </script>
 

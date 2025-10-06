@@ -31,10 +31,10 @@
                     Gold Loan Scheme
                 </p>
             </div>
-            <p class="text-gray-500">
+            <!-- <p class="text-gray-500">
                 <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
                 <a href="" class="text-gray-500 text-sm">Suvarna shree yojana no emi</a>
-            </p>
+            </p> -->
 
         </div>
     </div>

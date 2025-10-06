@@ -35,7 +35,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">New FD Account</h1>
+            <h1 class="text-xl font-semibold uppercase">New FD Account</h1>
         </div>
     </div>
 
@@ -45,11 +45,11 @@
             <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
                     <label class="md:text-lg font-medium block mb-4 uppercase">
-                        Member <span class="text-red-500">*</span>
+                        Customer <span class="text-red-500">*</span>
                     </label>
                     <select id="member_id" name="member_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-                        <option value="">Select member</option>
+                        <option value="">Select Customer</option>
                         @foreach($members as $member)
                         <option value="{{ $member->id }}">{{ $member->member_info_first_name }} {{ $member->member_info_last_name }}</option>
                         @endforeach
@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4 uppercase">Member Name</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Customer Name</label>
                     <input type="text" id="member_name"
                         placeholder="Enter Name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" disabled>
@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4 uppercase">Member Address</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Customer Address</label>
                     <input type="text" id="member_address"
                         placeholder="Enter Address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" disabled>
@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4 uppercase">Member Mobile No.</label>
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Customer Mobile No.</label>
                     <div class="flex gap-2">
                         <input type="text" class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3" value="+91" disabled>
                         <input type="text" id="member_mobile"
@@ -184,7 +184,7 @@
 
                 <div class="col-span-2 md:col-span-1">
 
-                    <x-amount-input name="fd_amount" id="fd_amount" label="FD Amount" />
+                    <x-amount-input name="fd_amount" id="fd_amount" label="FD AMOUNT" />
                     @error('fd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -326,7 +326,7 @@
                     <!-- Section Title -->
                     <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode</h4>
                     <!-- Amount Field -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center uppercase">
                         <label for="" class="text-sm font-medium text-gray-700">
                             Amount <span class="text-red-500">*</span>
                         </label>
@@ -339,7 +339,7 @@
 
                     <!-- Pay Mode -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
-                        <label class="text-sm font-medium text-gray-700">
+                        <label class="text-sm font-medium text-gray-700 uppercase">
                             Pay Mode <span class="text-red-500">*</span>
                         </label>
                         <div class="md:col-span-2 flex flex-wrap gap-4">
@@ -369,7 +369,7 @@
                     <!-- Cheque Fields -->
                     <div id="chequeFields" class="space-y-4 hidden">
                         <div class="mt-3">
-                            <label class="block text-sm font-medium text-gray-700">Bank Name <span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
                                     class="text-red-500">*</span></label>
                             <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
                                 <option value="">Select Bank</option>
@@ -382,7 +382,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Cheque No.<span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_cheque_no" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
                                 placeholder="Enter Cheque No.">
@@ -391,7 +391,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Cheque Date <span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date4" name="pay1_cheque_date"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
@@ -405,20 +405,20 @@
                     <!-- Online Transaction Fields -->
                     <div id="onlineFields" class="space-y-4 hidden">
                         <div class="mt-3">
-                            <label class="block text-sm font-medium text-gray-700">Transfer Date <span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date3" name="pay1_transfer_date"
                                 class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
                                 placeholder="DD/MM/YYYY">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No. <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_transfer_utr" class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
                                 placeholder="Enter Transaction No.">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Transfer Mode <span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Mode <span
                                     class="text-red-500">*</span></label>
                             <div class="flex gap-4 mt-2">
                                 <label class="flex items-center gap-2">
@@ -439,7 +439,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Credited in Company Account <span
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Credited in Company Account <span
                                     class="text-red-500">*</span></label>
                             <div class="flex gap-4 mt-2">
                                 <label class="flex items-center gap-2">
@@ -458,7 +458,7 @@
 
                     <!-- Saving Account Fields -->
                     <div id="savingFields" class="space-y-4 hidden mt-3">
-                        <label class="block text-sm font-medium text-gray-700">Select Saving Account <span
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
                                 class="text-red-500">*</span></label>
                         <select class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
                             <option value="">Select Account</option>

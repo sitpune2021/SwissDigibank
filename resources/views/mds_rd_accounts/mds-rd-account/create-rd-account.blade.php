@@ -26,10 +26,6 @@
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
             <h1 class="text-xl font-semibold">OPEN NEW RD ACCOUNT</h1>
-            <p class="text-gray-500">
-                <a href="{{route('mds-rd-accounts.rd-account-index')}}" class="text-gray-500">Recuuring Deposits</a> >
-                <a href="#" class="text-gray-500"> New</a>
-            </p>
         </div>
     </div>
 
@@ -67,7 +63,7 @@
 
                     <input type="text" id="memberName" name="member_name"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Member Name" value="" readonly>
+                        placeholder="Customer Name" value="" readonly>
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="city" class="md:text-lg font-medium block mb-4 uppercase">
@@ -76,7 +72,7 @@
 
                     <input type="text" id="memberAddress" name="member_address"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Member Address" value="" readonly>
+                        placeholder="Customer Address" value="" readonly>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">

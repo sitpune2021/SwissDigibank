@@ -93,10 +93,6 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">RD - {{ $rdAccount->id }}</h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500">Recurring Deposits</a> >
-                <a href="#" class="text-gray-500"> {{ $rdAccount->id }}</a>
-            </p>
         </div>
     </div>
     <!-- Menu Buttons -->
@@ -242,7 +238,7 @@
                 <table class="min-w-full whitespace-nowrap text-sm text-left ">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 w-1/3">Status</td>
+                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Status</td>
                             <td class="px-4 py-2">
                                 @if (strtolower($rdAccount->approve_status ?? '') === 'approved')
                                 <span
@@ -263,7 +259,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Customer</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Customer</td>
                             <td class="px-4 py-2">
                                 {{$rdAccount->member?->member_no
         ?? ($rdAccount->member?->id 
@@ -274,47 +270,47 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Created on</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Created on</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Created by</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Created by</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">RD No.</td>
+                            <td class="font-semibold px-4 py-2 uppercase">RD No.</td>
                             <td class="px-4 py-2">{{ $rdAccount->id }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Old RD No.</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Old RD No.</td>
                             <td class="px-4 py-2">—</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Scheme</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
                             <td class="px-4 py-2">{{$rdAccount->rdScheme->scheme_name ?? 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Open Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Open Date</td>
                             <td class="px-4 py-2"> {{ $rdAccount->open_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $rdAccount->open_date)->format('d-m-Y') : '' }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Deposit Frequency</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Deposit Frequency</td>
                             <td class="px-4 py-2">{{ $rdAccount->rdScheme->rd_dd_frequency ?? 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Installment Amount</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Installment Amount</td>
                             <td class="px-4 py-2">₹ {{ number_format($rdAccount->rd_amount, 2) }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Installment Amount Received (C)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Installment Amount Received (C)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Penalty / Other Charges Received</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Penalty / Other Charges Received</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Interest Credited (D)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
@@ -322,35 +318,35 @@
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Balance Available (C + D - E)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Balance Available (C + D - E)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Principal Amount Due (A)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Principal Amount Due (A)</td>
                             <td class="px-4 py-2">₹-</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Penalty / Other Charges Due (B)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Penalty / Other Charges Due (B)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Total Amount Due (A + B)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Total Amount Due (A + B)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Maturity Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
                             <td class="px-4 py-2">{{ optional($calc['maturity_date'])->format('d-m-Y') }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Close Date</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Maturity Amount (approx.)</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (approx.)</td>
                             <td class="px-4 py-2">₹ {{ number_format($calc['maturity_amount'], 2) }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Maturity Bonus Amount</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Maturity Bonus Amount</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
                         <tr>
@@ -358,11 +354,11 @@
                             <td class="px-4 py-2">{{ $rdAccount->rdScheme->anuual_interest_rate ?? 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Interest Compounding Interval</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Interest Compounding Interval</td>
                             <td class="px-4 py-2">{{ $rdAccount->rdScheme->interest_compounding_interval ?? 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">TDS Deduction</td>
+                            <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
                             <td class="px-4 py-2">
                                 @if($rdAccount->tds === 'yes')
                                 <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
@@ -376,7 +372,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2">Special Account</td>
+                            <td class="font-semibold px-4 py-2 uppercase">Special Account</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
                     </tbody>
@@ -397,7 +393,7 @@
                         <tbody class="divide-y divide-gray-200">
 
                             <tr>
-                                <td class="font-semibold px-4 py-2">Customer Name</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Customer Name</td>
                                 <td class="px-4 py-2">
                                     {{$rdAccount->member?->member_no
         ?? ($rdAccount->member?->id 
@@ -408,11 +404,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2">Mobile No</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Mobile No</td>
                                 <td class="px-4 py-2">{{ $rdAccount->member->member_info_mobile_no ?? 'N/A' }}</td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2">Address</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Address</td>
                                 <td class="px-4 py-2">
                                     @if($rdAccount->member && $rdAccount->member->address)
                                     {!! implode(', ', array_filter([
@@ -448,10 +444,10 @@
                 <table class="w-full  whitespace-nowrap text-sm text-gray-700 rounded-b-md">
                     <thead>
                         <tr class="border-b border-gray-200 text-start">
-                            <th class="px-3  text-start py-2">Status</th>
-                            <th class="px-3  text-start   py-2">Remark</th>
-                            <th class="px-3  text-start  py-2">Updated at</th>
-                            <th class="px-3  text-start  py-2">Approved By</th>
+                            <th class="px-3  text-start py-2 uppercase">Status</th>
+                            <th class="px-3  text-start   py-2 uppercase">Remark</th>
+                            <th class="px-3  text-start  py-2 uppercase">Updated at</th>
+                            <th class="px-3  text-start  py-2 uppercase">Approved By</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -469,10 +465,10 @@
             <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                 <!-- Header -->
                 <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
-                    <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
+                    <h3 class="text-lg font-semibold uppercase text-black ">ALLOCATED PASSBOOK</h3>
                     <button class="btn-primary px-3 py-2 rounded-3xl text-white">
                         <i class="las la-plus"></i>
-                        passbok
+                        Passbok
                     </button>
                 </div>
             </div>
@@ -623,7 +619,7 @@
             <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
                 <!--Old Rd No.-->
                 <form action="" class="mt-3 p-3">
-                    <label for="" class="block ">Old Rd No.</label>
+                    <label for="" class="block uppercase">Old Rd No.</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <input type="text" name="" id="" class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white"
                             placeholder="Enter Old Rd Number">
@@ -634,7 +630,7 @@
 
                 <!--Member-->
                 <form class="mt-2 px-3">
-                    <label for="branch" class="block mb-2">Customer</label>
+                    <label for="branch" class="block mb-2 uppercase">Customer</label>
                     <div class="flex flex-row items-center gap-3 justify-between">
                         <select name="member_id" id="member_id"
                             class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
@@ -648,7 +644,7 @@
 
                 <!--Branch-->
                 <form class="mt-2 px-3">
-                    <label for="branch" class="block mb-2">Branch</label>
+                    <label for="branch" class="block mb-2 uppercase">Branch</label>
                     <div class="flex flex-row items-center gap-3 justify-between">
                         <select name="branch_id" id="branch_id"
                             class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
@@ -666,7 +662,7 @@
 
                 <!--Advisor/ Staff-->
                 <form action="" class="mt-2 px-3">
-                    <label for="" class="block ">Advisor/ Staff</label>
+                    <label for="" class="block uppercase">Advisor/ Staff</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3 
            dark:bg-bg3 dark:text-white">
@@ -682,7 +678,7 @@
 
                 <!--Advisor/ Staff-->
                 <form action="" class="mt-2 px-3">
-                    <label for="" class="block ">Collection Advisor/ Staff</label>
+                    <label for="" class="block uppercase">Collection Advisor/ Staff</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3 
            dark:bg-bg3 dark:text-white">
@@ -697,13 +693,13 @@
                 </form>
 
                 <div class=" px-6 flex py-4 flex-row items-center gap-6">
-                    <p class="w-full text-lg  ">Current Chart</p>
+                    <p class="w-full text-lg uppercase">Current Chart</p>
                     <a href="#" class="text-primary w-full">none</a>
                 </div>
 
                 <!--Commission Chart-->
                 <form action="" class="mt-2 px-3 pb-4">
-                    <label for="" class="block ">Commission Chart</label>
+                    <label for="" class="block uppercase">Commission Chart</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3
                           dark:bg-bg3 dark:text-white">
@@ -741,19 +737,19 @@
                     <table class="w-full text-sm text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Account No</td>
+                                <td class="font-semibold px-3 py-2 w-1/3 uppercase">Account No</td>
                                 <td class="px-3 py-2">---</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme Name</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Scheme Name</td>
                                 <td class="px-3 py-2">---</td>
                             </tr>
-                            <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Available Balance</td>
+                            <tr class="border-b border-gray-200"> 
+                                <td class="font-semibold px-3 py-2 uppercase">Available Balance</td>
                                 <td class="px-3 py-2">--</td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-3 py-2">Un-link Saving Account</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Un-link Saving Account</td>
                                 <td class="px-3 py-2">---</td>
                             </tr>
                         </tbody>
@@ -781,55 +777,55 @@
                     <table class="w-full text-sm text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Scheme Name</td>
+                                <td class="font-semibold px-3 py-2 w-1/3 uppercase">Scheme Name</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->scheme_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme Code</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Scheme Code</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->scheme_code ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Minimum Locking Period</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Minimum Locking Period</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->rd_dd_lock_in_period ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Locking Period</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Interest Locking Period</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->interest_lock_in_period ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Deposit Frequency</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Deposit Frequency</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->rd_dd_frequency ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate (%)</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Annual Interest Rate (%)</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->anuual_interest_rate ?? 'N/A' }}</td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                            <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Interest Compounding Interval</td>
                                 <td class="px-3 py-2">{{ $rdAccount->rdScheme->interest_compounding_interval ?? 'N/A' }}</td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                            <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Tenure</td>
                                 <td class="px-3 py-2">
                                     {{ $rdAccount->rdScheme->tenure_of_rd_dd_value ?? 'N/A' }}
                                     {{ $rdAccount->rdScheme->tenure_of_rd_dd_type ?? '' }}
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                            <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Cancellation Charges</td>
                                 <td class="px-3 py-2">
                                     {{ $rdAccount->rdScheme->cancellation_charges_value ?? 'N/A' }}
                                     {{ $rdAccount->rdScheme->cancellation_charges_type ?? '' }}
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                            <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Penal Charges</td>
                                 <td class="px-3 py-2">
                                     {{ $rdAccount->rdScheme->penalty_charges_value ?? 'N/A' }}
                                     {{ $rdAccount->rdScheme->penalty_charges_type ?? '' }}
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                            <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Bonus Rate</td>
                                 <td class="px-3 py-2">
                                     {{ $rdAccount->rdScheme->bonus_rate_value ?? 'N/A' }}
@@ -837,7 +833,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-3 py-2">Minimum Amount</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Minimum Amount</td>
                                 <td class="px-3 py-2">₹ {{ number_format($rdAccount->rdScheme->min_rd_dd_amount ?? 0, 2) }}</td>
                             </tr>
                         </tbody>
@@ -867,31 +863,29 @@
                     <table class="w-full text-sm text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Maturity Date</td>
+                                <td class="font-semibold px-3 py-2 w-1/3 uppercase">Maturity Date</td>
                                 <td class="px-3 py-2">{{ optional($calc['maturity_date'])->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Principal Amount (A)</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Principal Amount (A)</td>
                                 <td class="px-3 py-2">₹ {{ number_format($calc['principal'], 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Total Interest (B)</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Total Interest (B)</td>
                                 <td class="px-3 py-2">₹ {{ number_format($calc['total_interest'], 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Bonus Amount (C)</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Bonus Amount (C)</td>
                                 <td class="px-3 py-2">₹ {{ number_format($calc['bonus'], 2) }}</td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-3 py-2">Maturity Amount (A + B + C)</td>
+                                <td class="font-semibold px-3 py-2 uppercase">Maturity Amount (A + B + C)</td>
                                 <td class="px-3 py-2 font-bold text-green-600">
                                     ₹ {{ number_format($calc['maturity_amount'], 2) }}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
 
@@ -913,9 +907,9 @@
                     <table class="w-full text-sm text-center  text-gray-700 rounded-b-md">
                         <thead>
                             <tr class="border-b  border-gray-200">
-                                <th class="px-3 py-2 w-1/3 text-left font-semibold">Name</th>
-                                <th class="px-3 py-2 w-1/3 text-left font-semibold">Relation</th>
-                                <th class="px-3 py-2 w-1/3 text-left font-semibold">Address</th>
+                                <th class="px-3 py-2 w-1/3 text-left font-semibold uppercase">Name</th>
+                                <th class="px-3 py-2 w-1/3 text-left font-semibold uppercase">Relation</th>
+                                <th class="px-3 py-2 w-1/3 text-left font-semibold uppercase">Address</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -944,12 +938,12 @@
                 <table class="w-full text-sm  text-gray-700 rounded-b-md">
                     <thead>
                         <tr class="border-b border-gray-200 text-center">
-                            <th class="px-3 py-2">TOTAL INST</th>
-                            <th class="px-3 py-2">PAID INST</th>
-                            <th class="px-3 py-2">DUE INST</th>
-                            <th class="px-3 py-2">OVERDUE INST</th>
-                            <th class="px-3 py-2">INST CANCELED</th>
-                            <th class="px-3 py-2">TOTAL INST NOT DUE</th>
+                            <th class="px-3 py-2 uppercase">TOTAL INST</th>
+                            <th class="px-3 py-2 uppercase">PAID INST</th>
+                            <th class="px-3 py-2 uppercase">DUE INST</th>
+                            <th class="px-3 py-2 uppercase">OVERDUE INST</th>
+                            <th class="px-3 py-2 uppercase">INST CANCELED</th>
+                            <th class="px-3 py-2 uppercase">TOTAL INST NOT DUE</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -975,7 +969,7 @@
                         <tbody class="divide-y divide-gray-200">
 
                             <tr>
-                                <td class="px-4 py-3 w-1/2 text-start align-middle">
+                                <td class="px-4 py-3 w-1/2 text-start align-middle uppercase">
                                     Branch
                                 </td>
                                 <td class="px-4 py-3 w-1/2 text-start align-middle">
@@ -984,7 +978,7 @@
                             </tr>
 
                             <tr>
-                                <td class="px-4 py-3 w-1/2 text-start align-middle">
+                                <td class="px-4 py-3 w-1/2 text-start align-middle uppercase">
                                     Joint Account
                                 </td>
                                 <td class="px-4 py-3 w-1/2 text-start align-middle">
@@ -1012,7 +1006,7 @@
             <div class="box dark:bg-bg3 border border-gray-200 mt-4 shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="px-4 py-3 ">
-                    <h3 class="text-lg font-semibold text-black dark:text-white">
+                    <h3 class="text-lg font-semibold text-black dark:text-white uppercase">
                         Transactions <span class="text-gray-500 text-sm">(Showing Last 5)</span>
                     </h3>
                 </div>
@@ -1023,18 +1017,18 @@
                         <table class="w-full border whitespace-nowrap rounded-lg overflow-hidden shadow-md">
                             <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                                 <tr>
-                                    <th class="px-4 py-2 text-sm font-semibold text-start">Date</th>
-                                    <th class="px-4 py-2 text-sm font-semibold text-start">Type</th>
-                                    <th class="px-4 py-2 text-sm font-semibold text-start">Payment Mode</th>
-                                    <th class="px-4 py-2 text-sm font-semibold text-start">Amount</th>
-                                    <th class="px-4 py-2 text-sm font-semibold text-start">Status</th>
+                                    <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Date</th>
+                                    <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Type</th>
+                                    <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Payment Mode</th>
+                                    <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Amount</th>
+                                    <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="text-left dark:text-gray-300">
                                 @forelse ($rdAccount->rdTransactions as $txn)
                                 <tr class="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800">
                                     <td class="px-4 py-2 text-sm">
-                                        {{ \Carbon\Carbon::parse($txn->t_date)->format('d/m/Y') }}
+                                        {{ \Carbon\Carbon::parse($txn->t_date)->format('d-m-Y') }}
                                     </td>
                                     <td class="px-4 py-2 text-sm">
                                         {{ ucfirst($txn->transaction_type) }}

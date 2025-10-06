@@ -44,7 +44,7 @@
         <table class="w-full text-sm text-left">
             <tbody>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Customer</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Customer</td>
                     <td class="px-4 py-2 border-b">
                         <a href="{{ route('member.show', $shareholding->members->id) }}" class="text-primary hover:underline">
                             {{ $shareholding->members->member_no 
@@ -57,48 +57,48 @@
 
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Share Allotment Date</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Share Allotment Date</td>
                     <td class="px-4 py-2 border-b">
                         {{ \Carbon\Carbon::parse($shareholding->allotment_date)->format('d-m-Y') ?? '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Share Range</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Share Range</td>
                     <td class="px-4 py-2 border-b">{{ $shareholding->from_share_no }} - {{ $shareholding->to_share_no }}
                     </td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Total Shares</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Total Shares</td>
                     <td class="px-4 py-2 border-b">{{ $shareholding->shares ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Nominal Value</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Nominal Value</td>
                     <td class="px-4 py-2 border-b"> ₹ {{ number_format($shareholding->face_value, 2) }}</td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Total Value</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Total Value</td>
                     <td class="px-4 py-2 font-medium text-green-600 border-b"> ₹
                         {{ number_format($shareholding->total_consideration, 2) }}
                     </td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Allotment Date</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Allotment Date</td>
                     <td class="px-4 py-2 text-green-600 border-b">
                         {{ \Carbon\Carbon::parse($shareholding->created_at)->format('d-m-Y') ?? '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Date of Transfer</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Date of Transfer</td>
                     <td class="px-4 py-2 border-b">
                         {{ $shareholding->transfer_date ? \Carbon\Carbon::parse($shareholding->transfer_date)->format('d-m-Y') : '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Share Certificate No</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Share Certificate No</td>
                     <td class="px-4 py-2 border-b">{{ $shareholding->certificate_number }}</td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-2 font-semibold border-b bg-gray-50">Is Surrendered</td>
+                    <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Is Surrendered</td>
                     <td class="px-4 py-2 border-b">No</td>
                 </tr>
             </tbody>
@@ -111,14 +111,14 @@
             <table class="w-full text-sm text-left border-0">
                 <thead class="font-bold text-white bg-green-500">
                     <tr>
-                        <th class="px-4 py-2 border-0">Business Type</th>
-                        <th class="px-4 py-2 border-0">Transferor</th>
-                        <th class="px-4 py-2 border-0">Transferee</th>
-                        <th class="px-4 py-2 border-0">Share Range</th>
-                        <th class="px-4 py-2 border-0">Nominal Val.</th>
-                        <th class="px-4 py-2 border-0">No. Of Shares</th>
-                        <th class="px-4 py-2 border-0">Transfer Date</th>
-                        <th class="px-4 py-2 border-0">New Share</th>
+                        <th class="px-4 py-2 border-0 uppercase">Business Type</th>
+                        <th class="px-4 py-2 border-0 uppercase">Transferor</th>
+                        <th class="px-4 py-2 border-0 uppercase">Transferee</th>
+                        <th class="px-4 py-2 border-0 uppercase">Share Range</th>
+                        <th class="px-4 py-2 border-0 uppercase">Nominal Val.</th>
+                        <th class="px-4 py-2 border-0 uppercase">No. Of Shares</th>
+                        <th class="px-4 py-2 border-0 uppercase">Transfer Date</th>
+                        <th class="px-4 py-2 border-0 uppercase">New Share</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white">

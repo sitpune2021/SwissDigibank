@@ -22,7 +22,7 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center justify-center gap-1">
-                                MEMBER
+                                CUSTOMER
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">

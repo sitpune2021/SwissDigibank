@@ -8,14 +8,7 @@
                 <h1 class="text-xl font-semibold uppercase">
                     Suvarna shree yojana no emi
                 </h1>
-                <p class="text-gray-500 text-sm font-semibold uppercase">
-                    Gold Loan Scheme
-                </p>
             </div>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm ">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm">Suvarna shree yojana no emi</a>
-            </p>
 
         </div>
     </div>
@@ -106,17 +99,16 @@
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3 uppercase">Created at</td>
-                            <td class="p-3">17/09/2025 12:29</td>
+                            <td class="p-3">17-09-2025 12:29</td>
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3 uppercase">Updated at</td>
-                            <td class="p-3">17/09/2025 12:29</td>
+                            <td class="p-3">17-09-2025 12:29</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 
 

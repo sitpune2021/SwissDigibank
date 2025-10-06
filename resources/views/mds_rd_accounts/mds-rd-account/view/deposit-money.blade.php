@@ -1,5 +1,5 @@
 @extends('layout.main')
-
+@section('content')
 <style>
     input[type="checkbox"] {
         width: 28px;
@@ -28,7 +28,6 @@
     }
 </style>
 
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -36,11 +35,6 @@
                 <h1 class="text-2xl font-semibold dark:text-white">RD - {{$rdAccount->id}}</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Deposit Money (Installments)</p>
             </div>
-            <p class="text-gray-500 dark:text-gray-400">
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Recurring Deposits </a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm"> RD{{$rdAccount->id}}</a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Deposit Money</a>
-            </p>
         </div>
     </div>
 
@@ -97,8 +91,8 @@
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                     </div>
                     @error('amount')
-                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
 
                     <!-- Remarks -->
                     <div>
@@ -116,9 +110,9 @@
                         <input type="text" id="t_date" name="t_date"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                     </div>
-                      @error('t_date')
-                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                    @error('t_date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
 
 
                     <!-- Receipt -->
@@ -274,8 +268,8 @@
                                 <td class="font-semibold pr-4 py-3">Member</td>
                                 <td>
                                     {{ $rdAccount->member->id ?? 'N/A' }} -
-                                {{ $rdAccount->member->member_info_first_name ?? '' }}
-                                {{ $rdAccount->member->member_info_last_name ?? '' }}
+                                    {{ $rdAccount->member->member_info_first_name ?? '' }}
+                                    {{ $rdAccount->member->member_info_last_name ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b">

@@ -89,10 +89,10 @@
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
       <h1 class="text-2xl font-semibold">MIS ACCOUNT - {{'' . $misaccount->member_id}} </h1>
-      <p class="text-gray-500">
+      <!-- <p class="text-gray-500">
         <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS ACCOUNT</a> >
         <a href="#" class="text-gray-500"> {{'' . $misaccount->member_id}} </a>
-      </p>
+      </p> -->
     </div>
   </div>
 
@@ -650,7 +650,7 @@
 
               <tr>
                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Fore Close Date</td>
-                <td class="px-4 py-2">02/04/2025</td>
+                <td class="px-4 py-2">02-04-2025</td>
               </tr>
 
               <tr>

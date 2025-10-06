@@ -77,18 +77,20 @@ class DdsAccountsController extends Controller
 
     public function create()
     {
+
         Log::info('DdsAccountsController@create called');
         $members  = Member::all();
         $branches = Branch::all();
         $schemes = Rdscheme::all();
         $minors   = Minor::all();
-                $banks = Bank::all();
+        $banks = Bank::all();
+        Log::info('All Schemes:', $schemes->pluck('rd_dd_frequency', 'scheme_name')->toArray());
 
         $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
         $membersData = $members->keyBy('id');
 
-        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData','banks'));
+        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData', 'banks'));
     }
 
     public function show($id)
@@ -122,6 +124,12 @@ class DdsAccountsController extends Controller
                 case 'daily':
                     $shouldHavePaid = $openDate->diffInDays($today);
                     break;
+                case 'weekly':
+                    $shouldHavePaid = floor($openDate->diffInDays($today) / 7);
+                    break;
+                case 'bi-weekly':
+                    $shouldHavePaid = floor($openDate->diffInDays($today) / 14);
+                    break;
                 case 'monthly':
                     $shouldHavePaid = $openDate->diffInMonths($today);
                     break;
@@ -129,6 +137,7 @@ class DdsAccountsController extends Controller
                     $shouldHavePaid = $openDate->diffInYears($today);
                     break;
             }
+
 
             $shouldHavePaid = min($shouldHavePaid, $totalInstallments);
         }
@@ -266,6 +275,12 @@ class DdsAccountsController extends Controller
             switch ($scheme->rd_dd_frequency) {
                 case 'daily':
                     $installments = 365;
+                    break;
+                case 'weekly':
+                    $installments = floor(365 / 7);
+                    break;
+                case 'bi-weekly':
+                    $installments = floor(365 / 14);
                     break;
                 case 'monthly':
                     $installments = $scheme->tenure_of_rd_dd_value;
@@ -518,11 +533,17 @@ class DdsAccountsController extends Controller
         $startDate = null,
         $schemeTenureMonths = null
     ) {
+        $frequency = str_replace('_', '-', strtolower($frequency)); // normalize
 
-        if (!in_array($frequency, ['daily', 'weekly'])) {
-            throw new InvalidArgumentException("Only 'daily' and 'weekly' frequencies are supported.");
+        if (!in_array($frequency, ['daily', 'weekly', 'bi-weekly'])) {
+            throw new InvalidArgumentException("Only 'daily', 'weekly', and 'bi-weekly' frequencies are supported.");
         }
 
+        $daysPerInstallment = match ($frequency) {
+            'daily' => 1,
+            'weekly' => 7,
+            'bi-weekly' => 14,
+        };
         $totalDeposit = $depositAmount * $installments;
 
         $days = $installments;
@@ -542,7 +563,7 @@ class DdsAccountsController extends Controller
         $maturityDate = null;
         if ($startDate) {
             $date = Carbon::parse($startDate);
-            $date->addDays($installments);
+            $date->addDays($installments * $daysPerInstallment);
             $maturityDate = $date->format('d-m-Y');
         }
 

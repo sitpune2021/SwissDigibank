@@ -37,7 +37,7 @@
   <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col  gap-2">
       <h1 class="text-xl font-semibold"> FD PAYOUTS -{{$fdAccount->id}} </h1>
-      <p class="text-gray-500">
+      <!-- <p class="text-gray-500">
         <a href="{{route('fd-mis-schemes.fd_index')}}" class="text-gray-500 text-sm">MIS Accounts</a> >
 
         {{-- @foreach($misaccounts as $mis) --}}
@@ -46,7 +46,7 @@
         {{-- @endforeach --}}
 
         <a href="#" class="text-gray-500  text-sm"> Payouts</a>
-      </p>
+      </p> -->
       {{-- {{ 'DEMO-' . $misaccount->member_id}} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }} --}}
     </div>
 

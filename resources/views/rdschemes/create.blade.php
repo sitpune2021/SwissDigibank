@@ -27,13 +27,7 @@
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
             <h3 class="text-xl font-semibold">NEW RD/ DD SCHEME</h3>
-            <p class="text-gray-500">
-                <a href="{{route('rdschemes.index')}}" class="text-gray-500">RD/ DD Scheme</a> >
-                <a href="" class="text-gray-500"> New</a>
-            </p>
-
         </div>
-
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
@@ -109,13 +103,13 @@
 
             <div class="col-span-2 md:col-span-1">
                 <label for="anuual_interest_rate" class="md:text-lg font-medium block mb-4 uppercase">
-                    Anuual Interest Rate(%)
+                    Annual Interest Rate(%)
                     <span class="text-red-500">*</span>
                 </label>
 
                 <input type="number" id="interes-rate" name="anuual_interest_rate"
                     class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="Enter Anuual Interest Rate(%) ">
+                    placeholder="Enter Annual Interest Rate(%) ">
                 @error('anuual_interest_rate') <span class="text-error">{{ $message }}</span> @enderror
             </div>
             <div class="col-span-2 md:col-span-1">

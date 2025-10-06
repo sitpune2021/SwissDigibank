@@ -57,15 +57,15 @@ $employee->name . ' EMPLOYEE') : 'ADD EMPLOYEE')
             @endif
             @php $isView = !empty($show); @endphp
             <div class="col-span-2 md:col-span-1">
-                <label for="member" class="md:text-lg font-medium block mb-4 uppercase">Link Member Profile
+                <label for="member" class="md:text-lg font-medium block mb-4 uppercase">Link Customer Profile
                     <input type="hidden" id="selectedMemberId" value="{{ isset($employee) ? $employee->member_id : '' }}">
                     @if(isset($isView) && $isView)
-                    {{-- View Mode: Just display the member name --}}
+                    {{-- View Mode: Just display the customer name --}}
                     <input type="text" value="{{ $employee->members->member_info_first_name ?? 'N/A' }}" @if($isView) disabled @endif
                         class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
                     @else
                     <select name="member" id="memberDropdown" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" @if($isView) disabled @endif>
-                        <option value="">Select Member</option>
+                        <option value="">Select Customer</option>
                         <!-- Dynamic options here -->
                     </select>
 

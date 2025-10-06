@@ -25,11 +25,11 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-2xl font-semibold dark:text-white">RD - {{$rdAccount->id}}</h1>
-                <p class="text-gray-500 dark:text-gray-400">
+                <!-- <p class="text-gray-500 dark:text-gray-400">
                     <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Recurring Deposits</a> >
                     <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">{{$rdAccount->id}}</a> >
                     <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Nominee</a>
-                </p>
+                </p> -->
             </div>
         </div>
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\RDScheme;
+use App\Models\Rdscheme;
 
 class RDCalculatorController extends Controller
 {
@@ -15,13 +15,13 @@ class RDCalculatorController extends Controller
 
     public function create()
     {
-        $schemes = RDScheme::select('scheme_code', 'scheme_name')->get(); 
+        $schemes = Rdscheme::select('scheme_code', 'scheme_name')->get(); 
         return view('mds_rd_accounts.calculators.create', compact('schemes'));
     }
 
     public function getScheme($scheme_code)
     {
-        $scheme = RDScheme::where('scheme_code', $scheme_code)->first();
+        $scheme = Rdscheme::where('scheme_code', $scheme_code)->first();
 
         if ($scheme) {
             return response()->json([
