@@ -729,6 +729,13 @@
         </div>
 
         <!-- Calculation Result Box -->
+         <!-- Hidden fields for saving calculation result -->
+        <input type="hidden" name="security_value" id="inputSecurity">
+        <input type="hidden" name="max_loan_amount" id="inputMaxLoan">
+        <input type="hidden" name="max_loan_limit" id="inputLimit">
+        <input type="hidden" name="maximum_approvable_amount" id="inputApprovable">
+        <input type="hidden" name="approved_loan_amount" id="inputApproved">
+
         <div id="calculationBox"
             class="mt-5 p-4 bg-secondary/5 rounded-10 hidden">
             <h3 class="text-lg font-semibold mb-3">Calculation Result</h3>
@@ -778,29 +785,7 @@
     </form>
 </div>
 
-<script>
-   let isCalculated = false; // flag set karte hain
 
-document.getElementById("calculateBtn").addEventListener("click", function (e) {
-    if (!isCalculated) {
-        //  Pehli click pe calculation karo
-        document.getElementById("calculationBox").classList.remove("hidden");
-
-        // Button ko submit bana do
-        this.textContent = "Submit";
-        this.type = "submit";
-
-        // Flag update karo
-        isCalculated = true;
-
-        // Prevent form submit on first click
-        e.preventDefault();
-    } else {
-        //  Ab button "Submit" hai → normal form submit hone do
-        // Yahan kuch extra code ki zarurat nahi hai
-    }
-});
-</script>
 
 <script>
 document.getElementById('member_id').addEventListener('change', function () {
@@ -887,16 +872,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<script>
-    function calculateNetLoan() {
-        let loan = parseFloat(document.getElementById('loanAmount').value) || 0;
-        let insurance = parseFloat(document.getElementById('insuranceAmount').value) || 0;
-        document.getElementById('netLoanAmount').value = loan + insurance;
-    }
 
-    document.getElementById('loanAmount').addEventListener('input', calculateNetLoan);
-    document.getElementById('insuranceAmount').addEventListener('input', calculateNetLoan);
-</script>
 
 
 <script>
@@ -927,7 +903,10 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
  <script>
-document.getElementById("calculateBtn").addEventListener("click", function () {
+let isCalculated = false;
+
+document.getElementById("calculateBtn").addEventListener("click", function (e) {
+    const button = this;
     let rows = document.querySelectorAll("#itemsBody tr");
     let totalSecurity = 0;
 
@@ -936,45 +915,57 @@ document.getElementById("calculateBtn").addEventListener("click", function () {
         let netWeight = parseFloat(row.querySelector(".netWeight")?.value) || 0;
         let tunch = parseFloat(row.querySelector(".tunch")?.value) || 0;
 
-        // Fine Weight (D) = (C% of B)
+        // Fine Weight = (Net Weight × Tunch%) / 100
         let fineWeight = (netWeight * tunch) / 100;
 
-        // Total Value = A × D
+        // Total Value = ValuePerGram × FineWeight
         let totalValue = valuePerGram * fineWeight;
 
-        // Row ke Total Value column me show karo
+        // Update total value cell
         let totalValueCell = row.querySelector(".totalValue");
-        if (totalValueCell) {
-            totalValueCell.textContent = totalValue.toFixed(2);
-        }
+        if (totalValueCell) totalValueCell.textContent = totalValue.toFixed(2);
 
         totalSecurity += totalValue;
     });
 
-    // Loan amount aur insurance ke input se values lo
+    // Loan and insurance
     let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
     let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
     let netLoan = loanAmount - insurance;
-    document.getElementById("netLoanAmount").value = netLoan;
+    document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
 
-    // Scheme ka data
+    // Scheme details
     let scheme = document.getElementById("scheme_id");
     let selected = scheme.options[scheme.selectedIndex];
-    let maxLoan = selected.getAttribute("data-max") || "-";
+    let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
     let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
-
-    // Maximum approvable amount = (totalSecurity × Limit%) / 100
     let approvable = (totalSecurity * limit) / 100;
 
-    // Show results
-    document.getElementById("resNetLoan").textContent = netLoan;
+    // Show in box
+    document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
     document.getElementById("resSecurity").textContent = totalSecurity.toFixed(2);
-    document.getElementById("resMaxLoan").textContent = maxLoan;
+    document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
     document.getElementById("resLimit").textContent = limit + "%";
     document.getElementById("resApprovable").textContent = approvable.toFixed(2);
     document.getElementById("resApproved").textContent = approvable.toFixed(2);
 
+    // Set hidden fields for backend saving
+    document.getElementById("inputSecurity").value = totalSecurity.toFixed(2);
+    document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+    document.getElementById("inputLimit").value = limit;
+    document.getElementById("inputApprovable").value = approvable.toFixed(2);
+    document.getElementById("inputApproved").value = approvable.toFixed(2);
+
+    // Show result box
     document.getElementById("calculationBox").classList.remove("hidden");
+
+    // Change button behavior
+    if (!isCalculated) {
+        e.preventDefault(); // stop submit on first click
+        button.textContent = "Submit";
+        button.type = "submit";
+        isCalculated = true;
+    }
 });
 </script>
 

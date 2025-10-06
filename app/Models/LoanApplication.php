@@ -45,6 +45,12 @@ class LoanApplication extends Model
         'credited',
         'collect_principal_as_emi',
         'collect_advance_processing_fee',
+        'security_value',
+        'max_loan_amount',
+        'max_loan_limit',
+        'maximum_approvable_amount',
+        'approved_loan_amount',
+        'status',
     ];
 
    // app/Models/LoanApplication.php
@@ -78,6 +84,11 @@ public function scheme()
 public function ornaments()
 {
     return $this->hasMany(LoanOrnament::class, 'application_id');
+}
+
+public function properties()
+{
+    return $this->hasMany(MortgageProperty::class, 'loan_application_id');
 }
 
 
