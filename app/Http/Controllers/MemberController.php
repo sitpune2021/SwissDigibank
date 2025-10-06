@@ -1453,7 +1453,7 @@ class MemberController extends Controller
         $member = Member::find($transaction->member_id);
 
         $data = [
-            'id'                 => $member->id ?? 'N/A',
+            'member_no'                 => $member->member_no ?? 'N/A',
             'member_info_first_name' => $member->member_info_first_name ?? 'N/A',
             'member_info_middle_name' => $member->member_info_middle_name ?? '',
             'member_info_last_name'  => $member->member_info_last_name ?? 'N/A',

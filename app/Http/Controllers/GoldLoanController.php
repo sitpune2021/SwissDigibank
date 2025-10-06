@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Branch;
 use App\Models\Scheme;
 use App\Models\LoanApplication;
+use App\Models\LoanOrnament;
 use App\Models\LoanCreditScore;
 use Illuminate\Support\Facades\Log;
 
@@ -166,30 +167,29 @@ class GoldLoanController extends Controller
             'collect_advance_processing_fee',
         ]));
 
-        // ==== Credit Score Details Save (Dynamic Rows) ====
-        if ($request->has('cibil_type')) {
-            foreach ($request->cibil_type as $index => $type) {
-                $filePath = null;
+    // Ornaments save karo (agar diye gaye hain)
+    if ($request->has('ornaments')) {
+        $ornaments = $request->ornaments;
 
-                // file upload handle
-                if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
-                    $filePath = $request->file('report_file')[$index]->store("cibil_reports", "public");
-                }
-
-                $loanApplication->creditScores()->create([
-                    'cibil_type'       => $type,
-                    'cibil_score'      => $request->cibil_score[$index] ?? null,
-                    'report_date'      => isset($request->report_date[$index])
-                        ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
-                        : null,
-                    'report_file_path' => $filePath,
-                ]);
-            }
+        foreach ($ornaments['item_type'] as $index => $type) {
+            LoanOrnament::create([
+                'application_id' => $loanApplication->id,
+                'item_type'      => $type,
+                'item_name'      => $ornaments['item_name'][$index] ?? null,
+                'no_of_items'    => $ornaments['no_of_items'][$index] ?? 0,
+                'value_per_gram' => $ornaments['value_per_gram'][$index] ?? 0,
+                'gross_weight'   => $ornaments['gross_weight'][$index] ?? 0,
+                'net_weight'     => $ornaments['net_weight'][$index] ?? 0,
+                'tunch'          => $ornaments['tunch'][$index] ?? 0,
+                'fine_weight'    => $ornaments['fine_weight'][$index] ?? 0,
+                'total_value'    => $ornaments['total_value'][$index] ?? 0,
+            ]);
         }
-
-        return redirect()->route('gold-loan.applications.index')
-            ->with('success', 'Loan Application + Credit Scores saved successfully!');
     }
+
+    return redirect()->route('gold-loan.applications.index')
+        ->with('success', 'Loan Application + Ornaments saved successfully!');
+}
 
 
     public function getMemberInfo($id)

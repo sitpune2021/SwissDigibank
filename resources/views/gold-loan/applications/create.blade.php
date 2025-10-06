@@ -560,6 +560,50 @@
                                             {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
                                         <span>No</span>
                                     </label>
+                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Transfer Mode <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-4 mt-2">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="imps"
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
+                                            <span>IMPS</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="vpa"
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
+
+                                            <span>VPA</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" value="neft_rtgs"
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
+                                            <span>NEFT/RTGS</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Credited in Company Account <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-4 mt-2">
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited" value="yes"
+                                                {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                            <span>Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited" value="no"
+                                                {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

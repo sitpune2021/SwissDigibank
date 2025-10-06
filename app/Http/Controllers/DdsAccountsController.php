@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Branch;
 use App\Models\DdsAccount;
 use App\Models\Minor;
+use App\Models\Bank;
 use App\Models\Account;
 use App\Models\AccountNominee;
 use App\Models\DdTransaction;
@@ -81,11 +82,13 @@ class DdsAccountsController extends Controller
         $branches = Branch::all();
         $schemes = Rdscheme::all();
         $minors   = Minor::all();
+                $banks = Bank::all();
+
         $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
         $membersData = $members->keyBy('id');
 
-        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData'));
+        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData','banks'));
     }
 
     public function show($id)
@@ -221,7 +224,7 @@ class DdsAccountsController extends Controller
 
     public function store(Request $request)
     {
-
+        // dd($request->all());
         Log::info('🔹 DdsAccountsController@store called');
         Log::info('Request data:', $request->all());
         if ($request->branch_id === 'null' || $request->branch_id === '') {
@@ -238,6 +241,7 @@ class DdsAccountsController extends Controller
             'nominee' => 'required|in:yes,no',
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
             'dd_amount' => 'required|numeric',
+            'remarks'    => 'nullable|string',
         ]);
 
         try {
@@ -312,6 +316,7 @@ class DdsAccountsController extends Controller
             $ddsAccount->open_date = $request->open_date;
             $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
             $ddsAccount->account_type = 'single';
+            $ddsAccount->remarks = $request->remarks;
             $ddsAccount->tds_deduction = 0;
             $ddsAccount->rd_dd_frequency = $scheme->rd_dd_frequency;
             $ddsAccount->total_installments = $installments;

@@ -515,6 +515,7 @@
             });
         });
     </script>
+    {{-- fronend validations --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // -----------------------------
@@ -544,6 +545,7 @@
                     id: 'nominee_aadhaar_no',
                     maxLength: 12
                 },
+
             ];
 
             digitFields.forEach(({
@@ -594,6 +596,18 @@
                     id: 'passport_no',
                     maxLength: 8
                 },
+                {
+                    id: 'meter_no',
+                    maxLength: 16
+                }, // <-- Moved here
+                {
+                    id: 'ci_no',
+                    maxLength: 16
+                }, // <-- Moved here
+                {
+                    id: 'dl_no',
+                    maxLength: 16
+                },
             ];
 
             alphaNumFields.forEach(({
@@ -612,7 +626,6 @@
             });
         });
     </script>
-
 
     <script>
         const titleRadios = document.querySelectorAll('input[name="member_info_title"]');

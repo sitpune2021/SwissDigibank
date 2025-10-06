@@ -412,8 +412,16 @@
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Bank Name<span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" name="bank_name" placeholder="Enter Bank Name"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                             <x-searchable-dropdown
+                                    :items="$banks"
+                                    label="Select Bank"
+                                    name="bank_name"
+                                    display-field="name"
+                                    value-field="id"
+                                    event="Bank-selected"
+                                    :selected="null" />
+                                    {{-- <input type="text" name="bank_name" placeholder="Enter Bank Name"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"> --}}
                                 </div>
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Cheque No<span
@@ -424,7 +432,7 @@
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Cheque Date<span
                                             class="text-red-500">*</span></label>
-                                    <input type="date" name="cheque_date" id="date3"
+                                    <input type="text" name="cheque_date" id="date3"
                                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     <i
                                         class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
