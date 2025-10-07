@@ -83,12 +83,9 @@
                                 </option>
                             @endforeach
                         </select>
-                        {{-- @elseif ($name === 'bank_name')
+                        @elseif ($name === 'bank_name')
                         <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_name" display-field="name"
-                            value-field="id" event="Bank-selected" :selected="old('bank_name', $shareholding->bank_name ?? null)" /> --}}
-                    @elseif ($name === 'bank_name')
-                        <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_id" display-field="name"
-                            value-field="id" event="Bank-selected" :selected="old('bank_id', $shareholding->bank_id ?? null)" />
+                            value-field="id" event="Bank-selected" :selected="old('bank_name', $shareholding->bank_id ?? null)" />
                     @else
                         @include('fields.inputs', [
                             'id' => $id,

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Promotor;
@@ -18,11 +20,19 @@ class Shareholding extends Model
         'transaction_date',
         'amount',
         'remarks',
-        'pay_mode' ,
-        'is_transfer'
+        'pay_mode',
+        'is_transfer',
+        'saving_account_id',
+        'transfer_date',
+        'utr_no',
+        'transfer_mode',
+        'bank_id ',
+        'bank_name',
+        'cheque_no',
+        'cheque_date'
     ];
 
-     protected $casts = [
+    protected $casts = [
         'allotment_date' => 'date',
         'transaction_date' => 'date',
     ];
@@ -31,21 +41,16 @@ class Shareholding extends Model
     {
         return $this->belongsTo(Promotor::class, 'promotor_id');
     }
-      public function Shareholder()
+    public function Shareholder()
     {
-        return $this->hasMany(Shareholders::class,'shareholding_id');
-
+        return $this->hasMany(Shareholders::class, 'shareholding_id');
     }
-      public function sharecertificate()
+    public function sharecertificate()
     {
-        return $this->hasMany(ShareCertificate::class,'shareholding_id');
-
+        return $this->hasMany(ShareCertificate::class, 'shareholding_id');
     }
-     public function Shareholders()
+    public function Shareholders()
     {
-        return $this->hasMany(Shareholders::class,'shareholding_id');
-
+        return $this->hasMany(Shareholders::class, 'shareholding_id');
     }
-
-    
 }
