@@ -676,12 +676,12 @@ return [
 
     'cheque' => [
         [
-            'label' => 'BANK NAME ',
-            'name' => 'cheque_bank_name',
-            'id' => 'cheque_bank_name',
-            'type' => 'text',
+            'label' => 'BANK NAME',
+            'name' => 'bank_id', // link to banks table
+            'id' => 'bank_id',
+            'type' => 'custom',
+            'component' => 'searchable-dropdown',
             'required' => true,
-            'placeholder' => 'Enter Bank Name',
         ],
         [
             'label' => 'CHEQUE NO. ',

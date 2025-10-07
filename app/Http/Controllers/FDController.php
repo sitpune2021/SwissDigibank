@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\AccountNominee;
 use App\Models\Branch;
 use App\Models\FdAccount;
+use App\Models\Bank;
 use App\Models\FDScheme;
 use App\Models\FdSchemeSlab;
 use App\Models\FdTransaction;
@@ -45,7 +46,9 @@ class FDController extends Controller
      */
     public function create()
     {
+
         return view('fd_mis_account.fd_scheme.add-scheme');
+        
     }
     public function store(Request $request)
     {
@@ -213,6 +216,7 @@ class FDController extends Controller
         $members = Member::all();
         $schemes = FDScheme::all();
         $savings = Account::with('members')->get();
+        $banks = Bank::all(); // assuming you have a Bank model
 
         $membersData = Member::with('address', 'minors', 'branch')->get()
             ->mapWithKeys(function ($m) {
@@ -228,7 +232,7 @@ class FDController extends Controller
                 ];
             });
 
-        return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings'));
+        return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings','banks'));
     }
 
     public function fd_store(Request $request)

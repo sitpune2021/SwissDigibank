@@ -371,12 +371,18 @@
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
                                     class="text-red-500">*</span></label>
-                            <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                <option value="">Select Bank</option>
-                                <option value="SBI">SBI</option>
-                                <option value="HDFC">HDFC</option>
-                                <option value="ICICI">ICICI</option>
-                            </select>
+                            <x-searchable-dropdown 
+    :items="$banks" 
+    label="Bank Name" 
+    name="pay1_bank" 
+    display-field="name" 
+    value-field="id" 
+    :selected="old('pay1_bank')" 
+/>
+@error('pay1_bank')
+<span class="text-red-500 text-sm">{{ $message }}</span>
+@enderror
+
                             @error('pay1_bank')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror

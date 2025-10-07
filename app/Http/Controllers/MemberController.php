@@ -78,7 +78,7 @@ class MemberController extends Controller
                 'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
-
+            $banks = Bank::all(); // Or pluck('name','id') if needed
             $sections = config('member_form');
             $member   = null;
             $route    = route('member.store');
@@ -108,7 +108,7 @@ class MemberController extends Controller
 
             return view(
                 'members.member.create',
-                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents', 'advisors')
+                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents', 'advisors', 'banks')
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -255,7 +255,7 @@ class MemberController extends Controller
             }
 
             // Store Membership Charge Transaction
-            MembershipChargeTransaction::create([
+            $transaction = MembershipChargeTransaction::create([
                 'member_id' => $member->id,
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
                 'membership_fee' => $request->charges_membership_fee ?? 0,
@@ -264,10 +264,23 @@ class MemberController extends Controller
                 'charges_pay_mode' => $request->charges_pay_mode,
                 'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
                 'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
-                'cheque_bank_name' => $request->charges_pay_mode === 'cheque' ? $request->cheque_bank_name : null,
+                'bank_id' => in_array($request->charges_pay_mode, ['cheque', 'online']) ? $request->bank_id : null,
                 'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
                 'cheque_date' => $request->charges_pay_mode === 'cheque' ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
             ]);
+
+            // ✅ Log the transaction data
+            Log::info('MembershipChargeTransaction stored', [
+                'transaction_id' => $transaction->id,
+                'member_id' => $transaction->member_id,
+                'pay_mode' => $transaction->charges_pay_mode,
+                'bank_id' => $transaction->bank_id,
+                'cheque_no' => $transaction->cheque_no,
+                'cheque_date' => $transaction->cheque_date,
+                'online_utr_no' => $transaction->online_utr_no,
+                'online_transfer_mode' => $transaction->online_transfer_mode,
+            ]);
+
 
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
         } catch (ValidationException $e) {
@@ -588,7 +601,7 @@ class MemberController extends Controller
         }
     }
 
-    
+
     public function createMinor(Request $request)
     {
         try {
