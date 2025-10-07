@@ -10,8 +10,9 @@ use App\Models\Member;
 use App\Models\Branch;
 use App\Models\Scheme;
 use App\Models\LoanApplication;
-use App\Models\LoanCreditScore;
 use App\Models\LoanOrnament;
+use App\Models\LoanCreditScore;
+
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -128,73 +129,6 @@ class GoldLoanController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
         return view("gold-loan.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-
-    // public function storeLoanApplication(Request $request)
-    // {
-    //     // Loan Application Save
-    //     $loanApplication = LoanApplication::create($request->only([
-    //         'application_date',
-    //         'member_id',
-    //         'co_applicant_1_id',
-    //         'co_applicant_2_id',
-    //         'branch_id',
-    //         'advisor_id',
-    //         'guarantor_1_id',
-    //         'guarantor_2_id',
-    //         'guarantor_3_id',
-    //         'guarantor_4_id',
-    //         'scheme_id',
-    //         'tenure_type',
-    //         'tenure_value',
-    //         'emi_collection',
-    //         'credit_period',
-    //         'loan_amount',
-    //         'insurance_amount',
-    //         'net_loan_amount',
-    //         'purpose_of_loan',
-    //         'processing_fee_value',
-    //         'processing_fee_gst',
-    //         'processing_fee_sgst',
-    //         'processing_fee_cgst',
-    //         'processing_fee_igst',
-    //         'processing_fee_total',
-    //         'fee_mode',
-    //         'bank_id',
-    //         'cheque_no',
-    //         'cheque_date',
-    //         'transfer_date',
-    //         'utr_no',
-    //         'transfer_mode',
-    //         'credited',
-    //         'collect_principal_as_emi',
-    //         'collect_advance_processing_fee',
-    //     ]));
-
-    //     // ==== Credit Score Details Save (Dynamic Rows) ====
-    //     if ($request->has('cibil_type')) {
-    //         foreach ($request->cibil_type as $index => $type) {
-    //             $filePath = null;
-
-    //             // file upload handle
-    //             if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
-    //                 $filePath = $request->file('report_file')[$index]->store("cibil_reports", "public");
-    //             }
-
-    //             $loanApplication->creditScores()->create([
-    //                 'cibil_type'       => $type,
-    //                 'cibil_score'      => $request->cibil_score[$index] ?? null,
-    //                 'report_date'      => isset($request->report_date[$index])
-    //                     ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
-    //                     : null,
-    //                 'report_file_path' => $filePath,
-    //             ]);
-    //         }
-    //     }
-
-    //     return redirect()->route('gold-loan.applications.index')
-    //         ->with('success', 'Loan Application + Credit Scores saved successfully!');
-    // }
-
     public function storeLoanApplication(Request $request)
     {
         // dd($request->all());

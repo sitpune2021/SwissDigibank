@@ -75,6 +75,11 @@ public function scheme()
 {
     return $this->belongsTo(GoldLoanScheme::class, 'scheme_id');
 }
+public function ornaments()
+{
+    return $this->hasMany(LoanOrnament::class, 'application_id');
+}
+
 
 
 }

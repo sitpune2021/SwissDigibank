@@ -15,7 +15,7 @@ class LoanOrnament extends Model
         'no_of_items',
         'value_per_gram',
         'gross_weight',
-        'gross_weight',
+        'net_weight',
         'tunch',
         'fine_weight',
         'total_value',

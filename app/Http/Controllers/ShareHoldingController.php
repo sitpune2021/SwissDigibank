@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Shareholding;
 use App\Models\Promotor;
+use App\Models\Account;
+use App\Models\Bank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -48,8 +50,8 @@ class ShareHoldingController extends Controller
             abort(404);
         }
     }
-    
-     public function create()
+
+    public function create()
     {
         try {
             $shareholding = null;
@@ -58,32 +60,70 @@ class ShareHoldingController extends Controller
             $method = 'POST';
             $isAdd = true;
             $nominal_value = 10.00;
+            $formFieldsConfig = config('share_form');
+            $banks = Bank::select('id', 'name')->get();
+
+            $formFields = [];
+
+            foreach ($formFieldsConfig as $key => $field) {
+                if (isset($field['name'])) {
+                    $formFields[] = $field; // normal field
+                } elseif (is_array($field)) {
+                    // nested fields (online_tr, cheque, saving_ac)
+                    foreach ($field as $nestedField) {
+                        $formFields[] = $nestedField;
+                    }
+                }
+            }
             $dynamicOptions = [
-                'promoter' => Promotor::pluck('first_name', 'id')
+                'promoter' => Promotor::pluck('first_name', 'id'),
+                'savingAccounts' => Account::pluck('account_no', 'id'), // ✅ key=id, value=account_no
+
+
             ];
-            return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd', 'nominal_value', 'formFields', 'dynamicOptions'));
+            return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd', 'nominal_value', 'formFields', 'banks', 'dynamicOptions', 'formFields'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
+
     public function store(Request $request)
     {
+        Log::info('Shareholding@store called', ['request' => $request->all()]);
+
         try {
+            // 1️⃣ Validation
             $validated = $request->validate([
-                'promotor_id'             => 'required|exists:promotors,id',
-                'allotment_date'       => 'required',
-                'first_share'          => 'required|numeric',
-                'share_no'           => 'required|numeric|gt:first_share',
-                'nominal_value'        => 'nullable|numeric',
-                'total_share_held'     => 'required|numeric',
-                'total_share_value'    => 'required|numeric',
-                'certificate_no'       => 'nullable|string|max:50',
-                'transaction_date'     => 'required',
-                'amount'               => 'required|numeric',
-                'remarks'              => 'nullable|string|max:255',
-                'pay_mode'             => 'required|in:cash,online_tr,cheque,saving_ac',
+                'promotor_id'       => 'required|exists:promotors,id',
+                'allotment_date'    => 'required',
+                'first_share'       => 'required|numeric',
+                'share_no'          => 'required|numeric|gt:first_share',
+                'nominal_value'     => 'nullable|numeric',
+                'total_share_held'  => 'required|numeric',
+                'total_share_value' => 'required|numeric',
+                'certificate_no'    => 'nullable|string|max:50',
+                'transaction_date'  => 'required',
+                'amount'            => 'required|numeric',
+                'remarks'           => 'nullable|string|max:255',
+                'pay_mode'          => 'required|in:cash,online_tr,cheque,saving_ac',
+
+                // Online Transfer
+                'transfer_date'     => 'required_if:pay_mode,online_tr|nullable|date',
+                'utr_no'            => 'required_if:pay_mode,online_tr|nullable|string|max:255',
+                'transfer_mode'     => 'required_if:pay_mode,online_tr|nullable|in:IMPS,VPA,NEFT/RTGS',
+
+                // Cheque
+                'bank_name'           => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
+                'cheque_no'         => 'required_if:pay_mode,cheque|nullable|string|max:255',
+                'cheque_date'       => 'required_if:pay_mode,cheque|date',
+
+                // Saving Account
+                'saving_account_id' => 'required_if:pay_mode,saving_ac|nullable|exists:accounts,id',
             ]);
 
+            Log::info('Validation passed', ['validated' => $validated]);
+
+            // 2️⃣ Check overlapping shares
             $overlap = Shareholding::where(function ($query) use ($validated) {
                 $query->whereBetween('first_share', [$validated['first_share'], $validated['share_no']])
                     ->orWhereBetween('share_no', [$validated['first_share'], $validated['share_no']])
@@ -94,17 +134,59 @@ class ShareHoldingController extends Controller
             })->exists();
 
             if ($overlap) {
+                Log::warning('Share overlap detected', [
+                    'first_share' => $validated['first_share'],
+                    'share_no' => $validated['share_no']
+                ]);
                 throw ValidationException::withMessages([
                     'first_share' => ['This share already allocated.'],
-                    'share_no' => ['This share already allocated.'],
+                    'share_no'    => ['This share already allocated.'],
                 ]);
             }
-            $data = $request->all();
-            $data['certificate_no'] = '2000230233';
-            Shareholding::create($data);
+
+            // 3️⃣ Prepare data for insert
+            $data = [
+                'promotor_id'       => $request->promotor_id,
+                'allotment_date'    => $request->allotment_date ? \Carbon\Carbon::parse($request->allotment_date)->format('Y-m-d') : null,
+                'first_share'       => $request->first_share,
+                'share_no'          => $request->share_no,
+                'nominal_value'     => $request->nominal_value,
+                'total_share_held'  => $request->total_share_held,
+                'total_share_value' => $request->total_share_value,
+                'certificate_no'    => $request->certificate_no ?? '2000230233',
+                'transaction_date'  => $request->transaction_date ? \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d') : null,
+                'amount'            => $request->amount,
+                'remarks'           => $request->remarks,
+                'pay_mode'          => $request->pay_mode,
+                'transfer_date'     => $request->pay_mode === 'online_tr' && $request->transfer_date ? \Carbon\Carbon::parse($request->transfer_date)->format('Y-m-d') : null,
+                'utr_no'            => $request->pay_mode === 'online_tr' ? $request->utr_no : null,
+                'transfer_mode'     => $request->pay_mode === 'online_tr' ? $request->transfer_mode : null,
+                'bank_name'           => $request->pay_mode === 'cheque' ? $request->bank_name : null,
+                'cheque_no'         => $request->pay_mode === 'cheque' ? $request->cheque_no : null,
+                'cheque_date'       => $request->pay_mode === 'cheque' && $request->cheque_date ? \Carbon\Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
+                'saving_account_id' => $request->pay_mode === 'saving_ac' ? $request->saving_account_id : null,
+            ];
+
+            Log::info('Final data before insert', $data);
+
+            // 4️⃣ Insert record
+            $shareholding = Shareholding::create($data);
+
+            Log::info('Shareholding created successfully', [
+                'id' => $shareholding->id,
+                'data' => $shareholding->toArray()
+            ]);
+
             return redirect()->route('shareholding.index')->with('success', 'Shareholding allocated successfully.');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed', ['errors' => $e->errors()]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in Shareholding@store', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->withInput()->withErrors(['error' => 'Something went wrong. Check logs for details.']);
         }
     }
 

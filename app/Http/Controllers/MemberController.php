@@ -78,7 +78,7 @@ class MemberController extends Controller
                 'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
-
+            $banks = Bank::all(); // Or pluck('name','id') if needed
             $sections = config('member_form');
             $member   = null;
             $route    = route('member.store');
@@ -108,7 +108,7 @@ class MemberController extends Controller
 
             return view(
                 'members.member.create',
-                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents', 'advisors')
+                compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'documents', 'advisors', 'banks')
             );
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -255,7 +255,7 @@ class MemberController extends Controller
             }
 
             // Store Membership Charge Transaction
-            MembershipChargeTransaction::create([
+            $transaction = MembershipChargeTransaction::create([
                 'member_id' => $member->id,
                 'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
                 'membership_fee' => $request->charges_membership_fee ?? 0,
@@ -264,11 +264,24 @@ class MemberController extends Controller
                 'charges_pay_mode' => $request->charges_pay_mode,
                 'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
                 'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
-                'cheque_bank_name' => $request->charges_pay_mode === 'cheque' ? $request->cheque_bank_name : null,
+                'bank_id' => in_array($request->charges_pay_mode, ['cheque', 'online']) ? $request->bank_id : null,
                 'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
                 'cheque_date' => $request->charges_pay_mode === 'cheque' ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
                 'type'=>"Membership Charges" ?? null,
             ]);
+
+            // ✅ Log the transaction data
+            Log::info('MembershipChargeTransaction stored', [
+                'transaction_id' => $transaction->id,
+                'member_id' => $transaction->member_id,
+                'pay_mode' => $transaction->charges_pay_mode,
+                'bank_id' => $transaction->bank_id,
+                'cheque_no' => $transaction->cheque_no,
+                'cheque_date' => $transaction->cheque_date,
+                'online_utr_no' => $transaction->online_utr_no,
+                'online_transfer_mode' => $transaction->online_transfer_mode,
+            ]);
+
 
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
         } catch (ValidationException $e) {
@@ -1366,138 +1379,6 @@ class MemberController extends Controller
 
         return view('members.member.application-form', compact('member', 'transaction'));
     }
-    // public function printReceipt($id)
-    // {
-    //     // Try to find in membership_charges_transaction first
-    //     $membershipTransaction = DB::table('membership_charges_transaction')
-    //         ->where('id', $id)
-    //         ->first();
-
-    //     if ($membershipTransaction) {
-    //         $transaction = (object) [
-    //             'id'                 => $membershipTransaction->id,
-    //             'member_id'          => $membershipTransaction->member_id,
-    //             'transaction_date'   => $membershipTransaction->transaction_date,
-    //             'amount'             => $membershipTransaction->membership_fee,
-    //             'pay_mode'           => $membershipTransaction->charges_pay_mode,
-    //             'type'               => 'Share amount',
-    //             'remarks'            => $membershipTransaction->remarks,
-    //             'status'             => $membershipTransaction->approve_status == 1 ? 'Approved' : 'Pending',
-    //             'is_accounted'       => $membershipTransaction->is_accounted,
-    //             'transaction_source' => 'Membership Charge',
-    //             'created_at'         => $membershipTransaction->created_at,
-    //             'updated_at'         => $membershipTransaction->updated_at,
-
-    //             // null values
-    //             'charge_type' => null,
-    //             'clearance_id' => null,
-    //             'charges_due' => null,
-    //             'waived_amount' => null,
-    //             'gst_rate' => null,
-    //             'total_amount' => null,
-    //             'rounding_off' => null,
-    //             'net_amount' => null,
-    //             'clear_due_remarks' => null,
-    //             'transfer_date' => null,
-    //             'utr_no' => null,
-    //             'transfer_mode' => null,
-    //             'credited_in_account' => null,
-    //             'bank_id' => null,
-    //             'cheque_no' => null,
-    //             'cheque_date' => null,
-    //         ];
-    //     } 
-    //     else {
-    //         // Otherwise try to find in member_other_charges
-    //         $otherCharge = DB::table('member_other_charges')
-    //             ->where('id', $id)
-    //             ->whereNull('deleted_at')
-    //             ->first();
-
-    //         if (!$otherCharge) {
-    //             abort(404, 'Transaction not found.');
-    //         }
-
-    //         $transaction = (object) [
-    //             'id'                 => $otherCharge->id,
-    //             'member_id'          => $otherCharge->member_id,
-    //             'transaction_date'   => $otherCharge->transaction_date,
-    //             'amount'             => $otherCharge->charges,
-    //             'pay_mode'           => $otherCharge->pay_mode,
-    //             'type'               => $otherCharge->type,
-    //             'remarks'            => '| consolidated transaction :: ' . ($otherCharge->clear_due_remarks ?? ''),
-    //             'status'             => $otherCharge->status == 'PAID' ? 'Approved' : 'Pending',
-    //             'is_accounted'       => null,
-    //             'transaction_source' => 'Other Charge',
-    //             'created_at'         => $otherCharge->created_at,
-    //             'updated_at'         => $otherCharge->updated_at,
-
-    //             // extra fields
-    //             'charge_type'         => $otherCharge->charge_type,
-    //             'clearance_id'        => $otherCharge->clearance_id,
-    //             'charges_due'         => $otherCharge->charges_due,
-    //             'waived_amount'       => $otherCharge->waived_amount,
-    //             'gst_rate'            => $otherCharge->gst_rate,
-    //             'total_amount'        => $otherCharge->total_amount,
-    //             'rounding_off'        => $otherCharge->rounding_off,
-    //             'net_amount'          => $otherCharge->net_amount,
-    //             'clear_due_remarks'   => $otherCharge->clear_due_remarks,
-    //             'transfer_date'       => $otherCharge->transfer_date,
-    //             'utr_no'              => $otherCharge->utr_no,
-    //             'transfer_mode'       => $otherCharge->transfer_mode,
-    //             'credited_in_account' => $otherCharge->credited_in_account,
-    //             'bank_id'             => $otherCharge->bank_id,
-    //             'cheque_no'           => $otherCharge->cheque_no,
-    //             'cheque_date'         => $otherCharge->cheque_date,
-    //         ];
-    //     }
-
-    //     // Then continue with the rest of your PDF logic
-    //     $member = Member::find($transaction->member_id);
-
-    //     $data = [
-    //         'reg_no'                 => $member->reg_no ?? 'N/A',
-    //         'member_info_first_name' => $member->member_info_first_name ?? 'N/A',
-    //         'member_info_middle_name' => $member->member_info_middle_name ?? '',
-    //         'member_info_last_name'  => $member->member_info_last_name ?? 'N/A',
-    //         'phone'                  => $member->phone ?? 'N/A',
-    //         'transaction_date'       => Carbon::parse($transaction->transaction_date)->format('d-m-Y'),
-    //         'ref_id'                 => $transaction->id,
-    //         'amount'                 => number_format($transaction->amount, 2),
-    //         'amount_suffix'          => 'CR',
-    //         'member_info_mobile_no'  => $member->member_info_mobile_no ?? '',
-    //         'mode'                   => $transaction->pay_mode ?? 'N/A',
-    //         'status'                 => $transaction->status ?? 'Pending',
-    //         'type'                   => $transaction->type ?? 'Membership Fee',
-    //         'remarks'                => $transaction->remarks ?? '',
-    //         'printed_on'             => now()->format('d/m/Y H:i'),
-    //         'printed_by'             => optional(Auth::user())->name ?? 'System',
-
-    //         // Additional fields
-    //         'charge_type'            => $transaction->charge_type,
-    //         'clearance_id'           => $transaction->clearance_id,
-    //         'charges_due'            => $transaction->charges_due,
-    //         'waived_amount'          => $transaction->waived_amount,
-    //         'gst_rate'               => $transaction->gst_rate,
-    //         'total_amount'           => $transaction->total_amount,
-    //         'rounding_off'           => $transaction->rounding_off,
-    //         'net_amount'             => $transaction->net_amount,
-    //         'clear_due_remarks'      => $transaction->clear_due_remarks,
-    //         'transfer_date'          => $transaction->transfer_date,
-    //         'utr_no'                 => $transaction->utr_no,
-    //         'transfer_mode'          => $transaction->transfer_mode,
-    //         'credited_in_account'    => $transaction->credited_in_account,
-    //         'bank_id'                => $transaction->bank_id,
-    //         'cheque_no'              => $transaction->cheque_no,
-    //         'cheque_date'            => $transaction->cheque_date,
-    //     ];
-
-    //     $pdf = Pdf::loadView('members.member.receipt', $data)
-    //         ->setPaper([0, 0, 238.346, 1000], 'portrait');
-
-    //     return $pdf->stream('receipt.pdf');
-    // }
-
 
     public function printReceipt($id)
     {
@@ -1586,8 +1467,8 @@ class MemberController extends Controller
 
         // ✅ Prepare data for PDF
         $data = [
-            'reg_no'                  => $member->reg_no ?? 'N/A',
-            'member_info_first_name'  => $member->member_info_first_name ?? 'N/A',
+            'member_no'                 => $member->member_no ?? 'N/A',
+            'member_info_first_name' => $member->member_info_first_name ?? 'N/A',
             'member_info_middle_name' => $member->member_info_middle_name ?? '',
             'member_info_last_name'   => $member->member_info_last_name ?? 'N/A',
             'phone'                   => $member->phone ?? 'N/A',

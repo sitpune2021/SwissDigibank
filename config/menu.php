@@ -100,6 +100,8 @@ return [
             ['title' => 'SCHEMES', 'route' => 'gold-loan.schemes.index'],
             ['title' => 'CALCULATOR', 'route' => 'gold-loan.calculator.index'],
             ['title' => 'APPLICATIONS', 'route' => 'gold-loan.applications.index'],
+            ['title' => 'Disbursements', 'route' => 'gold-loan.disbursements.index'],
+            ['title' => 'ORNAMENTS INVENTORY', 'route' => 'gold-loan.ornaments.index'],
         ],
     ],
     [

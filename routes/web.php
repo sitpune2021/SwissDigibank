@@ -27,6 +27,8 @@ use App\Http\Controllers\SchemesController;
 use App\Http\Controllers\HRController;
 use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\DisbursementController;
+use App\Http\Controllers\OrnamentController;
 use App\Http\Controllers\KycDocumentsController;
 // use App\Http\Middleware\CheckCustomHeader;
 use App\Http\Controllers\CalculatorController;
@@ -426,9 +428,29 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::put('/gold-loan/applications/{id}', [GoldLoanController::class, 'appupdate'])
         ->name('gold-loan.applications.update');
 
-
     Route::get('applications/show-emi-chart', [GoldLoanController::class, 'showEmiChart'])
         ->name('gold-loan.applications.view-buttons.show-emi-chart');
+
+
+    // DisbursementController
+    Route::get('disbursements/index', [DisbursementController::class, 'index'])
+        ->name('gold-loan.disbursements.index');
+    // disburse-loan page   
+    Route::get('disbursements/disburse-loan/{id}', [DisbursementController::class, 'show'])
+        ->name('gold-loan.disbursements.disburse-loan');
+    Route::post('/gold-loan/disbursements/store', [DisbursementController::class, 'store'])->name('disbursements.store');
+
+    
+
+    //  Ornament index
+    Route::get('ornaments/index', [OrnamentController::class, 'index'])
+        ->name('gold-loan.ornaments.index');
+    ////  Ornament Update
+    Route::post('ornaments/update/{id}', [OrnamentController::class, 'update'])
+        ->name('gold-loan.ornaments.update');
+    // Download excel sheet
+    Route::get('ornaments/export', [OrnamentController::class, 'exportXls'])->name('gold-loan.ornaments.export');
+
 
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
         ->name('gold-loan.applications.view-buttons.disburse-setting');
@@ -442,6 +464,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
         ->name('gold-loan.applications.upload-cibil-score');
 });
+
+
 
 Route::group(['prefix' => 'hr-managment'], function () {
     Route::resource('employee', HRController::class);

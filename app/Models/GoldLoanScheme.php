@@ -37,4 +37,11 @@ class GoldLoanScheme extends Model
         'annual_rate_interest',
         'is_active'
     ];
+
+    public function applications()
+    {
+        return $this->hasMany(LoanApplication::class, 'scheme_id');
+    }
+
+
 }

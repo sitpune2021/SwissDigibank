@@ -657,14 +657,8 @@ $misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
-                            <select name="bank_id"
-                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                <option value="">Select Bank</option>
-                                @foreach ($banks as $bank)
-                                    <option value="{{ $bank->id }}">{{ $bank->name }}</option>
-                                @endforeach
-                            </select>
-
+                                                        <x-searchable-dropdown :items="$banks" label="Bank Name" name="bank_id"
+                                    display-field="name" value-field="id" :selected="old('bank_id')" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Cheque No. <span
