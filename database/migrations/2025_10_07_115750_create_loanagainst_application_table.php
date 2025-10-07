@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('loan_applications', function (Blueprint $table) {
+        Schema::create('loanagainst_application', function (Blueprint $table) {
             $table->id();
 
             // Basic info
@@ -43,7 +43,9 @@ return new class extends Migration
             $table->decimal('insurance_amount', 15, 2)->nullable();
             $table->decimal('net_loan_amount', 15, 2);
             $table->string('purpose_of_loan');
-
+            $table->string('securety_type')->nullable(); // daily, monthly, etc.
+            $table->string('security_amount')->nullable(); // daily, monthly, etc.
+            
             // Processing Fee
             $table->decimal('processing_fee_value', 15, 2)->default(0);
             $table->decimal('processing_fee_gst', 5, 2)->default(18.0);
@@ -55,7 +57,6 @@ return new class extends Migration
             // Flags
             $table->boolean('collect_principal_as_emi')->default(false);
             $table->boolean('collect_advance_processing_fee')->default(false);
-            $table->string('fee_mode');
 
             // Calculation 
             $table->decimal('security_value', 15, 2)->nullable();
@@ -72,7 +73,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('loan_application_id');
             $table->string('cibil_type');
-            
             $table->integer('cibil_score')->nullable();
             $table->date('report_date')->nullable();
             $table->string('report_file_path')->nullable(); // file upload path
@@ -85,14 +85,10 @@ return new class extends Migration
         });
     }
 
-    // public function down(): void
-    // {
-    //     Schema::dropIfExists('loan_credit_scores');
-    //     Schema::dropIfExists('loan_applications');
-    // }
+   
     public function down()
     {
-        Schema::table('loan_applications', function (Blueprint $table) {
+        Schema::table('loanagainst_application', function (Blueprint $table) {
             $table->dropColumn([
                 'security_value',
                 'max_loan_amount',

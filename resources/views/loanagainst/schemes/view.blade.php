@@ -28,14 +28,9 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    Gold Loan Scheme
+                    LOAN AGAINST SCHEMES
                 </p>
             </div>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm">{{ $scheme->scheme_name }}</a>
-            </p>
-
         </div>
     </div>
 
@@ -43,7 +38,7 @@
         <div class="box col-span-2 md:col-span-1">
             <!-- Edit Button -->
             <div class="flex justify-end mb-4">
-                <a href="{{ route('mortgage.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
+                <a href="{{ route('loanagainst.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
                     <i class="las la-pencil-alt"></i>
                 </a>
 

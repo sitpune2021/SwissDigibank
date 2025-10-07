@@ -79,18 +79,6 @@ return [
             ['title' => 'MDS / RD ACCOUNTS', 'route' => 'mds-rd-accounts.rd-account-index'],
         ]
     ],
-    [
-        'title' => 'MORTGAGE LOAN',
-        'icon' => 'las la-university',
-        'position' => '8',
-        'active' => '1',
-        'submenu' => [
-            ['title' => 'SCHEMES', 'route' => 'mortgage_schemes.index'],
-            ['title' => 'CALCULATOR', 'route' => 'mortgage_calculator.index'],
-            ['title' => 'APPLICATIONS', 'route' => 'mortgage_application.index'],
-            ['title' => 'DISBURSEMENT', 'route' => 'mortage_disbursements.index'],
-        ],
-    ],
        [
         'title' => 'GOLD LOAN',
         'icon' => 'las la-university',
@@ -116,6 +104,21 @@ return [
             ['title' => 'APPLICATIONS', 'route' => 'mortgage.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'mortgage.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'mortgage.account.index'],
+            ['title' => 'LINE PROPERTY REPORT', 'route' => 'mortgage.lineproperty.index'],
+        ],
+    ],
+    [
+        'title' => 'LOAN AGAINST DEPOSIT',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'loanagainst.schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'loanagainst.calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'loanagainst.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'loanagainst.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'loanagainst.account.index'],
+            ['title' => 'LINE DEPOSITS REPORT', 'route' => 'loanagainst.lineproperty.index'],
         ],
     ],
     [

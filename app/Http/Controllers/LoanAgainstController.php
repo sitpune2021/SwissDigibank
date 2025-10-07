@@ -5,33 +5,32 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use Illuminate\Http\Request;
-use App\Models\MortgageScheme;
+use App\Models\LoanAgainstScheme;
 use App\Models\Member;
 use App\Models\Branch;
 use App\Models\Scheme;
-use App\Models\MortgageLoanApplication;
-use App\Models\MortgageProperty;
+use App\Models\LoanAgainstApplication;
 use App\Models\Calculator;
 use App\Models\LoanCreditScore;
 use Carbon\Carbon;
-use App\Exports\LinePropertExport;
+use App\Exports\LoanAgainstExport;
 use Maatwebsite\Excel\Facades\Excel;
 
-class MortgageController extends Controller
+class LoanAgainstController extends Controller
 {
     
     public function index()
     {       
-        //$schemes = MortgageScheme::all();
+        //$schemes = LoanAgainstScheme::all();
         // paginate(10) => 10 records per page
-        $schemes = MortgageScheme::orderBy('id', 'desc')->paginate(10);
-        return view("mortgage.schemes.index", compact('schemes'));
+        $schemes = LoanAgainstScheme::orderBy('id', 'desc')->paginate(10);
+        return view("loanagainst.schemes.index", compact('schemes'));
     } 
   
 
     public function create()
     {
-        return view("mortgage.schemes.create");
+        return view("loanagainst.schemes.create");
     }
 
     public function store(Request $request)
@@ -65,47 +64,46 @@ class MortgageController extends Controller
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
         ]);
 
-        MortgageScheme::create($validated);
+        LoanAgainstScheme::create($validated);
 
         return redirect()
-            ->route('mortgage.schemes.index')
+            ->route('loanagainst.schemes.index')
             ->with('success', 'Scheme created successfully!');
     }
 
     public function show($id)
     {
-        $scheme = MortgageScheme::findOrFail($id);
-        return view('mortgage.schemes.show', compact('scheme'));
+        $scheme = LoanAgainstScheme::findOrFail($id);
+        return view('loanagainst.schemes.show', compact('scheme'));
     }
 
     public function edit($id)
     {
-        $scheme = MortgageScheme::findOrFail($id);
-        return view('mortgage.schemes.create', compact('scheme'));
+        $scheme = LoanAgainstScheme::findOrFail($id);
+        return view('loanagainst.schemes.create', compact('scheme'));
     }
 
     public function update(Request $request, $id)
     {
-        $scheme = MortgageScheme::findOrFail($id);
+        $scheme = LoanAgainstScheme::findOrFail($id);
 
         $scheme->update($request->all());
 
-        return redirect()->route('mortgage.schemes.index')
+        return redirect()->route('loanagainst.schemes.index')
                         ->with('success', 'Scheme updated successfully!');
     }
   
     public function view($id)
     {
-        $scheme = MortgageScheme::findOrFail($id);
-        return view("mortgage.schemes.view", compact('scheme'));
+        $scheme = LoanAgainstScheme::findOrFail($id);
+        return view("loanagainst.schemes.view", compact('scheme'));
     }
 
     public function calculator()
     {
-        $scheme = MortgageScheme::all();
-        return view("mortgage.calculator.index", compact('scheme'));
+        $scheme = LoanAgainstScheme::all();
+        return view("loanagainst.calculator.index", compact('scheme'));
     }
-
 
     public function calculateResult(Request $request)
     {
@@ -139,7 +137,7 @@ class MortgageController extends Controller
                 'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
             ]);
 
-            $scheme = MortgageScheme::findOrFail($request->scheme_id);
+            $scheme = LoanAgainstScheme::findOrFail($request->scheme_id);
 
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
@@ -205,7 +203,7 @@ class MortgageController extends Controller
         $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
 
         //  Return to view
-        return view('mortgage.calculator.result', [
+        return view('loanagainst.calculator.result', [
             'scheme' => $scheme,
             'is_manual' => $isManual,
             'loan' => $loan,
@@ -232,11 +230,14 @@ class MortgageController extends Controller
      // GoldLoanController.php
     public function appindex()
     {
-        //  loan applications fetch 
-        $applications = MortgageLoanApplication::with(['creditScores'])->latest()->get();
+        // loan applications fetch with pagination
+        $applications = LoanAgainstApplication::with(['creditScores'])
+            ->latest()
+            ->paginate(10); // 10 records
 
-        return view("mortgage.applications.index", compact('applications'));
+        return view("loanagainst.applications.index", compact('applications'));
     }
+
 
 
     public function appcreate() 
@@ -244,48 +245,64 @@ class MortgageController extends Controller
         //$members = Member::all();
         $members = Member::select('id', 'member_info_first_name','member_info_mobile_no')->get();
         $branch = Branch::all();
-        $scheme = MortgageScheme::all();
+        $scheme = LoanAgainstScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("mortgage.applications.create", compact('members','branch','scheme','banks'));
+        return view("loanagainst.applications.create", compact('members','branch','scheme','banks'));
     }
    
 
-public function storeLoanApplication(Request $request)
-{
-    // Step 1: Save Loan Application
-    $application = MortgageLoanApplication::create([
-        'application_date' => $request->application_date,
-        'member_id' => $request->member_id,
-        'scheme_id' => $request->scheme_id,
-        'loan_amount' => $request->loan_amount,
-        'branch_id' => $request->branch_id,
-        'tenure_value' => $request->tenure_value,
-        'net_loan_amount' => $request->net_loan_amount,
-        'purpose_of_loan' => $request->purpose_of_loan,
-    ]);
+    public function storeLoanApplication(Request $request)
+    {
+        
+        $loanApplication = LoanAgainstApplication::create($request->only([
+            'application_date',
+            'member_id',
+            'co_applicant_1_id',
+            'co_applicant_2_id',
+            'branch_id',
+            'advisor_id',
+            'securety_type',
+            'security_amount',
+            'guarantor_1_id',
+            'guarantor_2_id',
+            'guarantor_3_id',
+            'guarantor_4_id',
+            'scheme_id',
+            'tenure_type',
+            'tenure_value',
+            'emi_collection',
+            'credit_period',
+            'loan_amount',
+            'insurance_amount',
+            'net_loan_amount',
+            'purpose_of_loan',
+            'processing_fee_value',
+            'processing_fee_gst',
+            'processing_fee_sgst',
+            'processing_fee_cgst',
+            'processing_fee_igst',
+            'processing_fee_total',
+            'fee_mode',
+            'bank_id',
+            'cheque_no',
+            'cheque_date',
+            'transfer_date',
+            'utr_no',
+            'transfer_mode',
+            'credited',
+            'collect_principal_as_emi',
+            'collect_advance_processing_fee',
+            // new calculation fields
+            'security_value',
+            'max_loan_amount',
+            'max_loan_limit',
+            'maximum_approvable_amount',
+            'approved_loan_amount',
+        ]));
 
-    // Step 2: Save Multiple Property Details
-    if ($request->filled('property_type')) {
-        foreach ($request->property_type as $index => $type) {
-            MortgageProperty::create([
-                'loan_application_id' => $application->id,
-                'property_type' => $type,
-                'ownership_type' => $request->ownership_type[$index] ?? null,
-                'property_address' => $request->property_address[$index] ?? null,
-                'city' => $request->city[$index] ?? null,
-                'state' => $request->state[$index] ?? null,
-                'area' => $request->area[$index] ?? null,
-                'property_value' => $request->property_value[$index] ?? 0,
-            ]);
-        }
+        return redirect()->route('loanagainst.applications.index')
+            ->with('success', 'Loan Application saved successfully!');
     }
-
-    return redirect()->route('mortgage.applications.index')
-        ->with('success', 'Loan Application and Property saved successfully!');
-}
-
-
-
 
 
     public function getMemberInfo($id)
@@ -309,29 +326,29 @@ public function storeLoanApplication(Request $request)
 
     public function appview($id)
     {
-        $application = MortgageLoanApplication::with([
+        $application = LoanAgainstApplication::with([
             'member',
             'coApplicant1',
             'guarantor1',
             'scheme'   // <-- add scheme here
         ])->findOrFail($id);
 
-        return view("mortgage.applications.view", compact('application'));
+        return view("loanagainst.applications.view", compact('application'));
     }
 
 
    public function appedit($id)
     {
-        $application = MortgageLoanApplication::with(['member', 'scheme'])->findOrFail($id);
+        $application = LoanAgainstApplication::with(['member', 'scheme'])->findOrFail($id);
 
-        // Dropdown data अगर चाहिए तो यहाँ से pass करो
+        // Dropdown data 
         $members = Member::all();
-        $schemes = MortgageScheme::all();
+        $schemes = LoanAgainstScheme::all();
         $branch = Branch::all();
-        $scheme = MortgageScheme::all();
+        $scheme = LoanAgainstScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view('mortgage.applications.create', compact('application', 'members', 'schemes','branch', 'scheme','banks'));
+        return view('loanagainst.applications.create', compact('application', 'members', 'schemes','branch', 'scheme','banks'));
     }
 
     public function appupdate(Request $request, $id)
@@ -344,54 +361,29 @@ public function storeLoanApplication(Request $request)
             // बाकी fields का validation
         ]);
 
-        $application = MortgageLoanApplication::findOrFail($id);
+        $application = LoanAgainstApplication::findOrFail($id);
         $application->update($request->all());
 
         return redirect()
             ->route('mortgage.applications.view', $application->id)
             ->with('success', 'Application updated successfully');
     }
-
-
-     public function showEmiChart(){
-        // $banks = Bank::all(); // or your logic here
-        return view("mortgage.applications.view-buttons.show-emi-chart");
-    }
-     public function showdisbursesetting(){
-        
-        return view("mortgage.applications.view-buttons.disburse-setting");
-    }
-
-     public function col_process_fee(){
-        
-        return view("mortgage.applications.view-buttons.col_process_fee");
-    }
-    public function upload_documents(){
-        
-        return view("mortgage.applications.upload_documents");
-    }
-     public function upload_cibil_score(){
-        
-        return view("mortgage.applications.upload-cibil-score");
-    }
-
-
    
 
     public function linepropertyindex()
     {
-        // loan applications fetch excluding status 1 and 2
-        $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member'])
-            ->whereNotIn('status', [1, 2])
+        // loan applications fetch excluding status 1 and 0
+        $applications = LoanAgainstApplication::with(['creditScores', 'branch', 'member'])
+            ->whereNotIn('status', [1, 0])
             ->latest()
             ->get(['id', 'status']);
 
-        return view("mortgage.lineproperty.index", compact('applications'));
+        return view("loanagainst.lineproperty.index", compact('applications'));
     }
 
     public function exportXls()
     {
-        return Excel::download(new LinePropertExport, 'lineproperty.xlsx');
+        return Excel::download(new LoanAgainstExport, 'loanagainst.xlsx');
     }
     
 

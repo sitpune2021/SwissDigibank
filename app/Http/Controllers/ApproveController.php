@@ -422,13 +422,25 @@ class ApproveController extends Controller
         //
     }
 
+    // public function loans()
+    // {
+    //     // loan applications fetch 
+    //     $applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
+
+    //     return view("approvals.loans", compact('applications'));
+    // }
+    
     public function loans()
     {
-        // loan applications fetch 
-        $applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
+        // loan applications fetch excluding status 1 and 2
+        $applications = LoanApplication::with(['creditScores', 'branch', 'member'])
+            ->whereNotIn('status', [1, 2])
+            ->latest()
+            ->get();
 
         return view("approvals.loans", compact('applications'));
     }
+
 
     public function updateStatus(Request $request, $id)
     {

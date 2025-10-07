@@ -74,7 +74,7 @@
           
             <!-- Application No. -->
            <td class="text-start !py-5 px-6">
-                <a href="{{ route('gold-loan.applications.view', $application->id) }}" 
+                <a href="{{ route('mortgage.applications.view', $application->id) }}" 
                 class="text-blue-600 hover:underline">
                     {{ $application->id }}
                 </a>
@@ -131,8 +131,8 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('gold-loan.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
-                            <li><a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            <li><a href="{{ route('mortgage.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('mortgage.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
                         </ul>
                     </div>
                 </div>

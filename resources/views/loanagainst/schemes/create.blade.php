@@ -27,22 +27,14 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW GOLD LOAN SCHEME</h1>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm"> New</a>
-            </p>
-
+            <h1 class="text-xl font-semibold">NEW LOAN AGAINST SCHEME</h1>
         </div>
-
     </div>
+    
     <div class="box">
         <div class="col-span-12  lg:col-span-12">
-           <!-- <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6" 
-            action="{{ route('gold-loan.schemes.store') }}" method="POST">
-            @csrf -->
             <form class="grid grid-cols-2 gap-4 mt-6"
-                action="{{ isset($scheme) ? route('mortgage.schemes.update', $scheme->id) : route('mortgage.schemes.store') }}"
+                action="{{ isset($scheme) ? route('loanagainst.schemes.update', $scheme->id) : route('loanagainst.schemes.store') }}"
                 method="POST">
                 @csrf
                 @if(isset($scheme))

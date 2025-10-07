@@ -23,8 +23,8 @@
     @endif
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h1 class=" flex text-xl block font-semibold">MORTGAGE LOAN SCHEMES</h1>
-                <a href="{{route('mortgage.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <h1 class=" flex text-xl block font-semibold">LOAN AGAINST SCHEMES</h1>
+                <a href="{{route('loanagainst.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
                 </a>
             </div>  
               
@@ -133,8 +133,8 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('mortgage.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
-                            <li><a href="{{ route('mortgage.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                            <li><a href="{{ route('loanagainst.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
+                            <li><a href="{{ route('loanagainst.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
                         </ul>
                     </div>
                 </div>
