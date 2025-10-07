@@ -116,7 +116,6 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
         Route::get('/fetch-schemes', [CalculatorController::class, 'getSchemes'])->name('fd.schemes.fetch');
         Route::get('/fetch-scheme/{id}', [CalculatorController::class, 'getSchemeDetails'])->name('fd.scheme.details');
-
     });
 
 
@@ -156,7 +155,7 @@ Route::middleware('auth.user')->group(function () {
 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
-    
+
     Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
 
 
@@ -190,10 +189,10 @@ Route::middleware('auth.user')->group(function () {
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
         Route::get('/members/receipt/print/{id}', [MemberController::class, 'printReceipt'])
-            ->middleware('auth') 
+            ->middleware('auth')
             ->name('transactions.print-receipt');
 
-Route::get('/members/application-form/{id}', [MemberController::class, 'applicationForm'])->name('members.application_form');
+        Route::get('/members/application-form/{id}', [MemberController::class, 'applicationForm'])->name('members.application_form');
 
         Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
@@ -370,31 +369,31 @@ Route::group(['prefix' => 'morgage-loan'], function () {
 
 // Gold Loan
 Route::group(['prefix' => 'gold-loan'], function () {
-        
+
     Route::get('scheme/index', [GoldLoanController::class, 'index'])
-            ->name('gold-loan.schemes.index');
+        ->name('gold-loan.schemes.index');
 
     // create form
     Route::get('scheme/create', [GoldLoanController::class, 'create'])
-    ->name('gold-loan.schemes.create');
+        ->name('gold-loan.schemes.create');
 
     // store form data
     Route::post('scheme/store', [GoldLoanController::class, 'store'])
-    ->name('gold-loan.schemes.store');
+        ->name('gold-loan.schemes.store');
 
     // view list
     Route::get('scheme/{id}', [GoldLoanController::class, 'show'])
-    ->name('gold-loan.schemes.show');
+        ->name('gold-loan.schemes.show');
 
     // edit form
-   Route::get('scheme/{id}/edit', [GoldLoanController::class, 'edit'])
-    ->name('gold-loan.schemes.edit');
+    Route::get('scheme/{id}/edit', [GoldLoanController::class, 'edit'])
+        ->name('gold-loan.schemes.edit');
 
     Route::put('scheme/{id}', [GoldLoanController::class, 'update'])
-    ->name('gold-loan.schemes.update');
+        ->name('gold-loan.schemes.update');
 
     Route::get('scheme/view/{id}', [GoldLoanController::class, 'view'])
-    ->name('gold-loan.schemes.view');
+        ->name('gold-loan.schemes.view');
 
 
     Route::get('calculator/index', [GoldLoanController::class, 'calculator'])
@@ -408,17 +407,17 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('applications/create', [GoldLoanController::class, 'appcreate'])
         ->name('gold-loan.applications.create');
-    
+
     Route::post('/loan-applications/store', [GoldLoanController::class, 'storeLoanApplication'])->name('loan-applications.store');
 
     Route::get('/members/{id}/info', [GoldLoanController::class, 'getMemberInfo'])
-    ->name('members.info');
+        ->name('members.info');
 
 
     // Route::get('applications/view', [GoldLoanController::class, 'appview'])
     //     ->name('gold-loan.applications.view');
     Route::get('gold-loan/applications/view/{id}', [GoldLoanController::class, 'appview'])
-    ->name('gold-loan.applications.view');
+        ->name('gold-loan.applications.view');
 
     // Edit form
     Route::get('/gold-loan/applications/{id}/edit', [GoldLoanController::class, 'appedit'])
@@ -440,7 +439,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.disbursements.disburse-loan');
     Route::post('/gold-loan/disbursements/store', [DisbursementController::class, 'store'])->name('disbursements.store');
 
-    
+
 
     //  Ornament index
     Route::get('ornaments/index', [OrnamentController::class, 'index'])

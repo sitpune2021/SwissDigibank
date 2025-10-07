@@ -1,332 +1,392 @@
 @extends('layout.main')
 @section('content')
 
-<style>
-    input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
-        accent-color: green;
-        /* For modern browsers */
-    }
+    <style>
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
 
-    /* Fallback for browsers without accent-color support */
-    input[type="checkbox"]:checked {
-        background-color: green;
-        border: none;
-    }
+        /* Fallback for browsers without accent-color support */
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
 
-    input[type="radio"] {
-        width: 24px;
-        height: 24px;
-        accent-color: green;
-        /* Modern browser support */
-    }
-</style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+            /* Modern browser support */
+        }
+    </style>
 
-<div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
-        <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW GOLD LOAN APPLICATION</h1>
+    <div class="main-inner">
+        <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
+            <div class="flex items-start flex-col  gap-2">
+                <h1 class="text-xl font-semibold">NEW GOLD LOAN APPLICATION</h1>
 
+            </div>
         </div>
-    </div>
 
-    <div class="box">
-        <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
-            <div class=" rounded-10 flex-1 bg-primary/5 p-2">
-                <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
-                    <form method="POST"
-                        enctype="multipart/form-data"
-                        action="{{ isset($application) ? route('gold-loan.applications.update', $application->id) : route('loan-applications.store') }}">
-                        @csrf
-                        @if(isset($application))
-                        @method('PUT')
-                        @endif
+        <div class="box">
 
-                        <div class="col-span-2 md:col-span-1">
-                            {{-- Application Date --}}
-                            <label class="md:text-lg font-medium block mb-4 uppercase">
-                                Application Date <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="application_date"
-                                value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
-                        </div>
+            <form method="POST" enctype="multipart/form-data"
+                action="  {{ isset($application) ? route('gold-loan.applications.update', $application->id) : route('loan-applications.store') }}">
+                @csrf
+                @if(isset($application))
+                @method('PUT')
+                @endif
+                <div class=" flex flex-col lg:flex-row  gap-2">
+                    <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10  lg:col-span-12">
+                        <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="member_id" class="md:text-lg font-medium block mb-4 uppercase">
-                                Customer <span class="text-red-500">*</span>
-                            </label>
+                            <div class="col-span-2 md:col-span-1">
+                                {{-- Application Date --}}
+                                <label class="md:text-lg font-medium block mb-4 uppercase">
+                                    Application Date <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" name="application_date"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                    value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
 
-                            <select name="member_id" id="member_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Customer No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}"
-                                    {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
-                                    data-name="{{ $member->member_info_first_name }}"
-                                    data-mobile="{{ $member->member_info_mobile_no }}">
-                                    {{ $member->member_info_first_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                1st Co-Applicant Customer</label>
-                            <select name="co_applicant_1_id" id="co_applicant_1_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Customer No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}"
-                                    {{ old('member_id', $application->co_applicant_1_id ?? '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                2nd Co-Applicant Customer</label>
-                            <select name="co_applicant_2_id" id="co_applicant_2_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Customer No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}"
-                                    {{ old('member_id', $application->co_applicant_2_id ?? '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Branch
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <select name="branch_id" id="branch_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Branch No or Name</option>
-                                @foreach($branch as $member)
-                                <option value="{{ $member->id }}"
-                                    {{ old('member_id', $application->branch_id ?? '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->branch_name }}
-                                </option>
-
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Advisor/ Staff</label>
-                            <select
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                placeholder="Enter Scheme Code">
-                                <option value="">select Advisor/ Staff </option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Guarantor 1 </label>
-                            <select name="guarantor_1_id" id="guarantor_1_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Customer No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}"
-                                    {{ old('member_id', $application->guarantor_1_id ?? '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }}
-                                </option>
-
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Guarantor 2</label>
-                                <select name="guarantor_2_id" id="guarantor_2_id"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Customer No or Name</option>
-                                    @foreach($members as $member)
-                                    <option value="{{ $member->id }}"
-                                        {{ old('member_id', $application->guarantor_2_id ?? '') == $member->id ? 'selected' : '' }}>
-                                        {{ $member->member_info_first_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
+                                @error('application_date')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
-                        </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Guarantor 3 </label>
-                                <select name="guarantor_3_id" id="guarantor_3_id"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Customer No or Name</option>
-                                    @foreach($members as $member)
-                                    <option value="{{ $member->id }}"
-                                        {{ old('member_id', $application->guarantor_3_id ?? '') == $member->id ? 'selected' : '' }}>
-                                        {{ $member->member_info_first_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Guarantor 4 </label>
-                                <select name="guarantor_4_id" id="guarantor_4_id"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Customer No or Name</option>
-                                    @foreach($members as $member)
-                                    <option value="{{ $member->id }}"
-                                        {{ old('member_id', $application->guarantor_4_id ?? '') == $member->id ? 'selected' : '' }}>
-                                        {{ $member->member_info_first_name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Scheme <span class="text-error">*</span>
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="member_id" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Customer <span class="text-red-500">*</span>
                                 </label>
 
-                                <select name="scheme_id" id="scheme_id"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Scheme Code</option>
-                                    @foreach($scheme as $sc)
-                                    <option value="{{ $sc->id }}"
-                                        {{ old('scheme_id', $application->scheme_id ?? '') == $sc->id ? 'selected' : '' }}
-                                        data-code="{{ $sc->scheme_code }}"
-                                        data-name="{{ $sc->scheme_name }}"
-                                        data-tenure="{{ $sc->tenure ?? '-' }}"
-                                        data-max="{{ $sc->max_loan_amount ?? '-' }}"
-                                        data-limit="{{ $sc->max_loan_limit ?? '-' }}"
-                                        data-min="{{ $sc->min_loan_amount ?? '-' }}"
-                                        data-interest="{{ $sc->annual_interest_rate ?? '-' }}"
-                                        data-type="{{ $sc->gold_loan_setting ?? '-' }}"
-                                        data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
-                                        data-charge="{{ $sc->charge_floting ?? '-' }}">
-                                        {{ $sc->scheme_code }}
+                                <select name="member_id" id="member_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Customer No or Name</option>
+                                   @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->member_id ?? '')
+                                        == $member->id ? 'selected' : '' }}
+                                        data-name="{{ $member->member_info_first_name }}"
+                                        data-mobile="{{ $member->member_info_mobile_no }}">
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                    @endforeach 
+                                </select>
+
+                                @error('member_id')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    1st Co-Applicant Customer</label>
+                                <select name="co_applicant_1_id" id="co_applicant_1_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Customer No or Name</option>
+                                     @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                        co_applicant_1_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                    @endforeach 
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    2nd Co-Applicant Customer</label>
+                                <select name="co_applicant_2_id" id="co_applicant_2_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Customer No or Name</option>
+                                    @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                        co_applicant_2_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
                                     </option>
                                     @endforeach
                                 </select>
+
                             </div>
-                        </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            {{-- do not remove div --}}
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
+                            <div class="col-span-2 md:col-span-1">
                                 <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Tenure Type
-                                    <span class="text-error">*</span>
+                                    Branch
+                                    <span class="text-red-500">*</span>
                                 </label>
-                                <div class="flex">
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" value="days"
-                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'days' ? 'checked' : '' }}>
-                                        <span class="text-gray-70 capitalize">DAYS</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" value="weeks"
-                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'weeks' ? 'checked' : '' }}>
-                                        <span class="text-gray-70 capitalize">WEEKS</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" value="months"
-                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'months' ? 'checked' : '' }}>
-                                        <span class="text-gray-70 capitalize">MONTHS</span>
-                                    </label>
+                                <select name="branch_id" id="branch_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Branch No or Name</option>
+                                    @foreach($branch as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->branch_id ?? '')
+                                        == $member->id ? 'selected' : '' }}>
+                                        {{ $member->branch_name }}
+                                    </option>
+
+                                    @endforeach
+                                </select>
+                                @error('branch_id')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Advisor/ Staff</label>
+                                <select
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                    placeholder="Enter Scheme Code">
+                                    <option value="">select Advisor/ Staff </option>
+                                </select>
+                                @error('branch_id')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Guarantor 1 </label>
+                                <select name="guarantor_1_id" id="guarantor_1_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Customer No or Name</option>
+                                    @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->guarantor_1_id
+                                        ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                        Guarantor 2</label>
+                                    <select name="guarantor_2_id" id="guarantor_2_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Customer No or Name</option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                            guarantor_2_id ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                        Guarantor 3 </label>
+                                    <select name="guarantor_3_id" id="guarantor_3_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Customer No or Name</option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                            guarantor_3_id ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                        Guarantor 4 </label>
+                                    <select name="guarantor_4_id" id="guarantor_4_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Customer No or Name</option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                            guarantor_4_id ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                        Scheme <span class="text-error">*</span>
+                                    </label>
+
+                                    <select name="scheme_id" id="scheme_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Scheme Code</option>
+                                        @foreach($scheme as $sc)
+                                        <option value="{{ $sc->id }}" {{ old('scheme_id', $application->scheme_id ?? '')
+                                            == $sc->id ? 'selected' : '' }}
+                                            data-code="{{ $sc->scheme_code }}"
+                                            data-name="{{ $sc->scheme_name }}"
+                                            data-tenure="{{ $sc->tenure ?? '-' }}"
+                                            data-max="{{ $sc->max_loan_amount ?? '-' }}"
+                                            data-limit="{{ $sc->max_loan_limit ?? '-' }}"
+                                            data-min="{{ $sc->min_loan_amount ?? '-' }}"
+                                            data-interest="{{ $sc->annual_interest_rate ?? '-' }}"
+                                            data-type="{{ $sc->gold_loan_setting ?? '-' }}"
+                                            data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
+                                            data-charge="{{ $sc->charge_floting ?? '-' }}">
+                                            {{ $sc->scheme_code }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    @error('scheme_id')
+                                        <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                {{-- do not remove div --}}
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                        Tenure Type
+                                        <span class="text-error">*</span>
+                                    </label>
+                                    <div class="flex">
+                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                            <input type="radio" name="tenure_type" value="days" {{ old('tenure_type',
+                                                $application->tenure_type ?? '') == 'days' ?
+                                            'checked' : '' }} >
+                                            <span class="text-gray-70 capitalize">DAYS</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                            <input type="radio" name="tenure_type" value="weeks" {{ old('tenure_type',
+                                                $application->tenure_type ?? '') == 'weeks' ?
+                                            'checked' : '' }} >
+                                            <span class="text-gray-70 capitalize">WEEKS</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                            <input type="radio" name="tenure_type" value="months" {{ old('tenure_type',
+                                                $application->tenure_type ?? '') == 'months' ?
+                                            'checked' : '' }} >
+                                            
+                                            <span class="text-gray-70 capitalize">MONTHS</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="tenure_value" name="tenure_value" value=" {{ old('tenure_value', $application->tenure_value ?? '') }}
+                                                            "
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
+                                @error('tenure_value')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    EMI Collection <span class="text-error">* </span>
+                                </label>
+                                <select name="emi_collection"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select</option>
+                                    <option value="Monthaly" {{ old('emi_collection', $application->emi_collection
+                                        ?? '') == 'Monthaly' ? 'selected' : '' }}
+                                        >Monthaly</option>
+                                    <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection
+                                        ?? '') == 'Qaurterly' ? 'selected' : '' }}
+                                        >Qaurterly</option>
+                                    <option value="Half_yearly" {{ old('emi_collection', $application->
+                                        emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}
+                                        >Half_yearly</option>
+                                    <option value="Yearly" {{ old('emi_collection', $application->emi_collection ??
+                                        '') == 'Yearly' ? 'selected' : '' }} >Yearly</option>
+                                </select>
+                                @error('emi_collection')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Credit Period(EMI Grace Period)(Days)
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="credit_period" name="credit_period" value=" {{ old('credit_period', $application->credit_period ?? 0) }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="0">
+                                @error('credit_period')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="loanAmount" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Loan Amount (₹) <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="loanAmount" name="loan_amount"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="0" value=" {{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                @error('loan_amount')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="insuranceAmount" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Insurance Amount (₹) <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="insuranceAmount" name="insurance_amount"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Insurance Amount (₹)" value="
+                                                            {{ old('insurance_amount', $application->insurance_amount ?? 0) }}
+                                                             ">
+                                @error('insurance_amount')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="netLoanAmount" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Net Loan Amount (₹) <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
+                                    placeholder="0" value="
+                                                            {{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}
+                                                             ">
+                                @error('net_loan_amount')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1 mb-3">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Purpose of Loan
+                                    <span class="text-error">*</span>
+                                </label>
+
+                                <input type="text" id="purpose_of_loan" name="purpose_of_loan"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Purpose of Loan" value="
+                                                            {{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}
+                                                             ">
+                                @error('purpose_of_loan')
+                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="tenure_value" name="tenure_value"
-                                value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm border px-3 py-2">
-                        </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                EMI Collection <span class="text-error">* </span>
-                            </label>
-                            <select name="emi_collection" class="w-full text-sm border px-3 py-2">
-                                <option value="">Please Select</option>
-                                <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
-                                <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
-                                <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
-                                <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
-                            </select>
-
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Credit Period ( EMI Grace Period ) ( Days )
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $application->credit_period ?? 0) }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0">
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="loanAmount" class="md:text-lg font-medium block mb-4 uppercase">
-                                Loan Amount (₹) <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="loanAmount" name="loan_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="insuranceAmount" class="md:text-lg font-medium block mb-4 uppercase">
-                                Insurance Amount (₹) <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="insuranceAmount" name="insurance_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="netLoanAmount" class="md:text-lg font-medium block mb-4 uppercase">
-                                Net Loan Amount (₹) <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
-                                placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1 mb-3">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Purpose of Loan
-                                <span class="text-error">*</span>
-                            </label>
-
-                            <input type="text" id="purpose_of_loan" name="purpose_of_loan"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
-                        </div>
-                        <!-- </div> -->
-
+                        <!-- Credit Score Details -->
                         <div class="col-span-12  lg:col-span-12 mb-5">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
@@ -335,16 +395,20 @@
                                 <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
                                     <thead class="bg-secondary/5 whitespace-nowrap">
                                         <tr class="bg-gray-100">
-                                            <th class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                                 Cibil Type
                                             </th>
-                                            <th class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                                 Cibil Score
                                             </th>
-                                            <th class="text-center  px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                            <th
+                                                class="text-center  px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                                 Report Date
                                             </th>
-                                            <th class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
                                                 Upload File
                                             </th>
                                             <th class=" px-2 py-2 md:px-4 md:py-2"></th>
@@ -362,23 +426,26 @@
                                 </button>
                             </div>
                             {{--calculator checkbox- --}}
-                            <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
+                            <x-checkbox-calculator id="manualEntry" name="manual_entry"
+                                label="Collect Principal Amount as EMI"
                                 sublabel="(Check this if you want to collect principal amount as EMIs.)" />
                         </div>
 
+                        <!-- Collect Advance Processing Fee -->
                         <div class="col-span-12  lg:col-span-12 ">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                                 Collect Advance Processing Fee
                             </label>
                             <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
-
                                 <div class="w-full">
                                     <div class="flex  flex-row justify-around items-center gap-3">
                                         <!-- Label -->
-                                        <label for="" class="text-sm block font-medium text-gray-700 dark:text-gray-200 uppercase">
+                                        <label for=""
+                                            class="text-sm block font-medium text-gray-700 dark:text-gray-200 uppercase">
                                             Total Processing Fee : </label>
-                                        <input type="text" name="processing_fee_value" id="processing_fee_value" readonly placeholder="0"
+                                        <input type="text" name="processing_fee_value" id="processing_fee_value" readonly
+                                            placeholder="0"
                                             class="w-64 rounded-10 block border dark:bg-bg3 px-3 py-2 text-sm " />
                                     </div>
                                 </div>
@@ -405,27 +472,32 @@
                                             </td>
                                             <!-- GST (%) -->
                                             <td class="px-2 py-2 ">
-                                                <input type="text" name="processing_fee_gst" id="processing_fee_gst" value="18.0" readonly
+                                                <input type="text" name="processing_fee_gst" id="processing_fee_gst"
+                                                    value="18.0" readonly
                                                     class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                             </td>
                                             <!-- SGST -->
                                             <td class="px-2 py-2 ">
-                                                <input type="text" name="processing_fee_sgst" id="processing_fee_sgst" value="0" readonly
+                                                <input type="text" name="processing_fee_sgst" id="processing_fee_sgst"
+                                                    value="0" readonly
                                                     class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                             </td>
                                             <!-- CGST -->
                                             <td class="px-2 py-2 ">
-                                                <input type="text" name="processing_fee_cgst" id="processing_fee_cgst" value="0" readonly
+                                                <input type="text" name="processing_fee_cgst" id="processing_fee_cgst"
+                                                    value="0" readonly
                                                     class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                             </td>
                                             <!-- IGST -->
                                             <td class="px-2 py-2 ">
-                                                <input type="text" name="processing_fee_igst" id="processing_fee_igst" value="0" readonly
+                                                <input type="text" name="processing_fee_igst" id="processing_fee_igst"
+                                                    value="0" readonly
                                                     class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                             </td>
                                             <!-- Total -->
                                             <td class="px-2 py-2">
-                                                <input type="number" name="processing_fee_total" id="processing_fee_total" placeholder="0"
+                                                <input type="number" name="processing_fee_total" id="processing_fee_total"
+                                                    placeholder="0"
                                                     class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
                                             </td>
                                         </tr>
@@ -433,21 +505,24 @@
                                 </table>
 
                                 <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
-                                    Pay Mode :</label>
+                                    Pay Mode :
+                                </label>
                                 <!-- Radio Buttons -->
-                                <div class="mt-3">
+                                <div class="mt-3 flex gap-3 ">
                                     <!-- Pay Mode -->
-                                    <label class="mr-4">
-                                        <input type="radio" name="fee_mode" value="cash"
-                                            {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> Cash
+                                    <label class="mr-4 flex items-center flex-row gap-3">
+                                        <input type="radio" name="fee_mode" value="cash" {{ old('fee_mode',
+                                            $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}>
+                                             Cash
                                     </label>
-                                    <label class="mr-4">
-                                        <input type="radio" name="fee_mode" value="cheque"
-                                            {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                    <label class="mr-4 flex items-center flex-row gap-3">
+                                        <input type="radio" name="fee_mode" value="cheque" {{ old('fee_mode',
+                                            $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> 
+                                            Cheque
                                     </label>
-                                    <label>
-                                        <input type="radio" name="fee_mode" value="online"
-                                            {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                    <label class="mr-4 flex items-center flex-row gap-3">
+                                        <input type="radio" name="fee_mode" value="online" {{ old('fee_mode',
+                                            $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}  > Online Tr.
                                     </label>
                                 </div>
 
@@ -458,8 +533,8 @@
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         <option value="">-- Select Bank --</option>
                                         @foreach($banks as $id => $name)
-                                        <option value="{{ $id }}"
-                                            {{ old('bank_id', $application->bank_id ?? '') == $id ? 'selected' : '' }}>
+                                        <option value="{{ $id }}" {{ old('bank_id', $application->bank_id ?? '') == $id ?
+                                            'selected' : '' }}>
                                             {{ $name }}
                                         </option>
                                         @endforeach
@@ -470,13 +545,13 @@
                                         <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                         <input type="text" name="cheque_no"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-                                            placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
+                                            placeholder="Enter Cheque No" value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
                                     </div>
 
                                     <!-- Cheque Date -->
                                     <div class="mt-3">
                                         <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                        <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        <input type="date" id="cheque_date" name="cheque_date" value="    {{ old('cheque_date', $application->cheque_date ?? '') }}"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
                                 </div>
@@ -487,7 +562,7 @@
                                         <label class="block text-sm font-medium text-gray-700 uppercase">
                                             Transfer Date <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                        <input type="date" id="transfer_date" name="transfer_date" value=" {{ old('transfer_date', $application->transfer_date ?? '') }} "
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
 
@@ -495,7 +570,8 @@
                                         <label class="block text-sm font-medium text-gray-700 uppercase">
                                             UTR / Transaction No. <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                        <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
+                                            value="{{ old('utr_no', $application->utr_no ?? '') }}"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
 
@@ -505,19 +581,22 @@
                                         </label>
                                         <div class="flex gap-4 mt-2">
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="transfer_mode" value="imps"
-                                                    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
+                                                <input type="radio" name="transfer_mode" value="imps" {{
+                                                    old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ?
+                                                'checked' : '' }} >
                                                 <span>IMPS</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="transfer_mode" value="vpa"
-                                                    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
+                                                <input type="radio" name="transfer_mode" value="vpa" {{
+                                                    old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ?
+                                                'checked' : '' }} >
 
                                                 <span>VPA</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="transfer_mode" value="neft_rtgs"
-                                                    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
+                                                <input type="radio" name="transfer_mode" value="neft_rtgs" {{
+                                                    old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ?
+                                                'checked' : '' }} >
                                                 <span>NEFT/RTGS</span>
                                             </label>
                                         </div>
@@ -529,13 +608,13 @@
                                         </label>
                                         <div class="flex gap-4 mt-2">
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="yes"
-                                                    {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                                <input type="radio" name="credited" value="yes" {{ old('credited',
+                                                    $application->credited ?? '') == 'yes' ? 'checked' : '' }} >
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="no"
-                                                    {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                                <input type="radio" name="credited" value="no" {{ old('credited',
+                                                    $application->credited ?? '') == 'no' ? 'checked' : '' }} >
                                                 <span>No</span>
                                             </label>
                                         </div>
@@ -543,223 +622,229 @@
                                 </div>
 
                                 <p for="" class=" text-error text-sm block mt-3 mb-4">
-                                    Note: If you wish to collect processing fee at the time of disbursement, then enter 0. Fees
+                                    Note: If you wish to collect processing fee at the time of disbursement, then enter 0.
+                                    Fees
                                     will be calculated accordingly.
                                 </p>
 
                             </div>
-                            <!-- </div> -->
-                            <!-- </div> -->
+                        </div>
+                    </div>
 
-
-                            <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
-                                {{-- Member Info Box --}}
-                                <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
-                                    <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                                        <h3 class="text-base font-semibold md:text-lg uppercase">Member Info</h3>
-                                        <button type="button" class="p-1 rounded transition"
-                                            onclick="toggleSection(this, 'memberInfoBody')">
-                                            <span class="toggle-icon text-lg font-bold">−</span>
-                                        </button>
-                                    </div>
-                                    <div id="memberInfoBody" class="px-4 py-3">
-                                        <div class="overflow-x-auto">
-                                            <table class="w-full text-sm text-left">
-                                                <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                                    <tr class="border-b">
-                                                        <td class="font-semibold py-2 pr-4 uppercase">Member Name</td>
-                                                        <td class="py-2 capitalize" id="memberName">-</td>
-                                                    </tr>
-                                                    <tr class="border-b">
-                                                        <td class="font-semibold py-2 pr-4 uppercase">Mobile No</td>
-                                                        <td class="py-2" id="memberMobile">-</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                    <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
+                        {{-- Member Info Box --}}
+                        <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
+                            <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
+                                <h3 class="text-base font-semibold md:text-lg uppercase">Member Info</h3>
+                                <button type="button" class="p-1 rounded transition"
+                                    onclick="toggleSection(this, 'memberInfoBody')">
+                                    <span class="toggle-icon text-lg font-bold">−</span>
+                                </button>
+                            </div>
+                            <div id="memberInfoBody" class="px-4 py-3">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left">
+                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                                            <tr class="border-b">
+                                                <td class="font-semibold py-2 pr-4 uppercase">Member Name</td>
+                                                <td class="py-2 capitalize" id="memberName">-</td>
+                                            </tr>
+                                            <tr class="border-b">
+                                                <td class="font-semibold py-2 pr-4 uppercase">Mobile No</td>
+                                                <td class="py-2" id="memberMobile">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
+                        </div>
 
-                            {{--schemeBox info --}}
-                            <div id="schemeBox" class=" mt-5 hidden">
-                                <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                                    <h3 class="text-base font-semibold md:text-lg uppercase">Scheme Info</h3>
-                                    <button type="button" class="p-1 rounded transition"
-                                        onclick="toggleSection(this, 'schemeInfoBody')">
-                                        <span class="toggle-icon text-lg font-bold">−</span>
-                                    </button>
-                                </div>
-
-                                <div id="schemeInfoBody" class="px-4 py-3">
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full text-sm text-left">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td>
-                                                    <td class="py-2" id="schemeCode">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td>
-                                                    <td class="py-2" id="schemeName">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td>
-                                                    <td class="py-2" id="schemeTenure">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td>
-                                                    <td class="py-2" id="schemeMax">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against Security</td>
-                                                    <td class="py-2" id="schemeLimit">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td>
-                                                    <td class="py-2" id="schemeMin">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td>
-                                                    <td class="py-2" id="schemeInterest">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
-                                                    <td class="py-2" id="schemeType">-</td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Active</td>
-                                                    <td class="py-2" id="schemeActive">-</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td>
-                                                    <td class="py-2" id="schemeCharge">-</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- </div>
-    </div> -->
-
-                            <div class="w-full overflow-x-auto mt-5">
-                                <table class="w-full rounded-10 whitespace-nowrap text-sm">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="text-center px-2 py-2 bg-secondary/5">#</th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Type <span class="text-red-500">*</span>
-                                            </th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Name <span class="text-red-500">*</span>
-                                            </th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">No of Item <span class="text-red-500">*</span>
-                                            </th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Value per Gram (A) (₹) <span
-                                                    class="text-red-500">*</span></th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Gross Weight (gm) <span
-                                                    class="text-red-500">*</span></th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Net Weight (B) (gm) <span
-                                                    class="text-red-500">*</span></th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Tunch (C) (%)<span
-                                                    class="text-red-500">*</span></th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">
-                                                Fine Weight *(D = C% of B) (gm)
-                                                <span class="text-red-500">*</span>
-                                            </th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Total Value (A * D)(₹)</th>
-                                            <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Image</th>
-                                            <th class="px-2 py-2 bg-secondary/5"></th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody id="itemsBody" class="wihtespace-nowrap">
-                                        <!-- Rows will be inserted here -->
-                                    </tbody>
-
-                                    <tfoot class="bg-gray-100 border">
-                                        <tr>
-                                            <td colspan="7" class="text-center font-semibold border px-2 py-2 ">TOTAL</td>
-                                            <td class="px-2 py-2 ">
-                                                {{-- <input type="text" class="w-full  rounded px-2 py-1 text-center bg-secondary/5" disabled> --}}
-                                            </td>
-                                            <td class="px-2 py-2 ">
-                                                {{-- <input type="text" class="w-full  rounded px-2 py-1 text-center bg-secondary/5" disabled> --}}
-                                            </td>
-                                            <td class="px-2 py-2 ">
-                                                <input type="number" readonly class="w-full border rounded-10 px-2 py-1 text-center bg-secondary/5"
-                                                    placeholder="0">
-                                            </td>
-                                            <td colspan="2" class=" pe-2">
-                                                {{-- <input type="number" readonly class="w-full  rounded px-2 py-1 text-center bg-secondary/5"> --}}
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-
-                            <div class="mt-3">
-                                <button type="button" id="addRowBtn" class="btn-primary rounded-10 px-4 py-2">
-                                    + Add Gold Items
+                        {{--schemeBox info --}}
+                        <div id="schemeBox" class=" mt-5 hidden">
+                            <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
+                                <h3 class="text-base font-semibold md:text-lg uppercase">Scheme Info</h3>
+                                <button type="button" class="p-1 rounded transition"
+                                    onclick="toggleSection(this, 'schemeInfoBody')">
+                                    <span class="toggle-icon text-lg font-bold">−</span>
                                 </button>
                             </div>
 
-                            <!-- Calculation Result Box -->
-                            <div id="calculationBox"
-                                class="mt-5 p-4 bg-secondary/5 rounded-10 hidden">
-                                <h3 class="text-lg font-semibold mb-3 uppercase">Calculation Result</h3>
-                                <table class="w-full text-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="font-semibold py-1 uppercase">Net Loan Amount</td>
-                                            <td id="resNetLoan">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-semibold py-1 uppercase">Security Value</td>
-                                            <td id="resSecurity">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-semibold py-1 uppercase">Max Loan Amount</td>
-                                            <td id="resMaxLoan">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-semibold py-1 uppercase">Max Loan Limit</td>
-                                            <td id="resLimit">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-semibold py-1 uppercase">Maximum Approvable Amount</td>
-                                            <td id="resApprovable">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-semibold py-1 uppercase">Approved Loan Amount</td>
-                                            <td id="resApproved">-</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <div id="schemeInfoBody" class="px-4 py-3">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left">
+                                        <tbody>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td>
+                                                <td class="py-2" id="schemeCode">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td>
+                                                <td class="py-2" id="schemeName">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td>
+                                                <td class="py-2" id="schemeTenure">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td>
+                                                <td class="py-2" id="schemeMax">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against
+                                                    Security</td>
+                                                <td class="py-2" id="schemeLimit">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td>
+                                                <td class="py-2" id="schemeMin">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td>
+                                                <td class="py-2" id="schemeInterest">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
+                                                <td class="py-2" id="schemeType">-</td>
+                                            </tr>
 
-                            <!-- Buttons -->
-                            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                                <button type="button" id="calculateBtn"
-                                    class="btn-outline justify-center">
-                                    Calculate
-                                </button>
-                                <button class="btn-outline justify-center" type="reset">
-                                    <a href="{{route('rdschemes.index')}}"> Back</a>
-                                </button>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Active</td>
+                                                <td class="py-2" id="schemeActive">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td>
+                                                <td class="py-2" id="schemeCharge">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-
-                            <!-- </div> -->
-                    </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+
+                <div class="w-full overflow-x-auto mt-5">
+                    <table class="w-full rounded-10 whitespace-nowrap text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center px-2 py-2 bg-secondary/5">#</th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Type <span
+                                        class="text-red-500">*</span>
+                                </th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Name <span
+                                        class="text-red-500">*</span>
+                                </th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">No of Item <span
+                                        class="text-red-500">*</span>
+                                </th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Value per Gram (A) (₹)
+                                    <span class="text-red-500">*</span>
+                                </th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Gross Weight (gm) <span
+                                        class="text-red-500">*</span></th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Net Weight (B) (gm) <span
+                                        class="text-red-500">*</span></th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Tunch (C) (%)<span
+                                        class="text-red-500">*</span></th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">
+                                    Fine Weight *(D = C% of B) (gm)
+                                    <span class="text-red-500">*</span>
+                                </th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Total Value (A * D)(₹)
+                                </th>
+                                <th class="text-center px-2 py-2 bg-secondary/5 uppercase">Item Image</th>
+                                <th class="px-2 py-2 bg-secondary/5"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="itemsBody" class="wihtespace-nowrap">
+                            <!-- Rows will be inserted here -->
+                        </tbody>
+
+                        <tfoot class="bg-gray-100 border">
+                            <tr>
+                                <td colspan="7" class="text-center font-semibold border px-2 py-2 ">TOTAL</td>
+                                <td class="px-2 py-2 ">
+                                    {{-- <input type="text" class="w-full  rounded px-2 py-1 text-center bg-secondary/5"
+                                        disabled> --}}
+                                </td>
+                                <td class="px-2 py-2 ">
+                                    {{-- <input type="text" class="w-full  rounded px-2 py-1 text-center bg-secondary/5"
+                                        disabled> --}}
+                                </td>
+                                <td class="px-2 py-2 ">
+                                    <input type="number" readonly
+                                        class="w-full border rounded-10 px-2 py-1 text-center bg-secondary/5"
+                                        placeholder="0">
+                                </td>
+                                <td colspan="2" class=" pe-2">
+                                    {{-- <input type="number" readonly
+                                        class="w-full  rounded px-2 py-1 text-center bg-secondary/5"> --}}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" id="addRowBtn" class="btn-primary rounded-10 px-4 py-2">
+                        + Add Gold Items
+                    </button>
+                </div>
+
+                <!-- Calculation Result Box -->
+                <div id="calculationBox" class="mt-5 p-4 bg-secondary/5 rounded-10 hidden">
+                    <h3 class="text-lg font-semibold mb-3 uppercase">Calculation Result</h3>
+                    <table class="w-full text-sm">
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold py-1 uppercase">Net Loan Amount</td>
+                                <td id="resNetLoan">-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-1 uppercase">Security Value</td>
+                                <td id="resSecurity">-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-1 uppercase">Max Loan Amount</td>
+                                <td id="resMaxLoan">-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-1 uppercase">Max Loan Limit</td>
+                                <td id="resLimit">-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-1 uppercase">Maximum Approvable Amount</td>
+                                <td id="resApprovable">-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-1 uppercase">Approved Loan Amount</td>
+                                <td id="resApproved">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+                    <button type="button" id="calculateBtn" class="btn-outline justify-center">
+                        Calculate
+                    </button>
+                    <button class="btn-outline justify-center" type="reset">
+                        <a href="{{route('rdschemes.index')}}"> Back</a>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
+
 
     <script>
         let isCalculated = false; // flag set karte hain
 
-        document.getElementById("calculateBtn").addEventListener("click", function(e) {
+        document.getElementById("calculateBtn").addEventListener("click", function (e) {
             if (!isCalculated) {
                 //  Pehli click pe calculation karo
                 document.getElementById("calculationBox").classList.remove("hidden");
@@ -781,7 +866,7 @@
     </script>
 
     <script>
-        document.getElementById('member_id').addEventListener('change', function() {
+        document.getElementById('member_id').addEventListener('change', function () {
             let selected = this.options[this.selectedIndex];
             let name = selected.getAttribute('data-name') || '-';
             let mobile = selected.getAttribute('data-mobile') || '-';
@@ -795,13 +880,13 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const memberSelect = document.getElementById("member_id");
             const memberBox = document.getElementById("memberBox");
             const memberName = document.getElementById("memberName");
             const memberMobile = document.getElementById("memberMobile");
 
-            memberSelect.addEventListener("change", function() {
+            memberSelect.addEventListener("change", function () {
                 const selectedOption = this.options[this.selectedIndex];
                 const name = selectedOption.getAttribute("data-name") || "-";
                 const mobile = selectedOption.getAttribute("data-mobile") || "-";
@@ -822,7 +907,7 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const schemeSelect = document.getElementById("scheme_id");
             const schemeBox = document.getElementById("schemeBox");
 
@@ -838,7 +923,7 @@
             const schemeActive = document.getElementById("schemeActive");
             const schemeCharge = document.getElementById("schemeCharge");
 
-            schemeSelect.addEventListener("change", function() {
+            schemeSelect.addEventListener("change", function () {
                 const selectedOption = this.options[this.selectedIndex];
 
                 if (this.value) {
@@ -905,7 +990,7 @@
     </script>
 
     <script>
-        document.getElementById("calculateBtn").addEventListener("click", function() {
+        document.getElementById("calculateBtn").addEventListener("click", function () {
             let rows = document.querySelectorAll("#itemsBody tr");
             let totalSecurity = 0;
 
@@ -959,79 +1044,82 @@
 
 
     <script>
-        // =====logic for dynamic cibil rows=====
+        document.addEventListener("DOMContentLoaded", function () {
+            const cibilBody = document.getElementById("cibilBody");
+            const addRowBtn = document.getElementById("addRow");
 
-        const cibilBody = document.getElementById("cibilBody");
-        const addRowBtn = document.getElementById("addRow");
+            // Template for new row
+            function newRow() {
+                // Get current date in DD/MM/YYYY format
+                const today = new Date();
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
 
-        // Template for new row
-        function newRow() {
-            // Get current date in DD/MM/YYYY format
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            const formattedDate = `${day}/${month}/${year}`;
+                return `
+                                    <tr class="nested-fields border-b">
+                                        <!-- Cibil Type -->
+                                        <td class="px-2 py-2" style="width:230px;">
+                                            <select name="cibil_type[]" required
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                                                <option value="transunion">TransUnion</option>
+                                                <option value="equifax">Equifax</option>
+                                                <option value="experian">Experian</option>
+                                                <option value="crif_highmark">Crif Highmark</option>
+                                            </select>
+                                        </td>
 
-            return `
-        <tr class="nested-fields border-b">
-            <!-- Cibil Type -->
-            <td class="px-2 py-2" style="width:230px;">
-                <select name="cibil_type[]" required
-                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
-                    <option value="transunion">TransUnion</option>
-                    <option value="equifax">Equifax</option>
-                    <option value="experian">Experian</option>
-                    <option value="crif_highmark">Crif Highmark</option>
-                </select>
-            </td>
+                                        <!-- Cibil Score -->
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                                        </td>
 
-            <!-- Cibil Score -->
-            <td class="px-2 py-2">
-                <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
-                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
-            </td>
+                                        <!-- Report Date -->
+                                        <td class="px-2 py-2 relative">
+                                            <input type="text" id="date2" name="report_date[]" value="${formattedDate}"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                                        </td>
 
-            <!-- Report Date -->
-            <td class="px-2 py-2 relative">
-                <input type="text" id="date2" name="report_date[]" value="${formattedDate}"
-                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
-            </td>
+                                        <!-- Upload File -->
+                                        <td class="px-2 py-2">
+                                            <input type="file" name="report_file[]"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+                                        </td>
 
-            <!-- Upload File -->
-            <td class="px-2 py-2">
-                <input type="file" name="report_file[]"
-                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
-            </td>
-
-            <!-- Remove button -->
-            <td class="px-2 py-2 md:px-4 md:py-2 text-center">
-                <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                    <i class="las la-times" aria-hidden="true"></i>
-                </button>
-            </td>
-        </tr>
-    `;
-        }
-
-
-        // Add row
-        addRowBtn.addEventListener("click", () => {
-
-
-            cibilBody.insertAdjacentHTML("beforeend", newRow());
-        });
-
-        // Remove row (event delegation)
-        cibilBody.addEventListener("click", function(e) {
-            if (e.target.closest(".removeRow")) {
-                e.target.closest("tr").remove();
+                                        <!-- Remove button -->
+                                        <td class="px-2 py-2 md:px-4 md:py-2 text-center">
+                                            <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                                                <i class="las la-times" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
             }
+
+
+            // Add row
+            addRowBtn.addEventListener("click", () => {
+
+
+                cibilBody.insertAdjacentHTML("beforeend", newRow());
+            });
+
+            // Remove row (event delegation)
+            cibilBody.addEventListener("click", function (e) {
+                if (e.target.closest(".removeRow")) {
+                    e.target.closest("tr").remove();
+                }
+            });
+
+            // ✅ Add one default row when page loads
+            cibilBody.insertAdjacentHTML("beforeend", newRow());
         });
 
         //== Add Gold Items== 
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const tbody = document.getElementById("itemsBody");
             const addRowBtn = document.getElementById("addRowBtn");
 
@@ -1042,52 +1130,53 @@
                 });
             }
 
+
             // === Function: Create a new row ===
             function createRow() {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-        <td class="text-center px-2 py-2">1</td>
-        <td class="px-2 py-2">
-            <select name="item_type[]" class="itemType w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-sm" style="width:150px;">
-                <option>Gold Jewelery</option>
-                <option>Gold Coin</option>
-                <option>Gold Biscuit</option>
-                <option>Silver Jewelery</option>
-                <option>Silver Coin</option>
-                <option>Silver Biscuit</option>
-                <option>Platinum</option>
-                <option>Diamond</option>
-                <option>Stone</option>
-            </select>
-        </td>
-        <td class="px-2 py-2">
-            <input type="text" name="item_name[]" placeholder="Enter Item Name" class="itemName w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="no_of_item[]" placeholder="No of Items" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="value_per_gram[]" placeholder="Value per Gram" class="valuePerGram w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="gross_weight[]" placeholder="Gross Weight" class="grossWeight w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-center text-sm">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="net_weight[]" placeholder="Net Weight" class="netWeight w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="tunch[]" placeholder="Tunch %" value="100" class="tunch w-full rounded bg-secondary/5 px-2 py-2 rounded-10 border text-center text-sm">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="fine_weight[]" placeholder="Fine Weight" readonly class="fineWeight w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-center text-sm bg-gray-100">
-        </td>
-        <td class="px-2 py-2">
-            <input type="number" name="total_value[]" placeholder="Total Value" readonly class="totalValue w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-center text-sm bg-gray-100">
-        </td>
-        <td class="px-2 py-2 text-center">
-            <button type="button" class="text-red-500 removeRowBtn"><i class="las la-times"></i></button>
-        </td>
-        `;
+                                    <td class="text-center px-2 py-2">1</td>
+                                    <td class="px-2 py-2">
+                                        <select name="item_type[]" class="itemType w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-sm" style="width:150px;">
+                                            <option>Gold Jewelery</option>
+                                            <option>Gold Coin</option>
+                                            <option>Gold Biscuit</option>
+                                            <option>Silver Jewelery</option>
+                                            <option>Silver Coin</option>
+                                            <option>Silver Biscuit</option>
+                                            <option>Platinum</option>
+                                            <option>Diamond</option>
+                                            <option>Stone</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="text" name="item_name[]" placeholder="Enter Item Name" class="itemName w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="no_of_item[]" placeholder="No of Items" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="value_per_gram[]" placeholder="Value per Gram" class="valuePerGram w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="gross_weight[]" placeholder="Gross Weight" class="grossWeight w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-center text-sm">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="net_weight[]" placeholder="Net Weight" class="netWeight w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="tunch[]" placeholder="Tunch %" value="100" class="tunch w-full rounded bg-secondary/5 px-2 py-2 rounded-10 border text-center text-sm">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="fine_weight[]" placeholder="Fine Weight" readonly class="fineWeight w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-center text-sm bg-gray-100">
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <input type="number" name="total_value[]" placeholder="Total Value" readonly class="totalValue w-full rounded px-2 py-2 rounded-10 border bg-secondary/5 text-center text-sm bg-gray-100">
+                                    </td>
+                                    <td class="px-2 py-2 text-center">
+                                        <button type="button" class="text-red-500 removeRowBtn"><i class="las la-times"></i></button>
+                                    </td>
+                                    `;
 
                 // === Select key elements from this row ===
                 const valuePerGram = row.querySelector(".valuePerGram");
@@ -1135,13 +1224,13 @@
             updateRowNumbers();
 
             // === Add Row button click ===
-            addRowBtn.addEventListener("click", function() {
+            addRowBtn.addEventListener("click", function () {
                 tbody.appendChild(createRow());
                 updateRowNumbers();
             });
 
             // === Remove Row (event delegation) ===
-            tbody.addEventListener("click", function(e) {
+            tbody.addEventListener("click", function (e) {
                 if (e.target.closest(".removeRowBtn")) {
                     e.target.closest("tr").remove();
                     updateRowNumbers();
@@ -1198,4 +1287,4 @@
             });
         });
     </script>
-    @endsection
+@endsection
