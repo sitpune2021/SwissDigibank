@@ -151,14 +151,19 @@
             </td>
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1">
-                    {{ number_format($disbursement->approved_amount, 2) }}
+                    {{ number_format($disbursement->approved_loan_amount, 2) }}
                 </div>
             </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ ucfirst($disbursement->status) }}
-                </div>
+           <td class="text-start !py-5 px-6">
+                @if($disbursement->status == 0)
+                    Draft
+                @elseif($disbursement->status == 1)
+                    Approved
+                @else
+                    Disbursed
+                @endif
             </td>
+
             <td class="text-start !py-5 px-6">
                 <div class="flex justify-center">
                     <div class="relative">
@@ -168,7 +173,12 @@
                                <a href="{{ route('gold-loan.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
                             </li>
                             <li>
-                                <a href="" class="single-option uppercase">Cancel Loan</a>
+                                <form action="{{ route('disbursements.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
+                                    @csrf
+                                    <button type="submit" class="single-option uppercase text-red-600 hover:underline">
+                                        Cancel Loan
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </div>

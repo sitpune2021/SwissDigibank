@@ -55,7 +55,15 @@ return new class extends Migration
             // Flags
             $table->boolean('collect_principal_as_emi')->default(false);
             $table->boolean('collect_advance_processing_fee')->default(false);
+            $table->string('fee_mode');
 
+            // Calculation 
+            $table->decimal('security_value', 15, 2)->nullable();
+            $table->decimal('max_loan_amount', 15, 2)->nullable();
+            $table->decimal('max_loan_limit', 15, 2)->nullable();
+            $table->decimal('maximum_approvable_amount', 15, 2)->nullable();
+            $table->decimal('approved_loan_amount', 15, 2)->nullable();
+            
             $table->timestamps();
         });
 
@@ -64,6 +72,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('loan_application_id');
             $table->string('cibil_type');
+            
             $table->integer('cibil_score')->nullable();
             $table->date('report_date')->nullable();
             $table->string('report_file_path')->nullable(); // file upload path
@@ -76,9 +85,22 @@ return new class extends Migration
         });
     }
 
-    public function down(): void
+    // public function down(): void
+    // {
+    //     Schema::dropIfExists('loan_credit_scores');
+    //     Schema::dropIfExists('loan_applications');
+    // }
+    public function down()
     {
-        Schema::dropIfExists('loan_credit_scores');
-        Schema::dropIfExists('loan_applications');
+        Schema::table('loan_applications', function (Blueprint $table) {
+            $table->dropColumn([
+                'security_value',
+                'max_loan_amount',
+                'max_loan_limit',
+                'maximum_approvable_amount',
+                'approved_loan_amount'
+            ]);
+        });
     }
+    
 };

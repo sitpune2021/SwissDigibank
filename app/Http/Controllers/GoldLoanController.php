@@ -11,16 +11,20 @@ use App\Models\Branch;
 use App\Models\Scheme;
 use App\Models\LoanApplication;
 use App\Models\LoanOrnament;
+use App\Models\Calculator;
 use App\Models\LoanCreditScore;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class GoldLoanController extends Controller
 {
-
+    
     public function index()
-    {
-        // saare gold loan schemes fetch karenge
-        $schemes = GoldLoanScheme::all();
+    {       
+        //$schemes = GoldLoanScheme::all();
+        // paginate(10) => 10 records per page
+        $schemes = GoldLoanScheme::orderBy('id', 'desc')->paginate(10);
         return view("gold-loan.schemes.index", compact('schemes'));
     }
 
@@ -32,40 +36,40 @@ class GoldLoanController extends Controller
 
     public function store(Request $request)
     {
-        // validation
+        
         $validated = $request->validate([
             'scheme_name' => 'required|string|max:255',
             'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
-            'min_loan_amount' => 'required|numeric',
-            'max_loan_amount' => 'required|numeric',
-            'tenure' => 'required|integer',
-            'annual_interest_rate' => 'required|numeric',
+            'min_loan_amount' => 'required|numeric|min:1',
+            'max_loan_amount' => 'required|numeric|min:1|max:200000',
+            'tenure' => 'required|integer|min:1',
+            'annual_interest_rate' => 'required|numeric|min:0',
+
+            // new optional fields
+            'processing_fee' => 'nullable|numeric|min:0',
+            'stamp_duty_charge' => 'nullable|numeric|min:0',
+            'insurance_fee' => 'nullable|numeric|min:0',
+            'gold_loan_setting' => 'nullable|string',
+            'max_loan_limit' => 'nullable|numeric|min:0',
+            'overdue_interest_rate' => 'nullable|numeric|min:0',
+            'penalty_charge' => 'nullable|numeric|min:0',
+            'fore_closer_charge' => 'nullable|numeric|min:0',
+            'credit_period' => 'nullable|numeric|min:0',
+            'sms_charge' => 'nullable|numeric|min:0',
+            'fuel_charge' => 'nullable|numeric|min:0',
+            'stationary_charge' => 'nullable|numeric|min:0',
+            'maintenace_charge' => 'nullable|numeric|min:0',
+            'collcetion' => 'nullable|numeric|min:0',
+            'is_active' => 'required|in:0,1',
+        ], [
+            'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
         ]);
 
-        try {
-            // Add is_active = 0
-            $data = array_merge($validated, ['is_active' => 0]);
+        GoldLoanScheme::create($validated);
 
-            // Save data
-            $scheme = GoldLoanScheme::create($data);
-
-            // Log success
-            Log::info('Gold Loan Scheme created successfully', [
-                'scheme_id' => $scheme->id,
-                'scheme_code' => $scheme->scheme_code
-            ]);
-
-            return redirect()->route('gold-loan.schemes.index')
-                ->with('success', 'Scheme created successfully!');
-        } catch (\Exception $e) {
-            // Log error
-            Log::error('Error creating Gold Loan Scheme: ' . $e->getMessage(), [
-                'request_data' => $request->all(),
-                'exception' => $e
-            ]);
-
-            return back()->withErrors(['error' => 'An error occurred while creating the scheme. Please try again.']);
-        }
+        return redirect()
+            ->route('gold-loan.schemes.index')
+            ->with('success', 'Scheme created successfully!');
     }
 
     public function show($id)
@@ -89,8 +93,7 @@ class GoldLoanController extends Controller
         return redirect()->route('gold-loan.schemes.index')
             ->with('success', 'Scheme updated successfully!');
     }
-
-
+  
     public function view($id)
     {
         $scheme = GoldLoanScheme::findOrFail($id);
@@ -99,24 +102,144 @@ class GoldLoanController extends Controller
 
     public function calculator()
     {
-        return view("gold-loan.calculator.index");
-    }
-    public function calculation()
-    {
-        return view("gold-loan.calculator.calculation");
+        $scheme = GoldLoanScheme::all();
+        return view("gold-loan.calculator.index", compact('scheme'));
     }
 
-    // GoldLoanController.php
+
+    public function calculateResult(Request $request)
+    {
+        $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
+
+        if ($isManual) {
+            //  Manual Entry Mode
+            $request->validate([
+                'loan_amount' => 'required|numeric|min:1',
+                'max_tenure' => 'required|integer|min:1',
+                'manual_interest_rate' => 'required|numeric|min:0',
+                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
+            ]);
+
+            $loan = (float) $request->loan_amount;
+            $tenureMonths = (int) $request->max_tenure;
+            $payout = $request->payout;
+            $interestType = 'flat';
+            $annualRate = (float) $request->manual_interest_rate;
+
+            $processingFee = (float) ($request->manual_processing_fee ?? 0);
+            $stampAmount = round($loan * ((float) ($request->manual_stamp ?? 0)) / 100, 2);
+            $insuranceAmount = round($loan * ((float) ($request->manual_insurance ?? 0)) / 100, 2);
+            $scheme = null;
+        } else {
+            //  Scheme Mode
+            $request->validate([
+                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'loan_amount' => 'required|numeric|min:1',
+                'tenure_months' => 'required|integer|min:1',
+                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
+            ]);
+
+            $scheme = GoldLoanScheme::findOrFail($request->scheme_id);
+
+            $loan = (float) $request->loan_amount;
+            $tenureMonths = (int) $request->tenure_months;
+            $payout = $request->payout;
+            $interestType = 'flat';
+            $annualRate = (float) ($request->annual_interest_rate ?? $scheme->annual_interest_rate ?? 0);
+
+            $processingFee = (float) ($scheme->processing_fee ?? 0);
+            $stampAmount = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
+            $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
+        }
+
+        //  Determine months per EMI payout
+        switch ($payout) {
+            case 'monthly':
+                $monthsPerInstallment = 1;
+                break;
+            case 'quarterly':
+                $monthsPerInstallment = 3;
+                break;
+            case 'half-yearly':
+                $monthsPerInstallment = 6;
+                break;
+            case 'yearly':
+                $monthsPerInstallment = 12;
+                break;
+            default:
+                $monthsPerInstallment = 1;
+        }
+
+        //  Total Installments & Interest
+        $installments = (int) ceil($tenureMonths / $monthsPerInstallment);
+        $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
+        $emi = round(($loan + $totalInterest) / $installments, 2);
+
+        // EMI Schedule Generation
+        $schedule = [];
+        $outstanding = $loan;
+        $startDate = now();
+
+        for ($i = 1; $i <= $installments; $i++) {
+            $principal = round($loan / $installments, 2);
+            $interest = round($totalInterest / $installments, 2);
+            $emiTotal = round($principal + $interest, 2);
+            $outstanding -= $principal;
+
+            $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
+            $dueDate = $emiDate->copy()->addDays(10); // optional grace period
+
+            $schedule[] = [
+                'no' => $i,
+                'emi_date' => $emiDate->format('d/m/Y'),
+                'due_date' => $dueDate->format('d/m/Y'),
+                'principal' => $principal,
+                'interest' => $interest,
+                'charges' => 0,
+                'emi' => $emiTotal,
+                'balance' => max($outstanding, 0),
+            ];
+        }
+
+        //  Grand Total (Loan + Interest + Charges)
+        $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
+
+        //  Return to view
+        return view('gold-loan.calculator.result', [
+            'scheme' => $scheme,
+            'is_manual' => $isManual,
+            'loan' => $loan,
+            'tenure_months' => $tenureMonths,
+            'payout' => $payout,
+            'installments' => $installments,
+            'interest_type' => ucfirst($interestType),
+            'annual_rate' => $annualRate,
+            'disburse_date' => now(),
+            'processing_fee' => $processingFee,
+            'processing_incl_gst' => $processingFee,
+            'stamp_amount' => $stampAmount,
+            'stamp_incl_gst' => $stampAmount,
+            'insurance_amount' => $insuranceAmount,
+            'schedule' => $schedule,
+            'total_interest' => $totalInterest,
+            'total_principal' => $loan,
+            'total_emi_paid' => $loan + $totalInterest,
+            'grand_total_payable' => $grandTotalPayable,
+        ]);
+    }
+
+
+     // GoldLoanController.php
     public function appindex()
     {
-        // सभी loan applications fetch करें
+        //  loan applications fetch 
         $applications = LoanApplication::with(['creditScores'])->latest()->get();
 
         return view("gold-loan.applications.index", compact('applications'));
     }
 
 
-    public function appcreate()
+    public function appcreate() 
     {
         //$members = Member::all();
         $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no')->get();
@@ -125,72 +248,131 @@ class GoldLoanController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
         return view("gold-loan.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-
     public function storeLoanApplication(Request $request)
     {
-        // Loan Application Save
-        $loanApplication = LoanApplication::create($request->only([
-            'application_date',
-            'member_id',
-            'co_applicant_1_id',
-            'co_applicant_2_id',
-            'branch_id',
-            'advisor_id',
-            'guarantor_1_id',
-            'guarantor_2_id',
-            'guarantor_3_id',
-            'guarantor_4_id',
-            'scheme_id',
-            'tenure_type',
-            'tenure_value',
-            'emi_collection',
-            'credit_period',
-            'loan_amount',
-            'insurance_amount',
-            'net_loan_amount',
-            'purpose_of_loan',
-            'processing_fee_value',
-            'processing_fee_gst',
-            'processing_fee_sgst',
-            'processing_fee_cgst',
-            'processing_fee_igst',
-            'processing_fee_total',
-            'fee_mode',
-            'bank_id',
-            'cheque_no',
-            'cheque_date',
-            'transfer_date',
-            'utr_no',
-            'transfer_mode',
-            'credited',
-            'collect_principal_as_emi',
-            'collect_advance_processing_fee',
-        ]));
+        // dd($request->all());
+        Log::info('--- Loan Application Store Started ---', [
+            'user_id' => Auth::id(),
+            'input_data' => $request->all(),
+        ]);
 
-    // Ornaments save karo (agar diye gaye hain)
-    if ($request->has('ornaments')) {
-        $ornaments = $request->ornaments;
+        try {
+            // Loan Application Save
+            $loanApplication = LoanApplication::create($request->only([
+                'application_date',
+                'member_id',
+                'co_applicant_1_id',
+                'co_applicant_2_id',
+                'branch_id',
+                'advisor_id',
+                'guarantor_1_id',
+                'guarantor_2_id',
+                'guarantor_3_id',
+                'guarantor_4_id',
+                'scheme_id',
+                'tenure_type',
+                'tenure_value',
+                'emi_collection',
+                'credit_period',
+                'loan_amount',
+                'insurance_amount',
+                'net_loan_amount',
+                'purpose_of_loan',
+                'processing_fee_value',
+                'processing_fee_gst',
+                'processing_fee_sgst',
+                'processing_fee_cgst',
+                'processing_fee_igst',
+                'processing_fee_total',
+                'fee_mode',
+                'bank_id',
+                'cheque_no',
+                'cheque_date',
+                'transfer_date',
+                'utr_no',
+                'transfer_mode',
+                'credited',
+                'collect_principal_as_emi',
+                'collect_advance_processing_fee',
+            ]));
 
-        foreach ($ornaments['item_type'] as $index => $type) {
-            LoanOrnament::create([
-                'application_id' => $loanApplication->id,
-                'item_type'      => $type,
-                'item_name'      => $ornaments['item_name'][$index] ?? null,
-                'no_of_items'    => $ornaments['no_of_items'][$index] ?? 0,
-                'value_per_gram' => $ornaments['value_per_gram'][$index] ?? 0,
-                'gross_weight'   => $ornaments['gross_weight'][$index] ?? 0,
-                'net_weight'     => $ornaments['net_weight'][$index] ?? 0,
-                'tunch'          => $ornaments['tunch'][$index] ?? 0,
-                'fine_weight'    => $ornaments['fine_weight'][$index] ?? 0,
-                'total_value'    => $ornaments['total_value'][$index] ?? 0,
+            Log::info('Loan Application created successfully', [
+                'loan_application_id' => $loanApplication->id,
             ]);
+
+            // ==== Credit Score Details Save (Dynamic Rows) ====
+            if ($request->has('cibil_type')) {
+                foreach ($request->cibil_type as $index => $type) {
+                    try {
+                        $filePath = null;
+
+                        if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                            $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+                        }
+
+                        $loanApplication->creditScores()->create([
+                            'cibil_type'       => $type,
+                            'cibil_score'      => $request->cibil_score[$index] ?? null,
+                            'report_date'      => isset($request->report_date[$index])
+                                ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                                : null,
+                            'report_file_path' => $filePath,
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Error while saving credit score entry', [
+                            'index' => $index,
+                            'error_message' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString(),
+                        ]);
+                    }
+                }
+            }
+
+            // ✅ Save Ornaments (Dynamic Rows)
+            $itemTypes = $request->input('item_type', []);
+            $itemNames = $request->input('item_name', []);
+            $noOfItems = $request->input('no_of_item', []);
+            $valuePerGram = $request->input('value_per_gram', []);
+            $grossWeight = $request->input('gross_weight', []);
+            $netWeight = $request->input('net_weight', []);
+            $tunch = $request->input('tunch', []);
+            $fineWeight = $request->input('fine_weight', []);
+            $totalValue = $request->input('total_value', []);
+
+            if (!empty($itemTypes)) {
+                foreach ($itemTypes as $index => $type) {
+                    $loanOrnament = LoanOrnament::create([
+                        'application_id'=> $loanApplication->id,
+                        'item_type' => $type,
+                        'item_name' => $itemNames[$index] ?? null,
+                        'no_of_item' => $noOfItems[$index] ?? 0,
+                        'value_per_gram' => $valuePerGram[$index] ?? 0,
+                        'gross_weight' => $grossWeight[$index] ?? 0,
+                        'net_weight' => $netWeight[$index] ?? 0,
+                        'tunch' => $tunch[$index] ?? 0,
+                        'fine_weight' => $fineWeight[$index] ?? 0,
+                        'total_value' => $totalValue[$index] ?? 0,
+                        'status'=>1
+                    ]);
+                }
+            }
+
+
+            Log::info('--- Loan Application Store Completed Successfully ---', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            return redirect()->route('gold-loan.applications.index')
+                ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error while storing Loan Application', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving loan application.');
         }
     }
-
-    return redirect()->route('gold-loan.applications.index')
-        ->with('success', 'Loan Application + Ornaments saved successfully!');
-}
-
 
     public function getMemberInfo($id)
     {

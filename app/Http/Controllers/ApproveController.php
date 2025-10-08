@@ -11,6 +11,7 @@ use App\Models\Account;
 use App\Models\FDAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\LoanApplication;
 
 class ApproveController extends Controller
 {
@@ -87,11 +88,12 @@ class ApproveController extends Controller
      * Start Approved Status
      */
 
+    
     public function updateAccountStatus(Request $request, $id)
     {
 
         try {
-            // ✅ Validate the input
+            //  Validate the input
             $validated = $request->validate([
                 'transaction_status' => 'required|in:0,1,2',
                 'remarks' => 'nullable|string|max:255',
@@ -414,8 +416,6 @@ class ApproveController extends Controller
         //
     }
 
-
-
     /**
      * Remove the specified resource from storage.
      */
@@ -423,4 +423,47 @@ class ApproveController extends Controller
     {
         //
     }
+
+    // public function loans()
+    // {
+    //     // loan applications fetch 
+    //     $applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
+
+    //     return view("approvals.loans", compact('applications'));
+    // }
+    
+    public function loans()
+    {
+        // loan applications fetch excluding status 1 and 2
+        $applications = LoanApplication::with(['creditScores', 'branch', 'member'])
+            ->whereNotIn('status', [1, 2])
+            ->latest()
+            ->get();
+
+        return view("approvals.loans", compact('applications'));
+    }
+
+
+    public function updateStatus(Request $request, $id)
+    {
+        $application = LoanApplication::findOrFail($id);
+        $application->status = $request->status;
+        $application->save();
+
+        return redirect()->back()->with('success', 'Status updated successfully!');
+    }
+
+
+    public function approvals_history()
+    {
+        $applications = LoanApplication::with(['creditScores', 'branch', 'member'])
+        ->where('status', 1) // approved applications
+        ->latest()
+        ->get();
+        //$applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
+        return view("approvals.approvals_history", compact('applications'));
+    }
+
+
+
 }

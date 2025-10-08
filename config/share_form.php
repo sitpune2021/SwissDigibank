@@ -106,11 +106,11 @@ return [
         [
             'label' => 'TRANSFER DATE',
             'name' => 'transfer_date',
-            'id' => 'online_transfer_date',
-            'type' => 'date',
+            'id' => 'date6',
+            'type' => 'text',
             'required' => true,
-            'default' => now()->format('Y-m-d'),
         ],
+    
         [
             'label' => 'UTR / TRANSACTION NO.',
             'name' => 'utr_no',
@@ -151,10 +151,9 @@ return [
         [
             'label' => 'CHEQUE DATE',
             'name' => 'cheque_date',
-            'id' => 'cheque_date',
-            'type' => 'date',
+            'id' => 'date7',
+            'type' => 'text',
             'required' => true,
-            'default' => now()->format('Y-m-d'),
         ],
     ],
 

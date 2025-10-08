@@ -57,7 +57,7 @@
                     <input type="text" name="scheme_name"
                         value="{{ old('scheme_name', $scheme->scheme_name ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Scheme Name ">
+                        placeholder="Enter Scheme Name " required>
                     @error('scheme_name')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -71,7 +71,7 @@
 
                     <input type="text" name="scheme_code" value="{{ old('scheme_code', $scheme->scheme_code ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 uppercase"
-                        placeholder="Enter Scheme Code">
+                        placeholder="Enter Scheme Code" required>
 
 
                 </div>
@@ -83,7 +83,7 @@
 
                     <input type="number" id="" name="min_loan_amount" value="{{ old('min_loan_amount', $scheme->min_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0">
+                        placeholder="0.0" required>
 
                 </div>
 
@@ -95,7 +95,11 @@
 
                     <input type="number" id="" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0">
+                        placeholder="0.0" max="200000" required>
+                        <!-- Laravel Error Message -->
+                        @error('max_loan_amount')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -104,9 +108,9 @@
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" id="maxLoanLimit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
+                    <input type="number" id="max_loan_limit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Maximum Loan Limit">
+                        placeholder="Enter Maximum Loan Limit" required>
                     <!-- This will show the words -->
                     <x-number-to-word for="maxLoanLimit" />
                 </div>
@@ -144,7 +148,7 @@
 
                     <input type="number" id="annual_interest_rate" name="annual_interest_rate" value="{{ old('annual_interest_rate', $scheme->annual_interest_rate ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Annual Interest Rate">
+                        placeholder="Enter Annual Interest Rate" required>
                 </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -164,29 +168,22 @@
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                placeholder="Enter Overdue Interest Rate (%) ">
+                                placeholder="Enter Overdue Interest Rate (%) " required>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Penalty Charges
-
                     </label>
-
                     <div class="flex items-center gap-2">
-
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-
                             <option value="">%</option>
                             <option class="uppercase" value="">Fixed</option>
                         </select>
-
                         <!-- Main Input -->
                         <input type="number" id="penalty_charge" name="penalty_charge" value="{{ old('penalty_charge', $scheme->penalty_charge ?? '') }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
@@ -198,19 +195,14 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Processing Fee
-
                     </label>
-
                     <div class="flex items-center gap-2">
-
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-
                             <option value="">%</option>
                             <option class="uppercase" value="">Fixed</option>
                         </select>
-
                         <!-- Main Input -->
                         <input type="number" id="processing_fee" name="processing_fee" value="{{ old('processing_fee', $scheme->processing_fee ?? '') }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
@@ -221,19 +213,14 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Stamp Duty Charge
-
                     </label>
-
                     <div class="flex items-center gap-2">
-
                         <!-- Left Select -->
                         <select name="" id=""
-                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                            <option class="uppercase" value="">Fixed</option>
+                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">                         
                             <option value="">%</option>
-
+                            <option class="uppercase" value="">Fixed</option>
                         </select>
-
                         <!-- Main Input -->
                         <input type="number" id="stamp_duty_charge" name="stamp_duty_charge" value="{{ old('stamp_duty_charge', $scheme->stamp_duty_charge ?? '') }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
@@ -245,15 +232,12 @@
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Insurance Fee
                     </label>
-
                     <div class="flex items-center gap-2">
-
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                            <option class="uppercase" value="">Fixed</option>
                             <option value="">%</option>
-
+                            <option class="uppercase" value="">Fixed</option>                   
                         </select>
 
                         <!-- Main Input -->
@@ -265,28 +249,22 @@
 
 
                 <div class="col-span-2 md:col-span-1">
-
                     <div class="col-sm-7">
                         <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Fore Closure Charges
                         </label>
-
                         <div class="flex items-center gap-2">
-
                             <!-- Left Select -->
                             <select name="" id=""
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option class="uppercase" value="">Fixed</option>
                                 <option value="">%</option>
-
+                                <option class="uppercase" value="">Fixed</option>                               
                             </select>
-
                             <!-- Main Input -->
                             <input type="number" id="fore_closer_charge" name="fore_closer_charge" value="{{ old('fore_closer_charge', $scheme->fore_closer_charge ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 placeholder="Enter Fore Closure Charges">
                         </div>
-
                     </div>
                 </div>
 
@@ -306,42 +284,51 @@
 
         {{--intersetTypeRadio --}}
         <div class="w-full">
-            <div class="mb-4" id="intersetTypeRadio">
-                <label class="md:text-lg font-medium block mb-2 uppercase">
-                    Interest Type <span class="text-red-600">*</span>
-                </label>
-
-                <div class="mt-1 flex flex-wrap gap-3">
-                    <!-- Reducing EMI -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="gold_loan_setting" value="{{ old('reducing_emi', $scheme->gold_loan_setting ?? '') }}" id="" class="text-green-600 focus:ring-green-500"
-                            data-target="charges-per-emi" checked>
-                        <span class="text-gray-70 capitalize">Reducing EMI</span>
+                <div class="mb-4" id="intersetTypeRadio">
+                    <label class="md:text-lg font-medium block mb-2">
+                        Interest Type <span class="text-red-600">*</span>
                     </label>
 
-                    <!-- Flat EMI -->
-                    <label class="flex items-center  capitalize gap-2 space-x-2 p-2">
-                        <input type="radio" name="gold_loan_setting"  value="{{ old('flat_emi', $scheme->gold_loan_setting ?? '') }}" id="" class="text-green-600 focus:ring-green-500"
-                            data-target="charges-per-emi">
-                        <span class="text-gray-700 capitalize">Flat EMI</span>
-                    </label>
+                    <div class="mt-1 flex flex-wrap gap-3">
+                        <!-- Reducing EMI -->
+                        <label class="flex items-center gap-2 p-2">
+                            <input type="radio" name="gold_loan_setting" 
+                                value="reducing_emi"
+                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'reducing_emi' ? 'checked' : '' }}
+                                required>
+                            <span>Reducing EMI</span>
+                        </label>
 
-                    <!-- Flat Advanced Interest Deduction -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="gold_loan_setting" value="{{ old('flat_advanced_interest', $scheme->gold_loan_setting ?? '') }}" id="" class="text-green-600 focus:ring-green-500"
-                            data-target="charges-per-emi">
-                        <span class="text-gray-700 capitalize">Flat Advanced Interest Deduction</span>
-                    </label>
+                        <!-- Flat EMI -->
+                        <label class="flex items-center gap-2 p-2">
+                            <input type="radio" name="gold_loan_setting" 
+                                value="flat_emi"
+                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_emi' ? 'checked' : '' }}
+                                required>
+                            <span>Flat EMI</span>
+                        </label>
 
-                    <!-- No EMI -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="gold_loan_setting" value="{{ old('no_emi', $scheme->gold_loan_setting ?? '') }}" id="" class="text-green-600 focus:ring-green-500"
-                            data-target="no-emi">
-                        <span class="text-gray-700 capitalize">No EMI</span>
-                    </label>
+                        <!-- Flat Advanced Interest Deduction -->
+                        <label class="flex items-center gap-2 p-2">
+                            <input type="radio" name="gold_loan_setting" 
+                                value="flat_advanced_interest"
+                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_advanced_interest' ? 'checked' : '' }}
+                                required>
+                            <span>Flat Advanced Interest Deduction</span>
+                        </label>
+
+                        <!-- No EMI -->
+                        <label class="flex items-center gap-2 p-2">
+                            <input type="radio" name="gold_loan_setting" 
+                                value="no_emi"
+                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'no_emi' ? 'checked' : '' }}
+                                required>
+                            <span>No EMI</span>
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
+
 
          {{-- Active field Yes/No --}}
         <div class="w-full">
@@ -349,20 +336,34 @@
                 <label class="md:text-lg font-medium block mb-2 uppercase">
                     Active <span class="text-red-600">*</span>
                 </label>
-
                 <div class="mt-1 flex flex-wrap gap-3">
                     <!-- Yes -->
                     <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="is_active" value="{{ old('is_active', $scheme->is_active ?? '') }}" class="text-green-600 focus:ring-green-500">
-                        <span class="text-gray-70 capitalize">yes</span>
+                        <input 
+                            type="radio" 
+                            name="is_active" 
+                            value="1" 
+                            class="text-green-600 focus:ring-green-500"
+                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}
+                            required
+                        >
+                        <span class="text-gray-700 capitalize">Yes</span>
                     </label>
 
-                    <!-- NO -->
+                    <!-- No -->
                     <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="is_active" value="{{ old('is_active', $scheme->is_active ?? '') }}" class="text-green-600 focus:ring-green-500 " checked>
-                        <span class="text-gray-700 capitalize">no</span>
+                        <input 
+                            type="radio" 
+                            name="is_active" 
+                            value="0" 
+                            class="text-green-600 focus:ring-green-500"
+                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}
+                            required
+                        >
+                        <span class="text-gray-700 capitalize">No</span>
                     </label>
                 </div>
+
             </div>
         </div>
 
@@ -491,8 +492,6 @@
 
         </div>
 
-
-
         {{-- No-EMI Inputs --}}
         <div id="no-emi" hidden>
             <div class="mt-4 ">
@@ -551,13 +550,10 @@
                                         class="w-full border border-gray-300 rounded p-1"></td>
                             </tbody>
                     </table>
-
-
                 </div>
             </div>
 
         </div>
-
 
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -575,11 +571,18 @@
 </div>
 {{-- </div> --}}
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const maxLoanInput = document.querySelector('input[name="max_loan_amount"]');
 
-
-
-
-
+    maxLoanInput.addEventListener('input', function () {
+        if (parseFloat(this.value) > 200000) {
+            alert('Maximum loan amount cannot exceed ₹2,00,000.');
+            this.value = 200000; // Auto reset to max value
+        }
+    });
+});
+</script>
 
 <script>
     // =====logic for Interest Type  radio  which opens charges Per EMI and No Emi=====
