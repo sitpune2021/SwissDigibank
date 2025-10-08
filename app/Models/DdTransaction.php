@@ -42,4 +42,8 @@ class DdTransaction extends Model
     {
         return $this->belongsTo(Account::class, 'saving_account_id');
     }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id'); // branch_id is foreign key in dds_accounts
+    }
 }

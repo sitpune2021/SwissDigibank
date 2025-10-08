@@ -11,7 +11,7 @@
     <div style="max-width:80mm; margin:0 auto; padding:8px 6px;">
 
         <div style="text-align:center; font-weight:800;">
-            <h2 style="margin:0; font-size:16px; font-weight:800;">SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</h2>
+            <h2 style="margin:0; font-size:16px; font-weight:800;">SBC GLOBAL</h2>
             <p style="margin:2px 0 8px; font-size:8px;">969/03-04</p>
         </div>
 

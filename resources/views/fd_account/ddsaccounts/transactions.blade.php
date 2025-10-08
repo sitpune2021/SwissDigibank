@@ -49,21 +49,24 @@
 
                 <!-- Tranx Id -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Tranx Id :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Tranx Id
+                        :</label>
                     <input type="text" name="q[tranx_id_cont]" placeholder="Search Tranx Id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
 
                 <!-- Remarks -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Remarks :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Remarks
+                        :</label>
                     <input type="text" name="q[message_cont]" placeholder="Search Remarks"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
 
                 <!-- Transaction Date From -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Transaction Date
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Transaction
+                        Date
                         From:</label>
                     <input type="text" name="q[transaction_date_gteq]" placeholder="DD/MM/YYYY"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
@@ -71,7 +74,8 @@
 
                 <!-- Transaction Date To -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Transaction Date
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Transaction
+                        Date
                         To:</label>
                     <input type="text" name="q[transaction_date_lteq]" placeholder="DD/MM/YYYY"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
@@ -79,14 +83,16 @@
 
                 <!-- Amount From -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Amount From :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Amount From
+                        :</label>
                     <input type="text" name="q[amount_gteq]" placeholder="From Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
 
                 <!-- Amount To -->
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Amount To :</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 uppercase">Amount To
+                        :</label>
                     <input type="text" name="q[amount_lteq]" placeholder="To Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3" />
                 </div>
@@ -123,7 +129,7 @@
                     <tbody>
                         @forelse($transactions as $tran)
                             <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700">
-                                <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tran->transaction_date)->format('d/m/Y') }}
+                                <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tran->transaction_date)->format('d-m-Y') }}
                                 </td>
                                 <td class="px-4 py-2">{{ ucfirst($tran->pay_mode) }}</td>
                                 <td class="px-4 py-2">{{ $tran->remarks ?? '-' }}</td>
@@ -144,23 +150,15 @@
                                         {{ $tran->accounted ? 'Yes' : 'No' }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2 text-right space-x-1">
-                                    <a href="{{ route('dds-accounts.transactions.show', [$ddsAccount->id, $tran->id]) }}"
-                                        class="btn btn-sm btn-info">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                    {{-- Print --}}
-                                    <i class="fa fa-print"></i>
-                                    {{-- Delete --}}
-                                    <form action="{{ route('dds-accounts.transactions.destroy', $tran->id) }}"
-                                        method="POST" style="display:inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-xs"
-                                            onclick="return confirm('Are you sure to delete transaction?')">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                        </button>
-                                    </form>
+
+                                <td class="py-2 px-6">
+                                    <div class="flex justify-center">
+                                        @include('partials._vertical-options', [
+                                            'id' => [$ddsAccount->id, $tran->id],
+                                            'viewRoute' => 'dds-accounts.transactions.show',
+                                            'deleteRoute' => 'dds-accounts.transactions.destroy',
+                                        ])
+                                    </div>
                                 </td>
                             </tr>
                         @empty

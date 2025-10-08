@@ -42,12 +42,12 @@
 
             <tr>
                 <th class="font-semibold px-4 py-2">Transaction Date</th>
-                <td class="font-semibold px-4 py-2">{{ $transaction->transaction_date ? \Carbon\Carbon::parse($transaction->transaction_date)->format('d/m/Y H:i:s') : '-' }}</td>
+                <td class="font-semibold px-4 py-2">{{ $transaction->transaction_date ? \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') : '-' }}</td>
             </tr>
 
             <tr>
                 <th class="font-semibold px-4 py-2"> Transaction Type</th>
-                <td class="font-semibold px-4 py-2">{{ ucfirst($transaction->transaction_type ?? '') }}</td>
+                <td class="font-semibold px-4 py-2">{{ ucfirst($transaction->transaction_type ?? '-') }}</td>
             </tr>
 
             <tr>
@@ -92,17 +92,17 @@
 
             <tr>
                 <th class="font-semibold px-4 py-2">Created At</th>
-                <td>{{ $transaction->created_at?->format('d-m-Y H:i') ?? '-' }}</td>
+                <td>{{ $transaction->created_at?->format('d-m-Y') ?? '-' }}</td>
             </tr>
 
             <tr>
                 <th class="font-semibold px-4 py-2">Updated At</th>
-                <td class="font-semibold px-4 py-2">{{ $transaction->updated_at?->format('d-m-Y H:i') ?? '-' }}</td>
+                <td class="font-semibold px-4 py-2">{{ $transaction->updated_at?->format('d-m-Y') ?? '-' }}</td>
             </tr>
 
             <tr>
                 <th class="font-semibold px-4 py-2">Branch</th>
-                <td class="font-semibold px-4 py-2">{{ $ddsAccount->branch->branch_name ?? '-' }}</td>
+                <td class="font-semibold px-4 py-2">{{ $transaction->branches->branch_name ?? '-' }}</td>
             </tr>
 
             <tr>
