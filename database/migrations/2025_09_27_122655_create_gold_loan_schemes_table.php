@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('gold_loan_schemes', function (Blueprint $table) {
             $table->id();
             $table->string('scheme_name', 191);
-            // make scheme_code shorter to avoid "key too long" issue on older MySQL
             $table->string('scheme_code', 100)->unique();
 
             // money fields
@@ -42,16 +41,16 @@ return new class extends Migration
             $table->decimal('sms_charge', 10, 2)->nullable();
             $table->decimal('fuel_charge', 10, 2)->nullable();
             $table->decimal('stationary_charge', 10, 2)->nullable();
-            $table->decimal('maintenance_charge', 10, 2)->nullable();
+            $table->decimal('maintenace_charge', 10, 2)->nullable();
 
-            $table->string('collection', 100)->nullable();
+            $table->string('collcetion', 100)->nullable();
 
             // date fields
             $table->string('from_date')->nullable();
             $table->string('to_date')->nullable();
 
             // penal/annual rates (normalized names)
-            $table->decimal('penal_rate_interest', 5, 2)->nullable();
+            $table->decimal('penal_rate_intererst', 5, 2)->nullable();
             $table->decimal('annual_rate_interest', 5, 2)->nullable();
 
             $table->boolean('is_active')->default(true);

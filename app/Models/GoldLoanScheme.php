@@ -26,11 +26,17 @@ class GoldLoanScheme extends Model
     'penalty_charge',
     'fore_closer_charge',
     'credit_period',
+    'charge_floting',
     'sms_charge',
     'fuel_charge',
     'stationary_charge',
     'maintenace_charge',
     'collcetion',
+    'from_date',
+    'to_date',
+    'penal_rate_intererst',
+    'annual_rate_interest',
+
 ];
 
     public function applications()

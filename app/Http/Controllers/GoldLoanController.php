@@ -26,7 +26,6 @@ class GoldLoanController extends Controller
         return view("gold-loan.schemes.index", compact('schemes'));
     } 
   
-
     public function create()
     {
         return view("gold-loan.schemes.create");
@@ -34,7 +33,6 @@ class GoldLoanController extends Controller
 
     public function store(Request $request)
     {
-        
         $validated = $request->validate([
             'scheme_name' => 'required|string|max:255',
             'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
@@ -42,8 +40,6 @@ class GoldLoanController extends Controller
             'max_loan_amount' => 'required|numeric|min:1|max:200000',
             'tenure' => 'required|integer|min:1',
             'annual_interest_rate' => 'required|numeric|min:0',
-
-            // new optional fields
             'processing_fee' => 'nullable|numeric|min:0',
             'stamp_duty_charge' => 'nullable|numeric|min:0',
             'insurance_fee' => 'nullable|numeric|min:0',
@@ -53,22 +49,63 @@ class GoldLoanController extends Controller
             'penalty_charge' => 'nullable|numeric|min:0',
             'fore_closer_charge' => 'nullable|numeric|min:0',
             'credit_period' => 'nullable|numeric|min:0',
+            'is_active' => 'nullable|boolean',
+            'charge_floting' => 'nullable|boolean',
+            //  Add this line
             'sms_charge' => 'nullable|numeric|min:0',
             'fuel_charge' => 'nullable|numeric|min:0',
             'stationary_charge' => 'nullable|numeric|min:0',
             'maintenace_charge' => 'nullable|numeric|min:0',
             'collcetion' => 'nullable|numeric|min:0',
-            'is_active' => 'required|in:0,1',
-        ], [
-            'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
+            'from_date' => 'nullable|date',
+            'to_date' => 'nullable|date|after_or_equal:from_date',
+            'penal_rate_intererst' => 'nullable|numeric|min:0',
+            'annual_rate_interest' => 'nullable|numeric|min:0',
         ]);
 
         GoldLoanScheme::create($validated);
 
-        return redirect()
-            ->route('gold-loan.schemes.index')
-            ->with('success', 'Scheme created successfully!');
+        return redirect()->route('gold-loan.schemes.index')
+                        ->with('success', 'Scheme created successfully!');
     }
+
+    // public function store(Request $request)
+    // {
+        
+    //     $validated = $request->validate([
+    //         'scheme_name' => 'required|string|max:255',
+    //         'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
+    //         'min_loan_amount' => 'required|numeric|min:1',
+    //         'max_loan_amount' => 'required|numeric|min:1|max:200000',
+    //         'tenure' => 'required|integer|min:1',
+    //         'annual_interest_rate' => 'required|numeric|min:0',
+
+    //         // new optional fields
+    //         'processing_fee' => 'nullable|numeric|min:0',
+    //         'stamp_duty_charge' => 'nullable|numeric|min:0',
+    //         'insurance_fee' => 'nullable|numeric|min:0',
+    //         'gold_loan_setting' => 'nullable|string',
+    //         'max_loan_limit' => 'nullable|numeric|min:0',
+    //         'overdue_interest_rate' => 'nullable|numeric|min:0',
+    //         'penalty_charge' => 'nullable|numeric|min:0',
+    //         'fore_closer_charge' => 'nullable|numeric|min:0',
+    //         'credit_period' => 'nullable|numeric|min:0',
+    //         'sms_charge' => 'nullable|numeric|min:0',
+    //         'fuel_charge' => 'nullable|numeric|min:0',
+    //         'stationary_charge' => 'nullable|numeric|min:0',
+    //         'maintenace_charge' => 'nullable|numeric|min:0',
+    //         'collcetion' => 'nullable|numeric|min:0',
+    //         'is_active' => 'required|in:0,1',
+    //     ], [
+    //         'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
+    //     ]);
+
+    //     GoldLoanScheme::create($validated);
+
+    //     return redirect()
+    //         ->route('gold-loan.schemes.index')
+    //         ->with('success', 'Scheme created successfully!');
+    // }
 
     public function show($id)
     {
@@ -103,7 +140,6 @@ class GoldLoanController extends Controller
         $scheme = GoldLoanScheme::all();
         return view("gold-loan.calculator.index", compact('scheme'));
     }
-
 
     public function calculateResult(Request $request)
     {
@@ -226,7 +262,6 @@ class GoldLoanController extends Controller
         ]);
     }
 
-
      // GoldLoanController.php
     public function appindex()
     {
@@ -235,7 +270,6 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.index", compact('applications'));
     }
-
 
     public function appcreate() 
     {
@@ -247,7 +281,6 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.create", compact('members','branch','scheme','banks'));
     }
    
-
     public function storeLoanApplication(Request $request)
     {
         
@@ -293,7 +326,7 @@ class GoldLoanController extends Controller
     'max_loan_limit',
     'maximum_approvable_amount',
     'approved_loan_amount',
-]));
+    ]));
 
 
     // Ornaments save karo (agar diye gaye hain)
@@ -318,9 +351,8 @@ class GoldLoanController extends Controller
 
     return redirect()->route('gold-loan.applications.index')
         ->with('success', 'Loan Application + Ornaments saved successfully!');
-}
-
-
+    }
+    
 
     public function getMemberInfo($id)
     {

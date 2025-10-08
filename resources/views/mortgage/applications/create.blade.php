@@ -38,8 +38,12 @@
         <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
             <div class=" rounded-10 flex-1 bg-primary/5 p-2">
                 <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
-                   <form action="{{ route('loan-applications.store') }}" method="POST">
-    @csrf
+                   <form method="POST" 
+                        action="{{ isset($application) ? route('gold-loan.applications.update', $application->id) : route('loan-applications.store') }}">
+                        @csrf
+                        @if(isset($application))
+                            @method('PUT')
+                        @endif
 
                         <div class="col-span-2 md:col-span-1">
                              {{-- Application Date --}}           
@@ -71,6 +75,36 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
+                                1st Co-Applicant Member</label>
+                           <select name="co_applicant_1_id" id="co_applicant_1_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                     <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->co_applicant_1_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                2nd Co-Applicant Member</label>
+                            <select name="co_applicant_2_id" id="co_applicant_2_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->co_applicant_2_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4">
                                 Branch
                                 <span class="text-red-500">*</span>
                             </label>
@@ -85,13 +119,109 @@
                                     
                                 @endforeach
                             </select>
-                        </div>                      
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                Advisor/ Staff</label>
+                            <select
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                placeholder="Enter Scheme Code">
+                                <option value="">select Advisor/ Staff </option>
+                            </select>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                Guarantor 1 </label>
+                            <select name="guarantor_1_id" id="guarantor_1_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                 <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_1_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                   
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <div class="col-sm-7">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Guarantor 2</label>
+                                <select name="guarantor_2_id" id="guarantor_2_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_2_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <div class="col-sm-7">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Guarantor 3 </label>
+                                <select name="guarantor_3_id" id="guarantor_3_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                     <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_3_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1">
+                            <div class="col-sm-7">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Guarantor 4 </label>
+                               <select name="guarantor_4_id" id="guarantor_4_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Member No or Name</option>
+                                @foreach($members as $member)
+                                     <option value="{{ $member->id }}"
+                                        {{ old('member_id', $application->guarantor_4_id ?? '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
                                 <label for="" class="md:text-lg font-medium block mb-4">
                                     Scheme <span class="text-error">*</span>
                                 </label>
+                               <!-- <select name="scheme_id" id="scheme_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Search Scheme Code</option>
+                                @foreach($scheme as $sc)
+                                    <option value="{{ $sc->id }}"
+                                        data-code="{{ $sc->scheme_code }}"
+                                        data-name="{{ $sc->scheme_name }}"
+                                        data-tenure="{{ $sc->tenure ?? '-' }}"
+                                        data-max="{{ $sc->max_loan_amount ?? '-' }}"
+                                        data-limit="{{ $sc->max_loan_limit ?? '-' }}"
+                                        data-min="{{ $sc->min_loan_amount ?? '-' }}"
+                                        data-interest="{{ $sc->annual_interest_rate ?? '-' }}"
+                                        data-type="{{ $sc->gold_loan_setting ?? '-' }}"                              
+                                        data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
+                                        data-charge="{{ $sc->charge_floting ?? '-' }}">
+                                        {{ $sc->scheme_code }}
+                                    </option>
+                                @endforeach
+                            </select> -->
                             <select name="scheme_id" id="scheme_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Scheme Code</option>
@@ -218,6 +348,47 @@
                                 placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
                         </div>
                 </div>
+
+
+                <div class="col-span-12  lg:col-span-12 mb-5">
+                    <hr>
+                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                        Credit Score Details </label>
+                    <div class="w-full overflow-x-auto">
+                        <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
+                            <thead class="bg-secondary/5 whitespace-nowrap">
+                                <tr class="bg-gray-100">
+                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                        Cibil Type
+                                    </th>
+                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                        Cibil Score
+                                    </th>
+                                    <th class="text-center  px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                        Report Date
+                                    </th>
+                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
+                                        Upload File
+                                    </th>
+                                    <th class=" px-2 py-2 md:px-4 md:py-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
+                                {{-- Credit Score Details Table --}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2">
+                            + Add New Score
+                        </button>
+                    </div>
+                    {{--calculator checkbox- --}}
+                    <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
+                        sublabel="(Check this if you want to collect principal amount as EMIs.)" />
+                </div>
+
 
                 <div class="col-span-12  lg:col-span-12 ">
                     <hr>
@@ -498,7 +669,8 @@
             </div>
         </div>
 
-       
+
+               <div id="itemsContainer"></div>
 
             <div class="col-span-2 md:col-span-1">
                 <label for="" class="uppercase:text-lg font-medium block mb-4">
@@ -511,65 +683,11 @@
             </div>
 
             <div class="mt-3">
-               <hr class="my-6">
-
-<h2 class="text-lg font-semibold mb-4">Property Details</h2>
-
-  <!-- 🔰 Property Details Section -->
-<div id="property-wrapper">
-    <div class="property-block border p-3 mb-3 rounded bg-gray-50">
-        <div class="grid grid-cols-3 gap-3">
-
-            <div>
-                <label>Property Type</label>
-                <input type="text" name="property_type[]" class="form-control" placeholder="Enter Property Type">
+                <button type="button" id="additem" class="btn-primary uppercase rounded-10 px-4 py-2">
+                    + Add NEW Items
+                </button>
             </div>
 
-            <div>
-                <label>Ownership Type</label>
-                <input type="text" name="ownership_type[]" class="form-control" placeholder="Enter Ownership Type">
-            </div>
-
-            <div>
-                <label>Property Address</label>
-                <input type="text" name="property_address[]" class="form-control" placeholder="Enter Property Address">
-            </div>
-
-            <div>
-                <label>City</label>
-                <input type="text" name="city[]" class="form-control" placeholder="Enter City">
-            </div>
-
-            <div>
-                <label>State</label>
-                <input type="text" name="state[]" class="form-control" placeholder="Enter State">
-            </div>
-
-            <div>
-                <label>Area (sqft)</label>
-                <input type="text" name="area[]" class="form-control" placeholder="Enter Area">
-            </div>
-
-            <div>
-                <label>Property Value</label>
-                <input type="number" name="property_value[]" class="form-control" placeholder="Enter Value">
-            </div>
-
-        </div>
-
-        <button type="button" class="remove-btn hidden bg-red-500 text-white px-3 py-1 rounded mt-3">Remove</button>
-    </div>
-</div>
-
-<!-- Add More Button -->
-<button type="button" id="addMoreBtn" class="mt-3 bg-green-600 text-white px-3 py-1 rounded" style="color: black;">+ Add More</button>
-
-    
-    
-
-    
-
-            </div>
 
 
         <!-- Calculation Result Box -->
@@ -622,12 +740,14 @@
             </div>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('rdschemes.index')}}"> BAck</a>
+                <a href="{{route('mortgage.applications.index')}}"> BAck</a>
             </button>
         </div>
     </div>
     </form>
 </div>
+
+
 
 <script>
 document.getElementById('member_id').addEventListener('change', function () {
@@ -641,6 +761,7 @@ document.getElementById('member_id').addEventListener('change', function () {
     document.getElementById('memberBox').classList.remove('hidden');
 });
 </script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -667,6 +788,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -712,6 +834,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+
+
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -739,10 +864,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<script>
-    let isCalculated = false;
+ <script>
+let isCalculated = false;
 
-    document.getElementById("calculateBtn").addEventListener("click", function (e) {
+document.getElementById("calculateBtn").addEventListener("click", function (e) {
     const button = this;
     let rows = document.querySelectorAll("#itemsBody tr");
     let totalSecurity = 0;
@@ -808,38 +933,232 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const wrapper = document.getElementById('property-wrapper');
-    const addMoreBtn = document.getElementById('addMoreBtn');
+    const addItemBtn = document.getElementById("additem");
+    const itemsContainer = document.getElementById("itemsContainer");
 
-    function addRemoveEvent(button) {
-        button.addEventListener('click', function () {
-            this.closest('.property-block').remove();
-        });
-    }
+    // Template for property block
+    const getPropertyBlock = () => `
+    
+    <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
+                <div class="flex flex-wrap gap-6">
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Property Type
+                            <span class="text-error">*</span>
+                        </label>
+                        <select
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 items-start rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                            placeholder="Enter Scheme Code">
+                            <option value="">select Property Type</option>
+                            <option value="agriculture_land">Agriculture Land</option>
+                            <option value="urban_land">Urban Land</option>
+                            <option value="plot">Plot</option>
+                            <option value="house">House</option>
+                            <option value="shop">Shop</option>
+                        </select>
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Doc Number
+                        </label>
 
-    addMoreBtn.addEventListener('click', function () {
-        const firstBlock = wrapper.querySelector('.property-block');
-        const newBlock = firstBlock.cloneNode(true);
+                        <input type="number" id="" name=""
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Doc Number">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Registrar Name
+                        </label>
 
-        // 🧹 Clear sab input fields
-        newBlock.querySelectorAll('input, textarea, select').forEach(input => input.value = '');
+                        <input type="text" id="" name=""
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Registrar Name">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Owner Name
+                        </label>
 
-        // 🔘 Show and activate remove button
-        const removeBtn = newBlock.querySelector('.remove-btn');
-        removeBtn.classList.remove('hidden');
-        addRemoveEvent(removeBtn);
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm  dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Owner Name">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Parent Name
+                        </label>
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm  dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Property Owner's Parent Name">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Plot No
+                        </label>
+                        <input type="number" id="" name=""
+                            class="w-1/2 text-sm  dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Plot No/ House No">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Tehsil
+                        </label>
 
-        // 🏗️ Append the new property block
-        wrapper.appendChild(newBlock);
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Tehsil">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            District
+                        </label>
+
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter District">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Area (SQ FT)
+                        </label>
+
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Area (SQ FT)">
+                    </div>
+
+                </div>
+
+                <label for="" class="uppercase:text-lg font-medium block mt-3 mb-4">
+                    Boundaries as per Sale Deed
+                </label>
+                <div class="flex flex-wrap mt-4 gap-6">
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            East
+                        </label>
+
+                        <input type="number" id="" name=""
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter East">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            West
+                        </label>
+
+                        <input type="text" id="" name=""
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter West">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            North
+                        </label>
+
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter North">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            South
+                        </label>
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter South">
+                    </div>
+
+                </div>
+
+                 <label for="" class="uppercase :text-lg font-medium block mt-3 mb-4">
+                    Boundaries  as per Technical
+                </label>
+                <div class="flex flex-wrap mt-4 gap-6">
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            East
+                        </label>
+
+                        <input type="number" id="" name=""
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter East">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            West
+                        </label>
+
+                        <input type="text" id="" name=""
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter West">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            North
+                        </label>
+
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter North">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            South
+                        </label>
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter South">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Expected Value
+                            <span class="text-red-500" >*</span>
+                        </label>
+                        <input type="text" id="" name=""
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            placeholder="Enter Expected Value">
+                    </div>
+                    <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                            Registered
+                        </label>
+                        <select
+                            class="w-1/2 text-sm dark:bg-bg3 border border-n30 dark:border-n500 items-start rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                            placeholder="Enter Scheme Code">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                     <div class="w-1/2 mb-3">
+                        <label for="" class="uppercase m:text-lg font-medium block mb-4">
+                           Action
+                        </label>
+                            <button class="btn-error text-white justify-center rounded-10 px-4 py-2 remove-item"><i class="las la-times"></i>Remove</button>
+                        </div>
+
+                </div>
+            </div>
+  `;
+
+    // Preload one block on page load
+    window.addEventListener("DOMContentLoaded", () => {
+        itemsContainer.insertAdjacentHTML("beforeend", getPropertyBlock());
     });
 
-    // Pehle block ke remove button ke liye bhi event bind kar do
-    document.querySelectorAll('.remove-btn').forEach(addRemoveEvent);
-});
+    // Add item on button click
+    addItemBtn.addEventListener("click", () => {
+        itemsContainer.insertAdjacentHTML("beforeend", getPropertyBlock());
+    });
+
+    // Delegate remove action
+    itemsContainer.addEventListener("click", (e) => {
+        if (e.target.closest(".remove-item")) {
+            e.target.closest(".property-block").remove();
+        }
+    });
 </script>
-
-
 
 
 @endsection

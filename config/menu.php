@@ -86,8 +86,8 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'SCHEMES', 'route' => 'gold-loan.schemes.index'],
-            ['title' => 'CALCULATOR', 'route' => 'gold-loan.calculator.index'],
             ['title' => 'APPLICATIONS', 'route' => 'gold-loan.applications.index'],
+            ['title' => 'CALCULATOR', 'route' => 'gold-loan.calculator.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'gold-loan.disbursements.index'],
             ['title' => 'ORNAMENTS INVENTORY', 'route' => 'gold-loan.ornaments.index'],
             ['title' => 'ACCOUNTS', 'route' => 'gold-loan.account.index'],
@@ -100,11 +100,11 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'SCHEMES', 'route' => 'mortgage.schemes.index'],
-            ['title' => 'CALCULATOR', 'route' => 'mortgage.calculator.index'],
             ['title' => 'APPLICATIONS', 'route' => 'mortgage.applications.index'],
+            ['title' => 'CALCULATOR', 'route' => 'mortgage.calculator.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'mortgage.disbursements.index'],
-            ['title' => 'ACCOUNTS', 'route' => 'mortgage.account.index'],
             ['title' => 'LINE PROPERTY REPORT', 'route' => 'mortgage.lineproperty.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'mortgage.account.index'],
         ],
     ],
     [
@@ -114,11 +114,11 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'SCHEMES', 'route' => 'loanagainst.schemes.index'],
-            ['title' => 'CALCULATOR', 'route' => 'loanagainst.calculator.index'],
             ['title' => 'APPLICATIONS', 'route' => 'loanagainst.applications.index'],
+            ['title' => 'CALCULATOR', 'route' => 'loanagainst.calculator.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'loanagainst.disbursements.index'],
-            ['title' => 'ACCOUNTS', 'route' => 'loanagainst.account.index'],
             ['title' => 'LINE DEPOSITS REPORT', 'route' => 'loanagainst.lineproperty.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'loanagainst.account.index'],
         ],
     ],
     [
@@ -132,7 +132,6 @@ return [
             ['title' => 'REVERSED TRANSACTIONS', 'route' => 'reverse-transaction.reverse_transaction'],
             ['title' => 'ACCOUNT APPROVALS', 'route' => 'approveAccounts'],
             ['title' => 'LOAN APPLICATION', 'route' => 'loans'],
-            // ['title' => 'Share Surrender', 'route' => 'share-surrender.index'],
         ]
     ],
     [

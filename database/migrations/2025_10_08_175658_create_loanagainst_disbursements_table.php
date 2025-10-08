@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('loanagainsst_disbursements', function (Blueprint $table) {
+        Schema::create('loanagainst_disbursements', function (Blueprint $table) {
             $table->id();
 
             // Relation with loan application
@@ -19,11 +19,12 @@ return new class extends Migration {
 
             // Loan & Charges
             $table->decimal('loan_amount', 15, 2)->default(0);
-            $table->string('final_amount');   
-            $table->string('disburse_mode1');   
-            $table->string('payment_mode2');   
-            $table->string('disburse_mode2');   
-            $table->string('payment_mode1');   
+            $table->decimal('final_amount', 15, 2)->default(0);
+            $table->string('disburse_mode1');
+            $table->string('payment_mode1');
+            $table->string('disburse_mode2');
+            $table->string('payment_mode2');
+
             // Processing Fee
             $table->decimal('processing_fee', 15, 2)->default(0);
             $table->decimal('gst_percent', 5, 2)->default(18.00);
@@ -50,42 +51,32 @@ return new class extends Migration {
             // Final Amount
             $table->decimal('final_amount_to_disburse', 15, 2)->default(0);
 
-            // -------------------------
             // Disbursement Mode 1
-            // -------------------------
             $table->decimal('disburse_mode1_amount', 15, 2)->default(0);
             $table->enum('disburse_mode1_type', ['cash', 'cheque', 'online', 'saving'])->nullable();
 
-            // If cheque
             $table->unsignedBigInteger('bank_id1')->nullable();
             $table->string('cheque_no1')->nullable();
             $table->date('cheque_date1')->nullable();
 
-            // If online
             $table->date('transfer_date1')->nullable();
             $table->string('utr_no1')->nullable();
             $table->enum('transfer_mode1', ['imps', 'vpa', 'neft_rtgs'])->nullable();
 
-            // If saving account
             $table->string('saving_acc1')->nullable();
 
-            // -------------------------
             // Disbursement Mode 2
-            // -------------------------
             $table->decimal('disburse_mode2_amount', 15, 2)->default(0);
             $table->enum('disburse_mode2_type', ['cash', 'cheque', 'online', 'saving'])->nullable();
 
-            // If cheque
             $table->unsignedBigInteger('bank_id2')->nullable();
             $table->string('cheque_no2')->nullable();
             $table->date('cheque_date2')->nullable();
 
-            // If online
             $table->date('transfer_date2')->nullable();
             $table->string('utr_no2')->nullable();
             $table->enum('transfer_mode2', ['imps', 'vpa', 'neft_rtgs'])->nullable();
 
-            // If saving account
             $table->string('saving_acc2')->nullable();
 
             // Meta
@@ -93,12 +84,15 @@ return new class extends Migration {
             $table->softDeletes();
 
             // Foreign Key
-            $table->foreign('loan_application_id')->references('id')->on('loan_applications')->onDelete('cascade');
+            $table->foreign('loan_application_id')
+                ->references('id')
+                ->on('loan_applications')
+                ->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('loanagainsst_disbursements');
+        Schema::dropIfExists('loanagainst_disbursements');
     }
 };
