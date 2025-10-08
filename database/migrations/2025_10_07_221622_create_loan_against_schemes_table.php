@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loanagainst_schemes', function (Blueprint $table) {
+        Schema::create('loan_against_schemes', function (Blueprint $table) {
             $table->id();
-            $table->string('scheme_name', 191);
+              $table->string('scheme_name', 191);
             // make scheme_code shorter to avoid "key too long" issue on older MySQL
             $table->string('scheme_code', 100)->unique();
 
@@ -56,9 +56,6 @@ return new class extends Migration
 
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-
-            // set engine / charset if needed (optional)
-            // $table->engine = 'InnoDB';
         });
     }
 
@@ -67,6 +64,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loanagainst_schemes');
+        Schema::dropIfExists('loan_against_schemes');
     }
 };
