@@ -99,7 +99,6 @@
                             <option value="staff_2">Staff 2</option>
                         </select>
                     </div>
-
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                             Amount to Deposit <span class="text-red-500">*</span>
@@ -115,7 +114,6 @@
                     <span class="text-red-500">{{ $message }}</span>
                     @enderror
 
-                    <!-- Remarks -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3 uppercase">Remarks (if
                             any)</label>
@@ -128,7 +126,7 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                             Transaction Date <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="transaction_date" placeholder="DD/MM/YYYY" id="date"
+                        <input type="text" name="transaction_date" placeholder="DD/MM/YYYY" id="date4"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
                             readonly>
                     </div>

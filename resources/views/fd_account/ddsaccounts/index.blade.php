@@ -126,7 +126,6 @@
                     </tbody>
                 </table>
             </div>
-            <x-pagination :paginator="$ddaccounts" />
         </div>
     </div>
     </div>
