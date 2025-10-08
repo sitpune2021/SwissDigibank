@@ -32,12 +32,12 @@
             <td class="p-2">
                 @if($application->status == 0)
                     Draft
-                @elseif($application->status == 3)
+                @elseif($application->status == 1)
                     Approved
-                @elseif($application->status == 4)
+                @elseif($application->status == 2)
                     Disbursed
                 @else
-                    Unknown
+                    DisApprove
                 @endif
             </td>
             <td class="p-2">-</td>

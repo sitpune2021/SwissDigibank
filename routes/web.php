@@ -40,7 +40,7 @@ use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
 use App\Http\Controllers\MortgageLoneController;
 use App\Http\Controllers\RdAccountController;
-use App\Http\Controllers\AccountController;
+use App\Http\Controllers\GoldloanAccountController;
 use App\Http\Controllers\RdschemesController;
 use App\Http\Controllers\PassbookController;
 use App\Http\Controllers\MortgageController;
@@ -479,7 +479,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
 
 // GOld Loan Account Page
-    Route::get('account/index', [AccountController::class, 'index'])
+    Route::get('account/index', [GoldloanAccountController::class, 'index'])
         ->name('gold-loan.account.index');
 
 
@@ -569,16 +569,19 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('mortgage.applications.view-buttons.show-emi-chart');
 
 
+
 // Disbursement Mortgage Loan
     Route::get('disbursements/index', [MortgageDisbursementController::class, 'index'])
         ->name('mortgage.disbursements.index');
-    Route::post('/mortgage/disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
-
+    Route::post('disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])
+        ->name('mortgage.disbursements.cancel'); // unique name
+        
     // disburse-loan page   
     Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])
         ->name('mortgage.disbursements.disburse-loan');
-    Route::post('/mortgage/disbursements/store', [MortgageDisbursementController::class, 'store'])->name('disbursements.store');
-    
+    Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])
+        ->name('mortgage.disbursements.store');
+
 
 // Mortgage Loan Account Page
     Route::get('account/index', [MortgageAccountController::class, 'index'])

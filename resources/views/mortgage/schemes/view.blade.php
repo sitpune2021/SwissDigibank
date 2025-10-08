@@ -28,14 +28,9 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    Gold Loan Scheme
+                    Mortgage Loan Scheme
                 </p>
             </div>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm">{{ $scheme->scheme_name }}</a>
-            </p>
-
         </div>
     </div>
 
