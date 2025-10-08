@@ -114,9 +114,15 @@
                 {{ number_format($application->net_loan_amount, 2) }}
             </td>
 
-            <!-- Status -->
+           <!-- Status -->
             <td class="text-start !py-5 px-6">
-                {{ $application->credited ?? 'PENDING' }}
+                @if($application->status == 0)
+                    Draft
+                @elseif($application->status == 1)
+                    Approved
+                @else
+                    DISBURSED
+                @endif
             </td>
 
             <!-- Actions -->

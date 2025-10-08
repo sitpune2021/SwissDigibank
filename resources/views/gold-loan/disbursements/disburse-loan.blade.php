@@ -181,37 +181,37 @@
                                     <tr class="">
                                         <!-- Value -->
                                         <td class="px-2 py-2 ">
-                                            <input type="text" name="" id="" value="0" readonly
+                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
                                                 class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- GST (%) -->
                                         <td class="px-2 py-2 ">
-                                            <input type="text" name="" id="" value="18.0" readonly
+                                            <input type="text" name="stamp_duty_fee" id="" value="18.0" readonly
                                                 class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- SGST -->
                                         <td class="px-2 py-2 ">
-                                            <input type="text" name="" id="" value="0" readonly
+                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
                                                 class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- CGST -->
                                         <td class="px-2 py-2 ">
-                                            <input type="text" name="" id="" value="0" readonly
+                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
                                                 class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- IGST -->
                                         <td class="px-2 py-2 ">
-                                            <input type="text" name="" id="" value="0" readonly
+                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
                                                 class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- Total -->
                                         <td class="px-2 py-2">
-                                            <input type="number" name="" id="" placeholder="0"
+                                            <input type="number" name="stamp_duty_fee" id="" placeholder="0"
                                                 class="w-full px-2 py-2 text-center  border  rounded-10 text-sm md:text-base" />
                                         </td>
                                     </tr>

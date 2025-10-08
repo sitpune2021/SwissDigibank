@@ -24,4 +24,10 @@ class Calculator extends Model
         'tds_deduction' => 'boolean',
         'is_senior_citizen' => 'boolean',
     ];
+
+    public function scheme()
+    {
+        return $this->belongsTo(GoldLoanScheme::class, 'scheme_id');
+    }
+    
 }
