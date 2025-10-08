@@ -41,7 +41,7 @@
           <label for="" class="block font-medium mb-2 uppercase">Account No <span class="text-red-500">*</span></label>
           <select id="account_id" name="account_id"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
-            <option value="">Select Account</option>
+            <!-- <option value="">Select Account</option> -->
             @foreach($accounts as $account)
             <option value="{{ $account->id }}">{{ $account->account_no }}</option>
             @endforeach
@@ -357,7 +357,7 @@
             accountData.address?.member_address_area,
             accountData.address?.member_address_landmark,
             accountData.address?.member_address_city_district,
-            accountData.address?.member_address_state,
+            accountData.address?.name,
             accountData.address?.member_address_pincode
             ].filter(Boolean).join(', ') || '-' }
           </div>
@@ -372,67 +372,67 @@
       <div style="flex: 1; font-size: 13px;">
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
-            <td style="width: 40%; font-weight: bold; padding: 3px 4px; vertical-align: top;">Customer ID</td>
+            <td style="width: 40%; font-weight: bold; padding: 3px 4px; vertical-align: top;">CUSTOMER ID</td>
             <td style="width: 2%; text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="width: 58%; padding: 3px 4px; vertical-align: top;">${accountData.members?.id ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Branch Name</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">BRANCH NAME</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.branch_name ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Account Type</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">ACCOUNT TYPE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.account_holder_type ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Branch Code</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">BRANCH CODE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.branch_code ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Account Number</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">ACCOUNT NUMBER</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.account_no ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">IFSC Code</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">IFSC CODE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.ifsc_code ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Branch Address</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">BRANCH ADDRESS</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.branch?.address_line1 ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Joint A/c Holder Name</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">JOINT A/C HOLDER NAME</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.joint_holder_name ?? '–'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Phone</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">PHONE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Mode of Operation</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">MODE OF OPERATION</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.operation_mode ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Date of Issue</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">DATE OF ISSUE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.issue_date ?? '-'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Nominee Name</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">NOMINEE NAME</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">${accountData.nominee?.nominee_name ?? 'Not Reg.'}</td>
           </tr>
           <tr>
-            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">Phone</td>
+            <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">PHONE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">0000000000</td>
           </tr>
@@ -509,72 +509,80 @@
   <div class="passbook" style="width: 100%; padding: 15px 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
     <table style="width: 100%; border-collapse: collapse; flex-grow: 1; margin-top: 37px;">
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Customer ID</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">CUSTOMER ID</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.id ?? '-'}</td>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Branch Name</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_no ?? '-'}</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.branch_name ?? '-'}</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Account Type</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ACCOUNT TYPE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.account_holder_type ?? '-'}</td>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Branch Code</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH CODE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.branch_code ?? '-'}</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Account Number</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ACCOUNT NUMBER</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.account_no ?? '-'}</td>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">IFSC Code</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">IFSC CODE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.ifsc_code ?? '-'}</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Account Holder Name</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ACCOUNT HOLDER NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? '-'}</td>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Branch Address</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.address_line1 ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">  
+        ${accountData.branch?.address_line1 ?? ''}</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Joint A/c Holder Name</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">JOINT A/c HOLDER NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? '–'}</td>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Phone</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? ''}
+        ${accountData.members?.member_address_panchayat ?? ''}
+        ${accountData.members?.member_address_area ?? ''}
+        ${accountData.members?.member_address_landmark ?? ''}
+        ${accountData.members?.member_address_city_district ?? ''}
+        ${accountData.members?.member_address_state ?? ''}
+        ${accountData.members?.member_address_pincode ?? ''}
+        </td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">PHONE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Mode of Operation</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">MODE OF OPERATION</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.operation_mode ?? '-'}</td>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Date of Issue</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">DATE OF ISSUE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;"></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Address</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">
           ${accountData.address?.member_address_line_1 ?? '-'}
         </td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Nominee Name</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">NOMINEE NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.nominee?.nominee_name ?? 'Not Reg.'}</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">Phone</td>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">PHONE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">0000000000</td>
       </tr>
     </table>
-    <div style="margin-top: 6px; text-align: right; font-weight: bold; font-size: 12px;">Authorized Signatory</div>
+    <div style="margin-top: 6px; text-align: right; font-weight: bold; font-size: 12px;">AUTHORIZED  SIGNATORY</div>
   </div>
 </body>
   `;

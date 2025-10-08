@@ -325,7 +325,7 @@ class AccountsController extends Controller
 
         $accountId = $request->account_id;
 
-        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address'])
+        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address.state'])
             ->find($accountId);
 
         $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();

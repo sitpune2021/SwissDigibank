@@ -13,6 +13,7 @@ use App\Models\FdTransaction;
 use App\Models\Member;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -48,11 +49,12 @@ class FDController extends Controller
     {
 
         return view('fd_mis_account.fd_scheme.add-scheme');
-        
     }
     public function store(Request $request)
     {
         try {
+            Log::info('FD Scheme Store initiated.', ['user_id' => auth()->id(), 'request_data' => $request->all()]);
+
             $validated = $request->validate([
                 'scheme_name'          => 'required|string|max:255',
                 'scheme_code'          => 'required|string|max:255',
@@ -75,7 +77,9 @@ class FDController extends Controller
                 'rows.*.payout_type'     => 'nullable|string',
             ]);
 
-            $validated['effective_date'] = \Carbon\Carbon::parse($request->effective_date)->format('Y-m-d');
+            Log::info('FD Scheme validation passed.');
+
+            $validated['effective_date'] = Carbon::parse($request->effective_date)->format('Y-m-d');
             $validated['admin']     = $request->has('admin') ? 1 : 0;
             $validated['associate'] = $request->has('associate') ? 1 : 0;
             $validated['member']    = $request->has('member') ? 1 : 0;
@@ -83,18 +87,20 @@ class FDController extends Controller
             DB::beginTransaction();
 
             $scheme = FdScheme::create($validated);
+            Log::info('FD Scheme created successfully.', ['scheme_id' => $scheme->id, 'scheme_name' => $scheme->scheme_name]);
 
             if ($request->has('rows')) {
-                foreach ($request->rows as $row) {
+                foreach ($request->rows as $index => $row) {
                     if (
                         empty($row['day_from']) &&
                         empty($row['day_to']) &&
                         empty($row['interest_rate'])
                     ) {
+                        Log::warning("Skipping slab row {$index} due to missing values.", ['row_data' => $row]);
                         continue;
                     }
 
-                    FdSchemeSlab::create([
+                    $slab = FdSchemeSlab::create([
                         'fd_scheme_id'    => $scheme->id,
                         'day_from'        => $row['day_from'] ?? 0,
                         'day_to'          => $row['day_to'] ?? 0,
@@ -102,23 +108,38 @@ class FDController extends Controller
                         'sr_citizen_rate' => $row['sr_citizen_rate'] ?? 0,
                         'payout_type'     => $row['payout_type'] ?? null,
                     ]);
+
+                    Log::info("FD Scheme Slab created.", [
+                        'scheme_id' => $scheme->id,
+                        'slab_id'   => $slab->id,
+                        'row_data'  => $row
+                    ]);
                 }
             }
 
             DB::commit();
 
+            Log::info('FD Scheme Store transaction committed successfully.', [
+                'scheme_id' => $scheme->id,
+                'created_by' => auth()->id()
+            ]);
+
             return redirect()
                 ->route('fd-mis-schemes.index')
                 ->with('success', 'FD Scheme created successfully!');
         } catch (ValidationException $e) {
-            // rethrow so Laravel handles it (shows validation errors in the view)
+            Log::warning('FD Scheme validation failed.', [
+                'errors' => $e->errors(),
+                'input'  => $request->all()
+            ]);
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // Log for debugging
             Log::error('FD Scheme Store Error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
+                'user_id' => Auth::id()
             ]);
 
             return redirect()
@@ -127,7 +148,6 @@ class FDController extends Controller
                 ->with('error', 'Something went wrong while creating FD Scheme. Please try again.');
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -232,7 +252,7 @@ class FDController extends Controller
                 ];
             });
 
-        return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings','banks'));
+        return view('fd_mis_account.fd-account.add_account', compact('members', 'membersData', 'schemes', 'savings', 'banks'));
     }
 
     public function fd_store(Request $request)

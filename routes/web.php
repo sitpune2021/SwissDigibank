@@ -35,12 +35,13 @@ use App\Http\Controllers\FdCalculatorController;
 use App\Http\Controllers\RDCalculatorController;
 use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
+use App\Http\Controllers\GoldLoanAccountController;
 use App\Http\Controllers\GoldLoanController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
 use App\Http\Controllers\MortgageLoneController;
 use App\Http\Controllers\RdAccountController;
-use App\Http\Controllers\AccountController;
+
 use App\Http\Controllers\RdschemesController;
 use App\Http\Controllers\PassbookController;
 use App\Http\Controllers\MortgageController;
@@ -478,7 +479,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
 
 // GOld Loan Account Page
-    Route::get('account/index', [AccountController::class, 'index'])
+    Route::get('account/index', [GoldLoanAccountController::class, 'index'])
         ->name('gold-loan.account.index');
 
 
