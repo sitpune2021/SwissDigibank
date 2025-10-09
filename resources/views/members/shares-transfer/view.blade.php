@@ -49,7 +49,7 @@
                         <a href="{{ route('member.show', $shareholding->members->id) }}" class="text-primary hover:underline">
                             {{ $shareholding->members->member_no 
     ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : 'N/A') }} -
-                            {{ $shareholding->members->member_info_first_name ?? '' }}{{ $shareholding->members->member_info_middle_name }}
+                            {{ $shareholding->members->member_info_first_name ?? '' }} {{ $shareholding->members->member_info_middle_name }}
                             {{ $shareholding->members->member_info_last_name }}
                         </a>
 
@@ -135,7 +135,7 @@
                                 class="text-primary hover:underline">
                              {{ $shareholding->members->member_no 
     ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : 'N/A') }} -
-                                {{ $shareholding->members->member_info_first_name ?? '' }}{{ $shareholding->members->member_info_middle_name }}
+                                {{ $shareholding->members->member_info_first_name ?? '' }} {{ $shareholding->members->member_info_middle_name }}
                                 {{ $shareholding->members->member_info_last_name }}
                             </a>
                         </td>

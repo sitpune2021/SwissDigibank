@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Branch;
 use App\Models\State;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class BranchController extends Controller
         try {
             $request->validate([
                 'branch_name'      => 'required|string|max:255',
-                'branch_code'      => 'required|string| max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
+                'branch_code'      => 'required|string|max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
                 'open_date'        => 'required',
                 'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
                 'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
@@ -70,19 +71,31 @@ class BranchController extends Controller
                 'gst_no'           => 'nullable|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/',
                 'disable_recharge' => 'required|in:yes,no',
                 'disable_neft'     => 'required|in:yes,no',
+                'permission_letter' => 'nullable|file',
             ]);
 
-            try {
-                Branch::create($request->all());
+            $data = $request->except('permission_letter');
 
-                return redirect()->route('branch.index')
-                    ->with('success', 'Branch added successfully.');
-            } catch (\Exception $e) {
-                return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
-                    ->withInput();
+            // ✅ Handle file upload
+            if ($request->hasFile('permission_letter')) {
+                $file = $request->file('permission_letter');
+                $filename = time() . '_' . $file->getClientOriginalName();
+
+                // Store file in storage/app/public/permission_letter
+                $filePath = $file->storeAs('permission_letter', $filename, 'public');
+
+                // Save the public path to database
+                $data['permission_letter'] = $filePath;
             }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404); // Only if resource is missing
+
+            // ✅ Create branch using processed data
+            Branch::create($data);
+
+            return redirect()->route('branch.index')
+                ->with('success', 'Branch added successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
+                ->withInput();
         }
     }
 

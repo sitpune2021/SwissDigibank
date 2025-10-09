@@ -826,7 +826,7 @@
                                                             {{ $transaction->transaction_date ?? 'N/A' }}
                                                         </td>
                                                         <td class="px-4 py-2">
-                                                            {{ ucfirst($transaction->type ?? 'N/A') }}
+                                                            {{ $transaction->type ?? 'N/A' }}
                                                         </td>
                                                         <td class="px-4 py-2">
                                                             {{ $transaction->pay_mode ?? 'N/A' }}

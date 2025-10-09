@@ -505,18 +505,11 @@ CUSTOMER')
 
         <div x-data="{ open: true }" class="mt-4 rounded shadow">
             <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
-                @click="open = !open">
-                <span class="font-semibold uppercase">Documents</span>
-                <div class="flex gap-2 space-x-2">
-                    {{-- Link to document edit page --}}
-                    <a href="{{ route('member.document', $member->id) }}">
-                        <i class="cursor-pointer fa fa-pencil text-white-600 hover:text-blue-800"></i>
-                    </a>
-                    {{-- Toggle button for showing/hiding sections --}}
+           <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
+                    @click="open = !open">
+                    <span class="font-semibold uppercase">Member KYC Info</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
-            </div>
             <!-- Content -->
             <div x-show="open" x-transition class="bg-white rounded-md">
                 <table class="w-full text-sm">

@@ -47,7 +47,7 @@
 
             <tr>
                 <th class="font-semibold px-4 py-2"> Transaction Type</th>
-                <td class="font-semibold px-4 py-2">{{ ucfirst($transaction->transaction_type ?? '-') }}</td>
+                <td class="font-semibold px-4 py-2">{{ ucfirst($transaction->type ?? '-') }}</td>
             </tr>
 
             <tr>
@@ -102,7 +102,7 @@
 
             <tr>
                 <th class="font-semibold px-4 py-2">Branch</th>
-                <td class="font-semibold px-4 py-2">{{ $transaction->branches->branch_name ?? '-' }}</td>
+                <td class="font-semibold px-4 py-2">{{ $transaction->branch->branch_name ?? '-' }}</td>
             </tr>
 
             <tr>

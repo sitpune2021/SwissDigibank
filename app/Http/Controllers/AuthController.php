@@ -24,7 +24,13 @@ class AuthController extends Controller
                 'message' => 'Invalid email or password.',
             ], 401);
         }
-
+        if ($user->user_active != 1) {
+           $user['user_active']="Inactive";
+        }
+        else
+        {
+             $user['user_active']="Active";
+        }
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
@@ -34,7 +40,6 @@ class AuthController extends Controller
             'user' => $user,
         ]);
     }
-
     // Logout API
     public function logout(Request $request)
     {

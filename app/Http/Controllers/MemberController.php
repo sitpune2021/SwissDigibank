@@ -69,7 +69,6 @@ class MemberController extends Controller
             abort(404);
         }
     }
-
     public function create()
     {
         try {
@@ -267,7 +266,7 @@ class MemberController extends Controller
                 'bank_id' => in_array($request->charges_pay_mode, ['cheque', 'online']) ? $request->bank_id : null,
                 'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
                 'cheque_date' => $request->charges_pay_mode === 'cheque' ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
-                'type'=>"Membership Charges" ?? null,
+                'type' => "Membership Charges" ?? null,
             ]);
 
             // ✅ Log the transaction data
@@ -916,104 +915,116 @@ class MemberController extends Controller
         ]);
     }
 
+    //this is for transaction details view page
     public function showTransactionDetails($id)
     {
-        $query = "
-    SELECT
-        id,
-        member_id,
-        transaction_date,
-        membership_fee AS amount,
-        charges_pay_mode AS pay_mode,
-        'Share amount' AS type,
-        remarks,
-        CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
-        is_accounted,
-        'Membership Charge' AS transaction_source,
-        created_at,
-        updated_at,
-        NULL AS charge_type,
-        NULL AS clearance_id,
-        NULL AS charges_due,
-        NULL AS waived_amount,
-        NULL AS gst_rate,
-        NULL AS total_amount,
-        NULL AS rounding_off,
-        NULL AS net_amount,
-        NULL AS clear_due_remarks,
-        NULL AS transfer_date,
-        NULL AS utr_no,
-        NULL AS transfer_mode,
-        NULL AS credited_in_account,
-        NULL AS bank_id,
-        NULL AS cheque_no,
-        NULL AS cheque_date
-    FROM
-        membership_charges_transaction
-    WHERE
-        id = ?
-            AND type = 'Share amount'
+        // Detect which table actually contains this transaction ID
+        $isMemberOtherCharge = DB::table('member_other_charges')
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->exists();
 
- 
-    UNION ALL
- 
-    SELECT
-        id,
-        member_id,
-        transaction_date,
-        charges AS amount ,
-        pay_mode,
-        type,
-        CONCAT('| consolidated transaction ::', IFNULL(clear_due_remarks, '')) AS remarks,
-        CASE WHEN status = 'PAID' THEN 'Approved' ELSE 'Pending' END AS status,
-        NULL AS is_accounted,
-        'Other Charge' AS transaction_source,
-        created_at,
-        updated_at,
-        charge_type,
-        clearance_id,
-        charges_due,
-        waived_amount,
-        gst_rate,
-        total_amount,
-        rounding_off,
-        net_amount,
-        clear_due_remarks,
-        transfer_date,
-        utr_no,
-        transfer_mode,
-        credited_in_account,
-        bank_id,
-        cheque_no,
-        cheque_date
-    FROM
-        member_other_charges
-    WHERE
-        id = ? AND deleted_at IS NULL
-            AND type = 'Normal'
+        if ($isMemberOtherCharge) {
+            // Fetch from member_other_charges table
+            $query = "
+            SELECT
+                id,
+                member_id,
+                transaction_date,
+                charges AS amount,
+                pay_mode,
+                type,
+                CONCAT('| consolidated transaction ::', IFNULL(clear_due_remarks, '')) AS remarks,
+                CASE WHEN status = 'PAID' THEN 'Approved' ELSE 'Pending' END AS status,
+                NULL AS is_accounted,
+                'Other Charge' AS transaction_source,
+                created_at,
+                updated_at,
+                charge_type,
+                clearance_id,
+                charges_due,
+                waived_amount,
+                gst_rate,
+                total_amount,
+                rounding_off,
+                net_amount,
+                clear_due_remarks,
+                transfer_date,
+                utr_no,
+                transfer_mode,
+                credited_in_account,
+                bank_id,
+                cheque_no,
+                cheque_date
+            FROM
+                member_other_charges
+            WHERE
+                id = ? AND deleted_at IS NULL
+                AND type = 'Normal'
+            LIMIT 1
+        ";
 
-    LIMIT 1
-    ";
+            $transaction = DB::selectOne($query, [$id]);
+        } else {
+            // Otherwise fetch from membership_charges_transaction table
+            $query = "
+            SELECT
+                id,
+                member_id,
+                transaction_date,
+                membership_fee AS amount,
+                charges_pay_mode AS pay_mode,
+                'Share amount' AS type,
+                remarks,
+                CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+                is_accounted,
+                'Membership Charge' AS transaction_source,
+                created_at,
+                updated_at,
+                NULL AS charge_type,
+                NULL AS clearance_id,
+                NULL AS charges_due,
+                NULL AS waived_amount,
+                NULL AS gst_rate,
+                NULL AS total_amount,
+                NULL AS rounding_off,
+                NULL AS net_amount,
+                NULL AS clear_due_remarks,
+                NULL AS transfer_date,
+                NULL AS utr_no,
+                NULL AS transfer_mode,
+                NULL AS credited_in_account,
+                NULL AS bank_id,
+                NULL AS cheque_no,
+                NULL AS cheque_date
+            FROM
+                membership_charges_transaction
+            WHERE
+                id = ?
+                AND type = 'Share amount'
+            LIMIT 1
+        ";
 
-        $transaction = DB::selectOne($query, [$id, $id]);
-
+            $transaction = DB::selectOne($query, [$id]);
+        }
         if (!$transaction) {
             abort(404, 'Transaction not found.');
         }
 
         // Fetch related data
         $member = Member::find($transaction->member_id);
-
         $branch = Branch::latest()->first();
         $Accounts = Account::latest()->first();
-        $amountFormatted = '₹ ' . number_format($transaction->amount, 2);
 
+        $amountFormatted = '₹ ' . number_format($transaction->amount, 2);
         if (!empty($transaction->gst_rate)) {
             $amountFormatted .= ' (Incl. ' . number_format($transaction->gst_rate, 1) . ' % GST)';
         }
 
         return view('members.member.transactionshow', compact('member', 'transaction', 'branch', 'Accounts', 'amountFormatted'));
     }
+
+
 
     public function softDeleteTransaction($transactionId)
     {
@@ -1382,93 +1393,111 @@ class MemberController extends Controller
 
     public function printReceipt($id)
     {
-        $query = "
-    SELECT
-        id,
-        member_id,
-        transaction_date,
-        membership_fee AS amount,
-        charges_pay_mode AS pay_mode,
-        'Share amount' AS type,
-        remarks,
-        CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
-        is_accounted,
-        'Membership Charge' AS transaction_source,
-        created_at,
-        updated_at,
-        NULL AS charge_type,
-        NULL AS clearance_id,
-        NULL AS charges_due,
-        NULL AS waived_amount,
-        NULL AS gst_rate,
-        NULL AS total_amount,
-        NULL AS rounding_off,
-        NULL AS net_amount,
-        NULL AS clear_due_remarks,
-        NULL AS transfer_date,
-        NULL AS utr_no,
-        NULL AS transfer_mode,
-        NULL AS credited_in_account,
-        NULL AS bank_id,
-        NULL AS cheque_no,
-        NULL AS cheque_date
-    FROM
-        membership_charges_transaction
-    WHERE
-        id = ? AND deleted_at IS NULL
-            AND type = 'Share amount'
 
- 
-    UNION ALL
- 
-    SELECT
-        id,
-        member_id,
-        transaction_date,
-        charges AS amount ,
-        pay_mode,
-        type,
-        CONCAT('| consolidated transaction ::', IFNULL(clear_due_remarks, '')) AS remarks,
-        CASE WHEN status = 'PAID' THEN 'Approved' ELSE 'Pending' END AS status,
-        NULL AS is_accounted,
-        'Other Charge' AS transaction_source,
-        created_at,
-        updated_at,
-        charge_type,
-        clearance_id,
-        charges_due,
-        waived_amount,
-        gst_rate,
-        total_amount,
-        rounding_off,
-        net_amount,
-        clear_due_remarks,
-        transfer_date,
-        utr_no,
-        transfer_mode,
-        credited_in_account,
-        bank_id,
-        cheque_no,
-        cheque_date
-    FROM
-        member_other_charges
-    WHERE
-        id = ? AND deleted_at IS NULL
-            AND type = 'Normal'
+        // changes done B
+        // Detect which table has this transaction ID
+        $isMemberOtherCharge = DB::table('member_other_charges')
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->exists();
 
-    LIMIT 1
-    ";
-
-        $transaction = DB::selectOne($query, [$id, $id]);
+        if ($isMemberOtherCharge) {
+            // Build query only for member_other_charges
+            $query = "
+            SELECT
+                id,
+                member_id,
+                transaction_date,
+                charges AS amount,
+                pay_mode,
+                type,
+                CONCAT('| consolidated transaction ::', IFNULL(clear_due_remarks, '')) AS remarks,
+                CASE WHEN status = 'PAID' THEN 'Approved' ELSE 'Pending' END AS status,
+                NULL AS is_accounted,
+                'Other Charge' AS transaction_source,
+                created_at,
+                updated_at,
+                charge_type,
+                clearance_id,
+                charges_due,
+                waived_amount,
+                gst_rate,
+                total_amount,
+                rounding_off,
+                net_amount,
+                clear_due_remarks,
+                transfer_date,
+                utr_no,
+                transfer_mode,
+                credited_in_account,
+                bank_id,
+                cheque_no,
+                cheque_date
+            FROM
+                member_other_charges
+            WHERE
+                id = ? AND deleted_at IS NULL AND type = 'Normal'
+            LIMIT 1
+        ";
+            $transaction = DB::selectOne($query, [$id]);
+        } else {
+            //Otherwise, get from membership_charges_transaction
+            $query = "
+            SELECT
+                id,
+                member_id,
+                transaction_date,
+                membership_fee AS amount,
+                charges_pay_mode AS pay_mode,
+                'Share amount' AS type,
+                remarks,
+                CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+                is_accounted,
+                'Membership Charge' AS transaction_source,
+                created_at,
+                updated_at,
+                NULL AS charge_type,
+                NULL AS clearance_id,
+                NULL AS charges_due,
+                NULL AS waived_amount,
+                NULL AS gst_rate,
+                NULL AS total_amount,
+                NULL AS rounding_off,
+                NULL AS net_amount,
+                NULL AS clear_due_remarks,
+                NULL AS transfer_date,
+                NULL AS utr_no,
+                NULL AS transfer_mode,
+                NULL AS credited_in_account,
+                NULL AS bank_id,
+                NULL AS cheque_no,
+                NULL AS cheque_date
+            FROM
+                membership_charges_transaction
+            WHERE
+                id = ? AND deleted_at IS NULL AND type = 'Share amount'
+            LIMIT 1
+        ";
+            $transaction = DB::selectOne($query, [$id]);
+        }
 
         if (!$transaction) {
             abort(404, 'Transaction not found.');
         }
+        // changes done B
+        $memberId = $transaction->member_id;
+
+        $member = DB::table('members')->where('id', $memberId)->first();
+
+        if (!$member) {
+            Log::warning("Member not found for transaction_id: $id | member_id: $memberId");
+            abort(404, 'Member not found for this transaction.');
+        }
 
         // ✅ Prepare data for PDF
         $data = [
-            'member_no'                 => $member->member_no ?? 'N/A',
-            'member_info_first_name' => $member->member_info_first_name ?? 'N/A',
+            'reg_no'                  => $member->reg_no ?? 'N/A',
+            'member_info_first_name'  => $member->member_info_first_name ?? 'N/A',
             'member_info_middle_name' => $member->member_info_middle_name ?? '',
             'member_info_last_name'   => $member->member_info_last_name ?? 'N/A',
             'phone'                   => $member->phone ?? 'N/A',
@@ -1501,6 +1530,8 @@ class MemberController extends Controller
             'bank_id'                 => $transaction->bank_id,
             'cheque_no'               => $transaction->cheque_no,
             'cheque_date'             => $transaction->cheque_date,
+            'member_no' => $member->member_no, // 👈 add this line
+
         ];
 
         // ✅ Generate and stream PDF
