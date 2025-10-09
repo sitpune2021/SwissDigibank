@@ -11,6 +11,7 @@ class Account extends Model
 
     protected $fillable = [
         'account_type',
+        'account_status',
         'account_no',
         'member_id',
         'address_id',
@@ -72,4 +73,4 @@ class Account extends Model
     {
         return $this->hasMany(DdTransaction::class, 'saving_account_id');
     }
-   }
+}
