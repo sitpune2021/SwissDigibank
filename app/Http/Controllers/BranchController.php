@@ -200,7 +200,7 @@ class BranchController extends Controller
     {
         $search = $request->input('q');
 
-        $branches = \App\Models\Branch::where('branch_name', 'like', "%{$search}%")->limit(10)->get();
+        $branches = Branch::where('branch_name', 'like', "%{$search}%")->limit(10)->get();
 
         return response()->json($branches->map(function ($branch) {
             return [
