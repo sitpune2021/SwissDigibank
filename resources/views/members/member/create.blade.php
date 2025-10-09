@@ -107,7 +107,7 @@
                     </div>
                 @endif
 
-                @if ($sectionName == 'member_KYC_documents')
+                @if ($sectionName == 'CUSTOMER_KYC_DOCUMENTS')
                     @if (!isset($member))
                         @php
                             function uploadedFileLink($documents, $key)
