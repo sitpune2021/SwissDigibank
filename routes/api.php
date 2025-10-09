@@ -2,18 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\AccountController;
 
+// login and logout route
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
-// Route::post('/register', [AuthenticationController::class, 'register']);
-// Route::get('/my-api/{id}', function ($id) {
-//     $member = Member::findOrFail($id);
+//member  api route
+Route::get('members/{id}', [MemberController::class, 'fetchMemberDetails']);
 
-//     return response()->json([
-//         'status' => true,
-//         'message' => 'data retrive suu',
-//         'data' => $member
-//     ]);
-// });
+//Account 
+Route::get('account/{id}', [AccountController::class, 'fetchAccountInfo']);
+
+
