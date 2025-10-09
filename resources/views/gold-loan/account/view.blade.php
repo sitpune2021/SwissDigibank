@@ -1,0 +1,1223 @@
+@extends('layout.main')
+
+<style>
+    .breadcrumb {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 14px;
+    }
+
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 8px;
+        color: #888;
+    }
+
+    .breadcrumb li a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .breadcrumb li.active {
+        color: #555;
+    }
+
+    .custom-thead {
+        background-color: #e6f4ea;
+        color: #14532d;
+    }
+
+    .custom-thead th {
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* Container for the toggle background */
+    .blocks {
+        width: 56px;
+        /* 14 * 4px */
+        height: 32px;
+        /* 8 * 4px */
+        border-radius: 9999px;
+        /* Fully rounded */
+        background-color: #9CA3AF;
+        /* Tailwind gray-400 default */
+        transition: background-color 0.3s ease;
+    }
+
+    /* The small white dot */
+    .dot {
+        position: absolute;
+        top: 4px;
+        /* 1 * 4px */
+        left: 4px;
+        /* 1 * 4px */
+        width: 24px;
+        /* 6 * 4px */
+        height: 24px;
+        /* 6 * 4px */
+        background-color: white;
+        border-radius: 9999px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    /* When the checkbox is checked, change bg color */
+    input[type="checkbox"].slider-toggle:checked+div .blocks {
+        background-color: #228cc5;
+        /* Tailwind green-500 */
+    }
+
+    /* Move the dot to right when checked */
+    input[type="checkbox"].slider-toggle:checked+div .dot {
+        transform: translateX(24px);
+        /* 6 * 4px */
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+        .custom-thead {
+            background-color: #14532d;
+            color: #d1fae5;
+        }
+    }
+
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
+
+    /* Fallback for browsers without accent-color support */
+    input[type="checkbox"]:checked {
+        background-color: green;
+        border: none;
+    }
+
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+        /* Modern browser support */
+    }
+
+    .tableWidth {
+        width: 90%;
+        margin: auto;
+    }
+
+    .bg-yellow {
+        background-color: #e17100;
+    }
+</style>
+
+@section('content')
+<div class="main-inner">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+        <div class="flex items-start flex-col gap-2">
+            <h1 class="text-2xl uppercase font-semibold">Gold Loan - 00460 </h1>
+            <p class="text-gray-500">
+                <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
+                <a href="#" class="text-gray-500 text-sm">00460</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+        <a href="" class="btn-secondary uppercase px-2 py-2 rounded-10 ">
+            View Transaction
+        </a>
+        <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            Pay Emi
+        </a>
+        <a href="" class="btn-error uppercase px-2 py-2 rounded-10 ">
+            Fore CloseLoan
+        </a>
+        <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            link saving account(Auto Debit)
+        </a>
+        <div class="relative inline-block text-left">
+            <!-- Button -->
+            <button type="button" class="btn-secondary uppercase px-2 py-2 rounded-10 flex items-center gap-2"
+                onclick="toggleDropdown('debitCharges')">
+                Debit Other Charges
+                <i class="las la-angle-down text-xs"></i>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="debitCharges"
+                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                <div class="py-1">
+                    <a href="#"
+                        class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Other Charges List
+                    </a>
+                    <a href="#"
+                        class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Debit Other Charges
+                    </a>
+                    <a href="#"
+                        class="flex items-center uppercase   gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Clear Dues
+                    </a>
+                </div>
+            </div>
+        </div>
+        <a href="" class="btn-primary  uppercase px-2 py-2 rounded-10 ">
+            Re-Update Emi Chart
+        </a>
+        <a href="" class="btn-error  uppercase px-2 py-2 rounded-10 ">
+            Remove Account
+        </a>
+        <div class="relative inline-block text-left">
+            <!-- Button -->
+            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+                onclick="toggleDropdown('printDropdown')">
+                <i class="las la-print text-lg"></i>
+                PRINT DOCUMENTS
+                <i class="las la-angle-down text-xs"></i>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="printDropdown"
+                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                <div class="py-1">
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i>Repayment Schedule
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i>  Loan Status
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> Closing Request letter
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i>Renewal Letter
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> Notice For Guarantor
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i>Notice for OVERDUE                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> Facility recall notice
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> Transaction Dispute
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> Reminder notice for ac holder 
+                    </a>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> Reminder notice for ac Guarantor 
+                    </a>
+
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> section 101 final notice ac holder 
+                    </a>
+                    
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
+                        <i class="las la-print text-secondary"></i> section 101 final notice ac Guarantor
+                    </a>
+                </div>
+            </div>
+        </div>
+        <a href="" class="btn-primary uppercase  px-2 py-2 rounded-10 ">
+            Show audit trail
+        </a>
+
+    </div>
+
+    <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
+        <!-- Left: Details -->
+        <div class=" w-full overflow-x-auto   overflow-hidden">
+            <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
+                {{-- <div class="text-end p-3">
+                    <a href="#" class=" p-2 btn-primary">
+                        <i class="las la-pencil-alt"></i>
+                    </a>
+                    <a href="#" class=" p-2 btn-error">
+                        <i class="las la-trash-alt"></i>
+                    </a>
+                </div> --}}
+                <table class="min-w-full text-sm text-left border-collapse">
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2 w-1/3">Status</td>
+                            <td class="px-4 py-2">
+                                <a href="" class="text-primary  capitalize hover:underline">
+                             <span
+                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                ACTIVE
+                            </span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold  px-4 py-2"> ACTIVE
+                                Member</td>
+                            <td class="px-4 py-2 capitalize  text-primary">DEMO-04435 - atharv page</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Member Contact No</td>
+                            <td class="px-4 py-2 capitalize text-primary">9087659432</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
+                            <td class="px-4 py-2">DEMO-04391 - sam butler</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Account No.</td>
+                            <td class="px-4 py-2">00460</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Application No.</td>
+                            <td class="px-4 py-2 text-primary">00592</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Open Date</td>
+                            <td class="px-4 py-2">24/09/2025 </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">First EMI Date</td>
+                            <td class="px-4 py-2">24/10/2025</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Last EMI Date</td>
+                            <td class="px-4 py-2">24/10/2025</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Scheme</td>
+                            <td class="px-4 py-2">Suvarna shree yojana flat advanced interest deduction - SSY15</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2"> Loan Amount</td>
+                            <td class="px-4 py-2">₹ 100,000.00</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2"> Total Deposit</td>
+                            <td class="px-4 py-2">₹ 8,333.00</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2"> Current Debt</td>
+                            <td class="px-4 py-2">(91,667.00)</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2"> Close Date</td>
+                            <td class="px-4 py-2"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2"> Interest Rate</td>
+                            <td class="px-4 py-2">20.0 %</td>
+                        </tr>
+                        <tr class="">
+                            <td class="font-semibold px-4 py-2"> Annualized Percentage Rate (APR)</td>
+                            <td class="px-4 py-2">0.0 %</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+            <!--APPOINTMENT DETAILS-->
+            <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+
+                <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  capitalize">APPOINTMENT DETAILS</h3>
+                    <div class=" flex gap-3">
+                        <a href="javascript:void(0)" onclick="openModal()" class="p-2 rounded-10 btn-primary">
+                            <i class="las la-upload"></i>New Appointment
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+                <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  capitalize">ALLOCATED PASSBOOK
+                    </h3>
+                    <div class=" flex gap-3">
+                        <a href="" class="p-2 rounded-10 btn-primary">
+                            <i class="las la-upload"></i>Passbook
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!--documents-->
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  capitalize">
+                        Documents
+
+                    </h3>
+                    <div class="">
+                        <a href="#" class="btn-primary p-1 pointer">
+                            <i class="las la-upload y"></i>
+                        </a>
+
+                        <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Documents')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="p-4" id="Documents">
+                    <div class="overflow-x-auto">
+                        <p class="capitalize">No documents found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!--COMMENTS-->
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  capitalize">
+                        COMMENTS
+                    </h3>
+                    <div class="">
+
+                        <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Comment')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="p-4" id="Comment">
+                    <p class="capitalize">No Comment Found</p>
+                    <div class="overflow-x-auto mt-5 flex flex-col items-center ">
+                        <button class="btn-primary  ">Add Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Settings -->
+        <div class=" w-full overflow-x-auto  ">
+            <div class="flex flex-row gap-4 dark:bg-bg3      rounded-10">
+                <div class="w-full box dark:bg-bg3 p-2 rounded-10 shadow-md border border-gray-200">
+                    <div class="flex justify-center gap-2  border-gray-200 px-4 py-3 bg-gray-50 rounded-t-2xl border-b">
+
+                        <h3 class="font-semibold  text-center sm:text-lg">
+                            {{--Rupee Symbol--}} &#x20B9; BALANCE REPORT
+                        </h3>
+                    </div>
+
+                    <div class="overflow-x-auto   ">
+                        <table class="w-full border-collapse">
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap  text-sm px-4 py-2">C. DEBT</td>
+                                    <td class="px-4 py-2 ">
+                                        <span class="font-bold">0.00</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap text-sm px-4 py-2">T. DEPOSIT</td>
+                                    <td class="px-4 py-2 ">
+                                        <span class="font-bold">8,333.00</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap text-sm px-4 py-2">T. DUE</td>
+                                    <td class="px-4 py-2 ">
+                                        <span class="font-bold">0.00</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap text-sm px-4 py-2 flex items-start gap-2 ">
+                                        OC DUE
+
+                                    </td>
+                                    <td class="px-4 py-2 text-red-800">
+                                        <span class="font-bold">0.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="whitespace-nowrap text-sm px-4 py-2">DUE DAYS</td>
+                                    <td class="px-4 py-2">
+                                        <span class="font-bold">0</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--SMS SETTINGS-->
+            <div class="box dark:bg-bg3 mt-3 border-gray-200 shadow-md rounded-lg">
+                <!-- Header -->
+                <div class="px-4 py-3">
+                    <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
+                </div>
+                <div class="p-4 overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
+                        <tbody class="divide-y divide-gray-200">
+
+                            <!-- SMS Toggle -->
+                            <tr>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
+                                <td class="px-4 py-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
+                                        <div class="relative">
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
+                                        </div>
+                                </td>
+                            </tr>
+
+                            {{-- SMS REMINDER --}}
+                            <tr>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS REMINDER </td>
+                                <td class="px-4 py-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
+                                        <div class="relative">
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
+                                        </div>
+                                </td>
+                            </tr>
+                            {{-- ON HOLD --}}
+                            <tr>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">ON HOLD</td>
+                                <td class="px-4 py-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
+                                        <div class="relative">
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
+                                        </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="bg-white dark:bg-bg3 shadow-md mt-4 p-2 rounded-xl border border-gray-200">
+                <div class="px-4 py-3 m-4">
+                    <h3 class="text-lg border-b font-semibold text-black">PENALTY SETTING</h3>
+                </div>
+                <!--Old MIS No.-->
+                <form action="" class="mt-3 p-3 border-b ">
+
+                    <label for="" class="block mb-2 font-semibold">Penalty Charges </label>
+                    <div class="col-sm-7">
+                        <div class="flex items-center gap-2">
+
+                            <!-- Left Select -->
+                            <select name="bonus_rate_type" id="bonus-rate-type round-10"
+                                class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-2 md:py-3">
+                                <option value="percentage">%</option>
+                                <option value="fixed">FIXED</option>
+                            </select>
+
+                            <!-- Main Input -->
+                            <input type="number" id="bonus-rate" name="bonus_rate_value"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="Enter Penalty Value ">
+
+                            <button type="submit" class="block btn-primary rounded-10">Update</button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <!--Branch-->
+                <form action="" method="" class="mt-2 px-3">
+
+
+                    <label for="branch" class="block mb-2 font-semibold">Overdue Interest (%) </label>
+                    <div class="col-sm-7">
+                        <div class="flex items-center gap-2">
+
+                            <!-- Left Select -->
+                            <select name="bonus_rate_type" id="bonus-rate-type round-10"
+                                class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-2 md:py-3">
+                                <option value="percentage"> TYPE_2</option>
+                                <option value="fixed">TYPE_1</option>
+                            </select>
+
+                            <!-- Main Input -->
+                            <input type="number" id="bonus-rate" name="bonus_rate_value"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0">
+
+                            <button type="submit" class="block btn-primary rounded-10">Update</button>
+                        </div>
+
+                    </div>
+                </form>
+
+
+            </div>
+
+
+
+            <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
+                <div class="p-4" id="SecurityDeposits">
+                    <div class="overflow-x-auto text-center">
+                        <div class="w-full overflow-x-auto">
+                            <table class="min-w-full border-collapse whitespace-nowrap text-sm text-center">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-2"></th>
+                                        <th class="px-4 py-2">NET P.</th>
+                                        <th class="px-4 py-2">EMI P.</th>
+                                        <th class="px-4 py-2">EMI INT.</th>
+                                        <th class="px-4 py-2">EMI CHRGS.</th>
+                                        <th class="px-4 py-2">OVERDUE INT.</th>
+                                        <th class="px-4 py-2">OTHER CHRGS.</th>
+                                        <th class="px-4 py-2">ADV. AMOUNT</th>
+                                        <th class="px-4 py-2">DISCOUNT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-primary border-b">
+                                        <th class="px-4 py-2 text-left">PAID</th>
+                                        <td class="px-4 py-2">8333.0</td>
+                                        <td class="px-4 py-2">8333.0</td>
+                                        <td class="px-4 py-2">20000.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                    </tr>
+                                    <tr class="text-error">
+                                        <th class="px-4 py-2 text-left">DUE</th>
+                                        <td class="px-4 py-2">91667.0</td>
+                                        <td class="px-4 py-2">8333.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">-</td>
+                                        <td class="px-4 py-2">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Gold Loan Scheme Info-->
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black uppercase ">
+                        Gold Loan Scheme Info
+                    </h3>
+                    <div class="">
+
+
+                        <button type="button" class="p-1 rounded transition"
+                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
+                    <table
+                        class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
+                                    Scheme Name
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    Gold Loan Assureplus Flat Advanced Interest Deduction
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">Scheme Code</td>
+                                <td class="px-4 py-2 text-right md:text-left">GLSAP003</td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Maximum Loan Amount
+
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ 100000.0
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Maximum Loan Limit
+
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    90.0 %
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">Interest Type</td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    Flat Advanced Interest Deduction
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Interest Rate
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    19.5 %
+                                </td>
+                            </tr>
+                            <tr class=" text-center">
+                                <td class="font-bold px-4 py-2" colspan="2">
+                                    Per EMI Charges
+                                </td>
+
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    SMS Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    0.0 ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Fuel Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    0.0 ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Stationary Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    0.0 ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Maintenance Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    0.0 ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Collection Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    0.0 ₹
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <!--Update Branch/ Associate/ Guarantor-->
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
+                        Update Branch/ Associate/ Guarantor
+                    </h3>
+                    <div class="">
+                        <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Guarantor')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="overflow-x-auto mt-2 " id="Guarantor">
+                    <form action="" class="mt-1    ">
+                        <label for="" class="block mb-2 font-semibold">Branch</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Branch</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1  ">
+                        <label for="" class="block mb-2 font-semibold">Advisor/ Staff</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Advisor/Staff</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1   ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 1</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1 ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 2</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1 ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 3</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1 ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 4</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            {{-- Gold Loan Basic Details --}}
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black uppercase ">
+                        Gold Loan Basic Details
+                    </h3>
+                    <div class="">
+
+
+                        <button type="button" class="p-1 rounded transition"
+                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="overflow-x-auto mt-5     " id="goldLoanSchemeInfo">
+                    <table
+                        class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
+                                    Branch
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    Gold Loan Assureplus Flat Advanced Interest Deduction
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">Advisor/ Staff</td>
+                                <td class="px-4 py-2 text-right md:text-left">SAMADHAN JADHAV</td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Loan Amount
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ 100,000.00
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Annual Interest Rate
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    20.0 %
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">Credit Period</td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    1 Days
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Interest Type
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    Flat Advanced Interest Deduction
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2" colspan="">
+                                    Per EMI Charges
+                                </td>
+                                <td class="px-4 py-2 ">
+                                    MONTHLY
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Tenure of Loan
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    12 MONTHS
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Processing Fee
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    ₹ 0.0
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">
+                                    Purpose of Loan
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    personal
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+    <!-- Tabs Wrapper -->
+    <div class="w-full box mt-5">
+        <!-- Tab Navigation -->
+        <ul class="flex border-b overflow-x-auto text-sm font-medium text-gray-600">
+            <li>
+                <button class="tab-btn px-4 py-2 border-b-2 uppercase text-primary" data-tab="tab1">
+                    Repayment Schedule (Installments)
+                </button>
+            </li>
+            <li>
+                <button
+                    class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
+                    data-tab="tab2">
+                    Current Statement
+                </button>
+            </li>
+            <li>
+                <button
+                    class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
+                    data-tab="tab3">
+                    Security Deposit
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content p-4">
+            <!-- Tab 1 -->
+            <div id="tab1" class="tab-pane block">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse whitespace-nowrap  text-sm">
+                        <thead class="bg-secondary/5 ">
+                            <tr>
+                                <th class=" p-2 ">EMI No.</th>
+                                <th class=" p-2 ">EMI DATE</th>
+                                <th class=" p-2 ">EMI DUE DATE</th>
+                                <th class=" p-2 ">PRINCIPAL</th>
+                                <th class=" p-2 ">INTEREST</th>
+                                <th class=" p-2 ">OTHER CHRG.</th>
+                                <th class=" p-2 ">EMI</th>
+                                <th class=" p-2 ">BAL. PRINCIPAL</th>
+                                <th class=" p-2 ">REMAINING AMT</th>
+                                <th class=" p-2 ">PAID DATE</th>
+                                <th class=" p-2 ">STATUS</th>
+                                <th class=" p-2 ">PROCESSED</th>
+                                <th class=" p-2 ">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-green-50 border-b">
+                                <td class=" p-2"></td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2">20000.00</td>
+                                <td class=" p-2">0.00</td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2">91,667.00</td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2">
+                                <td class=" p-2">
+
+                                </td>
+                                <td class=" p-2">
+
+                                </td>
+                            </tr>
+                            <tr class="bg-green-50 border-b">
+                                <td class=" p-2">1</td>
+                                <td class=" p-2">24/10/2025</td>
+                                <td class=" p-2">25/10/2025</td>
+                                <td class=" p-2">8,333.00</td>
+                                <td class=" p-2">0.00</td>
+                                <td class=" p-2">0.00</td>
+                                <td class=" p-2">8,333.00</td>
+                                <td class=" p-2">91,667.00</td>
+                                <td class=" p-2">0.00</td>
+                                <td class=" p-2">24/10/2025</td>
+                                <td class=" p-2"><span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        PAID
+                                    </span>
+                                </td>
+                                <td class=" p-2">
+                                    <span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        Yes
+                                    </span>
+                                </td>
+                                <td class=" p-2">
+                                    <div class="flex justify-center">
+                                        <div class="relative">
+                                            <i
+                                                class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                            <ul class="horiz-option popover-content">
+                                                <li><a href="" class="single-option capitalize">Mark Due</a></li>
+                                                <li><a href="" class="single-option capitalize">Print</a></li>
+
+
+                                            </ul>
+
+                                            {{-- @include('partials._vertical-options', [
+                                            /* 'id' =>base64_encode($director->id),
+                                            'viewRoute' => 'director.show',
+                                            'editRoute' => 'director.edit'*/
+                                            ]) --}}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2 -->
+            <div id="tab2" class="tab-pane hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse whitespace-nowrap  text-sm">
+                        <thead class="bg-gray-100">
+                            <tr class="bg-secondary/5">
+                                <th class="text-start p-2">DATE</th>
+                                <th class="text-start p-2">TYPE</th>
+                                <th class="text-start p-2">PAYMENT MODE</th>
+                                <th class="text-start p-2">AMOUNT</th>
+                                <th class="text-start p-2">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-start p-2">26/09/2025 12:56</td>
+                                <td class="text-start p-2">Debit</td>
+                                <td class="text-start p-2">System</td>
+                                <td class="text-start p-2">0.00</td>
+                                <td class="text-start p-2">Approved</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3 -->
+            <div id="tab3" class="tab-pane hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse whitespace-nowrap  text-sm">
+                        <thead class="bg-gray-100">
+                            <tr class="bg-secondary/5">
+                                <th class=" p-2">ITEM TYPE</th>
+                                <th class=" p-2">NAME</th>
+                                <th class=" p-2">QTY</th>
+                                <th class=" p-2">VAL./gm (₹)</th>
+                                <th class=" p-2">GROSS WEIGHT (gm)</th>
+                                <th class=" p-2">NET WEIGHT (gm)</th>
+                                <th class=" p-2">TUNCH (%)</th>
+                                <th class=" p-2">FINE WEIGHT (gm)</th>
+                                <th class=" p-2">TOTAL VAL. (₹)</th>
+                                <th class=" p-2">IMAGE</th>
+                                <th class=" p-2">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class=" p-2">Gold jewelry</td>
+                                <td class=" p-2">Gold</td>
+                                <td class=" p-2">5</td>
+                                <td class=" p-2">5,000.00</td>
+                                <td class=" p-2">50.0</td>
+                                <td class=" p-2">50.0</td>
+                                <td class=" p-2">100%</td>
+                                <td class=" p-2">50.0</td>
+                                <td class=" p-2">250,000.00</td>
+                                <td class=" p-2"></td>
+                                <td class=" p-2">Released</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle("hidden");
+        }
+
+        // Close dropdown if clicked outside
+        window.addEventListener("click", function (e) {
+            const dropdown = document.getElementById("printDropdown");
+            if (!e.target.closest("button") && !e.target.closest("#printDropdown")) {
+                dropdown.classList.add("hidden");
+            }
+        });
+</script>
+
+
+
+<!-- Tailwind Tab Script -->
+<script>
+    const tabBtns = document.querySelectorAll(".tab-btn");
+        const tabPanes = document.querySelectorAll(".tab-pane");
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const target = btn.dataset.tab;
+
+                tabBtns.forEach(b => b.classList.remove("border-primary", "text-primary"));
+                tabPanes.forEach(p => p.classList.add("hidden"));
+
+                btn.classList.add("border-primary", "text-primary");
+                document.getElementById(target).classList.remove("hidden");
+            });
+        });
+
+        // <!-- collapsed logic + - button-->
+
+        function toggleSection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = button.querySelector('.toggle-icon');
+
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
+
+</script>
+
+@endsection

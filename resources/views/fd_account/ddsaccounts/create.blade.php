@@ -177,12 +177,25 @@
                         <select id="scheme_id" name="scheme_id"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Scheme</option>
+                            @php
+                                $allowedFrequencies = ['daily', 'weekly', 'bi_weekly'];
+                            @endphp
+
                             @foreach ($schemes as $scheme)
-                                <option data-min="{{ $scheme->min_rd_dd_amount }}" value="{{ $scheme->id }}"
-                                    {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
-                                    {{ $scheme->scheme_name }}
-                                </option>
+                                @php
+                                    $frequency = strtolower(trim($scheme->rd_dd_frequency));
+                                @endphp
+
+                                @if (in_array($frequency, $allowedFrequencies))
+                                    <option data-min="{{ $scheme->min_rd_dd_amount }}"
+                                        data-frequency="{{ $frequency }}" value="{{ $scheme->id }}"
+                                        {{ old('scheme_id') == $scheme->id ? 'selected' : '' }}>
+                                        {{ $scheme->scheme_name }}
+                                    </option>
+                                @endif
                             @endforeach
+
+
                         </select>
                         @error('scheme_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -226,7 +239,8 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1 relative">
-                        <label for="remarks" class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0 uppercase">
+                        <label for="remarks"
+                            class="w-full md:w-1/4 text-sm font-medium text-gray-700 mb-2 md:mb-0 uppercase">
                             Remarks (if any)
                         </label>
                         <div class="w-full md:w-3/4 mt-2">
@@ -238,7 +252,8 @@
                     <div class="col-span-2 md:col-span-1"></div>
                     <!-- TDS -->
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">TDS Deduction<span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">TDS Deduction<span
+                                class="text-red-500">*</span></label>
                         <div class="flex items-center  gap-2">
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
                                     value="yes"> Yes</label>
@@ -252,7 +267,8 @@
                     <div class="col-span-2 md:col-span-1"></div>
 
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">Account Type <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Account Type <span
+                                class="text-red-500">*</span></label>
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="account_type" value="single"
@@ -408,8 +424,10 @@
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Bank Name<span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" name="bank_name" placeholder="Enter Bank Name"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_name"
+                                        display-field="name" value-field="id" event="Bank-selected" :selected="null" />
+                                    {{-- <input type="text" name="bank_name" placeholder="Enter Bank Name"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"> --}}
                                 </div>
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Cheque No<span
@@ -420,7 +438,7 @@
                                 <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                     <label class="font-medium block mb-1">Cheque Date<span
                                             class="text-red-500">*</span></label>
-                                    <input type="date" name="cheque_date" id="date3"
+                                    <input type="text" name="cheque_date" id="date3"
                                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     <i
                                         class="absolute -translate-y-1/2 cursor-pointer las la-calendar ltr:right-4 rtl:left-4 top-1/2"></i>
@@ -723,22 +741,22 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const mobileFields = ['memberMobile'];
+            const mobileFields = ['memberMobile'];
 
-        mobileFields.forEach(function(id) {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', function() {
+            mobileFields.forEach(function(id) {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        // Remove non-digits
+                        this.value = this.value.replace(/\D/g, '');
 
-                    this.value = this.value.replace(/\D/g, '');
-
-                    if (this.value.length > 10) {
-                        this.value = this.value.slice(0, 10);
-                    }
-                });
-            }
-        });
-        });
+                        // Limit to 10 digits
+                        if (this.value.length > 10) {
+                            this.value = this.value.slice(0, 10);
+                        }
+                    });
+                }
+            });
         });
     </script>
 

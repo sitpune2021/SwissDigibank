@@ -5,14 +5,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-xl font-semibold">DD- {{ $ddaccount->id ?? 'N/A' }} INSTALLMENTS</h1>
-                <!-- <div class="">
-                    <a href="" class="text-sm text-gray-500 ">Daily Deposits</a> >
-                    <a href="" class="text-sm text-gray-500">DDA03621 </a> >
-                    <a href="" class="text-sm text-gray-500">Installments</a>
-                </div> -->
             </div>
-
-
         </div>
         <div class="col-span-12 lg:col-span-12">
             <div class="my-4">
@@ -32,88 +25,39 @@
                             <th class="px-4 py-3 text-start text-lg  md:text-base font-bold text-gray-700">ACTIONS</th>
                         </tr>
                     </thead>
-                   <tbody>
-                @foreach ($installments as $inst)
-                    <tr>
-                        <td class="px-3 py-2">{{ $inst['number'] }}</td>
-                        <td class="px-3 py-2">{{ number_format((float) $inst['amount'], 2) }}</td>
-                        <td class="px-3 py-2">
-                            @if ($inst['due_date'])
-                                {{ \Carbon\Carbon::createFromFormat('d/m/Y', $inst['due_date'])->format('d/m/Y') }}
-                            @endif
-                        </td>
-                        <td class="px-3 py-2">
-                            @if ($inst['state'] === 'PAID')
-                                <span class="badge bg-success">PAID</span>
-                            @else
-                                <span class="badge bg-warning text-dark">PENDING</span>
-                            @endif
-                        </td>
-                        <td class="px-3 py-2">
-                            @if ($inst['paid_on'])
-                                {{ \Carbon\Carbon::createFromFormat('d/m/Y', $inst['paid_on'])->format('d/m/Y') }}
-                            @endif
-                        </td>
-                        <td class="px-3 py-2">
-                            @if ($inst['state'] === 'PAID')
-                                <button class="btn btn-sm btn-secondary" onclick="window.print()">Print</button>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
+                    <tbody>
+                        @foreach ($installments as $inst)
+                            <tr>
+                                <td class="px-3 py-2">{{ $inst['number'] }}</td>
+                                <td class="px-3 py-2">{{ number_format((float) $inst['amount'], 2) }}</td>
+                                <td class="px-3 py-2">
+                                    @if ($inst['due_date'])
+                                        {{ \Carbon\Carbon::createFromFormat('d/m/Y', $inst['due_date'])->format('d/m/Y') }}
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2">
+                                    @if ($inst['state'] === 'PAID')
+                                        <span class="badge  bg-green bg-success">PAID</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark"></span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2">
+                                    @if ($inst['paid_on'])
+                                        {{ \Carbon\Carbon::createFromFormat('d/m/Y', $inst['paid_on'])->format('d/m/Y') }}
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2">
+                                    @if ($inst['state'] === 'PAID')
+                                        <button class="btn btn-sm btn-secondary" onclick="window.print()">Print</button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
+
         </div>
     </div>
 @endsection
-{{-- @extends('layout.main')
-@section('content')
-    <div class="container py-4">
-        <h3 class="mb-3">Installments for DD - {{ $ddaccount->id  ?? 'N/A' }}</h3>
-
-        <table class="table table-bordered table-hover align-middle" style="font-size: 0.9rem;">
-            <thead class="table-success text-white" style="background-color: #28a745;">
-                <tr>
-                    <th scope="col" class="text-start px-3 py-2" style="min-width: 110px; cursor: pointer;">Installment No
-                    </th>
-                    <th scope="col" class="px-3 py-2">Amount</th>
-                    <th scope="col" class="px-3 py-2">Due Date</th>
-                    <th scope="col" class="px-3 py-2">State</th>
-                    <th scope="col" class="px-3 py-2">Paid On</th>
-                    <th scope="col" class="px-3 py-2">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($installments as $inst)
-                    <tr>
-                        <td class="px-3 py-2">{{ $inst['number'] }}</td>
-                        <td class="px-3 py-2">{{ number_format((float) $inst['amount'], 2) }}</td>
-                        <td class="px-3 py-2">
-                            @if ($inst['due_date'])
-                                {{ \Carbon\Carbon::createFromFormat('d/m/Y', $inst['due_date'])->format('d/m/Y') }}
-                            @endif
-                        </td>
-                        <td class="px-3 py-2">
-                            @if ($inst['state'] === 'PAID')
-                                <span class="badge bg-success">PAID</span>
-                            @else
-                                <span class="badge bg-warning text-dark">PENDING</span>
-                            @endif
-                        </td>
-                        <td class="px-3 py-2">
-                            @if ($inst['paid_on'])
-                                {{ \Carbon\Carbon::createFromFormat('d/m/Y', $inst['paid_on'])->format('d/m/Y') }}
-                            @endif
-                        </td>
-                        <td class="px-3 py-2">
-                            @if ($inst['state'] === 'PAID')
-                                <button class="btn btn-sm btn-secondary" onclick="window.print()">Print</button>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-@endsection --}}

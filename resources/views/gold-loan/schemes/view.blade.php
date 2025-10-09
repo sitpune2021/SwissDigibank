@@ -25,7 +25,7 @@
         <div class="flex items-start flex-col  gap-2">
             <div class="flex items-center gap-3">
                 <h1 class="text-xl font-semibold capitalize">
-                    Suvarna shree yojana no emi
+                    {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
                     Gold Loan Scheme
@@ -33,8 +33,8 @@
             </div>
             <!-- <p class="text-gray-500">
                 <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm">Suvarna shree yojana no emi</a>
-            </p> -->
+                <a href="" class="text-gray-500 text-sm">{{ $scheme->scheme_name }}</a>
+            </p>
 
         </div>
     </div>
@@ -70,12 +70,68 @@
                             <td class="p-3">₹ {{ number_format($scheme->max_loan_amount, 2) }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Maximum Loan Limit Against Deposit</td>
+                            <td class="p-3">{{ $scheme->max_loan_limit }} % </td>
+                        </tr>
+                        <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Minimum Loan Amount</td>
+                            <td class="p-3">₹ {{ number_format($scheme->min_loan_amount, 2) }}</td>
+                        </tr>
+                        <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Annual Interest Rate</td>
                             <td class="p-3">{{ $scheme->annual_interest_rate }} %</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Interest Type</td>
-                            <td class="p-3">{{ $scheme->interest_type }}</td>
+                            <td class="p-3">{{ $scheme->gold_loan_setting }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Fore Closure Charges</td>
+                            <td class="p-3">₹ {{ number_format($scheme->fore_closer_charge, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Stamp Duty Fee</td>
+                            <td class="p-3">₹ {{ number_format($scheme->stamp_duty_charge, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Insurance Charges</td>
+                            <td class="p-3">₹ {{ number_format($scheme->insurance_fee, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Processing Fee</td>
+                            <td class="p-3">{{ $scheme->processing_fee }} %</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Penalty Charge</td>
+                            <td class="p-3">{{ $scheme->penalty_charge }} %</td>
+                        </tr>
+                        <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Overdue Interest Rate (%)</td>
+                            <td class="p-3">{{ $scheme->overdue_interest_rate }} %</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">SMS Charges per EMI</td>
+                            <td class="p-3">₹ {{ number_format($scheme->sms_charge, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Fuel Charges per EMI</td>
+                            <td class="p-3">₹ {{ number_format($scheme->fuel_charge, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Stationary Charges per EMI</td>
+                            <td class="p-3">₹ {{ number_format($scheme->stationary_charge, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Maintenance Charges per EMI</td>
+                            <td class="p-3">₹ {{ number_format($scheme->maintenace_charge, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Collection Charges per EMI</td>
+                            <td class="p-3">₹ {{ number_format($scheme->collcetion, 2) }}</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Credit Period</td>
+                            <td class="p-3">{{ number_format($scheme->credit_period) }} Days</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Active</td>
@@ -135,10 +191,7 @@
             </div>
         </div>
     </div>
-
 </div>
-
-
 
 <script>
     // <!-- collapsed logic + - button-->

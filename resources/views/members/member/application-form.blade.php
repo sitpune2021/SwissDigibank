@@ -194,17 +194,17 @@
           <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo">
         </div>
         <!-- Bank Details -->
-        <div class="bank-details">
+        {{-- <div class="bank-details">
           <h1>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA <br> LIMITED</h1>
           <br>
           <p>SHEGAON SHEGAON Maharashtra - 110012</p>
           <p>E: sbcglobalbank@gmail.com | L: 0724-2991230 | M: 9922870805</p>
           <p>CIN: 969/03-04</p>
-        </div>
+        </div> --}}
         <div class="logo"></div>
       </div>
 
-      <h3>Membership Application Form ( M00081 )</h3>
+      <h3>Membership Application Form ( {{ $member->member_no}}  )</h3>
     </div>
 
     <table>
@@ -215,35 +215,35 @@
       </tr>
       <tr>
         <td>F/H Name</td>
-        <td>{{ $member->member_info_father_name ?? '-'}}</td>
+        <td>{{ $member->member_info_father_name ?? ''}}</td>
       </tr>
       <tr>
         <td>Mother's Name</td>
-             <td>{{ $member->member_info_mother_name ?? '-'}}</td>
+             <td>{{ $member->member_info_mother_name ?? ''}}</td>
 
       </tr>
       <tr>
         <td>D.O.B. (DD/MM/YYYY)</td>
-<td>{{ \Carbon\Carbon::parse($member->member_info_dob)->format('d-m-Y') ?? '-' }}</td>
+<td>{{ \Carbon\Carbon::parse($member->member_info_dob)->format('d-m-Y') ?? '' }}</td>
 
       </tr>
       <tr>
         <td>Reference by</td>
-             <td>{{ $member->id ?? '-'}}</td>
+             <td>{{ $member->id ?? ''}}</td>
       </tr>
     </table>
 
     <div class="section-title">Address</div>
     <table>
       <tr>
-             <td>{{ $member->address->member_address_line_1 ?? '-'}}</td>
+             <td>{{ $member->address->member_address_line_1 ?? ''}}</td>
         <td colspan="3"></td>
       </tr>
       <tr>
         <td style="width: 25%;">City</td>
-        <td style="width: 25%;">{{ $member->address->member_address_city_district ?? '-'}}</td>
+        <td style="width: 25%;">{{ $member->address->member_address_city_district ?? ''}}</td>
         <td style="width: 25%;">Pincode</td>
-        <td style="width: 25%;">{{ $member->address->member_address_pincode ?? '-'}}</td>
+        <td style="width: 25%;">{{ $member->address->member_address_pincode ?? ''}}</td>
       </tr>
       <tr>
         <td>State</td>
@@ -251,9 +251,9 @@
       </tr>
       <tr>
         <td>Mobile No.</td>
-        <td>{{ $member->member_info_mobile_no ?? '-'}}</td>
+        <td>{{ $member->member_info_mobile_no ?? ''}}</td>
         <td>Email</td>
-        <td>{{ $member->member_info_email ?? '-'}}</td>
+        <td>{{ $member->member_info_email ?? ''}}</td>
       </tr>
     </table>
 
@@ -261,25 +261,25 @@
     <table>
       <tr>
         <td>Qualification</td>
-        <td>{{ $member->member_info_qualification ?? '-'}}</td>
+        <td>{{ $member->member_info_qualification ?? ''}}</td>
         <td>PAN</td>
-             <td>{{ $member->kyc->member_kyc_pan_no ?? '-'}}</td>
+             <td>{{ $member->kyc->member_kyc_pan_no ?? ''}}</td>
       </tr>
       <tr>
         <td>Aadhaar No</td>
-             <td>{{ $member->kyc->member_kyc_aadhaar_no ?? '-'}}</td>
+             <td>{{ $member->kyc->member_kyc_aadhaar_no ?? ''}}</td>
         <td>Voter ID</td>
-             <td>{{ $member->kyc->member_kyc_voter_id_no ?? '-'}}</td>
+             <td>{{ $member->kyc->member_kyc_voter_id_no ?? ''}}</td>
       </tr>
       <tr>
         <td>Occupation</td>
-             <td>{{ $member->member_info_occupation ?? '-'}}</td>
+             <td>{{ $member->member_info_occupation ?? ''}}</td>
         <td rowspan="2" style="padding-top:2.5%;">Monthly Income</td>
-        <td rowspan="2">{{ $member->member_info_monthly_income ?? '-'}}</td>
+        <td rowspan="2">{{ $member->member_info_monthly_income ?? ''}}</td>
       </tr>
       <tr>
         <td>Marital Status</td>
-        <td>{{ $member->member_info_marital_status ?? '-'}}</td>
+        <td>{{ $member->member_info_marital_status ?? ''}}</td>
       </tr>
     </table>
 
@@ -287,13 +287,13 @@
     <table>
       <tr>
         <td>Name</td>
-             <td>{{ $member->kyc->nominee_name ?? '-'}}</td>
+             <td>{{ $member->kyc->nominee_name ?? ''}}</td>
         <td>Relation</td>
-             <td>{{ $member->kyc->nominee_relation ?? '-'}}</td>
+             <td>{{ $member->kyc->nominee_relation ?? ''}}</td>
       </tr>
       <tr>
         <td>Address</td>
-        <td colspan="3">{{ $member->kyc->nominee_address ?? '-'}}</td>
+        <td colspan="3">{{ $member->kyc->nominee_address ?? ''}}</td>
       </tr>
     </table>
 
@@ -316,7 +316,7 @@
     <div class="declaration">Declaration</div>
     <table>
       <tr>
-        <td style="font-size:11px;">I <b>JYOTI RAJKUMAR KALE</b> want to become a member of <b>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</b>. <br>
+        <td style="font-size:11px;">I <b> {{ $member->member_info_first_name }} {{ $member->member_info_middle_name }} {{ $member->member_info_last_name }}</b> want to become a member of <b>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</b>. <br>
           Also I do hereby declare and affirm that the particulars given by me are correct to the best of my knowledge and nothing has been concealed. I further certify that there are no legal/or police case is/are registered in my name. I am bound to accept all the rules and regulations formed by Registrar of Companies in this regard.
         </td>
       </tr>
@@ -331,7 +331,7 @@
   <!-- Page 2 -->
   <div class="container2 ">
     <div class="membership-box">
-      I <strong>JYOTI RAJKUMAR KALE</strong> <span style="margin-right:80px; "> am paying ₹ </span><span style="margin-right:50%;">as MEMBERSHIP </span> for <strong>10.0/</strong> 1 share as the case maybe. <br>
+      I <strong>{{ $member->member_info_first_name }} {{ $member->member_info_middle_name }} {{ $member->member_info_last_name }}</strong> <span style="margin-right:80px; "> am paying ₹ </span><span style="margin-right:50%;">as MEMBERSHIP </span> for <strong>10.0/</strong> 1 share as the case maybe. <br>
       Membership Charges : <strong>{{ $transaction->net_fee_to_collect ?? '-'}}</strong><br><br>
       Date : <strong>{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') ?? '-' }}</strong>
     </div>
@@ -343,12 +343,12 @@
         <td>M00081 static data </td>
       </tr>
       <tr>
-        <td>Introducer Member Name</td>
+        <td>Introducer Customer Name</td>
         <td>{{ $member->member_info_first_name }} {{ $member->member_info_middle_name }} {{ $member->member_info_last_name }}</td>
       </tr>
       <tr>
-        <td>Introducer Member No.</td>
-        <td>{{ $member->member_info_mobile_no ?? '-'}}</td>
+        <td>Introducer Customer No.</td>
+        <td>{{ $member->member_info_mobile_no ?? ''}}</td>
       </tr>
       <tr>
         <td>Entered By Operator (Name)</td>

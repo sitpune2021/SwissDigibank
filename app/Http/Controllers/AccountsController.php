@@ -16,10 +16,12 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Helpers\AccountsTransactionsHelper;
+use App\Mail\AccountOpenedMail;
 use App\Models\Bank;
 use App\Models\MembershipChargeTransaction;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -96,174 +98,6 @@ class AccountsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         Log::info('Account store request started', ['request_data' => $request->all()]);
-
-    //         $rules = [
-    //             'account_type'  => 'required|in:saving,current',
-    //             'firm_d'        => 'nullable|required_if:account_type,current|max:255',
-    //             'member_id'     => 'required|exists:members,id',
-    //             'branch_id'     => 'required|exists:branches,id',
-    //             'advisor_id'    => 'nullable|exists:users,id',
-    //             'scheme_id'     => 'required|integer|exists:schemes,id',
-    //             'open_date'     => 'required|date',
-    //             'amount'        => 'required|numeric|min:0',
-    //             'account_holder_type'   => 'required|in:single,joint',
-    //             'member_id_one'         => 'nullable|required_if:account_holder_type,joint',
-    //             'member_id_two'         => 'nullable',
-    //             'mode_of_operation'     => 'required_if:account_holder_type,joint|in:single,jointly,either_or_survivor',
-    //             'nominee'               => 'required|in:yes,no',
-    //             'payment_mode'          => 'required|in:cash,online,cheque',
-    //             'transaction_date'      => 'nullable|required|date',
-    //         ];
-
-    //         if ($request->input('nominee') === 'yes') {
-    //             $rules['nominee_relation'] = 'required|string|max:255';
-    //             $rules['nominee_name'] = 'required|string|max:255';
-    //             $rules['nominee_address'] = 'required|string|max:500';
-    //         }
-
-    //         if ($request->payment_mode === 'online') {
-    //             $rules['pay1_transfer_utr'] = 'required|string|max:50';
-    //             $rules['transfer_mode'] = 'nullable|string|max:50';
-    //             $rules['credited'] = 'nullable|numeric|max:100';
-    //         }
-
-    //         if ($request->payment_mode === 'cheque') {
-    //             $rules['pay1_bank'] = 'required|string|max:50';
-    //             $rules['pay1_cheque_no'] = 'required|numeric';
-    //             $rules['pay1_cheque_date'] = 'nullable|date';
-    //         }
-
-    //         Log::info('Validating request data');
-    //         $validated = $request->validate($rules);
-    //         Log::info('Validation passed', ['validated' => $validated]);
-
-    //         $scheme = \App\Models\Scheme::find($validated['scheme_id']);
-    //         if ($scheme && $validated['amount'] < $scheme->min_opening_balance) {
-    //             Log::warning('Amount less than scheme min balance', [
-    //                 'entered_amount' => $validated['amount'],
-    //                 'min_balance'    => $scheme->min_opening_balance,
-    //             ]);
-    //             return back()->withErrors([
-    //                 'amount' => 'Minimum required amount for this scheme is ₹' . $scheme->min_opening_balance,
-    //             ])->withInput();
-    //         }
-
-    //         DB::beginTransaction();
-    //         Log::info('DB transaction started');
-
-    //         $member = Member::with('shareTransfers')->find($validated['member_id']);
-
-    //         if (!$member || $member->shareTransfers->isEmpty()) {
-
-    //             Log::warning('Member does not have shares, cannot open saving account', [
-    //                 'member_id' => $validated['member_id']
-    //             ]);
-
-    //             return redirect()->back()
-    //                 ->withErrors(['member_id' => 'This member has no shares allocated. You cannot open a saving account.'])
-    //                 ->withInput();
-    //         }
-
-    //         $account = Account::create([
-    //             'account_type'          => $request->account_type,
-    //             'account_no'            => rand(100000, 999999), // Temporary
-    //             'firm_name'             => $request->firm_d,
-    //             'member_id'             => $request->member_id,
-    //             'branch_id'             => $request->branch_id,
-    //             'advisor_id'            => $request->advisor_id,
-    //             'scheme_id'             => $request->scheme_id,
-    //             'open_date'             => Carbon::parse($request->open_date)->format('Y-m-d'),
-    //             'amount_deposit'        => $request->amount,
-    //             'account_holder_type'   => $request->account_holder_type,
-    //             'joint_member1'         => $request->member_id_one,
-    //             'joint_member2'         => $request->member_id_two,
-    //             'mode_of_operation'     => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
-    //             'payment_mode'          => $request->payment_mode,
-    //             'transaction_date'      => Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s'),
-    //         ]);
-
-    //         Log::info('Account created', ['account_id' => $account->id]);
-
-    //         $account->account_no = 'SA' . str_pad($account->id, 6, '0', STR_PAD_LEFT);
-    //         $account->save();
-    //         Log::info('Account number updated', ['account_no' => $account->account_no]);
-
-    //         if ($request->nominee === 'yes') {
-    //             Log::info('Saving nominee data');
-    //             AccountNominee::create([
-    //                 'account_id'        => $account->id,
-    //                 'nominee_name'      => $request->nominee_name,
-    //                 'nominee_relation'  => $request->nominee_relation,
-    //                 'nominee_address'   => $request->nominee_address,
-    //                 'share_percentage'  => 100.00,
-    //             ]);
-
-    //             if (is_array($request->additional_nominee_name)) {
-    //                 foreach ($request->additional_nominee_name as $index => $name) {
-    //                     if (trim($name) !== '') {
-    //                         AccountNominee::create([
-    //                             'account_id'        => $account->id,
-    //                             'nominee_name'      => $name,
-    //                             'nominee_relation'  => $request->additional_nominee_relation[$index] ?? '',
-    //                             'nominee_address'   => $request->additional_nominee_address[$index] ?? '',
-    //                             'share_percentage'  => round(100 / (count($request->additional_nominee_name) + 1), 2),
-    //                         ]);
-    //                     }
-    //                 }
-    //                 Log::info('Additional nominees saved');
-    //             }
-    //         }
-
-    //         Log::info('Creating initial transaction', ['payment_mode' => $request->payment_mode]);
-    //         Transaction::create([
-    //             'account_id'        => $account->id,
-    //             'payment_mode'      => $request->payment_mode,
-    //             'amount'            => $request->amount,
-    //             'transaction_type'  => 'credit',
-    //             'transaction_date'  => now(),
-    //             'approve_status'    => 'pending',
-    //             'comment'           => 'Opening deposit',
-    //             'utr_number'        => $request->pay1_transfer_utr ?? null,
-    //             'transfer_mode'     => $request->transfer_mode ?? null,
-    //             'transfer_date'     => $request->pay1_transfer_date
-    //                 ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d')
-    //                 : null,
-    //             'credited_in'       => $request->credited ?? null,
-    //             'bank_name'         => $request->pay1_bank ?? null,
-    //             'cheque_no'         => $request->pay1_cheque_no ?? null,
-    //             'cheque_date'       => $request->pay1_cheque_date
-    //                 ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d')
-    //                 : null,
-    //         ]);
-
-    //         Log::info('Transaction payload', [
-    //             'transfer_mode' => $request->transfer_mode,
-    //             'transfer_date' => $request->pay1_transfer_date,
-    //         ]);
-
-    //         Log::info('Transaction saved successfully');
-
-    //         DB::commit();
-    //         Log::info('DB transaction committed');
-
-    //         return redirect()->route('accounts.show', base64_encode($account->id))
-    //             ->with('success', 'Please approve status!.');
-    //     } catch (ValidationException $e) {
-    //         throw $e;
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::error('Error in store account', [
-    //             'error_message' => $e->getMessage(),
-    //             'trace'         => $e->getTraceAsString(),
-    //         ]);
-    //         return back()->with('error', 'Error: ' . $e->getMessage())->withInput();
-    //     }
-    // }
 
     public function store(Request $request)
     {
@@ -354,6 +188,30 @@ class AccountsController extends Controller
             $account->account_no = 'SBC111' . str_pad($account->id, 9, '0', STR_PAD_LEFT);
 
             $account->save();
+
+            try {
+                $member = \App\Models\Member::find($account->member_id);
+
+                if ($member && !empty($member->member_info_mobile_no)) {
+                    $message = "Dear {$member->member_info_first_name}, your Saving Account ({$account->account_no}) has been successfully created with SBC GLOBAL. Thank you for banking with us!";
+
+                    \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
+                } else {
+                    Log::warning('Member mobile number missing for SMS', ['member_id' => $account->member_id]);
+                }
+
+                $accountData = [
+                    'name' => $member->member_info_first_name,
+                    'account_no' => $account->account_no,
+                    'email' => $member->member_info_email,
+                ];
+
+                // 3️⃣ Send the email (immediately)
+                Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
+
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
 
             if ($request->nominee === 'yes') {
                 AccountNominee::create([
@@ -478,7 +336,7 @@ class AccountsController extends Controller
 
         $accountId = $request->account_id;
 
-        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address'])
+        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address.state'])
             ->find($accountId);
 
         $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
@@ -520,7 +378,7 @@ class AccountsController extends Controller
 
         return response()->json([
             'success' => true,
-            'account' => $account,   
+            'account' => $account,
             'transactions' => $transactions,
             'printType' => $request->print,
             'fromDate' => $request->from_date,

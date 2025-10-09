@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Branch;
 use App\Models\DdsAccount;
 use App\Models\Minor;
+use App\Models\Bank;
 use App\Models\Account;
 use App\Models\AccountNominee;
 use App\Models\DdTransaction;
@@ -76,18 +77,224 @@ class DdsAccountsController extends Controller
 
     public function create()
     {
+
         Log::info('DdsAccountsController@create called');
         $members  = Member::all();
         $branches = Branch::all();
         $schemes = Rdscheme::all();
         $minors   = Minor::all();
+        $banks = Bank::all();
+        Log::info('All Schemes:', $schemes->pluck('rd_dd_frequency', 'scheme_name')->toArray());
+
         $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
         $membersData = $members->keyBy('id');
 
-        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData'));
+        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData', 'banks'));
     }
 
+    public function store(Request $request)
+    {
+        // dd($request->all());
+        Log::info('🔹 DdsAccountsController@store called');
+        Log::info('Request data:', $request->all());
+        if ($request->branch_id === 'null' || $request->branch_id === '') {
+            $request->merge(['branch_id' => null]);
+        }
+        $validated = $request->validate([
+            'member_id' => 'required|integer',
+            'branch_id' => 'nullable|integer',
+            'scheme_id' => 'required|integer|exists:rdschemes,id',
+            'open_date' => 'required|date',
+            'amount' => 'required|numeric',
+            'nominee' => 'required|in:yes,no',
+            'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
+            'dd_amount' => 'required|numeric',
+            'remarks'    => 'nullable|string',
+        ]);
+        switch ($request->pay_mode) {
+            case 'onlineTr':
+                $rules['transfer_date'] = 'required|date_format:d-m-Y';
+                $rules['utr_no'] = 'required|string|max:255';
+                $rules['transfer_mode'] = 'required|in:IMPS,VPA,NEFT/RTGS';
+                $rules['credited_in_company'] = 'required|in:1,0'; // 1=Yes, 0=No
+                break;
+
+            case 'cheque':
+                $rules['bank_name'] = 'required|string|max:255';
+                $rules['cheque_no'] = 'required|string|max:255';
+                $rules['cheque_date'] = 'required|date_format:d-m-Y';
+                break;
+
+            case 'saving':
+                $rules['saving_account_id'] = 'required|exists:saving_accounts,id';
+                break;
+        }
+        try {
+            Log::info('✅ Validation successful', $validated);
+
+            $scheme = Rdscheme::findOrFail($validated['scheme_id']);
+            Log::info('✅ Scheme fetched', ['scheme_id' => $scheme->id, 'scheme_name' => $scheme->name ?? 'N/A']);
+
+            $depositPerDay = $scheme->min_rd_dd_amount;
+
+            if ($scheme->tenure_of_rd_dd_type === 'months') {
+                $days = $scheme->tenure_of_rd_dd_value * 30;
+            } elseif ($scheme->tenure_of_rd_dd_type === 'years') {
+                $days = $scheme->tenure_of_rd_dd_value * 365;
+            } else {
+                $days = $scheme->tenure_of_rd_dd_value;
+            }
+            Log::info('📅 Tenure calculated', ['days' => $days]);
+
+            $rate = $scheme->anuual_interest_rate;
+
+            switch ($scheme->rd_dd_frequency) {
+                case 'daily':
+                    $installments = 365;
+                    break;
+                case 'weekly':
+                    $installments = floor(365 / 7);
+                    break;
+                case 'bi-weekly':
+                    $installments = floor(365 / 14);
+                    break;
+                case 'monthly':
+                    $installments = $scheme->tenure_of_rd_dd_value;
+                    break;
+                case 'yearly':
+                    $installments = $scheme->tenure_of_rd_dd_value;
+                    break;
+                default:
+                    $installments = 365;
+            }
+
+            if ($scheme->bonus_rate_type === 'percentage') {
+                $bonusRate = $scheme->bonus_rate_value;
+                $fixedBonus = 0;
+            } elseif ($scheme->bonus_rate_type === 'fixed') {
+                $bonusRate = 0;
+                $fixedBonus = $scheme->bonus_rate_value;
+            } else {
+                $bonusRate = 0;
+                $fixedBonus = 0;
+            }
+
+            $calculation = $this->calculateMaturity(
+                $request->dd_amount,
+                $installments,
+                'daily',
+                $rate,
+                $bonusRate,
+                $fixedBonus,
+                $request->open_date
+            );
+
+            sleep(5);
+            $total_deposit          = $calculation['total_deposit'];
+            $interest_earned        = $calculation['interest_earned'];
+            $bonus                  = $calculation['bonus'];
+            $maturity               = $calculation['maturity'];
+            $maturity_date          = $calculation['maturity_date'];
+
+            Log::info('📈 Maturity calculated', $calculation);
+
+            $ddsAccount = new DdsAccount();
+            $ddsAccount->member_id = $request->member_id;
+            $ddsAccount->branch_id = $request->branch_id;
+            $ddsAccount->scheme_id = $request->scheme_id;
+            $ddsAccount->dd_amount = $request->dd_amount;
+            $ddsAccount->open_date = $request->open_date;
+            $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
+            $ddsAccount->account_type = 'single';
+            $ddsAccount->remarks = $request->remarks;
+            $ddsAccount->tds_deduction = 0;
+            $ddsAccount->rd_dd_frequency = $scheme->rd_dd_frequency;
+            $ddsAccount->total_installments = $installments;
+            $ddsAccount->maturity_amount = $calculation['maturity'];
+
+            $ddsAccount->member_name = $request->member_name;
+            $ddsAccount->member_mobile = $request->member_mobile;
+            $ddsAccount->member_address = $request->member_address;
+            $ddsAccount->total_deposit = $calculation['total_deposit'];
+            $ddsAccount->interest_earned = $calculation['interest_earned'];
+            $ddsAccount->bonus = $calculation['bonus'];
+            $ddsAccount->maturity = $calculation['maturity'];
+            $ddsAccount->paid_installments     = 1;
+            $ddsAccount->due_installments      = 0;
+            $ddsAccount->overdue_installments  = 0;
+            $ddsAccount->canceled_installments = 0;
+            $ddsAccount->not_due_installments  = $ddsAccount->total_installments - 1;
+            $ddsAccount->maturity_date = \Carbon\Carbon::createFromFormat('d-m-Y', $calculation['maturity_date'])->format('Y-m-d');
+            $ddsAccount->save();
+
+            Log::info('✅ DDS Account created', ['dds_account_id' => $ddsAccount->id]);
+
+            $transaction = new DdTransaction();
+            $transaction->dds_account_id = $ddsAccount->id;
+            $transaction->transaction_date = now()->format('Y-m-d');
+            $transaction->amount = $request->amount;
+            $transaction->account_id = null;
+            $transaction->pay_mode = $request->pay_mode;
+
+            switch ($request->pay_mode) {
+                case 'onlineTr':
+                    $transaction->transfer_date = Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d');
+                    $transaction->utr_no = $request->utr_no;
+                    $transaction->transfer_mode = $request->transfer_mode;
+                    $transaction->credited_in_company = $request->credited_in_company;
+                    break;
+
+                case 'cheque':
+                    $transaction->bank_name = $request->bank_name;
+                    $transaction->cheque_no = $request->cheque_no;
+                    $transaction->cheque_date = Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d');
+                    break;
+
+                case 'saving':
+                    $transaction->saving_account_id = $request->saving_account_id;
+                    break;
+
+                    // No additional fields needed for 'cash'
+            }
+
+            $transaction->save();
+
+            Log::info('✅ Transaction saved', ['transaction_id' => $transaction->id, 'pay_mode' => $transaction->pay_mode]);
+
+            Log::debug('📦 Full transaction request payload', $request->all());
+
+            if ($request->nominee === "yes" && $request->has('nominee_name')) {
+                $totalNominees = count(array_filter($request->nominee_name));
+                $share = $totalNominees > 0 ? round(100 / $totalNominees, 2) : 100;
+
+                foreach ($request->nominee_name as $key => $name) {
+                    if (!empty($name)) {
+                        AccountNominee::create([
+                            'account_id'       => $ddsAccount->id,
+                            'nominee_name'     => $name,
+                            'nominee_relation' => $request->nominee_relation[$key] ?? null,
+                            'nominee_address'  => $request->nominee_address[$key] ?? null,
+                            'share_percentage' => $share,
+                        ]);
+                    }
+                }
+
+                Log::info('👥 Nominees added', ['total_nominees' => $totalNominees]);
+            }
+
+            return redirect()->route('dds-accounts.index')
+                ->with('success', 'DDS Account created successfully!');
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('❌ DDS Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->withInput()->withErrors([
+                'error' => 'Something went wrong. Please try again.',
+                'exception' => $e->getMessage(),
+            ]);
+        }
+    }
     public function show($id)
     {
         Log::info("DdsAccountsController@show called for ID: $id");
@@ -119,6 +326,12 @@ class DdsAccountsController extends Controller
                 case 'daily':
                     $shouldHavePaid = $openDate->diffInDays($today);
                     break;
+                case 'weekly':
+                    $shouldHavePaid = floor($openDate->diffInDays($today) / 7);
+                    break;
+                case 'bi-weekly':
+                    $shouldHavePaid = floor($openDate->diffInDays($today) / 14);
+                    break;
                 case 'monthly':
                     $shouldHavePaid = $openDate->diffInMonths($today);
                     break;
@@ -126,6 +339,7 @@ class DdsAccountsController extends Controller
                     $shouldHavePaid = $openDate->diffInYears($today);
                     break;
             }
+
 
             $shouldHavePaid = min($shouldHavePaid, $totalInstallments);
         }
@@ -218,175 +432,6 @@ class DdsAccountsController extends Controller
             'specialAccount'       => $specialAccount,
         ]);
     }
-
-    public function store(Request $request)
-    {
-
-        Log::info('🔹 DdsAccountsController@store called');
-        Log::info('Request data:', $request->all());
-        if ($request->branch_id === 'null' || $request->branch_id === '') {
-            $request->merge(['branch_id' => null]);
-        }
-
-
-        $validated = $request->validate([
-            'member_id' => 'required|integer',
-            'branch_id' => 'nullable|integer',
-            'scheme_id' => 'required|integer|exists:rdschemes,id',
-            'open_date' => 'required|date',
-            'amount' => 'required|numeric',
-            'nominee' => 'required|in:yes,no',
-            'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
-            'dd_amount' => 'required|numeric',
-        ]);
-
-        try {
-            Log::info('✅ Validation successful', $validated);
-
-            $scheme = Rdscheme::findOrFail($validated['scheme_id']);
-            Log::info('✅ Scheme fetched', ['scheme_id' => $scheme->id, 'scheme_name' => $scheme->name ?? 'N/A']);
-
-            $depositPerDay = $scheme->min_rd_dd_amount;
-
-            if ($scheme->tenure_of_rd_dd_type === 'months') {
-                $days = $scheme->tenure_of_rd_dd_value * 30;
-            } elseif ($scheme->tenure_of_rd_dd_type === 'years') {
-                $days = $scheme->tenure_of_rd_dd_value * 365;
-            } else {
-                $days = $scheme->tenure_of_rd_dd_value;
-            }
-            Log::info('📅 Tenure calculated', ['days' => $days]);
-
-            $rate = $scheme->anuual_interest_rate;
-
-            switch ($scheme->rd_dd_frequency) {
-                case 'daily':
-                    $installments = 365;
-                    break;
-                case 'monthly':
-                    $installments = $scheme->tenure_of_rd_dd_value;
-                    break;
-                case 'yearly':
-                    $installments = $scheme->tenure_of_rd_dd_value;
-                    break;
-                default:
-                    $installments = 365;
-            }
-
-            if ($scheme->bonus_rate_type === 'percentage') {
-                $bonusRate = $scheme->bonus_rate_value;
-                $fixedBonus = 0;
-            } elseif ($scheme->bonus_rate_type === 'fixed') {
-                $bonusRate = 0;
-                $fixedBonus = $scheme->bonus_rate_value;
-            } else {
-                $bonusRate = 0;
-                $fixedBonus = 0;
-            }
-
-            $calculation = $this->calculateMaturity(
-                $request->dd_amount,
-                $installments,
-                'daily',
-                $rate,
-                $bonusRate,
-                $fixedBonus,
-                $request->open_date
-            );
-
-            sleep(5);
-
-            $total_deposit          = $calculation['total_deposit'];
-            $interest_earned        = $calculation['interest_earned'];
-            $bonus                  = $calculation['bonus'];
-            $maturity               = $calculation['maturity'];
-            $maturity_date          = $calculation['maturity_date'];
-
-            Log::info('📈 Maturity calculated', $calculation);
-
-            $ddsAccount = new DdsAccount();
-            $ddsAccount->member_id = $request->member_id;
-            $ddsAccount->branch_id = $request->branch_id;
-            $ddsAccount->scheme_id = $request->scheme_id;
-            $ddsAccount->dd_amount = $request->dd_amount;
-            $ddsAccount->open_date = $request->open_date;
-            $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
-            $ddsAccount->account_type = 'single';
-            $ddsAccount->tds_deduction = 0;
-            $ddsAccount->rd_dd_frequency = $scheme->rd_dd_frequency;
-            $ddsAccount->total_installments = $installments;
-            $ddsAccount->maturity_amount = $calculation['maturity'];
-
-            $ddsAccount->member_name = $request->member_name;
-            $ddsAccount->member_mobile = $request->member_mobile;
-            $ddsAccount->member_address = $request->member_address;
-            $ddsAccount->total_deposit = $calculation['total_deposit'];
-            $ddsAccount->interest_earned = $calculation['interest_earned'];
-            $ddsAccount->bonus = $calculation['bonus'];
-            $ddsAccount->maturity = $calculation['maturity'];
-            $ddsAccount->paid_installments     = 1;
-            $ddsAccount->due_installments      = 0;
-            $ddsAccount->overdue_installments  = 0;
-            $ddsAccount->canceled_installments = 0;
-            $ddsAccount->not_due_installments  = $ddsAccount->total_installments - 1;
-            $ddsAccount->maturity_date = \Carbon\Carbon::createFromFormat('d-m-Y', $calculation['maturity_date'])->format('Y-m-d');
-            $ddsAccount->save();
-
-            Log::info('✅ DDS Account created', ['dds_account_id' => $ddsAccount->id]);
-
-            $transaction = new DdTransaction();
-            $transaction->dds_account_id = $ddsAccount->id;
-            $transaction->transaction_date = now()->format('Y-m-d');
-            $transaction->amount = $request->amount;
-            $transaction->account_id = null;
-            $transaction->pay_mode = $request->pay_mode;
-
-            $transaction->transfer_date = now()->format('Y-m-d');
-            $transaction->transfer_mode = $request->transfer_mode;
-            $transaction->utr_no = $request->utr_no;
-            $transaction->credited_in_company = $request->credited_in_company;
-            $transaction->cheque_no = $request->cheque_no;
-            $transaction->cheque_date = now()->format('Y-m-d');
-            $transaction->bank_name = $request->bank_name;
-            $transaction->saving_account_id = $request->saving_account_id;
-            $transaction->save();
-
-            Log::info('✅ Transaction saved', ['transaction_id' => $transaction->id, 'pay_mode' => $transaction->pay_mode]);
-
-            Log::debug('📦 Full transaction request payload', $request->all());
-
-            if ($request->nominee === "yes" && $request->has('nominee_name')) {
-                $totalNominees = count(array_filter($request->nominee_name));
-                $share = $totalNominees > 0 ? round(100 / $totalNominees, 2) : 100;
-
-                foreach ($request->nominee_name as $key => $name) {
-                    if (!empty($name)) {
-                        AccountNominee::create([
-                            'account_id'       => $ddsAccount->id,
-                            'nominee_name'     => $name,
-                            'nominee_relation' => $request->nominee_relation[$key] ?? null,
-                            'nominee_address'  => $request->nominee_address[$key] ?? null,
-                            'share_percentage' => $share,
-                        ]);
-                    }
-                }
-
-                Log::info('👥 Nominees added', ['total_nominees' => $totalNominees]);
-            }
-
-            return redirect()->route('dds-accounts.index')
-                ->with('success', 'DDS Account created successfully!');
-        } catch (ValidationException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            Log::error('❌ DDS Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->withInput()->withErrors([
-                'error' => 'Something went wrong. Please try again.',
-                'exception' => $e->getMessage(),
-            ]);
-        }
-    }
-
     public function edit(DdsAccount $ddaccount)
     {
         Log::info("DdsAccountsController@edit called for ID: {$ddaccount->id}");
@@ -513,11 +558,17 @@ class DdsAccountsController extends Controller
         $startDate = null,
         $schemeTenureMonths = null
     ) {
+        $frequency = str_replace('_', '-', strtolower($frequency)); // normalize
 
-        if (!in_array($frequency, ['daily', 'weekly'])) {
-            throw new InvalidArgumentException("Only 'daily' and 'weekly' frequencies are supported.");
+        if (!in_array($frequency, ['daily', 'weekly', 'bi-weekly'])) {
+            throw new InvalidArgumentException("Only 'daily', 'weekly', and 'bi-weekly' frequencies are supported.");
         }
 
+        $daysPerInstallment = match ($frequency) {
+            'daily' => 1,
+            'weekly' => 7,
+            'bi-weekly' => 14,
+        };
         $totalDeposit = $depositAmount * $installments;
 
         $days = $installments;
@@ -537,7 +588,7 @@ class DdsAccountsController extends Controller
         $maturityDate = null;
         if ($startDate) {
             $date = Carbon::parse($startDate);
-            $date->addDays($installments);
+            $date->addDays($installments * $daysPerInstallment);
             $maturityDate = $date->format('d-m-Y');
         }
 
@@ -596,11 +647,15 @@ class DdsAccountsController extends Controller
     public function transactionShow($accountId, $transactionId)
     {
         Log::info("DdsAccountsController@transactionShow called for DDS ID: $accountId, Transaction ID: $transactionId");
-        $ddsAccount  = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($accountId);
-        $transaction = DdTransaction::where('dds_account_id', $accountId)
-            ->with('ddsAccount')
-            ->findOrFail($transactionId);
 
+        // Fetch DDS Account with relations
+        $ddsAccount = DdsAccount::with(['member', 'branch', 'scheme'])
+            ->findOrFail($accountId);
+
+        // Fetch Transaction with all related data including branch
+        $transaction = DdTransaction::where('dds_account_id', $accountId)
+            ->with(['ddsAccount', 'branch'])
+            ->findOrFail($transactionId);
         return view('fd_account.ddsaccounts.transaction-show', compact('ddsAccount', 'transaction'));
     }
 
@@ -645,23 +700,25 @@ class DdsAccountsController extends Controller
     {
         Log::info('Deposit form requested for DDS account: ' . $id);
         $ddAccount = DdsAccount::findOrFail($id);
+        $banks = Bank::all();
 
         $members = Member::all();
         $installmentReceived = $ddAccount->installment_received;
         $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
         $installmentAmount = $ddAccount->dd_amount;
 
-        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount'));
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks'));
     }
     public function storeDeposit(Request $request)
     {
         try {
+            // ✅ Base validation
             $validated = $request->validate([
                 'dds_account_id'    => 'required|exists:dds_accounts,id',
                 'account_id'        => 'nullable|exists:accounts,id',
                 'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
                 'transaction_date'  => 'required|date_format:d/m/Y',
-                'amount'            => 'required|numeric',
+                'amount'            => 'required|numeric|min:1',
                 'collected_by'      => 'nullable|string|max:255',
 
                 // Files
@@ -670,9 +727,40 @@ class DdsAccountsController extends Controller
                 'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             ]);
 
-            // ✅ Convert date format
+            // ✅ Dynamic rules based on pay_mode
+            $extraRules = [];
+
+            switch ($request->pay_mode) {
+                case 'onlineTr':
+                    $extraRules = [
+                        'transfer_date'  => 'required|date_format:d-m-Y',
+                        'utr_no'         => 'required|string|max:255',
+                        'transfer_mode'  => 'required|in:IMPS,VPA,NEFT/RTGS',
+                    ];
+                    break;
+
+                case 'cheque':
+                    $extraRules = [
+                        'bank_name'   => 'required|string|max:255',
+                        'cheque_no'   => 'required|string|max:255',
+                        'cheque_date' => 'required|date_format:d-m-Y',
+                    ];
+                    break;
+
+                case 'saving':
+                    $extraRules = [
+                        'saving_account_id' => 'required|exists:saving_accounts,id',
+                    ];
+                    break;
+            }
+
+            // ✅ Validate additional fields
+            $request->validate($extraRules);
+
+            // ✅ Convert date format (for database)
             $transaction_date = \Carbon\Carbon::createFromFormat('d/m/Y', $validated['transaction_date'])->format('Y-m-d');
-            // File uploads
+
+            // ✅ Handle file uploads
             if ($request->hasFile('t_receipt')) {
                 $validated['t_receipt'] = $request->file('t_receipt')->store('receipts', 'public');
             }
@@ -685,10 +773,10 @@ class DdsAccountsController extends Controller
                 $validated['member_photo'] = $request->file('member_photo')->store('photos', 'public');
             }
 
-            // Save transaction
-            $transaction = \App\Models\DdTransaction::create([
+            // ✅ Create transaction
+            $transaction = DdTransaction::create([
                 'dds_account_id'    => $validated['dds_account_id'],
-                'account_id'        => $validated['account_id'],
+                'account_id'        => $validated['account_id'] ?? null,
                 'pay_mode'          => $validated['pay_mode'],
                 'transaction_date'  => $transaction_date,
                 'amount'            => $validated['amount'],
@@ -696,27 +784,48 @@ class DdsAccountsController extends Controller
                 't_receipt'         => $validated['t_receipt'] ?? null,
                 'member_sign'       => $validated['member_sign'] ?? null,
                 'member_photo'      => $validated['member_photo'] ?? null,
-                'created_at'        => now(),
-                'updated_at'        => now(),
             ]);
 
+            // ✅ Assign additional fields based on pay_mode
+            switch ($request->pay_mode) {
+                case 'onlineTr':
+                    $transaction->update([
+                        'transfer_date'  => \Carbon\Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d'),
+                        'utr_no'         => $request->utr_no,
+                        'transfer_mode'  => $request->transfer_mode,
+                    ]);
+                    break;
+
+                case 'cheque':
+                    $transaction->update([
+                        'bank_name'   => $request->bank_name,
+                        'cheque_no'   => $request->cheque_no,
+                        'cheque_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
+                    ]);
+                    break;
+
+                case 'saving':
+                    $transaction->update([
+                        'saving_account_id' => $request->saving_account_id,
+                    ]);
+                    break;
+
+                    // 'cash' → no extra fields
+            }
+
+            // ✅ Log the successful transaction
             Log::info('DDS Deposit Saved', [
                 'transaction_id' => $transaction->id,
                 'account_id'     => $transaction->account_id,
             ]);
 
-            return redirect()->route('dds.transactions', [
-                'id' => $transaction->dds_account_id,
-                'transaction_id' => $transaction->id
-            ])->with('success', 'Deposit saved successfully.');
+            // ✅ Redirect back
+            return redirect()
+                ->route('dds.transactions', ['id' => $transaction->dds_account_id])
+                ->with('success', 'Deposit saved successfully.');
         } catch (ValidationException $e) {
-            // Log validation errors
-            Log::error('Validation failed', [
-                'errors' => $e->validator->errors()->all()
-            ]);
-
-            // Then re-throw to preserve Laravel's default redirect behavior
-            throw $e;
+            Log::error('Validation failed', ['errors' => $e->validator->errors()->all()]);
+            throw $e; // Let Laravel handle redirect with errors
         } catch (\Exception $e) {
             Log::error('Error saving DDS deposit: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Something went wrong while saving the deposit.');
