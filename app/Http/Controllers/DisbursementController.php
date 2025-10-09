@@ -38,7 +38,7 @@ class DisbursementController extends Controller
         }
 
         // Update status to 0 (cancelled / draft)
-        $loan->status = 0;
+        $loan->status = 3;
         $loan->save();
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
@@ -119,6 +119,10 @@ class DisbursementController extends Controller
             'transfer_mode2' => $request->transfer_mode2,
             'saving_acc2' => $request->saving2,
         ]);
+
+        // Step 4: Update LoanApplication status = 2
+        LoanApplication::where('id', $request->loan_application_id)
+            ->update(['status' => 2]);
 
         // Redirect to index page
         return redirect()

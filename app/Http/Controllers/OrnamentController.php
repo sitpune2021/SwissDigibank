@@ -36,10 +36,10 @@ class OrnamentController extends Controller
         $ornaments = $query->paginate(10)->appends($request->query());
 
         // Status wise alag alag pagination
-        $mortgageItems = LoanOrnament::where('status', 'Mortgage')
+        $mortgageItems = LoanOrnament::where('status', '1')
             ->paginate(10, ['*'], 'mortgage_page');
 
-        $releasedItems = LoanOrnament::where('status', 'Released')
+        $releasedItems = LoanOrnament::where('status', '0')
             ->paginate(10, ['*'], 'released_page');
 
         // Agar AJAX hai to sirf ornaments table bhejo
@@ -97,13 +97,16 @@ class OrnamentController extends Controller
     {
         $ornament = LoanOrnament::findOrFail($id);
 
-        $ornament->status = $request->status;
-        $ornament->remark = $request->remark; // agar remarks ka column hai table me
+        // Force integer conversion (prevents 'Released'/'Mortgage' text issues)
+        $ornament->status = (int) $request->status;
+
+        $ornament->remark = $request->remark;
         $ornament->save();
 
         return redirect()->route('gold-loan.ornaments.index')
                         ->with('success', 'Ornament updated successfully!');
     }
+
 
     /**
      * Remove the specified resource from storage.

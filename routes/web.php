@@ -460,12 +460,12 @@ Route::group(['prefix' => 'gold-loan'], function () {
 // Disbursement GOld Loan
     Route::get('disbursements/index', [DisbursementController::class, 'index'])
         ->name('gold-loan.disbursements.index');
-    Route::post('/gold-loan/disbursements/cancel/{id}', [DisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
+    Route::post('/gold-loan/disbursements/cancel/{id}', [DisbursementController::class, 'cancelLoan'])->name('golddisbursements.cancel');
 
     // disburse-loan page   
     Route::get('disbursements/disburse-loan/{id}', [DisbursementController::class, 'show'])
         ->name('gold-loan.disbursements.disburse-loan');
-    Route::post('/gold-loan/disbursements/store', [DisbursementController::class, 'store'])->name('disbursements.store');
+    Route::post('/gold-loan/disbursements/store', [DisbursementController::class, 'store'])->name('golddisbursements.store');
     
 
 //  Ornament GOld Loan
@@ -476,6 +476,11 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.ornaments.update');
     // Download excel sheet
     Route::get('ornaments/export', [OrnamentController::class, 'exportXls'])->name('gold-loan.ornaments.export');
+
+
+// Cebil score
+    Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
+        ->name('gold-loan.applications.upload-cibil-score');
 
 
 // GOld Loan Account Page
@@ -493,8 +498,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('applications/upload_documents', [GoldLoanController::class, 'upload_documents'])
         ->name('gold-loan.applications.upload_documents');
 
-    Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
-        ->name('gold-loan.applications.upload-cibil-score');
+   
 });
 
 
@@ -549,7 +553,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('applications/create', [MortgageController::class, 'appcreate'])
         ->name('mortgage.applications.create');
     
-    Route::post('/loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('loan-applications.store');
+    Route::post('/mortgageloan/store', [MortgageController::class, 'storeLoanApplication'])->name('mortgage.store');
 
     Route::get('/members/{id}/info', [MortgageController::class, 'getMemberInfo'])
     ->name('members.info');
@@ -648,7 +652,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('applications/create', [LoanAgainstController::class, 'appcreate'])
         ->name('loanagainst.applications.create');
     
-    Route::post('/loan-applications/store', [LoanAgainstController::class, 'storeLoanApplication'])->name('loan-applications.store');
+    Route::post('/loan-against/store', [LoanAgainstController::class, 'storeLoanApplication'])->name('loan-against.store');
 
     Route::get('/members/{id}/info', [LoanAgainstController::class, 'getMemberInfo'])
     ->name('members.info');

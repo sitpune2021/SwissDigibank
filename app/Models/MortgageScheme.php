@@ -29,8 +29,13 @@ class MortgageScheme extends Model
     'sms_charge',
     'fuel_charge',
     'stationary_charge',
-    'maintenace_charge',
-    'collcetion',
+    'maintenance_charge',
+    'collection',
+    'charge_floting',
+    'from_date',
+    'to_date',
+    'penal_rate_interest',
+    'annual_rate_interest',
 ];
 
     public function applications()

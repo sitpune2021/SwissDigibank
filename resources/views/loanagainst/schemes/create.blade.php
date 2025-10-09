@@ -286,8 +286,10 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="reducing_emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'reducing_emi' ? 'checked' : '' }}
-                                required>
+                                required checked>
                             <span>Reducing EMI</span>
                         </label>
 
@@ -295,6 +297,8 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="flat_emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_emi' ? 'checked' : '' }}
                                 required>
                             <span>Flat EMI</span>
@@ -304,19 +308,21 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="flat_advanced_interest"
+                                 class="text-green-600 focus:ring-green-500"
+                       data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_advanced_interest' ? 'checked' : '' }}
                                 required>
                             <span>Flat Advanced Interest Deduction</span>
                         </label>
 
                         <!-- No EMI -->
-                        <label class="flex items-center gap-2 p-2">
+                        <!-- <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="no_emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'no_emi' ? 'checked' : '' }}
                                 required>
                             <span>No EMI</span>
-                        </label>
+                        </label> -->
                     </div>
                 </div>
             </div>
@@ -350,7 +356,7 @@
                             value="0" 
                             class="text-green-600 focus:ring-green-500"
                             {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}
-                            required
+                            required checked
                         >
                         <span class="text-gray-700 capitalize">No</span>
                     </label>
@@ -447,7 +453,7 @@
                             <option value="">%</option>
                         </select>
 
-                        <input type="number" name="maintenace_charge" value="{{ old('maintenace_charge', $scheme->maintenace_charge ?? '') }}" id="maintenace_charge"
+                        <input type="number" name="maintenance_charge" value="{{ old('maintenance_charge', $scheme->maintenance_charge ?? '') }}" id="maintenance_charge"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Maintenance Charges">
                     </div>
@@ -469,7 +475,7 @@
                             <option class="uppercase" value="">Fixed</option>
                             <option value="">%</option>
                         </select>
-                        <input type="number" name="collcetion" value="{{ old('collcetion', $scheme->collcetion ?? '') }}" id="collcetion"
+                        <input type="number" name="collection" value="{{ old('collection', $scheme->collection ?? '') }}" id="collection"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Collection Charges">
                     </div>

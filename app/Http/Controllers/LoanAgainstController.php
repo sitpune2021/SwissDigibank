@@ -15,6 +15,8 @@ use App\Models\LoanCreditScore;
 use Carbon\Carbon;
 use App\Exports\LoanAgainstExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LoanAgainstController extends Controller
 {
@@ -57,8 +59,8 @@ class LoanAgainstController extends Controller
             'sms_charge' => 'nullable|numeric|min:0',
             'fuel_charge' => 'nullable|numeric|min:0',
             'stationary_charge' => 'nullable|numeric|min:0',
-            'maintenace_charge' => 'nullable|numeric|min:0',
-            'collcetion' => 'nullable|numeric|min:0',
+            'maintenance_charge' => 'nullable|numeric|min:0',
+            'collection' => 'nullable|numeric|min:0',
             'is_active' => 'required|in:0,1',
         ], [
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
@@ -253,7 +255,12 @@ class LoanAgainstController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-        
+         Log::info('--- Loan Application Store Started ---', [
+            'user_id' => Auth::id(),
+            'input_data' => $request->all(),
+        ]);
+
+        try {
         $loanApplication = LoanAgainstApplication::create($request->only([
             'application_date',
             'member_id',
@@ -300,8 +307,78 @@ class LoanAgainstController extends Controller
             'approved_loan_amount',
         ]));
 
-        return redirect()->route('loanagainst.applications.index')
-            ->with('success', 'Loan Application saved successfully!');
+        // return redirect()->route('loanagainst.applications.index')
+        //     ->with('success', 'Loan Application saved successfully!');
+
+         Log::info('Loan Application created successfully', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            Log::info('Checking CIBIL data', [
+                'cibil_type' => $request->cibil_type,
+                'cibil_score' => $request->cibil_score,
+                'report_date' => $request->report_date,
+            ]);
+
+
+            // ==== Credit Score Details Save (Dynamic Rows) ====
+           if ($request->has('cibil_type')) {
+    Log::info('CIBIL block triggered', [
+        'cibil_type_count' => count($request->cibil_type),
+    ]);
+
+    foreach ($request->cibil_type as $index => $type) {
+        try {
+            $filePath = null;
+            if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+            }
+
+            Log::info('Saving CIBIL Entry', [
+                'loan_application_id' => $loanApplication->id,
+                'index' => $index,
+                'type' => $type,
+                'score' => $request->cibil_score[$index] ?? null,
+                'date' => $request->report_date[$index] ?? null,
+                'path' => $filePath,
+            ]);
+
+            $loanApplication->creditScores()->create([
+                'cibil_type'       => $type,
+                'cibil_score'      => $request->cibil_score[$index] ?? null,
+                'report_date'      => isset($request->report_date[$index])
+                    ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                    : null,
+                'report_file_path' => $filePath,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error while saving credit score entry', [
+                'index' => $index,
+                'error_message' => $e->getMessage(),
+            ]);
+        }
+    }
+} else {
+    Log::warning('CIBIL block skipped — no cibil_type found in request.');
+}
+
+
+
+            Log::info('--- Loan Application Store Completed Successfully ---', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            return redirect()->route('loanagainst.applications.index')
+                ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error while storing Loan Application', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving loan application.');
+        }
+
     }
 
 

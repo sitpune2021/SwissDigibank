@@ -56,10 +56,12 @@ class LoanAgainstApplication extends Model
     ];
 
    // app/Models/LoanApplication.php
+
 public function creditScores()
 {
-    return $this->hasMany(LoanCreditScore::class, 'loan_application_id');
+    return $this->hasMany(LoanAgainstCreditScore::class, 'loan_application_id');
 }
+
 // LoanApplication.php
 public function member()
 {

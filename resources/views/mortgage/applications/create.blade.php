@@ -26,11 +26,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">Loan Against Property Applications</h1>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500  capitalize text-sm">Loan Against Property Applications</a> >
-                <a href="" class="text-gray-500 capitalize text-sm"> New</a>
-            </p>
+            <h1 class="text-xl font-semibold">Mortgage Applications</h1>
         </div>
     </div>
 
@@ -39,7 +35,7 @@
             <div class=" rounded-10 flex-1 bg-primary/5 p-2">
                 <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
                    <form method="POST" 
-                        action="{{ isset($application) ? route('gold-loan.applications.update', $application->id) : route('loan-applications.store') }}">
+                        action="{{ isset($application) ? route('mortgage.applications.update', $application->id) : route('mortgage.store') }}">
                         @csrf
                         @if(isset($application))
                             @method('PUT')
@@ -352,38 +348,43 @@
 
                 <div class="col-span-12  lg:col-span-12 mb-5">
                     <hr>
-                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                        Credit Score Details </label>
-                    <div class="w-full overflow-x-auto">
-                        <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
-                            <thead class="bg-secondary/5 whitespace-nowrap">
-                                <tr class="bg-gray-100">
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Cibil Type
-                                    </th>
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Cibil Score
-                                    </th>
-                                    <th class="text-center  px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Report Date
-                                    </th>
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Upload File
-                                    </th>
-                                    <th class=" px-2 py-2 md:px-4 md:py-2"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
-                                {{-- Credit Score Details Table --}}
-                            </tbody>
-                        </table>
-                    </div>
+                   <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
+                                Credit Score Details </label>
+                            <div class="w-full overflow-x-auto">
+                                <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
+                                    <thead class="bg-secondary/5 whitespace-nowrap">
+                                        <tr class="bg-gray-100">
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Cibil Type
+                                            </th>
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Cibil Score
+                                            </th>
+                                            <th
+                                                class="text-center  px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Report Date
+                                            </th>
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Upload File
+                                            </th>
+                                            <th class=" px-2 py-2 md:px-4 md:py-2"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
+                                        {{-- Credit Score Details Table --}}
+                                    </tbody>
+                                </table>
+                            </div>
 
                     <div class="mt-3">
                         <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2">
                             + Add New Score
                         </button>
                     </div>
+
                     {{--calculator checkbox- --}}
                     <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
                         sublabel="(Check this if you want to collect principal amount as EMIs.)" />
@@ -1160,6 +1161,82 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
     });
 </script>
 
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cibilBody = document.getElementById("cibilBody");
+            const addRowBtn = document.getElementById("addRow");
+
+            // Template for new row
+            function newRow() {
+                // Get current date in DD/MM/YYYY format
+                const today = new Date();
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
+
+                return `
+                                    <tr class="nested-fields border-b">
+                                        <!-- Cibil Type -->
+                                        <td class="px-2 py-2" style="width:230px;">
+                                            <select name="cibil_type[]" required
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                                                <option value="transunion">TransUnion</option>
+                                                <option value="equifax">Equifax</option>
+                                                <option value="experian">Experian</option>
+                                                <option value="crif_highmark">Crif Highmark</option>
+                                            </select>
+                                        </td>
+
+                                        <!-- Cibil Score -->
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                                        </td>
+
+                                        <!-- Report Date -->
+                                        <td class="px-2 py-2 relative">
+                                            <input type="text" id="date2" name="report_date[]" value="${formattedDate}"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                                        </td>
+
+                                        <!-- Upload File -->
+                                        <td class="px-2 py-2">
+                                            <input type="file" name="report_file[]"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+                                        </td>
+
+                                        <!-- Remove button -->
+                                        <td class="px-2 py-2 md:px-4 md:py-2 text-center">
+                                            <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                                                <i class="las la-times" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+            }
+
+
+            // Add row
+            addRowBtn.addEventListener("click", () => {
+
+
+                cibilBody.insertAdjacentHTML("beforeend", newRow());
+            });
+
+            // Remove row (event delegation)
+            cibilBody.addEventListener("click", function (e) {
+                if (e.target.closest(".removeRow")) {
+                    e.target.closest("tr").remove();
+                }
+            });
+
+            //  Add one default row when page loads
+            cibilBody.insertAdjacentHTML("beforeend", newRow());
+        });
+
+        </script>
 
 @endsection
 

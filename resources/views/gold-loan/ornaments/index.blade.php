@@ -187,8 +187,8 @@
                                 <select name="status"
                                         class="mt-1 block w-full bg-secondary/5 rounded-10 border border-gray-300 px-3 py-3 text-sm dark:bg-bg3 shadow-sm">
                                     <option value="">Select Status</option>
-                                    <option value="Mortgage" {{ request('status') == 'Mortgage' ? 'selected' : '' }}>Mortgage</option>
-                                    <option value="Released" {{ request('status') == 'Released' ? 'selected' : '' }}>Released</option>
+                                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Mortgage</option>
+                                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Released</option>
                                 </select>
                             </div>
                         </div>

@@ -16,6 +16,8 @@ use App\Models\LoanCreditScore;
 use Carbon\Carbon;
 use App\Exports\LinePropertExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MortgageController extends Controller
 {
@@ -58,9 +60,14 @@ class MortgageController extends Controller
             'sms_charge' => 'nullable|numeric|min:0',
             'fuel_charge' => 'nullable|numeric|min:0',
             'stationary_charge' => 'nullable|numeric|min:0',
-            'maintenace_charge' => 'nullable|numeric|min:0',
-            'collcetion' => 'nullable|numeric|min:0',
+            'maintenance_charge' => 'nullable|numeric|min:0',
+            'collection' => 'nullable|numeric|min:0',
             'is_active' => 'required|in:0,1',
+             //  Add this line
+            'from_date' => 'nullable|date',
+            'to_date' => 'nullable|date|after_or_equal:from_date',
+            'penal_rate_interest' => 'nullable|numeric|min:0',
+            'annual_rate_interest' => 'nullable|numeric|min:0',
         ], [
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
         ]);
@@ -250,43 +257,102 @@ class MortgageController extends Controller
     }
    
 
-public function storeLoanApplication(Request $request)
-{
-    // Step 1: Save Loan Application
-    $application = MortgageLoanApplication::create([
-        'application_date' => $request->application_date,
-        'member_id' => $request->member_id,
-        'scheme_id' => $request->scheme_id,
-        'loan_amount' => $request->loan_amount,
-        'branch_id' => $request->branch_id,
-        'tenure_value' => $request->tenure_value,
-        'net_loan_amount' => $request->net_loan_amount,
-        'purpose_of_loan' => $request->purpose_of_loan,
-    ]);
+     public function storeLoanApplication(Request $request)
+    {
+        // dd($request->all());
+        Log::info('--- Loan Application Store Started ---', [
+            'user_id' => Auth::id(),
+            'input_data' => $request->all(),
+        ]);
 
-    // Step 2: Save Multiple Property Details
-    if ($request->filled('property_type')) {
-        foreach ($request->property_type as $index => $type) {
-            MortgageProperty::create([
-                'loan_application_id' => $application->id,
-                'property_type' => $type,
-                'ownership_type' => $request->ownership_type[$index] ?? null,
-                'property_address' => $request->property_address[$index] ?? null,
-                'city' => $request->city[$index] ?? null,
-                'state' => $request->state[$index] ?? null,
-                'area' => $request->area[$index] ?? null,
-                'property_value' => $request->property_value[$index] ?? 0,
+        try {
+            // Loan Application Save
+            $loanApplication = MortgageLoanApplication::create($request->only([
+                'application_date',
+                'member_id',
+                'co_applicant_1_id',
+                'co_applicant_2_id',
+                'branch_id',
+                'advisor_id',
+                'guarantor_1_id',
+                'guarantor_2_id',
+                'guarantor_3_id',
+                'guarantor_4_id',
+                'scheme_id',
+                'tenure_type',
+                'tenure_value',
+                'emi_collection',
+                'credit_period',
+                'loan_amount',
+                'insurance_amount',
+                'net_loan_amount',
+                'purpose_of_loan',
+                'processing_fee_value',
+                'processing_fee_gst',
+                'processing_fee_sgst',
+                'processing_fee_cgst',
+                'processing_fee_igst',
+                'processing_fee_total',
+                'fee_mode',
+                'bank_id',
+                'cheque_no',
+                'cheque_date',
+                'transfer_date',
+                'utr_no',
+                'transfer_mode',
+                'credited',
+                'collect_principal_as_emi',
+                'collect_advance_processing_fee',
+            ]));
+
+            Log::info('Loan Application created successfully', [
+                'loan_application_id' => $loanApplication->id,
             ]);
+
+            // ==== Credit Score Details Save (Dynamic Rows) ====
+            if ($request->has('cibil_type')) {
+                foreach ($request->cibil_type as $index => $type) {
+                    try {
+                        $filePath = null;
+
+                        if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                            $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+                        }
+
+                        $loanApplication->creditScores()->create([
+                            'cibil_type'       => $type,
+                            'cibil_score'      => $request->cibil_score[$index] ?? null,
+                            'report_date'      => isset($request->report_date[$index])
+                                ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                                : null,
+                            'report_file_path' => $filePath,
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Error while saving credit score entry', [
+                            'index' => $index,
+                            'error_message' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString(),
+                        ]);
+                    }
+                }
+            }
+
+
+            Log::info('--- Loan Application Store Completed Successfully ---', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            return redirect()->route('gold-loan.applications.index')
+                ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error while storing Loan Application', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving loan application.');
         }
     }
-
-    return redirect()->route('mortgage.applications.index')
-        ->with('success', 'Loan Application and Property saved successfully!');
-}
-
-
-
-
 
     public function getMemberInfo($id)
     {

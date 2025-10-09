@@ -159,8 +159,10 @@
                     Draft
                 @elseif($disbursement->status == 1)
                     Approved
-                @else
+                @elseif($disbursement->status == 2)
                     Disbursed
+                @else
+                    DisApproved
                 @endif
             </td>
 
@@ -173,7 +175,7 @@
                                <a href="{{ route('gold-loan.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
                             </li>
                             <li>
-                                <form action="{{ route('disbursements.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
+                                <form action="{{ route('golddisbursements.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
                                     @csrf
                                     <button type="submit" class="single-option uppercase text-red-600 hover:underline">
                                         Cancel Loan
