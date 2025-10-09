@@ -14,7 +14,7 @@ class RdschemesController extends Controller
 {
   public function index()
   {
-    $schemes = Rdscheme::orderBy('id','desc')->get();
+    $schemes = Rdscheme::orderBy('id', 'desc')->get();
 
     return view('rdschemes.index', compact('schemes'));
   }
@@ -23,7 +23,6 @@ class RdschemesController extends Controller
   {
     return view("rdschemes.create");
   }
-
 
   public function store(Request $request)
   {
@@ -71,7 +70,63 @@ class RdschemesController extends Controller
     // If validation passes, save data
     // Rdscheme::create($request->all());
   }
+  // public function store(Request $request)
+  // {
+  //   try {
+  //     Log::info('Rdscheme store() called', $request->all()); // 🟢 Step 1: Request data log करा
 
+  //     // Validation सुरू होण्यापूर्वी
+  //     Log::info('Starting validation for Rdscheme store');
+
+  //     $validated = $request->validate([
+  //       'scheme_name' => 'required|string|max:255',
+  //       'scheme_code' => 'required|string|max:50|unique:rdschemes,scheme_code',
+  //       'min_rd_dd_amount' => 'required|integer|min:1',
+  //       'rd_dd_frequency' => 'required|string|in:daily,weekly,bi_weekly,monthly,quarterly,half-yearly,yearly',
+  //       'anuual_interest_rate' => 'required|numeric|min:0|max:100',
+  //       'sr_citizen_add_on_interest_rate' => 'nullable|numeric|min:0|max:100',
+  //       'bonus_rate_type' => 'required|string|in:fixed,percentage',
+  //       'bonus_rate_value' => 'required|numeric|min:0',
+  //       'interest_compounding_interval' => 'required|string|in:monthly,quarterly,half_yearly,yearly',
+  //       'rd_dd_lock_in_period' => 'required|string|max:60',
+  //       'interest_lock_in_period' => 'required|string|max:60',
+  //       'tenure_of_rd_dd_type' => 'required|string|in:days,months,weeks',
+  //       'tenure_of_rd_dd_value' => 'required|integer|min:1',
+  //       'cancellation_charges_type' => 'nullable|string|in:fixed,percentage',
+  //       'cancellation_charges_value' => 'nullable|numeric|min:0',
+  //       'stationary_charges' => 'nullable|numeric|min:0',
+  //       'penalty_charges_type' => 'nullable|string|in:fixed,percentage',
+  //       'penalty_charges_value' => 'nullable|numeric|min:0',
+  //       'penal_charges' => 'nullable|string|max:255|in:0.0,0.5,1.0,1.5,2.0,3.0,4.0,5.0',
+  //       'app_type_admin' => 'nullable|string|in:1',
+  //       'app_type_associate' => 'nullable|string|in:1',
+  //       'app_type_member' => 'nullable|string|in:1',
+  //       'active' => 'required|string|in:yes,no',
+  //     ]);
+
+  //     Log::info('Validation successful', $validated); // 🟢 Step 2: Validation success log
+
+  //     // Insert record
+  //     $rdscheme = Rdscheme::create($validated);
+  //     Log::info('Rdscheme created successfully', ['id' => $rdscheme->id]);
+
+  //     return redirect()->route('rdschemes.index')
+  //       ->with('success', 'RD Scheme created successfully!');
+  //   } catch (ValidationException $e) {
+  //     Log::warning('Validation failed', $e->errors()); // 🟡 Step 3: Validation error log
+  //     return redirect()->back()
+  //       ->withErrors($e->errors())
+  //       ->withInput();
+  //   } catch (Exception $e) {
+  //     Log::error('Rdscheme creation failed: ' . $e->getMessage(), [
+  //       'trace' => $e->getTraceAsString()
+  //     ]); // 🔴 Step 4: Any other error log
+
+  //     return redirect()->back()
+  //       ->with('error', 'Something went wrong while saving scheme. Please try again.')
+  //       ->withInput();
+  //   }
+  // }
   public function show($id)
   {
     // fetch scheme by id

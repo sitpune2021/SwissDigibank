@@ -6,7 +6,7 @@ return
         'label' => 'ENROLLMENT DATE',
         'name' => 'enrollment_date',
         'id' => 'date',
-        'type' => 'text', // or 'date' if using a date picker
+        'type' => 'text',
         'required' => true,
         'default' => now()->format('d-m-Y'),
     ],
@@ -54,7 +54,7 @@ return
     [
         'label' => 'DATE OF BIRTH',
         'name' => 'dob',
-        'id' => 'datep4',
+        'id' => 'datep',
         'type' => 'text', 
         'required' => true,
     ],

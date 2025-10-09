@@ -90,15 +90,15 @@ class CompanyController extends Controller
                 'gst_certificate_path' => 'nullable|file',
 
                 // ISO Certification – formats like ISO-9001:2015 or ISO/IEC 27001
-                'iso_certification' => 'nullable|regex:/^ISO([\/\- ]?[A-Z0-9]+)*$/i|max:255',
+                'iso_certification' => 'nullable|regex:/^ISO([\/\- ]?[A-Z0-9]+)*$/i',
                 'iso_certificate_path' => 'nullable|file',
 
                 // BIS Certification – usually simple alphanumeric with dash/slash
-                'bis_certification' => 'nullable|regex:/^[A-Z0-9\-\/ ]{3,255}$/i|max:255',
+                'bis_certification' => 'nullable|regex:/^[A-Z0-9\-\/ ]{3,255}$/i',
                 'bis_certificate_path' => 'nullable|file',
 
                 // PF Number – Indian PF format: 2 letters (state) / 3–7 digits / alphanumeric
-                'pf_number' => 'nullable|regex:/^[A-Z]{2}\/[0-9]{3,7}\/[A-Z0-9]+$/i|max:50',
+                'pf_number' => 'nullable|regex:/^[A-Z]{2}\/[0-9]{3,7}\/[A-Z0-9]+$/i',
                 'pf_certificate_path' => 'nullable|file',
 
                 // ESIC Number – 10 to 17 digits

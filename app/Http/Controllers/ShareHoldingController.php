@@ -96,8 +96,8 @@ class ShareHoldingController extends Controller
             $validated = $request->validate([
                 'promotor_id'       => 'required|exists:promotors,id',
                 'allotment_date'    => 'required',
-                'first_share'       => 'required|numeric',
-                'share_no'          => 'required|numeric|gt:first_share',
+                'first_share' => 'required|numeric|min:1|max:50000',
+                'share_no'    => 'required|numeric|gt:first_share|min:1|max:50000',
                 'nominal_value'     => 'nullable|numeric',
                 'total_share_held'  => 'required|numeric',
                 'total_share_value' => 'required|numeric',

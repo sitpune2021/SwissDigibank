@@ -61,7 +61,6 @@
                         $conditionalClass = 'conditional saving_ac';
                     }
 
-                    // Conditionally hide these fields by default
                     $style = $conditionalClass ? 'display:none;' : '';
                 @endphp
 
@@ -83,7 +82,7 @@
                                 </option>
                             @endforeach
                         </select>
-                        @elseif ($name === 'bank_name')
+                    @elseif ($name === 'bank_name')
                         <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_name" display-field="name"
                             value-field="id" event="Bank-selected" :selected="old('bank_name', $shareholding->bank_id ?? null)" />
                     @else
@@ -106,6 +105,10 @@
                     @if ($id === 'amount')
                         <x-number-to-word for="amount" />
                     @endif
+                    @if (in_array($id, ['first_share', 'share_no']))
+                        <small class="text-blue-500 text-sm">Enter Value between : 1 - 50000</small>
+                    @endif
+
                 </div>
             @endforeach
 

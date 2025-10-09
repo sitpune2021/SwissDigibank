@@ -25,6 +25,9 @@ return [
         'type' => 'text',
         'name' => 'first_share',
         'id' => 'first_share',
+        'min' => 1,
+        'max' => 50000,
+
     ],
     [
         'label' => 'LAST DISTINCTIVE NO.',
@@ -32,6 +35,9 @@ return [
         'type' => 'text',
         'name' => 'share_no',
         'id' => 'share_no',
+        'min' => 1,
+        'max' => 50000,
+
     ],
     [
         'label' => 'SHARE NOMINAL VALUE',
@@ -110,7 +116,7 @@ return [
             'type' => 'text',
             'required' => true,
         ],
-    
+
         [
             'label' => 'UTR / TRANSACTION NO.',
             'name' => 'utr_no',
@@ -167,6 +173,6 @@ return [
             'options_key' => 'savingAccounts', // pass from controller
             'required' => true,
         ],
-      
+
     ],
 ];
