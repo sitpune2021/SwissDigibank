@@ -24,6 +24,9 @@ return [
         'type' => 'text',
         'name' => 'first_share',
         'id' => 'first_share',
+        'min' => 1,
+        'max' => 50000,
+
     ],
     [
         'label' => 'Last Distinctive No.',
@@ -31,6 +34,9 @@ return [
         'type' => 'text',
         'name' => 'share_no',
         'id' => 'share_no',
+        'min' => 1,
+        'max' => 50000,
+
     ],
     [
         'label' => 'Share Nominal Value',

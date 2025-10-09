@@ -24,7 +24,18 @@ class SmsHelper
                 "isrefno"     => true,
             ];
 
-           $response = \Illuminate\Support\Facades\Http::asJson()->post($url, $payload);
+            // $response = \Illuminate\Support\Facades\Http::asJson()->post($url, $payload);
+
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
+            ])->post($url, $payload);
+
+            Log::info('VoiceNSMS API Response', [
+                'mobile' => $mobile,
+                'response' => $response->json()
+            ]);
+
 
             Log::info('VoiceNSMS API Response', [
                 'mobile' => $mobile,

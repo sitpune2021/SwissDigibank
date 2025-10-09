@@ -3,65 +3,65 @@
 return [
 
     // Member Address
-    'Member_Correspondence_Address' => [
+    'CUSTOMER_CORRESPONDENCE_ADDRESS' => [
         [
-            'label' => 'Address Line 1',
+            'label' => 'ADDRESS LINE 1',
             'name' => 'member_address_line_1',
             'id' => 'address_line_1',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Address Line 2',
+            'label' => 'ADDRESS LINE 2',
             'name' => 'member_address_line_2',
             'id' => 'address_line_2',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Para',
+            'label' => 'PARA',
             'name' => 'member_address_para',
             'id' => 'para',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Ward',
+            'label' => 'WARD',
             'name' => 'member_address_ward',
             'id' => 'ward',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Panchayat',
+            'label' => 'PANCHAYAT',
             'name' => 'member_address_panchayat',
             'id' => 'panchayat',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Area',
+            'label' => 'AREA',
             'name' => 'member_address_area',
             'id' => 'area',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Landmark',
+            'label' => 'LANDMARK',
             'name' => 'member_address_landmark',
             'id' => 'landmark',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'City/ District',
+            'label' => 'CITY/DISTRICT',
             'name' => 'member_address_city_district',
             'id' => 'city_district',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'State',
+            'label' => 'STATE',
             'name' => 'member_address_state',
             'id' => 'stateDropdown',
             'type' => 'select',
@@ -70,14 +70,14 @@ return [
             'options_key' => 'states',
         ],
         [
-            'label' => 'Pincode',
+            'label' => 'PINCODE',
             'name' => 'member_address_pincode',
             'id' => 'pincode',
             'type' => 'number',
             'required' => true,
         ],
         [
-            'label' => 'Country',
+            'label' => 'COUNTRY',
             'name' => 'member_address_country',
             'id' => 'country',
             'type' => 'text',
@@ -87,23 +87,23 @@ return [
     ],
 
     // Permanent Address
-    'member_permanent_address' => [
+    'CUSTOMER_PERMANENT_ADDRESS' => [
         [
-            'label' => 'Address',
+            'label' => 'ADDRESS',
             'name' => 'member_address_address',
             'id' => 'address',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'City',
+            'label' => 'CITY',
             'name' => 'member_perm_address_city',
             'id' => 'city',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'State',
+            'label' => 'STATE',
             'name' => 'member_perm_address_state',
             'id' => 'state',
             'type' => 'select',
@@ -112,7 +112,7 @@ return [
             'options_key' => 'states',
         ],
         [
-            'label' => 'Pincode',
+            'label' => 'PINCODE',
             'name' => 'member_perm_address_pincode',
             'id' => 'pincode',
             'type' => 'number',
@@ -121,16 +121,16 @@ return [
     ],
 
     // GPS Location
-    'member_address_gps_location' => [
+    'CUSTOMER_ADDRESS_GPS_LOCATION' => [
         [
-            'label' => 'Location Latitude',
+            'label' => 'LOCATION LATITUDE',
             'name' => 'member_gps_location_latitude',
             'id' => 'location_latitude',
             'type' => 'text',
             'required' => false,
         ],
         [
-            'label' => 'Location Longitude',
+            'label' => 'LOCATION LONGITUDE',
             'name' => 'member_gps_location_longitude',
             'id' => 'location_longitude',
             'type' => 'number',

@@ -5,102 +5,102 @@
         color: #14532d;
     }
 
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
-
-    /* Container for the toggle background */
-    .blocks {
-        width: 56px;
-        /* 14 * 4px */
-        height: 32px;
-        /* 8 * 4px */
-        border-radius: 9999px;
-        /* Fully rounded */
-        background-color: #9CA3AF;
-        /* Tailwind gray-400 default */
-        transition: background-color 0.3s ease;
-    }
-
-    /* The small white dot */
-    .dot {
-        position: absolute;
-        top: 4px;
-        /* 1 * 4px */
-        left: 4px;
-        /* 1 * 4px */
-        width: 24px;
-        /* 6 * 4px */
-        height: 24px;
-        /* 6 * 4px */
-        background-color: white;
-        border-radius: 9999px;
-        transition: transform 0.3s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-    }
-
-    /* When the checkbox is checked, change bg color */
-    input[type="checkbox"].slider-toggle:checked+div .blocks {
-        background-color: #228cc5;
-        /* Tailwind green-500 */
-    }
-
-    /* Move the dot to right when checked */
-    input[type="checkbox"].slider-toggle:checked+div .dot {
-        transform: translateX(24px);
-        /* 6 * 4px */
-    }
-
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
+        .custom-thead th {
+            font-weight: 600;
+            border-bottom: 1px solid #ccc;
         }
-    }
 
-    input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
-        accent-color: green;
-        /* For modern browsers */
-    }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
-    /* Fallback for browsers without accent-color support */
-    input[type="checkbox"]:checked {
-        background-color: green;
-        border: none;
-    }
+        /* Container for the toggle background */
+        .blocks {
+            width: 56px;
+            /* 14 * 4px */
+            height: 32px;
+            /* 8 * 4px */
+            border-radius: 9999px;
+            /* Fully rounded */
+            background-color: #9CA3AF;
+            /* Tailwind gray-400 default */
+            transition: background-color 0.3s ease;
+        }
 
-    input[type="radio"] {
-        width: 24px;
-        height: 24px;
-        accent-color: green;
-        /* Modern browser support */
-    }
+        /* The small white dot */
+        .dot {
+            position: absolute;
+            top: 4px;
+            /* 1 * 4px */
+            left: 4px;
+            /* 1 * 4px */
+            width: 24px;
+            /* 6 * 4px */
+            height: 24px;
+            /* 6 * 4px */
+            background-color: white;
+            border-radius: 9999px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
 
-    .tableWidth {
-        width: 90%;
-        margin: auto;
-    }
+        /* When the checkbox is checked, change bg color */
+        input[type="checkbox"].slider-toggle:checked+div .blocks {
+            background-color: #228cc5;
+            /* Tailwind green-500 */
+        }
 
-    .bg-yellow {
-        background-color: #e17100;
-    }
-</style>
+        /* Move the dot to right when checked */
+        input[type="checkbox"].slider-toggle:checked+div .dot {
+            transform: translateX(24px);
+            /* 6 * 4px */
+        }
+
+
+        @media (prefers-color-scheme: dark) {
+            .custom-thead {
+                background-color: #14532d;
+                color: #d1fae5;
+            }
+        }
+
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
+
+        /* Fallback for browsers without accent-color support */
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+            /* Modern browser support */
+        }
+
+        .tableWidth {
+            width: 90%;
+            margin: auto;
+        }
+
+        .bg-yellow {
+            background-color: #e17100;
+        }
+    </style>
 
 @section('content')
     <div class="main-inner">
@@ -120,7 +120,15 @@
             <a href="{{ route('ddsaccounts.installments', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
                 INSTALLMENT PLAN
             </a>
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ route('ddsaccounts.installments', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+                INSTALLMENT PLAN
+            </a>
 
+            <a href="{{ route('dds-accounts.transactions', $ddaccount->id) }}"
+                class="btn btn-primary px-4 py-2 rounded-3xl">
+                VIEW TRANSACTIONS
+            </a>
             <a href="{{ route('dds-accounts.transactions', $ddaccount->id) }}"
                 class="btn btn-primary px-4 py-2 rounded-3xl">
                 VIEW TRANSACTIONS
@@ -142,12 +150,20 @@
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 PRINT DOCUMENTS
             </button>
+            <button class="btn-primary px-4 py-2 rounded-3xl ">
+                PRINT DOCUMENTS
+            </button>
 
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 SHOW AUDIT TRAIL
             </button>
         </div>
+            <button class="btn-primary px-4 py-2 rounded-3xl ">
+                SHOW AUDIT TRAIL
+            </button>
+        </div>
 
+        <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
             <div class=" w-full  overflow-hidden">
@@ -293,6 +309,10 @@
                     <div class="p-4 overflow-x-auto">
                         <table class="min-w-full text-sm text-left">
                             <tbody class="divide-y divide-gray-200">
+                    <!-- Body -->
+                    <div class="p-4 overflow-x-auto">
+                        <table class="min-w-full text-sm text-left">
+                            <tbody class="divide-y divide-gray-200">
 
                                 <tr>
                                     <td class="font-semibold px-4 py-2 w-1/3">Member Name</td>
@@ -358,14 +378,27 @@
                     </div>
 
                 </div>
+                </div>
 
 
 
             </div>
+            </div>
 
             <!-- Right: Settings -->
             <div class=" w-full ">
+            <!-- Right: Settings -->
+            <div class=" w-full ">
 
+                <!--settings-->
+                <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
+                    <!-- Header -->
+                    <div class="px-4 py-3">
+                        <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
+                    </div>
+                    <div class="p-4 overflow-x-auto">
+                        <table class="min-w-full text-sm text-left">
+                            <tbody class="divide-y divide-gray-200">
                 <!--settings-->
                 <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
                     <!-- Header -->
@@ -452,6 +485,43 @@
                                         </label>
                                     </td>
                                 </tr>
+                                <!-- ACCOUNT ON HOLD Toggle -->
+                                <tr>
+                                    <td class="font-semibold text-center align-middle px-4 py-3">AUTO PENALTY </td>
+                                    <td class="px-4 py-3">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="holdToggle" class="sr-only slider-toggle"
+                                                data-label-id="holdLabel">
+                                            <div class="relative">
+                                                <div
+                                                    class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                                </div>
+                                                <div
+                                                    class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                                </div>
+                                            </div>
+                                            <!-- <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span> -->
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-center align-middle px-4 py-3">DEDUCT TDS </td>
+                                    <td class="px-4 py-3">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="holdToggle" class="sr-only slider-toggle"
+                                                data-label-id="holdLabel">
+                                            <div class="relative">
+                                                <div
+                                                    class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                                </div>
+                                                <div
+                                                    class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                                </div>
+                                            </div>
+                                            <!-- <span id="holdLabel" class="ml-4 text-sm font-medium text-gray-700">OFF</span> -->
+                                        </label>
+                                    </td>
+                                </tr>
 
                             </tbody>
                         </table>
@@ -501,6 +571,11 @@
                                                 {{ $ddaccount->branch->branch_name }}
                                             </option>
                                         @endif
+                                        @if (!empty($ddaccount->branch))
+                                            <option value="{{ $ddaccount->branch->id }}" selected>
+                                                {{ $ddaccount->branch->branch_name }}
+                                            </option>
+                                        @endif
 
                                         @foreach ($branches as $branch)
                                             <option value="{{ $branch->id }}">
@@ -508,7 +583,16 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}">
+                                                {{ $branch->branch_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
+                                    <input type="submit" value="Update" class="block btn-primary">
+                                </div>
+                            </form>
                                     <input type="submit" value="Update" class="block btn-primary">
                                 </div>
                             </form>
@@ -523,9 +607,14 @@
 
                                         <option>Option 2</option>
                                     </select>
+                                        <option>Option 2</option>
+                                    </select>
 
                                     <input type="button" value="Update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary">
 
+                                </div>
+                            </form>
                                 </div>
                             </form>
 
@@ -539,7 +628,10 @@
 
                                         <option>Option 2</option>
                                     </select>
+                                        <option>Option 2</option>
+                                    </select>
 
+                                    <input type="button" value="Update" class="block  btn-primary">
                                     <input type="button" value="Update" class="block  btn-primary">
 
                                 </div>
@@ -559,13 +651,30 @@
 
                                         <option>Option 2</option>
                                     </select>
+                                        <option>Option 2</option>
+                                    </select>
 
+                                    <input type="button" value="Update" class="block btn-primary">
                                     <input type="button" value="Update" class="block btn-primary">
 
                                 </div>
                             </form>
                         </div>
+                                </div>
+                            </form>
+                        </div>
 
+                        <!--Scheme Info-->
+                        <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                                onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                <h3 class="text-lg font-semibold uppercase">Scheme Info</h3>
+                            </div>
+                            <!-- Body -->
+                            <div class="overflow-x-auto mt-5">
+                                <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                         <!--Scheme Info-->
                         <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                             <!-- Header -->
@@ -919,6 +1028,89 @@
                     cache: true
                 }
             });
+            toggle.dispatchEvent(new Event('change'));
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#memberDropdown').select2({
+                placeholder: 'Search Member',
+                allowClear: true,
+                width: '100%',
+                ajax: {
+                    url: "{{ route('ajax.members.search') }}", // Make sure this route exists
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(member) {
+                                return {
+                                    id: member.id,
+                                    text: "" + String(member.id).padStart(5, '0') + " - " +
+                                        member.member_info_first_name + " " + member
+                                        .member_info_last_name +
+                                        " (" + member.mobile_no + ")"
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 2
+            });
+        });
+    </script>
+    @push('script')
+        <script>
+            $(document).ready(function() {
+                $('#branchDropdown').select2({
+                    placeholder: 'Select Branch',
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        </script>
+    @endpush
+    <script>
+        $(document).ready(function() {
+            $('#memberDropdown').select2({
+                placeholder: 'Select a member',
+                allowClear: true
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#memberDropdown').select2({
+                placeholder: 'Search Member',
+                allowClear: true,
+                ajax: {
+                    url: "{{ route('ajax.members.search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term
+                        }; // search term
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(member) {
+                                return {
+                                    id: member.id,
+                                    text: `${String(member.id).padStart(5, '0')} - ${member.member_info_first_name} ${member.member_info_last_name} (${member.mobile_no})`
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
 
             $('#branchDropdown').select2({
                 placeholder: 'Search Branch',
@@ -947,4 +1139,32 @@
             });
         });
     </script>
+            $('#branchDropdown').select2({
+                placeholder: 'Search Branch',
+                allowClear: true,
+                ajax: {
+                    url: "{{ route('ajax.branches.search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(branch) {
+                                return {
+                                    id: branch.id,
+                                    text: branch.branch_name
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+    </script>
 @endsection
+

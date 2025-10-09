@@ -595,11 +595,15 @@ class DdsAccountsController extends Controller
     public function transactionShow($accountId, $transactionId)
     {
         Log::info("DdsAccountsController@transactionShow called for DDS ID: $accountId, Transaction ID: $transactionId");
-        $ddsAccount  = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($accountId);
-        $transaction = DdTransaction::where('dds_account_id', $accountId)
-            ->with('ddsAccount')
-            ->findOrFail($transactionId);
 
+        // Fetch DDS Account with relations
+        $ddsAccount = DdsAccount::with(['member', 'branch', 'scheme'])
+            ->findOrFail($accountId);
+
+        // Fetch Transaction with all related data including branch
+        $transaction = DdTransaction::where('dds_account_id', $accountId)
+            ->with(['ddsAccount', 'branch'])
+            ->findOrFail($transactionId);
         return view('fd_account.ddsaccounts.transaction-show', compact('ddsAccount', 'transaction'));
     }
 
@@ -644,23 +648,25 @@ class DdsAccountsController extends Controller
     {
         Log::info('Deposit form requested for DDS account: ' . $id);
         $ddAccount = DdsAccount::findOrFail($id);
+        $banks = Bank::all();
 
         $members = Member::all();
         $installmentReceived = $ddAccount->installment_received;
         $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
         $installmentAmount = $ddAccount->dd_amount;
 
-        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount'));
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks'));
     }
     public function storeDeposit(Request $request)
     {
         try {
+            // ✅ Base validation
             $validated = $request->validate([
                 'dds_account_id'    => 'required|exists:dds_accounts,id',
                 'account_id'        => 'nullable|exists:accounts,id',
                 'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
                 'transaction_date'  => 'required|date_format:d/m/Y',
-                'amount'            => 'required|numeric',
+                'amount'            => 'required|numeric|min:1',
                 'collected_by'      => 'nullable|string|max:255',
 
                 // Files
@@ -669,9 +675,40 @@ class DdsAccountsController extends Controller
                 'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             ]);
 
-            // ✅ Convert date format
+            // ✅ Dynamic rules based on pay_mode
+            $extraRules = [];
+
+            switch ($request->pay_mode) {
+                case 'onlineTr':
+                    $extraRules = [
+                        'transfer_date'  => 'required|date_format:d-m-Y',
+                        'utr_no'         => 'required|string|max:255',
+                        'transfer_mode'  => 'required|in:IMPS,VPA,NEFT/RTGS',
+                    ];
+                    break;
+
+                case 'cheque':
+                    $extraRules = [
+                        'bank_name'   => 'required|string|max:255',
+                        'cheque_no'   => 'required|string|max:255',
+                        'cheque_date' => 'required|date_format:d-m-Y',
+                    ];
+                    break;
+
+                case 'saving':
+                    $extraRules = [
+                        'saving_account_id' => 'required|exists:saving_accounts,id',
+                    ];
+                    break;
+            }
+
+            // ✅ Validate additional fields
+            $request->validate($extraRules);
+
+            // ✅ Convert date format (for database)
             $transaction_date = \Carbon\Carbon::createFromFormat('d/m/Y', $validated['transaction_date'])->format('Y-m-d');
-            // File uploads
+
+            // ✅ Handle file uploads
             if ($request->hasFile('t_receipt')) {
                 $validated['t_receipt'] = $request->file('t_receipt')->store('receipts', 'public');
             }
@@ -684,10 +721,10 @@ class DdsAccountsController extends Controller
                 $validated['member_photo'] = $request->file('member_photo')->store('photos', 'public');
             }
 
-            // Save transaction
-            $transaction = \App\Models\DdTransaction::create([
+            // ✅ Create transaction
+            $transaction = DdTransaction::create([
                 'dds_account_id'    => $validated['dds_account_id'],
-                'account_id'        => $validated['account_id'],
+                'account_id'        => $validated['account_id'] ?? null,
                 'pay_mode'          => $validated['pay_mode'],
                 'transaction_date'  => $transaction_date,
                 'amount'            => $validated['amount'],
@@ -695,27 +732,48 @@ class DdsAccountsController extends Controller
                 't_receipt'         => $validated['t_receipt'] ?? null,
                 'member_sign'       => $validated['member_sign'] ?? null,
                 'member_photo'      => $validated['member_photo'] ?? null,
-                'created_at'        => now(),
-                'updated_at'        => now(),
             ]);
 
+            // ✅ Assign additional fields based on pay_mode
+            switch ($request->pay_mode) {
+                case 'onlineTr':
+                    $transaction->update([
+                        'transfer_date'  => \Carbon\Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d'),
+                        'utr_no'         => $request->utr_no,
+                        'transfer_mode'  => $request->transfer_mode,
+                    ]);
+                    break;
+
+                case 'cheque':
+                    $transaction->update([
+                        'bank_name'   => $request->bank_name,
+                        'cheque_no'   => $request->cheque_no,
+                        'cheque_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
+                    ]);
+                    break;
+
+                case 'saving':
+                    $transaction->update([
+                        'saving_account_id' => $request->saving_account_id,
+                    ]);
+                    break;
+
+                    // 'cash' → no extra fields
+            }
+
+            // ✅ Log the successful transaction
             Log::info('DDS Deposit Saved', [
                 'transaction_id' => $transaction->id,
                 'account_id'     => $transaction->account_id,
             ]);
 
-            return redirect()->route('dds.transactions', [
-                'id' => $transaction->dds_account_id,
-                'transaction_id' => $transaction->id
-            ])->with('success', 'Deposit saved successfully.');
+            // ✅ Redirect back
+            return redirect()
+                ->route('dds.transactions', ['id' => $transaction->dds_account_id])
+                ->with('success', 'Deposit saved successfully.');
         } catch (ValidationException $e) {
-            // Log validation errors
-            Log::error('Validation failed', [
-                'errors' => $e->validator->errors()->all()
-            ]);
-
-            // Then re-throw to preserve Laravel's default redirect behavior
-            throw $e;
+            Log::error('Validation failed', ['errors' => $e->validator->errors()->all()]);
+            throw $e; // Let Laravel handle redirect with errors
         } catch (\Exception $e) {
             Log::error('Error saving DDS deposit: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Something went wrong while saving the deposit.');

@@ -6,39 +6,39 @@
         color: #14532d;
     }
 
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .custom-thead {
-            background-color: #14532d;
-            color: #d1fae5;
+        .custom-thead th {
+            font-weight: 600;
+            border-bottom: 1px solid #ccc;
         }
-    }
 
-    input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
-        accent-color: green;
-    }
+        @media (prefers-color-scheme: dark) {
+            .custom-thead {
+                background-color: #14532d;
+                color: #d1fae5;
+            }
+        }
 
-    input[type="checkbox"]:checked {
-        background-color: green;
-        border: none;
-    }
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+        }
 
-    input[type="radio"] {
-        width: 24px;
-        height: 24px;
-        accent-color: green;
-    }
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
 
-    .tableWidth {
-        width: 90%;
-        margin: auto;
-    }
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
+
+        .tableWidth {
+            width: 90%;
+            margin: auto;
+        }
 
     .bg-yellow {
         background-color: #F1BA07;
@@ -62,15 +62,27 @@
 
         <!-- Table -->
         <div class=" dark:bg-bg3 mt-5 shadow rounded-lg overflow-hidden">
+        <!-- Table -->
+        <div class=" dark:bg-bg3 mt-5 shadow rounded-lg overflow-hidden">
 
 
+            <div class="flex flex-col lg:flex-row gap-6">
             <div class="flex flex-col lg:flex-row gap-6">
 
                 <!-- Deposit Form -->
                 <div class=" w-full box dark:bg-bg3 shadow rounded-2xl p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
                     <hr class="my-4 border-gray-300 dark:border-gray-700">
+                <!-- Deposit Form -->
+                <div class=" w-full box dark:bg-bg3 shadow rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
+                    <hr class="my-4 border-gray-300 dark:border-gray-700">
 
+                    <form class="space-y-6" action="{{ route('dds.deposit.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="dds_account_id" value="{{ $ddAccount->id }}">
+                        <input type="hidden" name="account_id" value="{{ $ddAccount->account->id ?? '' }}">
                     <form class="space-y-6" action="{{ route('dds.deposit.store') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
@@ -202,7 +214,15 @@
                             </div>
 
                         </div>
+                        </div>
 
+                        <!-- Cheque Fields -->
+                        <div id="chequeFields" class="space-y-4 mt-2 hidden">
+                            <label class="block text-sm font-medium text-gray-700">Bank Name <span
+                                    class="text-red-500">*</span></label>
+                            <select name="bank_id" class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
+                                <option value="">Select Bank</option>
+                            </select>
                         <!-- Cheque Fields -->
                         <div id="chequeFields" class="space-y-4 mt-2 hidden">
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
@@ -215,7 +235,16 @@
                                     class="text-red-500">*</span></label>
                             <input type="text" name="cheque_no"
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5" placeholder="Enter Cheque No.">
+                            <label class="block text-sm font-medium text-gray-700">Cheque No. <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" name="cheque_no"
+                                class="w-full border rounded-10 px-3 py-3 bg-secondary/5" placeholder="Enter Cheque No.">
 
+                            <label class="block text-sm font-medium text-gray-700">Cheque Date <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="date3" name="cheque_date" placeholder="DD/MM/YYYY"
+                                class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
+                        </div>
                             <label class="block text-sm font-medium text-gray-700">Cheque Date <span
                                     class="text-red-500">*</span></label>
                             <input type="text" id="date3" name="cheque_date" placeholder="DD/MM/YYYY"
@@ -230,13 +259,33 @@
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
                                 <option value="">Select Account</option>
                             </select>
+                        <!-- Saving Fields -->
+                        <div id="savingFields" class="space-y-4 mt-2 hidden">
+                            <label class="block text-sm font-medium text-gray-700">Select Saving Account <span
+                                    class="text-red-500">*</span></label>
+                            <select id="savingAccountSelect" name="saving_account_id"
+                                class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
+                                <option value="">Select Account</option>
+                            </select>
 
+                            {{-- <div id="accountBalanceDiv" class="mt-3 hidden">
                             {{-- <div id="accountBalanceDiv" class="mt-3 hidden">
                                 <label class="block text-sm font-medium text-gray-700">Account Balance</label>
                                 <div id="accountBalance" class="p-3 text-sm font-semibold text-primary">₹0.00</div>
                             </div> --}}
                         </div>
+                        </div>
 
+                        <div class="flex justify-center gap-4 pt-4">
+                            <button type="submit" class="btn-primary  ">
+                                DEPOSIT
+                            </button>
+                            <a href="#" class="btn-outline ">
+                                CANCEL
+                            </a>
+                        </div>
+                    </form>
+                </div>
                         <div class="flex justify-center gap-4 pt-4">
                             <button type="submit" class="btn-primary  ">
                                 DEPOSIT
@@ -344,8 +393,10 @@
             const year = today.getFullYear();
 
             const currentDate = day + '/' + month + '/' + year;
+            const currentDate = day + '/' + month + '/' + year;
 
             document.getElementById('date').value = currentDate;
         });
     </script>
 @endsection
+

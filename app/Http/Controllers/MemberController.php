@@ -69,7 +69,6 @@ class MemberController extends Controller
             abort(404);
         }
     }
-
     public function create()
     {
         try {
@@ -945,8 +944,8 @@ class MemberController extends Controller
         LIMIT 1
     ";
 
-        $transaction = DB::selectOne($query, [$id, $id]);
-
+            $transaction = DB::selectOne($query, [$id]);
+        }
         if (!$transaction) {
             abort(404, 'Transaction not found.');
         }
@@ -957,6 +956,8 @@ class MemberController extends Controller
         $Accounts = Account::latest()->first();
         return view('members.member.transactionshow', compact('member', 'transaction', 'branch', 'Accounts'));
     }
+
+
 
     public function softDeleteTransaction($transactionId)
     {

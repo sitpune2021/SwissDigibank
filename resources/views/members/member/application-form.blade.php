@@ -197,17 +197,17 @@
           <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo">
         </div>
         <!-- Bank Details -->
-        <div class="bank-details">
+        {{-- <div class="bank-details">
           <h1>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA <br> LIMITED</h1>
           <br>
           <p>SHEGAON SHEGAON Maharashtra - 110012</p>
           <p>E: sbcglobalbank@gmail.com | L: 0724-2991230 | M: 9922870805</p>
           <p>CIN: 969/03-04</p>
-        </div>
+        </div> --}}
         <div class="logo"></div>
       </div>
 
-      <h3>Membership Application Form ( M00081 )</h3>
+      <h3>Membership Application Form ( {{ $member->member_no}}  )</h3>
     </div>
 
     <table>
@@ -317,7 +317,7 @@
     <div class="declaration">Declaration</div>
     <table>
       <tr>
-        <td style="font-size:11px;">I <b>JYOTI RAJKUMAR KALE</b> want to become a member of <b>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</b>. <br>
+        <td style="font-size:11px;">I <b> {{ $member->member_info_first_name }} {{ $member->member_info_middle_name }} {{ $member->member_info_last_name }}</b> want to become a member of <b>SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</b>. <br>
           Also I do hereby declare and affirm that the particulars given by me are correct to the best of my knowledge and nothing has been concealed. I further certify that there are no legal/or police case is/are registered in my name. I am bound to accept all the rules and regulations formed by Registrar of Companies in this regard.
         </td>
       </tr>

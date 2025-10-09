@@ -11,6 +11,16 @@
         </div>
         <!-- Alpine.js for toggle -->
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <div class="main-inner">
+        <!-- Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
+            <h3 class="h2">DD ACCOUNTS</h3>
+            <a class="btn-primary flex items-center gap-2" href="{{ route('dds-accounts.create') }}">
+                Add
+            </a>
+        </div>
+        <!-- Alpine.js for toggle -->
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
         <!-- Table -->
         <div class="col-span-12 box lg:col-span-6">
@@ -46,6 +56,20 @@
                         </tr>
                     </thead>
 
+                    <tbody>
+                        @foreach ($ddaccounts as $ddaccount)
+                            <tr class="border-t">
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_advisor_staff ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_advisor_staff ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_group ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <a href="{{ $ddaccount?->id ? route('dds-accounts.show', $ddaccount->id) : '#' }}"
+                                        class="text-primary hover:underline">
+                                        DDA {{ $ddaccount->id }}
+                                    </a>
+                                </td>
                     <tbody>
                         @foreach ($ddaccounts as $ddaccount)
                             <tr class="border-t">
@@ -117,6 +141,12 @@
                                             'id' => $ddaccount->id,
                                             'viewRoute' => 'dds-accounts.show',
                                         ])
+                                <td class="py-2 px-6">
+                                    <div class="flex justify-center">
+                                        @include('partials._vertical-options', [
+                                            'id' => $ddaccount->id,
+                                            'viewRoute' => 'dds-accounts.show',
+                                        ])
 
                                     </div>
                                 </td>
@@ -128,4 +158,15 @@
         </div>
     </div>
     </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
 @endsection
+
