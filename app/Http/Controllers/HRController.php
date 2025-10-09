@@ -37,7 +37,7 @@ class HRController extends Controller
                return view('employees.manage-employee', compact('employees'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
 
      public function create()
@@ -49,9 +49,9 @@ class HRController extends Controller
                return view('employees.add-employee', compact('employee', 'route', 'method'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
-     
+
      public function store(Request $request)
      {
           try {
@@ -60,7 +60,11 @@ class HRController extends Controller
                     'branch' => 'required|integer',
                     'joining_date' => 'required|date',
                     'gender' => 'required|in:male,female',
-                    'dob' => 'required|date',
+                    'dob' => [
+                         'required',
+                         'date',
+                         'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                    ],
                     'mobile_no' => 'required|digits:10',
                     'address' => 'nullable|string',
                     'email' => 'nullable|email|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/',
@@ -110,7 +114,7 @@ class HRController extends Controller
                return redirect()->route('employee.index')->with('success', 'Employee added successfully!');
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
 
      public function show($id)
@@ -122,7 +126,7 @@ class HRController extends Controller
                return view('employees.add-employee', compact('employee', 'show'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
      public function edit($id)
      {
@@ -134,7 +138,7 @@ class HRController extends Controller
                return view('employees.add-employee', compact('employee', 'route', 'method'));
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
      public function update(Request $request, $id)
      {
@@ -198,7 +202,7 @@ class HRController extends Controller
                return redirect()->route('employee.index')->with('success', 'Employee updated successfully!');
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
 
      public function getRelations()
@@ -226,7 +230,7 @@ class HRController extends Controller
                return response()->json($expenses);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
      public function payableLedger()
      {
@@ -235,7 +239,7 @@ class HRController extends Controller
                return response()->json($ledgers);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
      public function bloodGroup()
      {
@@ -244,6 +248,6 @@ class HRController extends Controller
                return response()->json($blood_groups);
           } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                abort(404);
-          } 
+          }
      }
 }

@@ -374,7 +374,7 @@
           <tr>
             <td style="width: 40%; font-weight: bold; padding: 3px 4px; vertical-align: top;">CUSTOMER ID</td>
             <td style="width: 2%; text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
-            <td style="width: 58%; padding: 3px 4px; vertical-align: top;">${accountData.members?.id ?? '-'}</td>
+            <td style="width: 58%; padding: 3px 4px; vertical-align: top;">${accountData.members?.member_no ?? '-'}</td>
           </tr>
           <tr>
             <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">BRANCH NAME</td>
@@ -539,22 +539,18 @@
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">  
-        ${accountData.branch?.address_line1 ?? ''}</td>
+        ${accountData.address?.member_address_line_1 ?? ''}
+
+        </td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">JOINT A/c HOLDER NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? ''}
-        ${accountData.members?.member_address_panchayat ?? ''}
-        ${accountData.members?.member_address_area ?? ''}
-        ${accountData.members?.member_address_landmark ?? ''}
-        ${accountData.members?.member_address_city_district ?? ''}
-        ${accountData.members?.member_address_state ?? ''}
-        ${accountData.members?.member_address_pincode ?? ''}
         </td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">PHONE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.mobile_no ?? '-'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">MODE OF OPERATION</td>
@@ -562,13 +558,21 @@
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.operation_mode ?? '-'}</td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">DATE OF ISSUE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;"></td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">{{ \Carbon\Carbon::now()->format('d-m-Y') }}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">
-          ${accountData.address?.member_address_line_1 ?? '-'}
+                      ${[
+            accountData.address?.member_address_line_1,
+            accountData.address?.member_address_line_2,
+            accountData.address?.member_address_area,
+            accountData.address?.member_address_landmark,
+            accountData.address?.member_address_city_district,
+            accountData.address?.name,
+            accountData.address?.member_address_pincode
+            ].filter(Boolean).join(', ') || '-' }
         </td>
       </tr>
       <tr>
@@ -579,7 +583,12 @@
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">PHONE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">0000000000</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">EMAIL</td>
+        <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_email?? '-'}</td>
       </tr>
     </table>
     <div style="margin-top: 6px; text-align: right; font-weight: bold; font-size: 12px;">AUTHORIZED  SIGNATORY</div>
