@@ -717,7 +717,7 @@ class DdsAccountsController extends Controller
                 'dds_account_id'    => 'required|exists:dds_accounts,id',
                 'account_id'        => 'nullable|exists:accounts,id',
                 'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
-                'transaction_date'  => 'required|date_format:d/m/Y',
+                'transaction_date'  => 'required|date_format:d-m-Y',
                 'amount'            => 'required|numeric|min:1',
                 'collected_by'      => 'nullable|string|max:255',
 
@@ -758,7 +758,7 @@ class DdsAccountsController extends Controller
             $request->validate($extraRules);
 
             // ✅ Convert date format (for database)
-            $transaction_date = \Carbon\Carbon::createFromFormat('d/m/Y', $validated['transaction_date'])->format('Y-m-d');
+            $transaction_date = \Carbon\Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
 
             // ✅ Handle file uploads
             if ($request->hasFile('t_receipt')) {
