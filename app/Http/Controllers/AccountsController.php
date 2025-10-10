@@ -53,6 +53,7 @@ class AccountsController extends Controller
 
     public function create()
     {
+
         try {
             $members = Member::pluck('member_info_first_name', 'id', 'member_info_mobile_no');
             $branches = Branch::pluck('branch_name', 'id');
@@ -70,7 +71,7 @@ class AccountsController extends Controller
 
             $address = Member::with('address')->get();
 
-            $formFields = config('accounts.form_fields'); // Optional, only if you're using dynamic form fields
+            $formFields = config('accounts.form_fields'); 
 
             $route = route('accounts.store');
             $method = 'POST';
@@ -193,24 +194,30 @@ class AccountsController extends Controller
                 $member = \App\Models\Member::find($account->member_id);
 
                 if ($member && !empty($member->member_info_mobile_no)) {
+
+                  
                     $message = "Dear {$member->member_info_first_name}, your Saving Account ({$account->account_no}) has been successfully created with SBC GLOBAL. Thank you for banking with us!";
 
                     \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
+
+
                 } else {
                     Log::warning('Member mobile number missing for SMS', ['member_id' => $account->member_id]);
                 }
 
-                $accountData = [
-                    'name' => $member->member_info_first_name,
-                    'account_no' => $account->account_no,
-                    'email' => $member->member_info_email,
-                ];
+                // $accountData = [
+                //     'name' => $member->member_info_first_name,
+                //     'account_no' => $account->account_no,
+                //     'email' => $member->member_info_email,
+                // ];
 
-                // 3️⃣ Send the email (immediately)
-                Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
+                // // 3️⃣ Send the email (immediately)
+                // Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
 
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+
+                
             }
 
             if ($request->nominee === 'yes') {

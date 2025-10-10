@@ -9,41 +9,47 @@ class SmsHelper
 {
     public static function sendSms($mobile, $message)
     {
-        try {
-            $url = env('VOICENSMS_URL', 'https://api.voicensms.in/SMSAPI/webresources/CreateSMSCampaignPost');
 
-            $payload = [
+        try {
+             $msisdn = is_array($mobile) ? $mobile : array($mobile);
+
+            $url = "https://api.voicensms.in/SMSAPI/webresources/CreateSMSCampaignPost";
+
+            // Payload (JSON data)
+            $data = [
                 "filetype"    => 2,
-                "msisdn"      => [$mobile],
+                "msisdn"      => $mobile,
                 "language"    => 0,
                 "credittype"  => 7,
-                "senderid"    => env('VOICENSMS_SENDERID', 'SBCGLB'),
+                "senderid"    => "SBCGLB",
                 "templateid"  => 0,
                 "message"     => $message,
-                "ukey"        => env('VOICENSMS_UKEY', '8ZSyxFHP9LOCSZZUotdWMdzoK'),
-                "isrefno"     => true,
+                "ukey"        => "8ZSyxFHP9LOCSZZUotdWMdzoK",
+                "isrefno"     => true
             ];
 
-            // $response = \Illuminate\Support\Facades\Http::asJson()->post($url, $payload);
+            $ch = curl_init($url);
 
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept'       => 'application/json',
-            ])->post($url, $payload);
-
-            Log::info('VoiceNSMS API Response', [
-                'mobile' => $mobile,
-                'response' => $response->json()
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST           => true,
+                CURLOPT_HTTPHEADER     => [
+                    "Content-Type: application/json"
+                ],
+                CURLOPT_POSTFIELDS     => json_encode($data),
             ]);
 
+            $response = curl_exec($ch);
 
-            Log::info('VoiceNSMS API Response', [
-                'mobile' => $mobile,
-                'response' => $response->json()
-            ]);
+            return $response;
 
-            return $response->json();
-        } catch (\Exception $e) {
+            if (curl_errno($ch)) {
+                Log::error('SMS Sending Failed - cURL Error', ['error' => curl_error($ch)]);
+                return false;
+            }
+            curl_close($ch);
+        } 
+        catch (\Exception $e) {
             Log::error('SMS Sending Failed', ['error' => $e->getMessage()]);
             return false;
         }
