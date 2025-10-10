@@ -23,8 +23,8 @@
     @endif
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h1 class=" flex text-xl block font-semibold">LOAN AGAINST SCHEMES</h1>
-                <a href="{{route('loanagainst.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <h1 class=" flex text-xl block font-semibold">BUSSINESS SCHEMES</h1>
+                <a href="{{route('business.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
                 </a>
             </div>  
               
@@ -84,7 +84,7 @@
         <tr class="border-b dark:border-bg3">
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1 text-secondary uppercase">
-                    <a href="{{ route('loanagainnst.schemes.view', $scheme->id) }}" class="single-option">
+                    <a href="{{ route('business.schemes.view', $scheme->id) }}" class="single-option">
                         {{ $scheme->scheme_code }}
                     </a>
                 </div>
@@ -133,8 +133,8 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('loanagainst.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
-                            <li><a href="{{ route('loanagainst.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                            <li><a href="{{ route('business.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
+                            <li><a href="{{ route('business.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
                         </ul>
                     </div>
                 </div>

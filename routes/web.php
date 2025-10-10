@@ -36,6 +36,7 @@ use App\Http\Controllers\RDCalculatorController;
 use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
 use App\Http\Controllers\GoldLoanController;
+use App\Http\Controllers\BussinessController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
 use App\Http\Controllers\MortgageLoneController;
@@ -47,6 +48,7 @@ use App\Http\Controllers\MortgageController;
 use App\Http\Controllers\LoanAgainstController;
 use App\Http\Controllers\LoanAgainstAccountController;
 use App\Http\Controllers\LoanAgainstDisbursementController;
+use App\Http\Controllers\BussinessDisbursementController;
 use App\Http\Controllers\MortgageDisbursementController;
 use App\Http\Controllers\MortgageAccountController;
 use App\Helpers\SmsHelper;
@@ -693,6 +695,94 @@ Route::group(['prefix' => 'loanagainst'], function () {
 
 
 /////////////////////////////////////   END DEPOSIT LOAN  REPORT   ////////////////////////////////////////////////////////
+
+/////////////////////////////////////   business LOAN    ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'business'], function () {
+
+    // business Loan Scheme
+    Route::get('scheme/index', [BussinessController::class, 'index'])
+        ->name('business.schemes.index');
+
+    // create form
+    Route::get('scheme/create', [BussinessController::class, 'create'])
+        ->name('business.schemes.create');
+    // store form data
+    Route::post('scheme/store', [BussinessController::class, 'store'])
+        ->name('business.schemes.store');
+
+    // view list
+    Route::get('scheme/{id}', [BussinessController::class, 'show'])
+        ->name('business.schemes.show');
+
+    // edit form
+    Route::get('scheme/{id}/edit', [BussinessController::class, 'edit'])
+        ->name('business.schemes.edit');
+    Route::put('scheme/{id}', [BussinessController::class, 'update'])
+        ->name('business.schemes.update');
+
+    Route::get('scheme/view/{id}', [BussinessController::class, 'view'])
+        ->name('business.schemes.view');
+
+    // business Loan Calculation
+    Route::get('calculator/index', [BussinessController::class, 'calculator'])
+        ->name('business.calculator.index');
+    // get scheme data
+    Route::get('business/scheme/{id}', [BussinessController::class, 'getSchemeDetails'])
+        ->name('business.scheme.details');
+
+    // Calculation page  
+    Route::get('calculator/calculation', [BussinessController::class, 'calculation'])->name('business.calculator.calculation');
+    Route::post('business/calculate', [BussinessController::class, 'calculateResult'])->name('business.calculator.calculate');
+
+
+    // business Application page
+    Route::get('applications/index', [BussinessController::class, 'appindex'])
+        ->name('business.applications.index');
+
+    Route::get('applications/create', [BussinessController::class, 'appcreate'])
+        ->name('business.applications.create');
+    
+    Route::post('/loan-against/store', [BussinessController::class, 'storeLoanApplication'])->name('bussiness-loan.store');
+
+    Route::get('/members/{id}/info', [BussinessController::class, 'getMemberInfo'])
+        ->name('members.info');
+
+    Route::get('business/applications/view/{id}', [BussinessController::class, 'appview'])
+        ->name('business.applications.view');
+
+    // Edit form
+    Route::get('/business/applications/{id}/edit', [BussinessController::class, 'appedit'])
+        ->name('business.applications.edit');
+
+    // Update
+    Route::put('/business/applications/{id}', [BussinessController::class, 'appupdate'])
+        ->name('business.applications.update');
+
+    Route::get('applications/show-emi-chart', [BussinessController::class, 'showEmiChart'])
+        ->name('business.applications.view-buttons.show-emi-chart');
+
+
+    // Disbursement business Loan
+    Route::get('disbursements/index', [BussinessDisbursementController::class, 'index'])
+        ->name('business.disbursements.index');
+    Route::post('/business/disbursements/cancel/{id}', [BussinessDisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
+
+    // disburse-loan page   
+    Route::get('disbursements/disburse-loan/{id}', [BussinessDisbursementController::class, 'show'])
+        ->name('loanagainst.disbursements.disburse-loan');
+    Route::post('/loanagainst/disbursements/store', [BussinessDisbursementController::class, 'store'])->name('disbursements.store');
+
+
+    // business Loan Account Page
+    Route::get('account/index', [BussinessController::class, 'index'])
+        ->name('business.account.index');
+
+});
+
+
+/////////////////////////////////////   END BUSSINESS LOAN    ////////////////////////////////////////////////////////
 
 
 Route::group(['prefix' => 'hr-managment'], function () {

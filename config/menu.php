@@ -122,6 +122,19 @@ return [
         ],
     ],
     [
+        'title' => 'BUSINESS LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'business.schemes.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'business.applications.index'],
+            ['title' => 'CALCULATOR', 'route' => 'business.calculator.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'business.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'business.account.index'],
+        ],
+    ],
+    [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',

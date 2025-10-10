@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
 
-   @if(session('success'))
+    @if(session('success'))
     <div 
         id="successMessage" 
         class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
@@ -21,57 +21,65 @@
         }, 2000);
     </script>
     @endif
-      
+        
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h1 class=" flex text-xl block font-semibold">LOAN AGAINST SCHEMES</h1>
-                <a href="{{route('loanagainst.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <h3 class=" flex text-xl block font-semibold">LOAN AGAINSTS APPLICATIONS</h3>
+                <a href="{{route('loanagainst.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
-            </div>  
-              
-        <div class="col-span-12 box lg:col-span-12">
+            </div>
+
+      
+       <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
+                            
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    SCHEME CODE
+                                   	APPLICATION NO.
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    SCHEME NAME
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    TENURE
+                                   APPLICATION DATE
                                 </div>
                             </th>
 
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    MAX. LOAN AMOUNT
+                                  MEMBER NO
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    INTEREST TYPE
+                                  	MEMBER NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    A. INTEREST RATE (%)
+                                  BRANCH
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    ACTIVE
+                                   SCHEME
                                 </div>
                             </th>
+                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center gap-1">
+                                  	PRINCIPAL AMT.
+                                </div>
+                            </th>
+                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center gap-1">
+                                  	STATUS
+                                </div>
+                            </th>
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     ACTIONS
@@ -79,79 +87,85 @@
                             </th>
                         </tr>
                     </thead>
-                   <tbody>
-    @forelse($schemes as $scheme)
+                    <tbody>
+    @foreach($applications as $application)
         <tr class="border-b dark:border-bg3">
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1 text-secondary uppercase">
-                    <a href="{{ route('loanagainnst.schemes.view', $scheme->id) }}" class="single-option">
-                        {{ $scheme->scheme_code }}
-                    </a>
-                </div>
+          
+            <!-- Application No. -->
+           <td class="text-start !py-5 px-6">
+                <a href="{{ route('loanagainst.applications.view', $application->id) }}" 
+                class="text-blue-600 hover:underline">
+                    {{ $application->id }}
+                </a>
             </td>
 
-            <td class="text-start !py-5 px-6 capitalize">
-                <div class="flex items-center gap-1">
-                    {{ $scheme->scheme_name }}
-                </div>
-            </td>
+            <!-- Application Date -->
             <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ $scheme->tenure }} Months
-                </div>
+                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
             </td>
+
+            <!-- Member No -->
             <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ number_format($scheme->max_loan_amount, 2) }}
-                </div>
+                <a href="{{ url('members/member/' . $application->member_id) }}" 
+                class="text-blue-600 hover:underline">
+                    {{ $application->member_id }}
+                </a>
             </td>
+
+
+            <!-- Member Name (अगर relation है तो member->name, अभी के लिए member_id ही दिखा रहा हूँ) -->
             <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1 capitalize">
-                    {{ str_replace('_',' ', $scheme->gold_loan_setting) }}
-                </div>
+                {{ $application->member->member_info_first_name ?? 'N/A' }}
             </td>
+
+            <!-- Branch -->
             <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ $scheme->annual_interest_rate }} %
-                </div>
+                {{ $application->branch->branch_name ?? 'N/A' }}
             </td>
+
+            <!-- Scheme -->
             <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    @if($scheme->is_active)
-                        <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
-                            Yes
-                        </span>
-                    @else
-                        <span class="block w-28 rounded-[30px] border border-n30 bg-red-200 py-2 text-center text-xs text-red-600">
-                            No
-                        </span>
-                    @endif
-                </div>
+                {{ $application->scheme->scheme_name ?? 'N/A' }}
             </td>
+
+            <!-- Principal Amount -->
+            <td class="text-start !py-5 px-6">
+                {{ number_format($application->net_loan_amount, 2) }}
+            </td>
+
+           <!-- Status -->
+            <td class="text-start !py-5 px-6">
+                @if($application->status == 0)
+                    Draft
+                @elseif($application->status == 1)
+                    Approved
+                @elseif($application->status == 2)
+                    DISBURSED
+                @else
+                    Disapproved
+                @endif
+            </td>
+
+            <!-- Actions -->
             <td class="text-start !py-5 px-6">
                 <div class="flex justify-center">
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('loanagainst.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
-                            <li><a href="{{ route('loanagainst.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                            <li><a href="{{ route('loanagainst.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('loanagainst.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
                         </ul>
                     </div>
                 </div>
             </td>
         </tr>
-    @empty
-        <tr>
-            <td colspan="8" class="text-center py-5">No Schemes Found</td>
-        </tr>
-    @endforelse
+    @endforeach
 </tbody>
 
 
                 </table>
-
                 <div class="mt-6">
-                    {{ $schemes->links('pagination::tailwind') }}
+                    {{ $applications->links('pagination::tailwind') }}
                 </div>
             </div>
 
