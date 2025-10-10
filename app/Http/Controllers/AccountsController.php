@@ -16,10 +16,12 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Helpers\AccountsTransactionsHelper;
+use App\Mail\AccountOpenedMail;
 use App\Models\Bank;
 use App\Models\MembershipChargeTransaction;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -197,10 +199,19 @@ class AccountsController extends Controller
                 } else {
                     Log::warning('Member mobile number missing for SMS', ['member_id' => $account->member_id]);
                 }
+
+                $accountData = [
+                    'name' => $member->member_info_first_name,
+                    'account_no' => $account->account_no,
+                    'email' => $member->member_info_email,
+                ];
+
+                // 3️⃣ Send the email (immediately)
+                Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
+
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             }
-
 
             if ($request->nominee === 'yes') {
                 AccountNominee::create([
@@ -325,7 +336,7 @@ class AccountsController extends Controller
 
         $accountId = $request->account_id;
 
-        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address'])
+        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address.state'])
             ->find($accountId);
 
         $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();

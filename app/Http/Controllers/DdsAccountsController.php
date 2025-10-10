@@ -701,13 +701,14 @@ class DdsAccountsController extends Controller
         Log::info('Deposit form requested for DDS account: ' . $id);
         $ddAccount = DdsAccount::findOrFail($id);
         $banks = Bank::all();
+    $accounts = Account::where('member_id', $ddsAccount->member_id ?? null)->get();
 
         $members = Member::all();
         $installmentReceived = $ddAccount->installment_received;
         $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
         $installmentAmount = $ddAccount->dd_amount;
 
-        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks'));
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks','accounts'));
     }
     public function storeDeposit(Request $request)
     {

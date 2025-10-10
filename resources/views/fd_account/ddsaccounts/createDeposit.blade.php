@@ -225,8 +225,10 @@
                             <select id="savingAccountSelect" name="saving_account_id"
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
                                 <option value="">Select Account</option>
+                                @foreach ($accounts as $account)
+                                    <option value="{{ $account->id }}">{{ $account->account_no }}</option>
+                                @endforeach
                             </select>
-
                             {{-- <div id="accountBalanceDiv" class="mt-3 hidden">
                                 <label class="block text-sm font-medium text-gray-700">Account Balance</label>
                                 <div id="accountBalance" class="p-3 text-sm font-semibold text-primary">₹0.00</div>

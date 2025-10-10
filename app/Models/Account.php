@@ -41,6 +41,7 @@ class Account extends Model
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+
     public function minor()
     {
         return $this->belongsTo(Minor::class, 'member_id');
