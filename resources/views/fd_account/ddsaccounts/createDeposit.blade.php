@@ -172,7 +172,7 @@
                                 UTR / Transaction No.
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="utr_no"
+                            <input type="text" name="utr_no" value="utr_no"
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5"
                                 placeholder="Enter UTR/Transaction No.">
                             <label class="block text-sm font-medium text-gray-700">
@@ -181,13 +181,16 @@
                             </label>
                             <div class="flex gap-3">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="transfer_mode" class="text-green-600"> IMPS
+                                    <input type="radio" name="transfer_mode" value="IMPS" class="text-green-600">
+                                    IMPS
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="transfer_mode" class="text-green-600"> VPA
+                                    <input type="radio" name="transfer_mode" value="VPA" class="text-green-600">
+                                    VPA
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="transfer_mode" class=""> NEFT/RTGS
+                                    <input type="radio" name="transfer_mode" value="NEFT/RTGS" class="">
+                                    NEFT/RTGS
                                 </label>
                             </div>
 
@@ -195,21 +198,24 @@
 
                         <!-- Cheque Fields -->
                         <div id="chequeFields" class="space-y-4 mt-2 hidden">
-                            <label class="block text-sm font-medium text-gray-700">Bank Name <span
-                                    class="text-red-500">*</span></label>
-                            <select name="bank_id" class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
-                                <option value="">Select Bank</option>
-                            </select>
+                            <!-- Bank Name -->
+                            <label class="block text-sm font-medium text-gray-700">
+                                Bank Name <span class="text-red-500">*</span>
+                            </label>
+                            <x-searchable-dropdown :items="$banks" label="BANK NAME" name="bank_name"
+                                display-field="name" value-field="id" :selected="old('bank_name')" />
 
+                            <!-- Cheque No -->
                             <label class="block text-sm font-medium text-gray-700">Cheque No. <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="cheque_no"
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5" placeholder="Enter Cheque No.">
 
+                            <!-- Cheque Date -->
                             <label class="block text-sm font-medium text-gray-700">Cheque Date <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" id="date3" name="cheque_date" placeholder="DD/MM/YYYY"
-                                class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
+                            <input type="text" id="date5" name="cheque_date" placeholder="DD/MM/YYYY"
+                                class="w-full border rounded-10 px-3 py-3 bg-secondary/5 date-input">
                         </div>
 
                         <!-- Saving Fields -->
@@ -219,8 +225,10 @@
                             <select id="savingAccountSelect" name="saving_account_id"
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
                                 <option value="">Select Account</option>
+                                @foreach ($accounts as $account)
+                                    <option value="{{ $account->id }}">{{ $account->account_no }}</option>
+                                @endforeach
                             </select>
-
                             {{-- <div id="accountBalanceDiv" class="mt-3 hidden">
                                 <label class="block text-sm font-medium text-gray-700">Account Balance</label>
                                 <div id="accountBalance" class="p-3 text-sm font-semibold text-primary">₹0.00</div>
@@ -324,47 +332,46 @@
         });
     </script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const payModeInputs = document.querySelectorAll('input[name="pay_mode"]');
+        document.addEventListener('DOMContentLoaded', function() {
+            const payModeInputs = document.querySelectorAll('input[name="pay_mode"]');
 
-        const onlineFields = document.getElementById('onlineFields');
-        const chequeFields = document.getElementById('chequeFields');
-        const savingFields = document.getElementById('savingFields');
+            const onlineFields = document.getElementById('onlineFields');
+            const chequeFields = document.getElementById('chequeFields');
+            const savingFields = document.getElementById('savingFields');
 
-        function togglePayModeFields(selectedMode) {
-            // Hide all by default
-            onlineFields.classList.add('hidden');
-            chequeFields.classList.add('hidden');
-            savingFields.classList.add('hidden');
+            function togglePayModeFields(selectedMode) {
+                // Hide all by default
+                onlineFields.classList.add('hidden');
+                chequeFields.classList.add('hidden');
+                savingFields.classList.add('hidden');
 
-            // Show only the selected one
-            switch (selectedMode) {
-                case 'onlineTr':
-                    onlineFields.classList.remove('hidden');
-                    break;
-                case 'cheque':
-                    chequeFields.classList.remove('hidden');
-                    break;
-                case 'saving':
-                    savingFields.classList.remove('hidden');
-                    break;
-                // cash doesn't need any extra fields
+                // Show only the selected one
+                switch (selectedMode) {
+                    case 'onlineTr':
+                        onlineFields.classList.remove('hidden');
+                        break;
+                    case 'cheque':
+                        chequeFields.classList.remove('hidden');
+                        break;
+                    case 'saving':
+                        savingFields.classList.remove('hidden');
+                        break;
+                        // cash doesn't need any extra fields
+                }
             }
-        }
 
-        // Bind change event to all radio buttons
-        payModeInputs.forEach(input => {
-            input.addEventListener('change', function () {
-                togglePayModeFields(this.value);
+            // Bind change event to all radio buttons
+            payModeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    togglePayModeFields(this.value);
+                });
             });
+
+            // If a mode is already selected (like on form resubmit), show its fields
+            const selectedInput = document.querySelector('input[name="pay_mode"]:checked');
+            if (selectedInput) {
+                togglePayModeFields(selectedInput.value);
+            }
         });
-
-        // If a mode is already selected (like on form resubmit), show its fields
-        const selectedInput = document.querySelector('input[name="pay_mode"]:checked');
-        if (selectedInput) {
-            togglePayModeFields(selectedInput.value);
-        }
-    });
-</script>
-
+    </script>
 @endsection

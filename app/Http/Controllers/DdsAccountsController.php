@@ -701,13 +701,14 @@ class DdsAccountsController extends Controller
         Log::info('Deposit form requested for DDS account: ' . $id);
         $ddAccount = DdsAccount::findOrFail($id);
         $banks = Bank::all();
+    $accounts = Account::where('member_id', $ddsAccount->member_id ?? null)->get();
 
         $members = Member::all();
         $installmentReceived = $ddAccount->installment_received;
         $balanceAvailable = $ddAccount->dd_amount - $installmentReceived;
         $installmentAmount = $ddAccount->dd_amount;
 
-        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks'));
+        return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks','accounts'));
     }
     public function storeDeposit(Request $request)
     {
@@ -717,7 +718,7 @@ class DdsAccountsController extends Controller
                 'dds_account_id'    => 'required|exists:dds_accounts,id',
                 'account_id'        => 'nullable|exists:accounts,id',
                 'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
-                'transaction_date'  => 'required|date_format:d/m/Y',
+                'transaction_date'  => 'required|date_format:d-m-Y',
                 'amount'            => 'required|numeric|min:1',
                 'collected_by'      => 'nullable|string|max:255',
 
@@ -758,7 +759,7 @@ class DdsAccountsController extends Controller
             $request->validate($extraRules);
 
             // ✅ Convert date format (for database)
-            $transaction_date = \Carbon\Carbon::createFromFormat('d/m/Y', $validated['transaction_date'])->format('Y-m-d');
+            $transaction_date = \Carbon\Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
 
             // ✅ Handle file uploads
             if ($request->hasFile('t_receipt')) {
