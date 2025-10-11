@@ -189,20 +189,7 @@ class AccountTransactionController extends Controller
 
         return redirect()->route('transaction.index')->with('success', 'Transaction deleted successfully.');
     }
-
-    // public function print($id)
-    // {
-    //     try {
-    //         $id = base64_decode($id);
-    //         $transaction = Transaction::findOrFail($id);
-
-    //         // Generate print view (Blade or PDF)
-    //         return view('saving-current-ac.accounts.print', compact('transaction'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
-
+    
     public function printReceipt($id)
     {
         $id = base64_decode($id);
