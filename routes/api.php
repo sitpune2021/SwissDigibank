@@ -18,8 +18,8 @@ Route::prefix('accounts')->group(function () {
 });
 
 //member  api route
-// Route::get('members/{id}', [MemberController::class, 'fetchMemberDetails']);
-Route::get('members/profile', [MemberController::class, 'fetchMemberDetails'])->middleware('auth:api');
+Route::get('members/{id}', [MemberController::class, 'fetchMemberDetails']);
+// Route::get('members/profile', [MemberController::class, 'fetchMemberDetails'])->middleware('auth:api');
 
 //Account 
 Route::get('account/{id}', [AccountController::class, 'fetchAccountInfo']);

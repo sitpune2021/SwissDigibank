@@ -12,7 +12,6 @@ class MemberController extends Controller
    
      public function fetchMemberDetails($id)
     {
-        
         try {
             $member = Member::findOrFail($id);
 
