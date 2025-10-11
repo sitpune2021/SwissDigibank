@@ -31,11 +31,6 @@
                     Gold Loan Scheme
                 </p>
             </div>
-            <!-- <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm">{{ $scheme->scheme_name }}</a>
-            </p>
-
         </div>
     </div>
 
@@ -137,18 +132,18 @@
                             <td class="font-semibold p-3">Active</td>
                             <td class="p-3">
                                 <span
-                                    class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                                    class="block w-28 rounded-[30px] border border-n30 {{ $scheme->is_active ? 'bg-primary/20 text-primary' : 'bg-red-200 text-red-600' }} py-2 text-center text-xs dark:border-n500 dark:bg-bg3 xxl:w-16">
                                     {{ $scheme->is_active ? 'Yes' : 'No' }}
                                 </span>
                             </td>
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Created at</td>
-                            <td class="p-3">{{ $scheme->created_at->format('d-m-Y H:i') }}</td>
+                            <td class="p-3">{{ $scheme->created_at->format('d/m/Y H:i') }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Updated at</td>
-                            <td class="p-3">{{ $scheme->updated_at->format('d-m-Y H:i') }}</td>
+                            <td class="p-3">{{ $scheme->updated_at->format('d/m/Y H:i') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -191,7 +186,10 @@
             </div>
         </div>
     </div>
+
 </div>
+
+
 
 <script>
     // <!-- collapsed logic + - button-->

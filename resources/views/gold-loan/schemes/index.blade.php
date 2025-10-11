@@ -123,7 +123,7 @@
                             Yes
                         </span>
                     @else
-                        <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                        <span class="block w-28 rounded-[30px] border border-n30 bg-red-200 py-2 text-center text-xs text-red-600">
                             No
                         </span>
                     @endif

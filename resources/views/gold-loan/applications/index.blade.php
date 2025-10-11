@@ -30,13 +30,13 @@
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  CUSTOMER NO
+                                  MEMBER NO
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  	CUSTOMER NAME
+                                  	MEMBER NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -89,7 +89,7 @@
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $application->member_id??'' }}
+                    {{ $application->member_id }}
                 </a>
             </td>
 
@@ -117,11 +117,13 @@
            <!-- Status -->
             <td class="text-start !py-5 px-6">
                 @if($application->status == 0)
-                    Draft
+                    DRAFT
                 @elseif($application->status == 1)
                     Approved
-                @else
+                    @elseif($application->status == 1)
                     DISBURSED
+                @else
+                    DISAPPROVED
                 @endif
             </td>
 

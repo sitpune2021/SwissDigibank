@@ -41,7 +41,7 @@
             <!-- Left: Details -->
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                   <form action="{{ route('disbursements.store') }}" method="POST">
+                   <form action="{{ route('golddisbursements.store') }}" method="POST">
                     @csrf
                         <!-- Header -->
                         

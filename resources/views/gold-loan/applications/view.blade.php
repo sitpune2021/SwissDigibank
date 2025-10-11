@@ -96,11 +96,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Gold Loan Application - 00591 </h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500 text-sm">Gold Loan Applications </a> >
-                <a href="#" class="text-gray-500 text-sm">00591</a>
-            </p>
+            <h1 class="text-2xl uppercase font-semibold">Gold Loan Application </h1>
         </div>
     </div>
 
@@ -200,7 +196,7 @@
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
+                            <td class="font-semibold px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
                                 <a href="{{ url('members/member/'. $application->member->id) }}" 
                                 class="text-primary capitalize hover:underline">
@@ -210,43 +206,43 @@
                         </tr>
 
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">1st Co-Applicant Customer</td>
+                            <td class="font-semibold px-4 py-2">1st Co-Applicant Member</td>
                             <td class="px-4 py-2 capitalize text-primary">
                                 {{ optional($application->coApplicant1)->member_no }} - {{ optional($application->coApplicant1)->member_info_first_name }}
                             </td>
                         </tr>
 
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Guarantor 1 Customer</td>
+                            <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
                             <td class="px-4 py-2 capitalize text-primary">
                                 {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
                             </td>
                         </tr>
 
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Application No.</td>
+                            <td class="font-semibold px-4 py-2">Application No.</td>
                             <td class="px-4 py-2">{{ $application->id }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Application Date</td>
+                            <td class="font-semibold px-4 py-2">Application Date</td>
                             <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Loan Account No.</td>
+                            <td class="font-semibold px-4 py-2">Loan Account No.</td>
                             <td class="px-4 py-2 text-primary">00459</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Gold Loan Scheme</td>
+                            <td class="font-semibold px-4 py-2">Gold Loan Scheme</td>
                            <td class="text-start !py-5 px-6">
                                 {{ $application->scheme->scheme_name ?? 'N/A' }}
                             </td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Amount Approved</td>
+                            <td class="font-semibold px-4 py-2">Amount Approved</td>
                             <td class="px-4 py-2">₹ 100,000.00</td>
                         </tr>
                         <tr>
-                            <td class="font-semibold px-4 py-2 uppercase">Status</td>
+                            <td class="font-semibold px-4 py-2">Status</td>
                             <td class="px-4 py-2">
                                 <span
                                     class="block w-32 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary ">DISBURSED</span>
@@ -260,7 +256,7 @@
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black uppercase">
+                    <h3 class="text-lg font-semibold text-black  capitalize">
                         Disbursement Settings
                     </h3>
                     <div class="">
@@ -278,7 +274,7 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
                                     Disbursement Date
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -287,12 +283,12 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">First EMI Date </td>
+                                <td class="font-semibold px-4 py-2">First EMI Date </td>
                                 <td class="px-4 py-2 text-right md:text-left"> 24/07/2026</td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">
+                                <td class="font-semibold px-4 py-2">
                                     Collect Processing Fee Separately
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -302,7 +298,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">
+                                <td class="font-semibold px-4 py-2">
                                     Collect Stamp Duty Fee Separately
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -312,14 +308,14 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase"> Collect Insurance Fee Separately</td>
+                                <td class="font-bold px-4 py-2"> Collect Insurance Fee Separately</td>
                                 <td class="px-4 py-2  text-right md:text-left">
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">
+                                <td class="font-bold px-4 py-2">
                                     Collect Adv. Interest Separately
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -328,7 +324,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">Collect Off Adv. EMI Interest Separately</td>
+                                <td class="font-bold px-4 py-2">Collect Off Adv. EMI Interest Separately</td>
                                 <td class="px-4 py-2   text-right md:text-left">
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
@@ -345,7 +341,7 @@
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black uppercase">Cibil Info</h3>
+                    <h3 class="text-lg font-semibold text-black  capitalize">Cibil Info</h3>
                     <div class=" flex gap-3">
                         <a href="{{route('gold-loan.applications.upload-cibil-score')}}"
                             class="p-2 btn-primary">
@@ -359,7 +355,7 @@
 
                                 <!-- Modal Header -->
                                 <div class="flex items-center justify-between px-4 py-3 bg-blue-600 rounded-t-lg">
-                                    <h2 class="text-white text-lg font-semibold ">Credit Score</h2>
+                                    <h2 class="text-white text-lg font-semibold">Credit Score</h2>
                                     <button class="text-white hover:text-gray-200" onclick="closeModal()">
                                         ✕
                                     </button>
@@ -399,22 +395,28 @@
                 <table class="w-full text-md  whitesapce-nowrap">
                     <thead class="bg-gray-100  text-start">
                         <tr class="text-start">
-                            <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Status</th>
-                            <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Remarks</th>
-                            <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Updated at</th>
-                            <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Approved By</th>
+                            <th class="px-2 py-2 font-semibold text-start text-gray-700">Status</th>
+                            <th class="px-2 py-2 font-semibold text-start text-gray-700">Remarks</th>
+                            <th class="px-2 py-2 font-semibold text-start text-gray-700">Updated at</th>
+                            <th class="px-2 py-2 font-semibold text-start text-gray-700">Approved By</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="border-t border-b">
-                            <td class="px-2 py-2 text-gray-800 uppercase"> approved</td>
+                            <td class="px-2 py-2 text-gray-800 capitalize"> approved</td>
                             <td class="px-2 py-2 text-gray-800 capitalize">—</td>
                             <td class="px-2 py-2 text-gray-800">21/08/2025 </td>
-                            <td class="px-2 py-2 text-gray-800 uppercase">Test Test</td>
+                            <td class="px-2 py-2 text-gray-800 capitalize">Test Test</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
+
+
+
+
+
 
             <!--Security Deposits-->
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
@@ -439,17 +441,17 @@
                             <table class="w-full  rounded-lg text-sm">
                                 <thead class="bg-secondary/5">
                                     <tr>
-                                        <th class="px-3 py-2 text-left uppercase">Item Type</th>
-                                        <th class="px-3 py-2 text-left uppercase">Name</th>
-                                        <th class="px-3 py-2 text-center uppercase">Qty</th>
-                                        <th class="px-3 py-2 text-center uppercase">Val./gm (₹)</th>
-                                        <th class="px-3 py-2 text-center uppercase">Gross Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center uppercase">Net Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center uppercase">Tunch (%)</th>
-                                        <th class="px-3 py-2 text-center uppercase">Fine Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center uppercase">Total Val. (₹)</th>
-                                        <th class="px-3 py-2 text-center uppercase">Image</th>
-                                        <th class="px-3 py-2 text-center uppercase">Status</th>
+                                        <th class="px-3 py-2 text-left">Item Type</th>
+                                        <th class="px-3 py-2 text-left">Name</th>
+                                        <th class="px-3 py-2 text-center">Qty</th>
+                                        <th class="px-3 py-2 text-center">Val./gm (₹)</th>
+                                        <th class="px-3 py-2 text-center">Gross Weight (gm)</th>
+                                        <th class="px-3 py-2 text-center">Net Weight (gm)</th>
+                                        <th class="px-3 py-2 text-center">Tunch (%)</th>
+                                        <th class="px-3 py-2 text-center">Fine Weight (gm)</th>
+                                        <th class="px-3 py-2 text-center">Total Val. (₹)</th>
+                                        <th class="px-3 py-2 text-center">Image</th>
+                                        <th class="px-3 py-2 text-center">Status</th>
                                     </tr>
                                 </thead>
 
@@ -585,7 +587,7 @@
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black  uppercase">
+                    <h3 class="text-lg font-semibold text-black  capitalize">
                         Gold Loan Scheme Info
                     </h3>
                     <div class="">
@@ -603,56 +605,57 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
     <tr class="border-b">
-        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
+        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
         <td class="px-4 py-2 text-right md:text-left">
             {{ $application->scheme->scheme_name ?? '-' }}
         </td>
     </tr>
 
     <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
+        <td class="font-semibold px-4 py-2">Scheme Code</td>
         <td class="px-4 py-2 text-right md:text-left">
             {{ $application->scheme->scheme_code ?? '-' }}
         </td>
     </tr>
 
     <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Amount</td>
+        <td class="font-semibold px-4 py-2">Maximum Loan Amount</td>
         <td class="px-4 py-2 text-right md:text-left">
             ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
         </td>
     </tr>
 
     <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Limit</td>
+        <td class="font-semibold px-4 py-2">Maximum Loan Limit</td>
         <td class="px-4 py-2 text-right md:text-left">
             {{ $application->scheme->max_loan_limit ?? 0 }} %
         </td>
     </tr>
 
     <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
+        <td class="font-bold px-4 py-2">Interest Type</td>
         <td class="px-4 py-2 text-right md:text-left">
             {{ $application->scheme->interest_type ?? '-' }}
         </td>
     </tr>
 
     <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Interest Rate</td>
+        <td class="font-bold px-4 py-2">Interest Rate</td>
         <td class="px-4 py-2 text-right md:text-left">
             {{ $application->scheme->annual_interest_rate ?? 0 }} %
         </td>
     </tr>
 
     <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Processing Fee</td>
+        <td class="font-bold px-4 py-2">Processing Fee</td>
         <td class="px-4 py-2 text-right md:text-left">
             ₹ {{ $application->scheme->processing_fee ?? 0 }}
         </td>
     </tr>
 
 </tbody>
-                   </table>
+
+                    </table>
                 </div>
             </div>
 
@@ -661,7 +664,7 @@
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black uppercase">
+                    <h3 class="text-lg font-semibold text-black  capitalize">
                         Gold Loan Application Info
 
                     </h3>
@@ -680,16 +683,16 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
                                     Branch
                                 </td>
-                                <td class="px-4 py-2 text-right md:text-left uppercase">
+                                <td class="px-4 py-2 text-right md:text-left">
                                     Kalyanadurgam
                                 </td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">Amount Requested</td>
+                                <td class="font-semibold px-4 py-2">Amount Requested</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ 34,000.00</td>
                             </tr>
 
@@ -791,7 +794,14 @@
                 </div>
             </div>
         </div>
+
     </div>
+
+
+
+
+
+
 
     <script>
         function toggleDropdown(id) {

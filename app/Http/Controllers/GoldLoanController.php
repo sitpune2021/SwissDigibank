@@ -16,6 +16,7 @@ use App\Models\LoanCreditScore;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class GoldLoanController extends Controller
 {
@@ -34,9 +35,9 @@ class GoldLoanController extends Controller
         return view("gold-loan.schemes.create");
     }
 
+
     public function store(Request $request)
     {
-        
         $validated = $request->validate([
             'scheme_name' => 'required|string|max:255',
             'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
@@ -44,8 +45,6 @@ class GoldLoanController extends Controller
             'max_loan_amount' => 'required|numeric|min:1|max:200000',
             'tenure' => 'required|integer|min:1',
             'annual_interest_rate' => 'required|numeric|min:0',
-
-            // new optional fields
             'processing_fee' => 'nullable|numeric|min:0',
             'stamp_duty_charge' => 'nullable|numeric|min:0',
             'insurance_fee' => 'nullable|numeric|min:0',
@@ -55,22 +54,26 @@ class GoldLoanController extends Controller
             'penalty_charge' => 'nullable|numeric|min:0',
             'fore_closer_charge' => 'nullable|numeric|min:0',
             'credit_period' => 'nullable|numeric|min:0',
+            'is_active' => 'nullable|boolean',
+            'charge_floting' => 'nullable|boolean',
+            //  Add this line
             'sms_charge' => 'nullable|numeric|min:0',
             'fuel_charge' => 'nullable|numeric|min:0',
             'stationary_charge' => 'nullable|numeric|min:0',
             'maintenace_charge' => 'nullable|numeric|min:0',
             'collcetion' => 'nullable|numeric|min:0',
-            'is_active' => 'required|in:0,1',
-        ], [
-            'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
+            'from_date' => 'nullable|date',
+            'to_date' => 'nullable|date|after_or_equal:from_date',
+            'penal_rate_intererst' => 'nullable|numeric|min:0',
+            'annual_rate_interest' => 'nullable|numeric|min:0',
         ]);
 
         GoldLoanScheme::create($validated);
 
-        return redirect()
-            ->route('gold-loan.schemes.index')
-            ->with('success', 'Scheme created successfully!');
+        return redirect()->route('gold-loan.schemes.index')
+                        ->with('success', 'Scheme created successfully!');
     }
+
 
     public function show($id)
     {
@@ -78,11 +81,13 @@ class GoldLoanController extends Controller
         return view('gold-loan.schemes.show', compact('scheme'));
     }
 
+
     public function edit($id)
     {
         $scheme = GoldLoanScheme::findOrFail($id);
         return view('gold-loan.schemes.create', compact('scheme'));
     }
+
 
     public function update(Request $request, $id)
     {
@@ -94,12 +99,14 @@ class GoldLoanController extends Controller
             ->with('success', 'Scheme updated successfully!');
     }
   
+
     public function view($id)
     {
         $scheme = GoldLoanScheme::findOrFail($id);
         return view("gold-loan.schemes.view", compact('scheme'));
     }
 
+    
     public function calculator()
     {
         $scheme = GoldLoanScheme::all();
@@ -248,6 +255,8 @@ class GoldLoanController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
         return view("gold-loan.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
+   
+
     public function storeLoanApplication(Request $request)
     {
         // dd($request->all());
@@ -294,6 +303,11 @@ class GoldLoanController extends Controller
                 'credited',
                 'collect_principal_as_emi',
                 'collect_advance_processing_fee',
+                'security_value',
+                'max_loan_amount',
+                'max_loan_limit',
+                'maximum_approvable_amount',
+                'approved_loan_amount',
             ]));
 
             Log::info('Loan Application created successfully', [
@@ -328,7 +342,7 @@ class GoldLoanController extends Controller
                 }
             }
 
-            // ✅ Save Ornaments (Dynamic Rows)
+            //  Save Ornaments (Dynamic Rows)
             $itemTypes = $request->input('item_type', []);
             $itemNames = $request->input('item_name', []);
             $noOfItems = $request->input('no_of_item', []);
@@ -374,6 +388,7 @@ class GoldLoanController extends Controller
         }
     }
 
+
     public function getMemberInfo($id)
     {
         $member = Member::select('id', 'member_info_first_name', 'member_info_mobile_no')
@@ -408,17 +423,32 @@ class GoldLoanController extends Controller
 
     public function appedit($id)
     {
+        // Load main loan + relations
         $application = LoanApplication::with(['member', 'scheme'])->findOrFail($id);
 
-        // Dropdown data अगर चाहिए तो यहाँ से pass करो
+        // Load related credit score & ornaments data
+        $creditScores = LoanCreditScore::where('loan_application_id', $id)->get();
+        $ornaments = LoanOrnament::where('application_id', $id)->get();
+
+        // Dropdown data
         $members = Member::all();
         $schemes = GoldLoanScheme::all();
         $branch = Branch::all();
         $scheme = GoldLoanScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view('gold-loan.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks'));
+        return view('gold-loan.applications.create', compact(
+            'application',
+            'members',
+            'schemes',
+            'branch',
+            'scheme',
+            'banks',
+            'creditScores',
+            'ornaments'
+        ));
     }
+
 
     public function appupdate(Request $request, $id)
     {
@@ -427,17 +457,72 @@ class GoldLoanController extends Controller
             'member_id'        => 'required|exists:members,id',
             'scheme_id'        => 'required|exists:gold_loan_schemes,id',
             'loan_amount'      => 'required|numeric',
-            // बाकी fields का validation
         ]);
 
         $application = LoanApplication::findOrFail($id);
         $application->update($request->all());
 
+        /* -----------------------------------------------
+        🟡 STEP 1: Purane ornaments delete karo
+        ------------------------------------------------*/
+        DB::table('loan_ornaments')->where('application_id', $application->id)->delete();
+
+        /* -----------------------------------------------
+        🟢 STEP 2: Naye ornaments insert karo
+        ------------------------------------------------*/
+        if ($request->has('item_type')) {
+            foreach ($request->item_type as $index => $type) {
+                DB::table('loan_ornaments')->insert([
+                    'application_id' => $application->id,
+                    'item_type'      => $type ?? null,
+                    'item_name'      => $request->item_name[$index] ?? null,
+                    'no_of_items'    => $request->no_of_items[$index] ?? null,
+                    'value_per_gram' => $request->value_per_gram[$index] ?? null,
+                    'gross_weight'   => $request->gross_weight[$index] ?? null,
+                    'net_weight'     => $request->net_weight[$index] ?? null,
+                    'tunch'          => $request->tunch[$index] ?? null,
+                    'fine_weight'    => $request->fine_weight[$index] ?? null,
+                    'total_value'    => $request->total_value[$index] ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+            }
+        }
+
+            /* -----------------------------------------------
+            🟢 STEP 3: Credit Score Details Update karo
+            ------------------------------------------------*/
+            DB::table('loan_credit_scores')->where('loan_application_id', $application->id)->delete();
+
+            if ($request->has('cibil_type')) {
+                foreach ($request->cibil_type as $index => $type) {
+            // Convert report_date to proper MySQL format
+            $report_date = null;
+            if (!empty($request->report_date[$index])) {
+                $report_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->report_date[$index])));
+            }
+
+            DB::table('loan_credit_scores')->insert([
+                'loan_application_id' => $application->id,
+                'cibil_type'          => $type ?? null,
+                'cibil_score'         => $request->cibil_score[$index] ?? null,
+                'report_date'         => $report_date,
+                'report_file_path'    => isset($request->report_file[$index])
+                                        ? $request->report_file[$index]->store('uploads/cibil_reports', 'public')
+                                        : null,
+                'created_at'          => now(),
+                'updated_at'          => now(),
+            ]);
+        }
+
+        }
+
         return redirect()
             ->route('gold-loan.applications.view', $application->id)
-            ->with('success', 'Application updated successfully');
+            ->with('success', 'Application updated successfully with ornaments & credit score');
     }
 
+   
 
     public function showEmiChart()
     {
@@ -446,23 +531,26 @@ class GoldLoanController extends Controller
     }
     public function showdisbursesetting()
     {
-
+        
         return view("gold-loan.applications.view-buttons.disburse-setting");
     }
 
     public function col_process_fee()
-    {
-
+    {      
         return view("gold-loan.applications.view-buttons.col_process_fee");
     }
+
     public function upload_documents()
     {
-
+        
         return view("gold-loan.applications.upload_documents");
     }
+
     public function upload_cibil_score()
     {
-
+        
         return view("gold-loan.applications.upload-cibil-score");
     }
+
+   
 }

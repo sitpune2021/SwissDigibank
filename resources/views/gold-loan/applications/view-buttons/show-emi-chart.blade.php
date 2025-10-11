@@ -23,12 +23,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">
-                Gold Loan Application - 00580 - EMI Chart </h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500 text-sm">Gold Loan Applications </a> >
-                <a href="#" class="text-gray-500 text-sm">00591</a> >
-                <a href="#" class="text-gray-500 text-sm">EMI Chart</a>
-            </p>
+                Gold Loan Application EMI Chart </h1>
         </div>
     </div>
     <div class="overflow-x-auto box">

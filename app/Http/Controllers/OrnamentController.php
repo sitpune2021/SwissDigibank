@@ -10,11 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class OrnamentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-   // aapka existing index() — no change required if ye already hai
-
+   
     public function index(Request $request)
     {
         $query = LoanOrnament::query()->with('loanApplication');
@@ -36,10 +32,10 @@ class OrnamentController extends Controller
         $ornaments = $query->paginate(10)->appends($request->query());
 
         // Status wise alag alag pagination
-        $mortgageItems = LoanOrnament::where('status', 'Mortgage')
+        $mortgageItems = LoanOrnament::where('status', '1')
             ->paginate(10, ['*'], 'mortgage_page');
 
-        $releasedItems = LoanOrnament::where('status', 'Released')
+        $releasedItems = LoanOrnament::where('status', '0')
             ->paginate(10, ['*'], 'released_page');
 
         // Agar AJAX hai to sirf ornaments table bhejo
@@ -51,65 +47,26 @@ class OrnamentController extends Controller
         return view('gold-loan.ornaments.index', compact('ornaments', 'mortgageItems', 'releasedItems'));
     }
 
-  
+
     public function exportXls()
     {
         return Excel::download(new OrnamentsExport, 'ornaments.xlsx');
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $ornament = LoanOrnament::findOrFail($id);
 
-        $ornament->status = $request->status;
-        $ornament->remark = $request->remark; // agar remarks ka column hai table me
+        // Force integer conversion (prevents 'Released'/'Mortgage' text issues)
+        $ornament->status = (int) $request->status;
+
+        $ornament->remark = $request->remark;
         $ornament->save();
 
         return redirect()->route('gold-loan.ornaments.index')
                         ->with('success', 'Ornament updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+
 }

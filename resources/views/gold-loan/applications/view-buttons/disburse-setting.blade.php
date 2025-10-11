@@ -21,12 +21,7 @@
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold">LOAN AGAINST PROPERTY APPLICATION - 100136 - DISBURSE SETTINGS</h1>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500">Loan Against Property Application</a> >
-                    <a href="#" class="text-gray-500">100136</a>
-                    <a href="#" class="text-gray-500">DISBURSE SETTINGS</a>
-                </p>
+                <h1 class="text-2xl font-semibold">LOAN AGAINST PROPERTY APPLICATION DISBURSE SETTINGS</h1>
             </div>
         </div>
         <div class="rounded-lg border-l-4 border-yellow-500 bg-warning p-4 mb-4">

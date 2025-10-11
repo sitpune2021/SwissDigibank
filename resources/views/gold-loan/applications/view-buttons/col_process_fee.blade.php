@@ -15,12 +15,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg font-semibold capitalize">LOAN APPLICATION- 100118</h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-sm text-gray-500">Loan Against Property Application</a> >
-                <a href="#" class=" text-sm text-gray-500">100118</a>
-                <a href="#" class=" text-sm text-gray-500">new-transction</a>
-            </p>
+            <h1 class="text-lg font-semibold capitalize">LOAN APPLICATION</h1>
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
