@@ -66,21 +66,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Separate table for Credit Scores
-        Schema::create('loan_credit_scores', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('loan_application_id');
-            $table->string('cibil_type');
-            $table->integer('cibil_score')->nullable();
-            $table->date('report_date')->nullable();
-            $table->string('report_file_path')->nullable(); // file upload path
-            $table->timestamps();
-
-            $table->foreign('loan_application_id')
-                ->references('id')
-                ->on('loan_applications')
-                ->onDelete('cascade');
-        });
+    
     }
 
    

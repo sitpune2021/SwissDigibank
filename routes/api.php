@@ -12,16 +12,17 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanct
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']); 
 // Route::post('/send-otp', [AuthController::class, 'sendOtp']);
 Route::get('/test-send-otp', [AuthController::class, 'testSendOtp']);
-Route::prefix('accounts')->group(function () {
-    Route::get('{account}/transactions', [ApiTransactionController::class, 'transactionHistory']);
-    Route::get('{account}/passbook', [ApiTransactionController::class, 'viewPassbook']);
+Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
+    Route::get('transactions', [ApiTransactionController::class, 'transactionHistory']);
+    Route::get('passbook', [ApiTransactionController::class, 'viewPassbook']);
 });
 
 //member  api route
-Route::get('members/{id}', [MemberController::class, 'fetchMemberDetails']);
+// Route::get('members/{id}', [MemberController::class, 'fetchMemberDetails']);
 // Route::get('members/profile', [MemberController::class, 'fetchMemberDetails'])->middleware('auth:api');
+Route::middleware('auth:sanctum')->get('members/details', [MemberController::class, 'fetchMemberDetails']);
 
 //Account 
-Route::get('account/{id}', [AccountController::class, 'fetchAccountInfo']);
-
+// Route::get('account/{id}', [AccountController::class, 'fetchAccountInfo']);
+Route::middleware('auth:sanctum')->get('account/details', [AccountController::class, 'fetchAccountInfo']);
 
