@@ -53,30 +53,6 @@ use App\Http\Controllers\MortgageAccountController;
 use App\Helpers\SmsHelper;
 
 // Clear cache 
-Route::get('/cache-clear', function () {
-    $exitCode = Artisan::call('cache:clear');
-    $exitCode = Artisan::call('config:clear');
-    $exitCode = Artisan::call('view:clear');
-    $exitCode = Artisan::call('route:clear');
-    return 'Success! Cache Cleared';
-});
-
-// Storage link 
-Route::get('/storage-link', function () {
-    $exitCode = Artisan::call('storage:link');
-    return 'Success! Storage link created';
-});
-
-// DB Migrate
-Route::get('/run-migrations', function () {
-    try {
-        Artisan::call('migrate', ['--force' => true]);
-        return 'Success! Migrations have been run.';
-    } catch (\Exception $e) {
-        return 'Migration failed: ' . $e->getMessage();
-    }
-});
-
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
 Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
@@ -248,7 +224,7 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
     Route::resource('transaction', AccountTransactionController::class);
     Route::get('/export-transaction/{id}', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
-    Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'print'])->name('transaction.print');
+    Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'printReceipt'])->name('transaction.print');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {

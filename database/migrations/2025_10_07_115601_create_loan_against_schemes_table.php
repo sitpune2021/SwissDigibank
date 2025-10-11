@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mortgage_schemes', function (Blueprint $table) {
+        Schema::create('loanagainst_schemes', function (Blueprint $table) {
             $table->id();
             $table->string('scheme_name', 191);
             // make scheme_code shorter to avoid "key too long" issue on older MySQL
@@ -67,6 +67,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mortgage_schemes');
+        Schema::dropIfExists('loanagainst_schemes');
     }
 };

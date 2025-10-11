@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccountsTransactionsHelper;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Helpers\CsvExportHelper;
 use App\Models\Account;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AccountTransactionController extends Controller
 {
@@ -188,16 +190,57 @@ class AccountTransactionController extends Controller
         return redirect()->route('transaction.index')->with('success', 'Transaction deleted successfully.');
     }
 
-    public function print($id)
-    {
-        try {
-            $id = base64_decode($id);
-            $transaction = Transaction::findOrFail($id);
+    // public function print($id)
+    // {
+    //     try {
+    //         $id = base64_decode($id);
+    //         $transaction = Transaction::findOrFail($id);
 
-            // Generate print view (Blade or PDF)
-            return view('saving-current-ac.accounts.print', compact('transaction'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+    //         // Generate print view (Blade or PDF)
+    //         return view('saving-current-ac.accounts.print', compact('transaction'));
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
+
+    public function printReceipt($id)
+    {
+        $id = base64_decode($id);
+        $transaction = Transaction::with('accounts.members')->where('id', $id)->first();
+
+        $account = $transaction->accounts ?? null;
+        $member  = $account->members ?? null;
+
+        $accountNo = $account->account_no ?? 'N/A';
+        if (!$transaction || !$account || !$member) {
+            abort(404, 'Transaction not found.');
         }
+
+        $balances = AccountsTransactionsHelper::getAccountBalacec([$transaction->account_id]);
+
+        $data = [
+            'member_no' => $member->member_no ?? 'N/A',
+            'member_info_first_name' => $member->member_info_first_name ?? 'N/A',
+            'member_info_middle_name' => $member->member_info_middle_name ?? '',
+            'member_info_last_name' => $member->member_info_last_name ?? '',
+            'member_info_mobile_no' => $member->member_info_mobile_no ?? 'N/A',
+            'account_no' => $accountNo ?? 'N/A',
+            'transaction_date' => \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y'),
+            'ref_id' => $transaction->id,
+            'amount' => number_format($transaction->amount, 2),
+            'amount_suffix' => 'CR',
+            'payment_mode' => $transaction->payment_mode ?? 'N/A',
+            'avl_balance' => number_format($balances['total_balance'], 2),
+            'approve_status' => $transaction->approve_status == 1 ? 'Approved' : 'Pending',
+            'type' => $transaction->transaction_type ?? 'Membership Fee',
+            'remarks' => $transaction->remarks ?? '',
+            'printed_on' => now()->format('d-m-Y H:i:s'),
+            'printed_by' => auth()->name ?? 'System',
+        ];
+
+        $pdf = Pdf::loadView('saving-current-ac.accounts.print', $data)
+            ->setPaper([0, 0, 238.346, 1000], 'portrait');
+
+        return $pdf->stream('saving-current-ac.accounts.print');
     }
 }

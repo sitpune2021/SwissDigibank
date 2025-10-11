@@ -6,23 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('loan_applications', function (Blueprint $table) {
-            //$table->string('fee_mode', 50)->nullable();
+            $table->string('status')->default('0')->after('id'); 
+            // 'after' me aap wo column likh sakte ho jiske baad ye add ho
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('loan_applications', function (Blueprint $table) {
-            $table->dropColumn('fee_mode');
+            $table->dropColumn('status');
         });
     }
 };
