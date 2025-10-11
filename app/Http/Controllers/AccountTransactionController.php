@@ -217,7 +217,7 @@ class AccountTransactionController extends Controller
             'amount' => number_format($transaction->amount, 2),
             'amount_suffix' => 'CR',
             'payment_mode' => $transaction->payment_mode ?? 'N/A',
-            'avl_balance' => number_format($balances['total_balance'], 2),
+            'avl_balance' => number_format($balances['total_balance']??0,2),
             'approve_status' => $transaction->approve_status == 1 ? 'Approved' : 'Pending',
             'type' => $transaction->transaction_type ?? 'Membership Fee',
             'remarks' => $transaction->remarks ?? '',
