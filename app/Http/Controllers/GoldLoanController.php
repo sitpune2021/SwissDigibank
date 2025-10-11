@@ -58,8 +58,8 @@ class GoldLoanController extends Controller
             'sms_charge' => 'nullable|numeric|min:0',
             'fuel_charge' => 'nullable|numeric|min:0',
             'stationary_charge' => 'nullable|numeric|min:0',
-            'maintenace_charge' => 'nullable|numeric|min:0',
-            'collcetion' => 'nullable|numeric|min:0',
+            'maintenance_charge' => 'nullable|numeric|min:0',
+            'collection' => 'nullable|numeric|min:0',
             'is_active' => 'required|in:0,1',
         ], [
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',

@@ -524,7 +524,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('applications/create', [MortgageController::class, 'appcreate'])
         ->name('mortgage.applications.create');
 
-    Route::post('/loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('loan-applications.store');
+    Route::post('/loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('mortgage.store');
 
     Route::get('/members/{id}/info', [MortgageController::class, 'getMemberInfo'])
         ->name('members.info');
@@ -547,12 +547,12 @@ Route::group(['prefix' => 'mortgage'], function () {
     // Disbursement Mortgage Loan
     Route::get('disbursements/index', [MortgageDisbursementController::class, 'index'])
         ->name('mortgage.disbursements.index');
-    Route::post('/mortgage/disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
+    Route::post('/mortgage/disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('mortgagedisbursements.cancel');
 
     // disburse-loan page   
     Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])
         ->name('mortgage.disbursements.disburse-loan');
-    Route::post('/mortgage/disbursements/store', [MortgageDisbursementController::class, 'store'])->name('disbursements.store');
+    Route::post('/mortgage/disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
 
     // Mortgage Loan Account Page
@@ -618,7 +618,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('applications/create', [LoanAgainstController::class, 'appcreate'])
         ->name('loanagainst.applications.create');
 
-    Route::post('/loan-applications/store', [LoanAgainstController::class, 'storeLoanApplication'])->name('loan-applications.store');
+    Route::post('/loan-applications/store', [LoanAgainstController::class, 'storeLoanApplication'])->name('loanagainst.store');
 
     Route::get('/members/{id}/info', [LoanAgainstController::class, 'getMemberInfo'])
         ->name('members.info');
@@ -641,12 +641,12 @@ Route::group(['prefix' => 'loanagainst'], function () {
     // Disbursement loanagainst Loan
     Route::get('disbursements/index', [LoanAgainstDisbursementController::class, 'index'])
         ->name('loanagainst.disbursements.index');
-    Route::post('/loanagainst/disbursements/cancel/{id}', [LoanAgainstDisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
+    Route::post('/loanagainst/disbursements/cancel/{id}', [LoanAgainstDisbursementController::class, 'cancelLoan'])->name('loanagainstdisbursements.cancel');
 
     // disburse-loan page   
     Route::get('disbursements/disburse-loan/{id}', [LoanAgainstDisbursementController::class, 'show'])
         ->name('loanagainst.disbursements.disburse-loan');
-    Route::post('/loanagainst/disbursements/store', [LoanAgainstDisbursementController::class, 'store'])->name('disbursements.store');
+    Route::post('/loanagainst/disbursements/store', [LoanAgainstDisbursementController::class, 'store'])->name('loanagainstdisbursements.store');
 
 
     // loanagainst Loan Account Page
