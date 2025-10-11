@@ -38,7 +38,7 @@ class UserController extends Controller
             return view('users.manage-user', compact('users'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
     public function create()
     {
@@ -56,7 +56,7 @@ class UserController extends Controller
             return view('users.add-user', compact('employees', 'branches', 'roles', 'isAdd'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -71,7 +71,7 @@ class UserController extends Controller
                 'user_name'          => 'required|string|max:255|unique:users,username',
                 'first_name'         => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'last_name'          => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'email'              => 'required|email|max:255|unique:users,email',
+                'email'              => 'required|string|email:rfc,dns|max:255|unique:users,email',
                 'mobile_no'          => 'required|string|max:10',
                 'back_date'          => 'required|integer|min:0',
                 'permission_role'    => 'required|integer|exists:roles,id',
@@ -108,7 +108,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('success', 'User created successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -127,7 +127,7 @@ class UserController extends Controller
             return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'show'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -147,7 +147,7 @@ class UserController extends Controller
             return view('users.add-user', compact('user', 'employees', 'branches', 'roles', 'method', 'route'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
@@ -196,7 +196,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('success', 'User updated successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
-        } 
+        }
     }
 
     /**
