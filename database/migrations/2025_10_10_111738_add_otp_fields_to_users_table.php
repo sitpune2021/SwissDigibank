@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('loan_applications', function (Blueprint $table) {
-            $table->string('fee_mode', 50)->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('otp')->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('loan_applications', function (Blueprint $table) {
-            $table->dropColumn('fee_mode');
+        Schema::table('users', function (Blueprint $table) {
+            //
         });
     }
 };

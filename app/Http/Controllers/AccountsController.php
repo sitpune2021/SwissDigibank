@@ -54,6 +54,53 @@ class AccountsController extends Controller
     public function create()
     {
 
+        // echo "Hii";
+
+        // $msisdn = "7020672418";
+        // $message = "dsadsad";
+        // $url = "https://api.voicensms.in/SMSAPI/webresources/CreateSMSCampaignPost";
+
+        // // Prepare the payload
+        // $data = [
+        //     "filetype"    => 2,
+        //     "msisdn"      => ['9307133589'], // must be array
+        //     "language"    => 0,
+        //     "credittype"  => 7,
+        //     "senderid"    => "SBCGLB",
+        //     "templateid"  => 0,
+        //     "message"     => $message,
+        //     "ukey"        => "8ZSyxFHP9LOCSZZUotdWMdzoK",
+        //     "isrefno"     => true
+        // ];
+
+        // // Initialize cURL
+        // $ch = curl_init($url);
+
+        // // Set cURL options
+        // curl_setopt_array($ch, [
+        //     CURLOPT_RETURNTRANSFER => true,
+        //     CURLOPT_POST           => true,
+        //     CURLOPT_HTTPHEADER     => [
+        //         "Content-Type: application/json"
+        //     ],
+        //     CURLOPT_POSTFIELDS     => json_encode($data, JSON_UNESCAPED_UNICODE), // ✅ ensure JSON encoding
+        // ]);
+
+        // // Execute cURL
+        // $response = curl_exec($ch);
+
+        // // Check for cURL errors
+        // if (curl_errno($ch)) {
+        //     throw new \Exception('cURL Error: ' . curl_error($ch));
+        // }
+
+        // // Close cURL
+        // curl_close($ch);
+
+        // // Decode and return response
+        // return json_decode($response, true);
+        // die;
+
         try {
             $members = Member::pluck('member_info_first_name', 'id', 'member_info_mobile_no');
             $branches = Branch::pluck('branch_name', 'id');
@@ -71,7 +118,7 @@ class AccountsController extends Controller
 
             $address = Member::with('address')->get();
 
-            $formFields = config('accounts.form_fields'); 
+            $formFields = config('accounts.form_fields');
 
             $route = route('accounts.store');
             $method = 'POST';
@@ -102,6 +149,9 @@ class AccountsController extends Controller
 
     public function store(Request $request)
     {
+
+
+
         try {
             Log::info('Account store request started', ['request_data' => $request->all()]);
 
@@ -195,12 +245,10 @@ class AccountsController extends Controller
 
                 if ($member && !empty($member->member_info_mobile_no)) {
 
-                  
+
                     $message = "Dear {$member->member_info_first_name}, your Saving Account ({$account->account_no}) has been successfully created with SBC GLOBAL. Thank you for banking with us!";
 
                     \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
-
-
                 } else {
                     Log::warning('Member mobile number missing for SMS', ['member_id' => $account->member_id]);
                 }
@@ -216,8 +264,6 @@ class AccountsController extends Controller
 
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
-
-                
             }
 
             if ($request->nominee === 'yes') {

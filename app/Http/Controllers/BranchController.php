@@ -55,7 +55,7 @@ class BranchController extends Controller
     {
         try {
             $request->validate([
-                'branch_name'      => 'required|string|max:255',
+                'branch_name'      => 'required|string|regex:/^[A-Za-z\s]+$/',
                 'branch_code'      => 'required|string|max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
                 'open_date'        => 'required',
                 'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
