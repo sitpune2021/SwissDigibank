@@ -52,7 +52,7 @@
 
             <tr>
                 <th class="font-semibold px-4 py-2">Amount</th>
-                <td class="font-semibold px-4 py-2"><strong>{{ number_format($transaction->amount, 2) }}</strong></td>
+                <td class="font-semibold px-4 py-2"><strong>{{ number_format($transaction->balance_available, 2) }}</strong></td>
             </tr>
 
             <tr>

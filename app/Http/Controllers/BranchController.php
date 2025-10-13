@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\State;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class BranchController extends Controller
 {
@@ -13,8 +14,10 @@ class BranchController extends Controller
     {
         try {
             $perPage = $request->input('perPage', 10);
+
             $query = Branch::with(['State'])
-                ->where('active', 'Yes')->orderBy('created_at', 'desc');
+                ->where('active', 'Yes')
+                ->orderBy('created_at', 'desc');
 
             if ($request->has('search')) {
                 $search = $request->input('search');
@@ -28,10 +31,12 @@ class BranchController extends Controller
                         });
                 });
             }
+
             $branches = $query->paginate($perPage)->appends($request->all());
             return view('company.branch.manage-branch', compact('branches'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404); // Only if resource is missing
+        } catch (\Exception $e) {
+            Log::error('Branch index error', ['error' => $e->getMessage()]);
+            abort(500, 'Unexpected error while fetching branches');
         }
     }
 
@@ -45,16 +50,17 @@ class BranchController extends Controller
             $branch = null;
             $route = route('branch.store');
             $method = 'POST';
+
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404); // Only if resource is missing
+        } catch (\Exception $e) {
+            abort(500, 'Unexpected error while preparing form');
         }
     }
 
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'branch_name'      => 'required|string|regex:/^[A-Za-z\s]+$/',
                 'branch_code'      => 'required|string|max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
                 'open_date'        => 'required',
@@ -74,28 +80,34 @@ class BranchController extends Controller
                 'permission_letter' => 'nullable|file',
             ]);
 
+            if ($validator->fails()) {
+                Log::warning('Branch validation failed', [
+                    'errors' => $validator->errors()->toArray(),
+                    'input'  => $request->all(),
+                ]);
+
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $data = $request->except('permission_letter');
 
-            // ✅ Handle file upload
             if ($request->hasFile('permission_letter')) {
                 $file = $request->file('permission_letter');
                 $filename = time() . '_' . $file->getClientOriginalName();
-
-                // Store file in storage/app/public/permission_letter
                 $filePath = $file->storeAs('permission_letter', $filename, 'public');
-
-                // Save the public path to database
                 $data['permission_letter'] = $filePath;
             }
 
-            // ✅ Create branch using processed data
             Branch::create($data);
 
-            return redirect()->route('branch.index')
-                ->with('success', 'Branch added successfully.');
+            return redirect()->route('branch.index')->with('success', 'Branch added successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong! Please try again. Error: ' . $e->getMessage())
-                ->withInput();
+            Log::error('Error creating branch', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'An unexpected error occurred.')->withInput();
         }
     }
 
@@ -103,47 +115,48 @@ class BranchController extends Controller
     {
         try {
             $decryptedId = base64_decode($id);
+            $branch = Branch::with(['State'])->findOrFail($decryptedId);
+            $formFields = config('branch_form');
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id')
             ];
-            $formFields = config('branch_form');
-            $branch = Branch::with(['State'])->find($decryptedId);;
-            $route = "";
+            $route = '';
             $method = 'POST';
             $show = true;
-            $encryptedId = $id;
-            return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'encryptedId', 'show'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+
+            return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions', 'id', 'show'));
+        } catch (\Exception $e) {
+            abort(404, 'Branch not found');
         }
     }
+
     public function edit($id)
     {
         try {
             $decryptedId = base64_decode($id);
             $branch = Branch::findOrFail($decryptedId);
-            $dynamicOptions = [
-                'states' =>  State::pluck('name', 'id')
-            ];
             $formFields = config('branch_form');
+            $dynamicOptions = [
+                'states' => State::pluck('name', 'id')
+            ];
             $route = route('branch.update', $id);
             $method = 'PUT';
+
             return view('company.branch.add-branch', compact('formFields', 'branch', 'route', 'method', 'dynamicOptions'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        } catch (\Exception $e) {
+            abort(404, 'Branch not found');
         }
     }
 
     public function update(Request $request, $id)
     {
         try {
-
             $decryptedId = base64_decode($id);
 
             $request->validate([
-                'branch_name'       => 'required|string|max:255',
-                'branch_code' => 'required|string|max:100|regex:/^[a-zA-Z][a-zA-Z0-9]*$/|unique:branches,branch_code,' . $decryptedId,
-                'open_date'       => 'required',
+                'branch_name'      => 'required|string|max:255',
+                'branch_code'      => 'required|string|max:100|regex:/^[a-zA-Z][a-zA-Z0-9]*$/|unique:branches,branch_code,' . $decryptedId,
+                'open_date'        => 'required',
                 'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
                 'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
                 'ifsc_code'        => 'nullable|string|size:11|regex:/^[A-Za-z0-9]+$/',
@@ -158,49 +171,45 @@ class BranchController extends Controller
                 'disable_recharge' => 'required|in:yes,no',
                 'disable_neft'     => 'required|in:yes,no',
             ]);
-            try {
-                $requestData = $request->all();
-                $branch = Branch::findOrFail($decryptedId);
-                $branch->update($requestData);
-                return redirect()->route('branch.index')->with('success', 'Branch updated successfully.');
-            } catch (\Exception $e) {
-                return back()->with('error', 'Something went wrong! Error: ' . $e->getMessage())->withInput();
-            }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+
+            $branch = Branch::findOrFail($decryptedId);
+            $branch->update($request->all());
+
+            return redirect()->route('branch.index')->with('success', 'Branch updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error updating branch', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Update failed: ' . $e->getMessage())->withInput();
         }
     }
 
-
     public function destroy($id)
     {
-        $branch = Branch::findOrFail($id);
-        $branch->delete();
+        try {
+            $branch = Branch::findOrFail($id);
+            $branch->delete();
 
-        return redirect()->route('branch.index')->with('success', 'Branch deleted successfully.');
+            return redirect()->route('branch.index')->with('success', 'Branch deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting branch', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to delete branch.');
+        }
     }
+
     public function getBranches()
     {
         try {
             $branches = Branch::orderBy('id', 'desc')->get();
             return response()->json($branches);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to fetch branches'], 500);
         }
     }
-    // public function search(Request $request)
-    // {
-    //     $q = $request->get('q');
 
-    //     return Branch::where('branch_name', 'like', "%$q%")
-    //         ->limit(10)
-    //         ->get(['id', 'branch_name']);
-    // }
     public function search(Request $request)
     {
         $search = $request->input('q');
 
-        $branches = \App\Models\Branch::where('branch_name', 'like', "%{$search}%")->limit(10)->get();
+        $branches = Branch::where('branch_name', 'like', "%{$search}%")->limit(10)->get();
 
         return response()->json($branches->map(function ($branch) {
             return [

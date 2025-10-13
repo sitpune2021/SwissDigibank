@@ -832,7 +832,7 @@
                                                             {{ $transaction->pay_mode ?? 'N/A' }}
                                                         </td>
                                                         <td class="px-4 py-2">
-                                                            {{ $transaction->amount ?? 'N/A' }}
+                                                            {{ $transaction->balance_available ?? 'N/A' }}
                                                         </td>
                                                         <td class="px-4 py-2 text-sm text-green-600 font-medium">Approved
                                                         </td>
