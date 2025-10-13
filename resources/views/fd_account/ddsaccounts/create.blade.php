@@ -456,7 +456,7 @@
                                 @foreach ($savingAccounts as $account)
                                     <option value="{{ $account->id }}">
                                         {{ $account->account_no }}
-                                        {{ $account->member->first_name ?? '' }} {{ $account->member->last_name ?? '' }}
+                                        {{ $account->members->full_name ?? ''  }}
                                     </option>
                                 @endforeach
                             </select>

@@ -10,7 +10,7 @@ class DdTransaction extends Model
         'account_id',
         'pay_mode',
         'transaction_date',
-        'amount',
+        'balance_available',
         'transfer_date',
         'transfer_mode',
         'utr_no',

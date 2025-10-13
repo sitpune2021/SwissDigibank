@@ -139,10 +139,13 @@
                                         {{ $tran->status ?? 'Pending' }}
                                     </span>
                                 </td>
+   
                                 <td class="px-4 py-2 text-right">{{ $tran->debit ? number_format($tran->debit, 2) : '' }}
                                 </td>
-                                <td class="px-4 py-2 text-right">{{ number_format($tran->amount, 2) }}</td>
-                                <td class="px-4 py-2 text-right">{{ number_format($tran->balance ?? $tran->amount, 2) }}
+                                <td class="px-4 py-2 text-right">{{ $tran->credit ? number_format($tran->balance_available, 2) : '' }}
+                                </td>
+                                <td class="px-4 py-2 text-right">{{ number_format($tran->balance, 2) }}</td>
+
                                 </td>
                                 <td class="px-4 py-2 text-center">
                                     <span

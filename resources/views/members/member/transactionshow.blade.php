@@ -12,7 +12,6 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <p class="text-gray-500">
-                    <a href="#" class="text-gray-500">Recurring Deposits</a> >
                 </p>
             </div>
         </div>

@@ -49,17 +49,12 @@
             <div class="flex items-start flex-col gap-2">
                 <div class="flex items-center gap-3 ">
                     <h1 class="text-2xl font-semibold dark:text-white">DD - {{ $ddAccount->id }}</h1>
-                    <!-- <p class="text-sm text-gray-500 dark:text-gray-400">Deposit Money (Installments)</p> -->
                 </div>
             </div>
         </div>
-
         <!-- Table -->
         <div class=" dark:bg-bg3 mt-5 shadow rounded-lg overflow-hidden">
-
-
             <div class="flex flex-col lg:flex-row gap-6">
-
                 <!-- Deposit Form -->
                 <div class=" w-full box dark:bg-bg3 shadow rounded-2xl p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
@@ -104,14 +99,14 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                                 Amount to Deposit <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" min="0" name="amount" id="amountToDeposit"
+                            <input type="number" min="0" name="balance_available" id="amountToDeposit"
                                 placeholder="Enter Amount to Deposit"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
                                 required>
                             <span id="amountError" class="text-red-500 hidden">Amount can't be less than the DDS installment
                                 amount.</span>
                         </div>
-                        @error('amount')
+                        @error('balance_available')
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
 
@@ -219,22 +214,22 @@
                         </div>
 
                         <!-- Saving Fields -->
-                        <div id="savingFields" class="space-y-4 mt-2 hidden">
+                        <div id="savingFields" class="space-y-4 mt-2">
                             <label class="block text-sm font-medium text-gray-700">Select Saving Account <span
                                     class="text-red-500">*</span></label>
-                            <select id="savingAccountSelect" name="saving_account_id"
+                            <select id="saving_account_id" name="saving_account_id"
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5">
                                 <option value="">Select Account</option>
-                                @foreach ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->account_no }}</option>
-                                @endforeach
+                                @forelse ($savingAccounts as $account)
+                                    <option value="{{ $account->id }}">
+                                        {{ $account->account_no }} ({{ $account->members->full_name ?? '' }} )({{ $account->amount_deposit ?? '' }})
+                                    </option>
+                                @empty
+                                    <option value="">No accounts found</option>
+                                @endforelse
                             </select>
-                            {{-- <div id="accountBalanceDiv" class="mt-3 hidden">
-                                <label class="block text-sm font-medium text-gray-700">Account Balance</label>
-                                <div id="accountBalance" class="p-3 text-sm font-semibold text-primary">₹0.00</div>
-                            </div> --}}
                         </div>
-
+                 
                         <div class="flex justify-center gap-4 pt-4">
                             <button type="submit" class="btn-primary  ">
                                 DEPOSIT
@@ -256,7 +251,7 @@
                         <table class="w-full text-sm">
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr class="border-b">
-                                    <td class="font-semibold pr-4 py-3 uppercase">Member</td>
+                                    <td class="font-semibold pr-4 py-3 uppercase">CUSTOMER</td>
                                     <td>{{ ($ddAccount->member?->member_no ??
                                         ($ddAccount->member?->id ? str_pad($ddAccount->member->id, 6, '0', STR_PAD_LEFT) : '')) .
                                         ' - ' .

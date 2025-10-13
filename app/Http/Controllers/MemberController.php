@@ -851,11 +851,14 @@ class MemberController extends Controller
                 id,
                 member_id,
                 transaction_date,
-                membership_fee AS amount,
+                net_fee_to_collect AS amount,
                 charges_pay_mode AS pay_mode,
                 type,
-                remarks,
-                CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+                    CASE 
+                        WHEN type = 'Membership Charges' THEN 'Member Registration'
+                        ELSE remarks
+                    END AS remarks,
+                    CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
                 is_accounted,
                 'Membership Charge' AS transaction_source
             FROM membership_charges_transaction
@@ -972,10 +975,13 @@ class MemberController extends Controller
                 id,
                 member_id,
                 transaction_date,
-                membership_fee AS amount,
+                net_fee_to_collect AS amount,
                 charges_pay_mode AS pay_mode,
-                'Share amount' AS type,
-                remarks,
+                 type,
+                 CASE 
+                    WHEN type = 'Membership Charges' THEN 'Member Registration'
+                    ELSE remarks
+                END AS remarks,
                 CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
                 is_accounted,
                 'Membership Charge' AS transaction_source,
