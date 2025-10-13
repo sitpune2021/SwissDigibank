@@ -23,7 +23,6 @@
     }
 </style>
 
-
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -414,7 +413,7 @@
             <div class="w-full my-4">
                 <hr class="border-gray-300">
                 <h4
-                    class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
+                    class="text-center uppercase font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
                     Charges Per EMI
                     <i class="las la-info-circle"></i>
                     </button>
@@ -607,7 +606,7 @@
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
            <button type="submit"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                class="px-6 py-3 btn-primary uppercase">
                 {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
             </button>
 

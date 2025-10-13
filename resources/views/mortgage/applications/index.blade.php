@@ -3,7 +3,7 @@
     <div class="main-inner">
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">Property/ Mortgage LOAN APPLICATIONS</h3>
+                <h3 class=" flex text-xl block font-semibold uppercase">Property/ Mortgage LOAN APPLICATIONS</h3>
                 <a href="{{route('mortgage.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
 

@@ -382,7 +382,7 @@ public function storeLoanApplication(Request $request)
     {
         // loan applications fetch excluding status 1 and 2
         $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member'])
-            ->whereNotIn('status', [1, 2])
+            ->whereNotIn('status', [4])
             ->latest()
             ->get(['id', 'status']);
 

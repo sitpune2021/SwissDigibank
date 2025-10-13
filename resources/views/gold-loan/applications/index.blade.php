@@ -89,7 +89,7 @@
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $application->member_id??'' }}
+                    {{ $application->member->member_no??'' }}
                 </a>
             </td>
 
@@ -117,11 +117,13 @@
            <!-- Status -->
             <td class="text-start !py-5 px-6">
                 @if($application->status == 0)
-                    Draft
+                    DRAFT
                 @elseif($application->status == 1)
-                    Approved
-                @else
+                    APPROVED
+                    @elseif($application->status == 1)
                     DISBURSED
+                @else
+                    DISAPPROVED
                 @endif
             </td>
 

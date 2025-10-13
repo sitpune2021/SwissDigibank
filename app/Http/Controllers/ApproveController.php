@@ -70,6 +70,34 @@ class ApproveController extends Controller
             $transaction->approve_status = $request->input('transaction_status');
             $transaction->remarks = $request->input('remarks');
             $transaction->payment_rev_rel = $request->input('payment_status');
+           
+                try {
+
+                    $member = \App\Models\Member::find($transaction->accounts->member_id);
+
+                    if ($member && !empty($member->member_info_mobile_no)) {
+
+
+                        $message = "Thanks For Your Missed Call To SBC GLOBAL, Please call our Customer Care 18002026261 OR Our Team Will Contact You Shortly.";
+
+                        \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
+                    } else {
+                        Log::warning('Member mobile number missing for SMS', ['member_id' => $member->id]);
+                    }
+
+                    // $accountData = [
+                    //     'name' => $member->member_info_first_name,
+                    //     'account_no' => $account->account_no,
+                    //     'email' => $member->member_info_email,
+                    // ];
+
+                    // // 3️⃣ Send the email (immediately)
+                    // Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
+
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+                }
+
 
             if (strtolower($transaction->payment_mode) === 'online') {
                 $transaction->bank_name = $request->input('bank_account_id');
@@ -88,7 +116,7 @@ class ApproveController extends Controller
      * Start Approved Status
      */
 
-    
+
     public function updateAccountStatus(Request $request, $id)
     {
 
@@ -106,6 +134,32 @@ class ApproveController extends Controller
                 $account->approve_status = $validated['transaction_status'];
                 $account->remarks = $validated['remarks'];
                 $account->save();
+
+                try {
+                    $member = \App\Models\Member::find($account->member_id);
+
+                    if ($member && !empty($member->member_info_mobile_no)) {
+
+
+                        $message = "Thanks For Your Missed Call To SBC GLOBAL, Please call our Customer Care 18002026261 OR Our Team Will Contact You Shortly.";
+
+                        \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
+                    } else {
+                        Log::warning('Member mobile number missing for SMS', ['member_id' => $account->member_id]);
+                    }
+
+                    // $accountData = [
+                    //     'name' => $member->member_info_first_name,
+                    //     'account_no' => $account->account_no,
+                    //     'email' => $member->member_info_email,
+                    // ];
+
+                    // // 3️⃣ Send the email (immediately)
+                    // Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
+
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+                }
 
                 // 📝 Log the update
                 Log::info('Account status updated', [
@@ -262,6 +316,8 @@ class ApproveController extends Controller
      * End Approved Status
      */
 
+
+    // share transfer approval start
     public function approveTransfer(Request $request)
     {
         try {
@@ -318,6 +374,8 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+
+    // share transfer approval ends
 
     /**
      * Reverse Transaction. - view form called
@@ -431,7 +489,7 @@ class ApproveController extends Controller
 
     //     return view("approvals.loans", compact('applications'));
     // }
-    
+
     public function loans()
     {
         // loan applications fetch excluding status 1 and 2
@@ -457,13 +515,10 @@ class ApproveController extends Controller
     public function approvals_history()
     {
         $applications = LoanApplication::with(['creditScores', 'branch', 'member'])
-        ->where('status', 1) // approved applications
-        ->latest()
-        ->get();
+            ->where('status', 1) // approved applications
+            ->latest()
+            ->get();
         //$applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
         return view("approvals.approvals_history", compact('applications'));
     }
-
-
-
 }

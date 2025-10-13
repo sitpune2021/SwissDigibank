@@ -58,7 +58,7 @@ class LoanAgainstApplication extends Model
    // app/Models/LoanApplication.php
 public function creditScores()
 {
-    return $this->hasMany(LoanCreditScore::class, 'loan_application_id');
+    return $this->hasMany(LoanAgainstCreditScore::class, 'loan_application_id');
 }
 // LoanApplication.php
 public function member()
@@ -69,10 +69,28 @@ public function coApplicant1()
 {
     return $this->belongsTo(Member::class, 'co_applicant_1_id');
 }
+
+
 public function guarantor1()
 {
     return $this->belongsTo(Member::class, 'guarantor_1_id');
 }
+
+public function guarantor2()
+{
+    return $this->belongsTo(Member::class, 'guarantor_2_id');
+}
+
+public function guarantor3()
+{
+    return $this->belongsTo(Member::class, 'guarantor_3_id');
+}
+
+public function guarantor4()
+{
+    return $this->belongsTo(Member::class, 'guarantor_4_id');
+}
+
 
 public function branch()
 {

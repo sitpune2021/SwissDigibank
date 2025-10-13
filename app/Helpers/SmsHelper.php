@@ -11,11 +11,9 @@ class SmsHelper
     {
         // $mobile = '7020672418';
         try {
-            //  $msisdn = is_array($mobile) ? $mobile : array($mobile);
 
             $url = "https://api.voicensms.in/SMSAPI/webresources/CreateSMSCampaignPost";
 
-            // Payload (JSON data)
             $data = [
                 "filetype"    => 2,
                 "msisdn"      => [$mobile],
@@ -41,13 +39,7 @@ class SmsHelper
 
             $response = curl_exec($ch);
 
-            // print_r($response);
-            //              die;
-
             return $response;
-
-            //  print_r($msisdn);
-            //  die;
 
             if (curl_errno($ch)) {
                 Log::error('SMS Sending Failed - cURL Error', ['error' => curl_error($ch)]);

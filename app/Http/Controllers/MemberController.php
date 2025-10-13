@@ -269,6 +269,32 @@ class MemberController extends Controller
                 'type' => "Membership Charges" ?? null,
             ]);
 
+            try {
+                $member = \App\Models\Member::find($member->id);
+
+                if ($member && !empty($member->member_info_mobile_no)) {
+
+
+                    $message = "Thanks For Your Missed Call To SBC GLOBAL, Please call our Customer Care 18002026261 OR Our Team Will Contact You Shortly.";
+
+                    \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
+                } else {
+                    Log::warning('Member mobile number missing for SMS', ['member_id' => $member->id]);
+                }
+
+                // $accountData = [
+                //     'name' => $member->member_info_first_name,
+                //     'account_no' => $account->account_no,
+                //     'email' => $member->member_info_email,
+                // ];
+
+                // // 3️⃣ Send the email (immediately)
+                // Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
+
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
+
             // ✅ Log the transaction data
             Log::info('MembershipChargeTransaction stored', [
                 'transaction_id' => $transaction->id,

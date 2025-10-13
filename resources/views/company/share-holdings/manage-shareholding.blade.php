@@ -143,7 +143,7 @@
                 @error($name)
                 <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                 @enderror
-                <button class="btn-primary" type="submit"> UPDATE </button>
+                <button class="btn-primary " type="submit"> UPDATE </button>
             </form>
         </div>
     </div>

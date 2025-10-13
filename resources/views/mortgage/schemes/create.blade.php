@@ -27,20 +27,12 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW GOLD LOAN SCHEME</h1>
-            <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm"> New</a>
-            </p>
-
+            <h1 class="text-xl font-semibold">MORTGAGE LOAN SCHEME</h1>
         </div>
-
     </div>
     <div class="box">
         <div class="col-span-12  lg:col-span-12">
-           <!-- <form class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6" 
-            action="{{ route('gold-loan.schemes.store') }}" method="POST">
-            @csrf -->
+
             <form class="grid grid-cols-2 gap-4 mt-6"
                 action="{{ isset($scheme) ? route('mortgage.schemes.update', $scheme->id) : route('mortgage.schemes.store') }}"
                 method="POST">
@@ -294,8 +286,10 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="reducing_emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'reducing_emi' ? 'checked' : '' }}
-                                required>
+                                required checked>
                             <span>Reducing EMI</span>
                         </label>
 
@@ -303,6 +297,8 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="flat_emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_emi' ? 'checked' : '' }}
                                 required>
                             <span>Flat EMI</span>
@@ -312,6 +308,8 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="flat_advanced_interest"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_advanced_interest' ? 'checked' : '' }}
                                 required>
                             <span>Flat Advanced Interest Deduction</span>
@@ -321,6 +319,8 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="no_emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="no-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'no_emi' ? 'checked' : '' }}
                                 required>
                             <span>No EMI</span>
@@ -345,7 +345,7 @@
                             value="1" 
                             class="text-green-600 focus:ring-green-500"
                             {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}
-                            required
+                            required checked
                         >
                         <span class="text-gray-700 capitalize">Yes</span>
                     </label>
@@ -373,7 +373,7 @@
             <div class="w-full my-4">
                 <hr class="border-gray-300">
                 <h4
-                    class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
+                    class="text-center uppercase font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
                     Charges Per EMI
                     <i class="las la-info-circle"></i>
                     </button>
@@ -455,7 +455,7 @@
                             <option value="">%</option>
                         </select>
 
-                        <input type="number" name="maintenace_charge" value="{{ old('maintenace_charge', $scheme->maintenace_charge ?? '') }}" id="maintenace_charge"
+                        <input type="number" name="maintenance_charge" value="{{ old('maintenance_charge', $scheme->maintenance_charge ?? '') }}" id="maintenance_charge"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Maintenance Charges">
                     </div>
@@ -477,7 +477,7 @@
                             <option class="uppercase" value="">Fixed</option>
                             <option value="">%</option>
                         </select>
-                        <input type="number" name="collcetion" value="{{ old('collcetion', $scheme->collcetion ?? '') }}" id="collcetion"
+                        <input type="number" name="collection" value="{{ old('collection', $scheme->collection ?? '') }}" id="collection"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Collection Charges">
                     </div>
@@ -542,7 +542,7 @@
                                 </td>
                                 <td class="border border-gray-300 p-1"><input type="number" name="to_date" value="{{ old('to_date', $scheme->to_date ?? '') }}" placeholder="To"
                                         class="w-full border  border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_intererst" value="{{ old('penal_rate_intererst', $scheme->penal_rate_intererst ?? '') }}"
+                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_interest" value="{{ old('penal_rate_interest', $scheme->penal_rate_interest ?? '') }}"
                                         placeholder="Penal Interest(%)"
                                         class="w-full  border border-gray-300 rounded p-1"></td>
                                 <td class="border border-gray-300 p-1"><input type="number" name="annual_rate_interest" value="{{ old('annual_rate_interest', $scheme->annual_rate_interest ?? '') }}"
@@ -558,7 +558,7 @@
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
            <button type="submit"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                class="px-6 py-3 btn-primary uppercase">
             {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
         </button>
 

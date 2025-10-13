@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
    
-     public function fetchMemberDetails($id)
+     public function fetchMemberDetails()
     {
+        $id=Auth::id();
+        // dd($id);
         try {
             $member = Member::findOrFail($id);
 
