@@ -77,6 +77,7 @@ class ApproveController extends Controller
 
                     if ($member && !empty($member->member_info_mobile_no)) {
 
+                //    $accountNo = $transaction->accounts->account_no ?? 'XXXXXX';
 
                         $message = "Thanks For Your Missed Call To SBC GLOBAL, Please call our Customer Care 18002026261 OR Our Team Will Contact You Shortly.";
 
