@@ -9,7 +9,7 @@ class LoanAgainstDisursement extends Model
 {
     use HasFactory;
 
-    protected $table = 'loanagainst_disbursements';
+    protected $table = 'loanagainsst_disbursements';
 
     // mass assignable fields
     protected $fillable = [
@@ -48,5 +48,6 @@ class LoanAgainstDisursement extends Model
         'utr_no2',
         'transfer_mode2',
         'saving_acc2',
+        'status'
     ];
 }
