@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('mortgage_loan_applications', function (Blueprint $table) {
+        Schema::create('loan_against_applications', function (Blueprint $table) {
             $table->id();
 
             // Basic info
@@ -43,14 +43,16 @@ return new class extends Migration
             $table->decimal('insurance_amount', 15, 2)->nullable();
             $table->decimal('net_loan_amount', 15, 2);
             $table->string('purpose_of_loan');
-
+            $table->string('securety_type')->nullable(); // daily, monthly, etc.
+            $table->string('security_amount')->nullable(); // daily, monthly, etc.
+            
             // Processing Fee
             $table->decimal('processing_fee_value', 15, 2)->default(0);
             $table->decimal('processing_fee_gst', 5, 2)->default(18.0);
             $table->decimal('processing_fee_sgst', 15, 2)->default(0);
             $table->decimal('processing_fee_cgst', 15, 2)->default(0);
             $table->decimal('processing_fee_igst', 15, 2)->default(0);
-            $table->decimal('processing_fee_total', 15, 2)->default(0);
+            $table->decimal('processing_fee_total', 15, 2)->nullable()->change();
 
             // Flags
             $table->boolean('collect_principal_as_emi')->default(false);
@@ -66,13 +68,13 @@ return new class extends Migration
             $table->timestamps();
         });
 
-    
+        
     }
 
    
     public function down()
     {
-        Schema::table('mortgage_loan_applications', function (Blueprint $table) {
+        Schema::table('loan_against_applications', function (Blueprint $table) {
             $table->dropColumn([
                 'security_value',
                 'max_loan_amount',

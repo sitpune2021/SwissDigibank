@@ -25,15 +25,12 @@
             }
         </style>
     </head>
+
     <div class="main-inner">
+        
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">Property/ Mortgage Loan Disbursements</h3>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500 text-sm">Property/ Mortgage Loan Disbursements
-                    </a> >
-                    <a href="#" class="text-gray-500 text-sm">100118</a>
-                </p>
+                <h3 class="uppercase font-semibold">Loan Againsts Disbursements</h3>
             </div>
         </div>
 
@@ -41,55 +38,53 @@
             <!-- Left: Details -->
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                   <form action="{{ route('disbursements.store') }}" method="POST">
+                  
+                <form method="POST" action="{{ route('mortgagedisbursements.store') }}">
                     @csrf
-                        <!-- Header -->
-                        
-                        <div class="px-4 py-3 ">
-                            <h3 class="text-lg border-b mb-4 font-semibold text-black">
-                                Application No - {{ $disbursement->id }}
-                                <input type="hidden" name="loan_application_id" value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
 
-                            </h3>
-                        </div>
-                         
-                        <!-- Body -->
+                    <!-- Header -->
+                    <div class="px-4 py-3">
+                        <h3 class="text-lg border-b mb-4 font-semibold text-black">
+                            Application No - {{ $disbursement->id }}
+                        </h3>
+                        <input type="hidden" name="loan_application_id" 
+                            value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
+                    </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Loan Disbursement Date
-                                <span class="text-red-500">*</span>
-                            </label>
+                    <!-- Loan Disbursement Date -->
+                    <div class="mb-4">
+                        <label class="md:text-lg font-medium block mb-2">
+                            Loan Disbursement Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="disbursal_date" class="form-input"
+                            value="{{ date('d-m-Y') }}" required>
+                    </div>
 
-                            <input type="text" id="disbursalDate" name="disbursal_date"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                value="{{ date('d-m-Y') }}">
-                        </div>
+                    <!-- First EMI Date -->
+                    <div class="mb-4">
+                        <label class="md:text-lg font-medium block mb-2">
+                            First EMI Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="emi_date" class="form-input"
+                            value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
+                    </div>
 
-                        <div class="col-span-2 md:col-span-1 mt-1 mb-4">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                First EMI Date
-                                <span class="text-red-500">*</span>
-                            </label>
+                    <!-- Loan Amount -->
+                    <div class="mb-4">
+                        <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
+                        <input type="number" name="loan_amount" class="form-input"
+                            value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                    </div>
 
-                            <input type="text" id="emiDate" name="emi_date"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}">
-                        </div>
+                    <!-- Final Amount -->
+                    <div class="mb-4">
+                        <label class="md:text-lg font-medium block mb-2">
+                            Final Amount To Disburse <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" name="final_amount" id="finalAmount" class="form-input" required>
+                    </div>
 
-                        <hr>
-                        <div class="col-span-2 md:col-span-1 mb-4">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Loan Amount
-                            </label>
-
-                            <input type="number" id="loan_amount" name="loan_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Loan Amount" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-                        </div>
-                        <hr>
-
-                        <h4>Processing Fee</h4>                     
+                    <h4>Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
@@ -159,178 +154,8 @@
                             </div>
                         </div>
 
+                        <h3>Disbursement Amount :</h3>
 
-                        <hr>
-                        <h4>
-                            Stamp Duty Fee
-                        </h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                                <tbody>
-                                    <!-- Column Labels -->
-                                    <tr class="">
-                                        <th class="text-center px-3 py-2 ">Value</th>
-                                        <th class="text-center px-3 py-2 ">GST (%)</th>
-                                        <th class="text-center px-3 py-2 ">SGST</th>
-                                        <th class="text-center px-3 py-2 ">CGST</th>
-                                        <th class="text-center px-3 py-2 ">IGST</th>
-                                        <th class="text-center px-3 py-2 ">Total</th>
-                                    </tr>
-
-                                    <!-- Input Row -->
-                                    <tr class="">
-                                        <!-- Value -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- GST (%) -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="18.0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- SGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- CGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- IGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- Total -->
-                                        <td class="px-2 py-2">
-                                            <input type="number" name="stamp_duty_fee" id="" placeholder="0"
-                                                class="w-full px-2 py-2 text-center  border  rounded-10 text-sm md:text-base" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="" data-target="paymode2" class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
-                            </div>
-
-                            <div id="paymode2" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" :showSaving="false" id="amount"
-                                    :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true"
-                                    :checkedDefault="'cash'" groupName="stampduty" />
-                            </div>
-                        </div>
-                        <hr>
-                        <h4>Insurance Fee</h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                           <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
-                                </tr>
-
-                                <!-- Input Row -->
-                                <tr class="">
-                                    <!-- Value -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="insurance" name="insurance_fee"
-                                            value="{{ $disbursement->insurance_amount ?? 0 }}" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
-
-                                    <!-- GST (%) -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="gst" value="0.0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
-
-                                    <!-- SGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="sgst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
-
-                                    <!-- CGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="cgst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
-
-                                    <!-- IGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="igst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
-
-                                    <!-- Total -->
-                                    <td class="px-2 py-2">
-                                        <input type="number" id="total" placeholder="0"
-                                            class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" readonly />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="collect_fee" data-target="paymode3"
-                                    class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
-                            </div>
-
-                            <div id="paymode3" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
-                                    id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
-                                    :hiddenheading="true" :checkedDefault="'cash'" groupName="insurance-fee" />
-                            </div>
-                        </div>
- 
-                         <hr>
-                        <h4>Advance Interest</h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-
-                            <input type="number" id="finalAmount" name="advance_interest"
-                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
-                            value="{{ $advanceInterest }}" readonly>
-
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="" data-target="advance-interest"
-                                    class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
-                            </div>
-
-                            <div id="advance-interest" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
-                                    id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
-                                    :hiddenheading="true" :checkedDefault="'cash'" groupName="advance-interest" />
-                            </div>
-                        </div>
-
-                         <hr>
-                        <div class="col-span-2 md:col-span-1 mb-4">
-                            <label for="" class="md:text-lg font-medium block mb-4 mt-4">
-                                Final Amount To Disburse
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="finalAmount" name="final_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4">
-                            <hr>
-                            <h3>Disbursement Amount :</h3>
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
                                     <label for="" class="md:text-lg font-medium block mb-4 mt-4">
@@ -432,13 +257,6 @@
                             </select>
                             </div>
 
-
-                                </div>
-                            </div>
-
-                        </div>
-
-
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
                                     <label for="" class="md:text-lg font-medium block mb-4 mt-4">
@@ -538,22 +356,83 @@
 
                                 </div>   
 
-                                </div>
+                                 </div> </div>                                
 
+                                </div>
                             </div>
 
+                            <!-- Dynamic Fields -->
+                            <div id="extraFields" class="mb-4"></div>
 
-                            <!-- Buttons -->
-                            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                                <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
+                            <!-- Submit Buttons -->
+                            <div class="flex flex-col sm:flex-row justify-center gap-3 mt-5">
+                                <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
                                     DISBURSE LOAN
                                 </button>
-
-                                <button class="btn-outline uppercase justify-center" type="reset">
-                                    <a href="#"> BACK</a>
-                                </button>
+                                <a href="#" class="btn-outline uppercase justify-center">BACK</a>
                             </div>
-                    </form>
+                    
+                        </form>
+
+    <!-- Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('disbursementForm');
+        const paymentMode = document.getElementById('payment_mode');
+        const extraFields = document.getElementById('extraFields');
+
+        paymentMode.addEventListener('change', function() {
+            const mode = this.value;
+            extraFields.innerHTML = ''; // clear previous
+
+            if (mode === 'cheque') {
+                extraFields.innerHTML = `
+                    <label>Bank Name</label>
+                    <input type="text" name="bank_name" class="form-input" >
+                    <label>Cheque No</label>
+                    <input type="text" name="cheque_no" class="form-input" >
+                    <label>Cheque Date</label>
+                    <input type="date" name="cheque_date" class="form-input" >
+                `;
+            } else if (mode === 'online') {
+                extraFields.innerHTML = `
+                    <label>UTR / Transaction No</label>
+                    <input type="text" name="utr_no" class="form-input" >
+                    <label>Transfer Date</label>
+                    <input type="date" name="transfer_date" class="form-input" >
+                `;
+            } else if (mode === 'saving') {
+                extraFields.innerHTML = `
+                    <label>Saving Account No</label>
+                    <input type="text" name="saving_acc_no" class="form-input" >
+                `;
+            }
+        });
+    });
+    </script>
+
+<style>
+.form-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #f9fafb;
+}
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+.btn-outline {
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+</style>
+
                 </div>
             </div>
         </div>
@@ -742,7 +621,6 @@
                                         <td class="px-3 py-2 text-center">100.0</td>
                                         <td class="px-3 py-2 text-center">2.0</td>
                                         <td class="px-3 py-2 text-center">198,333.00.0</td>
-
                                     </tr>
                                 </tbody>
                             </table>

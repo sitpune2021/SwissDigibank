@@ -13,6 +13,12 @@
 
     <title>Swiss Payment - Digital Banking</title>
 
+    <style>
+        label {
+            text-transform: uppercase;
+        }
+    </style>
+
 </head>
 
 <body class="vertical bg-secondary/5 dark:bg-bg3 hidden">

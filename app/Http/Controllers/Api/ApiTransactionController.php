@@ -5,12 +5,15 @@ use App\Models\Account;
 use App\Models\Transaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ApiTransactionController extends Controller
 {
-    public function transactionHistory($accountId)
+    public function transactionHistory()
     {
+                $accountId=Auth::id();
+
         // Validate account exists
         $account = Account::find($accountId);
         if (!$account) {
@@ -27,8 +30,10 @@ class ApiTransactionController extends Controller
             'transactions' => $transactions
         ]);
     }
-    public function viewPassbook($accountId)
+    public function viewPassbook()
     {
+                        $accountId=Auth::id();
+
         $account = Account::find($accountId);
         if (!$account) {
             return response()->json(['message' => 'Account not found.'], 404);

@@ -49,7 +49,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h1 class=" flex text-xl block  uppercase font-semibold">
-                Property/ Mortgage Loan Disbursements
+                Mortgage Loan Disbursements
             </h1>
             
         </div>
@@ -116,7 +116,7 @@
     @foreach($disbursements as $disbursement)
         <tr class="border-b dark:border-bg3">
             <td class="text-start !py-5 px-6">
-               <a href="{{ route('gold-loan.applications.view', $disbursement->id) }}" 
+               <a href="{{ route('loanagainst.applications.view', $disbursement->id) }}" 
                 class="text-blue-600 hover:underline">
                     {{ $disbursement->id }}
                 </a>
@@ -170,15 +170,18 @@
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
                              <li>
-                               <a href="{{ route('gold-loan.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
+                               <a href="{{ route('mortgage.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
                             </li>
                             <li>
-                                <form action="{{ route('disbursements.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
-                                    @csrf
-                                    <button type="submit" class="single-option uppercase text-red-600 hover:underline">
-                                        Cancel Loan
-                                    </button>
-                                </form>
+                           <form action="{{ route('mortgagedisbursements.cancel', $disbursement->id) }}" 
+                                method="POST" 
+                                onsubmit="return confirm('Are you sure you want to cancel this loan?');">
+                                @csrf
+                                <button type="submit" class="single-option uppercase text-red-600 hover:underline">
+                                    Cancel Loan
+                                </button>
+                            </form>
+
                             </li>
                         </ul>
                     </div>

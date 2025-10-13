@@ -29,8 +29,8 @@ class GoldLoanScheme extends Model
     'sms_charge',
     'fuel_charge',
     'stationary_charge',
-    'maintenace_charge',
-    'collcetion',
+    'maintenance_charge',
+    'collection',
 ];
 
     public function applications()

@@ -208,7 +208,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
                     @click="open = !open">
-                    <span class="font-semibold uppercase">Customer KYC Info</span>
+                    <span class="font-semibold uppercase">Member KYC Info</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
                 <!-- Content -->
@@ -362,12 +362,16 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
                                     <td class="px-6 py-2 text-start">
-                                        @php $photo = $documents->where('document_category', 'photo')->first(); @endphp
-                                        @if ($photo && $photo->file_path)
-                                            <button type="button" class="text-blue-600 underline"
-                                                onclick="previewDoc('{{ asset('storage/' . $photo->file_path) }}','Photo')">
-                                                View
-                                            </button>
+                                        @php 
+            $photo = $documents->get('photo'); // use keyBy for easy access
+        @endphp
+
+        @if ($photo && $photo->file_path)
+            {{-- View Button --}}
+            <button type="button" class="text-blue-600 underline"
+                    onclick="window.open('{{ asset('storage/' . $photo->file_path) }}','_blank')">
+                View
+            </button>
                                         @endif
                                     </td>
                                 </tr>

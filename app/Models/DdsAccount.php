@@ -31,8 +31,6 @@ class DdsAccount extends Model
         'maturity_date' => 'date',
     ];
 
-
-    // Relationships
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id');
@@ -45,12 +43,11 @@ class DdsAccount extends Model
 
     public function minor()
     {
-        return $this->belongsTo(Member::class, 'minor_id'); // minors सुद्धा members table मध्ये आहेत
-    }
+        return $this->belongsTo(Member::class, 'minor_id');     }
 
     public function transactions()
     {
-        return $this->hasMany(DdTransaction::class, 'dds_account_id'); // <--- fix here
+        return $this->hasMany(DdTransaction::class, 'dds_account_id'); 
     }
     public function scheme()
     {

@@ -149,9 +149,6 @@ class AccountsController extends Controller
 
     public function store(Request $request)
     {
-
-
-
         try {
             Log::info('Account store request started', ['request_data' => $request->all()]);
 
@@ -239,32 +236,6 @@ class AccountsController extends Controller
             $account->account_no = 'SBC111' . str_pad($account->id, 9, '0', STR_PAD_LEFT);
 
             $account->save();
-
-            try {
-                $member = \App\Models\Member::find($account->member_id);
-
-                if ($member && !empty($member->member_info_mobile_no)) {
-
-
-                    $message = "Dear {$member->member_info_first_name}, your Saving Account ({$account->account_no}) has been successfully created with SBC GLOBAL. Thank you for banking with us!";
-
-                    \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
-                } else {
-                    Log::warning('Member mobile number missing for SMS', ['member_id' => $account->member_id]);
-                }
-
-                // $accountData = [
-                //     'name' => $member->member_info_first_name,
-                //     'account_no' => $account->account_no,
-                //     'email' => $member->member_info_email,
-                // ];
-
-                // // 3️⃣ Send the email (immediately)
-                // Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
-
-            } catch (\Exception $e) {
-                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
-            }
 
             if ($request->nominee === 'yes') {
                 AccountNominee::create([

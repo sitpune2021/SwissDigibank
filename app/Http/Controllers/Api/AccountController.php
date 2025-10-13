@@ -6,12 +6,16 @@ use App\Models\Account;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
-    public function fetchAccountInfo($id)
+    public function fetchAccountInfo()
     {
         try {
+        $id=Auth::id();
+        // $userId = Auth::id();
+
             $account = Account::with('branch')->findOrFail($id);
 
             return response()->json([

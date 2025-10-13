@@ -31,15 +31,16 @@
     </div>
 
     <div class="box">
-        <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
-            <div class=" rounded-10 flex-1 bg-primary/5 p-2">
-                <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
-                   <form method="POST" 
-                        action="{{ isset($application) ? route('loanagainst.applications.update', $application->id) : route('loan-applications.store') }}">
+        <form method="POST" 
+                        action="{{ isset($application) ? route('loanagainst.applications.update', $application->id) : route('loan-against.store') }}">
                         @csrf
                         @if(isset($application))
                             @method('PUT')
                         @endif
+
+        <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
+          <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
+                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                         <div class="col-span-2 md:col-span-1">
                              {{-- Application Date --}}           
@@ -221,6 +222,7 @@
                             </select>
                             </div>
                         </div>
+
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
                                 Security Type <span class="text-error">* </span>
@@ -272,7 +274,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
@@ -347,47 +348,89 @@
                         </div>
                 </div>
 
-
+                <!-- Credit Score Details -->
                 <div class="col-span-12  lg:col-span-12 mb-5">
                     <hr>
-                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                        Credit Score Details </label>
-                    <div class="w-full overflow-x-auto">
-                        <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
-                            <thead class="bg-secondary/5 whitespace-nowrap">
-                                <tr class="bg-gray-100">
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Cibil Type
-                                    </th>
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Cibil Score
-                                    </th>
-                                    <th class="text-center  px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Report Date
-                                    </th>
-                                    <th class="text-center px-2 py-2 md:px-4 md:py-2  text-sm md:text-base">
-                                        Upload File
-                                    </th>
-                                    <th class=" px-2 py-2 md:px-4 md:py-2"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
-                                {{-- Credit Score Details Table --}}
-                            </tbody>
-                        </table>
-                    </div>
+                   <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
+                                Credit Score Details </label>
+                            <div class="w-full overflow-x-auto">
+                                <table class="w-full  rounded-lg whitespace-nowrap" id="cibilTable">
+                                    <thead class="bg-secondary/5 whitespace-nowrap">
+                                        <tr class="bg-gray-100">
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Cibil Type
+                                            </th>
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Cibil Score
+                                            </th>
+                                            <th
+                                                class="text-center  px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Report Date
+                                            </th>
+                                            <th
+                                                class="text-center px-2 py-2 md:px-4 md:py-2 uppercase text-sm md:text-base">
+                                                Upload File
+                                            </th>
+                                            <th class=" px-2 py-2 md:px-4 md:py-2"></th>
+                                        </tr>
+                                    </thead>
+                                   <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
+    @if(isset($application) && $application->creditScores)
+        @foreach($application->creditScores as $score)
+            <tr >
+                <td class="px-2 py-2">
+                    <select name="cibil_type[]" class="w-full text-center rounded-10 px-2 py-2 border">
+                        <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
+                        <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
+                        <option value="experian" {{ $score->cibil_type == 'experian' ? 'selected' : '' }}>Experian</option>
+                        <option value="crif_highmark" {{ $score->cibil_type == 'crif_highmark' ? 'selected' : '' }}>Crif Highmark</option>
+                    </select>
+                </td>
+
+                <td class="px-2 py-2">
+                    <input type="number" name="cibil_score[]" value="{{ $score->cibil_score }}"
+                        class="w-full text-center rounded-10 px-2 py-2 border" />
+                </td>
+
+                <td class="px-2 py-2">
+                    <input type="text" name="report_date[]" value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}"
+                        class="w-full text-center rounded-10 px-2 py-2 border" />
+                </td>
+
+                <td class="px-2 py-2">
+                    <input type="file" name="report_file[]" class="w-full text-center rounded-10 px-2 py-2 border" />
+                    @if($score->report_file_path)
+                        <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>
+                    @endif
+                </td>
+
+                <td class="px-2 py-2 text-center">
+                    <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                        <i class="las la-times"></i>
+                    </button>
+                </td>
+            </tr>
+        @endforeach
+    @endif
+</tbody>
+
+                                </table>
+                            </div>
 
                     <div class="mt-3">
                         <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2">
                             + Add New Score
                         </button>
                     </div>
+
                     {{--calculator checkbox- --}}
                     <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
                         sublabel="(Check this if you want to collect principal amount as EMIs.)" />
                 </div>
 
-
+                        <!-- Collect Advance Processing Fee -->
                 <div class="col-span-12  lg:col-span-12 ">
                     <hr>
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
@@ -573,7 +616,6 @@
                 </div>
             </div>
 
-
             <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
@@ -601,7 +643,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            
 
                 {{--schemeBox info --}}
                 <div id="schemeBox" class=" mt-5 hidden">
@@ -665,7 +707,8 @@
                 </div>
 
             </div>
-        </div>
+</div>
+    
 
         
         <!-- Calculation Result Box -->
@@ -712,17 +755,15 @@
            <!-- Buttons -->
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                 <button type="button" id="calculateBtn"
-                    class="btn-primary rounded-10 px-4 py-2 mt-4">
+                    class="btn-primary ruppercase justify-center">
                     Calculate
                 </button>
-            </div>
-
-            <button class="btn-outline uppercase justify-center" type="reset">
+                <button class="btn-outline uppercase justify-center" type="reset">
                 <a href="{{route('rdschemes.index')}}"> BAck</a>
             </button>
-        </div>
-    </div>
+            </div>
     </form>
+</div>
 </div>
 
 
@@ -813,8 +854,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
-
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -846,7 +885,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <script>
 let isCalculated = false;
 
-// ✅ Update Net Loan automatically
+// Update Net Loan automatically
 function updateNetLoanAmount() {
     const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
     const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
@@ -857,7 +896,7 @@ function updateNetLoanAmount() {
 document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
 document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
 
-// ✅ On Calculate click
+// On Calculate click
 document.getElementById("calculateBtn").addEventListener("click", function (e) {
     const button = this;
 
@@ -908,68 +947,79 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
 </script>
 
 
-<!-- <script>
-let isCalculated = false;
+ <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cibilBody = document.getElementById("cibilBody");
+    const addRowBtn = document.getElementById("addRow");
 
-//  Net Loan = Loan + Insurance
-function updateNetLoanAmount() {
-    const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-    const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-    const netLoan = loanAmount + insurance;
-    document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
-}
+    // Template for new row
+    function newRow() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        const formattedDate = `${day}/${month}/${year}`;
 
-document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
-document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
+        return `
+            <tr class="nested-fields border-b">
+                <!-- Cibil Type -->
+                <td class="px-2 py-2" style="width:230px;">
+                    <select name="cibil_type[]" required
+                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                        <option value="transunion">TransUnion</option>
+                        <option value="equifax">Equifax</option>
+                        <option value="experian">Experian</option>
+                        <option value="crif_highmark">Crif Highmark</option>
+                    </select>
+                </td>
 
-//  On Calculate button click
-document.getElementById("calculateBtn").addEventListener("click", function (e) {
-    const button = this;
+                <!-- Cibil Score -->
+                <td class="px-2 py-2">
+                    <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                </td>
 
-    // Step 1: Loan and insurance
-    let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-    let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-    let netLoan = loanAmount + insurance;
+                <!-- Report Date -->
+                <td class="px-2 py-2 relative">
+                    <input type="text" name="report_date[]" value="${formattedDate}"
+                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                </td>
 
-    // Step 2: Scheme details
-    let scheme = document.getElementById("scheme_id");
-    let selected = scheme.options[scheme.selectedIndex];
-    let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
-    let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+                <!-- Upload File -->
+                <td class="px-2 py-2">
+                    <input type="file" name="report_file[]"
+                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+                </td>
 
-    // Step 3: Calculate Maximum Approvable Amount (based on limit%)
-    // Formula: approvable = (netLoan * limit) / 100
-    let approvable = (netLoan * limit) / 100;
+                <!-- Remove button -->
+                <td class="px-2 py-2 text-center">
+                    <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                        <i class="las la-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
 
-    // Step 4: Approved loan = min(approvable, maxLoan)
-    let approved = Math.min(approvable, maxLoan);
+    // Add new row
+    addRowBtn.addEventListener("click", () => {
+        cibilBody.insertAdjacentHTML("beforeend", newRow());
+    });
 
-    // Step 5: Display results
-    document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
-    document.getElementById("resSecurity").textContent = "-"; // No security value used
-    document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
-    document.getElementById("resLimit").textContent = limit + "%";
-    document.getElementById("resApprovable").textContent = approvable.toFixed(2);
-    document.getElementById("resApproved").textContent = approved.toFixed(2);
+    // Remove row (event delegation)
+    cibilBody.addEventListener("click", function (e) {
+        if (e.target.closest(".removeRow")) {
+            e.target.closest("tr").remove();
+        }
+    });
 
-    // Step 6: Hidden fields (for backend save)
-    document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
-    document.getElementById("inputLimit").value = limit;
-    document.getElementById("inputApprovable").value = approvable.toFixed(2);
-    document.getElementById("inputApproved").value = approved.toFixed(2);
-
-    // Step 7: Show result box
-    document.getElementById("calculationBox").classList.remove("hidden");
-
-    // Step 8: Change button to Submit on 2nd click
-    if (!isCalculated) {
-        e.preventDefault();
-        button.textContent = "Submit";
-        button.type = "submit";
-        isCalculated = true;
+    // ✅ Only add a new row if there are NO existing rows (i.e. new application)
+    if (cibilBody.children.length === 0) {
+        cibilBody.insertAdjacentHTML("beforeend", newRow());
     }
 });
-</script> -->
+</script>
+
 
 
 @endsection

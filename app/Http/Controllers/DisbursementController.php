@@ -10,11 +10,7 @@ use Carbon\Carbon;
 
 class DisbursementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-   
-   
+    
     public function index()
     {
         // Pehle se disbursed ho chuke applications ke IDs nikalo
@@ -38,25 +34,12 @@ class DisbursementController extends Controller
         }
 
         // Update status to 0 (cancelled / draft)
-        $loan->status = 0;
+        $loan->status = 3;
         $loan->save();
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-  
 
     public function store(Request $request)
     {
@@ -120,6 +103,10 @@ class DisbursementController extends Controller
             'saving_acc2' => $request->saving2,
         ]);
 
+        // Step 4: Update LoanApplication status = 2
+        LoanApplication::where('id', $request->loan_application_id)
+            ->update(['status' => 2]);
+
         // Redirect to index page
         return redirect()
             ->route('gold-loan.disbursements.index')
@@ -169,27 +156,5 @@ class DisbursementController extends Controller
     }
 
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+   
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Helpers\AccountsTransactionsHelper;
+use App\Models\Account;
 use App\Models\Bank;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class DepositController extends Controller
             $id = base64_decode($encodedId);
             $banks = Bank::all();
             $member = Transaction::with(['accounts.members.kyc', 'accounts.scheme'])->where('id', $id)->first();
-            return view('saving-current-ac.deposits.deposit-create', compact('id', 'banks','member'));
+            return view('saving-current-ac.deposits.deposit-create', compact('id', 'banks', 'member'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }

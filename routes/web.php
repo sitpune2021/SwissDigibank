@@ -340,29 +340,6 @@ Route::group(['prefix' => 'approvals'], function () {
 
 ////////////////////////////////////   END APPROVALS    /////////////////////////////////////////////////////////////
 
-// Mortgage Loan
-Route::group(['prefix' => 'morgage-loan'], function () {
-    Route::get('mortgage-loan/schemes', [MortgageLoneController::class, 'index'])->name('mortgage_schemes.index');
-    Route::get('/create-mortgage-scheme', [MortgageLoneController::class, 'create'])->name('mortgage_schemes.create_mortgage_scheme');
-    Route::get('/edit-mortgage-scheme', [MortgageLoneController::class, 'edit'])->name('mortgage_schemes.edit-mortgage-scheme');
-    Route::get('/view-mortgage-scheme', [MortgageLoneController::class, 'view'])->name('mortgage_schemes.view-mortgage-scheme');
-
-    Route::get('/calculator', [MortgageLoneController::class, 'calculator'])->name('mortgage_calculator.index');
-    Route::get('/calculator/calculation', [MortgageLoneController::class, 'calculation'])->name('mortgage_calculator.calculation');
-    Route::get('/application', [MortgageLoneController::class, 'applications'])->name('mortgage_application.index');
-    // Route::get('/create-applications', [MortgageLoneController::class, 'applications'])->name('mortgage_application.create_application');
-    Route::get('/edit-application', [MortgageLoneController::class, 'editApplication'])->name('mortgage_application.edit-application');
-
-    Route::get('/view-application', [MortgageLoneController::class, 'viewApplication'])->name('mortgage_application.view.view-application');
-    Route::get('/emi-chart', [MortgageLoneController::class, 'emiChart'])->name('mortgage_application.view.emi-chart');
-    Route::get('/upload-documents', [MortgageLoneController::class, 'uploadDocuments'])->name('mortgage_appliction.view.upload-documents');
-    Route::get('/collect-processing-fee', [MortgageLoneController::class, 'collectProcessFee'])->name('mortgage_appliction.view.processing-fee');
-    Route::get('disburse-setting', [MortgageLoneController::class, 'disburseSetting'])->name('mortgage_application.view.disburse-setting');
-    Route::get('/cibil-score', [MortgageLoneController::class, 'cibilScore'])->name('mortgage_application.view.cibil-score');
-    Route::get('/disbursement', [MortgageLoneController::class, 'disbursementIndex'])->name('mortage_disbursements.index');
-    Route::get('/disburse-loan', [MortgageLoneController::class, 'disburseLoan'])->name('mortage_disbursements.disburse-loan');
-});
-
 
 /////////////////////////////////////   GOLD LOAN   ////////////////////////////////////////////////////////
 
@@ -524,7 +501,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('applications/create', [MortgageController::class, 'appcreate'])
         ->name('mortgage.applications.create');
 
-    Route::post('/loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('loan-applications.store');
+    Route::post('/loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('mortgage.store');
 
     Route::get('/members/{id}/info', [MortgageController::class, 'getMemberInfo'])
         ->name('members.info');
@@ -547,12 +524,12 @@ Route::group(['prefix' => 'mortgage'], function () {
     // Disbursement Mortgage Loan
     Route::get('disbursements/index', [MortgageDisbursementController::class, 'index'])
         ->name('mortgage.disbursements.index');
-    Route::post('/mortgage/disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
+    Route::post('/mortgage/disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('mortgagedisbursements.cancel');
 
-    // disburse-loan page   
+    // disburse-loan page  
     Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])
         ->name('mortgage.disbursements.disburse-loan');
-    Route::post('/mortgage/disbursements/store', [MortgageDisbursementController::class, 'store'])->name('disbursements.store');
+    Route::post('/mortgage/disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
 
     // Mortgage Loan Account Page
@@ -565,7 +542,6 @@ Route::group(['prefix' => 'mortgage'], function () {
     // Download excel sheet
     Route::get('ornaments/export', [MortgageController::class, 'exportXls'])->name('mortgage.lineproperty.export');
 });
-
 
 /////////////////////////////////////   END Mortgage LOAN   ////////////////////////////////////////////////////////
 
@@ -618,7 +594,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('applications/create', [LoanAgainstController::class, 'appcreate'])
         ->name('loanagainst.applications.create');
 
-    Route::post('/loan-applications/store', [LoanAgainstController::class, 'storeLoanApplication'])->name('loan-applications.store');
+    Route::post('/loan-against/store', [LoanAgainstController::class, 'storeLoanApplication'])->name('loan-against.store');
 
     Route::get('/members/{id}/info', [LoanAgainstController::class, 'getMemberInfo'])
         ->name('members.info');
@@ -643,7 +619,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.disbursements.index');
     Route::post('/loanagainst/disbursements/cancel/{id}', [LoanAgainstDisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
 
-    // disburse-loan page   
+    // disburse-loan page  
     Route::get('disbursements/disburse-loan/{id}', [LoanAgainstDisbursementController::class, 'show'])
         ->name('loanagainst.disbursements.disburse-loan');
     Route::post('/loanagainst/disbursements/store', [LoanAgainstDisbursementController::class, 'store'])->name('disbursements.store');
@@ -659,6 +635,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     // Download excel sheet
     Route::get('loanagainst/export', [LoanAgainstController::class, 'exportXls'])->name('loanagainst.lineproperty.export');
 });
+
 
 
 /////////////////////////////////////   END DEPOSIT LOAN  REPORT   ////////////////////////////////////////////////////////

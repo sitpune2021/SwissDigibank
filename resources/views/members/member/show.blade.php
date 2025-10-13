@@ -40,16 +40,6 @@ CUSTOMER')
     <a href="{{ route('members.transactions', $member->id) }}"
         class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
 
-    <!-- Dropdown -->
-    {{-- <div class="relative">
-        <button type="button" class="rounded-md px-2 py-1 text-white  text-sm bg-green-500 hover:bg-green-600"
-            onclick="toggleDropdown()">DEBIT OTHER CHARGES</button>
-        <ul id="dropdown-menu" class="absolute right-0 mt-2 hidden bg-white border rounded shadow-md text-left z-10">
-            <li><a class="block px-4 py-2 hover:bg-gray-100">OTHER CHARGES LIST</a></li>
-            <li><a class="block px-4 py-2 hover:bg-gray-100">DEBIT OTHER CHARGES</a></li>
-            <li><a class="block px-4 py-2 hover:bg-gray-100">CLEAR DUES</a></li>
-        </ul>
-    </div> --}}
 
     <div x-data="{ open: false }" class="relative inline-block">
 

@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Helpers\CsvExportHelper;
 use App\Models\Account;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+
 
 class AccountTransactionController extends Controller
 {
@@ -189,20 +192,7 @@ class AccountTransactionController extends Controller
 
         return redirect()->route('transaction.index')->with('success', 'Transaction deleted successfully.');
     }
-
-    // public function print($id)
-    // {
-    //     try {
-    //         $id = base64_decode($id);
-    //         $transaction = Transaction::findOrFail($id);
-
-    //         // Generate print view (Blade or PDF)
-    //         return view('saving-current-ac.accounts.print', compact('transaction'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
-
+    
     public function printReceipt($id)
     {
         $id = base64_decode($id);
@@ -230,7 +220,7 @@ class AccountTransactionController extends Controller
             'amount' => number_format($transaction->amount, 2),
             'amount_suffix' => 'CR',
             'payment_mode' => $transaction->payment_mode ?? 'N/A',
-            'avl_balance' => number_format($balances['total_balance'], 2),
+            'avl_balance' => number_format($balances['total_balance']??0,2),
             'approve_status' => $transaction->approve_status == 1 ? 'Approved' : 'Pending',
             'type' => $transaction->transaction_type ?? 'Membership Fee',
             'remarks' => $transaction->remarks ?? '',

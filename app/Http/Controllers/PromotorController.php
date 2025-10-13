@@ -458,9 +458,9 @@ class PromotorController extends Controller
     {
         try {
             $request->validate([
-                'documents' => 'required|array',
-                'documents.*.file' => 'required|file',
-                'documents.*.category' => 'required|string',
+                'documents' => 'nullable|array',
+                'documents.*.file' => 'nullable|file',
+                'documents.*.category' => 'nullable|string',
                 'documents.*.type' => 'nullable|string',
                 'member_id' => 'nullable'
             ]);

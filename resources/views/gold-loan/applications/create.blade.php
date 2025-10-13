@@ -39,8 +39,16 @@
                 @if(isset($application))
                 @method('PUT')
                 @endif
+                 <!-- Hidden Calculation Fields -->
+                <input type="hidden" name="security_value" id="security_value">
+                <input type="hidden" name="max_loan_amount" id="max_loan_amount">
+                <input type="hidden" name="max_loan_limit" id="max_loan_limit">
+                <input type="hidden" name="maximum_approvable_amount" id="maximum_approvable_amount">
+                <input type="hidden" name="approved_loan_amount" id="approved_loan_amount">
+
                 <div class=" flex flex-col lg:flex-row  gap-2">
                     <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10  lg:col-span-12">
+                        
                         <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                             <div class="col-span-2 md:col-span-1">
@@ -278,15 +286,19 @@
                                 </div>
                             </div>
 
+                            <!-- Tenure -->
                             <div class="col-span-2 md:col-span-1">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                <label for="tenure_value" class="md:text-lg font-medium block mb-4 uppercase">
                                     Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
                                     <span class="text-error">*</span>
                                 </label>
-                                <input type="number" id="tenure_value" name="tenure_value" value=" {{ old('tenure_value', $application->tenure_value ?? '') }}
-                                                            "
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-
+                                <input 
+                                    type="number" 
+                                    id="tenure_value" 
+                                    name="tenure_value"
+                                    value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                >
                                 @error('tenure_value')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -316,26 +328,33 @@
                                 @enderror
                             </div>
 
+                            <!-- Credit Period -->
                             <div class="col-span-2 md:col-span-1">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Credit Period(EMI Grace Period)(Days)
+                                <label for="credit_period" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Credit Period (EMI Grace Period) (Days)
                                     <span class="text-error">*</span>
                                 </label>
-                                <input type="number" id="credit_period" name="credit_period" value=" {{ old('credit_period', $application->credit_period ?? 0) }}"
+                                <input 
+                                    type="number" 
+                                    id="credit_period" 
+                                    name="credit_period"
+                                    value="{{ old('credit_period', $application->credit_period ?? 0) }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="0">
+                                    placeholder="0"
+                                >
                                 @error('credit_period')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div class="col-span-2 md:col-span-1">
+                           <div class="col-span-2 md:col-span-1">
                                 <label for="loanAmount" class="md:text-lg font-medium block mb-4 uppercase">
                                     Loan Amount (₹) <span class="text-error">*</span>
                                 </label>
                                 <input type="number" id="loanAmount" name="loan_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="0" value=" {{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                    placeholder="0"
+                                    value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
                                 @error('loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -347,9 +366,8 @@
                                 </label>
                                 <input type="number" id="insuranceAmount" name="insurance_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter Insurance Amount (₹)" value="
-                                                            {{ old('insurance_amount', $application->insurance_amount ?? 0) }}
-                                                             ">
+                                    placeholder="Enter Insurance Amount (₹)"
+                                    value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
                                 @error('insurance_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -361,13 +379,13 @@
                                 </label>
                                 <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
-                                    placeholder="0" value="
-                                                            {{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}
-                                                             ">
+                                    placeholder="0"
+                                    value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
                                 @error('net_loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
 
                             <div class="col-span-2 md:col-span-1 mb-3">
                                 <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -377,13 +395,12 @@
 
                                 <input type="text" id="purpose_of_loan" name="purpose_of_loan"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter Purpose of Loan" value="
-                                                            {{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}
-                                                             ">
+                                    placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
                                 @error('purpose_of_loan')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
                         </div>
 
                         <!-- Credit Score Details -->
@@ -414,8 +431,47 @@
                                             <th class=" px-2 py-2 md:px-4 md:py-2"></th>
                                         </tr>
                                     </thead>
-                                    <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
-                                        {{-- Credit Score Details Table --}}
+                                    <tbody id="cibilBody" >                                    
+                                            @if(isset($creditScores) && count($creditScores))
+                                                @foreach($creditScores as $score)
+                                                    <tr >
+                                                        <td class="px-2 py-2">
+                                                            <select name="cibil_type[]"  required>
+                                                                <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
+                                                                <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
+                                                                <option value="experian" {{ $score->cibil_type == 'experian' ? 'selected' : '' }}>Experian</option>
+                                                                <option value="crif_highmark" {{ $score->cibil_type == 'crif_highmark' ? 'selected' : '' }}>Crif Highmark</option>
+                                                            </select>
+                                                        </td>
+
+                                                        <td class="px-2 py-2">
+                                                            <input type="number" name="cibil_score[]" value="{{ $score->cibil_score }}" required>
+                                                        </td>
+
+                                                        <td class="px-2 py-2">
+                                                            <!-- <input type="text" name="report_date[]" value="{{ $score->report_date }}" required> -->
+                                                            <input 
+                                                            type="text" 
+                                                            name="report_date[]" 
+                                                            value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}" 
+                                                            class="w-full text-center rounded-10 px-2 py-2 border bg-secondary/5" 
+                                                            required>
+                                                        </td>
+
+                                                        <td class="px-2 py-2">
+                                                            @if($score->report_file)
+                                                                <a href="{{ asset('storage/' . $score->report_file) }}" target="_blank" class="text-blue-500 underline">View File</a>
+                                                            @endif
+                                                            <input type="file" name="report_file[]" class="w-full text-center rounded-10 px-2 py-2 border bg-secondary/5">
+                                                        </td>
+
+                                                        <td class="text-center">
+                                                            <button type="button" class="removeRow text-red-500 hover:text-red-700"><i class="las la-times"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                        @endif
+
                                     </tbody>
                                 </table>
                             </div>
@@ -758,9 +814,40 @@
                             </tr>
                         </thead>
 
-                        <tbody id="itemsBody" class="wihtespace-nowrap">
-                            <!-- Rows will be inserted here -->
-                        </tbody>
+                       <tbody id="itemsBody">
+    @if(isset($ornaments) && count($ornaments))
+        @foreach($ornaments as $key => $item)
+            <tr>
+                <td class="text-center px-2 py-2">{{ $key + 1 }}</td>
+                <td class="px-2 py-2">
+                    <select name="item_type[]" class="itemType w-full rounded px-2 py-2 border bg-secondary/5 text-sm">
+                        <option {{ $item->item_type == 'Gold Jewelery' ? 'selected' : '' }}>Gold Jewelery</option>
+                        <option {{ $item->item_type == 'Gold Coin' ? 'selected' : '' }}>Gold Coin</option>
+                        <option {{ $item->item_type == 'Gold Biscuit' ? 'selected' : '' }}>Gold Biscuit</option>
+                        <option {{ $item->item_type == 'Silver Jewelery' ? 'selected' : '' }}>Silver Jewelery</option>
+                        <option {{ $item->item_type == 'Silver Coin' ? 'selected' : '' }}>Silver Coin</option>
+                        <option {{ $item->item_type == 'Silver Biscuit' ? 'selected' : '' }}>Silver Biscuit</option>
+                        <option {{ $item->item_type == 'Platinum' ? 'selected' : '' }}>Platinum</option>
+                        <option {{ $item->item_type == 'Diamond' ? 'selected' : '' }}>Diamond</option>
+                        <option {{ $item->item_type == 'Stone' ? 'selected' : '' }}>Stone</option>
+                    </select>
+                </td>
+                <td class="px-2 py-2"><input type="text" name="item_name[]" value="{{ $item->item_name }}" class="itemName w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
+                <td class="px-2 py-2"><input type="number" name="no_of_items[]" value="{{ $item->no_of_items }}" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
+                <td class="px-2 py-2"><input type="number" name="value_per_gram[]" value="{{ $item->value_per_gram }}" class="valuePerGram w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
+                <td class="px-2 py-2"><input type="number" name="gross_weight[]" value="{{ $item->gross_weight }}" class="grossWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
+                <td class="px-2 py-2"><input type="number" name="net_weight[]" value="{{ $item->net_weight }}" class="netWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
+                <td class="px-2 py-2"><input type="number" name="tunch[]" value="{{ $item->tunch }}" class="tunch w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
+                <td class="px-2 py-2"><input type="number" name="fine_weight[]" value="{{ $item->fine_weight }}" readonly class="fineWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm bg-gray-100"></td>
+                <td class="px-2 py-2"><input type="number" name="total_value[]" value="{{ $item->total_value }}" readonly class="totalValue w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm bg-gray-100"></td>
+                <td class="px-2 py-2 text-center">
+                    <button type="button" class="text-red-500 removeRowBtn"><i class="las la-times"></i></button>
+                </td>
+            </tr>
+        @endforeach
+    @endif
+</tbody>
+
 
                         <tfoot class="bg-gray-100 border">
                             <tr>
@@ -774,8 +861,14 @@
                                         disabled> --}}
                                 </td>
                                 <td class="px-2 py-2 ">
-                                    <input type="number" readonly
+                                    <!-- <input type="number" readonly
                                         class="w-full border rounded-10 px-2 py-1 text-center bg-secondary/5"
+                                        placeholder="0"> -->
+                                        <input 
+                                        type="number" 
+                                        id="grandTotal" 
+                                        readonly 
+                                        class="w-full border rounded-10 px-2 py-1 text-center bg-secondary/5" 
                                         placeholder="0">
                                 </td>
                                 <td colspan="2" class=" pe-2">
@@ -989,60 +1082,93 @@
         });
     </script>
 
-    <script>
-        document.getElementById("calculateBtn").addEventListener("click", function () {
-            let rows = document.querySelectorAll("#itemsBody tr");
-            let totalSecurity = 0;
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    // ✅ Step 1: Form को पहले select करो (form id = loanForm)
+    const form = document.getElementById("loanForm");
 
-            rows.forEach(row => {
-                let valuePerGram = parseFloat(row.querySelector(".valuePerGram")?.value) || 0;
-                let netWeight = parseFloat(row.querySelector(".netWeight")?.value) || 0;
-                let tunch = parseFloat(row.querySelector(".tunch")?.value) || 0;
+    // ✅ Step 2: Calculate button click listener
+    document.getElementById("calculateBtn").addEventListener("click", function () {
+        let rows = document.querySelectorAll("#itemsBody tr");
+        let totalSecurity = 0;
 
-                // Fine Weight (D) = (C% of B)
-                let fineWeight = (netWeight * tunch) / 100;
+        rows.forEach(row => {
+            let valuePerGram = parseFloat(row.querySelector(".valuePerGram")?.value) || 0;
+            let netWeight = parseFloat(row.querySelector(".netWeight")?.value) || 0;
+            let tunch = parseFloat(row.querySelector(".tunch")?.value) || 0;
 
-                // Total Value = A × D
-                let totalValue = valuePerGram * fineWeight;
+            // Fine Weight (D) = (C% of B)
+            let fineWeight = (netWeight * tunch) / 100;
 
-                // Row ke Total Value column me show karo
-                let totalValueCell = row.querySelector(".totalValue");
-                if (totalValueCell) {
-                    totalValueCell.textContent = totalValue.toFixed(2);
-                }
+            // Total Value = A × D
+            let totalValue = valuePerGram * fineWeight;
 
-                totalSecurity += totalValue;
-            });
+            // Row ke Total Value column me show karo
+            let totalValueCell = row.querySelector(".totalValue");
+            if (totalValueCell) {
+                totalValueCell.textContent = totalValue.toFixed(2);
+            }
 
-            // Loan amount aur insurance ke input se values lo
-            let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-            let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-            let netLoan = loanAmount - insurance;
-            document.getElementById("netLoanAmount").value = netLoan;
-
-            // Scheme ka data
-            let scheme = document.getElementById("scheme_id");
-            let selected = scheme.options[scheme.selectedIndex];
-            let maxLoan = selected.getAttribute("data-max") || "-";
-            let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
-
-            // Maximum approvable amount = (totalSecurity × Limit%) / 100
-            let approvable = (totalSecurity * limit) / 100;
-
-            // Show results
-            document.getElementById("resNetLoan").textContent = netLoan;
-            document.getElementById("resSecurity").textContent = totalSecurity.toFixed(2);
-            document.getElementById("resMaxLoan").textContent = maxLoan;
-            document.getElementById("resLimit").textContent = limit + "%";
-            document.getElementById("resApprovable").textContent = approvable.toFixed(2);
-            document.getElementById("resApproved").textContent = approvable.toFixed(2);
-
-            document.getElementById("calculationBox").classList.remove("hidden");
+            totalSecurity += totalValue;
         });
-    </script>
 
+        // Loan amount aur insurance ke input se values lo
+        let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        let netLoan = loanAmount - insurance;
+        document.getElementById("netLoanAmount").value = netLoan;
 
+        // Scheme ka data
+        let scheme = document.getElementById("scheme_id");
+        let selected = scheme.options[scheme.selectedIndex];
+        let maxLoan = selected.getAttribute("data-max") || "0";   // ✅ CHANGED from "-" to "0"
+        let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
 
+        // Maximum approvable amount = (totalSecurity × Limit%) / 100
+        let approvable = (totalSecurity * limit) / 100;
+
+        // Show results in result box
+        document.getElementById("resNetLoan").textContent = netLoan;
+        document.getElementById("resSecurity").textContent = totalSecurity.toFixed(2);
+        document.getElementById("resMaxLoan").textContent = maxLoan;
+        document.getElementById("resLimit").textContent = limit + "%";
+        document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+        document.getElementById("resApproved").textContent = approvable.toFixed(2);
+
+        // ✅ Step 3: Hidden inputs me assign karo
+        document.getElementById("security_value").value = totalSecurity.toFixed(2);
+        document.getElementById("max_loan_amount").value = maxLoan;
+        document.getElementById("max_loan_limit").value = limit;
+        document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
+        document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
+
+        // ✅ Step 4: Debug console (optional)
+        console.log("✅ Hidden Inputs Updated:", {
+            security_value: totalSecurity.toFixed(2),
+            max_loan_amount: maxLoan,
+            max_loan_limit: limit,
+            maximum_approvable_amount: approvable.toFixed(2),
+            approved_loan_amount: approvable.toFixed(2),
+        });
+
+        // ✅ Step 5: Calculation box visible
+        document.getElementById("calculationBox").classList.remove("hidden");
+    });
+
+    // ✅ Step 6: Form submit hone से पहले debug check (optional)
+    form.addEventListener("submit", function () {
+        console.log("🟩 Submitting with values:", {
+            security_value: document.getElementById("security_value").value,
+            max_loan_amount: document.getElementById("max_loan_amount").value,
+            max_loan_limit: document.getElementById("max_loan_limit").value,
+            maximum_approvable_amount: document.getElementById("maximum_approvable_amount").value,
+            approved_loan_amount: document.getElementById("approved_loan_amount").value,
+        });
+    });
+});
+</script>
+
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const cibilBody = document.getElementById("cibilBody");
@@ -1062,7 +1188,7 @@
                                         <!-- Cibil Type -->
                                         <td class="px-2 py-2" style="width:230px;">
                                             <select name="cibil_type[]" required
-                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                                                >
                                                 <option value="transunion">TransUnion</option>
                                                 <option value="equifax">Equifax</option>
                                                 <option value="experian">Experian</option>
@@ -1072,20 +1198,18 @@
 
                                         <!-- Cibil Score -->
                                         <td class="px-2 py-2">
-                                            <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
-                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                                            <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
                                         </td>
 
                                         <!-- Report Date -->
                                         <td class="px-2 py-2 relative">
-                                            <input type="text" id="date2" name="report_date[]" value="${formattedDate}"
-                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                                             <input type="text" id="date2" name="report_date[]" value="${formattedDate}" class="w-full text-center rounded-10 px-2 py-2 border bg-secondary/5">
+                                           
                                         </td>
 
                                         <!-- Upload File -->
                                         <td class="px-2 py-2">
-                                            <input type="file" name="report_file[]"
-                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+                                            <input type="file" name="report_file[]">
                                         </td>
 
                                         <!-- Remove button -->
@@ -1114,7 +1238,12 @@
             });
 
             // ✅ Add one default row when page loads
-            cibilBody.insertAdjacentHTML("beforeend", newRow());
+           // cibilBody.insertAdjacentHTML("beforeend", newRow());
+           // ✅ Add one default row only if no existing CIBIL scores (edit mode)
+            if (cibilBody.querySelectorAll("tr").length === 0) {
+                cibilBody.insertAdjacentHTML("beforeend", newRow());
+            }
+
         });
 
         //== Add Gold Items== 
@@ -1220,8 +1349,14 @@
             }
 
             // === Add one default row on page load ===
-            tbody.appendChild(createRow());
-            updateRowNumbers();
+            // tbody.appendChild(createRow());
+            // updateRowNumbers();
+            // === Add one default row only if no data (ornaments) exists ===
+            if (tbody.querySelectorAll("tr").length === 0) {
+                tbody.appendChild(createRow());
+                updateRowNumbers();
+            }
+
 
             // === Add Row button click ===
             addRowBtn.addEventListener("click", function () {
@@ -1286,5 +1421,87 @@
                 label.textContent = `( ${radio.value} )`;
             });
         });
+
+        // Function: Calculate total of all total_value[] fields
+function calculateGrandTotal() {
+    let total = 0;
+    document.querySelectorAll('input[name="total_value[]"]').forEach(input => {
+        const val = parseFloat(input.value) || 0;
+        total += val;
+    });
+    const grandTotalInput = document.getElementById('grandTotal');
+    if (grandTotalInput) {
+        grandTotalInput.value = total.toFixed(2);
+    }
+}
+
+// When page loads — calculate once
+window.addEventListener('DOMContentLoaded', calculateGrandTotal);
+
+// When any total_value changes dynamically — recalculate
+document.addEventListener('input', function(e) {
+    if (e.target && e.target.name === 'total_value[]') {
+        calculateGrandTotal();
+    }
+});
+
+// Optional: if you have row add/remove buttons, call this function after each such event
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('removeRowBtn')) {
+        setTimeout(calculateGrandTotal, 100);
+    }
+});
+
+// === Recalculate for already existing rows (edit mode) ===
+document.querySelectorAll("#itemsBody tr").forEach(row => {
+    const valuePerGram = row.querySelector(".valuePerGram");
+    const netWeight = row.querySelector(".netWeight");
+    const tunch = row.querySelector(".tunch");
+    const fineWeight = row.querySelector(".fineWeight");
+    const totalValue = row.querySelector(".totalValue");
+
+    function calculate() {
+        const net = parseFloat(netWeight.value) || 0;
+        const t = parseFloat(tunch.value) || 0;
+        const vpg = parseFloat(valuePerGram.value) || 0;
+
+        const fine = (net * t) / 100;
+        fineWeight.value = fine.toFixed(2);
+        totalValue.value = (fine * vpg).toFixed(2);
+
+        calculateGrandTotal(); // 👈 update footer total also
+    }
+
+    // attach listeners for existing rows
+    [valuePerGram, netWeight, tunch].forEach(input => {
+        input.addEventListener("input", calculate);
+    });
+});
+
+// === Calculate Net Loan Amount (Fixed for Edit Mode) ===
+document.addEventListener("DOMContentLoaded", function () {
+    const loanAmount = document.getElementById("loanAmount");
+    const insuranceAmount = document.getElementById("insuranceAmount");
+    const netLoanAmount = document.getElementById("netLoanAmount");
+
+    function calculateNetLoan() {
+        const loan = parseFloat(loanAmount.value) || 0;
+        const insurance = parseFloat(insuranceAmount.value) || 0;
+        const total = loan + insurance; // ✅ Always add both
+        netLoanAmount.value = total.toFixed(2);
+    }
+
+    // ✅ Wait until input values are actually loaded
+    setTimeout(calculateNetLoan, 500);
+
+    // ✅ Recalculate on change or input (for both manual & edit mode)
+    [loanAmount, insuranceAmount].forEach(input => {
+        input.addEventListener("input", calculateNetLoan);
+        input.addEventListener("change", calculateNetLoan);
+    });
+});
+
+
+
     </script>
 @endsection

@@ -205,7 +205,7 @@
       <!--Scheme Info Table-->
       <div id="schemeBox" class="mt-5 hidden">
         <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-          <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
+          <h3 class="text-base font-semibold md:text-lg uppercase">Scheme Info</h3>
           <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'schemeInfoBody')">
             <span class="toggle-icon text-lg font-bold">−</span>
           </button>
@@ -215,26 +215,26 @@
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
               <tbody>
-                <tr><td class="font-semibold py-2 pr-4">Scheme Code</td><td class="py-2" id="schemeCode">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td><td class="py-2" id="schemeLimit">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Minimum Loan Amount</td><td class="py-2" id="schemeMin">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Active</td><td class="py-2" id="schemeActive">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td><td class="py-2" id="schemeCode">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against Security</td><td class="py-2" id="schemeLimit">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td><td class="py-2" id="schemeMin">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Active</td><td class="py-2" id="schemeActive">-</td></tr>
+                <tr><td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
+                  <td class="font-semibold px-3 py-2 uppercase">Stamp Duty Fee</td>
                   <td class="px-3 py-2"><span id="schemeStamp">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Insurance Charges</td>
+                  <td class="font-semibold px-3 py-2 uppercase">Insurance Charges</td>
                   <td class="px-3 py-2"><span id="schemeInsurance">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Processing Fee</td>
+                  <td class="font-semibold px-3 py-2 uppercase">Processing Fee</td>
                   <td class="px-3 py-2"><span id="schemeProcessing">-</span> ₹</td>
                 </tr>
               </tbody>
