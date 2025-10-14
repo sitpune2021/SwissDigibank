@@ -18,6 +18,7 @@ use Exception;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
+use App\Helpers\TransactionHelper;
 
 class DdsAccountsController extends Controller
 {
@@ -599,12 +600,56 @@ class DdsAccountsController extends Controller
         ];
     }
 
+    // public function transactions(Request $request, $id)
+    // {
+    //     Log::info("DdsAccountsController@transactions called for DDS ID: $id");
+    //     $ddsAccount = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($id);
+
+    //     $query = DdTransaction::where('dds_account_id', $id);
+
+    //     if ($request->filled('tranx_id')) {
+    //         $query->where('id', $request->tranx_id);
+    //     }
+
+    //     if ($request->filled('remarks')) {
+    //         $query->where('remarks', 'like', '%' . $request->remarks . '%');
+    //     }
+
+    //     if ($request->filled('from_date') && $request->filled('to_date')) {
+    //         $fromDate = Carbon::parse($request->from_date)->startOfDay();
+    //         $toDate = Carbon::parse($request->to_date)->endOfDay();
+    //         $query->whereBetween('transaction_date', [$fromDate, $toDate]);
+    //     }
+
+    //     if ($request->filled('from_amount') && $request->filled('to_amount')) {
+    //         $query->whereBetween('balance_available', [$request->from_amount, $request->to_amount]);
+    //     }
+
+    //     $transactions = $query
+    //         ->orderBy('transaction_date', 'asc')
+    //         ->orderBy('id', 'asc')
+    //         ->get();
+
+    //     $runningBalance = 0;
+    //     foreach ($transactions as $tran) {
+    //         $credit = $tran->balance_available ?? 0;
+    //         $debit = $tran->debit ?? 0;
+    //         $runningBalance += ($credit - $debit);
+    //         $tran->balance = $runningBalance;
+    //     }
+
+    //     $transactions = $transactions->sortByDesc('transaction_date')->sortByDesc('id')->values();
+
+    //     return view('fd_account.ddsaccounts.transactions', compact('ddsAccount', 'transactions'));
+    // }
     public function transactions(Request $request, $id)
     {
         Log::info("DdsAccountsController@transactions called for DDS ID: $id");
-        // Load DDS account with related member, branch, and scheme
+
+        // Fetch DDS account
         $ddsAccount = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($id);
 
+        // Build query based on filters
         $query = DdTransaction::where('dds_account_id', $id);
 
         if ($request->filled('tranx_id')) {
@@ -625,24 +670,20 @@ class DdsAccountsController extends Controller
             $query->whereBetween('balance_available', [$request->from_amount, $request->to_amount]);
         }
 
+        // Get transactions
         $transactions = $query
             ->orderBy('transaction_date', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
-        $runningBalance = 0;
-        foreach ($transactions as $tran) {
-            $credit = $tran->balance_available ?? 0;
-            $debit = $tran->debit ?? 0;
-            $runningBalance += ($credit - $debit);
-            $tran->balance = $runningBalance;
-        }
+        // Calculate running balance
+        $transactions = TransactionHelper::calculateRunningBalance($transactions);
 
+        // Sort transactions (most recent first)
         $transactions = $transactions->sortByDesc('transaction_date')->sortByDesc('id')->values();
 
         return view('fd_account.ddsaccounts.transactions', compact('ddsAccount', 'transactions'));
     }
-
     public function destroyTransaction($id)
     {
         Log::info("DdsAccountsController@destroyTransaction called for Transaction ID: $id");

@@ -8,12 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::dropIfExists('mortgage_loan_applications'); // <- Add this line
+
         Schema::create('mortgage_loan_applications', function (Blueprint $table) {
             $table->id();
 
             // Basic info
             $table->date('application_date');
-            $table->unsignedBigInteger('member_id'); // FK -> members table
+            $table->unsignedBigInteger('member_id');
 
             // Co-applicants
             $table->unsignedBigInteger('co_applicant_1_id')->nullable();
@@ -34,11 +36,11 @@ return new class extends Migration
 
             // Tenure
             $table->enum('tenure_type', ['days', 'weeks', 'months'])->default('months');
-            $table->integer('tenure_value'); // e.g. 12, 24
+            $table->integer('tenure_value');
 
             // Collection & Loan Details
-            $table->string('emi_collection')->nullable(); // daily, monthly, etc.
-            $table->integer('credit_period')->default(0); // grace period (days)
+            $table->string('emi_collection')->nullable();
+            $table->integer('credit_period')->default(0);
             $table->decimal('loan_amount', 15, 2);
             $table->decimal('insurance_amount', 15, 2)->nullable();
             $table->decimal('net_loan_amount', 15, 2);
@@ -65,22 +67,10 @@ return new class extends Migration
             
             $table->timestamps();
         });
-
-    
     }
 
-   
-    public function down()
+    public function down(): void
     {
-        Schema::table('mortgage_loan_applications', function (Blueprint $table) {
-            $table->dropColumn([
-                'security_value',
-                'max_loan_amount',
-                'max_loan_limit',
-                'maximum_approvable_amount',
-                'approved_loan_amount'
-            ]);
-        });
+        Schema::dropIfExists('mortgage_loan_applications'); // <- Proper rollback
     }
-    
 };
