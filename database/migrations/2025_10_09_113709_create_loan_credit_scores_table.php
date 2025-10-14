@@ -11,23 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loan_credit_scores', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('loan_application_id'); // foreign key
-            $table->string('cibil_type')->nullable();
-            $table->integer('cibil_score')->nullable();
-            $table->date('report_date')->nullable();
-            $table->string('report_file_path')->nullable();
-            $table->timestamps();
+        if (!Schema::hasTable('loan_credit_scores')) {
+            Schema::create('loan_credit_scores', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('loan_application_id');
+                $table->string('cibil_type')->nullable();
+                $table->integer('cibil_score')->nullable();
+                $table->date('report_date')->nullable();
+                $table->string('report_file_path')->nullable();
+                $table->timestamps();
 
-            // Foreign Key Relation
-            $table->foreign('loan_application_id')
-                  ->references('id')
-                  ->on('loan_applications')
-                  ->onDelete('cascade');
-        });
+                $table->foreign('loan_application_id')
+                    ->references('id')
+                    ->on('loan_applications')
+                    ->onDelete('cascade');
+            });
+        }
     }
-
     /**
      * Reverse the migrations.
      */

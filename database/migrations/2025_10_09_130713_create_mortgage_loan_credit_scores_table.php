@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mortgage_loan_credit_scores', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('loan_application_id')
-                ->constrained('mortgage_loan_applications')
-                ->onDelete('cascade');
-            $table->string('cibil_type')->nullable();
-            $table->integer('cibil_score')->nullable();
-            $table->date('report_date')->nullable();
-            $table->string('report_file_path')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('mortgage_loan_credit_scores')) {
+            Schema::create('mortgage_loan_credit_scores', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('loan_application_id')
+                      ->constrained('mortgage_loan_applications')
+                      ->onDelete('cascade');
+                $table->string('cibil_type')->nullable();
+                $table->integer('cibil_score')->nullable();
+                $table->date('report_date')->nullable();
+                $table->string('report_file_path')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

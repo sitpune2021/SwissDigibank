@@ -38,7 +38,7 @@ return new class extends Migration
 
                 $table->integer('credit_period')->nullable(); // days maybe
                 $table->string('gold_loan_setting', 50)->nullable();
-                $table->string('charge_floting', 50)->nullable(); // keep as string if descriptive
+                $table->string('charge_floating', 50)->nullable(); // fixed typo
 
                 $table->decimal('sms_charge', 10, 2)->nullable();
                 $table->decimal('fuel_charge', 10, 2)->nullable();
@@ -47,9 +47,9 @@ return new class extends Migration
 
                 $table->string('collection', 100)->nullable();
 
-                // date fields
-                $table->string('from_date')->nullable();
-                $table->string('to_date')->nullable();
+                // date fields as date type
+                $table->date('from_date')->nullable();
+                $table->date('to_date')->nullable();
 
                 // penal/annual rates (normalized names)
                 $table->decimal('penal_rate_interest', 5, 2)->nullable();
