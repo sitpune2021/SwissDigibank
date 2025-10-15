@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use App\Models\Menu;
 
 class MenuSeeder extends Seeder
@@ -13,35 +14,45 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
+        Schema::disableForeignKeyConstraints();
+
+        DB::table('sub_menuses')->truncate();
+        DB::table('menus')->truncate();
+
+        Schema::enableForeignKeyConstraints();
+
         $menus = config('menu');
 
-        foreach ($menus as $menuData) {
-            $menu = Menu::updateOrCreate(
-                ['title' => $menuData['title']],
-                [
-                    'icon' => $menuData['icon'] ?? null,
-                    'route' => $menuData['route'] ?? null,
-                    'position' => $menuData['position'] ?? null,
-                    'active' => $menuData['active'] ?? null,
-                ]
-            );
+        DB::transaction(function () use ($menus) {
+            foreach ($menus as $menuData) {
+                $menu = Menu::updateOrCreate(
+                    ['title' => $menuData['title']],
+                    [
+                        'icon' => $menuData['icon'] ?? null,
+                        'route' => $menuData['route'] ?? null,
+                        'position' => $menuData['position'] ?? null,
+                        'active' => $menuData['active'] ?? null,
+                    ]
+                );
 
-            if (!empty($menuData['submenu'])) {
-                $submenuTitles = collect($menuData['submenu'])->pluck('title')->toArray();
+                if (!empty($menuData['submenu'])) {
+                    $submenuTitles = collect($menuData['submenu'])->pluck('title')->toArray();
 
-                // Delete submenus that are no longer in config
-                $menu->submenus()->whereNotIn('title', $submenuTitles)->delete();
+                    // Delete submenus not in config
+                    $menu->submenus()->whereNotIn('title', $submenuTitles)->delete();
 
-                // Upsert submenus from config
-                foreach ($menuData['submenu'] as $submenuData) {
-                    $menu->submenus()->updateOrCreate(
-                        ['title' => $submenuData['title']],
-                        ['route' => $submenuData['route']]
-                    );
+                    // Upsert submenus
+                    foreach ($menuData['submenu'] as $submenuData) {
+                        $menu->submenus()->updateOrCreate(
+                            ['title' => $submenuData['title']],
+                            ['route' => $submenuData['route'] ?? null]
+                        );
+                    }
+                } else {
+                    // Delete all submenus if none in config
+                    $menu->submenus()->delete();
                 }
-            } else {
-                $menu->submenus()->delete();
             }
-        }
+        });
     }
 }

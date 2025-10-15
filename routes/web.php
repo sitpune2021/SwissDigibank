@@ -686,10 +686,16 @@ Route::get('/dev/run/{action}', function ($action) {
             case 'seed':
                 Artisan::call('db:seed');
                 return "Database seeding completed!";
+
+                case 'seed-menu':
+                Artisan::call('db:seed', ['--class' => 'MenuSeeder']);
+                return "MenuSeeder database seeding completed!";
+
             case 'storage-link':
                 Artisan::call('storage:link');
                 $output = Artisan::output();
                 return "Storage link created!"  . nl2br($output);
+                
             case 'install':
                 exec('composer install');
                 return "composer install executed!";
