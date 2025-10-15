@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Member;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Director;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -90,7 +91,6 @@ class DirectorController extends Controller
             if ($request->hasFile('signature')) {
                 $data['signature'] = $request->file('signature')->store('signatures', 'public');
             }
-
             Director::create($data);
 
             return redirect()->route('director.index')->with('success', 'Director created successfully.');
@@ -98,7 +98,6 @@ class DirectorController extends Controller
             abort(404);
         }
     }
-
 
     public function show(string $id)
     {
@@ -162,12 +161,15 @@ class DirectorController extends Controller
                 'authorized_signatory' => 'required|in:Yes,No',
             ]);
 
+
             if ($request->hasFile('signature')) {
+                if ($director->signature && Storage::disk('public')->exists($director->signature)) {
+                    Storage::disk('public')->delete($director->signature);
+                }
                 $data['signature'] = $request->file('signature')->store('signatures', 'public');
             } else {
                 $data['signature'] = $director->signature;
             }
-
             $director->update($data);
 
             return redirect()->route('director.index')->with('success', 'Director updated successfully.');

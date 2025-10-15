@@ -47,7 +47,7 @@ return new class extends Migration
 
                 $table->string('collection', 100)->nullable();
 
-                // date fields
+                // date fields as date type
                 $table->string('from_date')->nullable();
                 $table->string('to_date')->nullable();
 

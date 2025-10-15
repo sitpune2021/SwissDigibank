@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('fd_schemes', function (Blueprint $table) {
-                        $table->integer('tenure')->nullable()->change();
-
+            $table->integer('tenure')->nullable();
         });
     }
 
@@ -23,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('fd_schemes', function (Blueprint $table) {
-                        $table->integer('tenure')->nullable(false)->change();
-
+            $table->integer('tenure');
         });
     }
 };

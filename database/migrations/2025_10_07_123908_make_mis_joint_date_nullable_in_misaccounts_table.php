@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('misaccounts', function (Blueprint $table) {
-            $table->date('mis_joint_date')->nullable()->change();
+            $table->date('mis_joint_date')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('misaccounts', function (Blueprint $table) {
-            $table->date('mis_joint_date')->nullable(false)->change();
+            $table->dropColumn('mis_joint_date');
         });
     }
 };
