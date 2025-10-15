@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rdschemes', function (Blueprint $table) {
-            $table->integer('tenure_of_rd')->nullable()->change();
+            $table->integer('tenure_of_rd')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('rdschemes', function (Blueprint $table) {
-            $table->integer('tenure_of_rd')->nullable(false)->change();
+            $table->integer('tenure_of_rd');
         });
     }
 };
