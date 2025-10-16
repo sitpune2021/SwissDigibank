@@ -546,7 +546,6 @@ class DdsAccountsController extends Controller
 
         return back()->with('success', 'Branch updated successfully');
     }
-
     function calculateMaturity(
         $depositAmount,
         $installments,
@@ -568,6 +567,7 @@ class DdsAccountsController extends Controller
             'weekly' => 7,
             'bi-weekly' => 14,
         };
+
         $totalDeposit = $depositAmount * $installments;
 
         $days = $installments;
@@ -599,6 +599,7 @@ class DdsAccountsController extends Controller
             'maturity_date'   => $maturityDate,
         ];
     }
+
 
     // public function transactions(Request $request, $id)
     // {
@@ -642,6 +643,43 @@ class DdsAccountsController extends Controller
 
     //     return view('fd_account.ddsaccounts.transactions', compact('ddsAccount', 'transactions'));
     // }
+    public function installments($id)
+    {
+        $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
+
+        $installmentAmount = $ddaccount->dd_amount;
+        $openDate = Carbon::parse($ddaccount->open_date);
+        $totalInstallments = $ddaccount->total_installments;
+        $frequency = strtolower($ddaccount->rd_dd_frequency);
+
+        $installments = [];
+
+        for ($i = 0; $i < $totalInstallments; $i++) {
+            $dueDate = match ($frequency) {
+                'daily' => $openDate->copy()->addDays($i),
+                'monthly' => $openDate->copy()->addMonths($i),
+                'yearly' => $openDate->copy()->addYears($i),
+                default => $openDate->copy()->addDays($i),
+            };
+
+            $transaction = $ddaccount->transactions->firstWhere(function ($tranx) use ($dueDate) {
+                return Carbon::parse($tranx->transaction_date)->isSameDay($dueDate);
+            });
+
+            $installments[] = [
+                'number'   => $i + 1,
+                'amount'   => number_format($installmentAmount, 2),
+                'due_date' => $dueDate->format('d/m/Y'),
+                'state'    => $transaction ? 'PAID' : '',
+                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d/m/Y') : '',
+            ];
+        }
+
+        return view('fd_account.ddsaccounts.installments', [
+            'ddaccount' => $ddaccount,
+            'installments' => $installments,
+        ]);
+    }
     public function transactions(Request $request, $id)
     {
         Log::info("DdsAccountsController@transactions called for DDS ID: $id");
@@ -708,43 +746,6 @@ class DdsAccountsController extends Controller
         return view('fd_account.ddsaccounts.transaction-show', compact('ddsAccount', 'transaction'));
     }
 
-    public function installments($id)
-    {
-        $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
-
-        $installmentAmount = $ddaccount->dd_amount;
-        $openDate = Carbon::parse($ddaccount->open_date);
-        $totalInstallments = $ddaccount->total_installments;
-        $frequency = strtolower($ddaccount->rd_dd_frequency);
-
-        $installments = [];
-
-        for ($i = 0; $i < $totalInstallments; $i++) {
-            $dueDate = match ($frequency) {
-                'daily' => $openDate->copy()->addDays($i),
-                'monthly' => $openDate->copy()->addMonths($i),
-                'yearly' => $openDate->copy()->addYears($i),
-                default => $openDate->copy()->addDays($i),
-            };
-
-            $transaction = $ddaccount->transactions->firstWhere(function ($tranx) use ($dueDate) {
-                return Carbon::parse($tranx->transaction_date)->isSameDay($dueDate);
-            });
-
-            $installments[] = [
-                'number'   => $i + 1,
-                'amount'   => number_format($installmentAmount, 2),
-                'due_date' => $dueDate->format('d/m/Y'),
-                'state'    => $transaction ? 'PAID' : '',
-                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d/m/Y') : '',
-            ];
-        }
-
-        return view('fd_account.ddsaccounts.installments', [
-            'ddaccount' => $ddaccount,
-            'installments' => $installments,
-        ]);
-    }
     public function createDeposit($id)
     {
 
@@ -765,10 +766,11 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks', 'savingAccounts', 'membersData'));
     }
-
+  
     public function storeDeposit(Request $request)
     {
         try {
+            // Validate the input fields
             $validated = $request->validate([
                 'dds_account_id'    => 'required|exists:dds_accounts,id',
                 'account_id'        => 'nullable|exists:accounts,id',
@@ -776,20 +778,18 @@ class DdsAccountsController extends Controller
                 'transaction_date'  => 'required|date_format:d-m-Y',
                 'balance_available' => 'required|numeric|min:1',
                 'collected_by'      => 'nullable|string|max:255',
-                'type'  => 'required|in:credit,debit', // ✅ Add this
-
-                // Optional files
+                'type'              => 'required|in:credit,debit', // ✅ Added type for credit/debit validation
                 't_receipt'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
                 'member_sign'       => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                 'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             ]);
 
-            // Extra validations
+            // Extra validations based on pay mode
             $extraRules = match ($request->pay_mode) {
                 'onlineTr' => [
-                    'transfer_date'  => 'required|date_format:d-m-Y',
-                    'utr_no'         => 'required|string|max:255',
-                    'transfer_mode'  => 'required|in:IMPS,VPA,NEFT/RTGS',
+                    'transfer_date' => 'required|date_format:d-m-Y',
+                    'utr_no'        => 'required|string|max:255',
+                    'transfer_mode' => 'required|in:IMPS,VPA,NEFT/RTGS',
                 ],
                 'cheque' => [
                     'bank_name'   => 'required|string|max:255',
@@ -804,15 +804,15 @@ class DdsAccountsController extends Controller
 
             $request->validate($extraRules);
 
-            // Format date
+            // Format the transaction date
             $transaction_date = Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
 
-            // Upload files
-            $validated['t_receipt']    = $this->uploadFile($request, 't_receipt', 'receipts');
-            $validated['member_sign']  = $this->uploadFile($request, 'member_sign', 'signatures');
+            // Handle file uploads (if any)
+            $validated['t_receipt'] = $this->uploadFile($request, 't_receipt', 'receipts');
+            $validated['member_sign'] = $this->uploadFile($request, 'member_sign', 'signatures');
             $validated['member_photo'] = $this->uploadFile($request, 'member_photo', 'photos');
 
-            // ✅ Get previous balance
+            // Get previous balance (if any)
             $last = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
                 ->where(function ($q) use ($transaction_date) {
                     $q->where('transaction_date', '<', $transaction_date)
@@ -824,7 +824,7 @@ class DdsAccountsController extends Controller
 
             $prevBalance = $last?->balance ?? 0;
 
-            // ✅ Determine type: credit or debit
+            // Handle credit/debit logic
             if ($validated['type'] === 'credit') {
                 $creditAmount = $validated['balance_available'];
                 $debitAmount = null;
@@ -840,7 +840,7 @@ class DdsAccountsController extends Controller
                 $newBalance = $prevBalance - $debitAmount;
             }
 
-            // ✅ Save transaction in dd_transactions
+            // Save the transaction in the database
             $transaction = DdTransaction::create([
                 'dds_account_id'    => $validated['dds_account_id'],
                 'account_id'        => $validated['account_id'] ?? null,
@@ -858,7 +858,7 @@ class DdsAccountsController extends Controller
                 'accounted'         => true,
             ]);
 
-            // Add remarks / extra fields
+            // Additional updates based on payment mode
             if ($request->pay_mode === 'saving') {
                 $savingAccount = Account::find($request->saving_account_id);
 
@@ -886,7 +886,7 @@ class DdsAccountsController extends Controller
                 ]);
             }
 
-            // ✅ Update future balances
+            // Update balances for future transactions
             $futureTransactions = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
                 ->where(function ($q) use ($transaction_date, $transaction) {
                     $q->where('transaction_date', '>', $transaction_date)
@@ -907,6 +907,7 @@ class DdsAccountsController extends Controller
                 $tran->save();
             }
 
+            // Redirect to the transactions page with success message
             return redirect()
                 ->route('dds.transactions', ['id' => $transaction->dds_account_id])
                 ->with('success', 'Transaction saved successfully.');
@@ -918,10 +919,12 @@ class DdsAccountsController extends Controller
             return redirect()->back()->with('error', 'Something went wrong while saving the transaction.');
         }
     }
+
     private function uploadFile(Request $request, string $field, string $folder): ?string
     {
         return $request->hasFile($field)
             ? $request->file($field)->store($folder, 'public')
             : null;
     }
+    
 }
