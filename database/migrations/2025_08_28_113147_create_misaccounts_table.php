@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->foreignId('branch_id')->constrained('branches');
             $table->unsignedBigInteger('advisor_id')->nullable();
             $table->unsignedBigInteger('joint_member_id')->nullable();
-            $table->date('mis_joint_date');
             $table->date('open_date');
             $table->integer('tenure_year')->nullable();
             $table->integer('tenure_month')->nullable();

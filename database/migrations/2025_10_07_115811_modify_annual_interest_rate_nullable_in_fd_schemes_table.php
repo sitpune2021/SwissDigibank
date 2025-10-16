@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('fd_schemes', function (Blueprint $table) {
-                                    $table->integer('annual_interest_rate')->nullable()->change();
-
+            $table->integer('annual_interest_rate')->nullable();
         });
     }
 
@@ -23,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('fd_schemes', function (Blueprint $table) {
-            //
+            $table->dropColumn('annual_interest_rate');
         });
     }
 };

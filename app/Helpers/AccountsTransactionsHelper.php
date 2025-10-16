@@ -28,13 +28,9 @@ class AccountsTransactionsHelper
 
         return $balances;
     }
-
-
     //deposit function
-
     public static function deposit($account_id, $amount, $details = [])
     {
-
         // Step 1: Insert credit transaction
         \App\Models\Transaction::create([
             'account_id'       => $account_id,

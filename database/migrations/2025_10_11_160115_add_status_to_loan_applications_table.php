@@ -8,16 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('loan_applications', function (Blueprint $table) {
-            $table->string('status')->default('0')->after('id'); 
-            // 'after' me aap wo column likh sakte ho jiske baad ye add ho
-        });
+        if (Schema::hasTable('mortgage_loan_applications')) {
+            Schema::table('mortgage_loan_applications', function ($table) {
+                if (!Schema::hasColumn('mortgage_loan_applications', 'status')) {
+                    $table->string('status')->default('0')->after('id');
+                }
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('loan_applications', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        if (Schema::hasTable('mortgage_loan_applications')) {
+            Schema::table('mortgage_loan_applications', function ($table) {
+                if (Schema::hasColumn('mortgage_loan_applications', 'status')) {
+                    $table->dropColumn('status');
+                }
+            });
+        }
     }
 };

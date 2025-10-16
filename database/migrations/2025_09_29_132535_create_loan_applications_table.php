@@ -55,7 +55,6 @@ return new class extends Migration
             // Flags
             $table->boolean('collect_principal_as_emi')->default(false);
             $table->boolean('collect_advance_processing_fee')->default(false);
-            $table->string('fee_mode');
 
             // Calculation 
             $table->decimal('security_value', 15, 2)->nullable();
