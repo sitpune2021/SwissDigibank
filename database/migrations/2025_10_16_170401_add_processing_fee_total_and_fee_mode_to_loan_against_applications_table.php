@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('loan_against_applications', function (Blueprint $table) {
-         $table->decimal('processing_fee_total', 10, 2)->nullable()->after('security_amount');  
+            $table->string('fee_mode', 50)->nullable()->after('processing_fee_total');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('loan_against_applications', function (Blueprint $table) {
-           $table->dropColumn('fee_mode');
+            //
         });
     }
 };

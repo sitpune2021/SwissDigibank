@@ -126,7 +126,7 @@
                 DEPOSIT MONEY
             </a>
 
-            <a href="{{ route('ddsaccounts.createDeposit', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+            <a href="{{ route('ddsaccounts.withdraw-create', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
                 WITHDRAW MONEY
             </a>
             <button class="btn-primary px-4 py-2 rounded-3xl ">

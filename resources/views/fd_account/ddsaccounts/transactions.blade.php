@@ -147,7 +147,7 @@
 
                                 <!-- Credit -->
                                 <td class="px-4 py-2 text-right">
-                                    {{number_format($tran->balance, 2) }}
+                                    {{number_format($tran->balance_available, 2) }}
                                 </td>
 
                                 <!-- Balance -->
