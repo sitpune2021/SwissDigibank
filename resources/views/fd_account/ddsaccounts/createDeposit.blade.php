@@ -65,6 +65,7 @@
                         @csrf
                         <input type="hidden" name="dds_account_id" value="{{ $ddAccount->id }}">
                         <input type="hidden" name="account_id" value="{{ $ddAccount->account->id ?? '' }}">
+                        <input type="hidden" name="type" value="credit">
 
                         <!-- Member Signature -->
                         <div>
@@ -222,14 +223,15 @@
                                 <option value="">Select Account</option>
                                 @forelse ($savingAccounts as $account)
                                     <option value="{{ $account->id }}">
-                                        {{ $account->account_no }} ({{ $account->members->full_name ?? '' }} )({{ $account->amount_deposit ?? '' }})
+                                        {{ $account->account_no }} ({{ $account->members->full_name ?? '' }}
+                                        )({{ $account->amount_deposit ?? '' }})
                                     </option>
                                 @empty
                                     <option value="">No accounts found</option>
                                 @endforelse
                             </select>
                         </div>
-                 
+
                         <div class="flex justify-center gap-4 pt-4">
                             <button type="submit" class="btn-primary  ">
                                 DEPOSIT
