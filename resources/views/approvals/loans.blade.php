@@ -111,7 +111,17 @@
 
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center  gap-1">
-                                    -
+                                   
+                                    <span class="
+                                        @if($application->model_type === 'loan') text-blue-600
+                                        @elseif($application->model_type === 'mortgage') text-green-600
+                                        @elseif($application->model_type === 'loan_against') text-orange-600
+                                        @elseif($application->model_type === 'business_loan') text-purple-600
+                                        @endif
+                                    ">
+                                        {{ $types[$application->model_type] ?? 'Unknown' }}
+                                    </span>
+                                
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -141,26 +151,29 @@
                             <td>
                                 <form action="{{ route('loans.update-status', $application->id) }}" method="POST">
                                     @csrf
+                                    <input type="hidden" name="model_type" value="{{ $application->model_type }}">
+
                                     <select name="status" class="border rounded px-2 py-1">
                                         <option value="">Select</option>
                                         <option value="1" {{ $application->status == 1 ? 'selected' : '' }}>Approve</option>
                                         <option value="0" {{ $application->status == 0 ? 'selected' : '' }}>Not Approve</option>
                                     </select>
-                                
                             </td>
-                              <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+
+                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  <textarea name="" id="" class="border py-1 bg-secondary/5 rounded-10 px-3" placeholder="Enter Remarks"></textarea>
+                                    <textarea name="" id="" class="border py-1 bg-secondary/5 rounded-10 px-3" placeholder="Enter Remarks"></textarea>
                                 </div>
                             </td>
 
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                               <button type="submit" style="color:black"
+                                <button type="submit" style="color:black"
                                     class="bg-green-600 text-white px-3 py-1 rounded ml-2 hover:bg-green-700">
                                     DONE
                                 </button>
-                            </form>
+                                </form>
                             </td>
+
                         </tr>
                          @endforeach
                     </tbody>

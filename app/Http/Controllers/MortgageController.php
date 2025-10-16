@@ -16,6 +16,9 @@ use App\Models\LoanCreditScore;
 use Carbon\Carbon;
 use App\Exports\LinePropertExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class MortgageController extends Controller
 {
@@ -34,43 +37,74 @@ class MortgageController extends Controller
         return view("mortgage.schemes.create");
     }
 
+
     public function store(Request $request)
     {
-        
+        Log::info('Mortgage Scheme Store Started', [
+            'input' => $request->all(),
+            'user_id' => auth()->id(),
+        ]);
+
+        // Step 1: Validation (add new fields)
         $validated = $request->validate([
             'scheme_name' => 'required|string|max:255',
-            'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
-            'min_loan_amount' => 'required|numeric|min:1',
+            'tenure' => 'required|string|max:255',
+            'scheme_code' => 'required|string|max:50|unique:mortgage_schemes,scheme_code',
+            'max_loan_limit' => 'required|numeric|min:1',
             'max_loan_amount' => 'required|numeric|min:1|max:200000',
-            'tenure' => 'required|integer|min:1',
             'annual_interest_rate' => 'required|numeric|min:0',
-
-            // new optional fields
-            'processing_fee' => 'nullable|numeric|min:0',
-            'stamp_duty_charge' => 'nullable|numeric|min:0',
-            'insurance_fee' => 'nullable|numeric|min:0',
-            'gold_loan_setting' => 'nullable|string',
-            'max_loan_limit' => 'nullable|numeric|min:0',
-            'overdue_interest_rate' => 'nullable|numeric|min:0',
-            'penalty_charge' => 'nullable|numeric|min:0',
-            'fore_closer_charge' => 'nullable|numeric|min:0',
-            'credit_period' => 'nullable|numeric|min:0',
-            'sms_charge' => 'nullable|numeric|min:0',
-            'fuel_charge' => 'nullable|numeric|min:0',
-            'stationary_charge' => 'nullable|numeric|min:0',
-            'maintenace_charge' => 'nullable|numeric|min:0',
-            'collcetion' => 'nullable|numeric|min:0',
             'is_active' => 'required|in:0,1',
+
+            // optional numeric fields (these will be saved if present)
+            'overdue_interest_rate' => 'nullable|numeric',
+            'penalty_charge' => 'nullable|numeric',
+            'processing_fee' => 'nullable|numeric',
+            'stamp_duty_charge' => 'nullable|numeric',
+            'insurance_fee' => 'nullable|numeric',
+            'fore_closer_charge' => 'nullable|numeric',
+            'credit_period' => 'nullable|integer',
+            'gold_loan_setting' => 'nullable|string',
+            'sms_charge' => 'nullable|integer',
+            'fuel_charge' => 'nullable|integer',
+            'stationary_charge' => 'nullable|integer',
+            'maintenance_charge' => 'nullable|integer',
+            'collection' => 'nullable|integer',
         ], [
+            'scheme_name.required' => 'Please enter scheme name.',
+            'scheme_code.required' => 'Scheme code is required.',
+            'max_loan_limit.required' => 'Max loan limit is required.',
+            'tenure.required' => 'Tenure type is required.',
+            'annual_interest_rate.required' => 'Annual interest rate is required.',
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
         ]);
 
-        MortgageScheme::create($validated);
+        try {
+            DB::beginTransaction();
 
-        return redirect()
-            ->route('mortgage.schemes.index')
-            ->with('success', 'Scheme created successfully!');
+            // Create record directly with validated fields
+            $scheme = MortgageScheme::create($validated);
+
+            DB::commit();
+
+            Log::info('Mortgage Scheme Created Successfully', [
+                'scheme_id' => $scheme->id,
+            ]);
+
+            return redirect()
+                ->route('mortgage.schemes.index')
+                ->with('success', 'Scheme created successfully!');
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error While Storing Mortgage Scheme', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong! Please check log file.');
+        }
     }
+
 
     public function show($id)
     {
@@ -229,7 +263,6 @@ class MortgageController extends Controller
     }
 
 
-     // GoldLoanController.php
     public function appindex()
     {
         //  loan applications fetch 
@@ -250,42 +283,39 @@ class MortgageController extends Controller
     }
    
 
-public function storeLoanApplication(Request $request)
-{
-    // Step 1: Save Loan Application
-    $application = MortgageLoanApplication::create([
-        'application_date' => $request->application_date,
-        'member_id' => $request->member_id,
-        'scheme_id' => $request->scheme_id,
-        'loan_amount' => $request->loan_amount,
-        'branch_id' => $request->branch_id,
-        'tenure_value' => $request->tenure_value,
-        'net_loan_amount' => $request->net_loan_amount,
-        'purpose_of_loan' => $request->purpose_of_loan,
-    ]);
+    public function storeLoanApplication(Request $request)
+    {
+        // Step 1: Save Loan Application
+        $application = MortgageLoanApplication::create([
+            'application_date' => $request->application_date,
+            'member_id' => $request->member_id,
+            'scheme_id' => $request->scheme_id,
+            'loan_amount' => $request->loan_amount,
+            'branch_id' => $request->branch_id,
+            'tenure_value' => $request->tenure_value,
+            'net_loan_amount' => $request->net_loan_amount,
+            'purpose_of_loan' => $request->purpose_of_loan,
+        ]);
 
-    // Step 2: Save Multiple Property Details
-    if ($request->filled('property_type')) {
-        foreach ($request->property_type as $index => $type) {
-            MortgageProperty::create([
-                'loan_application_id' => $application->id,
-                'property_type' => $type,
-                'ownership_type' => $request->ownership_type[$index] ?? null,
-                'property_address' => $request->property_address[$index] ?? null,
-                'city' => $request->city[$index] ?? null,
-                'state' => $request->state[$index] ?? null,
-                'area' => $request->area[$index] ?? null,
-                'property_value' => $request->property_value[$index] ?? 0,
-            ]);
+        // Step 2: Save Multiple Property Details
+        if ($request->filled('property_type')) {
+            foreach ($request->property_type as $index => $type) {
+                MortgageProperty::create([
+                    'loan_application_id' => $application->id,
+                    'property_type' => $type,
+                    'ownership_type' => $request->ownership_type[$index] ?? null,
+                    'property_address' => $request->property_address[$index] ?? null,
+                    'city' => $request->city[$index] ?? null,
+                    'state' => $request->state[$index] ?? null,
+                    'area' => $request->area[$index] ?? null,
+                    'property_value' => $request->property_value[$index] ?? 0,
+                ]);
+            }
         }
+
+        return redirect()->route('mortgage.applications.index')
+            ->with('success', 'Loan Application and Property saved successfully!');
     }
-
-    return redirect()->route('mortgage.applications.index')
-        ->with('success', 'Loan Application and Property saved successfully!');
-}
-
-
-
 
 
     public function getMemberInfo($id)
@@ -306,7 +336,6 @@ public function storeLoanApplication(Request $request)
         }
     }
 
-
     public function appview($id)
     {
         $application = MortgageLoanApplication::with([
@@ -318,7 +347,6 @@ public function storeLoanApplication(Request $request)
 
         return view("mortgage.applications.view", compact('application'));
     }
-
 
    public function appedit($id)
     {
@@ -376,8 +404,6 @@ public function storeLoanApplication(Request $request)
     }
 
 
-   
-
     public function linepropertyindex()
     {
         // loan applications fetch excluding status 1 and 2
@@ -389,6 +415,7 @@ public function storeLoanApplication(Request $request)
         return view("mortgage.lineproperty.index", compact('applications'));
     }
 
+    
     public function exportXls()
     {
         return Excel::download(new LinePropertExport, 'lineproperty.xlsx');

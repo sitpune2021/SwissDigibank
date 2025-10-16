@@ -76,14 +76,6 @@
                             value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
                     </div>
 
-                    <!-- Final Amount -->
-                    <div class="mb-4">
-                        <label class="md:text-lg font-medium block mb-2">
-                            Final Amount To Disburse <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="final_amount" id="finalAmount" class="form-input" required>
-                    </div>
-
                     <h4>Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
@@ -96,7 +88,6 @@
                                         <th class="text-center px-3 py-2 ">IGST</th>
                                         <th class="text-center px-3 py-2 ">Total</th>
                                     </tr>
-
                                     <tr>
                                         <!-- Value -->
                                         <td class="px-2 py-2 ">
@@ -154,6 +145,14 @@
                             </div>
                         </div>
 
+                        <!-- Final Amount -->
+                        <div class="mb-4">
+                            <label class="md:text-lg font-medium block mb-2">
+                                Final Amount To Disburse <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" name="final_amount" id="finalAmount" class="form-input" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                        </div>
+
                         <h3>Disbursement Amount :</h3>
 
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
@@ -163,12 +162,12 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_1" name="D_mode_1"
+                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ $disbursement->net_loan_amount ?? '' }}"
                                         class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
                                         <label>
-                                        <input type="radio" name="payment_mode" value="cash"> Cash
+                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
                                         </label>
 
                                         <label>
@@ -264,12 +263,12 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_2" name="D_mode_2"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    <input type="text" id="D_mode_2" name="D_mode_2" value="0"
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
                                     
                                     <div class="mt-3">
                                        <label>
-                                        <input type="radio" name="payment_mode2" value="cash"> Cash
+                                        <input type="radio" name="payment_mode2" value="cash" checked> Cash
                                         </label>
                                         <label>
                                         <input type="radio" name="payment_mode2" value="cheque"> Cheque

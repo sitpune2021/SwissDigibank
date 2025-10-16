@@ -188,9 +188,9 @@
 
 
           {{--calculator checkbox- --}}
-          <x-checkbox-calculator id="manualEntry" name="manual_entry"
+          <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry"
             label="Check this if you want to divide loan EMIs in ratio."
-            sublabel="(ex. 80% Principal amount in first 60 EMIs & rest 20% in next 40 EMIs of total 100 EMIs)" />
+            sublabel="(ex. 80% Principal amount in first 60 EMIs & rest 20% in next 40 EMIs of total 100 EMIs)" /> -->
 
          
            <!-- Buttons -->

@@ -62,6 +62,10 @@ class GoldLoanController extends Controller
             'stationary_charge' => 'nullable|numeric|min:0',
             'maintenance_charge' => 'nullable|numeric|min:0',
             'collection' => 'nullable|numeric|min:0',
+            'from_date' => 'nullable|numeric|min:0',
+            'to_date' => 'nullable|numeric|min:0',
+            'penal_rate_interest' => 'nullable|numeric|min:0',
+            'annual_rate_interest' => 'nullable|numeric|min:0',
             'is_active' => 'required|in:0,1',
         ], [
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
@@ -261,6 +265,13 @@ class GoldLoanController extends Controller
         ]);
 
         try {
+
+             // 🩵 Fix date format
+        if ($request->filled('application_date')) {
+            $request->merge([
+                'application_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
+            ]);
+        }
             // Loan Application Save
             $loanApplication = LoanApplication::create($request->only([
                 'application_date',
@@ -340,7 +351,7 @@ class GoldLoanController extends Controller
             //  Save Ornaments (Dynamic Rows)
             $itemTypes = $request->input('item_type', []);
             $itemNames = $request->input('item_name', []);
-            $noOfItems = $request->input('no_of_item', []);
+            $noOfItems = $request->input('no_of_items', []);
             $valuePerGram = $request->input('value_per_gram', []);
             $grossWeight = $request->input('gross_weight', []);
             $netWeight = $request->input('net_weight', []);
@@ -354,7 +365,7 @@ class GoldLoanController extends Controller
                         'application_id'=> $loanApplication->id,
                         'item_type' => $type,
                         'item_name' => $itemNames[$index] ?? null,
-                        'no_of_item' => $noOfItems[$index] ?? 0,
+                        'no_of_items' => $noOfItems[$index] ?? 0,
                         'value_per_gram' => $valuePerGram[$index] ?? 0,
                         'gross_weight' => $grossWeight[$index] ?? 0,
                         'net_weight' => $netWeight[$index] ?? 0,
@@ -419,7 +430,7 @@ class GoldLoanController extends Controller
     {
         $application = LoanApplication::with(['member', 'scheme'])->findOrFail($id);
 
-        // ✅ Fetch all related CIBIL records for this loan application
+        //  Fetch all related CIBIL records for this loan application
         $creditScores = LoanCreditScore::where('loan_application_id', $id)->get();
 
         $ornaments = LoanOrnament::where('application_id', $id)->get();
@@ -438,7 +449,7 @@ class GoldLoanController extends Controller
             'branch',
             'scheme',
             'banks',
-            'creditScores', // ✅ Pass it to view
+            'creditScores', //  Pass it to view
             'ornaments'
         ));
     }
@@ -453,6 +464,9 @@ class GoldLoanController extends Controller
         ]);
 
         $application = LoanApplication::findOrFail($id);
+        $request->merge([
+            'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
+        ]);
         $application->update($request->all());
 
         /* -----------------------------------------------

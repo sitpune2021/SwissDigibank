@@ -31,22 +31,16 @@
                     Gold Loan Scheme
                 </p>
             </div>
-            <!-- <p class="text-gray-500">
-                <a href="" class="text-gray-500 text-sm">Gold Loan Schemes </a> >
-                <a href="" class="text-gray-500 text-sm">{{ $scheme->scheme_name }}</a>
-            </p>
-
         </div>
     </div>
 
     <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
         <div class="box col-span-2 md:col-span-1">
             <!-- Edit Button -->
-            <div class="flex justify-end mb-4">
+            <div class="flex justify-end mb-4" style="padding-left: 400px;">
                 <a href="{{ route('gold-loan.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
                     <i class="las la-pencil-alt"></i>
                 </a>
-
             </div>
 
             <!-- Responsive Table -->
@@ -123,11 +117,11 @@
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Maintenance Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->maintenace_charge, 2) }}</td>
+                            <td class="p-3">₹ {{ number_format($scheme->maintenance_charge, 2) }}</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Collection Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->collcetion, 2) }}</td>
+                            <td class="p-3">₹ {{ number_format($scheme->collection, 2) }}</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Credit Period</td>

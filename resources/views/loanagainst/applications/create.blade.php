@@ -68,6 +68,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('member_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -112,10 +115,12 @@
                                 <option value="{{ $member->id }}"
                                         {{ old('member_id', $application->branch_id ?? '') == $member->id ? 'selected' : '' }}>
                                         {{ $member->branch_name }}
-                                    </option>
-                                    
+                                    </option>                                   
                                 @endforeach
                             </select>
+                            @error('branch_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -220,6 +225,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('scheme_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                             </div>
                         </div>
 
@@ -228,16 +236,19 @@
                                 Security Type <span class="text-error">* </span>
                             </label>
                             <select name="securety_type" class="w-full text-sm border px-3 py-2">
-                            <option value="">Please Select</option>
-                            <option value="fd_to_self" {{ old('securety_type', $application->securety_type ?? '') == 'fd_to_self' ? 'selected' : '' }}>FD TO SELF</option>
-                            <option value="rd_to_self" {{ old('securety_type', $application->securety_type ?? '') == 'rd_to_self' ? 'selected' : '' }}>RD TO SELF</option>
-                            <option value="dd_to_self" {{ old('securety_type', $application->securety_type ?? '') == 'dd_to_self' ? 'selected' : '' }}>DD TO SELF</option>
-                            <option value="fd_bank" {{ old('securety_type', $application->securety_type ?? '') == 'fd_bank' ? 'selected' : '' }}>FD BANK</option>
-                            <option value="rd_bank" {{ old('securety_type', $application->securety_type ?? '') == 'rd_bank' ? 'selected' : '' }}>RD BANK</option>
-                            <option value="lic" {{ old('securety_type', $application->securety_type ?? '') == 'lic' ? 'selected' : '' }}>LIC</option>
-                            <option value="nsc" {{ old('securety_type', $application->securety_type ?? '') == 'nsc' ? 'selected' : '' }}>NSC</option>
-                            <option value="other_government_security" {{ old('securety_type', $application->securety_type ?? '') == 'other_government_security' ? 'selected' : '' }}>OTHER GOVERNMENT SECURITY</option>
-                        </select>
+                                <option value="">Please Select</option>
+                                <option value="fd_to_self" {{ old('securety_type', $application->securety_type ?? '') == 'fd_to_self' ? 'selected' : '' }}>FD TO SELF</option>
+                                <option value="rd_to_self" {{ old('securety_type', $application->securety_type ?? '') == 'rd_to_self' ? 'selected' : '' }}>RD TO SELF</option>
+                                <option value="dd_to_self" {{ old('securety_type', $application->securety_type ?? '') == 'dd_to_self' ? 'selected' : '' }}>DD TO SELF</option>
+                                <option value="fd_bank" {{ old('securety_type', $application->securety_type ?? '') == 'fd_bank' ? 'selected' : '' }}>FD BANK</option>
+                                <option value="rd_bank" {{ old('securety_type', $application->securety_type ?? '') == 'rd_bank' ? 'selected' : '' }}>RD BANK</option>
+                                <option value="lic" {{ old('securety_type', $application->securety_type ?? '') == 'lic' ? 'selected' : '' }}>LIC</option>
+                                <option value="nsc" {{ old('securety_type', $application->securety_type ?? '') == 'nsc' ? 'selected' : '' }}>NSC</option>
+                                <option value="other_government_security" {{ old('securety_type', $application->securety_type ?? '') == 'other_government_security' ? 'selected' : '' }}>OTHER GOVERNMENT SECURITY</option>
+                            </select>
+                             @error('securety_type')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -246,7 +257,10 @@
                             </label>
                             <input type="number" id="security_amount" name="security_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0" value="{{ old('security_amount', $application->security_amount ?? 0) }}">                       
+                                placeholder="0" value="{{ old('security_amount', $application->security_amount ?? 0) }}">
+                                @error('security_amount')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror                       
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -272,6 +286,9 @@
                                         <span class="text-gray-70 capitalize">MONTHS</span>
                                     </label>
                                 </div>
+                                 @error('tenure_type')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                             </div>
                         </div>
 
@@ -283,6 +300,9 @@
                             <input type="number" id="tenure_value" name="tenure_value"
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
                                 class="w-full text-sm border px-3 py-2">
+                                @error('tenure_value')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -296,7 +316,9 @@
                             <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
                             <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
                         </select>
-
+                            @error('emi_collection')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -307,6 +329,9 @@
                             <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $application->credit_period ?? 0) }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0">
+                                @error('credit_period')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                        <div class="col-span-2 md:col-span-1">
@@ -316,6 +341,9 @@
                             <input type="number" id="loanAmount" name="loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                @error('loan_amount')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -325,6 +353,9 @@
                             <input type="number" id="insuranceAmount" name="insurance_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
+                                @error('insurance_amount')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -334,6 +365,9 @@
                             <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
                                 placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
+                                @error('net_loan_amount')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1 mb-3">
@@ -341,10 +375,12 @@
                                 Purpose of Loan
                                 <span class="text-error">*</span>
                             </label>
-
                             <input type="text" id="purpose_of_loan" name="purpose_of_loan"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
+                                @error('purpose_of_loan')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
                 </div>
 
@@ -426,8 +462,8 @@
                     </div>
 
                     {{--calculator checkbox- --}}
-                    <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
-                        sublabel="(Check this if you want to collect principal amount as EMIs.)" />
+                    <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
+                        sublabel="(Check this if you want to collect principal amount as EMIs.)" /> -->
                 </div>
 
                         <!-- Collect Advance Processing Fee -->
@@ -437,16 +473,6 @@
                         Collect Advance Processing Fee
                     </label>
                     <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
-
-                        <div class="w-full">
-                            <div class="flex  flex-row justify-around items-center gap-3">
-                                <!-- Label -->
-                                <label for="" class="text-sm block font-medium text-gray-700 dark:text-gray-200">
-                                    Total Processing Fee : </label>
-                                <input type="text" name="processing_fee_value" id="processing_fee_value" readonly placeholder="0"
-                                    class="w-64 rounded-10 block border dark:bg-bg3 px-3 py-2 text-sm " />
-                            </div>
-                        </div>
 
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                             Collect Processing Fee :</label>
@@ -976,7 +1002,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <!-- Cibil Score -->
                 <td class="px-2 py-2">
                     <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
-                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                 </td>
 
                 <!-- Report Date -->

@@ -17,6 +17,10 @@ use App\Exports\LoanAgainstExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Exception;
+use Illuminate\Validation\ValidationException;
+
 
 class LoanAgainstController extends Controller
 {
@@ -29,7 +33,6 @@ class LoanAgainstController extends Controller
         return view("loanagainst.schemes.index", compact('schemes'));
     } 
   
-
     public function create()
     {
         return view("loanagainst.schemes.create");
@@ -37,40 +40,60 @@ class LoanAgainstController extends Controller
 
     public function store(Request $request)
     {
-        
-        $validated = $request->validate([
-            'scheme_name' => 'required|string|max:255',
-            'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
-            'min_loan_amount' => 'required|numeric|min:1',
-            'max_loan_amount' => 'required|numeric|min:1|max:200000',
-            'tenure' => 'required|integer|min:1',
-            'annual_interest_rate' => 'required|numeric|min:0',
-
-            // new optional fields
-            'processing_fee' => 'nullable|numeric|min:0',
-            'stamp_duty_charge' => 'nullable|numeric|min:0',
-            'insurance_fee' => 'nullable|numeric|min:0',
-            'gold_loan_setting' => 'nullable|string',
-            'max_loan_limit' => 'nullable|numeric|min:0',
-            'overdue_interest_rate' => 'nullable|numeric|min:0',
-            'penalty_charge' => 'nullable|numeric|min:0',
-            'fore_closer_charge' => 'nullable|numeric|min:0',
-            'credit_period' => 'nullable|numeric|min:0',
-            'sms_charge' => 'nullable|numeric|min:0',
-            'fuel_charge' => 'nullable|numeric|min:0',
-            'stationary_charge' => 'nullable|numeric|min:0',
-            'maintenance_charge' => 'nullable|numeric|min:0',
-            'collection' => 'nullable|numeric|min:0',
-            'is_active' => 'required|in:0,1',
-        ], [
-            'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
+        Log::info('--- Loan Against Scheme Store Started ---', [
+            'user_id' => auth()->id(),
+            'input'   => $request->all(),
         ]);
 
-        LoanAgainstScheme::create($validated);
+        try {
+            DB::beginTransaction();
 
-        return redirect()
-            ->route('loanagainst.schemes.index')
-            ->with('success', 'Scheme created successfully!');
+            try {
+                $validated = $request->validate([
+                    'scheme_name' => 'required|string|max:255',
+                    'scheme_code' => 'required|string|max:50|unique:loan_against_schemes,scheme_code',
+                    'security_type' => 'required|string',
+                    'max_loan_limit' => 'required|numeric|min:1',
+                    'max_loan_amount' => 'required|numeric|min:1|max:200000',
+                    'tenure' => 'required|integer|min:1',
+                    'annual_interest_rate' => 'required|numeric|min:0',
+                    'overdue_interest_rate' => 'required|numeric|min:0',
+                    'is_active' => 'required|in:0,1',
+                ], [
+                    'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
+                ]);
+
+            } catch (ValidationException $e) {
+                Log::warning('❌ Validation Failed in LoanAgainstScheme', [
+                    'errors' => $e->errors(),
+                    'input'  => $request->all(),
+                ]);
+
+                // ✅ Ye line Laravel ko redirect + error flash karne dega
+                return back()->withErrors($e->errors())->withInput();
+            }
+
+            // ✅ Data store
+            $scheme = LoanAgainstScheme::create($validated);
+
+            DB::commit();
+
+            Log::info('✅ Loan Against Scheme Created Successfully', [
+                'scheme_id' => $scheme->id,
+            ]);
+
+            return redirect()
+                ->route('loanagainst.schemes.index')
+                ->with('success', 'Scheme created successfully!');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('❌ Error while storing Loan Against Scheme', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Something went wrong! Please check log file.');
+        }
     }
 
     public function show($id)
@@ -255,131 +278,161 @@ class LoanAgainstController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-         Log::info('--- Loan Application Store Started ---', [
+        Log::info('--- Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
         ]);
 
+        // ✅ 1️⃣ Validation (Before try-catch)
+        $validated = $request->validate([
+            'application_date' => 'required|date',
+            'member_id' => 'required|exists:members,id',
+            'branch_id' => 'required|exists:branches,id',
+            'scheme_id' => 'required|exists:loan_against_schemes,id',
+            'loan_amount' => 'required|numeric|min:1',
+            'security_amount' => 'required|numeric|min:1',
+            'purpose_of_loan' => 'required|string|max:255',
+            'securety_type' => 'required|string',
+            'tenure_type' => 'required|string',
+            'net_loan_amount' => 'required|numeric|min:1',
+            'insurance_amount' => 'required|numeric|min:1',
+            'credit_period' => 'required|numeric|min:1',
+            'emi_collection' => 'required|string',
+            'tenure_value' => 'required|numeric|min:1',
+        ], [
+            // ✅ 2️⃣ Custom error messages
+            'application_date.required' => 'Please select the application date.',
+            'member_id.required' => 'Please select a member.',
+            'branch_id.required' => 'Please select a branch.',
+            'scheme_id.required' => 'Please select a loan scheme.',
+            'loan_amount.required' => 'Please enter the loan amount.',
+            'security_amount.required' => 'Please enter the security amount.',
+            'loan_amount.numeric' => 'Loan amount must be a number.',
+            'tenure_value.numeric' => 'tenure value must be a number.',
+            'purpose_of_loan.required' => 'Please enter the purpose of the loan.',
+            'securety_type.required' => 'Please select the security type.',
+            'tenure_type.required' => 'Please select the tenure type.',
+            'emi_collection.required' => 'Please select the emi collection.',
+            'net_loan_amount.required' => 'Please Enter Net Loan Amount.',
+            'insurance_amount.required' => 'Please Enter Insurance Amount.',
+            'credit_period.required' => 'Please Enter Credit Period.',
+        ]);
+
         try {
-        $loanApplication = LoanAgainstApplication::create($request->only([
-            'application_date',
-            'member_id',
-            'co_applicant_1_id',
-            'co_applicant_2_id',
-            'branch_id',
-            'advisor_id',
-            'securety_type',
-            'security_amount',
-            'guarantor_1_id',
-            'guarantor_2_id',
-            'guarantor_3_id',
-            'guarantor_4_id',
-            'scheme_id',
-            'tenure_type',
-            'tenure_value',
-            'emi_collection',
-            'credit_period',
-            'loan_amount',
-            'insurance_amount',
-            'net_loan_amount',
-            'purpose_of_loan',
-            'processing_fee_value',
-            'processing_fee_gst',
-            'processing_fee_sgst',
-            'processing_fee_cgst',
-            'processing_fee_igst',
-            'processing_fee_total',
-            'fee_mode',
-            'bank_id',
-            'cheque_no',
-            'cheque_date',
-            'transfer_date',
-            'utr_no',
-            'transfer_mode',
-            'credited',
-            'collect_principal_as_emi',
-            'collect_advance_processing_fee',
-            // new calculation fields
-            'security_value',
-            'max_loan_amount',
-            'max_loan_limit',
-            'maximum_approvable_amount',
-            'approved_loan_amount',
-        ]));
-
-        // return redirect()->route('loanagainst.applications.index')
-        //     ->with('success', 'Loan Application saved successfully!');
-
-         Log::info('Loan Application created successfully', [
-                'loan_application_id' => $loanApplication->id,
-            ]);
+            $loanApplication = LoanAgainstApplication::create($request->only([
+                'application_date',
+                'member_id',
+                'co_applicant_1_id',
+                'co_applicant_2_id',
+                'branch_id',
+                'advisor_id',
+                'securety_type',
+                'security_amount',
+                'guarantor_1_id',
+                'guarantor_2_id',
+                'guarantor_3_id',
+                'guarantor_4_id',
+                'scheme_id',
+                'tenure_type',
+                'tenure_value',
+                'emi_collection',
+                'credit_period',
+                'loan_amount',
+                'insurance_amount',
+                'net_loan_amount',
+                'purpose_of_loan',
+                'processing_fee_value',
+                'processing_fee_gst',
+                'processing_fee_sgst',
+                'processing_fee_cgst',
+                'processing_fee_igst',
+                'processing_fee_total',
+                'fee_mode',
+                'bank_id',
+                'cheque_no',
+                'cheque_date',
+                'transfer_date',
+                'utr_no',
+                'transfer_mode',
+                'credited',
+                'collect_principal_as_emi',
+                'collect_advance_processing_fee',
+                'security_value',
+                'max_loan_amount',
+                'max_loan_limit',
+                'maximum_approvable_amount',
+                'approved_loan_amount',
+            ]));
 
             Log::info('Checking CIBIL data', [
-                'cibil_type' => $request->cibil_type,
-                'cibil_score' => $request->cibil_score,
-                'report_date' => $request->report_date,
-            ]);
+                    'cibil_type' => $request->cibil_type,
+                    'cibil_score' => $request->cibil_score,
+                    'report_date' => $request->report_date,
+                ]);
 
 
             // ==== Credit Score Details Save (Dynamic Rows) ====
-           if ($request->has('cibil_type')) {
-    Log::info('CIBIL block triggered', [
-        'cibil_type_count' => count($request->cibil_type),
-    ]);
+            if ($request->has('cibil_type')) {
+                Log::info('CIBIL block triggered', [
+                'cibil_type_count' => count($request->cibil_type),
+            ]);
 
-    foreach ($request->cibil_type as $index => $type) {
-        try {
-            $filePath = null;
-            if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
-                $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+            foreach ($request->cibil_type as $index => $type) 
+            {
+                try {
+                    $filePath = null;
+                    if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                        $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+                    }
+
+                    Log::info('Saving CIBIL Entry', [
+                        'loan_application_id' => $loanApplication->id,
+                        'index' => $index,
+                        'type' => $type,
+                        'score' => $request->cibil_score[$index] ?? null,
+                        'date' => $request->report_date[$index] ?? null,
+                        'path' => $filePath,
+                    ]);
+
+                    $loanApplication->creditScores()->create([
+                        'cibil_type'       => $type,
+                        'cibil_score'      => $request->cibil_score[$index] ?? null,
+                        'report_date'      => isset($request->report_date[$index])
+                            ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                            : null,
+                        'report_file_path' => $filePath,
+                    ]);
+                    } catch (Exception $e) {
+                        Log::error('Error while saving credit score entry', [
+                            'index' => $index,
+                            'error_message' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            } else {
+                Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            Log::info('Saving CIBIL Entry', [
-                'loan_application_id' => $loanApplication->id,
-                'index' => $index,
-                'type' => $type,
-                'score' => $request->cibil_score[$index] ?? null,
-                'date' => $request->report_date[$index] ?? null,
-                'path' => $filePath,
-            ]);
 
-            $loanApplication->creditScores()->create([
-                'cibil_type'       => $type,
-                'cibil_score'      => $request->cibil_score[$index] ?? null,
-                'report_date'      => isset($request->report_date[$index])
-                    ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
-                    : null,
-                'report_file_path' => $filePath,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error while saving credit score entry', [
-                'index' => $index,
-                'error_message' => $e->getMessage(),
-            ]);
-        }
-    }
-} else {
-    Log::warning('CIBIL block skipped — no cibil_type found in request.');
-}
-
-
-
-            Log::info('--- Loan Application Store Completed Successfully ---', [
+            Log::info('Loan Application created successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
+
+            // ... (rest of your code — credit score logic etc.)
 
             return redirect()->route('loanagainst.applications.index')
-                ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
-        } catch (\Exception $e) {
-            Log::error('Error while storing Loan Application', [
-                'error_message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+                ->with('success', 'Loan Application + Credit Scores saved successfully!');
 
-            return back()->with('error', 'Something went wrong while saving loan application.');
-        }
+            } catch (Exception $e) {
+                Log::error('Error while storing Loan Application', [
+                    'error_message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
 
+                return back()->with('error', 'Something went wrong while saving loan application.');
+            }
     }
+
 
 
     public function getMemberInfo($id)
@@ -414,7 +467,7 @@ class LoanAgainstController extends Controller
     }
 
 
-   public function appedit($id)
+    public function appedit($id)
     {
         $application = LoanAgainstApplication::with([
             'member',
@@ -437,62 +490,133 @@ class LoanAgainstController extends Controller
             'application', 'members', 'scheme', 'branch', 'banks'
         ));
     }
+   
 
-  public function appupdate(Request $request, $id)
-{
-    $request->validate([
-        'application_date' => 'required|date',
-        'member_id'        => 'required|exists:members,id',
-        'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-        'loan_amount'      => 'required|numeric',
-    ]);
+    public function appupdate(Request $request, $id)
+    {
+        Log::info('--- Loan Application Update Started ---', [
+            'user_id' => auth()->id(),
+            'application_id' => $id,
+            'input_data' => $request->all(),
+        ]);
 
-    $application = LoanAgainstApplication::findOrFail($id);
+        DB::beginTransaction();
 
-    // 🔹 Update main application
-    $application->update($request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']));
+        try {
+            // Step 1: Validation
+            $request->validate([
+                'application_date' => 'required|date',
+                'member_id'        => 'required|exists:members,id',
+                'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+                'loan_amount'      => 'required|numeric',
+            ]);
 
-    // 🔹 Delete old scores (optional if you want to overwrite)
-    $application->creditScores()->delete();
+            // Step 2: Fetch record
+            $application = LoanAgainstApplication::find($id);
+            if (!$application) {
+                Log::warning('Loan Application not found', ['application_id' => $id]);
+                return back()->with('error', 'Loan application not found!');
+            }
 
-    // 🔹 Recreate from form data
-    $cibilTypes = $request->input('cibil_type', []);
-    $cibilScores = $request->input('cibil_score', []);
-    $reportDates = $request->input('report_date', []);
-    $reportFiles = $request->file('report_file', []);
+            // Step 3: Log old data before update
+            Log::info('Existing Loan Application Data Before Update', [
+                'old_data' => $application->toArray(),
+            ]);
 
-   foreach ($cibilTypes as $index => $type) {
-    $filePath = null;
-    if (isset($reportFiles[$index])) {
-        $filePath = $reportFiles[$index]->store('uploads/cibil_reports', 'public');
-    }
+            // Step 4: Update main table
+            Log::info('Attempting to update Loan Application...', [
+                'update_data' => $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']),
+            ]);
 
-    // 🩵 Convert date from DD/MM/YYYY → YYYY-MM-DD
-    $rawDate = $reportDates[$index] ?? null;
-    $formattedDate = null;
+            $updated = $application->update(
+                $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file'])
+            );
 
-    if (!empty($rawDate)) {
-        $dateObj = \DateTime::createFromFormat('d/m/Y', $rawDate);
-        if ($dateObj) {
-            $formattedDate = $dateObj->format('Y-m-d');
+            if (!$updated) {
+                Log::error('Loan Application update failed', [
+                    'application_id' => $id,
+                ]);
+                throw new Exception('Loan application update failed.');
+            }
+
+            // Step 5: Delete old CIBIL scores
+            Log::info('Deleting old CIBIL entries...', [
+                'application_id' => $id,
+            ]);
+            $application->creditScores()->delete();
+
+            // Step 6: Insert new CIBIL scores
+            $cibilTypes  = $request->input('cibil_type', []);
+            $cibilScores = $request->input('cibil_score', []);
+            $reportDates = $request->input('report_date', []);
+            $reportFiles = $request->file('report_file', []);
+
+            Log::info('CIBIL Data Received', [
+                'count' => count($cibilTypes),
+                'cibilTypes' => $cibilTypes,
+            ]);
+
+            foreach ($cibilTypes as $index => $type) {
+                try {
+                    $filePath = null;
+                    if (isset($reportFiles[$index])) {
+                        $filePath = $reportFiles[$index]->store('uploads/cibil_reports', 'public');
+                    }
+
+                    // Convert date DD/MM/YYYY → YYYY-MM-DD
+                    $rawDate = $reportDates[$index] ?? null;
+                    $formattedDate = null;
+                    if (!empty($rawDate)) {
+                        $dateObj = \DateTime::createFromFormat('d/m/Y', $rawDate);
+                        if ($dateObj) {
+                            $formattedDate = $dateObj->format('Y-m-d');
+                        }
+                    }
+
+                    $application->creditScores()->create([
+                        'cibil_type'   => $type,
+                        'cibil_score'  => $cibilScores[$index] ?? null,
+                        'report_date'  => $formattedDate,
+                        'report_file'  => $filePath,
+                    ]);
+
+                    Log::info('CIBIL Entry Added', [
+                        'application_id' => $id,
+                        'index' => $index,
+                        'type' => $type,
+                    ]);
+                } catch (Exception $ex) {
+                    Log::error('❌ Error while saving individual CIBIL entry', [
+                        'index' => $index,
+                        'message' => $ex->getMessage(),
+                    ]);
+                }
+            }
+
+            //  Step 7: Commit transaction
+            DB::commit();
+
+            Log::info('Loan Application Updated Successfully', [
+                'application_id' => $application->id,
+            ]);
+
+            return redirect()
+                ->route('loanagainst.applications.view', $application->id)
+                ->with('success', 'Application and credit scores updated successfully!');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error('Loan Application Update Failed', [
+                'application_id' => $id,
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while updating the application.');
         }
     }
 
-    $application->creditScores()->create([
-        'cibil_type'   => $type,
-        'cibil_score'  => $cibilScores[$index] ?? null,
-        'report_date'  => $formattedDate,
-        'report_file'  => $filePath,
-    ]);
-}
-
-
-    return redirect()
-        ->route('loanagainst.applications.edit', $application->id)
-        ->with('success', 'Application and credit scores updated successfully!');
-}
-
-   
 
     public function linepropertyindex()
     {
