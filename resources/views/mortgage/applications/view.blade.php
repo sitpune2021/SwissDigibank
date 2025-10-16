@@ -129,9 +129,6 @@
                 <i class="las la-print text-lg"></i>
                 PRINT DOCUMENTS
                 <i class="las la-angle-down text-xs"></i>
-
-
-
             </button>
 
             <!-- Dropdown Menu -->
@@ -188,13 +185,13 @@
         <div class=" w-full  overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
-                   <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                   <a href="{{ route('mortgage.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
 
-                    <a href="#" class=" p-2 btn-error">
+                    <!-- <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
-                    </a>
+                    </a> -->
 
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">

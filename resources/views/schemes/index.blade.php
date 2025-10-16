@@ -36,9 +36,9 @@
                             </a>
                         </td>
                         <td class="py-5 px-6">{{ $scheme->scheme_name }}</td>
-                        <td class="py-5 px-6">{{ $scheme->min_opening_balance, 2 }}</td>
-                        <td class="py-5 px-6">{{ $scheme->min_monthly_avg_balance, 2 }}</td>
-                        <td class="py-5 px-6">{{ $scheme->lock_in_amount, 2 }}</td>
+                        <td class="py-5 px-6">{{ number_format($scheme->min_opening_balance, 2) }}</td>
+                        <td class="py-5 px-6">{{ number_format($scheme->min_monthly_avg_balance, 2) }}</td>
+                        <td class="py-5 px-6">{{ number_format($scheme->lock_in_amount, 2) }}</td>
                         <td class="py-5 px-6">{{ $scheme->annual_int_rate }}</td>
                         <td class="py-5 px-6">{{ $scheme->interest_pay_cycle }}</td>
                         <!-- <td class="py-5 px-6">{{ $scheme->active }}</td> -->

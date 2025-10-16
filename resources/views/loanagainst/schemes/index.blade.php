@@ -84,7 +84,7 @@
         <tr class="border-b dark:border-bg3">
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1 text-secondary uppercase">
-                    <a href="{{ route('gold-loan.schemes.view', $scheme->id) }}" class="single-option">
+                    <a href="{{ route('loanagainst.schemes.view', $scheme->id) }}" class="single-option">
                         {{ $scheme->scheme_code }}
                     </a>
                 </div>

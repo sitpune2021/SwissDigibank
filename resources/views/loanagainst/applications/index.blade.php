@@ -136,13 +136,13 @@
            <!-- Status -->
             <td class="text-start !py-5 px-6">
                 @if($application->status == 0)
-                    Draft
+                    DRAFT
                 @elseif($application->status == 1)
-                    Approved
+                    APPROVED
                 @elseif($application->status == 2)
                     DISBURSED
                 @else
-                    Disapproved
+                    CANCELLED
                 @endif
             </td>
 

@@ -8,6 +8,9 @@ use App\Models\LoanAgainstDisursement;
 use App\Models\Bank;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
+use Illuminate\Validation\ValidationException;
 
 
 class LoanAgainstDisbursementController extends Controller
@@ -46,74 +49,111 @@ class LoanAgainstDisbursementController extends Controller
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
     }
 
+
     public function store(Request $request)
     {
-        
-        // Validate incoming request
-        $request->validate([
-            'loan_application_id' => 'required|exists:loan_against_applications,id',
-            'disbursal_date' => 'required',
-            'emi_date' => 'required',
-            'loan_amount' => 'required|numeric',
-            'final_amount' => 'required|numeric',
-        ]);
+        try {
+            // 🧾 Start log
+            Log::info('--- Loan Disbursement Store Started ---', [
+                'user_id' => auth()->id(),
+                'input' => $request->all(),
+            ]);
 
-        // Convert d-m-Y to Y-m-d before insert
-        $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
-        $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
+            // ✅ Validate input
+            $validated = $request->validate([
+                'loan_application_id' => 'required|exists:loan_against_applications,id',
+                'disbursal_date' => 'required|date_format:d-m-Y',
+                'emi_date' => 'required|date_format:d-m-Y',
+                'loan_amount' => 'required|numeric|min:1',
+                'final_amount' => 'required|numeric|min:1',
+            ]);
 
-        // Insert data into loanagainst_disbursements
-        $disbursement = LoanAgainstDisursement::create([
-            'loan_application_id' => $request->loan_application_id,
-            'disbursal_date' => $disbursalDate,
-            'emi_date' => $emiDate,
-            'loan_amount' => $request->loan_amount,
-            'processing_fee' => $request->processing_fee ?? 0,
-            'gst_percent' => $request->gst_percent ?? 0,
-            'sgst' => $request->sgst ?? 0,
-            'cgst' => $request->cgst ?? 0,
-            'igst' => $request->igst ?? 0,
-            'processing_fee_total' => $request->processing_fee_total ?? 0,
-            'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
-            'insurance_fee' => $request->insurance_fee ?? 0,
-            'advance_interest' => $request->advance_interest ?? 0,
-            'final_amount' => $request->final_amount,
+            // 🗓 Date conversion
+            $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
+            $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
 
-            // Disburse mode 1
-            'disburse_mode1' => $request->D_mode_1,
-            'payment_mode1' => $request->payment_mode,
-            'bank_id1' => $request->bank_id,
-            'cheque_no1' => $request->cheque_no,
-            'cheque_date1' => $request->cheque_date ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
-            'transfer_date1' => $request->transfer_date ? Carbon::parse($request->transfer_date)->format('Y-m-d') : null,
-            'utr_no1' => $request->utr_no,
-            'transfer_mode1' => $request->transfer_mode,
-            'saving_acc1' => $request->saving,
+            DB::beginTransaction();
 
-            // Disburse mode 2
-            'disburse_mode2' => $request->D_mode_2,
-            'payment_mode2' => $request->payment_mode2,
-            'bank_id2' => $request->bank_id2,
-            'cheque_no2' => $request->cheque_no2,
-            'cheque_date2' => $request->cheque_date2 ? Carbon::createFromFormat('d-m-Y', $request->cheque_date2)->format('Y-m-d') : null,
-            'transfer_date2' => $request->transfer_date2 ? Carbon::createFromFormat('d-m-Y', $request->transfer_date2)->format('Y-m-d') : null,
-            'utr_no2' => $request->utr_no2,
-            'transfer_mode2' => $request->transfer_mode2,
-            'saving_acc2' => $request->saving2,
-        ]);
+            // 💾 Insert into disbursements
+            $disbursement = LoanAgainstDisursement::create([
+                'loan_application_id' => $request->loan_application_id,
+                'disbursal_date' => $disbursalDate,
+                'emi_date' => $emiDate,
+                'loan_amount' => $request->loan_amount,
+                'processing_fee' => $request->processing_fee ?? 0,
+                'gst_percent' => $request->gst_percent ?? 0,
+                'sgst' => $request->sgst ?? 0,
+                'cgst' => $request->cgst ?? 0,
+                'igst' => $request->igst ?? 0,
+                'processing_fee_total' => $request->processing_fee_total ?? 0,
+                'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
+                'insurance_fee' => $request->insurance_fee ?? 0,
+                'advance_interest' => $request->advance_interest ?? 0,
+                'final_amount' => $request->final_amount,
 
-        /**
-         * NEW LINE BELOW
-         * When a disbursement is created, update loan_against_applications.status = 2
-         */
-        DB::table('loan_against_applications')
-            ->where('id', $request->loan_application_id)
-            ->update(['status' => 2]);
+                // Disburse mode 1
+                'disburse_mode1' => $request->D_mode_1,
+                'payment_mode1' => $request->payment_mode,
+                'bank_id1' => $request->bank_id,
+                'cheque_no1' => $request->cheque_no,
+                'cheque_date1' => $request->cheque_date ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
+                'transfer_date1' => $request->transfer_date ? Carbon::parse($request->transfer_date)->format('Y-m-d') : null,
+                'utr_no1' => $request->utr_no,
+                'transfer_mode1' => $request->transfer_mode,
+                'saving_acc1' => $request->saving,
 
-        // Redirect to index page
-        return redirect()
-            ->route('loanagainst.disbursements.index')
-            ->with('success', 'Loan Disbursement Created Successfully!');
+                // Disburse mode 2
+                'disburse_mode2' => $request->D_mode_2,
+                'payment_mode2' => $request->payment_mode2,
+                'bank_id2' => $request->bank_id2,
+                'cheque_no2' => $request->cheque_no2,
+                'cheque_date2' => $request->cheque_date2 ? Carbon::parse($request->cheque_date2)->format('Y-m-d') : null,
+                'transfer_date2' => $request->transfer_date2 ? Carbon::parse($request->transfer_date2)->format('Y-m-d') : null,
+                'utr_no2' => $request->utr_no2,
+                'transfer_mode2' => $request->transfer_mode2,
+                'saving_acc2' => $request->saving2,
+            ]);
+
+            // 🟢 Update application status
+            DB::table('loan_against_applications')
+                ->where('id', $request->loan_application_id)
+                ->update(['status' => 2]);
+
+            DB::commit();
+
+            Log::info('✅ Loan Disbursement Created Successfully', [
+                'disbursement_id' => $disbursement->id,
+            ]);
+
+            return redirect()
+                ->route('loanagainst.disbursements.index')
+                ->with('success', 'Loan Disbursement Created Successfully!');
+        }
+
+        // ⚠️ Validation error → show on form
+        catch (ValidationException $e) {
+            Log::warning('Validation Failed During Loan Disbursement', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
+            throw $e;
+        }
+
+        // ❌ Any other system/DB error
+        catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error('❌ Loan Disbursement Store Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'input' => $request->all(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong while saving the disbursement. Please try again.');
+        }
     }
 
 
