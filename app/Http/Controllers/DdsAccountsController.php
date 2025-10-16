@@ -748,7 +748,6 @@ class DdsAccountsController extends Controller
 
     public function createDeposit($id)
     {
-
         Log::info('Deposit form requested for DDS account: ' . $id);
         $ddAccount = DdsAccount::findOrFail($id);
         $banks = Bank::all();
@@ -766,7 +765,159 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.createDeposit', compact('ddAccount', 'members', 'installmentReceived', 'balanceAvailable', 'installmentAmount', 'banks', 'savingAccounts', 'membersData'));
     }
-  
+
+    // public function storeDeposit(Request $request)
+    // {
+    //     try {
+    //         // Validate the input fields
+    //         $validated = $request->validate([
+    //             'dds_account_id'    => 'required|exists:dds_accounts,id',
+    //             'account_id'        => 'nullable|exists:accounts,id',
+    //             'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
+    //             'transaction_date'  => 'required|date_format:d-m-Y',
+    //             'balance_available' => 'required|numeric|min:1',
+    //             'collected_by'      => 'nullable|string|max:255',
+    //             'type'              => 'required|in:credit,debit', // ✅ Added type for credit/debit validation
+    //             't_receipt'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    //             'member_sign'       => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+    //             'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+    //         ]);
+
+    //         // Extra validations based on pay mode
+    //         $extraRules = match ($request->pay_mode) {
+    //             'onlineTr' => [
+    //                 'transfer_date' => 'required|date_format:d-m-Y',
+    //                 'utr_no'        => 'required|string|max:255',
+    //                 'transfer_mode' => 'required|in:IMPS,VPA,NEFT/RTGS',
+    //             ],
+    //             'cheque' => [
+    //                 'bank_name'   => 'required|string|max:255',
+    //                 'cheque_no'   => 'required|string|max:255',
+    //                 'cheque_date' => 'required|date_format:d-m-Y',
+    //             ],
+    //             'saving' => [
+    //                 'saving_account_id' => 'required|exists:accounts,id',
+    //             ],
+    //             default => [],
+    //         };
+
+    //         $request->validate($extraRules);
+
+    //         // Format the transaction date
+    //         $transaction_date = Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
+
+    //         // Handle file uploads (if any)
+    //         $validated['t_receipt'] = $this->uploadFile($request, 't_receipt', 'receipts');
+    //         $validated['member_sign'] = $this->uploadFile($request, 'member_sign', 'signatures');
+    //         $validated['member_photo'] = $this->uploadFile($request, 'member_photo', 'photos');
+
+    //         // Get previous balance (if any)
+    //         $last = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
+    //             ->where(function ($q) use ($transaction_date) {
+    //                 $q->where('transaction_date', '<', $transaction_date)
+    //                     ->orWhere('transaction_date', $transaction_date);
+    //             })
+    //             ->orderBy('transaction_date', 'desc')
+    //             ->orderBy('id', 'desc')
+    //             ->first();
+
+    //         $prevBalance = $last?->balance ?? 0;
+
+    //         // Handle credit/debit logic
+    //         if ($validated['type'] === 'credit') {
+    //             $creditAmount = $validated['balance_available'];
+    //             $debitAmount = null;
+    //             $newBalance = $prevBalance + $creditAmount;
+    //         } elseif ($validated['type'] === 'debit') {
+    //             $debitAmount = $validated['balance_available'];
+    //             $creditAmount = null;
+
+    //             if ($prevBalance < $debitAmount) {
+    //                 return back()->with('error', 'Insufficient balance in DDS account.');
+    //             }
+
+    //             $newBalance = $prevBalance - $debitAmount;
+    //         }
+
+    //         // Save the transaction in the database
+    //         $transaction = DdTransaction::create([
+    //             'dds_account_id'    => $validated['dds_account_id'],
+    //             'account_id'        => $validated['account_id'] ?? null,
+    //             'pay_mode'          => $validated['pay_mode'],
+    //             'transaction_date'  => $transaction_date,
+    //             'debit'             => $debitAmount,
+    //             'credit'            => $creditAmount,
+    //             'balance_available' => $validated['balance_available'],
+    //             'balance'           => $newBalance,
+    //             'collected_by'      => $validated['collected_by'] ?? null,
+    //             't_receipt'         => $validated['t_receipt'],
+    //             'member_sign'       => $validated['member_sign'],
+    //             'member_photo'      => $validated['member_photo'],
+    //             'status'            => 'Approved',
+    //             'accounted'         => true,
+    //         ]);
+
+    //         // Additional updates based on payment mode
+    //         if ($request->pay_mode === 'saving') {
+    //             $savingAccount = Account::find($request->saving_account_id);
+
+    //             $transaction->update([
+    //                 'saving_account_id' => $request->saving_account_id,
+    //                 'remarks' => $validated['type'] === 'credit'
+    //                     ? "Credit from Saving A/c - {$savingAccount->account_no}"
+    //                     : "Debit to Saving A/c - {$savingAccount->account_no}"
+    //             ]);
+    //         }
+
+    //         if ($request->pay_mode === 'cheque') {
+    //             $transaction->update([
+    //                 'bank_name'   => $request->bank_name,
+    //                 'cheque_no'   => $request->cheque_no,
+    //                 'cheque_date' => Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
+    //             ]);
+    //         }
+
+    //         if ($request->pay_mode === 'onlineTr') {
+    //             $transaction->update([
+    //                 'transfer_date' => Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d'),
+    //                 'utr_no'        => $request->utr_no,
+    //                 'transfer_mode' => $request->transfer_mode,
+    //             ]);
+    //         }
+
+    //         // Update balances for future transactions
+    //         $futureTransactions = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
+    //             ->where(function ($q) use ($transaction_date, $transaction) {
+    //                 $q->where('transaction_date', '>', $transaction_date)
+    //                     ->orWhere(function ($q2) use ($transaction_date, $transaction) {
+    //                         $q2->where('transaction_date', $transaction_date)
+    //                             ->where('id', '>', $transaction->id);
+    //                     });
+    //             })
+    //             ->orderBy('transaction_date')
+    //             ->orderBy('id')
+    //             ->get();
+
+    //         $runningBalance = $transaction->balance;
+
+    //         foreach ($futureTransactions as $tran) {
+    //             $runningBalance += ($tran->credit ?? 0) - ($tran->debit ?? 0);
+    //             $tran->balance = $runningBalance;
+    //             $tran->save();
+    //         }
+
+    //         // Redirect to the transactions page with success message
+    //         return redirect()
+    //             ->route('dds.transactions', ['id' => $transaction->dds_account_id])
+    //             ->with('success', 'Transaction saved successfully.');
+    //     } catch (ValidationException $e) {
+    //         Log::error('Validation failed', ['errors' => $e->validator->errors()->all()]);
+    //         throw $e;
+    //     } catch (\Exception $e) {
+    //         Log::error('Error saving DDS transaction: ' . $e->getMessage());
+    //         return redirect()->back()->with('error', 'Something went wrong while saving the transaction.');
+    //     }
+    // }
     public function storeDeposit(Request $request)
     {
         try {
@@ -812,7 +963,7 @@ class DdsAccountsController extends Controller
             $validated['member_sign'] = $this->uploadFile($request, 'member_sign', 'signatures');
             $validated['member_photo'] = $this->uploadFile($request, 'member_photo', 'photos');
 
-            // Get previous balance (if any)
+            // Get the previous balance (if any)
             $last = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
                 ->where(function ($q) use ($transaction_date) {
                     $q->where('transaction_date', '<', $transaction_date)
@@ -824,20 +975,13 @@ class DdsAccountsController extends Controller
 
             $prevBalance = $last?->balance ?? 0;
 
-            // Handle credit/debit logic
+            // Ensure 'type' is 'credit' for deposits
             if ($validated['type'] === 'credit') {
                 $creditAmount = $validated['balance_available'];
                 $debitAmount = null;
                 $newBalance = $prevBalance + $creditAmount;
-            } elseif ($validated['type'] === 'debit') {
-                $debitAmount = $validated['balance_available'];
-                $creditAmount = null;
-
-                if ($prevBalance < $debitAmount) {
-                    return back()->with('error', 'Insufficient balance in DDS account.');
-                }
-
-                $newBalance = $prevBalance - $debitAmount;
+            } else {
+                return back()->with('error', 'Invalid transaction type for deposit.');
             }
 
             // Save the transaction in the database
@@ -855,7 +999,7 @@ class DdsAccountsController extends Controller
                 'member_sign'       => $validated['member_sign'],
                 'member_photo'      => $validated['member_photo'],
                 'status'            => 'Approved',
-                'accounted'         => true,
+                'accounted'         => true, // Mark as accounted
             ]);
 
             // Additional updates based on payment mode
@@ -920,11 +1064,175 @@ class DdsAccountsController extends Controller
         }
     }
 
+
+    public function createwithdraw($id)
+    {
+        $withraw = DdsAccount::findOrFail($id);
+        $banks = Bank::all();
+        $members  = Member::all();
+        $savingAccounts = Account::with('members')
+            ->where('member_id', $withraw->member_id)
+            ->where('account_type', 'saving')
+            ->get();
+        $members = Member::orderBy('member_info_first_name')->get();
+        $membersData = $members->keyBy('id');
+        return view('fd_account.ddsaccounts.createwithdraw', compact('withraw', 'banks', 'members', 'savingAccounts', 'membersData'));
+    }
+
+    public function storewithdraw(Request $request)
+    {
+        try {
+            // dd($request);
+
+            // Validate the input fields for withdrawal
+            $validated = $request->validate([
+                'dds_account_id'    => 'required|exists:dds_accounts,id',
+                'account_id'        => 'nullable|exists:accounts,id',
+                'pay_mode'          => ['required', Rule::in(['cash', 'onlineTr', 'cheque', 'saving'])],
+                'transaction_date'  => 'required|date_format:d-m-Y',
+                'balance_available' => 'required|numeric|min:1',
+                'collected_by'      => 'nullable|string|max:255',
+                'type'              => 'required|in:debit',
+                't_receipt'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'member_sign'       => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                'member_photo'      => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            ]);
+
+            // Extra validations based on pay mode
+            $extraRules = match ($request->pay_mode) {
+                'onlineTr' => [
+                    'transfer_date' => 'required|date_format:d-m-Y',
+                    'utr_no'        => 'required|string|max:255',
+                    'transfer_mode' => 'required|in:IMPS,VPA,NEFT/RTGS',
+                ],
+                'cheque' => [
+                    'bank_name'   => 'required|string|max:255',
+                    'cheque_no'   => 'required|string|max:255',
+                    'cheque_date' => 'required|date_format:d-m-Y',
+                ],
+                'saving' => [
+                    'saving_account_id' => 'required|exists:accounts,id',
+                ],
+                default => [],
+            };
+
+            $request->validate($extraRules);
+
+            // Format the transaction date
+            $transaction_date = Carbon::createFromFormat('d-m-Y', $validated['transaction_date'])->format('Y-m-d');
+
+            // Handle file uploads (if any)
+            $validated['t_receipt'] = $this->uploadFile($request, 't_receipt', 'receipts');
+            $validated['member_sign'] = $this->uploadFile($request, 'member_sign', 'signatures');
+            $validated['member_photo'] = $this->uploadFile($request, 'member_photo', 'photos');
+
+            // Get previous balance (if any)
+            $last = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
+                ->where(function ($q) use ($transaction_date) {
+                    $q->where('transaction_date', '<', $transaction_date)
+                        ->orWhere('transaction_date', $transaction_date);
+                })
+                ->orderBy('transaction_date', 'desc')
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $prevBalance = $last?->balance ?? 0;
+
+            // Handle withdrawal logic (debit)
+            $debitAmount = $validated['balance_available'];
+            $creditAmount = null;
+
+            // Ensure there is enough balance to withdraw
+            if ($prevBalance < $debitAmount) {
+                return back()->with('error', 'Insufficient balance in DDS account.');
+            }
+
+            // Calculate the new balance after withdrawal
+            $newBalance = $prevBalance - $debitAmount;
+
+            // Save the transaction in the database
+            $transaction = DdTransaction::create([
+                'dds_account_id'    => $validated['dds_account_id'],
+                'account_id'        => $validated['account_id'] ?? null,
+                'pay_mode'          => $validated['pay_mode'],
+                'transaction_date'  => $transaction_date,
+                'debit'             => $debitAmount,  // Store the debit amount here
+                'credit'            => $creditAmount,
+                'balance_available' => $debitAmount,  // Store the withdrawal amount in balance_available
+                'balance'           => $newBalance,   // Updated balance after withdrawal
+                'collected_by'      => $validated['collected_by'] ?? null,
+                't_receipt'         => $validated['t_receipt'],
+                'member_sign'       => $validated['member_sign'],
+                'member_photo'      => $validated['member_photo'],
+                'status'            => 'Approved',
+                'accounted'         => true,
+            ]);
+
+            // Additional updates based on payment mode
+            if ($request->pay_mode === 'saving') {
+                $savingAccount = Account::find($request->saving_account_id);
+
+                $transaction->update([
+                    'saving_account_id' => $request->saving_account_id,
+                    'remarks' => "Debit from Saving A/c - {$savingAccount->account_no}",
+                ]);
+            }
+
+            if ($request->pay_mode === 'cheque') {
+                $transaction->update([
+                    'bank_name'   => $request->bank_name,
+                    'cheque_no'   => $request->cheque_no,
+                    'cheque_date' => Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
+                ]);
+            }
+
+            if ($request->pay_mode === 'onlineTr') {
+                $transaction->update([
+                    'transfer_date' => Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d'),
+                    'utr_no'        => $request->utr_no,
+                    'transfer_mode' => $request->transfer_mode,
+                ]);
+            }
+
+            // Update balances for future transactions
+            $futureTransactions = DdTransaction::where('dds_account_id', $validated['dds_account_id'])
+                ->where(function ($q) use ($transaction_date, $transaction) {
+                    $q->where('transaction_date', '>', $transaction_date)
+                        ->orWhere(function ($q2) use ($transaction_date, $transaction) {
+                            $q2->where('transaction_date', $transaction_date)
+                                ->where('id', '>', $transaction->id);
+                        });
+                })
+                ->orderBy('transaction_date')
+                ->orderBy('id')
+                ->get();
+
+            $runningBalance = $transaction->balance;
+
+            foreach ($futureTransactions as $tran) {
+                $runningBalance += ($tran->credit ?? 0) - ($tran->debit ?? 0);
+                $tran->balance = $runningBalance;
+                $tran->save();
+            }
+
+            // Redirect to the transactions page with success message
+            return redirect()
+                ->route('dds.transactions', ['id' => $transaction->dds_account_id])
+                ->with('success', 'Withdrawal transaction saved successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation failed', ['errors' => $e->validator->errors()->all()]);
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Error saving DDS withdrawal transaction: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong while saving the transaction.');
+        }
+    }
+
+
     private function uploadFile(Request $request, string $field, string $folder): ?string
     {
         return $request->hasFile($field)
             ? $request->file($field)->store($folder, 'public')
             : null;
     }
-    
 }
