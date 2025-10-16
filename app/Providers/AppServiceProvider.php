@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema; //  Add this line
 use App\Models\Menu;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,8 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        //  Fix for MySQL key length issue
+        Schema::defaultStringLength(191);
+
+        // Existing sidebar composer logic
         View::composer('layouts.sidebar', function ($view) {
-        $view->with('menu', Menu::all());
-		});
+            $view->with('menu', Menu::all());
+        });
     }
 }

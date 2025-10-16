@@ -29,11 +29,6 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h3 class="uppercase font-semibold">Gold Loan Disbursements</h3>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500 text-sm">Gold Loan Disbursements
-                    </a> >
-                    <a href="#" class="text-gray-500 text-sm">100118</a>
-                </p>
             </div>
         </div>
 
@@ -41,8 +36,8 @@
             <!-- Left: Details -->
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                   <form action="{{ route('disbursements.store') }}" method="POST">
-                    @csrf
+                    <form action="{{ route('golddisbursements.store') }}" method="POST">
+                        @csrf
                         <!-- Header -->
                         
                         <div class="px-4 py-3 ">

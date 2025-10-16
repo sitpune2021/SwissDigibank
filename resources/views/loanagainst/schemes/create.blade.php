@@ -33,9 +33,7 @@
     
     <div class="box">
         <div class="col-span-12  lg:col-span-12">
-            <form class="grid grid-cols-2 gap-4 mt-6"
-                action="{{ isset($scheme) ? route('loanagainst.schemes.update', $scheme->id) : route('loanagainst.schemes.store') }}"
-                method="POST">
+            <form class="grid grid-cols-2 gap-4 mt-6" action="{{ isset($scheme) ? route('loanagainst.schemes.update', $scheme->id) : route('loanagainst.schemes.store') }}" method="POST">
                 @csrf
                 @if(isset($scheme))
                     @method('PUT')
@@ -49,7 +47,7 @@
                     <input type="text" name="scheme_name"
                         value="{{ old('scheme_name', $scheme->scheme_name ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Scheme Name " required>
+                        placeholder="Enter Scheme Name " >
                     @error('scheme_name')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -60,23 +58,35 @@
                         Scheme Code
                         <span class="text-red-500">*</span>
                     </label>
-
                     <input type="text" name="scheme_code" value="{{ old('scheme_code', $scheme->scheme_code ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 uppercase"
-                        placeholder="Enter Scheme Code" required>
-
-
+                        placeholder="Enter Scheme Code" >
+                    @error('scheme_code')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
+
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        Minimum Loan Amount (₹)
+                    <label for="deposit_loan_setting_security_type" class="md:text-lg font-medium block mb-4">
+                        Security Type
                         <span class="text-red-500">*</span>
                     </label>
-
-                    <input type="number" id="" name="min_loan_amount" value="{{ old('min_loan_amount', $scheme->min_loan_amount ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0" required>
-
+                    <select class="form-control w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        name="security_type"
+                        id="deposit_loan_setting_security_type">
+                        <option value="">Please Select</option>
+                        <option value="FD_OF_SELF" {{ old('security_type', $scheme->security_type ?? '') == 'FD_OF_SELF' ? 'selected' : '' }}>FD of Self</option>
+                        <option value="RD_OF_SELF" {{ old('security_type', $scheme->security_type ?? '') == 'RD_OF_SELF' ? 'selected' : '' }}>RD of Self</option>
+                        <option value="DAILY_DEPOSIT_OF_SELF" {{ old('security_type', $scheme->security_type ?? '') == 'DAILY_DEPOSIT_OF_SELF' ? 'selected' : '' }}>DD of Self</option>
+                        <option value="FD_OF_BANK" {{ old('security_type', $scheme->security_type ?? '') == 'FD_OF_BANK' ? 'selected' : '' }}>FD of Bank</option>
+                        <option value="RD_OF_BANK" {{ old('security_type', $scheme->security_type ?? '') == 'RD_OF_BANK' ? 'selected' : '' }}>RD of Bank</option>
+                        <option value="LIC" {{ old('security_type', $scheme->security_type ?? '') == 'LIC' ? 'selected' : '' }}>LIC</option>
+                        <option value="NSC" {{ old('security_type', $scheme->security_type ?? '') == 'NSC' ? 'selected' : '' }}>NSC</option>
+                        <option value="OTHER_GOVT_SECURITY" {{ old('security_type', $scheme->security_type ?? '') == 'OTHER_GOVT_SECURITY' ? 'selected' : '' }}>Other Govt. Security</option>
+                    </select>
+                    @error('security_type')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -84,10 +94,9 @@
                         Maximum Loan Amount (₹)
                         <span class="text-red-500">*</span>
                     </label>
-
                     <input type="number" id="" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0" max="200000" required>
+                        placeholder="0.0" max="200000" >
                         <!-- Laravel Error Message -->
                         @error('max_loan_amount')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -99,13 +108,16 @@
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
-
                     <input type="number" id="max_loan_limit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Maximum Loan Limit" required>
+                        placeholder="Enter Maximum Loan Limit" >
+                    @error('max_loan_limit')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                     <!-- This will show the words -->
                     <x-number-to-word for="maxLoanLimit" />
                 </div>
+
                 <div class="col-span-2 md:col-span-1">
                     <label for="tenure" class="md:text-lg font-medium block mb-4">
                         Max. Tenure <span class="text-red-500">*</span>
@@ -132,16 +144,20 @@
                     </select>
 
                 </div>
+
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Annual Interest Rate (%)
                         <span class="text-red-500">*</span>
                     </label>
-
                     <input type="number" id="annual_interest_rate" name="annual_interest_rate" value="{{ old('annual_interest_rate', $scheme->annual_interest_rate ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Annual Interest Rate" required>
+                        placeholder="Enter Annual Interest Rate" >
+                    @error('annual_interest_rate')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror                      
                 </div>
+
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Overdue Interest Rate (%)
@@ -149,18 +165,19 @@
                     </label>
                     <div class="col-sm-7">
                         <div class="flex items-center gap-2">
-
                             <!-- Left Select -->
                             <select name="" id=""
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
                                 <option value="TYPE_1">TYPE_1</option>
                                 <option value="TYPE_2">TYPE_2</option>
                             </select>
-
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                placeholder="Enter Overdue Interest Rate (%) " required>
+                                placeholder="Enter Overdue Interest Rate (%) " >
+                                @error('overdue_interest_rate')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
                     </div>
                 </div>
@@ -263,15 +280,13 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Credit Period
-
                     </label>
 
                     <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $scheme->credit_period ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Credit Period">
-
-
                 </div>
+
         </div>
 
         {{--intersetTypeRadio --}}
@@ -289,7 +304,7 @@
                                 class="text-green-600 focus:ring-green-500"
                                 data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'reducing_emi' ? 'checked' : '' }}
-                                required checked>
+                                 required checked>
                             <span>Reducing EMI</span>
                         </label>
 
@@ -308,8 +323,8 @@
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="flat_advanced_interest"
-                                 class="text-green-600 focus:ring-green-500"
-                       data-target="charges-per-emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_advanced_interest' ? 'checked' : '' }}
                                 required>
                             <span>Flat Advanced Interest Deduction</span>
@@ -320,7 +335,7 @@
                             <input type="radio" name="gold_loan_setting" 
                                 value="no_emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'no_emi' ? 'checked' : '' }}
-                                required>
+                                >
                             <span>No EMI</span>
                         </label> -->
                     </div>
@@ -342,9 +357,7 @@
                             name="is_active" 
                             value="1" 
                             class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}
-                            required
-                        >
+                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
                         <span class="text-gray-700 capitalize">Yes</span>
                     </label>
 
@@ -356,10 +369,12 @@
                             value="0" 
                             class="text-green-600 focus:ring-green-500"
                             {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}
-                            required checked
-                        >
+                             checked>
                         <span class="text-gray-700 capitalize">No</span>
                     </label>
+                     @error('is_active')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                 </div>
 
             </div>
@@ -413,7 +428,7 @@
 
                         <input type="number" name="fuel_charge" value="{{ old('fuel_charge', $scheme->fuel_charge ?? '') }}" id="fuel_charge"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Enter Penalty Charges">
+                            placeholder="Enter fuel Charges">
                     </div>
                 </div>
 

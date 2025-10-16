@@ -22,6 +22,11 @@
             /* Modern browser support */
         }
     </style>
+    <style>
+        label {
+            text-transform: uppercase;
+        }
+    </style>
 
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
@@ -39,7 +44,8 @@
                 @if(isset($application))
                 @method('PUT')
                 @endif
-                 <!-- Hidden Calculation Fields -->
+
+                <!-- Hidden Calculation Fields -->
                 <input type="hidden" name="security_value" id="security_value">
                 <input type="hidden" name="max_loan_amount" id="max_loan_amount">
                 <input type="hidden" name="max_loan_limit" id="max_loan_limit">
@@ -48,22 +54,18 @@
 
                 <div class=" flex flex-col lg:flex-row  gap-2">
                     <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10  lg:col-span-12">
-                        
                         <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
-                            <div class="col-span-2 md:col-span-1">
+                           <div class="col-span-2 md:col-span-1">
                                 {{-- Application Date --}}
-                                <label class="md:text-lg font-medium block mb-4 uppercase">
+                                <label class="md:text-lg font-medium block mb-4">
                                     Application Date <span class="text-red-500">*</span>
                                 </label>
-                                <input type="date" name="application_date"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                    value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
 
-                                @error('application_date')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
-                                @enderror
+                                <input type="text" name="application_date"
+                                    value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                             </div>
+
 
                             <div class="col-span-2 md:col-span-1">
                                 <label for="member_id" class="md:text-lg font-medium block mb-4 uppercase">
@@ -286,19 +288,14 @@
                                 </div>
                             </div>
 
-                            <!-- Tenure -->
                             <div class="col-span-2 md:col-span-1">
-                                <label for="tenure_value" class="md:text-lg font-medium block mb-4 uppercase">
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                                     Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
                                     <span class="text-error">*</span>
                                 </label>
-                                <input 
-                                    type="number" 
-                                    id="tenure_value" 
-                                    name="tenure_value"
-                                    value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                >
+                                <input type="number" id="tenure_value" name="tenure_value" value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
                                 @error('tenure_value')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -328,33 +325,26 @@
                                 @enderror
                             </div>
 
-                            <!-- Credit Period -->
                             <div class="col-span-2 md:col-span-1">
-                                <label for="credit_period" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Credit Period (EMI Grace Period) (Days)
+                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                    Credit Period(EMI Grace Period)(Days)
                                     <span class="text-error">*</span>
                                 </label>
-                                <input 
-                                    type="number" 
-                                    id="credit_period" 
-                                    name="credit_period"
-                                    value="{{ old('credit_period', $application->credit_period ?? 0) }}"
+                                <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $application->credit_period ?? 0) }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="0"
-                                >
+                                    placeholder="0">
                                 @error('credit_period')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                           <div class="col-span-2 md:col-span-1">
+                            <div class="col-span-2 md:col-span-1">
                                 <label for="loanAmount" class="md:text-lg font-medium block mb-4 uppercase">
                                     Loan Amount (₹) <span class="text-error">*</span>
                                 </label>
                                 <input type="number" id="loanAmount" name="loan_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="0"
-                                    value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                    placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
                                 @error('loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -366,8 +356,7 @@
                                 </label>
                                 <input type="number" id="insuranceAmount" name="insurance_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter Insurance Amount (₹)"
-                                    value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
+                                    placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
                                 @error('insurance_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -379,13 +368,11 @@
                                 </label>
                                 <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
-                                    placeholder="0"
-                                    value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
+                                    placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
                                 @error('net_loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-
 
                             <div class="col-span-2 md:col-span-1 mb-3">
                                 <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -400,7 +387,6 @@
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-
                         </div>
 
                         <!-- Credit Score Details -->
@@ -431,48 +417,85 @@
                                             <th class=" px-2 py-2 md:px-4 md:py-2"></th>
                                         </tr>
                                     </thead>
-                                    <tbody id="cibilBody" >                                    
-                                            @if(isset($creditScores) && count($creditScores))
-                                                @foreach($creditScores as $score)
-                                                    <tr >
-                                                        <td class="px-2 py-2">
-                                                            <select name="cibil_type[]"  required>
-                                                                <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
-                                                                <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
-                                                                <option value="experian" {{ $score->cibil_type == 'experian' ? 'selected' : '' }}>Experian</option>
-                                                                <option value="crif_highmark" {{ $score->cibil_type == 'crif_highmark' ? 'selected' : '' }}>Crif Highmark</option>
-                                                            </select>
-                                                        </td>
+                                    <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
+                                        @if(isset($creditScores) && count($creditScores))
+                                            @foreach($creditScores as $score)
+                                                <tr class="nested-fields border-b">
+                                                    <td class="px-2 py-2" style="width:230px;">
+                                                        <select name="cibil_type[]" required
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                                                            <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
+                                                            <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
+                                                            <option value="experian" {{ $score->cibil_type == 'experian' ? 'selected' : '' }}>Experian</option>
+                                                            <option value="crif_highmark" {{ $score->cibil_type == 'crif_highmark' ? 'selected' : '' }}>Crif Highmark</option>
+                                                        </select>
+                                                    </td>
 
-                                                        <td class="px-2 py-2">
-                                                            <input type="number" name="cibil_score[]" value="{{ $score->cibil_score }}" required>
-                                                        </td>
+                                                    <td class="px-2 py-2">
+                                                        <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"
+                                                            value="{{ $score->cibil_score }}" required/>
+                                                    </td>
 
-                                                        <td class="px-2 py-2">
-                                                            <!-- <input type="text" name="report_date[]" value="{{ $score->report_date }}" required> -->
-                                                            <input 
-                                                            type="text" 
-                                                            name="report_date[]" 
-                                                            value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}" 
-                                                            class="w-full text-center rounded-10 px-2 py-2 border bg-secondary/5" 
-                                                            required>
-                                                        </td>
+                                                    <td class="px-2 py-2 relative">
+                                                        <input type="text" name="report_date[]" 
+                                                            value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}"
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"
+                                                            required/>
+                                                    </td>
 
-                                                        <td class="px-2 py-2">
-                                                            @if($score->report_file)
-                                                                <a href="{{ asset('storage/' . $score->report_file) }}" target="_blank" class="text-blue-500 underline">View File</a>
+                                                    <!-- <td class="px-2 py-2">
+                                                        @if($score->report_file)
+                                                            <a href="{{ asset('storage/'.$score->report_file) }}" target="_blank" class="text-blue-600 underline">
+                                                                View File
+                                                            </a><br>
+                                                        @endif
+                                                        <input type="file" name="report_file[]" 
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+                                                    </td> -->
+
+                                                    <td class="px-2 py-2 text-center">
+                                                        @if(!empty($score->report_file))
+                                                            @php
+                                                                $filePath = 'storage/'.$score->report_file;
+                                                                $extension = pathinfo($score->report_file, PATHINFO_EXTENSION);
+                                                            @endphp
+
+                                                            @if(in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                                {{-- Show small image preview --}}
+                                                                <a href="{{ asset($filePath) }}" target="_blank">
+                                                                    <img src="{{ asset($filePath) }}" 
+                                                                        alt="Credit Report" 
+                                                                        class="mx-auto rounded-md border border-gray-300 shadow-sm"
+                                                                        style="width:60px; height:60px; object-fit:cover;">
+                                                                </a>
+                                                            @else
+                                                                {{-- Show "View File" link for non-image files --}}
+                                                                <a href="{{ asset($filePath) }}" target="_blank" class="text-blue-600 underline">
+                                                                    View File
+                                                                </a>
                                                             @endif
-                                                            <input type="file" name="report_file[]" class="w-full text-center rounded-10 px-2 py-2 border bg-secondary/5">
-                                                        </td>
+                                                            <br>
+                                                        @endif
 
-                                                        <td class="text-center">
-                                                            <button type="button" class="removeRow text-red-500 hover:text-red-700"><i class="las la-times"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
+                                                        {{-- Upload new file --}}
+                                                        <input type="file" name="report_file[]" 
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+                                                    </td>
+
+
+                                                    <td class="px-2 py-2 md:px-4 md:py-2 text-center">
+                                                        <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                                                            <i class="las la-times" aria-hidden="true"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            {{-- If no records, show default empty row --}}
                                         @endif
-
                                     </tbody>
+
                                 </table>
                             </div>
 
@@ -481,10 +504,7 @@
                                     + Add New Score
                                 </button>
                             </div>
-                            {{--calculator checkbox- --}}
-                            <x-checkbox-calculator id="manualEntry" name="manual_entry"
-                                label="Collect Principal Amount as EMI"
-                                sublabel="(Check this if you want to collect principal amount as EMIs.)" />
+                            
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
@@ -494,18 +514,7 @@
                                 Collect Advance Processing Fee
                             </label>
                             <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
-                                <div class="w-full">
-                                    <div class="flex  flex-row justify-around items-center gap-3">
-                                        <!-- Label -->
-                                        <label for=""
-                                            class="text-sm block font-medium text-gray-700 dark:text-gray-200 uppercase">
-                                            Total Processing Fee : </label>
-                                        <input type="text" name="processing_fee_value" id="processing_fee_value" readonly
-                                            placeholder="0"
-                                            class="w-64 rounded-10 block border dark:bg-bg3 px-3 py-2 text-sm " />
-                                    </div>
-                                </div>
-
+                                
                                 <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                                     Collect Processing Fee :</label>
                                 <table class="min-w-full text-sm md:text-base whitespace-nowrap">
@@ -814,39 +823,71 @@
                             </tr>
                         </thead>
 
-                       <tbody id="itemsBody">
-    @if(isset($ornaments) && count($ornaments))
-        @foreach($ornaments as $key => $item)
-            <tr>
-                <td class="text-center px-2 py-2">{{ $key + 1 }}</td>
-                <td class="px-2 py-2">
-                    <select name="item_type[]" class="itemType w-full rounded px-2 py-2 border bg-secondary/5 text-sm">
-                        <option {{ $item->item_type == 'Gold Jewelery' ? 'selected' : '' }}>Gold Jewelery</option>
-                        <option {{ $item->item_type == 'Gold Coin' ? 'selected' : '' }}>Gold Coin</option>
-                        <option {{ $item->item_type == 'Gold Biscuit' ? 'selected' : '' }}>Gold Biscuit</option>
-                        <option {{ $item->item_type == 'Silver Jewelery' ? 'selected' : '' }}>Silver Jewelery</option>
-                        <option {{ $item->item_type == 'Silver Coin' ? 'selected' : '' }}>Silver Coin</option>
-                        <option {{ $item->item_type == 'Silver Biscuit' ? 'selected' : '' }}>Silver Biscuit</option>
-                        <option {{ $item->item_type == 'Platinum' ? 'selected' : '' }}>Platinum</option>
-                        <option {{ $item->item_type == 'Diamond' ? 'selected' : '' }}>Diamond</option>
-                        <option {{ $item->item_type == 'Stone' ? 'selected' : '' }}>Stone</option>
-                    </select>
-                </td>
-                <td class="px-2 py-2"><input type="text" name="item_name[]" value="{{ $item->item_name }}" class="itemName w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
-                <td class="px-2 py-2"><input type="number" name="no_of_items[]" value="{{ $item->no_of_items }}" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
-                <td class="px-2 py-2"><input type="number" name="value_per_gram[]" value="{{ $item->value_per_gram }}" class="valuePerGram w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
-                <td class="px-2 py-2"><input type="number" name="gross_weight[]" value="{{ $item->gross_weight }}" class="grossWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
-                <td class="px-2 py-2"><input type="number" name="net_weight[]" value="{{ $item->net_weight }}" class="netWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
-                <td class="px-2 py-2"><input type="number" name="tunch[]" value="{{ $item->tunch }}" class="tunch w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"></td>
-                <td class="px-2 py-2"><input type="number" name="fine_weight[]" value="{{ $item->fine_weight }}" readonly class="fineWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm bg-gray-100"></td>
-                <td class="px-2 py-2"><input type="number" name="total_value[]" value="{{ $item->total_value }}" readonly class="totalValue w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm bg-gray-100"></td>
-                <td class="px-2 py-2 text-center">
-                    <button type="button" class="text-red-500 removeRowBtn"><i class="las la-times"></i></button>
-                </td>
-            </tr>
-        @endforeach
-    @endif
-</tbody>
+                        <tbody id="itemsBody" class="whitespace-nowrap">
+                            @if(isset($ornaments) && count($ornaments))
+                                @foreach($ornaments as $key => $item)
+                                    <tr>
+                                        <td class="text-center px-2 py-2">{{ $key + 1 }}</td>
+                                        <td class="px-2 py-2">
+                                            <select name="item_type[]" class="itemType w-full rounded px-2 py-2 border bg-secondary/5 text-sm">
+                                                <option {{ $item->item_type == 'Gold Jewelery' ? 'selected' : '' }}>Gold Jewelery</option>
+                                                <option {{ $item->item_type == 'Gold Coin' ? 'selected' : '' }}>Gold Coin</option>
+                                                <option {{ $item->item_type == 'Gold Biscuit' ? 'selected' : '' }}>Gold Biscuit</option>
+                                                <option {{ $item->item_type == 'Silver Jewelery' ? 'selected' : '' }}>Silver Jewelery</option>
+                                                <option {{ $item->item_type == 'Silver Coin' ? 'selected' : '' }}>Silver Coin</option>
+                                                <option {{ $item->item_type == 'Silver Biscuit' ? 'selected' : '' }}>Silver Biscuit</option>
+                                                <option {{ $item->item_type == 'Platinum' ? 'selected' : '' }}>Platinum</option>
+                                                <option {{ $item->item_type == 'Diamond' ? 'selected' : '' }}>Diamond</option>
+                                                <option {{ $item->item_type == 'Stone' ? 'selected' : '' }}>Stone</option>
+                                            </select>
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="item_name[]" class="itemName w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm" 
+                                                value="{{ $item->item_name }}">
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="no_of_items[]" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"
+                                                value="{{ $item->no_of_items }}">
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="value_per_gram[]" class="valuePerGram w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"
+                                                value="{{ $item->value_per_gram }}">
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="gross_weight[]" class="grossWeight w-full rounded px-2 py-2 border bg-secondary/5 text-center text-sm"
+                                                value="{{ $item->gross_weight }}">
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="net_weight[]" class="netWeight w-full bg-secondary/5 rounded px-2 py-2 border text-center text-sm"
+                                                value="{{ $item->net_weight }}">
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="tunch[]" class="tunch w-full rounded bg-secondary/5 px-2 py-2 border text-center text-sm"
+                                                value="{{ $item->tunch }}">
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="fine_weight[]" class="fineWeight w-full rounded px-2 py-2 border bg-secondary/5 text-center text-sm bg-gray-100"
+                                                value="{{ $item->fine_weight }}" readonly>
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="total_value[]" class="totalValue w-full rounded px-2 py-2 border bg-secondary/5 text-center text-sm bg-gray-100"
+                                                value="{{ $item->total_value }}" readonly>
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            @if($item->item_image)
+                                                <a href="{{ asset('storage/'.$item->item_image) }}" target="_blank" class="text-blue-600 underline block mb-1">View</a>
+                                            @endif
+                                            <input type="file" name="item_image[]" class="w-full rounded px-2 py-2 border bg-secondary/5 text-center text-sm">
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            <button type="button" class="text-red-500 removeRowBtn"><i class="las la-times"></i></button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                {{-- Default row for create page --}}
+                            @endif
+                        </tbody>
 
 
                         <tfoot class="bg-gray-100 border">
@@ -861,10 +902,7 @@
                                         disabled> --}}
                                 </td>
                                 <td class="px-2 py-2 ">
-                                    <!-- <input type="number" readonly
-                                        class="w-full border rounded-10 px-2 py-1 text-center bg-secondary/5"
-                                        placeholder="0"> -->
-                                        <input 
+                                    <input 
                                         type="number" 
                                         id="grandTotal" 
                                         readonly 
@@ -1082,12 +1120,12 @@
         });
     </script>
 
- <script>
+    <script>
     document.addEventListener("DOMContentLoaded", function () {
-    // ✅ Step 1: Form को पहले select करो (form id = loanForm)
+    //  Step 1: Form को पहले select करो (form id = loanForm)
     const form = document.getElementById("loanForm");
 
-    // ✅ Step 2: Calculate button click listener
+    //  Step 2: Calculate button click listener
     document.getElementById("calculateBtn").addEventListener("click", function () {
         let rows = document.querySelectorAll("#itemsBody tr");
         let totalSecurity = 0;
@@ -1115,13 +1153,13 @@
         // Loan amount aur insurance ke input se values lo
         let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
         let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-        let netLoan = loanAmount - insurance;
+        let netLoan = loanAmount + insurance;
         document.getElementById("netLoanAmount").value = netLoan;
 
         // Scheme ka data
         let scheme = document.getElementById("scheme_id");
         let selected = scheme.options[scheme.selectedIndex];
-        let maxLoan = selected.getAttribute("data-max") || "0";   // ✅ CHANGED from "-" to "0"
+        let maxLoan = selected.getAttribute("data-max") || "0";   //  CHANGED from "-" to "0"
         let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
 
         // Maximum approvable amount = (totalSecurity × Limit%) / 100
@@ -1135,15 +1173,15 @@
         document.getElementById("resApprovable").textContent = approvable.toFixed(2);
         document.getElementById("resApproved").textContent = approvable.toFixed(2);
 
-        // ✅ Step 3: Hidden inputs me assign karo
+        //  Step 3: Hidden inputs me assign karo
         document.getElementById("security_value").value = totalSecurity.toFixed(2);
         document.getElementById("max_loan_amount").value = maxLoan;
         document.getElementById("max_loan_limit").value = limit;
         document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
         document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
 
-        // ✅ Step 4: Debug console (optional)
-        console.log("✅ Hidden Inputs Updated:", {
+        //  Step 4: Debug console (optional)
+        console.log("Hidden Inputs Updated:", {
             security_value: totalSecurity.toFixed(2),
             max_loan_amount: maxLoan,
             max_loan_limit: limit,
@@ -1151,13 +1189,13 @@
             approved_loan_amount: approvable.toFixed(2),
         });
 
-        // ✅ Step 5: Calculation box visible
+        // Step 5: Calculation box visible
         document.getElementById("calculationBox").classList.remove("hidden");
     });
 
-    // ✅ Step 6: Form submit hone से पहले debug check (optional)
+    //  Step 6: Form submit hone से पहले debug check (optional)
     form.addEventListener("submit", function () {
-        console.log("🟩 Submitting with values:", {
+        console.log("Submitting with values:", {
             security_value: document.getElementById("security_value").value,
             max_loan_amount: document.getElementById("max_loan_amount").value,
             max_loan_limit: document.getElementById("max_loan_limit").value,
@@ -1166,9 +1204,9 @@
         });
     });
 });
-</script>
+    </script>
 
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const cibilBody = document.getElementById("cibilBody");
@@ -1188,7 +1226,7 @@
                                         <!-- Cibil Type -->
                                         <td class="px-2 py-2" style="width:230px;">
                                             <select name="cibil_type[]" required
-                                                >
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                                                 <option value="transunion">TransUnion</option>
                                                 <option value="equifax">Equifax</option>
                                                 <option value="experian">Experian</option>
@@ -1198,18 +1236,20 @@
 
                                         <!-- Cibil Score -->
                                         <td class="px-2 py-2">
-                                            <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
+                                            <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
                                         </td>
 
                                         <!-- Report Date -->
                                         <td class="px-2 py-2 relative">
-                                             <input type="text" id="date2" name="report_date[]" value="${formattedDate}" class="w-full text-center rounded-10 px-2 py-2 border bg-secondary/5">
-                                           
+                                            <input type="text" id="date2" name="report_date[]" value="${formattedDate}"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
                                         </td>
 
                                         <!-- Upload File -->
                                         <td class="px-2 py-2">
-                                            <input type="file" name="report_file[]">
+                                            <input type="file" name="report_file[]"
+                                                class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
                                         </td>
 
                                         <!-- Remove button -->
@@ -1238,12 +1278,10 @@
             });
 
             // ✅ Add one default row when page loads
-           // cibilBody.insertAdjacentHTML("beforeend", newRow());
-           // ✅ Add one default row only if no existing CIBIL scores (edit mode)
-            if (cibilBody.querySelectorAll("tr").length === 0) {
+            //cibilBody.insertAdjacentHTML("beforeend", newRow());
+             if (cibilBody.querySelectorAll("tr").length === 0) {
                 cibilBody.insertAdjacentHTML("beforeend", newRow());
             }
-
         });
 
         //== Add Gold Items== 
@@ -1282,7 +1320,7 @@
                                         <input type="text" name="item_name[]" placeholder="Enter Item Name" class="itemName w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
                                     </td>
                                     <td class="px-2 py-2">
-                                        <input type="number" name="no_of_item[]" placeholder="No of Items" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
+                                        <input type="number" name="no_of_items[]" placeholder="No of Items" class="noOfItem w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
                                     </td>
                                     <td class="px-2 py-2">
                                         <input type="number" name="value_per_gram[]" placeholder="Value per Gram" class="valuePerGram w-full bg-secondary/5 rounded px-2 py-2 rounded-10 border text-center text-sm">
@@ -1349,14 +1387,12 @@
             }
 
             // === Add one default row on page load ===
-            // tbody.appendChild(createRow());
-            // updateRowNumbers();
-            // === Add one default row only if no data (ornaments) exists ===
+            //tbody.appendChild(createRow());
             if (tbody.querySelectorAll("tr").length === 0) {
                 tbody.appendChild(createRow());
                 updateRowNumbers();
             }
-
+            //updateRowNumbers();
 
             // === Add Row button click ===
             addRowBtn.addEventListener("click", function () {
@@ -1379,7 +1415,7 @@
             rows.forEach(row => {
                 let item_type = row.querySelector(".itemType")?.value || '';
                 let item_name = row.querySelector(".itemName")?.value || '';
-                let no_of_item = row.querySelector(".noOfItem")?.value || 0;
+                let no_of_items = row.querySelector(".noOfItem")?.value || 0;
                 let value_per_gram = row.querySelector(".valuePerGram")?.value || 0;
                 let gross_weight = row.querySelector(".grossWeight")?.value || 0;
                 let net_weight = row.querySelector(".netWeight")?.value || 0;
@@ -1390,7 +1426,7 @@
                 items.push({
                     item_type,
                     item_name,
-                    no_of_item,
+                    no_of_items,
                     value_per_gram,
                     gross_weight,
                     net_weight,
@@ -1421,8 +1457,10 @@
                 label.textContent = `( ${radio.value} )`;
             });
         });
+    </script>
 
-        // Function: Calculate total of all total_value[] fields
+    <script>
+         // Function: Calculate total of all total_value[] fields
 function calculateGrandTotal() {
     let total = 0;
     document.querySelectorAll('input[name="total_value[]"]').forEach(input => {
@@ -1477,31 +1515,6 @@ document.querySelectorAll("#itemsBody tr").forEach(row => {
         input.addEventListener("input", calculate);
     });
 });
+</script>
 
-// === Calculate Net Loan Amount (Fixed for Edit Mode) ===
-document.addEventListener("DOMContentLoaded", function () {
-    const loanAmount = document.getElementById("loanAmount");
-    const insuranceAmount = document.getElementById("insuranceAmount");
-    const netLoanAmount = document.getElementById("netLoanAmount");
-
-    function calculateNetLoan() {
-        const loan = parseFloat(loanAmount.value) || 0;
-        const insurance = parseFloat(insuranceAmount.value) || 0;
-        const total = loan + insurance; // ✅ Always add both
-        netLoanAmount.value = total.toFixed(2);
-    }
-
-    // ✅ Wait until input values are actually loaded
-    setTimeout(calculateNetLoan, 500);
-
-    // ✅ Recalculate on change or input (for both manual & edit mode)
-    [loanAmount, insuranceAmount].forEach(input => {
-        input.addEventListener("input", calculateNetLoan);
-        input.addEventListener("change", calculateNetLoan);
-    });
-});
-
-
-
-    </script>
 @endsection

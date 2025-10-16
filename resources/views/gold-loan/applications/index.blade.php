@@ -120,10 +120,10 @@
                     DRAFT
                 @elseif($application->status == 1)
                     APPROVED
-                    @elseif($application->status == 1)
+                    @elseif($application->status == 2)
                     DISBURSED
                 @else
-                    DISAPPROVED
+                    CANCELED
                 @endif
             </td>
 

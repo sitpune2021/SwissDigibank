@@ -57,9 +57,9 @@
                   data-limit="{{ $item->max_loan_limit }}"
                   data-min="{{ $item->min_loan_amount }}"
                   data-interest="{{ $item->annual_interest_rate }}"
-                  data-type="{{ $item->interest_type }}"
+                  data-type="{{ $item->gold_loan_setting }}"
                   data-active="{{ $item->is_active ? 'Yes' : 'No' }}"
-                  data-charge="{{ $item->foreclosure_charges }}"
+                  data-charge="{{ $item->fore_closer_charge }}"
                   {{-- unique attributes for each --}}
                   data-processing="{{ $item->processing_fee }}"
                   data-stamp="{{ $item->stamp_duty_charge }}"
@@ -188,9 +188,9 @@
 
 
           {{--calculator checkbox- --}}
-          <x-checkbox-calculator id="manualEntry" name="manual_entry"
+          <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry"
             label="Check this if you want to divide loan EMIs in ratio."
-            sublabel="(ex. 80% Principal amount in first 60 EMIs & rest 20% in next 40 EMIs of total 100 EMIs)" />
+            sublabel="(ex. 80% Principal amount in first 60 EMIs & rest 20% in next 40 EMIs of total 100 EMIs)" /> -->
 
          
            <!-- Buttons -->

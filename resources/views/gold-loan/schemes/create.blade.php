@@ -570,9 +570,7 @@
                                 <th rowspan="2" class="text-center py-3 ">
                                     ANNUAL INTEREST
                                     RATE (%)
-
                                 </th>
-
                             </tr>
                             <tr class="">
                                 <th class="text-center ">FROM (Start From Day 1)</th>
@@ -587,7 +585,7 @@
                                 </td>
                                 <td class="border border-gray-300 p-1"><input type="number" name="to_date" value="{{ old('to_date', $scheme->to_date ?? '') }}" placeholder="To"
                                         class="w-full border  border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_intererst" value="{{ old('penal_rate_intererst', $scheme->penal_rate_intererst ?? '') }}"
+                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_interest" value="{{ old('penal_rate_interest', $scheme->penal_rate_interest ?? '') }}"
                                         placeholder="Penal Interest(%)"
                                         class="w-full  border border-gray-300 rounded p-1"></td>
                                 <td class="border border-gray-300 p-1"><input type="number" name="annual_rate_interest" value="{{ old('annual_rate_interest', $scheme->annual_rate_interest ?? '') }}"
@@ -595,11 +593,8 @@
                                         class="w-full border border-gray-300 rounded p-1"></td>
                             </tbody>
                     </table>
-
-
                 </div>
             </div>
-
         </div>
 
 

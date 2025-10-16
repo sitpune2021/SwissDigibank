@@ -12,12 +12,14 @@ use App\Models\FDAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\LoanApplication;
+use App\Models\MortgageLoanApplication;
+use App\Models\LoanAgainstApplication;
+use App\Models\BusinessLoanApplication;
+
 
 class ApproveController extends Controller
 {
-    /**
-     *  show all pending transaction
-     */
+    
     public function index(Request $request)
     {
         try {
@@ -58,9 +60,6 @@ class ApproveController extends Controller
         }
     }
 
-    /**
-     * Update pending transaction status
-     */
 
     public function update(Request $request, $id)
     {
@@ -113,13 +112,6 @@ class ApproveController extends Controller
             abort(404);
         }
     }
-     /**
-     * pending transaction status end
-     */
-    
-    /**
-     * Start Approved Status
-     */
 
 
     public function updateAccountStatus(Request $request, $id)
@@ -210,6 +202,7 @@ class ApproveController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong while updating account status.']);
         }
     }
+
 
     public function approveAccounts(Request $request)
     {
@@ -317,12 +310,7 @@ class ApproveController extends Controller
         }
     }
 
-    /**
-     * End Approved Status
-     */
 
-
-    // share transfer approval start
     public function approveTransfer(Request $request)
     {
         try {
@@ -348,6 +336,7 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+
 
     public function approveShareTransfer(Request $request)
     {
@@ -380,11 +369,7 @@ class ApproveController extends Controller
         }
     }
 
-    // share transfer approval ends
-
-    /**
-     * Reverse Transaction. - view form called
-     */
+   
     public function reverseTransactionView(Request $request, $id)
     {
         try {
@@ -395,6 +380,7 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+
 
     public function reverseTransactionApprove(Request $request, $id)
     {
@@ -431,6 +417,7 @@ class ApproveController extends Controller
         }
     }
 
+
     public function approveReverseTransaction()
     {
         try {
@@ -444,6 +431,8 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+
+
     public function approveTransaction($encodedId, Request $request)
     {
         try {
@@ -463,67 +452,142 @@ class ApproveController extends Controller
             abort(404);
         }
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    // public function loans()
-    // {
-    //     // loan applications fetch 
-    //     $applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
-
-    //     return view("approvals.loans", compact('applications'));
-    // }
 
     public function loans()
     {
-        // loan applications fetch excluding status 1 and 2
-        $applications = LoanApplication::with(['creditScores', 'branch', 'member'])
-            ->whereNotIn('status', [1, 2])
+        // Normal Loan Applications
+        $loanApplications = LoanApplication::with(['creditScores', 'branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'loan';
+                return $item;
+            });
 
-        return view("approvals.loans", compact('applications'));
+        // Mortgage Loan Applications
+        $mortgageLoans = MortgageLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'mortgage';
+                return $item;
+            });
+
+        // Loan Against Applications
+        $loanAgainst = LoanAgainstApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'loan_against';
+                return $item;
+            });
+
+            // Business Loan Applications
+            $businessLoans = BusinessLoanApplication::with(['branch', 'member'])
+                ->whereNotIn('status', [1, 2, 3])
+                ->latest()
+                ->get()
+                ->map(function ($item) {
+                    $item->model_type = 'business_loan';
+                    return $item;
+                });
+
+            // Merge all 4 collections
+            $applications = $loanApplications
+                ->concat($mortgageLoans)
+                ->concat($loanAgainst)
+                ->concat($businessLoans)
+                ->sortByDesc('created_at');
+
+            // Account types array
+            $types = [
+                'loan' => 'Gold Loan',
+                'mortgage' => 'Mortgage Loan',
+                'loan_against' => 'Loan Against',
+                'business_loan' => 'Business Loan',
+            ];
+
+            return view('approvals.loans', compact('applications', 'types'));
     }
 
 
     public function updateStatus(Request $request, $id)
     {
-        $application = LoanApplication::findOrFail($id);
-        $application->status = $request->status;
-        $application->save();
+        Log::info('--- Update Status Started ---', [
+            'id' => $id,
+            'status' => $request->status,
+            'model_type' => $request->model_type,
+        ]);
 
-        return redirect()->back()->with('success', 'Status updated successfully!');
+        $modelType = $request->model_type;
+        $status = $request->status;
+
+        switch ($modelType) {
+            case 'loan':
+                $application = LoanApplication::find($id);
+                break;
+            case 'mortgage':
+                $application = MortgageLoanApplication::find($id);
+                break;
+            case 'loan_against':
+                $application = LoanAgainstApplication::find($id);
+                break;
+            case 'business_loan':
+                $application = BusinessLoanApplication::find($id);
+                break;
+            default:
+                $application = null;
+        }
+
+        if ($application) {
+            $application->status = $status;
+            $application->save();
+
+            Log::info('Status Updated Successfully', [
+                'id' => $application->id,
+                'table' => get_class($application),
+                'new_status' => $status,
+            ]);
+
+            return redirect()->back()->with('success', 'Status updated successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Application not found in any table!');
     }
 
 
     public function approvals_history()
     {
-        $applications = LoanApplication::with(['creditScores', 'branch', 'member'])
-            ->where('status', 1) // approved applications
+        // Normal Loan Applications (approved)
+        $loanApplications = LoanApplication::with(['creditScores', 'branch', 'member'])
+            ->where('status', 1)
             ->latest()
             ->get();
-        //$applications = LoanApplication::with(['creditScores', 'branch', 'member'])->latest()->get();
-        return view("approvals.approvals_history", compact('applications'));
+
+        // Mortgage Loan Applications (approved)
+        $mortgageLoans = MortgageLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get();
+
+        // Loan Against Applications (approved)
+        $loanAgainst = LoanAgainstApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get();
+
+        // Merge all 3 collections
+        $applications = $loanApplications
+            ->concat($mortgageLoans)
+            ->concat($loanAgainst)
+            ->sortByDesc('created_at');
+
+        return view('approvals.approvals_history', compact('applications'));
     }
+
+
 }

@@ -125,9 +125,6 @@
                 <i class="las la-print text-lg"></i>
                 PRINT DOCUMENTS
                 <i class="las la-angle-down text-xs"></i>
-
-
-
             </button>
 
             <!-- Dropdown Menu -->
@@ -186,9 +183,9 @@
                         <i class="las la-pencil-alt"></i>
                     </a>
 
-                    <a href="#" class=" p-2 btn-error">
+                    <!-- <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
-                    </a>
+                    </a> -->
 
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">

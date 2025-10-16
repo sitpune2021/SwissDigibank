@@ -66,22 +66,14 @@
                value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
     </div>
 
-    <!-- Loan Amount -->
-    <div class="mb-4">
-        <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-        <input type="number" name="loan_amount" class="form-input"
-               value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-    </div>
+                    <!-- Loan Amount -->
+                    <div class="mb-4">
+                        <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
+                        <input type="number" name="loan_amount" class="form-input"
+                            value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                    </div>
 
-    <!-- Final Amount -->
-    <div class="mb-4">
-        <label class="md:text-lg font-medium block mb-2">
-            Final Amount To Disburse <span class="text-red-500">*</span>
-        </label>
-        <input type="number" name="final_amount" id="finalAmount" class="form-input" required>
-    </div>
-
-     <h4>Processing Fee</h4>                     
+                    <h4>Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
@@ -140,18 +132,23 @@
                                 </tbody>
                             </table>
 
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="collect_fee" id="collect_fee" data-target="paymodeWrapper" class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
-                            </div>
-
+                        
                             <div id="paymodeWrapper" class="mt-3 hidden">
                                 <!-- pass processing fee to your paymode component -->
                                 <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'" groupName="processing_fee2" />
                             </div>
                         </div>
 
-    <h3>Disbursement Amount :</h3>
+                    <!-- Final Amount -->
+                    <div class="mb-4">
+                        <label class="md:text-lg font-medium block mb-2">
+                            Final Amount To Disburse <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" name="final_amount" id="finalAmount" class="form-input"
+                                value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                    </div>
+
+                    <h3>Disbursement Amount :</h3>
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
                                     <label for="" class="md:text-lg font-medium block mb-4 mt-4">
@@ -160,11 +157,12 @@
                                     </label>
 
                                     <input type="text" id="D_mode_1" name="D_mode_1"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                        value="{{ $disbursement->net_loan_amount ?? '' }}" >
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
                                         <label>
-                                        <input type="radio" name="payment_mode" value="cash"> Cash
+                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
                                         </label>
 
                                         <label>
@@ -264,11 +262,12 @@
                                     </label>
 
                                     <input type="text" id="D_mode_2" name="D_mode_2"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                        value="0" readonly>
                                     
                                     <div class="mt-3">
                                        <label>
-                                        <input type="radio" name="payment_mode2" value="cash"> Cash
+                                        <input type="radio" name="payment_mode2" value="cash" checked> Cash
                                         </label>
                                         <label>
                                         <input type="radio" name="payment_mode2" value="cheque"> Cheque

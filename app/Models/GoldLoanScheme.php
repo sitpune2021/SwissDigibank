@@ -31,6 +31,10 @@ class GoldLoanScheme extends Model
     'stationary_charge',
     'maintenance_charge',
     'collection',
+    'from_date',
+    'to_date',
+    'penal_rate_interest',
+    'annual_rate_interest',
 ];
 
     public function applications()
