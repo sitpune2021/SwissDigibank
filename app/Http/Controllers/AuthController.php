@@ -10,10 +10,8 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
-    // Login API
     public function login(Request $request)
     {
-        // Basic validation: username required (email or mobile), password required
         $data = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string|min:6',
@@ -22,15 +20,11 @@ class AuthController extends Controller
         $username = trim($data['username']);
         $password = $data['password'];
 
-        // Detect if username is an email
         if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
             $user = User::where('email', $username)->first();
         } else {
-            // Normalize mobile: remove spaces, dashes, parentheses
             $normalizedMobile = preg_replace('/[^\d\+]/', '', $username);
 
-            // Basic mobile format check (adjust regex for your expected formats)
-            // Accepts digits optionally starting with +, length between 7 and 15
             if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
                 return response()->json([
                     'status' => false,
@@ -38,14 +32,10 @@ class AuthController extends Controller
                 ], 422);
             }
 
-            // Often mobile numbers are stored without '+' and non-digit chars. Adjust as needed.
-            // Try both with and without leading '+' depending on your storage
             $user = User::where('mobile', $normalizedMobile)
                 ->orWhere('mobile', ltrim($normalizedMobile, '+'))
                 ->first();
         }
-
-        // If user not found or password doesn't match
         if (!$user || !Hash::check($password, $user->password)) {
             return response()->json([
                 'status' => false,
@@ -61,17 +51,25 @@ class AuthController extends Controller
             ], 403);
         }
 
-        // Create OTP and expiry
         $otp = rand(100000, 999999);
         $user->otp = $otp;
-        $user->otp_expires_at = now()->addMinutes(10);
+        $user->otp_expires_at = now()->addMinutes(5);
         $user->save();
+        try {
 
-        // In production: send OTP via SMS or email. Don't return OTP.
+            $user = \App\Models\User::find($user->id);
+            $dlttemplateid = 1707172240212439291;
+            $mobile = $user->mobile;
+            $message = "Your login OTP is $otp which is valid for 5 min. Do not disclose OTP to anyone. SBC GLOBAL";
+
+            \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+        } catch (\Exception $e) {
+            Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+        }
         return response()->json([
             'status' => true,
             'message' => 'OTP sent successfully.',
-            'otp' => $otp, // remove this in production
+            'otp' => $otp,
         ]);
     }
     public function verifyOtp(Request $request)
