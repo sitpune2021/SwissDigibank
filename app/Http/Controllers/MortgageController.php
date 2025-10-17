@@ -12,13 +12,14 @@ use App\Models\Scheme;
 use App\Models\MortgageLoanApplication;
 use App\Models\MortgageProperty;
 use App\Models\Calculator;
-use App\Models\LoanCreditScore;
+use App\Models\MortgageCreditScore;
 use Carbon\Carbon;
 use App\Exports\LinePropertExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class MortgageController extends Controller
 {
@@ -285,36 +286,186 @@ class MortgageController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-        // Step 1: Save Loan Application
-        $application = MortgageLoanApplication::create([
-            'application_date' => $request->application_date,
-            'member_id' => $request->member_id,
-            'scheme_id' => $request->scheme_id,
-            'loan_amount' => $request->loan_amount,
-            'branch_id' => $request->branch_id,
-            'tenure_value' => $request->tenure_value,
-            'net_loan_amount' => $request->net_loan_amount,
-            'purpose_of_loan' => $request->purpose_of_loan,
+        Log::info('--- Loan Application Store Started ---', [
+            'user_id' => Auth::id(),
+            'input_data' => $request->all(),
         ]);
 
-        // Step 2: Save Multiple Property Details
-        if ($request->filled('property_type')) {
-            foreach ($request->property_type as $index => $type) {
-                MortgageProperty::create([
-                    'loan_application_id' => $application->id,
-                    'property_type' => $type,
-                    'ownership_type' => $request->ownership_type[$index] ?? null,
-                    'property_address' => $request->property_address[$index] ?? null,
-                    'city' => $request->city[$index] ?? null,
-                    'state' => $request->state[$index] ?? null,
-                    'area' => $request->area[$index] ?? null,
-                    'property_value' => $request->property_value[$index] ?? 0,
+        try {
+            // Step 1: Convert application_date (DD-MM-YYYY → YYYY-MM-DD)
+            if ($request->filled('application_date')) {
+                try {
+                    $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
+                    $request->merge(['application_date' => $formattedDate]);
+                    Log::info('Converted application_date', ['formatted' => $formattedDate]);
+                } catch (Exception $e) {
+                    Log::warning('Invalid application_date format', ['value' => $request->application_date]);
+                }
+            }
+
+            // Step 2: Map total_security_amount → security_amount
+            if ($request->filled('total_security_amount')) {
+                $request->merge(['security_amount' => $request->total_security_amount]);
+                Log::info('Mapped total_security_amount → security_amount', [
+                    'security_amount' => $request->total_security_amount,
                 ]);
             }
-        }
 
-        return redirect()->route('mortgage.applications.index')
-            ->with('success', 'Loan Application and Property saved successfully!');
+            // Step 3: Validation
+            $validated = $request->validate([
+                'application_date' => 'required|date',
+                'member_id' => 'required|exists:members,id',
+                'branch_id' => 'required|exists:branches,id',
+                'scheme_id' => 'required|exists:mortgage_schemes,id',
+                'loan_amount' => 'required|numeric|min:1',
+                'security_amount' => 'required|numeric|min:1',
+                'purpose_of_loan' => 'required|string|max:255',
+                'tenure_type' => 'required|string',
+                'tenure_value' => 'required|numeric|min:1',
+                'emi_collection' => 'required|string',
+                'credit_period' => 'required|numeric|min:1',
+                'insurance_amount' => 'required|numeric|min:1',
+                'net_loan_amount' => 'required|numeric|min:1',
+            ]);
+
+            Log::info('Validation Passed');
+
+            // Step 4: Create main loan application
+            $loanApplication = MortgageLoanApplication::create([
+                'application_date' => $request->application_date,
+                'member_id' => $request->member_id,
+                'branch_id' => $request->branch_id,
+                'scheme_id' => $request->scheme_id,
+                'co_applicant_1_id' => $request->co_applicant_1_id,
+                'co_applicant_2_id' => $request->co_applicant_2_id,
+                'guarantor_1_id' => $request->guarantor_1_id,
+                'guarantor_2_id' => $request->guarantor_2_id,
+                'guarantor_3_id' => $request->guarantor_3_id,
+                'guarantor_4_id' => $request->guarantor_4_id,
+                'tenure_type' => $request->tenure_type,
+                'tenure_value' => $request->tenure_value,
+                'emi_collection' => $request->emi_collection,
+                'credit_period' => $request->credit_period,
+                'loan_amount' => $request->loan_amount,
+                'insurance_amount' => $request->insurance_amount,
+                'net_loan_amount' => $request->net_loan_amount,
+                'purpose_of_loan' => $request->purpose_of_loan,
+                'security_amount' => $request->security_amount,
+                'securety_type' => $request->securety_type ?? 'Property',
+                'max_loan_amount' => $request->max_loan_amount,
+                'max_loan_limit' => $request->max_loan_limit,
+                'maximum_approvable_amount' => $request->maximum_approvable_amount,
+                'approved_loan_amount' => $request->approved_loan_amount,
+                'created_by' => Auth::id(),
+            ]);
+
+            Log::info('Loan Application Inserted Successfully', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            // Step 5: Insert multiple CIBIL records
+            if ($request->has('cibil_type') && is_array($request->cibil_type)) {
+                foreach ($request->cibil_type as $index => $type) {
+                    if (empty($type)) continue;
+
+                    try {
+                        $reportDate = null;
+                        if (!empty($request->report_date[$index])) {
+                            $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
+                        }
+
+                        $filePath = null;
+                        if ($request->hasFile("report_file.$index")) {
+                            $filePath = $request->file("report_file.$index")
+                                ->store('uploads/cibil_reports', 'public');
+                        }
+
+                        MortgageCreditScore::create([
+                            'loan_application_id' => $loanApplication->id,
+                            'cibil_type' => $type,
+                            'cibil_score' => $request->cibil_score[$index] ?? null,
+                            'report_date' => $reportDate,
+                            'report_file_path' => $filePath,
+                        ]);
+
+                        Log::info('CIBIL Record Inserted', [
+                            'type' => $type,
+                            'score' => $request->cibil_score[$index] ?? null,
+                        ]);
+                    } catch (Exception $e) {
+                        Log::warning('Failed to insert CIBIL record', [
+                            'index' => $index,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
+
+            // Step 6: Insert property details
+        
+            if ($request->has('properties') && is_array($request->properties)) {
+                foreach ($request->properties as $i => $prop) {
+                    if (empty($prop['property_type'])) continue;
+
+                        try {
+                        MortgageProperty::create([
+                        'loan_application_id' => $loanApplication->id,
+                        'property_type' => $prop['property_type'] ?? null,
+                        'doc_number' => $prop['doc_number'] ?? null,
+                        'registrar_name' => $prop['registrar_name'] ?? null,
+                        'owner_name' => $prop['owner_name'] ?? null,
+                        'parent_name' => $prop['parent_name'] ?? null,
+                        'plot_no' => $prop['plot_no'] ?? null,
+                        'tehsil' => $prop['tehsil'] ?? null,
+                        'district' => $prop['district'] ?? null,
+                        'area_sqft' => $prop['area'] ?? null,
+                        'expected_value' => $prop['property_value'] ?? null,
+                        'registered' => $prop['registered'] ?? 'no',
+                        // Boundaries as per Sale Deed
+                        'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
+                        'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
+                        'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
+                        'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
+                        // Boundaries as per Technical
+                        'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
+                        'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
+                        'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
+                        'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
+                    ]);
+
+
+                            Log::info('Property Record Inserted', [
+                                'property_type' => $prop['property_type'],
+                                'expected_value' => $prop['property_value'] ?? null,
+                            ]);
+                        } catch (Exception $e) {
+                            Log::warning('Failed to insert one property record', [
+                                'index' => $i,
+                                'error' => $e->getMessage(),
+                            ]);
+                        }
+                    }
+                } else {
+                    Log::info('No property details found in request');
+                }
+
+
+            // Step 7: Final success response
+            Log::info('All Data Saved Successfully', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            return redirect()->route('mortgage.applications.index')
+                ->with('success', 'Loan, Credit Score & Property details saved successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Error while storing Loan Application', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving the loan application.');
+        }
     }
 
 
@@ -348,19 +499,19 @@ class MortgageController extends Controller
         return view("mortgage.applications.view", compact('application'));
     }
 
-   public function appedit($id)
+    public function appedit($id)
     {
-        $application = MortgageLoanApplication::with(['member', 'scheme'])->findOrFail($id);
+        $application = MortgageLoanApplication::with(['member', 'scheme', 'creditScores', 'properties'])->findOrFail($id);
 
-        // Dropdown data अगर चाहिए तो यहाँ से pass करो
         $members = Member::all();
         $schemes = MortgageScheme::all();
-        $branch = Branch::all();
-        $scheme = MortgageScheme::all();
-        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+        $scheme  = MortgageScheme::all();
+        $branch  = Branch::all();
+        $banks   = Bank::pluck('name', 'id');
 
-        return view('mortgage.applications.create', compact('application', 'members', 'schemes','branch', 'scheme','banks'));
+        return view('mortgage.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks'));
     }
+
 
     public function appupdate(Request $request, $id)
     {
@@ -369,11 +520,61 @@ class MortgageController extends Controller
             'member_id'        => 'required|exists:members,id',
             'scheme_id'        => 'required|exists:gold_loan_schemes,id',
             'loan_amount'      => 'required|numeric',
-            // बाकी fields का validation
         ]);
 
         $application = MortgageLoanApplication::findOrFail($id);
-        $application->update($request->all());
+        //$application->update($request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']));
+        // Convert date format before update
+        $data = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
+
+        // Convert application_date from d-m-Y → Y-m-d
+        if (!empty($data['application_date'])) {
+            $data['application_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
+        }
+
+        // Convert cheque_date if it exists and not already in Y-m-d
+        if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
+            $data['cheque_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
+        }
+
+        // Convert transfer_date if exists
+        if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
+            $data['transfer_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
+        }
+
+        // Now safely update
+        $application->update($data);
+
+        // Delete old CIBIL reports (if editing)
+        $application->creditScores()->delete();
+
+        // Insert new/updated CIBIL rows
+        if ($request->has('cibil_type')) {
+            foreach ($request->cibil_type as $index => $type) {
+                $filePath = null;
+                if ($request->hasFile("report_file.$index")) {
+                    $filePath = $request->file("report_file.$index")->store('cibil_reports', 'public');
+                }
+
+                $application->creditScores()->create([
+                    'cibil_type' => $type,
+                    'cibil_score' => $request->cibil_score[$index],
+                    'report_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
+                    'report_file_path' => $filePath,
+                ]);
+            }
+        }
+
+        // Delete old property details
+    $application->properties()->delete();
+
+    // Insert updated property details
+    if ($request->has('properties')) {
+        foreach ($request->properties as $prop) {
+            $application->properties()->create($prop);
+        }
+    }
+
 
         return redirect()
             ->route('mortgage.applications.view', $application->id)

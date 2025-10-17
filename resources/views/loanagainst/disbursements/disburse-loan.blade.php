@@ -200,6 +200,7 @@
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                                             <input type="date" id="cheque_date" name="cheque_date"
+                                            value="{{ old('cheque_date', date('Y-m-d')) }}"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
                                     </div>
@@ -210,7 +211,8 @@
                                     <label class="block text-sm font-medium text-gray-700">
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" 
+                                    <input type="date" id="transfer_date" name="transfer_date"
+                                    value="{{ old('transfer_date', date('Y-m-d')) }}" 
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                                 <div>
@@ -301,6 +303,7 @@
                                             <div class="mt-3">
                                                 <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                                                 <input type="date" id="cheque_date2" name="cheque_date2"
+                                                value="{{ old('cheque_date2', date('Y-m-d')) }}" 
                                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                         </div>
@@ -311,6 +314,7 @@
                                                     Transfer Date <span class="text-red-500">*</span>
                                                 </label>
                                                 <input type="date" id="transfer_date2" name="transfer_date2" 
+                                                value="{{ old('transfer_date2', date('Y-m-d')) }}" 
                                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                             <div>
@@ -752,6 +756,16 @@ document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
             });
         });
     });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('cheque_date').value = today;
+    document.getElementById('transfer_date').value = today;
+    document.getElementById('cheque_date2').value = today;
+    document.getElementById('transfer_date2').value = today;
+});
 </script>
     
 

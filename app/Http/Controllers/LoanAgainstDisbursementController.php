@@ -22,14 +22,16 @@ class LoanAgainstDisbursementController extends Controller
    
     public function index()
     {
-        // Pehle se disbursed ho chuke applications ke IDs nikalo
-        $disbursedIds = LoanAgainstDisursement::pluck('loan_application_id');
-
-        //  approved (status = 1) applications fetch 
         $disbursements = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
-            ->where('status', 1) //  Only approved
-            ->whereNotIn('id', $disbursedIds)
+            ->where('status', '1')
+            // ->whereNotIn('id', $disbursedIds)
             ->get();
+
+        Log::info('Loan Query Result', [
+            'count' => $disbursements->count(),
+            'ids' => $disbursements->pluck('id')
+        ]);
+
 
         return view('loanagainst.disbursements.index', compact('disbursements'));
     }

@@ -54,10 +54,7 @@ class MortgageLoanApplication extends Model
     ];
 
    // app/Models/LoanApplication.php
-public function creditScores()
-{
-    return $this->hasMany(LoanCreditScore::class, 'loan_application_id');
-}
+
 // LoanApplication.php
 public function member()
 {
@@ -85,6 +82,11 @@ public function scheme()
 public function properties()
 {
     return $this->hasMany(MortgageProperty::class, 'loan_application_id');
+}
+
+public function creditScores()
+{
+    return $this->hasMany(MortgageCreditScore::class, 'loan_application_id');
 }
 
 

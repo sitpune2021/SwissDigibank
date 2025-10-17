@@ -610,16 +610,17 @@
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="credited" value="yes"
-                                                {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                                {{ old('credited', ($application->credited ?? 0)) == 1 ? 'checked' : '' }}>
                                             <span>Yes</span>
                                         </label>
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="credited" value="no"
-                                                {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                                {{ old('credited', ($application->credited ?? 0)) == 0 ? 'checked' : '' }}>
                                             <span>No</span>
                                         </label>
                                     </div>
                                 </div>
+
                             </div>
                         
                         <p for="" class=" text-error text-sm block mt-3 mb-4">
@@ -876,11 +877,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Default dates
+    // ✅ Default dates only if no value set
     let today = new Date().toISOString().split('T')[0];
-    document.getElementById("cheque_date").value = today;
-    document.getElementById("transfer_date").value = today;
+    if (!document.getElementById("cheque_date").value) {
+        document.getElementById("cheque_date").value = today;
+    }
+    if (!document.getElementById("transfer_date").value) {
+        document.getElementById("transfer_date").value = today;
+    }
+
+    // ✅ Check which pay mode is already selected and show fields
+    const selectedMode = document.querySelector('input[name="fee_mode"]:checked');
+    if (selectedMode) {
+        if (selectedMode.value === "cheque") {
+            bankDropdownWrapper.classList.remove("hidden");
+        } else if (selectedMode.value === "online") {
+            onlineFields.classList.remove("hidden");
+        }
+    }
 });
+
 </script>
 
 

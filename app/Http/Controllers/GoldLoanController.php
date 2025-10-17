@@ -68,6 +68,7 @@ class GoldLoanController extends Controller
             'annual_rate_interest' => 'nullable|numeric|min:0',
             'is_active' => 'required|in:0,1',
         ], [
+            'min_loan_amount.max' => 'Minimum loan amount cannot exceed ₹2,00,000.',
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
         ]);
 
@@ -111,7 +112,6 @@ class GoldLoanController extends Controller
         $scheme = GoldLoanScheme::all();
         return view("gold-loan.calculator.index", compact('scheme'));
     }
-
 
     public function calculateResult(Request $request)
     {
@@ -235,7 +235,6 @@ class GoldLoanController extends Controller
     }
 
 
-     // GoldLoanController.php
     public function appindex()
     {
         //  loan applications fetch 
@@ -255,7 +254,6 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
    
-
     public function storeLoanApplication(Request $request)
     {
         // dd($request->all());
@@ -424,7 +422,6 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view", compact('application'));
     }
-
 
     public function appedit($id)
     {

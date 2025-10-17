@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 
 class DisbursementController extends Controller
@@ -18,20 +19,21 @@ class DisbursementController extends Controller
     
     public function index()
     {
-        // Pehle se disbursed ho chuke applications ke IDs nikalo
-        $disbursedIds = GoldLoanDisbursement::pluck('loan_application_id');
-
-        // Sirf approved (status = 1) aur abhi tak disbursed na hue applications fetch karo
-        $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
-            ->where('status', 1) //  Only approved
-            ->whereNotIn('id', $disbursedIds)
+             $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', '1')
+            // ->whereNotIn('id', $disbursedIds)
             ->get();
+
+        Log::info('Loan Query Result', [
+            'count' => $disbursements->count(),
+            'ids' => $disbursements->pluck('id')
+        ]);
 
         return view('gold-loan.disbursements.index', compact('disbursements'));
     }
 
 
-    public function cancelLoan($id)
+     public function cancelLoan($id)
     {
         $loan = LoanApplication::find($id);
 
@@ -39,53 +41,40 @@ class DisbursementController extends Controller
             return redirect()->back()->with('error', 'Loan not found.');
         }
 
-        // Update status to 0 (cancelled / draft)
+        // Update status to 0 (cancelled )
         $loan->status = 3;
         $loan->save();
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
+
     }
 
 
-    public function store(Request $request)
+     public function store(Request $request)
     {
-        
-        Log::info('--- Loan Disbursement Store Started ---', ['input_data' => $request->all()]);
-
-        DB::beginTransaction();
-
         try {
-            //  Validation using Validator
-            $validator = Validator::make($request->all(), [
-                'loan_application_id' => 'required|exists:loan_applications,id',
-                'disbursal_date' => 'required',
-                'emi_date' => 'required',
-                'loan_amount' => 'required|numeric',
-                'final_amount' => 'required|numeric',
+            // 🧾 Start log
+            Log::info('--- Loan Disbursement Store Started ---', [
+                'user_id' => auth()->id(),
+                'input' => $request->all(),
             ]);
 
-            if ($validator->fails()) {
-                // ❌ Validation failed – log details
-                Log::error('❌ Validation failed for Loan Disbursement', [
-                    'errors' => $validator->errors()->toArray(),
-                    'input' => $request->all(),
-                ]);
-
-                return back()
-                    ->withErrors($validator)
-                    ->withInput()
-                    ->with('error', 'Validation failed. Please check required fields.');
-            }
-
-            Log::info('✅ Validation passed successfully', [
-                'validated_data' => $validator->validated(),
+            // ✅ Validate input
+            $validated = $request->validate([
+                'loan_application_id' => 'required|exists:loan_against_applications,id',
+                'disbursal_date' => 'required|date_format:d-m-Y',
+                'emi_date' => 'required|date_format:d-m-Y',
+                'loan_amount' => 'required|numeric|min:1',
+                'final_amount' => 'required|numeric|min:1',
             ]);
 
-            // ✅ Convert Dates
+            // 🗓 Date conversion
             $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
             $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
 
-            // ✅ Insert into gold_loan_disbursements
+            DB::beginTransaction();
+
+            // 💾 Insert into disbursements
             $disbursement = GoldLoanDisbursement::create([
                 'loan_application_id' => $request->loan_application_id,
                 'disbursal_date' => $disbursalDate,
@@ -102,7 +91,7 @@ class DisbursementController extends Controller
                 'advance_interest' => $request->advance_interest ?? 0,
                 'final_amount' => $request->final_amount,
 
-                // Disburse Mode 1
+                // Disburse mode 1
                 'disburse_mode1' => $request->D_mode_1,
                 'payment_mode1' => $request->payment_mode,
                 'bank_id1' => $request->bank_id,
@@ -113,42 +102,57 @@ class DisbursementController extends Controller
                 'transfer_mode1' => $request->transfer_mode,
                 'saving_acc1' => $request->saving,
 
-                // Disburse Mode 2
+                // Disburse mode 2
                 'disburse_mode2' => $request->D_mode_2,
                 'payment_mode2' => $request->payment_mode2,
                 'bank_id2' => $request->bank_id2,
                 'cheque_no2' => $request->cheque_no2,
-                'cheque_date2' => $request->cheque_date2 ? Carbon::createFromFormat('d-m-Y', $request->cheque_date2)->format('Y-m-d') : null,
-                'transfer_date2' => $request->transfer_date2 ? Carbon::createFromFormat('d-m-Y', $request->transfer_date2)->format('Y-m-d') : null,
+                'cheque_date2' => $request->cheque_date2 ? Carbon::parse($request->cheque_date2)->format('Y-m-d') : null,
+                'transfer_date2' => $request->transfer_date2 ? Carbon::parse($request->transfer_date2)->format('Y-m-d') : null,
                 'utr_no2' => $request->utr_no2,
                 'transfer_mode2' => $request->transfer_mode2,
                 'saving_acc2' => $request->saving2,
             ]);
 
-            Log::info('✅ Disbursement inserted successfully', ['id' => $disbursement->id]);
-
-            // ✅ Update loan_applications.status = 2
-            LoanApplication::where('id', $request->loan_application_id)->update(['status' => 2]);
-
-            Log::info('✅ Loan application status updated to 2', [
-                'loan_application_id' => $request->loan_application_id
-            ]);
+            // 🟢 Update application status
+            DB::table('loan_applications')
+                ->where('id', $request->loan_application_id)
+                ->update(['status' => 2]);
 
             DB::commit();
+
+            Log::info('✅ Loan Disbursement Created Successfully', [
+                'disbursement_id' => $disbursement->id,
+            ]);
 
             return redirect()
                 ->route('gold-loan.disbursements.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
+        }
 
-        } catch (Exception $e) {
+        // ⚠️ Validation error → show on form
+        catch (ValidationException $e) {
+            Log::warning('Validation Failed During Loan Disbursement', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
+            throw $e;
+        }
+
+        // Any other system/DB error
+        catch (Exception $e) {
             DB::rollBack();
 
-            Log::error('❌ Error in Loan Disbursement Store', [
-                'error_message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+            Log::error('❌ Loan Disbursement Store Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'input' => $request->all(),
             ]);
 
-            return back()->with('error', 'Something went wrong! Please check log file.');
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong while saving the disbursement. Please try again.');
         }
     }
 

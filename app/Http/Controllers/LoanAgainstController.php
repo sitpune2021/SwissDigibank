@@ -59,6 +59,19 @@ class LoanAgainstController extends Controller
                     'annual_interest_rate' => 'required|numeric|min:0',
                     'overdue_interest_rate' => 'required|numeric|min:0',
                     'is_active' => 'required|in:0,1',
+                     // New fields (optional)
+                    'penalty_charge' => 'nullable|numeric|min:0',
+                    'processing_fee' => 'nullable|numeric|min:0',
+                    'stamp_duty_charge' => 'nullable|numeric|min:0',
+                    'insurance_fee' => 'nullable|numeric|min:0',
+                    'fore_closer_charge' => 'nullable|numeric|min:0',
+                    'credit_period' => 'nullable|integer|min:0',
+                    'sms_charge' => 'nullable|numeric|min:0',
+                    'fuel_charge' => 'nullable|numeric|min:0',
+                    'stationary_charge' => 'nullable|numeric|min:0',
+                    'gold_loan_setting' => 'nullable|string|max:255',
+                    'maintenance_charge' => 'nullable|numeric|min:0',
+                    'collection' => 'nullable|numeric|min:0',
                 ], [
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
                 ]);
@@ -123,6 +136,7 @@ class LoanAgainstController extends Controller
         $scheme = LoanAgainstScheme::findOrFail($id);
         return view("loanagainst.schemes.view", compact('scheme'));
     }
+
 
     public function calculator()
     {
@@ -252,7 +266,6 @@ class LoanAgainstController extends Controller
     }
 
 
-     // GoldLoanController.php
     public function appindex()
     {
         // loan applications fetch with pagination
@@ -262,7 +275,6 @@ class LoanAgainstController extends Controller
 
         return view("loanagainst.applications.index", compact('applications'));
     }
-
 
 
     public function appcreate() 
@@ -278,7 +290,7 @@ class LoanAgainstController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-        Log::info('--- Loan Application Store Started ---', [
+        Log::info('--- Loan Against Deposite Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
         ]);
@@ -414,17 +426,17 @@ class LoanAgainstController extends Controller
             }
 
 
-            Log::info('Loan Application created successfully', [
+            Log::info('Loan Against Deposite created successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
 
             // ... (rest of your code — credit score logic etc.)
 
             return redirect()->route('loanagainst.applications.index')
-                ->with('success', 'Loan Application + Credit Scores saved successfully!');
+                ->with('success', 'Loan Against Deposite + Credit Scores saved successfully!');
 
             } catch (Exception $e) {
-                Log::error('Error while storing Loan Application', [
+                Log::error('Error while storing Loan Against Deposite', [
                     'error_message' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
