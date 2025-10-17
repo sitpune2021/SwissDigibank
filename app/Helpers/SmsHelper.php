@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\Log;
 
 class SmsHelper
 {
-    public static function sendSms($mobile, $message)
+    public static function sendSms($mobile, $message,$dlttemplateid)
     {
-        // $mobile = '7020672418';
         try {
 
             $url = "https://api.voicensms.in/SMSAPI/webresources/CreateSMSCampaignPost";
@@ -21,6 +20,7 @@ class SmsHelper
                 "credittype"  => 7,
                 "senderid"    => "SBCGLB",
                 "templateid"  => 0,
+                "dlttemplateid" => $dlttemplateid,
                 "message"     => $message,
                 "ukey"        => "8ZSyxFHP9LOCSZZUotdWMdzoK",
                 "isrefno"     => true

@@ -282,8 +282,24 @@ class AccountsController extends Controller
             DB::commit();
             Log::info('DB transaction committed');
 
+            try {
+                $member = \App\Models\Member::find($account->member_id);
+
+                $dlttemplateid = 1707172181384295971;
+                $mobile = $member->member_info_mobile_no;
+
+                $account1 = $account->account_no;
+
+                $message = "Dear Customer, we have received your saving a/c application. Your temp. a/c no. is $account1. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
+
             return redirect()->route('accounts.show', base64_encode($account->id))
                 ->with('success', 'Please approve status!.');
+
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {

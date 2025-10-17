@@ -135,8 +135,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
         Route::get('/ddsaccount/{id}/withdraw', [DdsAccountsController::class, 'createwithdraw'])->name('ddsaccounts.withdraw-create');
-       Route::post('/ddsaccount/withdraw/store', [DdsAccountsController::class, 'storewithdraw'])->name('ddsaccounts.withdraw-store');
-
+        Route::post('/ddsaccount/withdraw/store', [DdsAccountsController::class, 'storewithdraw'])->name('ddsaccounts.withdraw-store');
     });
 
     Route::resource('rd-calculator', RDCalculatorController::class)
@@ -726,8 +725,6 @@ Route::group(['prefix' => 'bussiness'], function () {
     // bussiness Loan Account Page
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])
         ->name('bussiness.account.index');
-
-
 });
 
 
@@ -804,8 +801,6 @@ Route::group(['prefix' => 'cc_od'], function () {
     // cc_od Loan Account Page
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])
         ->name('cc_od.account.index');
-
-
 });
 
 
@@ -858,15 +853,19 @@ Route::get('/dev/run/{action}', function ($action) {
                 Artisan::call('db:seed');
                 return "Database seeding completed!";
 
-                case 'seed-menu':
+            case 'seed-menu':
                 Artisan::call('db:seed', ['--class' => 'MenuSeeder']);
                 return "MenuSeeder database seeding completed!";
+
+            case 'seed-role':
+                Artisan::call('db:seed', ['--class' => 'RoleSeeder']);
+                return "RoleSeeder database seeding completed!";
 
             case 'storage-link':
                 Artisan::call('storage:link');
                 $output = Artisan::output();
                 return "Storage link created!"  . nl2br($output);
-                
+
             case 'install':
                 exec('composer install');
                 return "composer install executed!";
