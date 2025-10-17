@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LoanAgainstCreditScore extends Model
+class MortgageCreditScore extends Model
 {
     use HasFactory;
+    protected $table = 'mortgage_loan_credit_scores';
 
     protected $fillable = [
         'loan_application_id',
@@ -18,9 +19,9 @@ class LoanAgainstCreditScore extends Model
     ];
 
     
-public function loanApplication()
+public function application()
 {
-    return $this->belongsTo(LoanAgainstApplication::class, 'loan_application_id');
+    return $this->belongsTo(MortgageLoanApplication::class, 'loan_application_id');
 }
 
 }

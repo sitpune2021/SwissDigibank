@@ -417,7 +417,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
     // Disbursement GOld Loan
     Route::get('disbursements/index', [DisbursementController::class, 'index'])
         ->name('gold-loan.disbursements.index');
-    Route::post('/gold-loan/disbursements/cancel/{id}', [DisbursementController::class, 'cancelLoan'])->name('disbursements.cancel');
+    Route::post('/gold-loan/disbursements/cancel/{id}', [DisbursementController::class, 'cancelLoan'])->name('golddisbursements.cancel');
 
     // disburse-loan page   
     Route::get('disbursements/disburse-loan/{id}', [DisbursementController::class, 'show'])

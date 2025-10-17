@@ -76,7 +76,7 @@
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" id="" name="min_loan_amount" value="{{ old('min_loan_amount', $scheme->min_loan_amount ?? '') }}"
+                    <input type="number" id="" max="200000" name="min_loan_amount" value="{{ old('min_loan_amount', $scheme->min_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="0.0">
                      @error('min_loan_amount')
@@ -649,15 +649,21 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const minInput = document.querySelector('input[name="min_loan_amount"]');
     const maxInput = document.querySelector('input[name="max_loan_amount"]');
-    maxInput.addEventListener('input', function() {
-        if (parseFloat(this.value) > 200000) {
-            alert("Maximum loan amount cannot exceed ₹2,00,000!");
-            this.value = 200000;
+
+    function validateLimit(input) {
+        if (parseFloat(input.value) > 200000) {
+            alert("Loan amount cannot exceed ₹2,00,000!");
+            input.value = 200000;
         }
-    });
-    });
+    }
+
+    minInput.addEventListener('input', () => validateLimit(minInput));
+    maxInput.addEventListener('input', () => validateLimit(maxInput));
+});
 </script>
+
 
 @endsection

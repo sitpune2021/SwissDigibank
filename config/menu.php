@@ -104,7 +104,7 @@ return [
             ['title' => 'APPLICATIONS', 'route' => 'mortgage.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'mortgage.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'mortgage.account.index'],
-            ['title' => 'LINE PROPERTY REPORT', 'route' => 'mortgage.lineproperty.index'],
+            ['title' => 'LIEN PROPERTY REPORT', 'route' => 'mortgage.lineproperty.index'],
         ],
     ],
     [
@@ -118,7 +118,7 @@ return [
             ['title' => 'APPLICATIONS', 'route' => 'loanagainst.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'loanagainst.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'loanagainst.account.index'],
-            ['title' => 'LINE DEPOSITS REPORT', 'route' => 'loanagainst.lineproperty.index'],
+            ['title' => 'LIEN DEPOSITS REPORT', 'route' => 'loanagainst.lineproperty.index'],
         ],
     ],
     [

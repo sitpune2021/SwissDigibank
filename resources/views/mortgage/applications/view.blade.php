@@ -96,11 +96,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Gold Loan Application - 00591 </h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500 text-sm">Gold Loan Applications </a> >
-                <a href="#" class="text-gray-500 text-sm">00591</a>
-            </p>
+            <h1 class="text-2xl uppercase font-semibold">Gold Loan Application </h1>
         </div>
     </div>
 

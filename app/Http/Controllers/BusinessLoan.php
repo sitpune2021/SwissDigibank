@@ -11,9 +11,9 @@ use App\Models\Branch;
 use App\Models\Scheme;
 use App\Models\BusinessLoanApplication;
 use App\Models\Calculator;
-use App\Models\LoanCreditScore;
+use App\Models\BusinessLoanCredit;
 use Carbon\Carbon;
-use App\Exports\bussinessExport;
+
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -139,6 +139,7 @@ class BusinessLoan extends Controller
         $scheme = BusinessLoanScheme::findOrFail($id);
         return view("bussiness.schemes.view", compact('scheme'));
     }
+
 
     public function calculator()
     {
@@ -280,7 +281,6 @@ class BusinessLoan extends Controller
     }
 
 
-
     public function appcreate() 
     {
         //$members = Member::all();
@@ -292,30 +292,30 @@ class BusinessLoan extends Controller
     }
    
 
-  public function storeLoanApplication(Request $request)
-{
-    Log::info('--- Business Loan Application Store Started ---', [
-        'user_id' => Auth::id(),
-        'input_data' => $request->all(),
-    ]);
+    public function storeLoanApplication(Request $request)
+    {
+        Log::info('--- Business Loan Application Store Started ---', [
+            'user_id' => Auth::id(),
+            'input_data' => $request->all(),
+        ]);
 
-    // 🧩 Validation (Security fields removed)
-    try {
-        $validated = $request->validate([
-            'application_date'   => 'required|date',
-            'member_id'          => 'required|exists:members,id',
-            'branch_id'          => 'required|exists:branches,id',
-            'scheme_id'          => 'required|exists:loan_against_schemes,id',
-            'loan_amount'        => 'required|numeric|min:1',
-            'purpose_of_loan'    => 'required|string|max:255',
-            'tenure_type'        => 'required|string',
-            'net_loan_amount'    => 'required|numeric|min:1',
-            'insurance_amount'   => 'required|numeric|min:1',
-            'credit_period'      => 'required|numeric|min:1',
-            'emi_collection'     => 'required|string',
-            'tenure_value'       => 'required|numeric|min:1',
-            'charge_per_emi' => 'required|in:0,1',
-        ], [
+        // Validation (Security fields removed)
+        try {
+            $validated = $request->validate([
+                'application_date'   => 'required|date',
+                'member_id'          => 'required|exists:members,id',
+                'branch_id'          => 'required|exists:branches,id',
+                'scheme_id'          => 'required|exists:loan_against_schemes,id',
+                'loan_amount'        => 'required|numeric|min:1',
+                'purpose_of_loan'    => 'required|string|max:255',
+                'tenure_type'        => 'required|string',
+                'net_loan_amount'    => 'required|numeric|min:1',
+                'insurance_amount'   => 'required|numeric|min:1',
+                'credit_period'      => 'required|numeric|min:1',
+                'emi_collection'     => 'required|string',
+                'tenure_value'       => 'required|numeric|min:1',
+                'charge_per_emi' => 'required|in:0,1',
+            ], [
             'application_date.required' => 'Please select the application date.',
             'member_id.required'        => 'Please select a member.',
             'branch_id.required'        => 'Please select a branch.',
@@ -331,112 +331,109 @@ class BusinessLoan extends Controller
             'credit_period.required'    => 'Please enter Credit Period.',
         ]);
 
-        Log::info('✅ Validation passed successfully.');
-    } catch (ValidationException $e) {
-        Log::error('❌ Validation failed', [
-            'errors' => $e->errors(),
-        ]);
-
-        return back()->withErrors($e->errors())->withInput();
-    }
-
-    try {
-        // ✅ Create record (Security fields removed, null sent instead)
-        $loanApplication = BusinessLoanApplication::create([
-            'application_date'              => $request->application_date,
-            'member_id'                     => $request->member_id,
-            'co_applicant_1_id'             => $request->co_applicant_1_id,
-            'co_applicant_2_id'             => $request->co_applicant_2_id,
-            'branch_id'                     => $request->branch_id,
-            'advisor_id'                    => $request->advisor_id,
-            'guarantor_1_id'                => $request->guarantor_1_id,
-            'guarantor_2_id'                => $request->guarantor_2_id,
-            'guarantor_3_id'                => $request->guarantor_3_id,
-            'guarantor_4_id'                => $request->guarantor_4_id,
-            'scheme_id'                     => $request->scheme_id,
-            'tenure_type'                   => $request->tenure_type,
-            'tenure_value'                  => $request->tenure_value,
-            'emi_collection'                => $request->emi_collection,
-            'credit_period'                 => $request->credit_period,
-            'loan_amount'                   => $request->loan_amount,
-            'insurance_amount'              => $request->insurance_amount,
-            'net_loan_amount'               => $request->net_loan_amount,
-            'purpose_of_loan'               => $request->purpose_of_loan,
-            'charge_per_emi'                => $request->charge_per_emi,
-            'processing_fee_value'          => $request->processing_fee_value ?? 0,
-            'processing_fee_gst'            => $request->processing_fee_gst,
-            'processing_fee_sgst'           => $request->processing_fee_sgst,
-            'processing_fee_cgst'           => $request->processing_fee_cgst,
-            'processing_fee_igst'           => $request->processing_fee_igst,
-            'processing_fee_total'          => $request->processing_fee_total,
-            'fee_mode'                      => $request->fee_mode,
-            'bank_id'                       => $request->bank_id,
-            'cheque_no'                     => $request->cheque_no,
-            'cheque_date'                   => $request->cheque_date,
-            'transfer_date'                 => $request->transfer_date,
-            'utr_no'                        => $request->utr_no,
-            'transfer_mode'                 => $request->transfer_mode,
-            'credited'                      => $request->credited ?? 0,
-            'collect_principal_as_emi'      => $request->collect_principal_as_emi ?? 0,
-            'collect_advance_processing_fee'=> $request->collect_advance_processing_fee ?? 0,
-            'max_loan_amount'               => $request->max_loan_amount ?? 0,
-            'maximum_approvable_amount'     => $request->maximum_approvable_amount ?? 0,
-            'approved_loan_amount'          => $request->approved_loan_amount ?? 0,
-            // 🔽 Security fields set to null (since removed from form)
-            'security_type'                 => null,
-            'security_amount'               => null,
-        ]);
-
-        Log::info('✅ Business Loan Application created successfully', [
-            'loan_application_id' => $loanApplication->id,
-        ]);
-
-        // ==== Credit Score Details Save (Dynamic Rows) ====
-        if ($request->has('cibil_type')) {
-            Log::info('CIBIL block triggered', [
-                'cibil_type_count' => count($request->cibil_type),
+            Log::info('Validation passed successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation failed', [
+                'errors' => $e->errors(),
             ]);
 
-            foreach ($request->cibil_type as $index => $type) {
-                try {
-                    $filePath = null;
-                    if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
-                        $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
-                    }
-
-                    $loanApplication->creditScores()->create([
-                        'cibil_type'       => $type,
-                        'cibil_score'      => $request->cibil_score[$index] ?? null,
-                        'report_date'      => isset($request->report_date[$index])
-                            ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
-                            : null,
-                        'report_file_path' => $filePath,
-                    ]);
-                } catch (Exception $e) {
-                    Log::error('Error while saving credit score entry', [
-                        'index' => $index,
-                        'error_message' => $e->getMessage(),
-                    ]);
-                }
-            }
-        } else {
-            Log::warning('CIBIL block skipped — no cibil_type found in request.');
+            return back()->withErrors($e->errors())->withInput();
         }
 
-        return redirect()->route('bussiness.applications.index')
-            ->with('success', 'Business Loan Application + Credit Scores saved successfully!');
-    } catch (Exception $e) {
-        Log::error('❌ Error while storing Business Loan Application', [
-            'error_message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
+        try {
+            // Create record (Security fields removed, null sent instead)
+            $loanApplication = BusinessLoanApplication::create([
+                'application_date'              => $request->application_date,
+                'member_id'                     => $request->member_id,
+                'co_applicant_1_id'             => $request->co_applicant_1_id,
+                'co_applicant_2_id'             => $request->co_applicant_2_id,
+                'branch_id'                     => $request->branch_id,
+                'advisor_id'                    => $request->advisor_id,
+                'guarantor_1_id'                => $request->guarantor_1_id,
+                'guarantor_2_id'                => $request->guarantor_2_id,
+                'guarantor_3_id'                => $request->guarantor_3_id,
+                'guarantor_4_id'                => $request->guarantor_4_id,
+                'scheme_id'                     => $request->scheme_id,
+                'tenure_type'                   => $request->tenure_type,
+                'tenure_value'                  => $request->tenure_value,
+                'emi_collection'                => $request->emi_collection,
+                'credit_period'                 => $request->credit_period,
+                'loan_amount'                   => $request->loan_amount,
+                'insurance_amount'              => $request->insurance_amount,
+                'net_loan_amount'               => $request->net_loan_amount,
+                'purpose_of_loan'               => $request->purpose_of_loan,
+                'charge_per_emi'                => $request->charge_per_emi,
+                'processing_fee_value'          => $request->processing_fee_value ?? 0,
+                'processing_fee_gst'            => $request->processing_fee_gst,
+                'processing_fee_sgst'           => $request->processing_fee_sgst,
+                'processing_fee_cgst'           => $request->processing_fee_cgst,
+                'processing_fee_igst'           => $request->processing_fee_igst,
+                'processing_fee_total'          => $request->processing_fee_total,
+                'fee_mode'                      => $request->fee_mode,
+                'bank_id'                       => $request->bank_id,
+                'cheque_no'                     => $request->cheque_no,
+                'cheque_date'                   => $request->cheque_date,
+                'transfer_date'                 => $request->transfer_date,
+                'utr_no'                        => $request->utr_no,
+                'transfer_mode'                 => $request->transfer_mode,
+                'credited' => ($request->credited === 'yes' || $request->credited == 1) ? 1 : 0,
+                'collect_principal_as_emi'      => $request->collect_principal_as_emi ?? 0,
+                'collect_advance_processing_fee'=> $request->collect_advance_processing_fee ?? 0,
+                'max_loan_amount'               => $request->max_loan_amount ?? 0,
+                'maximum_approvable_amount'     => $request->maximum_approvable_amount ?? 0,
+                'approved_loan_amount'          => $request->approved_loan_amount ?? 0,
+                // Security fields set to null (since removed from form)
+                'security_type'                 => null,
+                'security_amount'               => null,
+            ]);
 
-        return back()->with('error', 'Something went wrong while saving loan application.');
+            Log::info('Business Loan Application created successfully', [
+                'loan_application_id' => $loanApplication->id,
+            ]);
+
+            // ==== Credit Score Details Save (Dynamic Rows) ====
+            if ($request->has('cibil_type')) {
+                Log::info('CIBIL block triggered', [
+                    'cibil_type_count' => count($request->cibil_type),
+                ]);
+
+                foreach ($request->cibil_type as $index => $type) {
+                    try {
+                        $filePath = null;
+                        if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                            $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+                        }
+
+                        $loanApplication->creditScores()->create([
+                            'cibil_type'       => $type,
+                            'cibil_score'      => $request->cibil_score[$index] ?? null,
+                            'report_date'      => isset($request->report_date[$index])
+                                ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                                : null,
+                            'report_file_path' => $filePath,
+                        ]);
+                    } catch (Exception $e) {
+                        Log::error('Error while saving credit score entry', [
+                            'index' => $index,
+                            'error_message' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            } else {
+                Log::warning('CIBIL block skipped — no cibil_type found in request.');
+            }
+
+            return redirect()->route('bussiness.applications.index')
+                ->with('success', 'Business Loan Application + Credit Scores saved successfully!');
+        } catch (Exception $e) {
+            Log::error('❌ Error while storing Business Loan Application', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving loan application.');
+        }
     }
-}
-
-
-
 
 
     public function getMemberInfo($id)
@@ -456,7 +453,6 @@ class BusinessLoan extends Controller
             ]);
         }
     }
-
 
     public function appview($id)
     {
@@ -532,9 +528,18 @@ class BusinessLoan extends Controller
                 'update_data' => $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']),
             ]);
 
-            $updated = $application->update(
-                $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file'])
-            );
+            // $updated = $application->update(
+            //     $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file'])
+            // );
+            // Convert 'credited' value ('yes'/'no') to integer (1/0)
+            $inputData = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
+
+            if (isset($inputData['credited'])) {
+                $inputData['credited'] = ($inputData['credited'] === 'yes' || $inputData['credited'] === '1') ? 1 : 0;
+            }
+
+            $updated = $application->update($inputData);
+
 
             if (!$updated) {
                 Log::error('Loan Application update failed', [
@@ -619,23 +624,6 @@ class BusinessLoan extends Controller
 
             return back()->with('error', 'Something went wrong while updating the application.');
         }
-    }
-
-
-    public function linepropertyindex()
-    {
-        // loan applications fetch excluding status 1 and 0
-        $applications = BusinessLoanApplication::with(['creditScores', 'branch', 'member'])
-            ->whereNotIn('status', [1, 0])
-            ->latest()
-            ->get(['id', 'status']);
-
-        return view("bussiness.lineproperty.index", compact('applications'));
-    }
-
-    public function exportXls()
-    {
-        return Excel::download(new bussinessExport, 'bussiness.xlsx');
     }
     
 

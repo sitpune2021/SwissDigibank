@@ -11,23 +11,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 
 class BusinessLoanDisburments extends Controller
 {
     
-    // public function index()
-    // {
-    //     $disbursedIds = BusinessLoanDisbursment::pluck('loan_application_id');
-
-    //     $disbursements = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
-    //         ->where('status', '1') // ← string match because column type is string
-    //         ->whereNotIn('id', $disbursedIds)
-    //         ->get();
-
-    //     return view('bussiness.disbursements.index', compact('disbursements'));
-    // }
-
     public function index()
     {
         // $disbursedIds = BusinessLoanDisbursment::pluck('loan_application_id');
@@ -66,14 +55,19 @@ class BusinessLoanDisburments extends Controller
     {
         try {
             // Start log
+            // Log::info('--- Loan Disbursement Store Started ---', [
+            //     'user_id' => auth()->id(),
+            //     'input' => $request->all(),
+            // ]);
             Log::info('--- Loan Disbursement Store Started ---', [
-                'user_id' => auth()->id(),
-                'input' => $request->all(),
+                'user_id' => Auth::id(),  // Auth facade
+                'input'   => $request->all(),
             ]);
+
 
             // Validate input
             $validated = $request->validate([
-                'loan_application_id' => 'required|exists:loan_against_applications,id',
+                'loan_application_id' => 'required|exists:bussiness_loan_applications,id',
                 'disbursal_date' => 'required|date_format:d-m-Y',
                 'emi_date' => 'required|date_format:d-m-Y',
                 'loan_amount' => 'required|numeric|min:1',

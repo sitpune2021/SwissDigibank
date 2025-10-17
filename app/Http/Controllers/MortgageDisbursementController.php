@@ -8,6 +8,9 @@ use App\Models\MortgageLoanDisbursement;
 use App\Models\Bank;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
+use Illuminate\Validation\ValidationException;
 
 
 class MortgageDisbursementController extends Controller
@@ -19,14 +22,15 @@ class MortgageDisbursementController extends Controller
    
     public function index()
     {
-        // Pehle se disbursed ho chuke applications ke IDs nikalo
-        $disbursedIds = MortgageLoanDisbursement::pluck('loan_application_id');
-
-        //  approved (status = 1) applications fetch 
-        $disbursements = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
-            ->where('status', 1) //  Only approved
-            ->whereNotIn('id', $disbursedIds)
+            $disbursements = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', '1')
+            // ->whereNotIn('id', $disbursedIds)
             ->get();
+
+        Log::info('Loan Query Result', [
+            'count' => $disbursements->count(),
+            'ids' => $disbursements->pluck('id')
+        ]);
 
         return view('mortgage.disbursements.index', compact('disbursements'));
     }
@@ -54,72 +58,111 @@ class MortgageDisbursementController extends Controller
         }
     }
 
+
     public function store(Request $request)
     {
-        //  Step 1: Validation
-        $validated = $request->validate([
-            'loan_application_id' => 'required|integer',
-            'disbursal_date' => 'required',
-            'emi_date' => 'required',
-            'final_amount' => 'required|numeric',
-            'processing_fee' => 'nullable|numeric',
-            'gst_percent' => 'nullable|numeric',
-        ]);
+        try {
+            // Start log
+            Log::info('--- Loan Disbursement Store Started ---', [
+                'user_id' => auth()->id(),
+                'input' => $request->all(),
+            ]);
 
-        //  Step 2: Date format convert (d-m-Y → Y-m-d)
-        $disbursalDate = date('Y-m-d', strtotime($request->disbursal_date));
-        $emiDate = date('Y-m-d', strtotime($request->emi_date));
+            // Validate input
+            $validated = $request->validate([
+                'loan_application_id' => 'required|exists:loan_against_applications,id',
+                'disbursal_date' => 'required|date_format:d-m-Y',
+                'emi_date' => 'required|date_format:d-m-Y',
+                'loan_amount' => 'required|numeric|min:1',
+                'final_amount' => 'required|numeric|min:1',
+            ]);
 
-        //  Step 3: Create record
-        $disbursement = new MortgageLoanDisbursement([
-            'loan_application_id' => $request->loan_application_id,
-            'disbursal_date'      => $disbursalDate,
-            'emi_date'            => $emiDate,
-            'loan_amount'         => $request->loan_amount ?? 0,
-            'processing_fee'      => $request->processing_fee ?? 0,
-            'gst_percent'         => $request->gst_percent ?? 0,
-            'sgst'                => $request->sgst ?? 0,
-            'cgst'                => $request->cgst ?? 0,
-            'igst'                => $request->igst ?? 0,
-            'processing_fee_total'=> $request->processing_fee_total ?? 0,
-            'stamp_duty_fee'      => $request->stamp_duty_fee ?? 0,
-            'insurance_fee'       => $request->insurance_fee ?? 0,
-            'advance_interest'    => $request->advance_interest ?? 0,
-            'final_amount'        => $request->final_amount ?? 0,
+            // Date conversion
+            $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
+            $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
 
-            // First disbursement mode
-            'disburse_mode1'      => $request->D_mode_1 ?? 0,
-            'payment_mode1'       => $request->payment_mode ?? null,
-            'bank_id1'            => $request->bank_id ?? null,
-            'cheque_no1'          => $request->cheque_no ?? null,
-            'cheque_date1'        => $request->cheque_date ? date('Y-m-d', strtotime($request->cheque_date)) : null,
-            'transfer_date1'      => $request->transfer_date ? date('Y-m-d', strtotime($request->transfer_date)) : null,
-            'utr_no1'             => $request->utr_no ?? null,
-            'transfer_mode1'      => $request->transfer_mode1 ?? null,
-            'saving_acc1'         => $request->saving ?? null,
+            DB::beginTransaction();
 
-            // Second disbursement mode
-            'disburse_mode2'      => $request->D_mode_2 ?? 0,
-            'payment_mode2'       => $request->payment_mode2 ?? null,
-            'bank_id2'            => $request->bank_id2 ?? null,
-            'cheque_no2'          => $request->cheque_no2 ?? null,
-            'cheque_date2'        => $request->cheque_date2 ? date('Y-m-d', strtotime($request->cheque_date2)) : null,
-            'transfer_date2'      => $request->transfer_date2 ? date('Y-m-d', strtotime($request->transfer_date2)) : null,
-            'utr_no2'             => $request->utr_no2 ?? null,
-            'transfer_mode2'      => $request->transfer_mode2 ?? null,
-            'saving_acc2'         => $request->saving2 ?? null,
-        ]);
+            // Insert into disbursements
+            $disbursement = MortgageLoanDisbursement::create([
+                'loan_application_id' => $request->loan_application_id,
+                'disbursal_date' => $disbursalDate,
+                'emi_date' => $emiDate,
+                'loan_amount' => $request->loan_amount,
+                'processing_fee' => $request->processing_fee ?? 0,
+                'gst_percent' => $request->gst_percent ?? 0,
+                'sgst' => $request->sgst ?? 0,
+                'cgst' => $request->cgst ?? 0,
+                'igst' => $request->igst ?? 0,
+                'processing_fee_total' => $request->processing_fee_total ?? 0,
+                'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
+                'insurance_fee' => $request->insurance_fee ?? 0,
+                'advance_interest' => $request->advance_interest ?? 0,
+                'final_amount' => $request->final_amount,
 
-        $disbursement->save();
+                // Disburse mode 1
+                'disburse_mode1' => $request->D_mode_1,
+                'payment_mode1' => $request->payment_mode,
+                'bank_id1' => $request->bank_id,
+                'cheque_no1' => $request->cheque_no,
+                'cheque_date1' => $request->cheque_date ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
+                'transfer_date1' => $request->transfer_date ? Carbon::parse($request->transfer_date)->format('Y-m-d') : null,
+                'utr_no1' => $request->utr_no,
+                'transfer_mode1' => $request->transfer_mode,
+                'saving_acc1' => $request->saving,
 
-        // Step 4: Update mortgage_loan_applications status = 2
-        MortgageLoanApplication::where('id', $request->loan_application_id)
-            ->update(['status' => 2]);
+                // Disburse mode 2
+                'disburse_mode2' => $request->D_mode_2,
+                'payment_mode2' => $request->payment_mode2,
+                'bank_id2' => $request->bank_id2,
+                'cheque_no2' => $request->cheque_no2,
+                'cheque_date2' => $request->cheque_date2 ? Carbon::parse($request->cheque_date2)->format('Y-m-d') : null,
+                'transfer_date2' => $request->transfer_date2 ? Carbon::parse($request->transfer_date2)->format('Y-m-d') : null,
+                'utr_no2' => $request->utr_no2,
+                'transfer_mode2' => $request->transfer_mode2,
+                'saving_acc2' => $request->saving2,
+            ]);
 
-        // Step 4: Redirect with success
-        return redirect()
-            ->route('mortgage.disbursements.index')
-            ->with('success', 'Loan disbursement successfully saved!');
+            // Update application status
+            DB::table('mortgage_loan_applications')
+                ->where('id', $request->loan_application_id)
+                ->update(['status' => 2]);
+
+            DB::commit();
+
+            Log::info('Loan Disbursement Created Successfully', [
+                'disbursement_id' => $disbursement->id,
+            ]);
+
+            return redirect()
+                ->route('mortgage.disbursements.index')
+                ->with('success', 'Loan Disbursement Created Successfully!');
+        }
+
+        // Validation error → show on form
+        catch (ValidationException $e) {
+            Log::warning('Validation Failed During Loan Disbursement', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
+            throw $e;
+        }
+
+        // Any other system/DB error
+        catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error('Loan Disbursement Store Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'input' => $request->all(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong while saving the disbursement. Please try again.');
+        }
     }
 
 
@@ -164,7 +207,6 @@ class MortgageDisbursementController extends Controller
             )
         );
     }
-
 
    
 }
