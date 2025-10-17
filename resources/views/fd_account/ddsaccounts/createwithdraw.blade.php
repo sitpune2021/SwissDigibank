@@ -48,7 +48,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <div class="flex items-center gap-3 ">
-                    <h1 class="text-2xl font-semibold dark:text-white">DD - {{ $ddAccount->id }}</h1>
+                    <h1 class="text-2xl font-semibold dark:text-white">DD - {{ $withraw->id }}</h1>
                 </div>
             </div>
         </div>
@@ -57,14 +57,14 @@
             <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Deposit Form -->
                 <div class=" w-full box dark:bg-bg3 shadow rounded-2xl p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">Withdraw Money (Installments)</h3>
                     <hr class="my-4 border-gray-300 dark:border-gray-700">
 
                     <form class="space-y-6" action="{{ route('dds.deposit.store') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="dds_account_id" value="{{ $ddAccount->id }}">
-                        <input type="hidden" name="account_id" value="{{ $ddAccount->account->id ?? '' }}">
+                        <input type="hidden" name="dds_account_id" value="{{ $withraw->id }}">
+                        <input type="hidden" name="account_id" value="{{ $withraw->account->id ?? '' }}">
                         <input type="hidden" name="type" value="credit">
 
                         <!-- Member Signature -->
@@ -98,7 +98,7 @@
                         </div>
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
-                                Amount to Deposit <span class="text-red-500">*</span>
+                                Amount to Withdraw <span class="text-red-500">*</span>
                             </label>
                             <input type="number" min="0" name="balance_available" id="amountToDeposit"
                                 placeholder="Enter Amount to Deposit"
@@ -254,42 +254,42 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">CUSTOMER</td>
-                                    <td>{{ ($ddAccount->member?->member_no ??
-                                        ($ddAccount->member?->id ? str_pad($ddAccount->member->id, 6, '0', STR_PAD_LEFT) : '')) .
+                                    <td>{{ ($withraw->member?->member_no ??
+                                        ($withraw->member?->id ? str_pad($withraw->member->id, 6, '0', STR_PAD_LEFT) : '')) .
                                         ' - ' .
-                                        $ddAccount->member->member_info_first_name ??
+                                        $withraw->member->member_info_first_name ??
                                         'N/A' }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">DD No.</td>
-                                    <td> DDA{{ $ddAccount->id ?? 'N/A' }}</td>
+                                    <td> DDA{{ $withraw->id ?? 'N/A' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Scheme</td>
-                                    <td>{{ $ddAccount->scheme->scheme_name ?? '-' }}</td>
+                                    <td>{{ $withraw->scheme->scheme_name ?? '-' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Tenure</td>
-                                    <td>{{ $ddAccount->scheme->tenure_of_rd_dd_value }}
-                                        {{ $ddAccount->scheme->tenure_of_rd_dd_type }}
+                                    <td>{{ $withraw->scheme->tenure_of_rd_dd_value }}
+                                        {{ $withraw->scheme->tenure_of_rd_dd_type }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Frequency</td>
-                                    <td>{{ $ddAccount->scheme->rd_dd_frequency ?? '-' }}</td>
+                                    <td>{{ $withraw->scheme->rd_dd_frequency ?? '-' }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Principal Amt.</td>
-                                    <td>{{ number_format($ddAccount->dd_amount, 2) }}</td>
+                                    <td>{{ number_format($withraw->dd_amount, 2) }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Amount Received</td>
-                                    <td>{{ number_format($installmentReceived, 2) }}</td>
+                                    {{-- <td>{{ number_format($installmentReceived, 2) }}</td> --}}
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Balance Available</td>
-                                    <td>{{ number_format($balanceAvailable, 2) }}</td>
+                                    {{-- <td>{{ number_format($balanceAvailable, 2) }}</td> --}}
                                 </tr>
                             </tbody>
                         </table>

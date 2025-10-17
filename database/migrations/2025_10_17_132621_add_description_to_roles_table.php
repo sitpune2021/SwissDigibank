@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('loan_against_applications', function (Blueprint $table) {
-         $table->decimal('processing_fee_total', 10, 2)->nullable()->after('security_amount');  
+        Schema::table('roles', function (Blueprint $table) {
+            $table->string('description')->nullable()->after('guard_name');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('loan_against_applications', function (Blueprint $table) {
-           $table->dropColumn('fee_mode');
+        Schema::table('roles', function (Blueprint $table) {
+            $table->dropColumn('description');
         });
     }
 };

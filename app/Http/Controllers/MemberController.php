@@ -21,9 +21,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\MembershipChargeTransaction;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class MemberController extends Controller
 {
@@ -269,32 +272,6 @@ class MemberController extends Controller
                 'type' => "Membership Charges" ?? null,
             ]);
 
-            try {
-                $member = \App\Models\Member::find($member->id);
-
-                if ($member && !empty($member->member_info_mobile_no)) {
-
-
-                    $message = "Thanks For Your Missed Call To SBC GLOBAL, Please call our Customer Care 18002026261 OR Our Team Will Contact You Shortly.";
-
-                    \App\Helpers\SmsHelper::sendSms($member->member_info_mobile_no, $message);
-                } else {
-                    Log::warning('Member mobile number missing for SMS', ['member_id' => $member->id]);
-                }
-
-                // $accountData = [
-                //     'name' => $member->member_info_first_name,
-                //     'account_no' => $account->account_no,
-                //     'email' => $member->member_info_email,
-                // ];
-
-                // // 3️⃣ Send the email (immediately)
-                // Mail::to($member->member_info_email)->send(new AccountOpenedMail($accountData));
-
-            } catch (\Exception $e) {
-                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
-            }
-
             // ✅ Log the transaction data
             Log::info('MembershipChargeTransaction stored', [
                 'transaction_id' => $transaction->id,
@@ -307,6 +284,37 @@ class MemberController extends Controller
                 'online_transfer_mode' => $transaction->online_transfer_mode,
             ]);
 
+            $managerRole = Role::where('name', 'Member')->first();
+
+            if ($managerRole) {
+                User::create([
+                    'name'       => $managerRole->name ?? 'Member',
+                    'fname'      => $request->member_info_first_name ?? 'Member',
+                    'lname'      => $request->member_info_last_name ?? 'Member',
+                    'email'      => $request->member_info_email ?? 'member'.$member->id.'@gmail.com',
+                    'mobile'     => $request->member_info_mobile_no ?? null,
+                    'username'   => 'Member' . $member->id,
+                    'password'   => Hash::make('member123'),
+                    'role_id'    => $managerRole->id,
+                    'branch_id'  => $member->general_branch ?? null,
+                    'user_active' => true,
+                ]);
+            }
+
+            try {
+                $member = \App\Models\Member::find($member->id);
+// dd($member);
+                $mobile = $member->member_info_mobile_no;
+                // if ($member && !empty($member->member_info_mobile_no)) {
+                $dlttemplateid = 1707173529330693298;
+                $password = "member123";
+
+                $message = "Dear Customer, Thanks for becoming member of $mobile. Your login USERNAME - $mobile, PASSWORD -  $password. Note - Don't disclose USERNAME/PASSWORD to anyone. SBC GLOBAL
+                ";
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
 
             return redirect()->route('member.index')->with('success', 'Member created successfully.');
         } catch (ValidationException $e) {

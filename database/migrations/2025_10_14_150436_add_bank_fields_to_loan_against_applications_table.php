@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('loan_against_applications', function (Blueprint $table) {
             // Banking related fields
-            $table->unsignedBigInteger('bank_id')->nullable()->after('fee_mode');
+            $table->unsignedBigInteger('bank_id')->nullable()->after('member_id');
             $table->string('cheque_no')->nullable()->after('bank_id');
             $table->date('cheque_date')->nullable()->after('cheque_no');
             $table->date('transfer_date')->nullable()->after('cheque_date');

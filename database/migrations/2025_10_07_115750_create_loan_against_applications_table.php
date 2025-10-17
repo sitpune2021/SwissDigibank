@@ -52,8 +52,7 @@ return new class extends Migration
             $table->decimal('processing_fee_sgst', 15, 2)->default(0);
             $table->decimal('processing_fee_cgst', 15, 2)->default(0);
             $table->decimal('processing_fee_igst', 15, 2)->default(0);
-            $table->decimal('processing_fee_total', 15, 2)->nullable()->change();
-
+    
             // Flags
             $table->boolean('collect_principal_as_emi')->default(false);
             $table->boolean('collect_advance_processing_fee')->default(false);
