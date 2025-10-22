@@ -287,11 +287,11 @@ class MemberController extends Controller
             $managerRole = Role::where('name', 'Member')->first();
 
             if ($managerRole) {
-                User::create([
+                $user = User::create([
                     'name'       => $managerRole->name ?? 'Member',
                     'fname'      => $request->member_info_first_name ?? 'Member',
                     'lname'      => $request->member_info_last_name ?? 'Member',
-                    'email'      => $request->member_info_email ?? 'member'.$member->id.'@gmail.com',
+                    'email'      => $request->member_info_email ?? 'member' . $member->id . '@gmail.com',
                     'mobile'     => $request->member_info_mobile_no ?? null,
                     'username'   => 'Member' . $member->id,
                     'password'   => Hash::make('member123'),
@@ -299,11 +299,12 @@ class MemberController extends Controller
                     'branch_id'  => $member->general_branch ?? null,
                     'user_active' => true,
                 ]);
+                $member->user_id = $user->id;
+                $member->save();
             }
 
             try {
                 $member = \App\Models\Member::find($member->id);
-// dd($member);
                 $mobile = $member->member_info_mobile_no;
                 // if ($member && !empty($member->member_info_mobile_no)) {
                 $dlttemplateid = 1707173529330693298;

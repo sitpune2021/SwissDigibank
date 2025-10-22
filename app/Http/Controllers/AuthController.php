@@ -151,4 +151,76 @@ class AuthController extends Controller
             'message' => 'Logout successful!',
         ]);
     }
+    public function setMpin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'mpin' => 'required|digits:4|confirmed',
+        ]);
+
+        $username = $request->input('username');
+        $user = null;
+
+        if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            $user = User::where('email', $username)->first();
+        } else {
+            $normalizedMobile = preg_replace('/[^\d\+]/', '', $username);
+            if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid mobile number format.',
+                ], 422);
+            }
+            $user = User::where('mobile', $normalizedMobile)->first();
+        }
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        if ($user->otp !== null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'OTP not yet verified.',
+            ], 403);
+        }
+
+        $user->mpin = Hash::make($request->mpin);
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'mPIN set successfully.',
+        ]);
+    }
+    public function verifyMpin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'mpin' => 'required|digits:4',
+        ]);
+
+        $username = $request->input('username');
+        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+            ? User::where('email', $username)->first()
+            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+        if (!$user || !$user->mpin || !Hash::check($request->mpin, $user->mpin)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid mPIN.',
+            ], 401);
+        }
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'status' => true,
+            'message' => 'mPIN verified successfully!',
+            'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
+        ]);
+    }
 }
