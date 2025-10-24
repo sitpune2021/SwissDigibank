@@ -34,7 +34,8 @@ class Member extends Model
         'member_info_collection_time',
         'member_info_marital_status',
         'member_info_religion',
-        'member_info_email'
+        'member_info_email',
+        'user_id'
     ];
     //   protected $casts = [
     //     'general_enrollment_date' => 'date',
@@ -121,4 +122,9 @@ class Member extends Model
     {
         return $this->hasMany(KycDocument::class, 'member_id');
     }
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 }

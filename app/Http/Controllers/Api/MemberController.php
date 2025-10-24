@@ -14,9 +14,8 @@ class MemberController extends Controller
      public function fetchMemberDetails()
     {
         $id=Auth::id();
-        // dd($id);
         try {
-            $member = Member::findOrFail($id);
+        $member = Member::where('user_id', $id)->firstOrFail();
 
             $fullName = trim(
                 ($member->member_info_title ?? '') . ' ' .
