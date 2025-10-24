@@ -67,44 +67,48 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        Maximum Loan Amount (₹)
-                        <span class="text-red-500">*</span>
+                    <label for="maxLoanAmount" class="md:text-lg font-medium block mb-4">
+                        Maximum Loan Amount (₹) <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0" max="200000" >
-                        <!-- Laravel Error Message -->
-                        @error('max_loan_amount')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
+                    
+                    <input type="number" id="maxLoanAmount" name="max_loan_amount"
+                        value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
+                        rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        placeholder="0.0" max="200000">
+
+                    <p id="maxLoanAmountWords" class="text-red-500 text-xs mt-1"></p>
+
+                    @error('max_loan_amount')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="tenure" class="md:text-lg font-medium block mb-4">
                         Max. Tenure <span class="text-red-500">*</span>
                     </label>
-
-                    <select id="tenure" name="tenure" value="{{ old('tenure', $scheme->tenure ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
-                        <option value="1">1 Month</option>
-                        <option selected="selected" value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="9">9 Months</option>
-                        <option value="12">12 Months</option>
-                        <option value="18">18 Months</option>
-                        <option value="24">2 Years</option>
-                        <option value="36">3 Years</option>
-                        <option value="48">4 Years</option>
-                        <option value="60">5 Years</option>
-                        <option value="72">6 Years</option>
-                        <option value="84">7 Years</option>
-                        <option value="96">8 Years</option>
-                        <option value="108">9 Years</option>
-                        <option value="120">10 Years</option>
-                        <option value="180">15 Years</option>
+                    <select id="tenure" name="tenure"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        required>
+                        <option value="">Please Select</option>
+                        <option value="1" {{ old('tenure', $scheme->tenure ?? '') == '1' ? 'selected' : '' }}>1 Month</option>
+                        <option value="3" {{ old('tenure', $scheme->tenure ?? '') == '3' ? 'selected' : '' }}>3 Months</option>
+                        <option value="6" {{ old('tenure', $scheme->tenure ?? '') == '6' ? 'selected' : '' }}>6 Months</option>
+                        <option value="9" {{ old('tenure', $scheme->tenure ?? '') == '9' ? 'selected' : '' }}>9 Months</option>
+                        <option value="12" {{ old('tenure', $scheme->tenure ?? '') == '12' ? 'selected' : '' }}>12 Months</option>
+                        <option value="18" {{ old('tenure', $scheme->tenure ?? '') == '18' ? 'selected' : '' }}>18 Months</option>
+                        <option value="24" {{ old('tenure', $scheme->tenure ?? '') == '24' ? 'selected' : '' }}>2 Years</option>
+                        <option value="36" {{ old('tenure', $scheme->tenure ?? '') == '36' ? 'selected' : '' }}>3 Years</option>
+                        <option value="48" {{ old('tenure', $scheme->tenure ?? '') == '48' ? 'selected' : '' }}>4 Years</option>
+                        <option value="60" {{ old('tenure', $scheme->tenure ?? '') == '60' ? 'selected' : '' }}>5 Years</option>
+                        <option value="72" {{ old('tenure', $scheme->tenure ?? '') == '72' ? 'selected' : '' }}>6 Years</option>
+                        <option value="84" {{ old('tenure', $scheme->tenure ?? '') == '84' ? 'selected' : '' }}>7 Years</option>
+                        <option value="96" {{ old('tenure', $scheme->tenure ?? '') == '96' ? 'selected' : '' }}>8 Years</option>
+                        <option value="108" {{ old('tenure', $scheme->tenure ?? '') == '108' ? 'selected' : '' }}>9 Years</option>
+                        <option value="120" {{ old('tenure', $scheme->tenure ?? '') == '120' ? 'selected' : '' }}>10 Years</option>
+                        <option value="180" {{ old('tenure', $scheme->tenure ?? '') == '180' ? 'selected' : '' }}>15 Years</option>
                     </select>
-
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -608,5 +612,45 @@ document.addEventListener('DOMContentLoaded', function () {
             if (targetEl) targetEl.hidden = false;
         }
     });
+</script>
+
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+
+    function numberToWords(num) {
+        const a = [
+            '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+            'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen',
+            'Eighteen', 'Nineteen'
+        ];
+        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        if ((num = num.toString()).length > 9) return 'Overflow';
+
+        let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{3})$/);
+        if (!n) return;
+
+        let str = '';
+        str += n[1] != 0 ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+        str += n[2] != 0 ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+        str += n[3] != 0 ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+        str += n[4] != 0 ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' ' : '';
+        return str.trim();
+    }
+
+    const maxLoanInput = document.getElementById("maxLoanAmount");
+    const maxLoanWords = document.getElementById("maxLoanAmountWords");
+
+    maxLoanInput.addEventListener("input", function () {
+        const value = this.value;
+
+        if (value && !isNaN(value)) {
+            maxLoanWords.textContent = numberToWords(parseInt(value)) + " Rupees Only";
+        } else {
+            maxLoanWords.textContent = "";
+        }
+    });
+
+});
 </script>
 @endsection

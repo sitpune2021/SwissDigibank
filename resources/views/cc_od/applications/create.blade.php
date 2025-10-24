@@ -53,14 +53,14 @@
                         
                         <div class="col-span-2 md:col-span-1">
                             <label for="member_id" class="md:text-lg font-medium block mb-4">
-                                Member <span class="text-red-500">*</span>
+                                CUSTOMER <span class="text-red-500">*</span>
                             </label>
                             
                             <select name="member_id" id="member_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Member No or Name</option>
                                 @foreach($members as $member)
-                                    <option value="{{ $member->id }}"
+                                    <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}"
                                     {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
                                         data-name="{{ $member->member_info_first_name }}"
                                         data-mobile="{{ $member->member_info_mobile_no }}">
@@ -566,7 +566,7 @@
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base capitalize font-semibold md:text-lg">Member Info</h3>
+                        <h3 class="text-base capitalize font-semibold md:text-lg">Customer Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'memberInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -577,7 +577,7 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Member Name</td>
+                                        <td class="font-semibold py-2 pr-4">Customer Name</td>
                                         <td class="py-2 capitalize" id="memberName">-</td>
                                     </tr>
                                     <tr class="border-b">
@@ -929,6 +929,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<!-- branch Auto populate when select customer -->
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const memberSelect = document.getElementById("member_id");
+        const branchSelect = document.getElementById("branch_id");
+
+        memberSelect.addEventListener("change", function () {
+            let selectedOption = this.options[this.selectedIndex];
+            let branchId = selectedOption.getAttribute("data-branch");
+
+            if (branchId) {
+                branchSelect.value = branchId;
+            } else {
+                branchSelect.value = "";
+            }
+        });
+    });
+</script>
 
 @endsection
 

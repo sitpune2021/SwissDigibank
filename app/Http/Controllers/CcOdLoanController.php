@@ -153,7 +153,7 @@ class CcOdLoanController extends Controller
     public function appcreate() 
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no')->get();
+        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
         $branch = Branch::all();
         $scheme = CcOdLoanScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']

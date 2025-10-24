@@ -218,13 +218,23 @@ class LoanAgainstController extends Controller
         $startDate = now();
 
         for ($i = 1; $i <= $installments; $i++) {
+
+            // Base Calculation
             $principal = round($loan / $installments, 2);
             $interest = round($totalInterest / $installments, 2);
             $emiTotal = round($principal + $interest, 2);
-            $outstanding -= $principal;
+
+            // Adjust Final EMI to remove rounding balance
+            if ($i == $installments) {
+                $principal = round($outstanding, 2);
+                $emiTotal = round($principal + $interest, 2);
+                $outstanding = 0;
+            } else {
+                $outstanding -= $principal;
+            }
 
             $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-            $dueDate = $emiDate->copy()->addDays(10); // optional grace period
+            $dueDate = $emiDate->copy()->addDays(10);
 
             $schedule[] = [
                 'no' => $i,
@@ -237,6 +247,12 @@ class LoanAgainstController extends Controller
                 'balance' => max($outstanding, 0),
             ];
         }
+
+        // Add this here 
+        $totalInterestPaid = array_sum(array_column($schedule, 'interest'));
+        $totalChargesPaid  = array_sum(array_column($schedule, 'charges'));
+        $totalEmiPaid      = array_sum(array_column($schedule, 'emi'));
+
 
         //  Grand Total (Loan + Interest + Charges)
         $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
@@ -262,6 +278,9 @@ class LoanAgainstController extends Controller
             'total_principal' => $loan,
             'total_emi_paid' => $loan + $totalInterest,
             'grand_total_payable' => $grandTotalPayable,
+            'total_interest_paid' => $totalInterestPaid,
+            'total_charges_paid'  => $totalChargesPaid,   
+
         ]);
     }
 
@@ -280,7 +299,7 @@ class LoanAgainstController extends Controller
     public function appcreate() 
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no')->get();
+        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
         $branch = Branch::all();
         $scheme = LoanAgainstScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']

@@ -96,7 +96,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Gold Loan Application </h1>
+            <h1 class="text-2xl uppercase font-semibold">Mortgage Loan Application </h1>
         </div>
     </div>
 
@@ -585,7 +585,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Gold Loan Scheme Info
+                        Mortgage Loan Scheme Info
                     </h3>
                     <div class="">
 
@@ -662,7 +662,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Gold Loan Application Info
+                        Mortgage Application Info
 
                     </h3>
                     <div class="">

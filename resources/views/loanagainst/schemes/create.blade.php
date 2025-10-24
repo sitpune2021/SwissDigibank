@@ -124,45 +124,55 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="max_loan_limit" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="max_loan_limit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Maximum Loan Limit" >
+
+                    <select id="max_loan_limit" name="max_loan_limit"
+                        class="form-control w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 
+                            dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
+                        required>
+                        <option value="">Please Select</option>
+                        <option value="50.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '50.0' ? 'selected' : '' }}>50%</option>
+                        <option value="60.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '60.0' ? 'selected' : '' }}>60%</option>
+                        <option value="70.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '70.0' ? 'selected' : '' }}>70%</option>
+                        <option value="75.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '75.0' ? 'selected' : '' }}>75%</option>
+                        <option value="80.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '80.0' ? 'selected' : '' }}>80%</option>
+                        <option value="90.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '90.0' ? 'selected' : '' }}>90%</option>
+                        <option value="100.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '100.0' ? 'selected' : '' }}>100%</option>
+                    </select>
                     @error('max_loan_limit')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <!-- This will show the words -->
-                    <x-number-to-word for="maxLoanLimit" />
                 </div>
+
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="tenure" class="md:text-lg font-medium block mb-4">
                         Max. Tenure <span class="text-red-500">*</span>
                     </label>
-
-                    <select id="tenure" name="tenure" value="{{ old('tenure', $scheme->tenure ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
-                        <option value="1">1 Month</option>
-                        <option selected="selected" value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="9">9 Months</option>
-                        <option value="12">12 Months</option>
-                        <option value="18">18 Months</option>
-                        <option value="24">2 Years</option>
-                        <option value="36">3 Years</option>
-                        <option value="48">4 Years</option>
-                        <option value="60">5 Years</option>
-                        <option value="72">6 Years</option>
-                        <option value="84">7 Years</option>
-                        <option value="96">8 Years</option>
-                        <option value="108">9 Years</option>
-                        <option value="120">10 Years</option>
-                        <option value="180">15 Years</option>
+                    <select id="tenure" name="tenure"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        required>
+                        <option value="">Please Select</option>
+                        <option value="1" {{ old('tenure', $scheme->tenure ?? '') == '1' ? 'selected' : '' }}>1 Month</option>
+                        <option value="3" {{ old('tenure', $scheme->tenure ?? '') == '3' ? 'selected' : '' }}>3 Months</option>
+                        <option value="6" {{ old('tenure', $scheme->tenure ?? '') == '6' ? 'selected' : '' }}>6 Months</option>
+                        <option value="9" {{ old('tenure', $scheme->tenure ?? '') == '9' ? 'selected' : '' }}>9 Months</option>
+                        <option value="12" {{ old('tenure', $scheme->tenure ?? '') == '12' ? 'selected' : '' }}>12 Months</option>
+                        <option value="18" {{ old('tenure', $scheme->tenure ?? '') == '18' ? 'selected' : '' }}>18 Months</option>
+                        <option value="24" {{ old('tenure', $scheme->tenure ?? '') == '24' ? 'selected' : '' }}>2 Years</option>
+                        <option value="36" {{ old('tenure', $scheme->tenure ?? '') == '36' ? 'selected' : '' }}>3 Years</option>
+                        <option value="48" {{ old('tenure', $scheme->tenure ?? '') == '48' ? 'selected' : '' }}>4 Years</option>
+                        <option value="60" {{ old('tenure', $scheme->tenure ?? '') == '60' ? 'selected' : '' }}>5 Years</option>
+                        <option value="72" {{ old('tenure', $scheme->tenure ?? '') == '72' ? 'selected' : '' }}>6 Years</option>
+                        <option value="84" {{ old('tenure', $scheme->tenure ?? '') == '84' ? 'selected' : '' }}>7 Years</option>
+                        <option value="96" {{ old('tenure', $scheme->tenure ?? '') == '96' ? 'selected' : '' }}>8 Years</option>
+                        <option value="108" {{ old('tenure', $scheme->tenure ?? '') == '108' ? 'selected' : '' }}>9 Years</option>
+                        <option value="120" {{ old('tenure', $scheme->tenure ?? '') == '120' ? 'selected' : '' }}>10 Years</option>
+                        <option value="180" {{ old('tenure', $scheme->tenure ?? '') == '180' ? 'selected' : '' }}>15 Years</option>
                     </select>
-
                 </div>
 
                 <div class="col-span-2 md:col-span-1">

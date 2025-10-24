@@ -53,14 +53,14 @@
                         
                         <div class="col-span-2 md:col-span-1">
                             <label for="member_id" class="md:text-lg font-medium block mb-4">
-                                Member <span class="text-red-500">*</span>
+                                Customer <span class="text-red-500">*</span>
                             </label>
                             
                             <select name="member_id" id="member_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Member No or Name</option>
                                 @foreach($members as $member)
-                                    <option value="{{ $member->id }}"
+                                    <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}"
                                     {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
                                         data-name="{{ $member->member_info_first_name }}"
                                         data-mobile="{{ $member->member_info_mobile_no }}">
@@ -341,6 +341,7 @@
                             <input type="number" id="loanAmount" name="loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                <p id="loanAmountWords" class="text-red-500 text-xs mt-1"></p>
                                 @error('loan_amount')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -353,6 +354,7 @@
                             <input type="number" id="insuranceAmount" name="insurance_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
+                                <p id="insuranceAmountWords" class="text-red-500 text-xs mt-1"></p>
                                 @error('insurance_amount')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -646,7 +648,7 @@
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base capitalize font-semibold md:text-lg">Member Info</h3>
+                        <h3 class="text-base capitalize font-semibold md:text-lg">Customer Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'memberInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -657,7 +659,7 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Member Name</td>
+                                        <td class="font-semibold py-2 pr-4">Customer Name</td>
                                         <td class="py-2 capitalize" id="memberName">-</td>
                                     </tr>
                                     <tr class="border-b">
@@ -922,8 +924,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </script>
 
-
-
 <script>
 let isCalculated = false;
 
@@ -988,9 +988,8 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
 });
 </script>
 
-
- <script>
-document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
     const cibilBody = document.getElementById("cibilBody");
     const addRowBtn = document.getElementById("addRow");
 
@@ -1055,10 +1054,73 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // ✅ Only add a new row if there are NO existing rows (i.e. new application)
+    // Only add a new row if there are NO existing rows (i.e. new application)
     if (cibilBody.children.length === 0) {
         cibilBody.insertAdjacentHTML("beforeend", newRow());
     }
+});
+</script>
+
+<!-- branch Auto populate when select customer -->
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const memberSelect = document.getElementById("member_id");
+        const branchSelect = document.getElementById("branch_id");
+
+        memberSelect.addEventListener("change", function () {
+            let selectedOption = this.options[this.selectedIndex];
+            let branchId = selectedOption.getAttribute("data-branch");
+
+            if (branchId) {
+                branchSelect.value = branchId;
+            } else {
+                branchSelect.value = "";
+            }
+        });
+    });
+</script>
+
+<!-- loan amount & insurance amount sub text massage -->
+ <script>
+function numberToWords(num) {
+    const a = [
+        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+    ];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    if (num === 0) return '';
+    if (num < 20) return a[num];
+    if (num < 100) return b[Math.floor(num / 10)] + (num % 10 ? ' ' + a[num % 10] : '');
+    if (num < 1000) return a[Math.floor(num / 100)] + ' Hundred ' + numberToWords(num % 100);
+
+    if (num < 100000)
+        return numberToWords(Math.floor(num / 1000)) + ' Thousand ' + numberToWords(num % 1000);
+
+    if (num < 10000000)
+        return numberToWords(Math.floor(num / 100000)) + ' Lakh ' + numberToWords(num % 100000);
+
+    return numberToWords(Math.floor(num / 10000000)) + ' Crore ' + numberToWords(num % 10000000);
+}
+
+function updateWords(inputId, outputId) {
+    const value = document.getElementById(inputId).value;
+    const wordsContainer = document.getElementById(outputId);
+
+    if (value && !isNaN(value)) {
+        wordsContainer.textContent = numberToWords(parseInt(value)) + " Rupees Only";
+    } else {
+        wordsContainer.textContent = "";
+    }
+}
+
+document.getElementById("loanAmount").addEventListener("input", function () {
+    updateWords("loanAmount", "loanAmountWords");
+});
+
+document.getElementById("insuranceAmount").addEventListener("input", function () {
+    updateWords("insuranceAmount", "insuranceAmountWords");
 });
 </script>
 
