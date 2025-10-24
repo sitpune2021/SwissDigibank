@@ -27,7 +27,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW LOAN AGAINST SCHEME</h1>
+            <h1 class="text-xl font-semibold">NEW DEPOSITE LOAN SCHEME</h1>
         </div>
     </div>
     
@@ -89,18 +89,38 @@
                     @enderror
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Amount (₹)
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
+                    <input type="number" id="maxLoanAmount" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0" max="200000" >
-                        <!-- Laravel Error Message -->
+                        placeholder="0.0"  min="0" max="200000" >
+                       
                         @error('max_loan_amount')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
+                </div> -->
+                <div class="col-span-2 md:col-span-1">
+                    <label for="maxLoanAmount" class="md:text-lg font-medium block mb-4">
+                        Maximum Loan Amount (₹)
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <!-- <input type="number" id="maxLoanAmount" name="max_loan_amount"
+                        min="0" max="200000"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
+                        placeholder="0.0">
+                    <p id="maxLoanWords" class="text-blue-700 text-sm mt-1 font-semibold"></p>
+                    <p id="maxLoanError" class="text-red-600 text-sm mt-1 font-semibold hidden"></p> -->
+                    <input type="number" id="maxLoanAmount" name="max_loan_amount"
+                            min="0" max="200000"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
+                            placeholder="0.0">
+
+                        <p id="maxLoanWords" class="text-sm mt-1 font-semibold"></p>
+                        <p id="maxLoanError" class="text-sm mt-1 font-semibold hidden"></p>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -576,7 +596,7 @@
         </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('rdschemes.index')}}"> BAck</a>
+                <a href="{{route('loanagainst.schemes.index')}}"> BAck</a>
             </button>
         </div>
     </div>
@@ -617,4 +637,67 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 </script>
+
+
+<script>
+// Convert numbers to words
+function numberToWords(num) {
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    if ((num = num.toString()).length > 9) return 'Overflow';
+    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return '';
+
+    let str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + 
+            (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
+    return str.trim() + ' Rupees Only';
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const maxInput = document.getElementById('maxLoanAmount');
+    const maxWords = document.getElementById('maxLoanWords');
+    const maxError = document.getElementById('maxLoanError');
+
+    // Prevent typing "-" or "e"
+    maxInput.addEventListener("keypress", function(e) {
+        if (e.key === "-" || e.key === "e" || e.key === "E") {
+            e.preventDefault();
+        }
+    });
+
+    // Handle input
+    maxInput.addEventListener("input", function() {
+        const val = this.value.trim();
+
+        // If negative or invalid
+        if (val.startsWith('-') || val < 0) {
+            this.value = '';
+            maxWords.textContent = 'Invalid input! Negative values not allowed.';
+            maxWords.style.color = 'red';
+            maxError.classList.add('hidden');
+            return;
+        }
+
+        // If valid number
+        if (val && !isNaN(val)) {
+            maxError.classList.add('hidden');
+            maxWords.textContent = numberToWords(parseInt(val));
+            maxWords.style.color = '#d8871dff'; // Tailwind "text-blue-700"
+        } else {
+            maxWords.textContent = '';
+            maxError.classList.add('hidden');
+        }
+    });
+});
+</script>
+
+
 @endsection

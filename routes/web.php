@@ -52,6 +52,9 @@ use App\Http\Controllers\MortgageDisbursementController;
 use App\Http\Controllers\MortgageAccountController;
 use App\Helpers\SmsHelper;
 use App\Http\Controllers\BusinessLoan;
+use App\Http\Controllers\CcOdLoanController;
+use App\Http\Controllers\CcOdLoanControllerDisburments;
+use App\Http\Controllers\CcOdLoanControllerAccount;
 use App\Http\Controllers\BusinessLoanDisburments;
 use App\Http\Controllers\BusinessLoanAccount;
 
@@ -737,69 +740,72 @@ Route::group(['prefix' => 'bussiness'], function () {
 Route::group(['prefix' => 'cc_od'], function () {
 
     // cc_od Loan Scheme
-    Route::get('scheme/index', [BusinessLoan::class, 'index'])
+    Route::get('scheme/index', [CcOdLoanController::class, 'index'])
         ->name('cc_od.schemes.index');
 
     // create form
-    Route::get('scheme/create', [BusinessLoan::class, 'create'])
+    Route::get('scheme/create', [CcOdLoanController::class, 'create'])
         ->name('cc_od.schemes.create');
     // store form data
-    Route::post('scheme/store', [BusinessLoan::class, 'store'])
+    Route::post('scheme/store', [CcOdLoanController::class, 'store'])
         ->name('cc_od.schemes.store');
 
     // view list
-    Route::get('scheme/{id}', [BusinessLoan::class, 'show'])
+    Route::get('scheme/{id}', [CcOdLoanController::class, 'show'])
         ->name('cc_od.schemes.show');
 
     // edit form
-    Route::get('scheme/{id}/edit', [BusinessLoan::class, 'edit'])
+    Route::get('scheme/{id}/edit', [CcOdLoanController::class, 'edit'])
         ->name('cc_od.schemes.edit');
-    Route::put('scheme/{id}', [BusinessLoan::class, 'update'])
+    Route::put('scheme/{id}', [CcOdLoanController::class, 'update'])
         ->name('cc_od.schemes.update');
 
-    Route::get('scheme/view/{id}', [BusinessLoan::class, 'view'])
+    Route::get('scheme/view/{id}', [CcOdLoanController::class, 'view'])
         ->name('cc_od.schemes.view');
 
     // cc_od Application page
-    Route::get('applications/index', [BusinessLoan::class, 'appindex'])
+    Route::get('applications/index', [CcOdLoanController::class, 'appindex'])
         ->name('cc_od.applications.index');
 
-    Route::get('applications/create', [BusinessLoan::class, 'appcreate'])
+    Route::get('applications/create', [CcOdLoanController::class, 'appcreate'])
         ->name('cc_od.applications.create');
 
-    Route::post('/businessloan/store', [BusinessLoan::class, 'storeLoanApplication'])->name('cc_od.store');
+    Route::post('/CcOdLoanController/store', [CcOdLoanController::class, 'storeLoanApplication'])->name('cc_od.store');
 
-    Route::get('/members/{id}/info', [BusinessLoan::class, 'getMemberInfo'])
+    Route::get('/members/{id}/info', [CcOdLoanController::class, 'getMemberInfo'])
         ->name('members.info');
 
-    Route::get('cc_od/applications/view/{id}', [BusinessLoan::class, 'appview'])
+    Route::get('cc_od/applications/view/{id}', [CcOdLoanController::class, 'appview'])
         ->name('cc_od.applications.view');
 
     // Edit form
-    Route::get('/cc_od/applications/{id}/edit', [BusinessLoan::class, 'appedit'])
+    Route::get('/cc_od/applications/{id}/edit', [CcOdLoanController::class, 'appedit'])
         ->name('cc_od.applications.edit');
 
     // Update
-    Route::put('/cc_od/applications/{id}', [BusinessLoan::class, 'appupdate'])
+    Route::put('/cc_od/applications/{id}', [CcOdLoanController::class, 'appupdate'])
         ->name('cc_od.applications.update');
 
-    Route::get('applications/show-emi-chart', [BusinessLoan::class, 'showEmiChart'])
+    Route::get('applications/show-emi-chart', [CcOdLoanController::class, 'showEmiChart'])
         ->name('cc_od.applications.view-buttons.show-emi-chart');
 
+    Route::get('cc-od/credit-score/upload/{id}', [CcOdLoanController::class, 'upload'])
+    ->name('cc_od.credit_score.upload');
 
+    
     // Disbursement cc_od Loan
-    Route::get('disbursements/index', [BusinessLoanDisburments::class, 'index'])
+    Route::get('disbursements/index', [CcOdLoanControllerDisburments::class, 'index'])
         ->name('cc_od.disbursements.index');
-    Route::post('/cc_od/disbursements/cancel/{id}', [BusinessLoanDisburments::class, 'cancelLoan'])->name('cc_od.cancel');
+    Route::post('/cc_od/disbursements/cancel/{id}', [CcOdLoanControllerDisburments::class, 'cancelLoan'])->name('cc_od.cancel');
 
     // disburse-loan page  
-    Route::get('disbursements/disburse-loan/{id}', [BusinessLoanDisburments::class, 'show'])
+    Route::get('disbursements/disburse-loan/{id}', [CcOdLoanControllerDisburments::class, 'show'])
         ->name('cc_od.disbursements.disburse-loan');
-    Route::post('/cc_od/disbursements/store', [BusinessLoanDisburments::class, 'store'])->name('cc_od.store');
+    Route::post('/cc_od/disbursements/store', [CcOdLoanControllerDisburments::class, 'store'])->name('cc_od_disbursment.store');
 
 
     // cc_od Loan Account Page
-    Route::get('account/index', [BusinessLoanAccount::class, 'index'])
+    Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])
         ->name('cc_od.account.index');
 });
 
@@ -825,6 +831,7 @@ Route::group(['prefix' => 'support', 'as' => 'support.'], function () {
     Route::get('/privacy-policy', [SupportController::class, 'privacyPolicy'])->name('privacy.policy');
     Route::get('/contact-us', [SupportController::class, 'contactUs'])->name('contact.us');
 });
+
 Route::prefix('fd_account/calculator')->name('calculator.')->group(function () {
     Route::get('/create', [CalculatorController::class, 'create'])->name('create');
     Route::post('/store', [CalculatorController::class, 'store'])->name('store');

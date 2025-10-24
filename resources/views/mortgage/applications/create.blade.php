@@ -844,7 +844,7 @@
                 </button>
 
                 <button class="btn-outline uppercase justify-center" type="reset">
-                    <a href="#">BACK</a>
+                    <a href="{{ route('mortgage.applications.index') }}">BACK</a>
                 </button>
             </div>
 
