@@ -22,7 +22,15 @@
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                <form action="">
+                <form action="{{ route('ccod.col_process_fee.store', $application->id) }}" method="POST">
+                    @csrf
+
+                    <input type="hidden" name="value" value="0">
+                    <input type="hidden" name="gst_percent" value="18.0">
+                    <input type="hidden" name="sgst" value="0">
+                    <input type="hidden" name="cgst" value="0">
+                    <input type="hidden" name="igst" value="0">
+
                     <!-- Header -->
                     <div class="px-4 py-3">
                         <h3 class="text-lg border-b font-semibold text-black">COLLECT ADVANCE PROCESSING FEE</h3>
@@ -75,7 +83,7 @@
 
                                     <!-- Total -->
                                     <td class="px-2 py-2">
-                                        <input type="number" name="" id="" placeholder="0"
+                                        <input type="number" name="total" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center  border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>

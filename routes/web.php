@@ -811,6 +811,10 @@ Route::group(['prefix' => 'cc_od'], function () {
     // Collect Processing fee page in application view page
     Route::get('cc-od/col-process-fee/{id}', [CcOdLoanController::class, 'col_process_fee'])
         ->name('cc_od.applications.view-buttons.col_process_fee');
+
+    Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
+    ->name('ccod.col_process_fee.store');
+
 });
 
 
