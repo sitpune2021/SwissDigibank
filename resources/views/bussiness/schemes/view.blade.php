@@ -137,13 +137,13 @@
                                 </span>
                             </td>
                         </tr>
-                        <tr class="bg-gray-50 border-b">
+                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Created at</td>
-                            <td class="p-3">{{ $scheme->created_at->format('d/m/Y H:i') }}</td>
+                            <td class="p-3">{{ $scheme->created_at->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Updated at</td>
-                            <td class="p-3">{{ $scheme->updated_at->format('d/m/Y H:i') }}</td>
+                            <td class="p-3">{{ $scheme->updated_at->format('d-m-Y') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -159,7 +159,7 @@
         <div class="box shadow-md rounded-10">
             <!-- Header -->
             <div class="flex items-center justify-between px-4 py-3 dark:bg-bg3 bg-secondary/5 rounded-10 ">
-                <h3 class="text-lg font-semibold text-gray-800">GOLD LOAN SETTING AUDIT TRAIL</h3>
+                <h3 class="text-lg font-semibold text-gray-800">BUSINESS LOAN SETTING AUDIT TRAIL</h3>
                 <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'auditTrail')">
                     <span class="toggle-icon text-lg font-bold">−</span>
                 </button>

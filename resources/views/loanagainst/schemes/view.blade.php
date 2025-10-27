@@ -28,7 +28,7 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    LOAN AGAINST SCHEMES
+                    DEPOSITE LOAN SCHEME
                 </p>
             </div>
         </div>
@@ -139,11 +139,11 @@
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Created at</td>
-                            <td class="p-3">{{ $scheme->created_at->format('d/m/Y H:i') }}</td>
+                            <td class="p-3">{{ $scheme->created_at->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Updated at</td>
-                            <td class="p-3">{{ $scheme->updated_at->format('d/m/Y H:i') }}</td>
+                            <td class="p-3">{{ $scheme->updated_at->format('d-m-Y') }}</td>
                         </tr>
                     </tbody>
                 </table>

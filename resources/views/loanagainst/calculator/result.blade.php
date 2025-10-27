@@ -8,7 +8,8 @@
       <tbody class="divide-y divide-gray-200">
         <tr>
           <td class="font-semibold py-2 px-3 w-1/4">Disburse Date</td>
-          <td class="py-2 px-3 w-1/4">{{ $disburse_date->format('d/m/Y') }}</td>
+          <!-- <td class="py-2 px-3 w-1/4">{{ $disburse_date->format('d/m/Y') }}</td> -->
+           <td class="py-2 px-3 w-1/4">{{ $disburse_date->format('d-m-Y') }}</td>
           <td class="font-semibold py-2 px-3 w-1/4">Loan Amount</td>
           <td class="py-2 px-3 w-1/4">₹ {{ number_format($loan,2) }}</td>
         </tr>
@@ -45,8 +46,8 @@
         <tr class="bg-gray-50 font-semibold">
           <td class="py-2 px-3 text-gray-700"> </td>
           <td class="py-2 px-3"> </td>
-          <td class="py-2 px-3 text-gray-700">Grand Total Payable</td>
-          <td class="py-2 px-3 text-green-700 font-bold">₹ {{ number_format($grand_total_payable,2) }}</td>
+          <!-- <td class="py-2 px-3 text-gray-700">Grand Total Payable</td>
+          <td class="py-2 px-3 text-green-700 font-bold">₹ {{ number_format($grand_total_payable,2) }}</td> -->
         </tr>
       </tbody>
     </table>
@@ -72,8 +73,14 @@
         @foreach($schedule as $row)
           <tr>
             <td class="p-2 text-center">{{ $row['no'] }}</td>
-            <td class="p-2 text-center">{{ $row['emi_date'] }}</td>
-            <td class="p-2 text-center">{{ $row['due_date'] }}</td>
+            <!-- <td class="p-2 text-center">{{ $row['emi_date'] }}</td> -->
+            <td class="p-2 text-center">
+                {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
+            </td>
+            <!-- <td class="p-2 text-center">{{ $row['due_date'] }}</td> -->
+            <td class="p-2 text-center">
+                {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
+            </td>
             <td class="p-2 text-right">₹ {{ number_format($row['principal'],2) }}</td>
             <td class="p-2 text-right">₹ {{ number_format($row['interest'],2) }}</td>
             <td class="p-2 text-right">₹ {{ number_format($row['charges'],2) }}</td>
@@ -82,6 +89,15 @@
           </tr>
         @endforeach
       </tbody>
+      <tfoot>
+            <tr class="bg-gray-200 font-bold">
+                <td colspan="4" class="p-2 text-center">TOTAL</td>
+                <td class="p-2 text-right">₹ {{ number_format($total_interest_paid, 2) }}</td>
+                <td class="p-2 text-right">₹ {{ number_format($total_charges_paid, 2) }}</td>
+                <td class="p-2 text-right">₹ {{ number_format($total_emi_paid, 2) }}</td>
+                <td class="p-2 text-right">₹ 0.00</td>
+            </tr>
+        </tfoot>
     </table>
   </div>
 </div>

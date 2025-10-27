@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 
 class User extends Authenticatable
-{    
+{
     use HasApiTokens, Notifiable;
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -38,6 +38,9 @@ class User extends Authenticatable
         'emp_id',
         'otp',
         'otp_expires_at'
+    ];
+    protected $casts = [
+        'otp_expires_at' => 'datetime',
     ];
 
     /**

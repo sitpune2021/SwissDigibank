@@ -117,6 +117,7 @@
                                         @elseif($application->model_type === 'mortgage') text-green-600
                                         @elseif($application->model_type === 'loan_against') text-orange-600
                                         @elseif($application->model_type === 'business_loan') text-purple-600
+                                        @elseif($application->model_type === 'cc_od') text-yellow-600
                                         @endif
                                     ">
                                         {{ $types[$application->model_type] ?? 'Unknown' }}
