@@ -139,7 +139,7 @@
 
                     <!-- Edit Icon -->
                      <!-- Edit Icon (show only if status ≠ 2 and ≠ 3) -->
-                    @if($application->status != 2 && $application->status != 3)
+                    @if($application->status != 2)
                     <a href="{{ route('gold-loan.applications.edit', $application->id) }}" 
                     class="text-green-500 hover:text-green-700" 
                     title="Edit">

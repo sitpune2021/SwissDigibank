@@ -475,6 +475,20 @@ class CcOdLoanController extends Controller
     }
     
 
+    public function col_process_fee($id)
+    {
+         $application = CcOdLoanApplication::with([
+            'member',
+            'coApplicant1',
+            'guarantor1',
+            'scheme',
+            'creditScores'
+        ])->findOrFail($id);
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        return view("cc_od.applications.view-buttons.col_process_fee", compact('application','banks'));
+    }
+
 
     
 }
