@@ -67,7 +67,6 @@
                      @error('scheme_code')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -76,9 +75,10 @@
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" id="" max="200000" name="min_loan_amount" value="{{ old('min_loan_amount', $scheme->min_loan_amount ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    <input type="number" id="minLoanAmount" min="0" max="200000" name="min_loan_amount" value="{{ old('min_loan_amount', $scheme->min_loan_amount ?? '') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
                         placeholder="0.0">
+                        <p id="minLoanWords" class="text-red-600 text-sm mt-1 font-semibold"></p>
                      @error('min_loan_amount')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -90,9 +90,10 @@
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" id=""  max="200000" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    <input type="number" id="maxLoanAmount" min="0" max="200000" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
                         placeholder="0.0">
+                        <p id="maxLoanWords" class="text-red-600 text-sm mt-1 font-semibold"></p>                 
                          @error('max_loan_amount')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -606,7 +607,7 @@
             </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('rdschemes.index')}}"> BAck</a>
+                <a href="{{route('gold-loan.schemes.index')}}"> BAck</a>
             </button>
         </div>
 
@@ -665,5 +666,68 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+// Function to convert numbers into words
+function numberToWords(num) {
+    const a = [
+        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+    ];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    if ((num = num.toString()).length > 9) return 'Overflow';
+    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return '';
+
+    let str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + 
+            (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
+    return str.trim() + ' Rupees Only';
+}
+
+// Event listeners for both fields
+['minLoanAmount', 'maxLoanAmount'].forEach(id => {
+    const input = document.getElementById(id);
+    const output = document.getElementById(id === 'minLoanAmount' ? 'minLoanWords' : 'maxLoanWords');
+
+    input.addEventListener('input', () => {
+        const val = input.value;
+        if (val && val > 0) {
+            output.textContent = numberToWords(parseInt(val));
+            output.classList.remove('hidden');
+        } else {
+            output.textContent = '';
+        }
+    });
+});
+</script>
+
+<!-- Stop Negative Value -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const inputs = document.querySelectorAll("#minLoanAmount, #maxLoanAmount");
+
+    inputs.forEach(input => {
+        // Prevent typing "-" (minus sign)
+        input.addEventListener("keypress", function(e) {
+            if (e.key === "-" || e.key === "e" || e.key === "E") {
+                e.preventDefault();
+            }
+        });
+
+        // Prevent pasting negative or invalid values
+        input.addEventListener("input", function() {
+            if (this.value < 0) {
+                this.value = '';
+            }
+        });
+    });
+});
+</script>
 
 @endsection

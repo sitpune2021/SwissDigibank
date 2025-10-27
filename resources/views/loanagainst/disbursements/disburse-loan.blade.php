@@ -28,7 +28,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">Loan Againsts Disbursements</h3>
+                <h3 class="uppercase font-semibold">DEPOSITE LOAN DISBURSMETS</h3>
             </div>
         </div>
 
@@ -372,7 +372,7 @@
         <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
             DISBURSE LOAN
         </button>
-        <a href="#" class="btn-outline uppercase justify-center">BACK</a>
+        <a href="{{ route('loanagainst.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
     </div>
 </form>
 

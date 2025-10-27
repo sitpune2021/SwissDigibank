@@ -27,7 +27,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW LOAN AGAINST SCHEME</h1>
+            <h1 class="text-xl font-semibold">NEW DEPOSITE LOAN SCHEME</h1>
         </div>
     </div>
     
@@ -89,60 +89,90 @@
                     @enderror
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Amount (₹)
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
+                    <input type="number" id="maxLoanAmount" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0" max="200000" >
-                        <!-- Laravel Error Message -->
+                        placeholder="0.0"  min="0" max="200000" >
+                       
                         @error('max_loan_amount')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
+                </div> -->
+                <div class="col-span-2 md:col-span-1">
+                    <label for="maxLoanAmount" class="md:text-lg font-medium block mb-4">
+                        Maximum Loan Amount (₹)
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <!-- <input type="number" id="maxLoanAmount" name="max_loan_amount"
+                        min="0" max="200000"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
+                        placeholder="0.0">
+                    <p id="maxLoanWords" class="text-blue-700 text-sm mt-1 font-semibold"></p>
+                    <p id="maxLoanError" class="text-red-600 text-sm mt-1 font-semibold hidden"></p> -->
+                    <input type="number" id="maxLoanAmount" name="max_loan_amount"
+                            min="0" max="200000"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
+                            placeholder="0.0">
+
+                        <p id="maxLoanWords" class="text-sm mt-1 font-semibold"></p>
+                        <p id="maxLoanError" class="text-sm mt-1 font-semibold hidden"></p>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="max_loan_limit" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="max_loan_limit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Maximum Loan Limit" >
+
+                    <select id="max_loan_limit" name="max_loan_limit"
+                        class="form-control w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 
+                            dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
+                        required>
+                        <option value="">Please Select</option>
+                        <option value="50.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '50.0' ? 'selected' : '' }}>50%</option>
+                        <option value="60.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '60.0' ? 'selected' : '' }}>60%</option>
+                        <option value="70.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '70.0' ? 'selected' : '' }}>70%</option>
+                        <option value="75.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '75.0' ? 'selected' : '' }}>75%</option>
+                        <option value="80.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '80.0' ? 'selected' : '' }}>80%</option>
+                        <option value="90.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '90.0' ? 'selected' : '' }}>90%</option>
+                        <option value="100.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '100.0' ? 'selected' : '' }}>100%</option>
+                    </select>
                     @error('max_loan_limit')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <!-- This will show the words -->
-                    <x-number-to-word for="maxLoanLimit" />
                 </div>
+
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="tenure" class="md:text-lg font-medium block mb-4">
                         Max. Tenure <span class="text-red-500">*</span>
                     </label>
-
-                    <select id="tenure" name="tenure" value="{{ old('tenure', $scheme->tenure ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
-                        <option value="1">1 Month</option>
-                        <option selected="selected" value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="9">9 Months</option>
-                        <option value="12">12 Months</option>
-                        <option value="18">18 Months</option>
-                        <option value="24">2 Years</option>
-                        <option value="36">3 Years</option>
-                        <option value="48">4 Years</option>
-                        <option value="60">5 Years</option>
-                        <option value="72">6 Years</option>
-                        <option value="84">7 Years</option>
-                        <option value="96">8 Years</option>
-                        <option value="108">9 Years</option>
-                        <option value="120">10 Years</option>
-                        <option value="180">15 Years</option>
+                    <select id="tenure" name="tenure"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        required>
+                        <option value="">Please Select</option>
+                        <option value="1" {{ old('tenure', $scheme->tenure ?? '') == '1' ? 'selected' : '' }}>1 Month</option>
+                        <option value="3" {{ old('tenure', $scheme->tenure ?? '') == '3' ? 'selected' : '' }}>3 Months</option>
+                        <option value="6" {{ old('tenure', $scheme->tenure ?? '') == '6' ? 'selected' : '' }}>6 Months</option>
+                        <option value="9" {{ old('tenure', $scheme->tenure ?? '') == '9' ? 'selected' : '' }}>9 Months</option>
+                        <option value="12" {{ old('tenure', $scheme->tenure ?? '') == '12' ? 'selected' : '' }}>12 Months</option>
+                        <option value="18" {{ old('tenure', $scheme->tenure ?? '') == '18' ? 'selected' : '' }}>18 Months</option>
+                        <option value="24" {{ old('tenure', $scheme->tenure ?? '') == '24' ? 'selected' : '' }}>2 Years</option>
+                        <option value="36" {{ old('tenure', $scheme->tenure ?? '') == '36' ? 'selected' : '' }}>3 Years</option>
+                        <option value="48" {{ old('tenure', $scheme->tenure ?? '') == '48' ? 'selected' : '' }}>4 Years</option>
+                        <option value="60" {{ old('tenure', $scheme->tenure ?? '') == '60' ? 'selected' : '' }}>5 Years</option>
+                        <option value="72" {{ old('tenure', $scheme->tenure ?? '') == '72' ? 'selected' : '' }}>6 Years</option>
+                        <option value="84" {{ old('tenure', $scheme->tenure ?? '') == '84' ? 'selected' : '' }}>7 Years</option>
+                        <option value="96" {{ old('tenure', $scheme->tenure ?? '') == '96' ? 'selected' : '' }}>8 Years</option>
+                        <option value="108" {{ old('tenure', $scheme->tenure ?? '') == '108' ? 'selected' : '' }}>9 Years</option>
+                        <option value="120" {{ old('tenure', $scheme->tenure ?? '') == '120' ? 'selected' : '' }}>10 Years</option>
+                        <option value="180" {{ old('tenure', $scheme->tenure ?? '') == '180' ? 'selected' : '' }}>15 Years</option>
                     </select>
-
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -576,7 +606,7 @@
         </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('rdschemes.index')}}"> BAck</a>
+                <a href="{{route('loanagainst.schemes.index')}}"> BAck</a>
             </button>
         </div>
     </div>
@@ -617,4 +647,67 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 </script>
+
+
+<script>
+// Convert numbers to words
+function numberToWords(num) {
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    if ((num = num.toString()).length > 9) return 'Overflow';
+    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return '';
+
+    let str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + 
+            (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
+    return str.trim() + ' Rupees Only';
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const maxInput = document.getElementById('maxLoanAmount');
+    const maxWords = document.getElementById('maxLoanWords');
+    const maxError = document.getElementById('maxLoanError');
+
+    // Prevent typing "-" or "e"
+    maxInput.addEventListener("keypress", function(e) {
+        if (e.key === "-" || e.key === "e" || e.key === "E") {
+            e.preventDefault();
+        }
+    });
+
+    // Handle input
+    maxInput.addEventListener("input", function() {
+        const val = this.value.trim();
+
+        // If negative or invalid
+        if (val.startsWith('-') || val < 0) {
+            this.value = '';
+            maxWords.textContent = 'Invalid input! Negative values not allowed.';
+            maxWords.style.color = 'red';
+            maxError.classList.add('hidden');
+            return;
+        }
+
+        // If valid number
+        if (val && !isNaN(val)) {
+            maxError.classList.add('hidden');
+            maxWords.textContent = numberToWords(parseInt(val));
+            maxWords.style.color = '#d8871dff'; // Tailwind "text-blue-700"
+        } else {
+            maxWords.textContent = '';
+            maxError.classList.add('hidden');
+        }
+    });
+});
+</script>
+
+
 @endsection

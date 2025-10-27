@@ -30,13 +30,13 @@
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  MEMBER NO
+                                  CUSTOMER NO
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  	MEMBER NAME
+                                  	CUSTOMER NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">

@@ -15,6 +15,7 @@ use App\Models\LoanApplication;
 use App\Models\MortgageLoanApplication;
 use App\Models\LoanAgainstApplication;
 use App\Models\BusinessLoanApplication;
+use App\Models\CcOdLoanApplication;
 
 
 class ApproveController extends Controller
@@ -457,11 +458,22 @@ class ApproveController extends Controller
                     return $item;
                 });
 
+            // cc od Loan Applications
+            $cc_od = CcOdLoanApplication::with(['branch', 'member'])
+                ->whereNotIn('status', [1, 2, 3])
+                ->latest()
+                ->get()
+                ->map(function ($item) {
+                    $item->model_type = 'cc_od';
+                    return $item;
+                });
+
             // Merge all 4 collections
             $applications = $loanApplications
                 ->concat($mortgageLoans)
                 ->concat($loanAgainst)
                 ->concat($businessLoans)
+                ->concat($cc_od)
                 ->sortByDesc('created_at');
 
             // Account types array
@@ -470,6 +482,7 @@ class ApproveController extends Controller
                 'mortgage' => 'Mortgage Loan',
                 'loan_against' => 'Loan Against',
                 'business_loan' => 'Business Loan',
+                'cc_od' => 'CC OD',
             ];
 
             return view('approvals.loans', compact('applications', 'types'));
@@ -499,6 +512,9 @@ class ApproveController extends Controller
                 break;
             case 'business_loan':
                 $application = BusinessLoanApplication::find($id);
+                break;
+                 case 'cc_od':
+                $application = CcOdLoanApplication::find($id);
                 break;
             default:
                 $application = null;

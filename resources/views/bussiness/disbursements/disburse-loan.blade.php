@@ -372,7 +372,7 @@
         <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
             DISBURSE LOAN
         </button>
-        <a href="#" class="btn-outline uppercase justify-center">BACK</a>
+        <a href="{{ route('bussiness.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
     </div>
 </form>
 

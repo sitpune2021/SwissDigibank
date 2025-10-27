@@ -22,8 +22,8 @@
     @endif
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">BUSINESS LOAN APPLICATIONS</h3>
-                <a href="{{route('bussiness.applications.create')}}" class=" block flex btn-primary capitalize ">add
+                <h3 class=" flex text-xl block font-semibold">CC LIMIT APPLICATIONS</h3>
+                <a href="{{route('cc_od.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
             </div>
 
@@ -48,13 +48,13 @@
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  MEMBER NO
+                                  CUSTOMER NO
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  	MEMBER NAME
+                                  	CUSTOMER NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -92,7 +92,7 @@
           
             <!-- Application No. -->
            <td class="text-start !py-5 px-6">
-                <a href="{{ route('bussiness.applications.view', $application->id) }}" 
+                <a href="{{ route('cc_od.applications.view', $application->id) }}" 
                 class="text-blue-600 hover:underline">
                     {{ $application->id }}
                 </a>
@@ -151,8 +151,8 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('bussiness.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
-                            <li><a href="{{ route('bussiness.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            <li><a href="{{ route('cc_od.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('cc_od.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
                         </ul>
                     </div>
                 </div>

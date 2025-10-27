@@ -697,10 +697,10 @@
                     </div>
 
                     <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
-                        {{-- Member Info Box --}}
+                        {{-- Customer Info Box --}}
                         <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                             <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                                <h3 class="text-base font-semibold md:text-lg uppercase">Member Info</h3>
+                                <h3 class="text-base font-semibold md:text-lg uppercase">Customer Info</h3>
                                 <button type="button" class="p-1 rounded transition"
                                     onclick="toggleSection(this, 'memberInfoBody')">
                                     <span class="toggle-icon text-lg font-bold">−</span>
@@ -711,7 +711,7 @@
                                     <table class="w-full text-sm text-left">
                                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                             <tr class="border-b">
-                                                <td class="font-semibold py-2 pr-4 uppercase">Member Name</td>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Customer Name</td>
                                                 <td class="py-2 capitalize" id="memberName">-</td>
                                             </tr>
                                             <tr class="border-b">
@@ -963,7 +963,7 @@
                         Calculate
                     </button>
                     <button class="btn-outline justify-center" type="reset">
-                        <a href="{{route('rdschemes.index')}}"> Back</a>
+                        <a href="{{route('gold-loan.applications.index')}}"> Back</a>
                     </button>
                 </div>
             </form>
@@ -1277,7 +1277,7 @@
                 }
             });
 
-            // ✅ Add one default row when page loads
+            // Add one default row when page loads
             //cibilBody.insertAdjacentHTML("beforeend", newRow());
              if (cibilBody.querySelectorAll("tr").length === 0) {
                 cibilBody.insertAdjacentHTML("beforeend", newRow());

@@ -26,13 +26,13 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">BUSINESS LOAN APPLICATION</h1>
+            <h1 class="text-xl font-semibold">NEW CC LIMIT APPLICATION</h1>
         </div>
     </div>
 
     <div class="box">
         <form method="POST" 
-                        action="{{ isset($application) ? route('bussiness.applications.update', $application->id) : route('businessloan.store') }}" enctype="multipart/form-data">
+                        action="{{ isset($application) ? route('cc_od.applications.update', $application->id) : route('cc_od.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if(isset($application))
                             @method('PUT')
@@ -53,14 +53,14 @@
                         
                         <div class="col-span-2 md:col-span-1">
                             <label for="member_id" class="md:text-lg font-medium block mb-4">
-                                Member <span class="text-red-500">*</span>
+                                CUSTOMER <span class="text-red-500">*</span>
                             </label>
                             
                             <select name="member_id" id="member_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Member No or Name</option>
                                 @foreach($members as $member)
-                                    <option value="{{ $member->id }}"
+                                    <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}"
                                     {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
                                         data-name="{{ $member->member_info_first_name }}"
                                         data-mobile="{{ $member->member_info_mobile_no }}">
@@ -230,36 +230,7 @@
                             @enderror
                             </div>
                         </div>
-                                                
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
-                                    Tenure Type
-                                    <span class="text-error">*</span>
-                                </label>
-                                <div class="flex">
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" value="days"
-                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'days' ? 'checked' : '' }}>
-                                        <span class="text-gray-70 capitalize">DAYS</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" value="weeks"
-                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'weeks' ? 'checked' : '' }}>
-                                        <span class="text-gray-70 capitalize">WEEKS</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
-                                        <input type="radio" name="tenure_type" value="months"
-                                            {{ old('tenure_type', $application->tenure_type ?? '') == 'months' ? 'checked' : '' }}>
-                                        <span class="text-gray-70 capitalize">MONTHS</span>
-                                    </label>
-                                </div>
-                                 @error('tenure_type')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                            </div>
-                        </div>
-
+                                               
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
                                 Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
@@ -269,22 +240,6 @@
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
                                 class="w-full text-sm border px-3 py-2">
                                 @error('tenure_value')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                EMI Collection <span class="text-error">* </span>
-                            </label>
-                            <select name="emi_collection" class="w-full text-sm border px-3 py-2">
-                            <option value="">Please Select</option>
-                            <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
-                            <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
-                            <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
-                            <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
-                        </select>
-                            @error('emi_collection')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                         </div>
@@ -302,35 +257,11 @@
                                 @enderror
                         </div>
 
-                       <div class="col-span-2 md:col-span-1">
-                            <label for="loanAmount" class="md:text-lg font-medium block mb-4">
-                                Loan Amount (₹) <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="loanAmount" name="loan_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
-                                @error('loan_amount')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="insuranceAmount" class="md:text-lg font-medium block mb-4">
-                                Insurance Amount (₹) <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="insuranceAmount" name="insurance_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
-                                @error('insurance_amount')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                        </div>
-
                         <div class="col-span-2 md:col-span-1">
                             <label for="netLoanAmount" class="md:text-lg font-medium block mb-4">
-                                Net Loan Amount (₹) <span class="text-error">*</span>
+                                Requested CC Limit (₹) <span class="text-error">*</span>
                             </label>
-                            <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
+                            <input type="number" id="netLoanAmount" name="net_loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
                                 placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
                                 @error('net_loan_amount')
@@ -340,30 +271,30 @@
 
                         <div class="col-span-2 md:col-span-1 mb-3">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                Purpose of Loan
+                                Purpose of CC Limit
                                 <span class="text-error">*</span>
                             </label>
                             <input type="text" id="purpose_of_loan" name="purpose_of_loan"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
+                                placeholder="Enter Purpose of CC Limit" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
                                 @error('purpose_of_loan')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <label class="md:text-lg font-medium block mb-4">
-                                Charges Per EMI Type <span class="text-error">*</span>
+                                Link With FD <span class="text-error">*</span>
                             </label>
                             <div class="flex gap-6">
                                 <label class="flex items-center gap-2">
                                     <input type="radio" name="charge_per_emi" value="0"
                                         {{ old('charge_per_emi', $application->charge_per_emi ?? '0') == '0' ? 'checked' : '' }}>
-                                    ON EMI
+                                   YES
                                 </label>
                                 <label class="flex items-center gap-2">
                                     <input type="radio" name="charge_per_emi" value="1"
                                         {{ old('charge_per_emi', $application->charge_per_emi ?? '') == '1' ? 'checked' : '' }}>
-                                    ON PRINCIPAL
+                                    NO
                                 </label>
                             </div>
                             @error('charge_per_emi')
@@ -519,7 +450,7 @@
                                 <!-- Pay Mode -->
                                 <label class="mr-4">
                                     <input type="radio" name="fee_mode" value="cash"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> Cash
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }} checked> Cash
                                 </label>
                                 <label class="mr-4">
                                     <input type="radio" name="fee_mode" value="cheque"
@@ -635,7 +566,7 @@
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base capitalize font-semibold md:text-lg">Member Info</h3>
+                        <h3 class="text-base capitalize font-semibold md:text-lg">Customer Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'memberInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -646,7 +577,7 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Member Name</td>
+                                        <td class="font-semibold py-2 pr-4">Customer Name</td>
                                         <td class="py-2 capitalize" id="memberName">-</td>
                                     </tr>
                                     <tr class="border-b">
@@ -761,7 +692,7 @@
                     Calculate
                 </button>
                 <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('rdschemes.index')}}"> BAck</a>
+                <a href="{{route('cc_od.applications.index')}}"> BAck</a>
             </button>
             </div>
     </form>
@@ -887,55 +818,40 @@ document.addEventListener("DOMContentLoaded", () => {
 <script>
     let isCalculated = false;
 
-    // Auto update Net Loan when user types
-    function updateNetLoanAmount() {
-        const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-        const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-        const netLoan = loanAmount + insurance;
-
-        document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
-    }
-
-    document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
-    document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
-
-    // On Calculate button click
     document.getElementById("calculateBtn").addEventListener("click", function (e) {
         const button = this;
 
-    // Step 1: Get base values
-    const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-    const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-    const netLoan = loanAmount + insurance;
+        // Step 1: Get base value (only Net Loan)
+        const netLoan = parseFloat(document.getElementById("netLoanAmount")?.value) || 0;
 
-    // Step 2: Get scheme details
-    const scheme = document.getElementById("scheme_id");
-    const selected = scheme.options[scheme.selectedIndex];
-    const maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+        // Step 2: Get scheme details
+        const scheme = document.getElementById("scheme_id");
+        const selected = scheme.options[scheme.selectedIndex];
+        const maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
 
-    // Step 3: Approvable = min(NetLoan, MaxLoan)
-    const approvable = Math.min(netLoan, maxLoan);
+        // Step 3: Approvable = min(NetLoan, MaxLoan)
+        const approvable = Math.min(netLoan, maxLoan);
 
-    // Step 4: Display results
-    document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
-    document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
-    document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+        // Step 4: Display results
+        document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
+        document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
+        document.getElementById("resApprovable").textContent = approvable.toFixed(2);
 
-    // Step 5: Set hidden inputs for backend
-    document.getElementById("inputNetLoan").value = netLoan.toFixed(2);
-    document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
-    document.getElementById("inputApprovable").value = approvable.toFixed(2);
+        // Step 5: Set hidden inputs for backend
+        document.getElementById("inputNetLoan").value = netLoan.toFixed(2);
+        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+        document.getElementById("inputApprovable").value = approvable.toFixed(2);
 
-    // Step 6: Show calculation box
-    document.getElementById("calculationBox").classList.remove("hidden");
+        // Step 6: Show calculation box
+        document.getElementById("calculationBox").classList.remove("hidden");
 
-    // Step 7: Convert Calculate → Submit on 2nd click
-    if (!isCalculated) {
-        e.preventDefault();
-        button.textContent = "Submit";
-        button.type = "submit";
-        isCalculated = true;
-    }
+        // Step 7: Convert Calculate → Submit on 2nd click
+        if (!isCalculated) {
+            e.preventDefault(); // stop immediate submission
+            button.textContent = "Submit";
+            button.type = "submit";
+            isCalculated = true;
+        }
     });
 </script>
 
@@ -1013,6 +929,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<!-- branch Auto populate when select customer -->
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const memberSelect = document.getElementById("member_id");
+        const branchSelect = document.getElementById("branch_id");
+
+        memberSelect.addEventListener("change", function () {
+            let selectedOption = this.options[this.selectedIndex];
+            let branchId = selectedOption.getAttribute("data-branch");
+
+            if (branchId) {
+                branchSelect.value = branchId;
+            } else {
+                branchSelect.value = "";
+            }
+        });
+    });
+</script>
 
 @endsection
 

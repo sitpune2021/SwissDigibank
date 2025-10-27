@@ -23,7 +23,7 @@
     @endif
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">LOAN AGAINSTS APPLICATIONS</h3>
+                <h3 class=" flex text-xl block font-semibold">DEPOSITE LOAN APPLICATIONS</h3>
                 <a href="{{route('loanagainst.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
             </div>
