@@ -62,7 +62,7 @@
                                     Application Date <span class="text-red-500">*</span>
                                 </label>
 
-                                <input type="text" name="application_date"
+                                <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                     value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                             </div>
 
@@ -265,19 +265,19 @@
                                         <span class="text-error">*</span>
                                     </label>
                                     <div class="flex">
-                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                        <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="days" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'days' ?
                                             'checked' : '' }} >
                                             <span class="text-gray-70 capitalize">DAYS</span>
                                         </label>
-                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                        <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="weeks" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'weeks' ?
                                             'checked' : '' }} >
                                             <span class="text-gray-70 capitalize">WEEKS</span>
                                         </label>
-                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                        <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="months" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'months' ?
                                             'checked' : '' }} >
