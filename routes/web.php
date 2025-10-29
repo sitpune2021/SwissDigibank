@@ -438,6 +438,14 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('account/index', [GoldLoanAccountController::class, 'index'])
         ->name('gold-loan.account.index');
 
+    Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
+        ->name('gold-loan.account.show');
+
+    Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
+        ->name('gold-loan.account.transaction');
+
+    Route::get('goldloan-account/payemi/{id}', [GoldLoanAccountController::class, 'goldLoanPayEmi'])
+        ->name('gold-loan.account.pay-emi');
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -790,9 +798,9 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('cc_od.applications.view-buttons.show-emi-chart');
 
     Route::get('cc-od/credit-score/upload/{id}', [CcOdLoanController::class, 'upload'])
-    ->name('cc_od.credit_score.upload');
+        ->name('cc_od.credit_score.upload');
 
-    
+
     // Disbursement cc_od Loan
     Route::get('disbursements/index', [CcOdLoanControllerDisburments::class, 'index'])
         ->name('cc_od.disbursements.index');

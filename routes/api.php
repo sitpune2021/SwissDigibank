@@ -11,15 +11,14 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/send-otp', [AuthController::class, 'sendOtpSms']);
-Route::post('/set-mpin', [AuthController::class, 'setMpin']);
-Route::post('/verify-mpin', [AuthController::class, 'verifyMpin']);
-
+Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp']);
+Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp']);
+Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin']);
 
 Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
     Route::get('transactions', [ApiTransactionController::class, 'transactionHistory']);
     Route::get('passbook', [ApiTransactionController::class, 'viewPassbook']);
-    Route::get('balance', [ApiTransactionController::class, 'getBalance']); // fixed
-
+    Route::get('balance', [ApiTransactionController::class, 'getBalance']); 
 });
 //member  api route
 Route::middleware('auth:sanctum')->get('members/details', [MemberController::class, 'fetchMemberDetails']);

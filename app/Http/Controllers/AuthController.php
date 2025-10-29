@@ -43,14 +43,12 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Check user active flag
         if ($user->user_active != 1) {
             return response()->json([
                 'status' => false,
                 'message' => 'User account is inactive.',
             ], 403);
         }
-
         $otp = rand(100000, 999999);
         $user->otp = $otp;
         $user->otp_expires_at = now()->addMinutes(5);
@@ -151,28 +149,191 @@ class AuthController extends Controller
             'message' => 'Logout successful!',
         ]);
     }
-    public function setMpin(Request $request)
+    // public function requestMpinOtp(Request $request)
+    // {
+    //     $request->validate([
+    //         'username' => 'required|string',
+    //     ]);
+
+    //     $username = $request->input('username');
+
+    //     $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+    //         ? User::where('email', $username)->first()
+    //         : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'User not found.',
+    //         ], 404);
+    //     }
+
+    //     // Generate OTP
+    //     $otp = rand(100000, 999999);
+    //     $user->otp = $otp;
+    //     $user->otp_expires_at = now()->addMinutes(5);
+    //     $user->otp_verified = false;
+    //     $user->save();
+
+    //     try {
+    //         $dlttemplateid = '1707172240212439291';
+
+    //         $mobile = preg_replace('/\D/', '', $user->mobile);
+    //         if (strlen($mobile) == 10) {
+    //             $mobile = "91" . $mobile;
+    //         }
+
+
+    //         $message = "Your OTP is {$otp} which is valid for 5 min. Do not disclose OTP to anyone. SBC GLOBAL";
+
+    //         Log::info("Sending OTP to {$mobile}", [
+    //             'message' => $message,
+    //             'dlttemplateid' => $dlttemplateid,
+    //         ]);
+
+    //         $response = \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+    //         Log::info("VoiceNSMS Response", ['response' => $response]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error while sending OTP', ['error' => $e->getMessage()]);
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Failed to send OTP. Please try again later.',
+    //         ], 500);
+    //     }
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'OTP sent successfully to your registered mobile number. Please verify to set or reset mPIN.',
+    //         'otp' => $otp, // Development only
+    //     ]);
+    // }
+
+    // public function verifympinOtp(Request $request)
+    // {
+    //     $request->validate([
+    //         'username' => 'required|string',
+    //         'otp' => 'required|digits:6',
+    //     ]);
+
+    //     $username = $request->input('username');
+    //     $otp = $request->input('otp');
+
+    //     $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+    //         ? User::where('email', $username)->first()
+    //         : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'User not found.',
+    //         ], 404);
+    //     }
+
+    //     if (!$user->otp || $user->otp_expires_at->isPast()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'OTP expired or not found. Please request a new one.',
+    //         ], 400);
+    //     }
+
+    //     if ($user->otp != $otp) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Invalid OTP.',
+    //         ], 401);
+    //     }
+
+    //     $user->otp = null;
+    //     $user->otp_expires_at = null;
+    //     $user->otp_verified = true;
+    //     $user->save();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'OTP verified successfully. You can now set or reset your mPIN.',
+    //     ]);
+    // }
+
+    // public function setMpin(Request $request)
+    // {
+    //     $request->validate([
+    //         'username' => 'required|string',
+    //         'mpin' => 'required|digits:4|confirmed', // requires mpin_confirmation
+    //     ]);
+
+    //     $username = $request->input('username');
+
+    //     $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+    //         ? User::where('email', $username)->first()
+    //         : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'User not found.',
+    //         ], 404);
+    //     }
+
+    //     // OTP must be verified before setting or resetting mPIN
+    //     if (!$user->otp_verified) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Please verify OTP before setting mPIN.',
+    //         ], 403);
+    //     }
+
+    //     // Save hashed mPIN
+    //     $user->mpin = bcrypt($request->mpin);
+    //     $user->otp_verified = false;
+    //     $user->save();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'mPIN set/reset successfully.',
+    //     ]);
+    // }
+
+    // public function verifyMpin(Request $request)
+    // {
+    //     $request->validate([
+    //         'username' => 'required|string',
+    //         'mpin' => 'required|digits:4',
+    //     ]);
+
+    //     $username = $request->input('username');
+    //     $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+    //         ? User::where('email', $username)->first()
+    //         : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+    //     if (!$user || !$user->mpin || !Hash::check($request->mpin, $user->mpin)) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Invalid mPIN.',
+    //         ], 401);
+    //     }
+
+    //     $token = $user->createToken('api-token')->plainTextToken;
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'mPIN verified successfully!',
+    //         'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
+    //     ]);
+    // }
+
+//otp base
+
+    public function requestMpinOtp(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
-            'mpin' => 'required|digits:4|confirmed',
         ]);
 
         $username = $request->input('username');
-        $user = null;
 
-        if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
-            $user = User::where('email', $username)->first();
-        } else {
-            $normalizedMobile = preg_replace('/[^\d\+]/', '', $username);
-            if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Invalid mobile number format.',
-                ], 422);
-            }
-            $user = User::where('mobile', $normalizedMobile)->first();
-        }
+        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+            ? User::where('email', $username)->first()
+            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
 
         if (!$user) {
             return response()->json([
@@ -181,21 +342,177 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if ($user->otp !== null) {
+        $otp = rand(100000, 999999);
+        $user->otp = $otp;
+        $user->otp_expires_at = now()->addMinutes(5);
+        $user->otp_verified = false;
+        $user->save();
+
+        try {
+            $dlttemplateid = '1707172240212439291'; 
+
+            $mobile = preg_replace('/\D/', '', $user->mobile);
+            if (strlen($mobile) == 10) {
+                $mobile = "91" . $mobile;
+            }
+
+            $message = "Your login OTP is {$otp} which is valid for 5 min. Do not disclose OTP to anyone. SBC GLOBAL";
+            Log::info("Sending OTP to {$mobile}", [
+                'message' => $message,
+                'dlttemplateid' => $dlttemplateid,
+            ]);
+
+            $response = \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            Log::info("VoiceNSMS Response", ['response' => $response]);
+        } catch (\Exception $e) {
+            Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             return response()->json([
                 'status' => false,
-                'message' => 'OTP not yet verified.',
-            ], 403);
+                'message' => 'Failed to send OTP. Please try again later.',
+            ], 500);
         }
 
-        $user->mpin = Hash::make($request->mpin);
+        return response()->json([
+            'status' => true,
+            'message' => 'OTP sent successfully to your registered mobile number. Please verify to set mPIN.',
+            'otp' => $otp, 
+        ]);
+    }
+
+    public function verifympinOtp(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'otp' => 'required|digits:6',
+        ]);
+
+        $username = $request->input('username');
+        $otp = $request->input('otp');
+
+        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+            ? User::where('email', $username)->first()
+            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        if (!$user->otp || $user->otp_expires_at->isPast()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'OTP expired or not found. Please request a new one.',
+            ], 400);
+        }
+
+        if ($user->otp != $otp) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid OTP.',
+            ], 401);
+        }
+
+        $user->otp = null; 
+        $user->otp_expires_at = null;
+        $user->otp_verified = true;
         $user->save();
 
         return response()->json([
             'status' => true,
-            'message' => 'mPIN set successfully.',
+            'message' => 'OTP verified successfully. You can now set your mPIN.',
         ]);
     }
+
+    // public function setMpin(Request $request)
+    // {
+    //     $request->validate([
+    //         'username' => 'required|string',
+    //         'mpin' => 'required|digits:4|confirmed', // requires mpin_confirmation
+    //     ]);
+
+    //     $username = $request->input('username');
+
+    //     // Find user by email or mobile
+    //     if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
+    //         $user = User::where('email', $username)->first();
+    //     } else {
+    //         $normalizedMobile = preg_replace('/[^\d\+]/', '', $username);
+    //         $user = User::where('mobile', $normalizedMobile)->first();
+    //     }
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'User not found.',
+    //         ], 404);
+    //     }
+
+    //     // Check if OTP was verified
+    //     if (!$user->otp_verified) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Please verify OTP before setting mPIN.',
+    //         ], 403);
+    //     }
+
+    //     // Save hashed mPIN
+    //     $user->mpin = bcrypt($request->mpin);
+    //     $user->save();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'mPIN set successfully.',
+    //     ]);
+    // }
+public function setOrResetMpin(Request $request)
+{
+    $request->validate([
+        'username' => 'required|string',
+        'mpin' => 'required|digits:4|confirmed', // requires mpin_confirmation
+    ]);
+
+    $username = $request->input('username');
+
+    // Find user by email or mobile
+    $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+        ? User::where('email', $username)->first()
+        : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+    if (!$user) {
+        return response()->json([
+            'status' => false,
+            'message' => 'User not found.',
+        ], 404);
+    }
+
+    // Ensure OTP is verified before setting/resetting mPIN
+    if (!$user->otp_verified) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Please verify OTP before setting/resetting mPIN.',
+        ], 403);
+    }
+
+    // Check if this is a reset or first-time set
+    $isReset = $user->mpin ? true : false;
+
+    // Save hashed mPIN
+    $user->mpin = bcrypt($request->mpin);
+
+    // Clear OTP after successful operation
+    $user->otp = null;
+    $user->otp_expires_at = null;
+    $user->otp_verified = false;
+    $user->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => $isReset ? 'mPIN reset successfully.' : 'mPIN set successfully.',
+    ]);
+}
+
     public function verifyMpin(Request $request)
     {
         $request->validate([

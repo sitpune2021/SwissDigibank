@@ -1,39 +1,6 @@
 @extends('layout.main')
-
+@section('content')
 <style>
-    .breadcrumb {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin-bottom: 1rem;
-        font-size: 14px;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 8px;
-        color: #888;
-    }
-
-    .breadcrumb li a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    .breadcrumb li.active {
-        color: #555;
-    }
-
-    .custom-thead {
-        background-color: #e6f4ea;
-        color: #14532d;
-    }
-
-    .custom-thead th {
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-    }
-
     .sr-only {
         position: absolute;
         width: 1px;
@@ -126,23 +93,22 @@
     }
 </style>
 
-@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Gold Loan - 00460 </h1>
-            <p class="text-gray-500">
+            <h1 class="text-2xl uppercase font-semibold">Gold Loan - {{$goldLoan->id}} </h1>
+            <!-- <p class="text-gray-500">
                 <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
                 <a href="#" class="text-gray-500 text-sm">00460</a>
-            </p>
+            </p> -->
         </div>
     </div>
 
     <div class="flex flex-wrap gap-3">
-        <a href="" class="btn-secondary uppercase px-2 py-2 rounded-10 ">
+        <a href="{{route('gold-loan.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase px-2 py-2 rounded-10 ">
             View Transaction
         </a>
-        <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+        <a href="{{route('gold-loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             Pay Emi
         </a>
         <a href="" class="btn-error uppercase px-2 py-2 rounded-10 ">
@@ -201,7 +167,7 @@
                         <i class="las la-print text-secondary"></i>Repayment Schedule
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
-                        <i class="las la-print text-secondary"></i>  Loan Status
+                        <i class="las la-print text-secondary"></i> Loan Status
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
                         <i class="las la-print text-secondary"></i> Closing Request letter
@@ -213,7 +179,7 @@
                         <i class="las la-print text-secondary"></i> Notice For Guarantor
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
-                        <i class="las la-print text-secondary"></i>Notice for OVERDUE                    </a>
+                        <i class="las la-print text-secondary"></i>Notice for OVERDUE </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
                         <i class="las la-print text-secondary"></i> Facility recall notice
                     </a>
@@ -221,16 +187,16 @@
                         <i class="las la-print text-secondary"></i> Transaction Dispute
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
-                        <i class="las la-print text-secondary"></i> Reminder notice for ac holder 
+                        <i class="las la-print text-secondary"></i> Reminder notice for ac holder
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
-                        <i class="las la-print text-secondary"></i> Reminder notice for ac Guarantor 
+                        <i class="las la-print text-secondary"></i> Reminder notice for ac Guarantor
                     </a>
 
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
-                        <i class="las la-print text-secondary"></i> section 101 final notice ac holder 
+                        <i class="las la-print text-secondary"></i> section 101 final notice ac holder
                     </a>
-                    
+
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 uppercase">
                         <i class="las la-print text-secondary"></i> section 101 final notice ac Guarantor
                     </a>
@@ -261,57 +227,79 @@
                             <td class="font-semibold px-4 py-2 w-1/3">Status</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary  capitalize hover:underline">
-                             <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                ACTIVE
-                            </span>
+                                    <span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        ACTIVE
+                                    </span>
                                 </a>
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold  px-4 py-2"> ACTIVE
                                 Member</td>
-                            <td class="px-4 py-2 capitalize  text-primary">DEMO-04435 - atharv page</td>
+                            <td class="px-4 py-2 capitalize  text-primary">{{$goldLoan->member->member_no  ?? ''}}  {{$goldLoan->member->member_info_first_name  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Member Contact No</td>
-                            <td class="px-4 py-2 capitalize text-primary">9087659432</td>
+                            <td class="px-4 py-2 capitalize text-primary">{{$goldLoan->member->member_info_mobile_no  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
-                            <td class="px-4 py-2">DEMO-04391 - sam butler</td>
+                            <td class="px-4 py-2">{{$goldLoan->coApplicant1->member_no ?? ''}} - {{$goldLoan->coApplicant1->member_info_first_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Account No.</td>
-                            <td class="px-4 py-2">00460</td>
+                            <td class="px-4 py-2">{{$goldLoan->id ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application No.</td>
                             <td class="px-4 py-2 text-primary">00592</td>
                         </tr>
+                        @php
+                        use Carbon\Carbon;
+
+                        $applicationDate = Carbon::parse($goldLoan->application_date);
+                        $firstEmiDate = $applicationDate->copy()->addMonth(); // next month same date
+
+                        switch (strtolower($goldLoan->tenure_type)) {
+                        case 'days':
+                        $lastEmiDate = $firstEmiDate->copy()->addDays($goldLoan->tenure_value - 1);
+                        break;
+
+                        case 'weeks':
+                        $lastEmiDate = $firstEmiDate->copy()->addWeeks($goldLoan->tenure_value - 1);
+                        break;
+
+                        case 'months':
+                        default:
+                        $lastEmiDate = $firstEmiDate->copy()->addMonthsNoOverflow($goldLoan->tenure_value - 1);
+                        break;
+                        }
+
+                        @endphp
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Open Date</td>
-                            <td class="px-4 py-2">24/09/2025 </td>
+                            <td class="px-4 py-2">{{ $applicationDate->format('d-m-Y')  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">First EMI Date</td>
-                            <td class="px-4 py-2">24/10/2025</td>
+                            <td class="px-4 py-2">{{ $firstEmiDate->format('d-m-Y')  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Last EMI Date</td>
-                            <td class="px-4 py-2">24/10/2025</td>
+                            <td class="px-4 py-2">{{ $lastEmiDate->format('d-m-Y')  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Scheme</td>
-                            <td class="px-4 py-2">Suvarna shree yojana flat advanced interest deduction - SSY15</td>
+                            <td class="px-4 py-2">{{$goldLoan->scheme->scheme_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Loan Amount</td>
-                            <td class="px-4 py-2">₹ 100,000.00</td>
+                            <td class="px-4 py-2">₹ {{$goldLoan->loan_amount ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Total Deposit</td>
-                            <td class="px-4 py-2">₹ 8,333.00</td>
+                            <td class="px-4 py-2">₹ </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Current Debt</td>
@@ -323,18 +311,15 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Interest Rate</td>
-                            <td class="px-4 py-2">20.0 %</td>
+                            <td class="px-4 py-2">{{$goldLoan->scheme->annual_interest_rate ?? '0'}} %</td>
                         </tr>
                         <tr class="">
                             <td class="font-semibold px-4 py-2"> Annualized Percentage Rate (APR)</td>
-                            <td class="px-4 py-2">0.0 %</td>
+                            <td class="px-4 py-2"> %</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-
-
-
 
             <!--APPOINTMENT DETAILS-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
@@ -586,12 +571,7 @@
 
                     </div>
                 </form>
-
-
             </div>
-
-
-
             <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
                 <div class="p-4" id="SecurityDeposits">
                     <div class="overflow-x-auto text-center">
@@ -636,23 +616,16 @@
                                 </tbody>
                             </table>
                         </div>
-
-
                     </div>
                 </div>
-
             </div>
-
             <!-- Gold Loan Scheme Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
                         Gold Loan Scheme Info
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanSchemeInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -670,13 +643,13 @@
                                     Scheme Name
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    Gold Loan Assureplus Flat Advanced Interest Deduction
+                                    {{ $goldLoan->scheme->scheme_name??''}}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2">Scheme Code</td>
-                                <td class="px-4 py-2 text-right md:text-left">GLSAP003</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ $goldLoan->scheme->scheme_code??'' }}</td>
                             </tr>
 
                             <tr class="border-b">
@@ -685,7 +658,7 @@
 
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 100000.0
+                                    ₹ {{ $goldLoan->scheme->max_loan_amount??'' }}
                                 </td>
                             </tr>
 
@@ -695,14 +668,14 @@
 
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    90.0 %
+                                    {{ $goldLoan->scheme->max_loan_limit??'' }} %
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">Interest Type</td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    Flat Advanced Interest Deduction
+                                   {{ $goldLoan->scheme->gold_loan_setting??'' }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -710,7 +683,7 @@
                                     Interest Rate
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    19.5 %
+                                    {{ $goldLoan->scheme->annual_interest_rate??'' }} %
                                 </td>
                             </tr>
                             <tr class=" text-center">
@@ -724,7 +697,7 @@
                                     SMS Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    0.0 ₹
+                                      {{ $goldLoan->scheme->sms_charge??'0.0' }} ₹
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -732,7 +705,7 @@
                                     Fuel Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    0.0 ₹
+                                     {{ $goldLoan->scheme->fuel_charge??'0.0' }} ₹
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -740,7 +713,7 @@
                                     Stationary Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    0.0 ₹
+                                    {{ $goldLoan->scheme->stationary_charge??'0.0' }} ₹
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -748,7 +721,7 @@
                                     Maintenance Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    0.0 ₹
+                                    {{ $goldLoan->scheme->maintenance_charge??'0.0' }} ₹
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -756,15 +729,13 @@
                                     Collection Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    0.0 ₹
+                                 {{ $goldLoan->scheme->collection??'0.0' }} ₹
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
             </div>
-
 
             <!--Update Branch/ Associate/ Guarantor-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
@@ -1043,7 +1014,7 @@
                                 <td class=" p-2">20000.00</td>
                                 <td class=" p-2">0.00</td>
                                 <td class=" p-2"></td>
-                                <td class=" p-2">91,667.00</td>
+                                <td class=" p-2">{{$principal}}</td>
                                 <td class=" p-2"></td>
                                 <td class=" p-2"></td>
                                 <td class=" p-2">
@@ -1054,50 +1025,41 @@
 
                                 </td>
                             </tr>
-                            <tr class="bg-green-50 border-b">
-                                <td class=" p-2">1</td>
-                                <td class=" p-2">24/10/2025</td>
-                                <td class=" p-2">25/10/2025</td>
-                                <td class=" p-2">8,333.00</td>
-                                <td class=" p-2">0.00</td>
-                                <td class=" p-2">0.00</td>
-                                <td class=" p-2">8,333.00</td>
-                                <td class=" p-2">91,667.00</td>
-                                <td class=" p-2">0.00</td>
-                                <td class=" p-2">24/10/2025</td>
-                                <td class=" p-2"><span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                        PAID
+                            @foreach ($emiSchedule as $emi)
+                            <tr class="border-b {{ $emi['status'] == 'PAID' ? 'bg-green-50' : '' }}">
+                                <td class="p-2">{{ $emi['emi_no'] }}</td>
+                                <td class="p-2">{{ $emi['emi_date'] }}</td>
+                                <td class="p-2">{{ $emi['emi_due_date'] }}</td>
+                                <td class="p-2">{{ $emi['principal'] }}</td>
+                                <td class="p-2">{{ $emi['interest'] }}</td>
+                                <td class="p-2">{{ $emi['other_charges'] }}</td>
+                                <td class="p-2">{{ $emi['emi_amount'] }}</td>
+                                <td class="p-2">{{ $emi['balance_principal'] }}</td>
+                                <td class="p-2">{{ $emi['remaining_amount'] }}</td>
+                                <td class="p-2">{{ $emi['paid_date'] }}</td>
+                                <td class="p-2">
+                                    <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                        {{ $emi['status'] }}
                                     </span>
                                 </td>
-                                <td class=" p-2">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                        Yes
+                                <td class="p-2">
+                                    <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                        {{ $emi['processed'] }}
                                     </span>
                                 </td>
-                                <td class=" p-2">
+                                <td class="p-2">
                                     <div class="flex justify-center">
                                         <div class="relative">
-                                            <i
-                                                class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                             <ul class="horiz-option popover-content">
-                                                <li><a href="" class="single-option capitalize">Mark Due</a></li>
-                                                <li><a href="" class="single-option capitalize">Print</a></li>
-
-
+                                                <li><a href="#" class="single-option capitalize">Mark Due</a></li>
+                                                <li><a href="#" class="single-option capitalize">Print</a></li>
                                             </ul>
-
-                                            {{-- @include('partials._vertical-options', [
-                                            /* 'id' =>base64_encode($director->id),
-                                            'viewRoute' => 'director.show',
-                                            'editRoute' => 'director.edit'*/
-                                            ]) --}}
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -1177,16 +1139,16 @@
 
 <script>
     function toggleDropdown(id) {
-            document.getElementById(id).classList.toggle("hidden");
-        }
+        document.getElementById(id).classList.toggle("hidden");
+    }
 
-        // Close dropdown if clicked outside
-        window.addEventListener("click", function (e) {
-            const dropdown = document.getElementById("printDropdown");
-            if (!e.target.closest("button") && !e.target.closest("#printDropdown")) {
-                dropdown.classList.add("hidden");
-            }
-        });
+    // Close dropdown if clicked outside
+    window.addEventListener("click", function(e) {
+        const dropdown = document.getElementById("printDropdown");
+        if (!e.target.closest("button") && !e.target.closest("#printDropdown")) {
+            dropdown.classList.add("hidden");
+        }
+    });
 </script>
 
 
@@ -1194,30 +1156,29 @@
 <!-- Tailwind Tab Script -->
 <script>
     const tabBtns = document.querySelectorAll(".tab-btn");
-        const tabPanes = document.querySelectorAll(".tab-pane");
+    const tabPanes = document.querySelectorAll(".tab-pane");
 
-        tabBtns.forEach(btn => {
-            btn.addEventListener("click", () => {
-                const target = btn.dataset.tab;
+    tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const target = btn.dataset.tab;
 
-                tabBtns.forEach(b => b.classList.remove("border-primary", "text-primary"));
-                tabPanes.forEach(p => p.classList.add("hidden"));
+            tabBtns.forEach(b => b.classList.remove("border-primary", "text-primary"));
+            tabPanes.forEach(p => p.classList.add("hidden"));
 
-                btn.classList.add("border-primary", "text-primary");
-                document.getElementById(target).classList.remove("hidden");
-            });
+            btn.classList.add("border-primary", "text-primary");
+            document.getElementById(target).classList.remove("hidden");
         });
+    });
 
-        // <!-- collapsed logic + - button-->
+    // <!-- collapsed logic + - button-->
 
-        function toggleSection(button, sectionId) {
-            const section = document.getElementById(sectionId);
-            const icon = button.querySelector('.toggle-icon');
+    function toggleSection(button, sectionId) {
+        const section = document.getElementById(sectionId);
+        const icon = button.querySelector('.toggle-icon');
 
-            section.classList.toggle('hidden');
-            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
-        }
-
+        section.classList.toggle('hidden');
+        icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+    }
 </script>
 
 @endsection
