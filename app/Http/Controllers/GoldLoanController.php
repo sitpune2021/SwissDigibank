@@ -30,7 +30,6 @@ class GoldLoanController extends Controller
         return view("gold-loan.schemes.index", compact('schemes'));
     }
 
-
     public function create()
     {
         return view("gold-loan.schemes.create");
@@ -38,45 +37,85 @@ class GoldLoanController extends Controller
 
     public function store(Request $request)
     {
-        
-        $validated = $request->validate([
-            'scheme_name' => 'required|string|max:255',
-            'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
-            'min_loan_amount' => 'required|numeric|min:1',
-            'max_loan_amount' => 'required|numeric|min:1|max:200000',
-            'tenure' => 'required|integer|min:1',
-            'annual_interest_rate' => 'required|numeric|min:0',
+        try {
+            Log::info('Store function started', ['request' => $request->all()]);
 
-            // new optional fields
-            'processing_fee' => 'nullable|numeric|min:0',
-            'stamp_duty_charge' => 'nullable|numeric|min:0',
-            'insurance_fee' => 'nullable|numeric|min:0',
-            'gold_loan_setting' => 'nullable|string',
-            'max_loan_limit' => 'nullable|numeric|min:0',
-            'overdue_interest_rate' => 'nullable|numeric|min:0',
-            'penalty_charge' => 'nullable|numeric|min:0',
-            'fore_closer_charge' => 'nullable|numeric|min:0',
-            'credit_period' => 'nullable|numeric|min:0',
-            'sms_charge' => 'nullable|numeric|min:0',
-            'fuel_charge' => 'nullable|numeric|min:0',
-            'stationary_charge' => 'nullable|numeric|min:0',
-            'maintenance_charge' => 'nullable|numeric|min:0',
-            'collection' => 'nullable|numeric|min:0',
-            'from_date' => 'nullable|numeric|min:0',
-            'to_date' => 'nullable|numeric|min:0',
-            'penal_rate_interest' => 'nullable|numeric|min:0',
-            'annual_rate_interest' => 'nullable|numeric|min:0',
-            'is_active' => 'required|in:0,1',
-        ], [
-            'min_loan_amount.max' => 'Minimum loan amount cannot exceed ₹2,00,000.',
-            'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
-        ]);
+            $validated = $request->validate([
+                'scheme_name' => 'required|string|max:255',
+                'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code',
+                'min_loan_amount' => 'required|numeric|min:1',
+                'max_loan_amount' => 'required|numeric|min:1|max:200000',
+                'tenure' => 'required|integer|min:1',
+                'annual_interest_rate' => 'required|numeric|min:0',
+                'processing_fee' => 'nullable|numeric|min:0',
+                'stamp_duty_charge' => 'nullable|numeric|min:0',
+                'insurance_fee' => 'nullable|numeric|min:0',
+                'gold_loan_setting' => 'nullable|string',
+                'max_loan_limit' => 'required|numeric|max:100',
+                'overdue_interest_rate' => 'nullable|numeric|min:0',
+                'penalty_charge' => 'nullable|numeric|min:0',
+                'fore_closer_charge' => 'nullable|numeric|min:0',
+                'credit_period' => 'nullable|numeric|min:0',
+                'sms_charge' => 'nullable|numeric|min:0',
+                'fuel_charge' => 'nullable|numeric|min:0',
+                'stationary_charge' => 'nullable|numeric|min:0',
+                'maintenance_charge' => 'nullable|numeric|min:0',
+                'collection' => 'nullable|numeric|min:0',
+                'from_date' => 'nullable|numeric|min:0',
+                'to_date' => 'nullable|numeric|min:0',
+                'penal_rate_interest' => 'nullable|numeric|min:0',
+                'annual_rate_interest' => 'nullable|numeric|min:0',
+                'is_active' => 'required|in:0,1',
 
-        GoldLoanScheme::create($validated);
+                'charge_floting' => 'nullable|in:0,1',
+                'no_emi' => 'nullable|array|max:12',
+                'no_emi.*.from_date' => 'nullable|numeric|min:1',
+                'no_emi.*.to_date' => 'nullable|numeric|min:1',
+                'no_emi.*.penal_rate_interest' => 'nullable|numeric|min:0|max:100',
+                'no_emi.*.annual_rate_interest' => 'nullable|numeric|min:0|max:100',
+            ]);
 
-        return redirect()
-            ->route('gold-loan.schemes.index')
-            ->with('success', 'Scheme created successfully!');
+            Log::info('Validation Passed', ['validated' => $validated]);
+
+            $filteredSlabs = [];
+            if ($request->has('no_emi')) {
+                foreach ($request->no_emi as $slab) {
+                    if (!empty($slab['from_date']) || !empty($slab['to_date']) ||
+                        !empty($slab['penal_rate_interest']) || !empty($slab['annual_rate_interest'])) {
+                        $filteredSlabs[] = $slab;
+                    }
+                }
+            }
+
+            if ($request->gold_loan_setting == 'no_emi') {
+                $validated['no_emi_slabs'] = json_encode($filteredSlabs);
+                $validated['charge_floting'] = $request->charge_floting;
+            } else {
+                $validated['no_emi_slabs'] = null;
+            }
+
+            Log::info('Final saved data', ['data' => $validated]);
+
+            GoldLoanScheme::create($validated);
+
+            Log::info('Gold Loan Scheme created Successfully');
+
+            return redirect()
+                ->route('gold-loan.schemes.index')
+                ->with('success', 'Scheme created successfully!');
+
+        } catch (\Throwable $e) {
+            Log::error('Error while storing Scheme', [
+                'error_message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()
+                ->withErrors('Something went wrong! Check logs.')
+                ->withInput();
+        }
     }
 
     public function show($id)
@@ -95,7 +134,26 @@ class GoldLoanController extends Controller
     {
         $scheme = GoldLoanScheme::findOrFail($id);
 
-        $scheme->update($request->all());
+        // Validate required fields only
+        $request->validate([
+            'scheme_name' => 'required|string|max:255',
+            'scheme_code' => 'required|string|max:50|unique:gold_loan_schemes,scheme_code,' . $id,
+            'gold_loan_setting' => 'required|string',
+        ]);
+
+        // Take all fields except no_emi_slabs (we will process manually)
+        $input = $request->except(['no_emi']);
+
+        // If No-EMI selected — store array directly
+        if ($request->gold_loan_setting == 'no_emi') {
+            $input['no_emi_slabs'] = $request->no_emi;
+            $input['charge_floting'] = $request->charge_floting ?? 0;
+        } else {
+            $input['no_emi_slabs'] = null;
+            $input['charge_floting'] = null;
+        }
+
+        $scheme->update($input);
 
         return redirect()->route('gold-loan.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -106,6 +164,10 @@ class GoldLoanController extends Controller
         $scheme = GoldLoanScheme::findOrFail($id);
         return view("gold-loan.schemes.view", compact('scheme'));
     }
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
 
     public function calculator()
     {
@@ -129,7 +191,9 @@ class GoldLoanController extends Controller
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->max_tenure;
             $payout = $request->payout;
-            $interestType = 'flat';
+           // $interestType = 'flat';
+           $interestType = $request->interest_type ?? 'flat_emi';
+
             $annualRate = (float) $request->manual_interest_rate;
 
             $processingFee = (float) ($request->manual_processing_fee ?? 0);
@@ -150,7 +214,30 @@ class GoldLoanController extends Controller
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
             $payout = $request->payout;
-            $interestType = 'flat';
+            //$interestType = 'flat';
+            //$interestType = strtolower($scheme->gold_loan_setting) === 'no_emi' ? 'no_emi' : 'flat';
+            $setting = strtolower($scheme->gold_loan_setting);
+
+            switch ($setting) {
+                case 'flat_advanced_interest':
+                    $interestType = 'Flat Advanced Interest';
+                    break;
+                case 'flat_advance_interest':
+                    $interestType = 'Flat Advance Interest';
+                    break;
+                case 'flat_interest':
+                    $interestType = 'Flat Interest';
+                    break;
+                case 'reducing_balance':
+                    $interestType = 'Reducing Balance';
+                    break;
+                case 'no_emi':
+                    $interestType = 'No EMI';
+                    break;
+                default:
+                    $interestType = ucfirst($setting); // fallback
+            }
+
             $annualRate = (float) ($request->annual_interest_rate ?? $scheme->annual_interest_rate ?? 0);
 
             $processingFee = (float) ($scheme->processing_fee ?? 0);
@@ -182,18 +269,53 @@ class GoldLoanController extends Controller
         $emi = round(($loan + $totalInterest) / $installments, 2);
 
         // EMI Schedule Generation
-        $schedule = [];
+        //$schedule = [];
+        // Interest Calculation According to Selected Type
+        if (strtolower($interestType) === 'reducing_emi') {
+            $monthlyRate = ($annualRate / 100) / 12;
+            $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
+        } else {
+            // FLAT EMI (Default)
+            $emi = round(($loan + $totalInterest) / $installments, 2);
+        }
+
         $outstanding = $loan;
         $startDate = now();
 
-        for ($i = 1; $i <= $installments; $i++) {
-            $principal = round($loan / $installments, 2);
-            $interest = round($totalInterest / $installments, 2);
-            $emiTotal = round($principal + $interest, 2);
-            $outstanding -= $principal;
+        for ($i = 1; $i <= $installments; $i++) 
+        {
 
             $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-            $dueDate = $emiDate->copy()->addDays(10); // optional grace period
+            $dueDate = $emiDate->copy()->addDays(10);
+
+            if ($interestType === 'No EMI') {
+                // No EMI Logic
+                if ($i == $installments) {
+                    $principal = round($loan, 2);
+                } else {
+                    $principal = 0;
+                }
+
+                $interest = null;
+                $charges = null;
+                $emiTotal = null;
+                $balance = null;
+
+            } else {
+                // Normal EMI Logic
+                if ($i == $installments) {
+                    $principal = round($outstanding, 2);
+                } else {
+                    $principal = round($loan / $installments, 2);
+                }
+
+                $interest = round($totalInterest / $installments, 2);
+                $charges = 0;
+                $emiTotal = round($principal + $interest, 2);
+
+                $outstanding -= $principal;
+                $balance = max(round($outstanding, 2), 0);
+            }
 
             $schedule[] = [
                 'no' => $i,
@@ -201,11 +323,12 @@ class GoldLoanController extends Controller
                 'due_date' => $dueDate->format('d/m/Y'),
                 'principal' => $principal,
                 'interest' => $interest,
-                'charges' => 0,
+                'charges' => $charges,
                 'emi' => $emiTotal,
-                'balance' => max($outstanding, 0),
+                'balance' => $balance,
             ];
         }
+
 
         //  Grand Total (Loan + Interest + Charges)
         $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
@@ -235,6 +358,9 @@ class GoldLoanController extends Controller
     }
 
 
+//////////////////////////////////////////////////////////////////////////////////
+
+
     public function appindex()
     {
         //  loan applications fetch 
@@ -247,7 +373,7 @@ class GoldLoanController extends Controller
     public function appcreate() 
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = GoldLoanScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
@@ -410,7 +536,6 @@ class GoldLoanController extends Controller
         }
     }
 
-
     public function appview($id)
     {
         $application = LoanApplication::with([
@@ -527,6 +652,10 @@ class GoldLoanController extends Controller
             ->with('success', 'Application updated successfully with ornaments & credit score');
     }
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+
     public function showEmiChart()
     {
         // $banks = Bank::all(); // or your logic here
@@ -538,19 +667,258 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.view-buttons.disburse-setting");
     }
 
-    public function col_process_fee()
-    {
-
-        return view("gold-loan.applications.view-buttons.col_process_fee");
-    }
     public function upload_documents()
     {
 
         return view("gold-loan.applications.upload_documents");
     }
+
     public function upload_cibil_score()
     {
 
         return view("gold-loan.applications.upload-cibil-score");
     }
+
+    public function col_process_fee($id)
+    {
+         $application = LoanApplication::with([
+            'member',
+            'coApplicant1',
+            'guarantor1',
+            'scheme',
+            'creditScores'
+        ])->findOrFail($id);
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        return view("daily_weekly.applications.view-buttons.col_process_fee", compact('application','banks'));
+    }
+
+    public function storeProcessFee(Request $request, $id)
+    {
+        $request->validate([
+            'total' => 'required|numeric|min:0',
+            'fee_mode' => 'required|in:cash,cheque,online'
+        ]);
+
+        $data = $request->all();
+        $data['application_id'] = $id;
+
+        if ($request->fee_mode == 'cheque') {
+            $request->validate([
+                'bank_id' => 'required',
+                'cheque_no' => 'required',
+                'cheque_date' => 'required|date',
+            ]);
+        }
+
+        if ($request->fee_mode == 'online') {
+            $request->validate([
+                'transfer_date' => 'required|date',
+                'utr_no' => 'required',
+                'transfer_mode' => 'required|in:imps,vpa,neft_rtgs',
+                'credited' => 'required|in:yes,no',
+            ]);
+        }
+
+        DailyWeeklyProcessingFee::create($data);
+
+        return redirect()->route('daily_weekly.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+    }
+
+    public function emiChart($id)
+    {
+        $application = LoanApplication::with(['scheme', 'member', 'branch'])->findOrFail($id);
+
+        // Interest Type
+        //$interestType = strtolower($application->scheme->interest_type ?? 'flat_emi');
+        
+        $interestTypeRaw = strtolower(trim($application->scheme->gold_loan_setting ?? 'flat_emi'));
+
+        $interestType = 'flat_emi'; // default
+
+        if (str_contains($interestTypeRaw, 'no')) {
+            $interestType = 'no_emi';
+        }
+        elseif (str_contains($interestTypeRaw, 'reduce')) {
+            $interestType = 'reducing';
+        }
+        elseif (str_contains($interestTypeRaw, 'flat')) {
+            $interestType = 'flat_emi';
+        }
+
+
+        // Basic inputs
+        $disburseDate = $application->disbursal_date
+            ? Carbon::parse($application->disbursal_date)
+            : Carbon::now();
+
+        $loanAmount = floatval($application->loan_amount ?? 0);
+        $tenure = intval($application->tenure_value ?? ($application->scheme->no_of_emi ?? 1));
+        if ($tenure <= 0) $tenure = 1;
+
+        // Charges
+        $processingFeeInc = floatval($application->processing_fee ?? 0);
+        $stampDutyInc     = floatval($application->stamp_duty ?? 0);
+        $insuranceInc     = floatval($application->insurance_fee ?? 0);
+        $fitnessInc       = floatval($application->fitness_fee ?? 0);
+
+        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+
+        // Interest rate
+        $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);
+
+        // Collection Frequency
+        $collection = strtolower($application->emi_collection ?? 'monthly');
+
+        switch ($collection) 
+        {
+            case 'daily':
+                $periodIncrement = 'addDay';
+                $periodsPerYear = 365;
+                $periodName = 'Daily';
+                $periodUnit = 'day';
+                break;
+            case 'weekly':
+            case 'bi_weekly':
+            case '4_weekly':
+                $periodIncrement = 'addWeek';
+                $periodsPerYear = 52;
+                $periodName = 'Weekly';
+                $periodUnit = 'week';
+                break;
+            default:
+                $periodIncrement = 'addMonth';
+                $periodsPerYear = 12;
+                $periodName = 'Monthly';
+                $periodUnit = 'month';
+        }
+
+        $periodicRate = ($annualRate / 100) / $periodsPerYear;
+        $principalPerEmi = round($loanAmount / $tenure, 2);
+
+        $schedule = [];
+        $remainingPrincipal = $loanAmount;
+        $emiDate = $disburseDate->copy();
+
+        for ($i = 1; $i <= $tenure; $i++) 
+        {
+
+            $emiDate = $emiDate->copy()->{$periodIncrement}(1);
+
+            /* -------- CASE : NO EMI -------- */
+            
+            if ($interestType == 'no_emi') 
+            {
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $emiDate->format('d/m/Y'),
+                    'principal' => number_format($loanAmount, 2, '.', ''), // Full principal for display only
+                    'interest' => '',  
+                    'charges_per_emi' => '',
+                    'emi' => '',
+                    'bal_principal' => '',
+                ];
+
+                continue;
+            }
+
+            /* -------- CASE : FLAT ADVANCED -------- */
+
+            if ($interestType == 'flat_advanced') {
+
+                if ($i == $tenure) {
+                    $principalThis = round($remainingPrincipal, 2);
+                } else {
+                    $principalThis = $principalPerEmi;
+                }
+
+                $emiTotal = $principalThis;
+                $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $emiDate->format('d/m/Y'),
+                    'principal' => number_format($principalThis, 2, '.', ''),
+                    'interest' => number_format(0, 2, '.', ''),
+                    'charges_per_emi' => number_format(0, 2, '.', ''),
+                    'emi' => number_format($emiTotal, 2, '.', ''),
+                    'bal_principal' => number_format($remainingPrincipal, 2, '.', ''),
+                ];
+
+                continue;
+            }
+
+            /* -------- DEFAULT CASE : FLAT EMI -------- */
+            $interestForPeriod = round($remainingPrincipal * $periodicRate, 2);
+            if ($i == $tenure) {
+                $principalThis = round($remainingPrincipal, 2);
+            } else {
+                $principalThis = $principalPerEmi;
+            }
+
+            $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
+            $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
+
+            $schedule[] = [
+                'no' => $i,
+                'emi_date' => $emiDate->format('d/m/Y'),
+                'due_date' => $emiDate->format('d/m/Y'),
+                'principal' => number_format($principalThis, 2, '.', ''),
+                'interest' => number_format($interestForPeriod, 2, '.', ''),
+                'charges_per_emi' => number_format($chargesPerEmi, 2, '.', ''),
+                'emi' => number_format($emiTotal, 2, '.', ''),
+                'bal_principal' => number_format($remainingPrincipal, 2, '.', ''),
+            ];
+        }
+
+        // Totals
+        if ($interestType == 'no_emi') {
+            $totalPrincipal = 0;
+            $totalInterest = 0;
+            $totalCharges = 0;
+            $totalEmi = 0;
+        } else {
+            $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
+            $totalInterest = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
+            $totalCharges = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
+            $totalEmi = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        }
+
+        return view('gold-loan.applications.view-buttons.show-emi-chart', compact(
+            'application',
+            'loanAmount',
+            'disburseDate',
+            'processingFeeInc',
+            'stampDutyInc',
+            'insuranceInc',
+            'fitnessInc',
+            'tenure',
+            'periodName',
+            'periodUnit',
+            'chargesPerEmi',
+            'schedule',
+            'totalPrincipal',
+            'totalInterest',
+            'totalCharges',
+            'totalEmi'
+        ));
+    }
+
+    public function disbursment($id)
+    {
+        $application = LoanApplication::with([
+            'member',
+            'coApplicant1',
+            'guarantor1',
+            'scheme',
+            'creditScores'
+        ])->findOrFail($id);
+
+        return view("gold-loan.applications.view-buttons.disburse-setting", compact('application'));
+    }
+
 }

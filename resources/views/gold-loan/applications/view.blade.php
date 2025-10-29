@@ -1,5 +1,6 @@
 @extends('layout.main')
 @section('content')
+
 <style>
     .sr-only {
         position: absolute;
@@ -102,84 +103,82 @@
 
     <div class="flex flex-wrap gap-3">
 
-    
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            Show Emi Chart
+        <!-- Always Visible -->
+        <a href="{{ route('gold-loan.applications.view-buttons.show-emi-chart', $application->id) }}" 
+            target="_blank" class="btn-primary px-2 py-2 rounded-10">
+            Show EMI Chart
         </a>
-    
-    @if($application->status != 2 )
-        @if($application->status != 1 )
-        @if($application->status == 3 )
-        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            Collect Processing Fee
-        </a>
-        @endif
-         @endif
-         @if($application->status != 3 )
-        <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            DISBURSE SETTINGS
-        </a>
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
-            REGISTER eNACH ( Fidypay )
-        </a>
-        @endif
-    @endif
-    @if($application->status != 3 )
-        <div class="relative inline-block text-left">
-            <!-- Button -->
-            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
-                onclick="toggleDropdown('printDropdown')">
-                <i class="las la-print text-lg"></i>
-                PRINT DOCUMENTS
-                <i class="las la-angle-down text-xs"></i>
-            </button>
 
-            <!-- Dropdown Menu -->
-            <div id="printDropdown"
-                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                <div class="py-1">
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> APPLICATION FORM
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> EMI SCHEDULE CHART
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> SANCTION LETTER
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LOAN AGREEMENT
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> DISBURSE LETTER
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> PROMISSORY NOTE
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LETTER OF UNDERTAKING
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LETTER OF EVIDENCING
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> GUARANTOR AGREEMENT
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> JURISDICTION ACK LETTER
-                    </a>
+        {{-- Status != DISBURSEMENT (2) --}}
+        @if($application->status != 2)
 
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> INDEMNIFICATION LETTER
-                    </a>
+            {{-- Status == DRAFT (0) OR CANCELED (3) --}}
+            @if(in_array($application->status, [0, 3]))
+                <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
+                    class="btn-warning uppercase px-2 py-2 rounded-10">
+                    Collect Processing Fee
+                </a>
+            @endif
+
+            {{-- Status != CANCELED (3) --}}
+            @if($application->status != 3)
+                <a href="{{ route('gold-loan.applications.view-buttons.disburse-setting', $application->id) }}" 
+                    target="_blank" class="btn-warning uppercase px-2 py-2 rounded-10">
+                    DISBURSE SETTINGS
+                </a>
+
+                <a href="#" class="btn-primary px-2 py-2 rounded-10">
+                    REGISTER eNACH (Fidypay)
+                </a>
+            @endif
+
+        @endif
+
+
+        {{-- If NOT CANCELED (3) then show print menu --}}
+        @if($application->status != 3)
+            <div class="relative inline-block text-left">
+
+                <!-- Print Button -->
+                <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+                    onclick="toggleDropdown('printDropdown')">
+                    <i class="las la-print text-lg"></i>
+                    PRINT DOCUMENTS
+                    <i class="las la-angle-down text-xs"></i>
+                </button>
+
+                <!-- Print Dropdown Menu -->
+                <div id="printDropdown"
+                    class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+
+                    @php $printDocs = [
+                        'APPLICATION FORM',
+                        'EMI SCHEDULE CHART',
+                        'SANCTION LETTER',
+                        'LOAN AGREEMENT',
+                        'DISBURSE LETTER',
+                        'PROMISSORY NOTE',
+                        'LETTER OF UNDERTAKING',
+                        'LETTER OF EVIDENCING',
+                        'GUARANTOR AGREEMENT',
+                        'JURISDICTION ACK LETTER',
+                        'INDEMNIFICATION LETTER'
+                    ]; @endphp
+
+                    <div class="py-1">
+                        @foreach($printDocs as $doc)
+                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="las la-print text-secondary"></i> {{ $doc }}
+                            </a>
+                        @endforeach
+                    </div>
 
                 </div>
+
             </div>
-        </div>
-    @endif
+        @endif
 
     </div>
-
 
 
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">

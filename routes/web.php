@@ -454,6 +454,23 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
         ->name('gold-loan.applications.upload-cibil-score');
+        
+
+    // Collect Processing fee page in application view page
+    Route::get('applications/col-process-fee/{id}', [GoldLoanController::class, 'col_process_fee'])
+        ->name('daily_weekly.applications.view-buttons.col_process_fee');
+    Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
+    ->name('daily_weekly.col_process_fee.store');
+
+
+    // Show EMI chart in a new tab
+    Route::get('applications/{id}/emi-chart', [GoldLoanController::class, 'emiChart'])
+    ->name('gold-loan.applications.view-buttons.show-emi-chart');
+
+    // Disbusrment setting
+    Route::get('applications/{id}/disbursment', [GoldLoanController::class, 'disbursment'])
+    ->name('gold-loan.applications.view-buttons.disburse-setting');
+
 });
 
 
