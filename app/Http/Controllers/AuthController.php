@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthController extends Controller
 {
@@ -252,47 +253,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function setMpin(Request $request)
-    // {
-    //     $request->validate([
-    //         'username' => 'required|string',
-    //         'mpin' => 'required|digits:4|confirmed', // requires mpin_confirmation
-    //     ]);
-
-    //     $username = $request->input('username');
-
-    //     // Find user by email or mobile
-    //     if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
-    //         $user = User::where('email', $username)->first();
-    //     } else {
-    //         $normalizedMobile = preg_replace('/[^\d\+]/', '', $username);
-    //         $user = User::where('mobile', $normalizedMobile)->first();
-    //     }
-
-    //     if (!$user) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'User not found.',
-    //         ], 404);
-    //     }
-
-    //     // Check if OTP was verified
-    //     if (!$user->otp_verified) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Please verify OTP before setting mPIN.',
-    //         ], 403);
-    //     }
-
-    //     // Save hashed mPIN
-    //     $user->mpin = bcrypt($request->mpin);
-    //     $user->save();
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'mPIN set successfully.',
-    //     ]);
-    // }
     public function setOrResetMpin(Request $request)
     {
         $request->validate([
@@ -326,7 +286,8 @@ class AuthController extends Controller
         $isReset = $user->mpin ? true : false;
 
         // Save hashed mPIN
-        $user->mpin = bcrypt($request->mpin);
+        // $user->mpin = bcrypt($request->mpin);
+        $user->mpin = Crypt::encryptString($request->mpin);
 
         // Clear OTP after successful operation
         $user->otp = null;
@@ -352,7 +313,7 @@ class AuthController extends Controller
             ? User::where('email', $username)->first()
             : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
 
-        if (!$user || !$user->mpin || !Hash::check($request->mpin, $user->mpin)) {
+        if (!$user || !$user->mpin || Crypt::decryptString($user->mpin) !== $request->mpin) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid mPIN.',
@@ -365,6 +326,45 @@ class AuthController extends Controller
             'status' => true,
             'message' => 'mPIN verified successfully!',
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
+        ]);
+    }
+
+    public function checkMpinStatus(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+        ]);
+
+        $username = $request->input('username');
+
+        // Find user by email or mobile
+        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+            ? User::where('email', $username)->first()
+            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        // Check if mPIN is already set
+        $isMpinSet = !empty($user->mpin);
+        $mpinValue = null;
+
+        if ($isMpinSet) {
+            try {
+                $mpinValue = Crypt::decryptString($user->mpin);
+            } catch (\Exception $e) {
+                $mpinValue = null; // If decryption fails
+            }
+        }
+
+        return response()->json([
+            'status' => $isMpinSet,
+            'message' => $isMpinSet ? 'mPIN already set.' : 'mPIN not set yet.',
+            'mpin_value' => $mpinValue, // <-- This will show the actual mPIN like "2002"
         ]);
     }
 }

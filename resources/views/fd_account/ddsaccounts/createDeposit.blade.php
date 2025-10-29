@@ -62,12 +62,8 @@
 
                     <form class="space-y-6" action="{{ route('ddsaccounts.deposit', $ddAccount->id) }}" method="POST"
                         enctype="multipart/form-data">
-
                         @csrf
-                        {{-- <input type="hidden" name="dds_account_id" value="{{ $ddAccount->id }}">
-                        <input type="hidden" name="account_id" value="{{ $ddAccount->account->id ?? '' }}">
-                        <input type="hidden" name="type" value="credit"> --}}
-
+                    
                         <!-- Member Signature -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer's
@@ -144,7 +140,7 @@
                             </label>
                             <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600">
+                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600" checked >
                                     Cash
                                 </label>
                                 <label class="flex items-center gap-2">
@@ -171,7 +167,7 @@
                                 UTR / Transaction No.
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="utr_no" value="utr_no"
+                            <input type="text" name="utr_no" value=""
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5"
                                 placeholder="Enter UTR/Transaction No.">
                             <label class="block text-sm font-medium text-gray-700">
