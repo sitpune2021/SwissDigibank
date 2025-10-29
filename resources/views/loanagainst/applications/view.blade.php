@@ -96,7 +96,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Loan AGAINSTS Application - 00591 </h1>
+            <h1 class="text-2xl uppercase font-semibold">DEPOSITE LOAN APPLICATION</h1>
         </div>
     </div>
 
@@ -182,11 +182,6 @@
                    <a href="{{ route('loanagainst.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
-
-                    <!-- <a href="#" class=" p-2 btn-error">
-                        <i class="las la-trash-alt"></i>
-                    </a> -->
-
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">

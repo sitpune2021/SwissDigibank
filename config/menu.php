@@ -135,6 +135,18 @@ return [
         ],
     ],
     [
+        'title' => 'CC / OD  LIMIT',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'cc_od.schemes.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'cc_od.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'cc_od.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'cc_od.account.index'],
+        ],
+    ],
+    [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',

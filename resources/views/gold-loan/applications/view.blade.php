@@ -102,10 +102,12 @@
 
     <div class="flex flex-wrap gap-3">
 
+    
         <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             Show Emi Chart
         </a>
-
+    
+    @if($application->status != 2 )
         <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
             Collect Processing Fee
         </a>
@@ -116,7 +118,7 @@
         <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
             REGISTER eNACH ( Fidypay )
         </a>
-
+    @endif
 
         <div class="relative inline-block text-left">
             <!-- Button -->
@@ -206,20 +208,6 @@
                         </tr>
 
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">1st Co-Applicant Customer</td>
-                            <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->coApplicant1)->member_no }} - {{ optional($application->coApplicant1)->member_info_first_name }}
-                            </td>
-                        </tr>
-
-                        <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 uppercase">Guarantor 1 Customer</td>
-                            <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
-                            </td>
-                        </tr>
-
-                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Application No.</td>
                             <td class="px-4 py-2">{{ $application->id }}</td>
                         </tr>
@@ -244,8 +232,23 @@
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Status</td>
                             <td class="px-4 py-2">
-                                <span
-                                    class="block w-32 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary ">DISBURSED</span>
+                                @if($application->status == 0)
+                                    <span class="block w-32 rounded-[30px] border border-yellow-400 bg-yellow-100 py-2 text-center text-xs text-yellow-600">
+                                        PENDING
+                                    </span>
+                                @elseif($application->status == 1)
+                                    <span class="block w-32 rounded-[30px] border border-green-400 bg-green-100 py-2 text-center text-xs text-green-600">
+                                        APPROVED
+                                    </span>
+                                @elseif($application->status == 2)
+                                    <span class="block w-32 rounded-[30px] border border-blue-400 bg-blue-100 py-2 text-center text-xs text-blue-600">
+                                        DISBURSED
+                                    </span>
+                                @elseif($application->status == 3)
+                                    <span class="block w-32 rounded-[30px] border border-red-400 bg-red-100 py-2 text-center text-xs text-red-600">
+                                        CANCELLED
+                                    </span>
+                                @endif
                             </td>
                         </tr>
 
@@ -253,89 +256,6 @@
                 </table>
             </div>
 
-            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
-                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black uppercase">
-                        Disbursement Settings
-                    </h3>
-                    <div class="">
-
-
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Body -->
-                <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
-                    <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">
-                                    Disbursement Date
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    24/09/2025
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">First EMI Date </td>
-                                <td class="px-4 py-2 text-right md:text-left"> 24/07/2026</td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">
-                                    Collect Processing Fee Separately
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/10 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16"> Yes </span>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">
-                                    Collect Stamp Duty Fee Separately
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase"> Collect Insurance Fee Separately</td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">
-                                    Collect Adv. Interest Separately
-                                </td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">Collect Off Adv. EMI Interest Separately</td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
             <!--Cibil Info-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">

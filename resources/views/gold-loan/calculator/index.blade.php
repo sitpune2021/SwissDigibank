@@ -30,7 +30,7 @@
       <div class="flex items-start flex-col  gap-2">
         <div class="flex items-center gap-3">
           <h1 class="text-xl font-semibold capitalize">
-            GOLD/ SILVER LOAN CALCULATOR
+            GOLD / SILVER LOAN CALCULATOR
           </h1>
         </div>
       </div>
@@ -41,6 +41,7 @@
       <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
         <form action="{{ route('gold-loan.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
           @csrf
+          
           <!-- Scheme -->
           <div class="mb-4">
             <label for="" class="block font-medium mb-2">Scheme <span class="text-red-500">*</span></label>
@@ -313,8 +314,46 @@ document.getElementById('manualEntry').addEventListener('change', function () {
   });
 </script>
 
-
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const manualEntry = document.getElementById("manualEntry");
+    const schemeDropdown = document.getElementById("scheme_id");
+    const manualFields = document.getElementById("manualFields");
+
+    // When "Enter Values Manually" is toggled
+    manualEntry.addEventListener("change", function () {
+        const isChecked = this.checked;
+
+        // Disable scheme dropdown if manual entry is selected
+        schemeDropdown.disabled = isChecked;
+
+        // Show/hide manual fields
+        manualFields.classList.toggle("hidden", !isChecked);
+
+        // Clear scheme selection if manual entry is selected
+        if (isChecked) {
+            schemeDropdown.value = "";
+        }
+    });
+
+    // When a scheme is selected
+    schemeDropdown.addEventListener("change", function () {
+        if (this.value !== "") {
+            // Disable and uncheck manual entry checkbox
+            manualEntry.checked = false;
+            manualEntry.disabled = true;
+            manualFields.classList.add("hidden");
+        } else {
+            // Enable manual entry checkbox again if no scheme selected
+            manualEntry.disabled = false;
+        }
+    });
+});
+</script>
+
+
+
+<!-- <script>
 document.addEventListener('DOMContentLoaded', function () {
     const manualEntryCheckbox = document.getElementById('manualEntry');
     const schemeDropdown = document.getElementById('scheme_id');
@@ -330,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-</script>
+</script> -->
 
 
 

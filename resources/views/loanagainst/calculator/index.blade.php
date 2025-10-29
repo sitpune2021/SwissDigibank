@@ -30,7 +30,7 @@
       <div class="flex items-start flex-col  gap-2">
         <div class="flex items-center gap-3">
           <h1 class="text-xl font-semibold capitalize">
-            LOAN AGAINSTS CALCULATOR
+            DEPOSITE LOAN CALCULATOR
           </h1>
         </div>
       </div>

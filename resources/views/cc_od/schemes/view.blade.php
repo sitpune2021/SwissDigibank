@@ -28,7 +28,7 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    BUSINESS LOAN SCHEMES
+                    CC / OD LOAN SCHEMES
                 </p>
             </div>
         </div>
@@ -38,7 +38,7 @@
         <div class="box col-span-2 md:col-span-1">
             <!-- Edit Button -->
             <div class="flex justify-end mb-4">
-                <a href="{{ route('bussiness.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
+                <a href="{{ route('cc_od.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
                     <i class="las la-pencil-alt"></i>
                 </a>
 
@@ -61,23 +61,15 @@
                             <td class="p-3">{{ $scheme->tenure }} Months</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Maximum Loan Amount</td>
+                            <td class="font-semibold p-3">Maximum CC Limit</td>
                             <td class="p-3">₹ {{ number_format($scheme->max_loan_amount, 2) }}</td>
-                        </tr>
-                        <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Maximum Loan Limit Against Deposit</td>
-                            <td class="p-3">{{ $scheme->max_loan_limit }} % </td>
-                        </tr>
-                        <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Minimum Loan Amount</td>
-                            <td class="p-3">₹ {{ number_format($scheme->min_loan_amount, 2) }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Annual Interest Rate</td>
                             <td class="p-3">{{ $scheme->annual_interest_rate }} %</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Interest Type</td>
+                            <td class="font-semibold p-3">Interest Payout Type</td>
                             <td class="p-3">{{ $scheme->gold_loan_setting }}</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
@@ -99,34 +91,6 @@
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Penalty Charge</td>
                             <td class="p-3">{{ $scheme->penalty_charge }} %</td>
-                        </tr>
-                        <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Overdue Interest Rate (%)</td>
-                            <td class="p-3">{{ $scheme->overdue_interest_rate }} %</td>
-                        </tr>
-                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">SMS Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->sms_charge, 2) }}</td>
-                        </tr>
-                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Fuel Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->fuel_charge, 2) }}</td>
-                        </tr>
-                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Stationary Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->stationary_charge, 2) }}</td>
-                        </tr>
-                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Maintenance Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->maintenace_charge, 2) }}</td>
-                        </tr>
-                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Collection Charges per EMI</td>
-                            <td class="p-3">₹ {{ number_format($scheme->collcetion, 2) }}</td>
-                        </tr>
-                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Credit Period</td>
-                            <td class="p-3">{{ number_format($scheme->credit_period) }} Days</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Active</td>
@@ -159,7 +123,7 @@
         <div class="box shadow-md rounded-10">
             <!-- Header -->
             <div class="flex items-center justify-between px-4 py-3 dark:bg-bg3 bg-secondary/5 rounded-10 ">
-                <h3 class="text-lg font-semibold text-gray-800">GOLD LOAN SETTING AUDIT TRAIL</h3>
+                <h3 class="text-lg font-semibold text-gray-800">CC / OD LOAN SETTING AUDIT TRAIL</h3>
                 <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'auditTrail')">
                     <span class="toggle-icon text-lg font-bold">−</span>
                 </button>

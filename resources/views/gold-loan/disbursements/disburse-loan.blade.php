@@ -549,7 +549,7 @@
                                 </button>
 
                                 <button class="btn-outline uppercase justify-center" type="reset">
-                                    <a href="#"> BACK</a>
+                                    <a href="{{route('gold-loan.disbursements.index')}}"> BACK</a>
                                 </button>
                             </div>
                     </form>

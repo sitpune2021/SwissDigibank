@@ -49,7 +49,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h1 class=" flex text-xl block  uppercase font-semibold">
-                Business Loan Disbursements
+                CC Limit Disbursements
             </h1>
             
         </div>
@@ -116,7 +116,7 @@
     @foreach($disbursements as $disbursement)
         <tr class="border-b dark:border-bg3">
             <td class="text-start !py-5 px-6">
-               <a href="{{ route('bussiness.applications.view', $disbursement->id) }}" 
+               <a href="{{ route('cc_od.applications.view', $disbursement->id) }}" 
                 class="text-blue-600 hover:underline">
                     {{ $disbursement->id }}
                 </a>
@@ -170,10 +170,10 @@
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
                              <li>
-                               <a href="{{ route('bussiness.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
+                               <a href="{{ route('cc_od.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
                             </li>
                             <li>
-                                <form action="{{ route('businessdisbursements.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
+                                <form action="{{ route('cc_od.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
                                     @csrf
                                     <button type="submit" class="single-option uppercase text-red-600 hover:underline">
                                         Cancel Loan
