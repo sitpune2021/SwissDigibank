@@ -25,6 +25,8 @@ class DdTransaction extends Model
         't_receipt',
         'member_sign',
         'member_photo',
+        'amount',
+        'type',
 
     ];
 

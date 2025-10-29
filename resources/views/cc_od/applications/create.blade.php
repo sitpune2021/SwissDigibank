@@ -47,7 +47,7 @@
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="application_date"
+                            <input type="date" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
                         </div>
                         
@@ -238,7 +238,7 @@
                             </label>
                             <input type="number" id="tenure_value" name="tenure_value"
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm border px-3 py-2">
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 @error('tenure_value')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror

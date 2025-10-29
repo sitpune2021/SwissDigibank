@@ -230,17 +230,17 @@
                                     <span class="text-error">*</span>
                                 </label>
                                 <div class="flex">
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
+                                    <label class="flex items-center gap-2 space-x-2 p-1">
                                         <input type="radio" name="tenure_type" value="days"
                                             {{ old('tenure_type', $application->tenure_type ?? '') == 'days' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">DAYS</span>
                                     </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
+                                    <label class="flex items-center gap-2 space-x-2 p-1">
                                         <input type="radio" name="tenure_type" value="weeks"
                                             {{ old('tenure_type', $application->tenure_type ?? '') == 'weeks' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">WEEKS</span>
                                     </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
+                                    <label class="flex items-center gap-2 space-x-2 p-1">
                                         <input type="radio" name="tenure_type" value="months"
                                             {{ old('tenure_type', $application->tenure_type ?? '') == 'months' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">MONTHS</span>

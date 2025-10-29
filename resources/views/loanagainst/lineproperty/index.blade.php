@@ -1,7 +1,7 @@
 @extends('layout.main')
 @section('content')
 <div class="main-inner">
-    <h3 class="text-2xl font-semibold">DEPOSITE LOAN REPORT</h3>
+    <h3 class="text-2xl font-semibold">LOAN AGAINST DEPOSITE REPORT</h3>
 
     <div class="box overflow-x-auto">
         <div class="flex justify-end">

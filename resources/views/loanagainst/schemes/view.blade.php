@@ -28,7 +28,7 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    DEPOSITE LOAN SCHEME
+                    LOAN AGAINST DEPOSITE SCHEME
                 </p>
             </div>
         </div>

@@ -147,6 +147,18 @@ return [
         ],
     ],
     [
+        'title' => 'DAILY / WEEKLY LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'daily_weekly.schemes.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'daily_weekly.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'daily_weekly.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'daily_weekly.account.index'],
+        ],
+    ],
+    [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',

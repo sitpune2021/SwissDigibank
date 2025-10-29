@@ -53,7 +53,8 @@ class LoanApplication extends Model
         'status',
     ];
 
-   // app/Models/LoanApplication.php
+
+
 public function creditScores()
 {
     return $this->hasMany(LoanCreditScore::class, 'loan_application_id');

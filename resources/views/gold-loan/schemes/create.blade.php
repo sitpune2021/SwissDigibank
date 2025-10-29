@@ -654,15 +654,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const minInput = document.querySelector('input[name="min_loan_amount"]');
     const maxInput = document.querySelector('input[name="max_loan_amount"]');
 
-    function validateLimit(input) {
-        if (parseFloat(input.value) > 200000) {
-            alert("Loan amount cannot exceed ₹2,00,000!");
-            input.value = 200000;
-        }
+    function validateLimit(input, output) {
+    if (parseFloat(input.value) > 200000) {
+        alert("Loan amount cannot exceed ₹2,00,000!");
+        input.value = 200000;
+        output.textContent = numberToWords(200000); //  Words update yaha
     }
+}
 
-    minInput.addEventListener('input', () => validateLimit(minInput));
-    maxInput.addEventListener('input', () => validateLimit(maxInput));
+
+   const minOutput = document.getElementById('minLoanWords');
+const maxOutput = document.getElementById('maxLoanWords');
+
+minInput.addEventListener('input', () => validateLimit(minInput, minOutput));
+maxInput.addEventListener('input', () => validateLimit(maxInput, maxOutput));
+
 });
 </script>
 
