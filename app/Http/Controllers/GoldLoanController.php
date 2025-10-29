@@ -417,7 +417,8 @@ class GoldLoanController extends Controller
             'member',
             'coApplicant1',
             'guarantor1',
-            'scheme'   // <-- add scheme here
+            'scheme',   // <-- add scheme here
+             'branch' 
         ])->findOrFail($id);
 
         return view("gold-loan.applications.view", compact('application'));

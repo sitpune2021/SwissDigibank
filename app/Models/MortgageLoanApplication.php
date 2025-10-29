@@ -53,9 +53,8 @@ class MortgageLoanApplication extends Model
         'status',
     ];
 
-   // app/Models/LoanApplication.php
 
-// LoanApplication.php
+
 public function member()
 {
     return $this->belongsTo(Member::class, 'member_id');

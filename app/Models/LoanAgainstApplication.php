@@ -55,7 +55,11 @@ class LoanAgainstApplication extends Model
         'status',
     ];
 
-   // app/Models/LoanApplication.php
+    protected $attributes = [
+    'model_type' => 'loan_against',
+];
+
+
 public function creditScores()
 {
     return $this->hasMany(LoanAgainstCreditScore::class, 'loan_application_id');

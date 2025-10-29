@@ -12,6 +12,7 @@ use App\Models\Scheme;
 use App\Models\CcOdLoanApplication;
 use App\Models\Calculator;
 use App\Models\BusinessLoanCredit;
+use App\Models\CcOdProcessingFee;
 use Carbon\Carbon;
 
 use Maatwebsite\Excel\Facades\Excel;
@@ -475,6 +476,51 @@ class CcOdLoanController extends Controller
     }
     
 
+    public function col_process_fee($id)
+    {
+         $application = CcOdLoanApplication::with([
+            'member',
+            'coApplicant1',
+            'guarantor1',
+            'scheme',
+            'creditScores'
+        ])->findOrFail($id);
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        return view("cc_od.applications.view-buttons.col_process_fee", compact('application','banks'));
+    }
+
+    public function storeProcessFee(Request $request, $id)
+    {
+        $request->validate([
+            'total' => 'required|numeric|min:0',
+            'fee_mode' => 'required|in:cash,cheque,online'
+        ]);
+
+        $data = $request->all();
+        $data['application_id'] = $id;
+
+        if ($request->fee_mode == 'cheque') {
+            $request->validate([
+                'bank_id' => 'required',
+                'cheque_no' => 'required',
+                'cheque_date' => 'required|date',
+            ]);
+        }
+
+        if ($request->fee_mode == 'online') {
+            $request->validate([
+                'transfer_date' => 'required|date',
+                'utr_no' => 'required',
+                'transfer_mode' => 'required|in:imps,vpa,neft_rtgs',
+                'credited' => 'required|in:yes,no',
+            ]);
+        }
+
+        CcOdProcessingFee::create($data);
+
+        return redirect()->route('cc_od.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+    }
 
     
 }

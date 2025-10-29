@@ -47,7 +47,7 @@
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="application_date"
+                            <input type="date" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
                         </div>
                         
@@ -238,17 +238,17 @@
                                     <span class="text-error">*</span>
                                 </label>
                                 <div class="flex">
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
+                                    <label class="flex items-center gap-2 space-x-2 p-1">
                                         <input type="radio" name="tenure_type" value="days"
                                             {{ old('tenure_type', $application->tenure_type ?? '') == 'days' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">DAYS</span>
                                     </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
+                                    <label class="flex items-center gap-2 space-x-2 p-1">
                                         <input type="radio" name="tenure_type" value="weeks"
                                             {{ old('tenure_type', $application->tenure_type ?? '') == 'weeks' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">WEEKS</span>
                                     </label>
-                                    <label class="flex items-center gap-2 space-x-2 p-2">
+                                    <label class="flex items-center gap-2 space-x-2 p-1">
                                         <input type="radio" name="tenure_type" value="months"
                                             {{ old('tenure_type', $application->tenure_type ?? '') == 'months' ? 'checked' : '' }}>
                                         <span class="text-gray-70 capitalize">MONTHS</span>
@@ -267,7 +267,7 @@
                             </label>
                             <input type="number" id="tenure_value" name="tenure_value"
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm border px-3 py-2">
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 @error('tenure_value')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -277,7 +277,7 @@
                             <label for="" class="md:text-lg font-medium block mb-4">
                                 EMI Collection <span class="text-error">* </span>
                             </label>
-                            <select name="emi_collection" class="w-full text-sm border px-3 py-2">
+                            <select name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                             <option value="">Please Select</option>
                             <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
                             <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>

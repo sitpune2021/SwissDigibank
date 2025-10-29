@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">Business Loan Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
