@@ -68,25 +68,24 @@
 
 
                             <div class="col-span-2 md:col-span-1">
-                                <label for="member_id" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Customer <span class="text-red-500">*</span>
+                                <label for="member_id" class="md:text-lg font-medium block mb-4">
+                                    CUSTOMER <span class="text-red-500">*</span>
                                 </label>
-
+                                
                                 <select name="member_id" id="member_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Customer No or Name</option>
-                                   @foreach($members as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->member_id ?? '')
-                                        == $member->id ? 'selected' : '' }}
-                                        data-name="{{ $member->member_info_first_name }}"
-                                        data-mobile="{{ $member->member_info_mobile_no }}">
-                                        {{ $member->member_info_first_name }}
-                                    </option>
-                                    @endforeach 
+                                    <option value="">Search Member No or Name</option>
+                                    @foreach($members as $member)
+                                        <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}"
+                                        {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
+                                            data-name="{{ $member->member_info_first_name }}"
+                                            data-mobile="{{ $member->member_info_mobile_no }}">
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
-
                                 @error('member_id')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -122,7 +121,7 @@
                             </div>
 
                             <div class="col-span-2 md:col-span-1">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                <label for="" class="md:text-lg font-medium block mb-4">
                                     Branch
                                     <span class="text-red-500">*</span>
                                 </label>
@@ -130,15 +129,14 @@
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                     <option value="">Search Branch No or Name</option>
                                     @foreach($branch as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->branch_id ?? '')
-                                        == $member->id ? 'selected' : '' }}>
-                                        {{ $member->branch_name }}
-                                    </option>
-
+                                    <option value="{{ $member->id }}"
+                                            {{ old('member_id', $application->branch_id ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->branch_name }}
+                                        </option>                                   
                                     @endforeach
                                 </select>
                                 @error('branch_id')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -971,10 +969,10 @@
     </div>
 
 
-
+    <!-- Calculation & Submit Button  -->
     <script>
         let isCalculated = false; // flag set karte hain
-
+        let isValidOrnament = false;
         document.getElementById("calculateBtn").addEventListener("click", function (e) {
             if (!isCalculated) {
                 //  Pehli click pe calculation karo
@@ -982,7 +980,8 @@
 
                 // Button ko submit bana do
                 this.textContent = "Submit";
-                this.type = "submit";
+               this.type = "submit";
+            //    this.type = "button";
 
                 // Flag update karo
                 isCalculated = true;
@@ -996,6 +995,7 @@
         });
     </script>
 
+    <!-- Memeber Box -->
     <script>
         document.getElementById('member_id').addEventListener('change', function () {
             let selected = this.options[this.selectedIndex];
@@ -1009,7 +1009,7 @@
         });
     </script>
 
-
+    <!-- Member Info details -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const memberSelect = document.getElementById("member_id");
@@ -1036,7 +1036,7 @@
         });
     </script>
 
-
+    <!-- Scheme Info Details -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const schemeSelect = document.getElementById("scheme_id");
@@ -1055,6 +1055,27 @@
             const schemeCharge = document.getElementById("schemeCharge");
 
             schemeSelect.addEventListener("change", function () {
+                // ✅ Loan Amount Validation Based On Scheme
+const loanAmountInput = document.getElementById("loanAmount");
+
+loanAmountInput.addEventListener("input", function () {
+    let max = parseFloat(schemeSelect.options[schemeSelect.selectedIndex].getAttribute("data-max")) || 0;
+    let min = parseFloat(schemeSelect.options[schemeSelect.selectedIndex].getAttribute("data-min")) || 0;
+    let val = parseFloat(loanAmountInput.value) || 0;
+
+    if (val > max) {
+        alert("Loan Amount cannot be greater than Maximum Loan Amount (" + max + ")");
+        loanAmountInput.value = max;
+    }
+
+    // if (val < min) {
+    //     alert("Loan Amount cannot be less than Minimum Loan Amount (" + min + ")");
+    //     loanAmountInput.value = min;
+    // }
+
+    calculateNetLoan();
+});
+
                 const selectedOption = this.options[this.selectedIndex];
 
                 if (this.value) {
@@ -1081,6 +1102,7 @@
         });
     </script>
 
+    <!-- Net + insurance = net loan amount calculation -->
     <script>
         function calculateNetLoan() {
             let loan = parseFloat(document.getElementById('loanAmount').value) || 0;
@@ -1092,7 +1114,7 @@
         document.getElementById('insuranceAmount').addEventListener('input', calculateNetLoan);
     </script>
 
-
+    <!-- pay Mode -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -1120,6 +1142,7 @@
         });
     </script>
 
+    <!-- Final wight Ornaments calculation -->
     <script>
     document.addEventListener("DOMContentLoaded", function () {
     //  Step 1: Form को पहले select करो (form id = loanForm)
@@ -1171,14 +1194,49 @@
         document.getElementById("resMaxLoan").textContent = maxLoan;
         document.getElementById("resLimit").textContent = limit + "%";
         document.getElementById("resApprovable").textContent = approvable.toFixed(2);
-        document.getElementById("resApproved").textContent = approvable.toFixed(2);
+        //document.getElementById("resApproved").textContent = approvable.toFixed(2);
 
         //  Step 3: Hidden inputs me assign karo
         document.getElementById("security_value").value = totalSecurity.toFixed(2);
         document.getElementById("max_loan_amount").value = maxLoan;
         document.getElementById("max_loan_limit").value = limit;
         document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
-        document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
+        //document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
+// ✅ Ornament value must cover Net Loan
+if (totalSecurity < netLoan) {
+    alert("Total Ornament Security Value must be greater than or equal to Net Loan Amount!");
+
+    isValidOrnament = false;
+
+    // Submit Button disable + back to Calculate
+    const btn = document.getElementById("calculateBtn");
+    btn.type = "button";
+    btn.textContent = "Re-Calculate";
+    btn.disabled = false;
+
+    return;
+}
+
+// ✅ Agar yahan pohonch gaye means no error
+isValidOrnament = true;
+
+
+// ✅ Approved Loan Logic
+let approvedLoan = netLoan;
+
+// Rule: Net loan max loan se upar? → cap it to max loan
+if (approvedLoan > maxLoan) {
+    approvedLoan = parseFloat(maxLoan);
+}
+
+// Rule: Limit se upar? → cap it to approvable
+if (approvedLoan > approvable) {
+    approvedLoan = approvable;
+}
+
+// Final Approved Loan Display
+document.getElementById("resApproved").textContent = approvedLoan.toFixed(2);
+document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
 
         //  Step 4: Debug console (optional)
         console.log("Hidden Inputs Updated:", {
@@ -1194,19 +1252,27 @@
     });
 
     //  Step 6: Form submit hone से पहले debug check (optional)
-    form.addEventListener("submit", function () {
-        console.log("Submitting with values:", {
-            security_value: document.getElementById("security_value").value,
-            max_loan_amount: document.getElementById("max_loan_amount").value,
-            max_loan_limit: document.getElementById("max_loan_limit").value,
-            maximum_approvable_amount: document.getElementById("maximum_approvable_amount").value,
-            approved_loan_amount: document.getElementById("approved_loan_amount").value,
-        });
-    });
+    // form.addEventListener("submit", function () {
+    //     console.log("Submitting with values:", {
+    //         security_value: document.getElementById("security_value").value,
+    //         max_loan_amount: document.getElementById("max_loan_amount").value,
+    //         max_loan_limit: document.getElementById("max_loan_limit").value,
+    //         maximum_approvable_amount: document.getElementById("maximum_approvable_amount").value,
+    //         approved_loan_amount: document.getElementById("approved_loan_amount").value,
+    //     });
+    // });
+    form.addEventListener("submit", function (e) {
+    if (!isValidOrnament) {
+        e.preventDefault();
+        alert("Please correct Ornament Security Value first!");
+        return false;
+    }
+});
+
 });
     </script>
 
-
+    <!-- Credit Score -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const cibilBody = document.getElementById("cibilBody");
@@ -1459,62 +1525,82 @@
         });
     </script>
 
+    <!-- Ornaments calculation -->
     <script>
-         // Function: Calculate total of all total_value[] fields
-function calculateGrandTotal() {
-    let total = 0;
-    document.querySelectorAll('input[name="total_value[]"]').forEach(input => {
-        const val = parseFloat(input.value) || 0;
-        total += val;
-    });
-    const grandTotalInput = document.getElementById('grandTotal');
-    if (grandTotalInput) {
-        grandTotalInput.value = total.toFixed(2);
-    }
-}
+        // Function: Calculate total of all total_value[] fields
+        function calculateGrandTotal() {
+            let total = 0;
+            document.querySelectorAll('input[name="total_value[]"]').forEach(input => {
+                const val = parseFloat(input.value) || 0;
+                total += val;
+            });
+            const grandTotalInput = document.getElementById('grandTotal');
+            if (grandTotalInput) {
+                grandTotalInput.value = total.toFixed(2);
+            }
+        }
 
-// When page loads — calculate once
-window.addEventListener('DOMContentLoaded', calculateGrandTotal);
+        // When page loads — calculate once
+        window.addEventListener('DOMContentLoaded', calculateGrandTotal);
 
-// When any total_value changes dynamically — recalculate
-document.addEventListener('input', function(e) {
-    if (e.target && e.target.name === 'total_value[]') {
-        calculateGrandTotal();
-    }
-});
+        // When any total_value changes dynamically — recalculate
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.name === 'total_value[]') {
+                calculateGrandTotal();
+            }
+        });
 
-// Optional: if you have row add/remove buttons, call this function after each such event
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('removeRowBtn')) {
-        setTimeout(calculateGrandTotal, 100);
-    }
-});
+        // Optional: if you have row add/remove buttons, call this function after each such event
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('removeRowBtn')) {
+                setTimeout(calculateGrandTotal, 100);
+            }
+        });
 
-// === Recalculate for already existing rows (edit mode) ===
-document.querySelectorAll("#itemsBody tr").forEach(row => {
-    const valuePerGram = row.querySelector(".valuePerGram");
-    const netWeight = row.querySelector(".netWeight");
-    const tunch = row.querySelector(".tunch");
-    const fineWeight = row.querySelector(".fineWeight");
-    const totalValue = row.querySelector(".totalValue");
+        // === Recalculate for already existing rows (edit mode) ===
+        document.querySelectorAll("#itemsBody tr").forEach(row => {
+            const valuePerGram = row.querySelector(".valuePerGram");
+            const netWeight = row.querySelector(".netWeight");
+            const tunch = row.querySelector(".tunch");
+            const fineWeight = row.querySelector(".fineWeight");
+            const totalValue = row.querySelector(".totalValue");
 
-    function calculate() {
-        const net = parseFloat(netWeight.value) || 0;
-        const t = parseFloat(tunch.value) || 0;
-        const vpg = parseFloat(valuePerGram.value) || 0;
+            function calculate() {
+                const net = parseFloat(netWeight.value) || 0;
+                const t = parseFloat(tunch.value) || 0;
+                const vpg = parseFloat(valuePerGram.value) || 0;
 
-        const fine = (net * t) / 100;
-        fineWeight.value = fine.toFixed(2);
-        totalValue.value = (fine * vpg).toFixed(2);
+                const fine = (net * t) / 100;
+                fineWeight.value = fine.toFixed(2);
+                totalValue.value = (fine * vpg).toFixed(2);
 
-        calculateGrandTotal(); // 👈 update footer total also
-    }
+                calculateGrandTotal(); // 👈 update footer total also
+            }
 
-    // attach listeners for existing rows
-    [valuePerGram, netWeight, tunch].forEach(input => {
-        input.addEventListener("input", calculate);
-    });
-});
-</script>
+            // attach listeners for existing rows
+            [valuePerGram, netWeight, tunch].forEach(input => {
+                input.addEventListener("input", calculate);
+            });
+        });
+    </script>
+
+    <!-- branch Auto populate when select customer -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const memberSelect = document.getElementById("member_id");
+            const branchSelect = document.getElementById("branch_id");
+
+            memberSelect.addEventListener("change", function () {
+                let selectedOption = this.options[this.selectedIndex];
+                let branchId = selectedOption.getAttribute("data-branch");
+
+                if (branchId) {
+                    branchSelect.value = branchId;
+                } else {
+                    branchSelect.value = "";
+                }
+            });
+        });
+    </script>
 
 @endsection

@@ -21,12 +21,7 @@
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold">LOAN AGAINST PROPERTY APPLICATION - 100136 - DISBURSE SETTINGS</h1>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500">Loan Against Property Application</a> >
-                    <a href="#" class="text-gray-500">100136</a>
-                    <a href="#" class="text-gray-500">DISBURSE SETTINGS</a>
-                </p>
+                <h1 class="text-2xl font-semibold">Gold Loan Application - Disburse Settings</h1>
             </div>
         </div>
         <div class="rounded-lg border-l-4 border-yellow-500 bg-warning p-4 mb-4">
@@ -44,7 +39,7 @@
                     <form action="">
                         <!-- Header -->
                         <div class="px-4 py-3 ">
-                            <h3 class="text-lg border-b mb-4 font-semibold text-black">Application No - 100118</h3>
+                            <h3 class="text-lg border-b mb-4 font-semibold text-black">Application No - {{ $application->id }}</h3>
                         </div>
                         <!-- Body -->
 
@@ -61,14 +56,13 @@
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-4">
                             <label for="" class="md:text-lg font-medium block mb-4">
-                                Application Date
+                                First EMI Date
                                 <span class="text-red-500">*</span>
                             </label>
 
                             <input type="text" id="emiDate"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="First EMI Date">
-
                         </div>
                         <hr>
                         <x-checkbox-calculator id="disburseSetting" name="disburse_setting"
@@ -95,7 +89,7 @@
                 <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                     <!-- Header -->
                     <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                        <h3 class="text-black font-semibold text-lg">Property Loan Application Info</h3>
+                        <h3 class="text-black font-semibold text-lg">Daily / Weekly Loan Application Info</h3>
 
                         <!-- Toggle Button -->
                         <button class="p-1 rounded transition" onclick="toggleSection(this)">
@@ -107,101 +101,176 @@
                     <!-- Content (Initially Hidden) -->
                     <div class="overflow-x-auto p-4 hidden">
                         <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
-                            <tbody>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2 w-1/3">Branch</td>
-                                    <td class="px-3 py-2">Kalyanadurgam</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Amount Requested</td>
-                                    <td class="px-3 py-2">₹ 10,000.00</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Amount Approvable</td>
-                                    <td class="px-3 py-2"> ₹ 61,562.00</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Amount Approved</td>
-                                    <td class="px-3 py-2">₹ 10,000.00</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Interest Amount</td>
-                                    <td class="px-3 py-2"> ₹ 1,117.00</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
-                                    <td class="px-3 py-2">20.0 %</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Annualized Percentage Rate (APR)</td>
-                                    <td class="px-3 py-2"> 34.24 % | %</td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Credit Period</td>
-                                    <td class="px-3 py-2">
-                                        1 Days
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
-                                    <td class="px-3 py-2">
-                                        ₹ 11,117.00
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">EMI Payout</td>
-                                    <td class="px-3 py-2">
-                                        MONTHLY
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">EMI Amount</td>
-                                    <td class="px-3 py-2">
-                                        ₹ 956.00
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">No. of EMIs</td>
-                                    <td class="px-3 py-2">
-                                        12
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Tenure of Loan</td>
-                                    <td class="px-3 py-2">
-                                        12 MONTHS
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Loan In Ratio</td>
-                                    <td class="px-3 py-2">
-                                        <span
-                                            class="block w-20 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
-                                            No
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Processing Fee</td>
-                                    <td class="px-3 py-2">
-                                        ₹ 236.00 (Incl. 18.0 % GST)
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
-                                    <td class="px-3 py-2">
-                                        ₹ 236.00 (Incl. 18.0 % GST)
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-semibold px-3 py-2">Purpose of Loan</td>
-                                    <td class="px-3 py-2">
-                                        123
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">
+                                    Application Date
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left uppercase">
+                                    {{ $application->application_date  }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Application No.</td>
+                                <td class="px-4 py-2 text-right md:text-left">{{ $application->id }}</td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Member
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->member->member_info_first_name }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Branch
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->branch->branch_name }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    1st Co-Applicant Member
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->member->member_info_first_name }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    2nd Co-Applicant Member
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->member->member_info_first_name }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Amount Requested
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->loan_amount }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Amount Approvable
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->maximum_approvable_amount }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Amount Approved
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->loan_amount }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                   Interst Type
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->scheme->gold_loan_setting }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Annual Interest Rate
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->scheme->annual_interest_rate }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Credit Period
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->credit_period }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Tenure of Loan	
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->tenure_value }}
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Processing Fee
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->processing_fee }} (Incl. 18 % GST)
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Stamp Duty Fee
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->stamp_duty }} (Incl. 18 % GST)
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Insurance Fee
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->insurance_fee }} (Incl. 18 % GST)
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                   Fitness Fee
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->fitness_fee }} (Incl. 18 % GST)
+                                </td>
+                            </tr>
+                            <tr>
+                            <td class="font-semibold px-4 py-2">Application Status</td>
+                            <td class="px-4 py-2">
+                                @php
+                                    $statusText = 'UNKNOWN';
+                                    $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
+
+                                    if ($application->status == 0) {
+                                        $statusText = 'DRAFT';
+                                        $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
+                                    } elseif ($application->status == 1) {
+                                        $statusText = 'APPROVED';
+                                        $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
+                                    } elseif ($application->status == 2) {
+                                        $statusText = 'DISBURSEMENT';
+                                        $statusClass = 'bg-green-200 text-green-600 border-green-300';
+                                    } elseif ($application->status == 3) {
+                                        $statusText = 'CANCELED';
+                                        $statusClass = 'bg-red-200 text-red-600 border-red-300';
+                                    }
+                                @endphp
+
+                                <span class="block w-32 rounded-[30px] border py-2 text-center text-xs {{ $statusClass }}">
+                                    {{ $statusText }}
+                                </span>
+                            </td>
+                        </tr>                     
+                        </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -212,8 +281,6 @@
                         class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
                         <h3 class="text-lg font-semibold capitalize">Security Deposits</h3>
                         <div class="">
-
-
                             <button type="button" class="p-1 rounded transition"
                                 onclick="toggleSection(this, 'SecurityDeposits')">
                                 <span class="toggle-icon text-lg font-bold">−</span>
@@ -282,6 +349,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const disbursalInput = document.getElementById('disbursalDate');
@@ -338,7 +406,6 @@
         });
     </script>
 
-
     <script>
         function toggleSection(button) {
             const section = button.closest('.box').querySelector('.overflow-x-auto');
@@ -347,4 +414,22 @@
             icon.textContent = section.classList.contains('hidden') ? '+' : '−';
         }
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const disbursementInput = document.getElementById("disbursalDate");
+    const emiDateInput = document.getElementById("emiDate");
+
+    const today = new Date();
+    const formattedToday = today.toISOString().split("T")[0];
+    disbursementInput.value = formattedToday;
+
+    const emiDate = new Date();
+    emiDate.setMonth(emiDate.getMonth() + 1);
+    const formattedEmiDate = emiDate.toISOString().split("T")[0];
+    emiDateInput.value = formattedEmiDate;
+});
+
+    </script>
+
 @endsection
