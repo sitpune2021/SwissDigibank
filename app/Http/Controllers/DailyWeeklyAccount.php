@@ -7,5 +7,9 @@ use Illuminate\Http\Request;
 
 class DailyWeeklyAccount extends Controller
 {
-    //
+    public function index(Request $request)
+    {
+       
+            return view(view: 'daily_weekly.account.index');
+    }
 }

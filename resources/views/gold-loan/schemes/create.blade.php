@@ -33,13 +33,13 @@
     <div class="box">
         <div class="col-span-12  lg:col-span-12">
           
-            <form class="grid grid-cols-2 gap-4 mt-6"
-                action="{{ isset($scheme) ? route('gold-loan.schemes.update', $scheme->id) : route('gold-loan.schemes.store') }}"
-                method="POST">
-                @csrf
-                @if(isset($scheme))
-                    @method('PUT')
-                @endif
+        <form class="grid grid-cols-2 gap-4 mt-6"
+            action="{{ isset($scheme) ? route('gold-loan.schemes.update', $scheme->id) : route('gold-loan.schemes.store') }}"
+            method="POST">
+            @csrf
+            @if(isset($scheme))
+                @method('PUT')
+            @endif
 
                {{-- Scheme Name --}}
                 <div class="col-span-2 md:col-span-1">
@@ -100,18 +100,25 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
+                    <label for="maxLoanLimit" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" id="maxLoanLimit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
+                    <input type="number" 
+                        id="maxLoanLimit" 
+                        name="max_loan_limit"
+                        value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Maximum Loan Limit">
-                         @error('max_loan_limit')
+                        placeholder="Enter Maximum Loan Limit"
+                        max="100"
+                        oninput="this.value = Math.min(Math.max(this.value, 0), 100)"
+                    >
+
+                    @error('max_loan_limit')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <!-- This will show the words -->
+
                     <x-number-to-word for="maxLoanLimit" />
                 </div>
 
@@ -190,7 +197,6 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Penalty Charges
-
                     </label>
 
                     <div class="flex items-center gap-2">
@@ -273,9 +279,7 @@
                     </div>
                 </div>
 
-
                 <div class="col-span-2 md:col-span-1">
-
                     <div class="col-sm-7">
                         <label for="" class="md:text-lg font-medium block mb-4">
                             Fore Closure Charges
@@ -381,36 +385,32 @@
 
                 <div class="mt-1 flex flex-wrap gap-3">
 
-                    <!-- Yes -->
+                    <!-- YES -->
                     <label class="flex items-center gap-2 p-2">
                         <input type="radio" 
                             name="is_active" 
                             value="1"
-                            class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
+                            {{ old('is_active', $scheme->is_active ?? null) == 1 ? 'checked' : '' }}>
                         <span>Yes</span>
                     </label>
 
-                    <!-- No -->
+                    <!-- NO -->
                     <label class="flex items-center gap-2 p-2">
                         <input type="radio" 
                             name="is_active" 
                             value="0"
-                            class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }} checked>
+                            {{ old('is_active', $scheme->is_active ?? null) == 0 ? 'checked' : '' }}>
                         <span>No</span>
                     </label>
-
-                    @error('is_active')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
                 </div>
+
             </div>
         </div>
 
 
         {{-- Charges Per EMI Inputs --}}
         <div id="charges-per-emi" hidden>
+            
             <div class="w-full my-4">
                 <hr class="border-gray-300">
                 <h4
@@ -464,7 +464,6 @@
                 </div>
 
             </div>
-
 
             <div class="  md:gap-5 gap-4 w-full  grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
@@ -536,29 +535,51 @@
 
         </div>
 
-
+        {{-- Put this ABOVE your <div id="no-emi"> --}}
+        @php
+            if(isset($scheme) && $scheme->gold_loan_setting == 'no_emi') {
+                $noEmiData = $scheme->no_emi_slabs ?? [];
+                $showNoEmi = true;
+            } else {
+                $noEmiData = array_fill(0, 12, [
+                    'from_date' => '',
+                    'to_date' => '',
+                    'penal_rate_interest' => '',
+                    'annual_rate_interest' => ''
+                ]);
+                $showNoEmi = false;
+            }
+        @endphp
 
         {{-- No-EMI Inputs --}}
         <div id="no-emi" hidden>
-            <div class="mt-4 ">
+            <div class="mt-4">
                 <label class="md:text-lg font-medium block mb-2 capitalize">
                     Charge Floating Interest Rate Per Slab
                     <span class="text-red-600">*</span>
                 </label>
+
                 <div class="mt-1 flex flex-wrap gap-3">
-                    <!-- Yes -->
+                    <!-- YES -->
                     <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="charge_floting" value="{{ old('charge_floting', $scheme->charge_floting ?? '') }}" class="text-green-600 focus:ring-green-500" checked>
-                        <span class="text-gray-70 uppercase">yes</span>
+                        <input type="radio" 
+                            name="charge_floting" 
+                            value="1"
+                            {{ old('charge_floting', $scheme->charge_floting ?? null) == 1 ? 'checked' : '' }}>
+                        <span class="text-gray-700 uppercase">YES</span>
                     </label>
+
                     <!-- NO -->
                     <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="charge_floting" value="{{ old('charge_floting', $scheme->charge_floting ?? '') }}" class="text-green-600 focus:ring-green-500 "
-                            checked>
-                        <span class="text-gray-700 uppercase">no</span>
+                        <input type="radio" 
+                            name="charge_floting" 
+                            value="0"
+                            {{ old('charge_floting', $scheme->charge_floting ?? null) == 0 ? 'checked' : '' }}>
+                        <span class="text-gray-700 uppercase">NO</span>
                     </label>
                 </div>
             </div>
+
             <div class=" tableWidth mt-2 px-4">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -578,26 +599,44 @@
                                 <th class="text-center  ">TO</th>
                             </tr>
                         </thead>
-                        <tbody>
+                       <tbody>
+                           @for($i = 0; $i < 12; $i++)
                             <tr>
-                                <td class="border border-gray-300 p-1">
-                                    <input type="number" name="from_date" value="{{ old('from_date', $scheme->from_date ?? '') }}" placeholder="From"
-                                        class="w-full  border border-gray-300 rounded p-1">
+                                <td class="border p-1">
+                                    <input type="number"
+                                        name="no_emi[{{ $i }}][from_date]"
+                                        value="{{ old("no_emi.$i.from_date", $noEmiData[$i]['from_date'] ?? '') }}"
+                                        class="w-full border rounded p-1">
                                 </td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="to_date" value="{{ old('to_date', $scheme->to_date ?? '') }}" placeholder="To"
-                                        class="w-full border  border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_interest" value="{{ old('penal_rate_interest', $scheme->penal_rate_interest ?? '') }}"
-                                        placeholder="Penal Interest(%)"
-                                        class="w-full  border border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="annual_rate_interest" value="{{ old('annual_rate_interest', $scheme->annual_rate_interest ?? '') }}"
-                                        placeholder="Annual Interest Rate(%) "
-                                        class="w-full border border-gray-300 rounded p-1"></td>
-                            </tbody>
+
+                                <td class="border p-1">
+                                    <input type="number"
+                                        name="no_emi[{{ $i }}][to_date]"
+                                        value="{{ old("no_emi.$i.to_date", $noEmiData[$i]['to_date'] ?? '') }}"
+                                        class="w-full border rounded p-1">
+                                </td>
+
+                                <td class="border p-1">
+                                    <input type="number"
+                                        name="no_emi[{{ $i }}][penal_rate_interest]"
+                                        value="{{ old("no_emi.$i.penal_rate_interest", $noEmiData[$i]['penal_rate_interest'] ?? '') }}"
+                                        class="w-full border rounded p-1">
+                                </td>
+
+                                <td class="border p-1">
+                                    <input type="number"
+                                        name="no_emi[{{ $i }}][annual_rate_interest]"
+                                        value="{{ old("no_emi.$i.annual_rate_interest", $noEmiData[$i]['annual_rate_interest'] ?? '') }}"
+                                        class="w-full border rounded p-1">
+                                </td>
+                            </tr>
+                            @endfor
+                        </tbody>
+
                     </table>
                 </div>
             </div>
         </div>
-
 
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -620,34 +659,37 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const radioGroup = document.getElementById('intersetTypeRadio');
-    const sections = ["charges-per-emi", "no-emi"];
 
-    // Hide/Show logic on change
-    radioGroup.addEventListener("change", function (e) {
-        if (e.target.name === "gold_loan_setting") {
+        const radioGroup = document.getElementById('intersetTypeRadio');
+        const sections = ["charges-per-emi", "no-emi"];
+
+        // Hide/Show logic on change
+        radioGroup.addEventListener("change", function (e) {
+            if (e.target.name === "gold_loan_setting") {
+                sections.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.hidden = true;
+                });
+
+                const target = document.getElementById(e.target.dataset.target);
+                if (target) target.hidden = false;
+            }
+        });
+
+        // ✅ Auto show correct section on page load (Edit case)
+        const checkedRadio = document.querySelector('input[name="gold_loan_setting"]:checked');
+        if (checkedRadio) {
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.hidden = true;
             });
 
-            const target = document.getElementById(e.target.dataset.target);
-            if (target) target.hidden = false;
+            const targetEl = document.getElementById(checkedRadio.dataset.target);
+            if (targetEl) targetEl.hidden = false;
         }
     });
-
-    // Auto-show correct section on page load
-    const checkedRadio = document.querySelector('input[name="gold_loan_setting"]:checked');
-    if (checkedRadio) {
-        sections.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.hidden = true;
-        });
-        const targetEl = document.getElementById(checkedRadio.dataset.target);
-        if (targetEl) targetEl.hidden = false;
-    }
-});
 </script>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

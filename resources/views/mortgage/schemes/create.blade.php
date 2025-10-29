@@ -73,9 +73,10 @@
                         Maximum Loan Amount (₹)
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
+                    <input type="number" id="maxLoanAmount" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0" max="200000" >
+                        placeholder="0.0" min="0" max="200000" >
+                        <p id="maxLoanAmountWords" class="text-red-500 text-sm mt-1"></p>
                         <!-- Laravel Error Message -->
                         @error('max_loan_amount')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -87,9 +88,10 @@
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="max_loan_limit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
+                    <input type="number" id="maxLoanLimit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Maximum Loan Limit" >
+                        <p id="maxLoanLimitWords" class="text-red-500 text-sm mt-1"></p>
                          @error('max_loan_limit')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -589,4 +591,67 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 </script>
+
+<!-- Max loan amount and loan limit sub text massage -->
+<script>
+function numberToWords(num) {
+
+    if (!num) return "";
+
+    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+    const convert = (n) => {
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + (n % 100 ? a[n % 100] : "");
+        if (n < 100000) return convert(Math.floor(n / 1000)) + " Thousand " + (n % 1000 ? convert(n % 1000) : "");
+        if (n < 10000000) return convert(Math.floor(n / 100000)) + " Lakh " + (n % 100000 ? convert(n % 100000) : "");
+        return "";
+    };
+
+    return convert(num).trim();
+}
+
+function attachListener(inputId, outputId) {
+    const input = document.getElementById(inputId);
+    const output = document.getElementById(outputId);
+
+    if (!input || !output) return;
+
+    input.addEventListener("input", function() {
+        const num = parseInt(this.value);
+        output.textContent = num ? numberToWords(num) + " Only" : "";
+    });
+}
+
+attachListener("maxLoanAmount", "maxLoanAmountWords");
+attachListener("maxLoanLimit", "maxLoanLimitWords");
+</script>
+
+<!-- Stop Negative value -->
+<script>
+  function blockMinus(inputId) {
+    const input = document.getElementById(inputId);
+
+    // Keyboard se minus block 
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "-" || event.key === "Minus") {
+            event.preventDefault();
+        }
+    });
+
+    // Copy-paste se minus remove 
+    input.addEventListener("input", function() {
+        this.value = this.value.replace(/-/g, "");
+    });
+}
+
+blockMinus("maxLoanAmount");
+blockMinus("maxLoanLimit");
+</script>
+
 @endsection

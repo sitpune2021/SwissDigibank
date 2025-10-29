@@ -48,7 +48,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h1 class=" flex text-xl block  uppercase font-semibold">Gold Loans</h1>
+            <h1 class=" flex text-xl block  uppercase font-semibold">CC / OD Account Loans</h1>
             <a href="#" class=" block flex btn-primary capitalize ">
                 Add
             </a>
