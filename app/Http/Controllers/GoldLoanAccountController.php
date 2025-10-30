@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\CsvExportHelper;
+use App\Models\Bank;
+use App\Models\GoldLoanTransaction;
 use App\Models\LoanApplication;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GoldLoanAccountController extends Controller
 {
@@ -16,6 +19,7 @@ class GoldLoanAccountController extends Controller
         // dd( $goldLoan);
         return view('gold-loan.account.index', compact('goldLoan'));
     }
+
     // public function show(Request $request, $id)
     // {
     //     $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
@@ -72,7 +76,7 @@ class GoldLoanAccountController extends Controller
 
     public function show(Request $request, $id)
     {
-        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
+        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
 
         if (!$goldLoan) {
             return redirect()->back()->with('error', 'Loan not found.');
@@ -316,5 +320,104 @@ class GoldLoanAccountController extends Controller
     public function goldLoanPayEmi()
     {
         return view('gold-loan.account.view-buttons.pay-emi.pay_emi');
+    }
+
+    public function goldLoanPay($id)
+    {
+        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
+
+        // dd($goldLoan);
+        $banks = Bank::all();
+
+        $P = (float)$goldLoan->loan_amount;
+        $annualRate = (float)$goldLoan->interest_rate;
+        $N = (int)$goldLoan->tenure_value;
+        $R = $annualRate / 12 / 100;
+
+        $paidCount = LoanApplication::where('status', 'PAID')->count();
+
+        if ($paidCount == 0) {
+            $currentDebt = $P;
+        } else {
+            $currentDebt = $P * ((pow(1 + $R, $N) - pow(1 + $R, $paidCount)) / (pow(1 + $R, $N) - 1));
+        }
+
+        $currentDebt = round($currentDebt, 2);
+        // dd($currentDebt);
+        // --- Find next due EMI ---
+        $nextDue = $goldLoan->emiPayments()
+            ->where('status', 'pending')
+            ->orderBy('emi_no', 'asc')
+            ->first();
+
+        // If no pending EMI, loan is fully paid
+        if (!$nextDue) {
+            return view('gold-loan.account.view-buttons.pay.pay', [
+                'goldLoan' => $goldLoan,
+                'banks' => $banks,
+                'currentDebt' => 0,
+                'payableAmount' => 0,
+                'message' => 'All EMIs are paid.'
+            ]);
+        }
+
+        $today = \Carbon\Carbon::today();
+        $dueDate = \Carbon\Carbon::parse($nextDue->emi_date);
+        $daysLate = $dueDate->diffInDays($today, false);
+        $daysLate = $daysLate > 0 ? $daysLate : 0;
+
+        $interestTillToday = round(($currentDebt * $annualRate * $daysLate) / 36500, 2);
+
+        $lateFee = $daysLate * 10;
+
+        $emiAmount = (float) $nextDue->emi_amount;
+        $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
+        dd($payableAmount);
+
+        return view('gold-loan.account.view-buttons.pay.pay', compact(
+            'goldLoan',
+            'banks',
+            'currentDebt',
+            'payableAmount',
+            'interestTillToday',
+            'lateFee',
+            'daysLate',
+            'nextDue'
+        ));
+    }
+
+    public function payEmi(Request $request)
+    {
+        $request->validate([
+            'loan_id' => 'required|exists:loan_applications,id',
+            'transaction_date' => 'required|date',
+            'current_debt' => 'required|numeric',
+            'total_payable' => 'required|numeric',
+            'amount_collected' => 'required|numeric|min:1',
+        ]);
+
+        $loan = LoanApplication::find($request->loan_id);
+
+        // Store transaction
+        $transaction = GoldLoanTransaction::create([
+            'loan_id' => $loan->id,
+            'transaction_date' => $request->transaction_date,
+            'current_debt' => $request->current_debt,
+            'other_charges' => $request->other_charges ?? 0,
+            'total_payable' => $request->total_payable,
+            'amount_collected' => $request->amount_collected,
+            'remarks' => $request->remarks ?? null,
+            'created_by' => Auth::id(),
+        ]);
+
+        // Update remaining balance in loan table
+        $loan->balance_amount = $loan->balance_amount - $request->amount_collected;
+        if ($loan->balance_amount < 0) $loan->balance_amount = 0;
+
+
+        dd($loan);
+        $loan->save();
+
+        return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
     }
 }

@@ -28,7 +28,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">DEPOSITE LOAN DISBURSMETS</h3>
+                <h3 class="uppercase font-semibold">LOAN AGAINST DEPOSITE DISBURSMETS</h3>
             </div>
         </div>
 

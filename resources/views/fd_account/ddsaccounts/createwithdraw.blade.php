@@ -57,15 +57,16 @@
             <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Deposit Form -->
                 <div class=" w-full box dark:bg-bg3 shadow rounded-2xl p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">Withdraw Money (Installments)</h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">Withdraw Money
+                        (Installments)</h3>
                     <hr class="my-4 border-gray-300 dark:border-gray-700">
 
-                    <form class="space-y-6" action="{{ route('dds.deposit.store') }}" method="POST"
+                    <form class="space-y-6" action="{{ route('ddsaccounts.withdraw', $withraw->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="dds_account_id" value="{{ $withraw->id }}">
+                        {{-- <input type="hidden" name="dds_account_id" value="{{ $withraw->id }}">
                         <input type="hidden" name="account_id" value="{{ $withraw->account->id ?? '' }}">
-                        <input type="hidden" name="type" value="credit">
+                        <input type="hidden" name="type" value="debit"> --}}
 
                         <!-- Member Signature -->
                         <div>
@@ -100,16 +101,23 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                                 Amount to Withdraw <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" min="0" name="balance_available" id="amountToDeposit"
-                                placeholder="Enter Amount to Deposit"
+
+                            <input type="number" min="0"name="amount" id="amount" max="{{ $balanceAvailable }}" name="amount"
+                                id="amountToWithdraw" placeholder="Enter Amount to Withdraw"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
                                 required>
-                            <span id="amountError" class="text-red-500 hidden">Amount can't be less than the DDS installment
-                                amount.</span>
+
+                            <x-number-to-word for="amount" />
+
+                            <small class="text-gray-500">
+                                Maximum amount available: {{ number_format($balanceAvailable, 2) }}
+                            </small>
                         </div>
-                        @error('balance_available')
+
+                        @error('amount')
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
+
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3 uppercase">Remarks (if
@@ -289,7 +297,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Balance Available</td>
-                                    {{-- <td>{{ number_format($balanceAvailable, 2) }}</td> --}}
+                                    <td>{{ number_format($balanceAvailable, 2) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -368,6 +376,16 @@
             const selectedInput = document.querySelector('input[name="pay_mode"]:checked');
             if (selectedInput) {
                 togglePayModeFields(selectedInput.value);
+            }
+        });
+    </script>
+    <script>
+        const amountInput = document.getElementById('amountToWithdraw');
+        const maxBalance = @json($balanceAvailable);
+
+        amountInput.addEventListener('input', function() {
+            if (parseFloat(this.value) > maxBalance) {
+                this.value = maxBalance;
             }
         });
     </script>

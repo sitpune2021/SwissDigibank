@@ -147,10 +147,34 @@
                             </td>
 
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center  gap-1">
-                                    Fixed Loan
+                                <div class="flex items-center gap-1">
+
+                                    @switch($application->model_type)
+                                        @case('loan')
+                                            Gold Loan
+                                            @break
+                                        @case('mortgage')
+                                            Mortgage Loan
+                                            @break
+                                        @case('loan_against')
+                                            Loan Against
+                                            @break
+                                        @case('business_loan')
+                                            Business Loan
+                                            @break
+                                        @case('cc_od')
+                                            CC / OD Loan
+                                            @break
+                                        @case('daily_weekly')
+                                            Daily / Weekly Loan
+                                            @break
+                                        @default
+                                            Unknown Type
+                                    @endswitch
+
                                 </div>
                             </td>
+
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center  gap-1">
                                     <span class="text-primary">
@@ -159,19 +183,35 @@
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1">                   
+                                   @if($application->model_type == 'daily_weekly')
+                                   {{ $application->loan_amount }}
+                                    @else
                                     {{ $application->max_loan_amount }}
+                                    @endif
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    {{ $application->maximum_approvable_amount }}
+                                <div class="flex items-center gap-1 uppercase">
+                                    @if($application->model_type == 'daily_weekly')
+                                        {{ $application->loan_amount }}
+                                    @else
+                                        {{ $application->maximum_approvable_amount }}
+                                    @endif
                                 </div>
                             </td>
 
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                   	{{ $application->approved_loan_amount }}
+                                    @if($application->model_type == 'daily_weekly')
+                                        <input type="number"
+                                            value="{{ $application->loan_amount }}"
+                                            class="border py-2 bg-secondary/5 rounded-10 px-3">
+                                    @else
+                                        <input type="number"
+                                            value="{{ $application->approved_loan_amount }}"
+                                            class="border py-2 bg-secondary/5 rounded-10 px-3">
+                                    @endif
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -191,13 +231,13 @@
                             </td>
                               <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  Test Test
+                                  -
                                 </div>
                             </td>
 
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                  <div class="flex items-center gap-1">
-                                 gfgfg
+                                 -
                                 </div>
                             </td>
                         </tr>

@@ -53,44 +53,47 @@ class LoanApplication extends Model
         'status',
     ];
 
-   // app/Models/LoanApplication.php
-public function creditScores()
-{
-    return $this->hasMany(LoanCreditScore::class, 'loan_application_id');
-}
-// LoanApplication.php
-public function member()
-{
-    return $this->belongsTo(Member::class, 'member_id');
-}
-public function coApplicant1()
-{
-    return $this->belongsTo(Member::class, 'co_applicant_1_id');
-}
-public function guarantor1()
-{
-    return $this->belongsTo(Member::class, 'guarantor_1_id');
-}
-
-public function branch()
-{
-    return $this->belongsTo(Branch::class, 'branch_id');
-}
-
-public function scheme()
-{
-    return $this->belongsTo(GoldLoanScheme::class, 'scheme_id');
-}
-public function ornaments()
-{
-    return $this->hasMany(LoanOrnament::class, 'application_id');
-}
-
-public function properties()
-{
-    return $this->hasMany(MortgageProperty::class, 'loan_application_id');
-}
 
 
+    public function creditScores()
+    {
+        return $this->hasMany(LoanCreditScore::class, 'loan_application_id');
+    }
+    // LoanApplication.php
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'member_id');
+    }
+    public function coApplicant1()
+    {
+        return $this->belongsTo(Member::class, 'co_applicant_1_id');
+    }
+    public function guarantor1()
+    {
+        return $this->belongsTo(Member::class, 'guarantor_1_id');
+    }
 
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function scheme()
+    {
+        return $this->belongsTo(GoldLoanScheme::class, 'scheme_id');
+    }
+    public function ornaments()
+    {
+        return $this->hasMany(LoanOrnament::class, 'application_id');
+    }
+
+    public function properties()
+    {
+        return $this->hasMany(MortgageProperty::class, 'loan_application_id');
+    }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(GoldLoanTransaction::class, 'loan_id');
+    }
 }

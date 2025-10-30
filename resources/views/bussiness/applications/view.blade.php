@@ -96,7 +96,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Loan AGAINSTS Application - 00591 </h1>
+            <h1 class="text-2xl uppercase font-semibold">Business Loan Application</h1>
         </div>
     </div>
 
@@ -105,19 +105,18 @@
         <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             Show Emi Chart
         </a>
+        @if($application->status != 2)
+            <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+                Collect Processing Fee
+            </a>
+            <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+                DISBURSE SETTINGS
+            </a>
 
-        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            Collect Processing Fee
-        </a>
-        <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            DISBURSE SETTINGS
-        </a>
-
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
-            REGISTER eNACH ( Fidypay )
-        </a>
-
-
+            <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
+                REGISTER eNACH ( Fidypay )
+            </a>
+        @endif
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
@@ -248,90 +247,6 @@
                 </table>
             </div>
 
-            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
-                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black  capitalize">
-                        Disbursement Settings
-                    </h3>
-                    <div class="">
-
-
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Body -->
-                <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
-                    <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
-                                    Disbursement Date
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    24/09/2025
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">First EMI Date </td>
-                                <td class="px-4 py-2 text-right md:text-left"> 24/07/2026</td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Collect Processing Fee Separately
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/10 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16"> Yes </span>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Collect Stamp Duty Fee Separately
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2"> Collect Insurance Fee Separately</td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
-                                    Collect Adv. Interest Separately
-                                </td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Collect Off Adv. EMI Interest Separately</td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
             <!--Cibil Info-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
 
@@ -408,85 +323,12 @@
             </div>
 
 
-
-
-
-
-
-            <!--Security Deposits-->
-            <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
-
-                <div
-                    class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold capitalize">Security Deposits</h3>
-                    <div class="">
-
-
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'SecurityDeposits')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Body -->
-                <div class="p-4" id="SecurityDeposits">
-                    <div class="overflow-x-auto text-center mt-5">
-                        <div class="w-full overflow-x-auto">
-                            <table class="w-full  rounded-lg text-sm">
-                                <thead class="bg-secondary/5">
-                                    <tr>
-                                        <th class="px-3 py-2 text-left">Item Type</th>
-                                        <th class="px-3 py-2 text-left">Name</th>
-                                        <th class="px-3 py-2 text-center">Qty</th>
-                                        <th class="px-3 py-2 text-center">Val./gm (₹)</th>
-                                        <th class="px-3 py-2 text-center">Gross Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center">Net Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center">Tunch (%)</th>
-                                        <th class="px-3 py-2 text-center">Fine Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center">Total Val. (₹)</th>
-                                        <th class="px-3 py-2 text-center">Image</th>
-                                        <th class="px-3 py-2 text-center">Status</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-3 py-2">Gold Jewellery</td>
-                                        <td class="px-3 py-2">abc</td>
-                                        <td class="px-3 py-2 text-center">3</td>
-                                        <td class="px-3 py-2 text-center">20000.0</td>
-                                        <td class="px-3 py-2 text-center">3.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">100.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">40000.0</td>
-                                        <td class="px-3 py-2 text-center">
-                                            <!-- Upload Button -->
-                                            <a class="btn-primary p-1">
-                                                <i class="las la-upload"></i>
-                                            </a>
-                                        </td>
-                                        <td class="px-3 py-2 text-center">Mortgage</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-
-
             <!--documents-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
                         Documents
-
                     </h3>
                     <div class="">
                         <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
@@ -583,7 +425,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Gold Loan Scheme Info
+                        Business Loan Scheme Info
                     </h3>
                     <div class="">
 
@@ -621,13 +463,6 @@
     </tr>
 
     <tr class="border-b">
-        <td class="font-semibold px-4 py-2">Maximum Loan Limit</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->max_loan_limit ?? 0 }} %
-        </td>
-    </tr>
-
-    <tr class="border-b">
         <td class="font-bold px-4 py-2">Interest Type</td>
         <td class="px-4 py-2 text-right md:text-left">
             {{ $application->scheme->interest_type ?? '-' }}
@@ -660,12 +495,9 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Gold Loan Application Info
-
+                        Business Loan Application Info
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanAppInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>

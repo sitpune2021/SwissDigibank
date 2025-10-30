@@ -108,18 +108,23 @@
         </a>
     
     @if($application->status != 2 )
+        @if($application->status != 1 )
+        @if($application->status == 3 )
         <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
             Collect Processing Fee
         </a>
+        @endif
+         @endif
+         @if($application->status != 3 )
         <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
             DISBURSE SETTINGS
         </a>
-
         <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
             REGISTER eNACH ( Fidypay )
         </a>
+        @endif
     @endif
-
+    @if($application->status != 3 )
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
@@ -127,9 +132,6 @@
                 <i class="las la-print text-lg"></i>
                 PRINT DOCUMENTS
                 <i class="las la-angle-down text-xs"></i>
-
-
-
             </button>
 
             <!-- Dropdown Menu -->
@@ -174,7 +176,7 @@
                 </div>
             </div>
         </div>
-
+    @endif
 
     </div>
 
@@ -190,9 +192,9 @@
                         <i class="las la-pencil-alt"></i>
                     </a>
 
-                    <a href="#" class=" p-2 btn-error">
+                    <!-- <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
-                    </a>
+                    </a> -->
 
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">
@@ -213,11 +215,13 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Application Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
+                            <td class="px-4 py-2">
+                                {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
+                            </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Loan Account No.</td>
-                            <td class="px-4 py-2 text-primary">00459</td>
+                            <td class="px-4 py-2 text-primary">-</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Gold Loan Scheme</td>
@@ -227,7 +231,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Amount Approved</td>
-                            <td class="px-4 py-2">₹ 100,000.00</td>
+                            <td class="px-4 py-2">₹ {{ $application->approved_loan_amount ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Status</td>
@@ -441,10 +445,11 @@
                     <div
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
-                            <button type="button" class="btn-primary px-2 py-1 rounded-10">
+                            <!-- <button type="button" class="btn-primary px-2 py-1 rounded-10">
                                 <i class="las la-upload y"></i>
                                 <span>UPLOAD</span>
-                            </button>
+                            </button> -->
+                            0.0
                         </label>
                     </div>
                 </div>
@@ -518,56 +523,49 @@
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->scheme_name ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->scheme_name ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->scheme_code ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->scheme_code ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Amount</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Amount</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Limit</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->max_loan_limit ?? 0 }} %
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Limit</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->max_loan_limit ?? 0 }} %
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->interest_type ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->interest_type ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Interest Rate</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->annual_interest_rate ?? 0 }} %
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2 uppercase">Interest Rate</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Processing Fee</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            ₹ {{ $application->scheme->processing_fee ?? 0 }}
-        </td>
-    </tr>
-
-</tbody>
+                        </tbody>
                    </table>
                 </div>
             </div>
@@ -575,15 +573,11 @@
 
             <!--Gold Loan Application Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase">
                         Gold Loan Application Info
-
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanAppInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -600,13 +594,13 @@
                                     Branch
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left uppercase">
-                                    Kalyanadurgam
+                                    {{ $application->branch->branch_name ?? 'N/A' }}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Amount Requested</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 34,000.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{ $application->net_loan_amount }}</td>
                             </tr>
 
                             <tr class="border-b">
@@ -614,7 +608,7 @@
                                     Amount Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 36,000.00
+                                    ₹ {{ $application->maximum_approvable_amount }}
                                 </td>
                             </tr>
 
@@ -623,7 +617,7 @@
                                     Amount Approved
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 34,000.00
+                                    ₹ {{ $application->approved_loan_amount }}
                                 </td>
                             </tr>
 
@@ -632,7 +626,7 @@
                                     Interest Amount
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    ₹ 5,525.00
+                                    ₹ 0.0
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -640,7 +634,7 @@
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    19.5 %
+                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -656,7 +650,7 @@
                                     Credit Period
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    1 Days
+                                    {{ $application->credit_period }} Days
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -664,7 +658,7 @@
                                     Total Amount to Recover
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ 39,525.00
+                                    ₹ 00.00
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -672,24 +666,23 @@
                                     Tenure of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    10 MONTHS
+                                    {{ $application->tenure_value }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Collect Principal Amount as EMI
+                                    EMI Payout
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">no</span>
+                                    {{ $application->emi_collection }}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Processing Fee
+                                    Insurance Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ 118.00 (Incl. 18.0 % GST)
+                                    ₹ {{ $application->insurance_amount }} (Incl. 0.0 % GST)
                                 </td>
                             </tr>
                             <tr class="">
@@ -697,7 +690,7 @@
                                     Purpose of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    Property
+                                    {{ $application->purpose_of_loan }}
                                 </td>
                             </tr>
 

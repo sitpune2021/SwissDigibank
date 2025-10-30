@@ -57,6 +57,9 @@ use App\Http\Controllers\CcOdLoanControllerDisburments;
 use App\Http\Controllers\CcOdLoanControllerAccount;
 use App\Http\Controllers\BusinessLoanDisburments;
 use App\Http\Controllers\BusinessLoanAccount;
+use App\Http\Controllers\DailyWeeklyController;
+use App\Http\Controllers\DailyWeeklyDisburments;
+use App\Http\Controllers\DailyWeeklyAccount;
 
 // Clear cache 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -132,13 +135,26 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
-        Route::post('/dds/deposit/store', [DdsAccountsController::class, 'storeDeposit'])->name('dds.deposit.store');
-        Route::get('/ddsaccount/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])->name('ddsaccounts.createDeposit');
-        // routes/web.php
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
-        Route::get('/ddsaccount/{id}/withdraw', [DdsAccountsController::class, 'createwithdraw'])->name('ddsaccounts.withdraw-create');
-        Route::post('/ddsaccount/withdraw/store', [DdsAccountsController::class, 'storewithdraw'])->name('ddsaccounts.withdraw-store');
+
+        // Deposit Routes
+        Route::get('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])
+            ->name('ddsaccounts.createDeposit');
+
+        Route::post('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'deposit'])
+            ->name('ddsaccounts.deposit');
+
+        // Withdraw Routes
+        Route::get('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'createWithdraw'])
+            ->name('ddsaccounts.withdraw-create');
+
+        Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
+            ->name('ddsaccounts.withdraw');
+
+        // Show Account Details
+        Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
+            ->name('ddsaccounts.show');
     });
 
     Route::resource('rd-calculator', RDCalculatorController::class)
@@ -446,6 +462,12 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('goldloan-account/payemi/{id}', [GoldLoanAccountController::class, 'goldLoanPayEmi'])
         ->name('gold-loan.account.pay-emi');
+
+    Route::get('goldloan-account/pay/{id}', [GoldLoanAccountController::class, 'goldLoanPay'])
+        ->name('gold-loan.account.pay');
+
+    Route::post('/goldloan/pay-emi', [GoldLoanController::class, 'payEmi'])->name('goldloan.payEmi');
+
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -815,10 +837,112 @@ Route::group(['prefix' => 'cc_od'], function () {
     // cc_od Loan Account Page
     Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])
         ->name('cc_od.account.index');
+
+    // Collect Processing fee page in application view page
+    Route::get('cc-od/col-process-fee/{id}', [CcOdLoanController::class, 'col_process_fee'])
+        ->name('cc_od.applications.view-buttons.col_process_fee');
+
+    Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
+        ->name('ccod.col_process_fee.store');
 });
 
 
 /////////////////////////////////////   END CC / OD LOAN   ////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////   Daily / Weekly LOAN   ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'daily_weekly'], function () {
+
+    // daily_weekly Loan Scheme
+    Route::get('scheme/index', [DailyWeeklyController::class, 'index'])
+        ->name('daily_weekly.schemes.index');
+
+    // create form
+    Route::get('scheme/create', [DailyWeeklyController::class, 'create'])
+        ->name('daily_weekly.schemes.create');
+    // store form data
+    Route::post('scheme/store', [DailyWeeklyController::class, 'store'])
+        ->name('daily_weekly.schemes.store');
+
+    // view list
+    Route::get('scheme/{id}', [DailyWeeklyController::class, 'show'])
+        ->name('daily_weekly.schemes.show');
+
+    // edit form
+    Route::get('scheme/{id}/edit', [DailyWeeklyController::class, 'edit'])
+        ->name('daily_weekly.schemes.edit');
+    Route::put('scheme/{id}', [DailyWeeklyController::class, 'update'])
+        ->name('daily_weekly.schemes.update');
+
+    Route::get('scheme/view/{id}', [DailyWeeklyController::class, 'view'])
+        ->name('daily_weekly.schemes.view');
+
+
+    // daily_weekly Application page
+    Route::get('applications/index', [DailyWeeklyController::class, 'appindex'])
+        ->name('daily_weekly.applications.index');
+
+    Route::get('applications/create', [DailyWeeklyController::class, 'appcreate'])
+        ->name('daily_weekly.applications.create');
+
+    Route::post('/DailyWeekly/store', [DailyWeeklyController::class, 'storeLoanApplication'])->name('daily_weekly.store');
+
+    Route::get('/members/{id}/info', [DailyWeeklyController::class, 'getMemberInfo'])
+        ->name('members.info');
+
+    Route::get('daily_weekly/applications/view/{id}', [DailyWeeklyController::class, 'appview'])
+        ->name('daily_weekly.applications.view');
+
+    // Edit form
+    Route::get('/daily_weekly/applications/{id}/edit', [DailyWeeklyController::class, 'appedit'])
+        ->name('daily_weekly.applications.edit');
+
+    // Update
+    Route::put('/daily_weekly/applications/{id}', [DailyWeeklyController::class, 'appupdate'])
+        ->name('daily_weekly.applications.update');
+
+    Route::get('applications/show-emi-chart', [DailyWeeklyController::class, 'showEmiChart'])
+        ->name('daily_weekly.applications.view-buttons.show-emi-chart');
+
+    Route::get('cc-od/credit-score/upload/{id}', [DailyWeeklyController::class, 'upload'])
+        ->name('daily_weekly.credit_score.upload');
+
+
+    // Disbursement daily_weekly Loan
+    Route::get('disbursements/index', [DailyWeeklyDisburments::class, 'index'])
+        ->name('daily_weekly.disbursements.index');
+    Route::post('/daily_weekly/disbursements/cancel/{id}', [DailyWeeklyDisburments::class, 'cancelLoan'])->name('daily_weekly.cancel');
+
+    // disburse-loan page  
+    Route::get('disbursements/disburse-loan/{id}', [DailyWeeklyDisburments::class, 'show'])
+        ->name('daily_weekly.disbursements.disburse-loan');
+    Route::post('/daily_weekly/disbursements/store', [DailyWeeklyDisburments::class, 'store'])->name('daily_weekly_disbursment.store');
+
+
+    // daily_weekly Loan Account Page
+    Route::get('account/index', [DailyWeeklyAccount::class, 'index'])
+        ->name('daily_weekly.account.index');
+
+    // Collect Processing fee page in application view page
+    Route::get('daily_weekly/col-process-fee/{id}', [DailyWeeklyController::class, 'col_process_fee'])
+        ->name('daily_weekly.applications.view-buttons.col_process_fee');
+    Route::post('daily_weekly/col-process-fee/store/{id}', [DailyWeeklyController::class, 'storeProcessFee'])
+        ->name('daily_weekly.col_process_fee.store');
+
+
+    // Show EMI chart in a new tab
+    Route::get('daily_weekly/{id}/emi-chart', [DailyWeeklyController::class, 'emiChart'])
+        ->name('daily_weekly.applications.view-buttons.show-emi-chart');
+
+    // Disbusrment setting
+    Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
+        ->name('daily_weekly.applications.view-buttons.disburse-setting');
+});
+
+
+/////////////////////////////////////   END Daily / Weekly LOAN   ////////////////////////////////////////////////////////
 
 
 Route::group(['prefix' => 'hr-managment'], function () {

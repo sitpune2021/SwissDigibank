@@ -1,5 +1,24 @@
 @extends('layout.main')
 @section('content')
+@php
+$setting = $goldLoan->scheme->gold_loan_setting ?? '';
+switch ($setting) {
+case 'reducing_emi':
+$settingLabel = 'Reducing Emi';
+break;
+case 'flat_advanced_interest':
+$settingLabel = 'Flat Advanced Interest';
+break;
+case 'flat_emi':
+$settingLabel = 'Flat Emi';
+break;
+case 'no_emi':
+$settingLabel = 'No Emi';
+break;
+default:
+$settingLabel = '';
+}
+@endphp
 <style>
     .sr-only {
         position: absolute;
@@ -110,6 +129,9 @@
         </a>
         <a href="{{route('gold-loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             Pay Emi
+        </a>
+        <a href="{{route('gold-loan.account.pay',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            Pay
         </a>
         <a href="" class="btn-error uppercase px-2 py-2 rounded-10 ">
             Fore CloseLoan
@@ -237,11 +259,11 @@
                         <tr class="border-b">
                             <td class="font-semibold  px-4 py-2"> ACTIVE
                                 Member</td>
-                            <td class="px-4 py-2 capitalize  text-primary">{{$goldLoan->member->member_no  ?? ''}}  {{$goldLoan->member->member_info_first_name  ?? 'N/A'}}</td>
+                            <td class="px-4 py-2 capitalize  text-primary">{{$goldLoan->member->member_no ?? ''}} {{$goldLoan->member->member_info_first_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Member Contact No</td>
-                            <td class="px-4 py-2 capitalize text-primary">{{$goldLoan->member->member_info_mobile_no  ?? 'N/A'}}</td>
+                            <td class="px-4 py-2 capitalize text-primary">{{$goldLoan->member->member_info_mobile_no ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
@@ -675,7 +697,7 @@
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">Interest Type</td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                   {{ $goldLoan->scheme->gold_loan_setting??'' }}
+                                    {{$settingLabel ??''}}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -697,7 +719,7 @@
                                     SMS Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                      {{ $goldLoan->scheme->sms_charge??'0.0' }} ₹
+                                    {{ $goldLoan->scheme->sms_charge??'0.0' }} ₹
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -705,7 +727,7 @@
                                     Fuel Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                     {{ $goldLoan->scheme->fuel_charge??'0.0' }} ₹
+                                    {{ $goldLoan->scheme->fuel_charge??'0.0' }} ₹
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -729,7 +751,7 @@
                                     Collection Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                 {{ $goldLoan->scheme->collection??'0.0' }} ₹
+                                    {{ $goldLoan->scheme->collection??'0.0' }} ₹
                                 </td>
                             </tr>
                         </tbody>
@@ -760,10 +782,8 @@
                                     placeholder="Enter Penalty Value ">
                                     <option value="">Select Branch</option>
                                 </select>
-
                                 <button type="submit" class="block btn-primary rounded-10">Update</button>
                             </div>
-
                         </div>
                     </form>
                     <form action="" class="mt-1  ">
@@ -853,16 +873,13 @@
                         Gold Loan Basic Details
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanSchemeInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
                         </button>
                     </div>
                 </div>
-                <!-- Body -->
-                <div class="overflow-x-auto mt-5     " id="goldLoanSchemeInfo">
+                <div class="overflow-x-auto mt-5" id="goldLoanSchemeInfo">
                     <table
                         class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -872,13 +889,13 @@
                                     Branch
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    Gold Loan Assureplus Flat Advanced Interest Deduction
+                                    {{$goldLoan->member->branch->branch_name??''}}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2">Advisor/ Staff</td>
-                                <td class="px-4 py-2 text-right md:text-left">SAMADHAN JADHAV</td>
+                                <td class="px-4 py-2 text-right md:text-left"></td>
                             </tr>
 
                             <tr class="border-b">
@@ -886,7 +903,7 @@
                                     Loan Amount
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 100,000.00
+                                    ₹ {{$goldLoan->loan_amount??''}}
                                 </td>
                             </tr>
 
@@ -895,22 +912,23 @@
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    20.0 %
+                                    {{$goldLoan->scheme->annual_interest_rate??''}} %
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">Credit Period</td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    1 Days
+                                    {{$goldLoan->credit_period??''}} Days
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
                                     Interest Type
                                 </td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    Flat Advanced Interest Deduction
+
+                                <td class="px-4 py-2 text-right md:text-left capitalize">
+                                    {{$settingLabel ??''}}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -918,7 +936,7 @@
                                     Per EMI Charges
                                 </td>
                                 <td class="px-4 py-2 ">
-                                    MONTHLY
+                                    {{$goldLoan->emi_collection??''}}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -926,7 +944,7 @@
                                     Tenure of Loan
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    12 MONTHS
+                                    {{$goldLoan->tenure??''}} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -934,7 +952,7 @@
                                     Processing Fee
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    ₹ 0.0
+                                    ₹ {{$goldLoan->processing_fee_value??'0.0'}}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -942,7 +960,7 @@
                                     Purpose of Loan
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    personal
+                                    {{$goldLoan->processing_fee_value??'N/A'}}
                                 </td>
                             </tr>
                         </tbody>
@@ -982,12 +1000,10 @@
             </li>
         </ul>
 
-        <!-- Tab Content -->
         <div class="tab-content p-4">
-            <!-- Tab 1 -->
             <div id="tab1" class="tab-pane block">
                 <div class="overflow-x-auto">
-                    <table class="w-full border-collapse whitespace-nowrap  text-sm">
+                    <!-- <table class="w-full border-collapse whitespace-nowrap  text-sm">
                         <thead class="bg-secondary/5 ">
                             <tr>
                                 <th class=" p-2 ">EMI No.</th>
@@ -1048,15 +1064,75 @@
                                     </span>
                                 </td>
                                 <td class="p-2">
-                                    <div class="flex justify-center">
-                                        <div class="relative">
-                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                            <ul class="horiz-option popover-content">
-                                                <li><a href="#" class="single-option capitalize">Mark Due</a></li>
-                                                <li><a href="#" class="single-option capitalize">Print</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <button
+                                        class="btn btn-sm process-btn 
+               {{ $emi['status'] === 'UNPAID' ? 'bg-gray-400' : ($emi['status'] === 'DUE' ? 'bg-yellow-500' : 'bg-green-600') }} 
+               text-white px-3 py-1 rounded"
+                                        data-loan="{{ $goldLoan->id }}"
+                                        data-emi="{{ $emi['emi_no'] }}"
+                                        {{ $emi['status'] === 'PAID' ? 'disabled' : '' }}>
+                                        {{ $emi['status'] === 'UNPAID' ? 'PROCESS' : ($emi['status'] === 'DUE' ? 'PAY EMI' : 'PAID') }}
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table> -->
+
+                    <table class="w-full border-collapse whitespace-nowrap  text-sm" id="emiTable">
+                        <thead class="bg-secondary/5">
+                            <tr>
+                                <th class="p-2">EMI No.</th>
+                                <th class="p-2">EMI DATE</th>
+                                <th class="p-2">EMI DUE DATE</th>
+                                <th class="p-2">PRINCIPAL</th>
+                                <th class="p-2">INTEREST</th>
+                                <th class="p-2">OTHER CHRG.</th>
+                                <th class="p-2">EMI</th>
+                                <th class="p-2">BAL. PRINCIPAL</th>
+                                <th class="p-2">REMAINING AMT</th>
+                                <th class="p-2">PAID DATE</th>
+                                <th class="p-2">STATUS</th>
+                                <th class="p-2">PROCESSED</th>
+                                <th class="p-2">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($emiSchedule as $emi)
+                            <tr class="border-b {{ $emi['status'] == 'PAID' ? 'bg-green-50' : '' }}">
+                                <td class="p-2">{{ $emi['emi_no'] }}</td>
+                                <td class="p-2 emi-date">{{ $emi['emi_date'] }}</td>
+                                <td class="p-2 emi-due-date">{{ $emi['emi_due_date'] }}</td>
+                                <td class="p-2">{{ $emi['principal'] }}</td>
+                                <td class="p-2">{{ $emi['interest'] }}</td>
+                                <td class="p-2">{{ $emi['other_charges'] }}</td>
+                                <td class="p-2">{{ $emi['emi_amount'] }}</td>
+                                <td class="p-2">{{ $emi['balance_principal'] }}</td>
+                                <td class="p-2">{{ $emi['remaining_amount'] }}</td>
+                                <td class="p-2">{{ $emi['paid_date'] }}</td>
+
+                                <!-- STATUS -->
+                                <td class="p-2 status">
+                                    <span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                        {{ $emi['status'] }}
+                                    </span>
+                                </td>
+
+                                <!-- PROCESSED -->
+                                <td class="p-2 processed">
+                                    <span
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                        {{ $emi['processed'] }}
+                                    </span>
+                                </td>
+
+                                <!-- ACTION BUTTON -->
+                                <td class="p-2">
+                                    <button class="process-btn btn-primary px-3 py-1 rounded"
+                                        data-emi="{{ $emi['emi_no'] }}" {{ $emi['status'] === 'PAID' ? 'disabled' : '' }}>
+                                        PROCESS
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -1065,7 +1141,6 @@
                 </div>
             </div>
 
-            <!-- Tab 2 -->
             <div id="tab2" class="tab-pane hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse whitespace-nowrap  text-sm">
@@ -1091,7 +1166,6 @@
                 </div>
             </div>
 
-            <!-- Tab 3 -->
             <div id="tab3" class="tab-pane hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse whitespace-nowrap  text-sm">
@@ -1180,5 +1254,158 @@
         icon.textContent = section.classList.contains('hidden') ? '+' : '−';
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = Array.from(document.querySelectorAll("#emiTable tbody tr"));
+        if (!rows.length) return;
 
+        // ----- helpers -----
+        // make a date-only (midnight) JS Date
+        const toDateOnly = d => d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : null;
+
+        // parse "DD-MM-YYYY" or "DD/MM/YYYY" or "YYYY-MM-DD" robustly
+        function parseAny(dateStr) {
+            if (!dateStr) return null;
+            const s = dateStr.trim();
+            // yyyy-mm-dd
+            let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+            if (m) return toDateOnly(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+            // dd-mm-yyyy or dd/mm/yyyy
+            m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+            if (m) return toDateOnly(new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])));
+            // fallback
+            const p = new Date(s);
+            return isNaN(p) ? null : toDateOnly(p);
+        }
+
+        const today = toDateOnly(new Date());
+        console.log("today:", today);
+
+        // Hide all process buttons produced by Blade loop (we will show exactly one)
+        document.querySelectorAll(".process-btn").forEach(b => {
+            b.style.display = "none";
+        });
+
+        // Build array of rows that actually have emi-date cells and are not PAID
+        const emiRows = rows.map((row, idx) => {
+            const emiDateText = row.querySelector(".emi-date")?.textContent?.trim() || "";
+            const emiDueText = row.querySelector(".emi-due-date")?.textContent?.trim() || "";
+            const statusText = row.querySelector(".status span")?.textContent?.trim() || "";
+            const emiDate = parseAny(emiDateText);
+            const emiDueDate = parseAny(emiDueText);
+            return {
+                row,
+                idx,
+                emiDate,
+                emiDueDate,
+                statusText,
+                emiDateText,
+                emiDueText
+            };
+        }).filter(r => r.emiDate && r.statusText !== "PAID");
+
+        if (!emiRows.length) {
+            console.log("No unpaid EMI rows found.");
+            return;
+        }
+
+        // Find the single row that should host the process button:
+        // Priority:
+        // 1) first row where emiDate <= today <= emiDueDate  (inclusive)
+        // 2) else first unpaid EMI row (future) — button will be disabled (btn-warning)
+        let pos = emiRows.findIndex(r => r.emiDate && r.emiDueDate && (today >= r.emiDate && today <= r.emiDueDate));
+        if (pos === -1) {
+            pos = 0; // fallback to first unpaid row
+        }
+        const active = emiRows[pos];
+        console.log("Selected row for button:", pos, active.emiDateText, active.emiDueText, "parsed:", active.emiDate, active.emiDueDate);
+
+        // Show button on that active row (use existing server-rendered button)
+        const btn = active.row.querySelector(".process-btn");
+        if (!btn) {
+            console.warn("No .process-btn found in selected row");
+            return;
+        }
+        btn.style.display = "inline-block";
+
+        // Set enable/disable and classes: enabled only when emiDate <= today <= emiDueDate (inclusive).
+        function applyBtnStateForRow(r, button) {
+            const emiDate = r.emiDate;
+            const emiDue = r.emiDueDate;
+            // If emiDue missing, require exact emiDate equality
+            let enabled = false;
+            if (emiDate && emiDue) {
+                enabled = (today >= emiDate && today <= emiDue);
+            } else if (emiDate) {
+                enabled = (today.getTime() === emiDate.getTime());
+            }
+            button.disabled = !enabled;
+            button.classList.remove("btn-primary", "btn-warning");
+            if (enabled) {
+                button.classList.add("btn-primary");
+                button.style.cursor = "pointer";
+            } else {
+                button.classList.add("btn-warning");
+                button.style.cursor = "not-allowed";
+            }
+            console.log("Button state for row", r.idx, "enabled?", enabled, "emiDate:", r.emiDate, "emiDue:", r.emiDueDate);
+        }
+
+        applyBtnStateForRow(active, btn);
+
+        // Click handler: only act when enabled. After click, update row (status -> DUE, processed -> No),
+        // clear action cell of current row, and move the button to the next unpaid EMI row (if any),
+        // then evaluate enable/disable on the new row.
+        btn.addEventListener("click", function() {
+            if (btn.disabled) return;
+
+            // Update current row UI
+            const curStatusSpan = active.row.querySelector(".status span");
+            const curProcessedSpan = active.row.querySelector(".processed span");
+            if (curStatusSpan) {
+                curStatusSpan.textContent = "DUE";
+                curStatusSpan.classList.remove("text-primary");
+                curStatusSpan.classList.add("text-yellow-600");
+            }
+            if (curProcessedSpan) curProcessedSpan.textContent = "No";
+
+            // remove button from current cell
+            const curActionCell = active.row.querySelector("td:last-child");
+            if (curActionCell) curActionCell.innerHTML = "";
+
+            // find next unpaid EMI row in emiRows list
+            const currentIndexInEmiRows = pos;
+            let nextIndex = currentIndexInEmiRows + 1;
+            if (nextIndex >= emiRows.length) {
+                // no more unpaid rows -> remove button
+                btn.remove();
+                console.log("No more unpaid EMI rows; button removed.");
+                return;
+            }
+            // attach to next
+            const next = emiRows[nextIndex];
+            const nextActionCell = next.row.querySelector("td:last-child");
+            if (!nextActionCell) {
+                console.warn("No action cell for next row");
+                btn.remove();
+                return;
+            }
+            nextActionCell.innerHTML = "";
+            nextActionCell.appendChild(btn);
+
+            // update pos/active reference
+            pos = nextIndex;
+            // re-evaluate enable/disable for next
+            applyBtnStateForRow(next, btn);
+        });
+
+        // Debug helper: log all EMI rows parsed
+        console.table(emiRows.map(r => ({
+            idx: r.idx,
+            emiDate: r.emiDate,
+            emiDueDate: r.emiDueDate,
+            status: r.statusText
+        })));
+    });
+</script>
 @endsection

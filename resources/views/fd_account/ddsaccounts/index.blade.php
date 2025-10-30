@@ -55,7 +55,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->member?->general_group ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    <a href="{{ $ddaccount?->id ? route('dds-accounts.show', $ddaccount->id) : '#' }}"
+                                    <a href="{{ $ddaccount?->id ? route('ddsaccounts.show', $ddaccount->id) : '#' }}"
                                         class="text-primary hover:underline">
                                         DDA {{ $ddaccount->id }}
                                     </a>
@@ -116,7 +116,7 @@
                                     <div class="flex justify-center">
                                         @include('partials._vertical-options', [
                                             'id' => $ddaccount->id,
-                                            'viewRoute' => 'dds-accounts.show',
+                                            'viewRoute' => 'ddsaccounts.show',
                                         ])
 
                                     </div>

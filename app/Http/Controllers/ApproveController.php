@@ -16,6 +16,7 @@ use App\Models\MortgageLoanApplication;
 use App\Models\LoanAgainstApplication;
 use App\Models\BusinessLoanApplication;
 use App\Models\CcOdLoanApplication;
+use App\Models\DailyWeeklyApplication;
 
 
 class ApproveController extends Controller
@@ -524,22 +525,34 @@ class ApproveController extends Controller
                 return $item;
             });
 
-        // Merge all 4 collections
-        $applications = $loanApplications
-            ->concat($mortgageLoans)
-            ->concat($loanAgainst)
-            ->concat($businessLoans)
-            ->concat($cc_od)
-            ->sortByDesc('created_at');
+            // Daily Weekly Loan Applications
+            $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
+                ->whereNotIn('status', [1, 2, 3])
+                ->latest()
+                ->get()
+                ->map(function ($item) {
+                    $item->model_type = 'daily_weekly';
+                    return $item;
+                });
 
-        // Account types array
-        $types = [
-            'loan' => 'Gold Loan',
-            'mortgage' => 'Mortgage Loan',
-            'loan_against' => 'Loan Against',
-            'business_loan' => 'Business Loan',
-            'cc_od' => 'CC OD',
-        ];
+            // Merge all 4 collections
+            $applications = $loanApplications
+                ->concat($mortgageLoans)
+                ->concat($loanAgainst)
+                ->concat($businessLoans)
+                ->concat($cc_od)
+                ->concat($daily_weekly)
+                ->sortByDesc('created_at');
+
+            // Account types array
+            $types = [
+                'loan' => 'Gold Loan',
+                'mortgage' => 'Mortgage Loan',
+                'loan_against' => 'Loan Against',
+                'business_loan' => 'Business Loan',
+                'cc_od' => 'CC OD',
+                'daily_weekly' => 'Daily Weekly',
+            ];
 
         return view('approvals.loans', compact('applications', 'types'));
     }
@@ -572,6 +585,9 @@ class ApproveController extends Controller
             case 'cc_od':
                 $application = CcOdLoanApplication::find($id);
                 break;
+            case 'daily_weekly':
+                $application = DailyWeeklyApplication::find($id);
+                break;
             default:
                 $application = null;
         }
@@ -595,30 +611,62 @@ class ApproveController extends Controller
 
     public function approvals_history()
     {
-        // Normal Loan Applications (approved)
+        // gold Loan Applications (approved)
         $loanApplications = LoanApplication::with(['creditScores', 'branch', 'member'])
             ->where('status', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'Gold loan';
+            });
 
         // Mortgage Loan Applications (approved)
         $mortgageLoans = MortgageLoanApplication::with(['branch', 'member'])
             ->where('status', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'Mortgage Loan';
+            });
 
         // Loan Against Applications (approved)
         $loanAgainst = LoanAgainstApplication::with(['branch', 'member'])
             ->where('status', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'loan_against';
+            });
 
-        // Merge all 3 collections
+        // cc_od Applications (approved)
+        $cc_od = CcOdLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'cc_od';
+            });
+
+        // daily_weekly Applications (approved)
+        $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'daily_weekly';
+            });
+
+        // Merge all 5 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
+            ->concat($cc_od)
+            ->concat($daily_weekly)
             ->sortByDesc('created_at');
 
         return view('approvals.approvals_history', compact('applications'));
     }
+
+
+
 }
