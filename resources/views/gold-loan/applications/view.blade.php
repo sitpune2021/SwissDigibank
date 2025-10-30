@@ -113,12 +113,12 @@
         @if($application->status != 2)
 
             {{-- Status == DRAFT (0) OR CANCELED (3) --}}
-            @if(in_array($application->status, [0, 3]))
+            <!-- @if(in_array($application->status, [0, 3]))
                 <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
                     class="btn-warning uppercase px-2 py-2 rounded-10">
                     Collect Processing Fee
                 </a>
-            @endif
+            @endif -->
 
             {{-- Status != CANCELED (3) --}}
             @if($application->status != 3)
@@ -296,7 +296,6 @@
                     </div>
                 </div>
 
-
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto" id="cibilInfo">
                     <table class="w-full text-sm text-left">
@@ -310,9 +309,6 @@
                     </table>
                 </div>
             </div>
-
-
-
 
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
                 <table class="w-full text-md  whitesapce-nowrap">
@@ -373,24 +369,36 @@
                                 </thead>
 
                                 <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-3 py-2">Gold Jewellery</td>
-                                        <td class="px-3 py-2">abc</td>
-                                        <td class="px-3 py-2 text-center">3</td>
-                                        <td class="px-3 py-2 text-center">20000.0</td>
-                                        <td class="px-3 py-2 text-center">3.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">100.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">40000.0</td>
-                                        <td class="px-3 py-2 text-center">
-                                            <!-- Upload Button -->
-                                            <a class="btn-primary p-1">
-                                                <i class="las la-upload"></i>
-                                            </a>
-                                        </td>
-                                        <td class="px-3 py-2 text-center">Mortgage</td>
-                                    </tr>
+                                    @if($application->loanOrnaments->isNotEmpty())
+                                        @foreach($application->loanOrnaments as $ornament)
+                                            <tr>
+                                                <td class="px-3 py-2">{{ $ornament->item_type ?? 'N/A' }}</td>
+                                                <td class="px-3 py-2">{{ $ornament->item_name ?? 'N/A' }}</td>
+                                                <td class="px-3 py-2 text-center">{{ $ornament->no_of_items ?? '0' }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->value_per_gram, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->gross_weight, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->net_weight, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->tunch, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->fine_weight, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->total_value, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">
+                                                    @if(!empty($ornament->image_path))
+                                                        <a href="{{ asset('storage/' . $ornament->image_path) }}" target="_blank" class="text-blue-500 underline">
+                                                            View
+                                                        </a>
+                                                    @else
+                                                        <span class="text-gray-400">No Image</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="11" class="text-center py-3 text-gray-500">
+                                                No security deposits available.
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -435,7 +443,6 @@
             <div class="flex flex-row gap-4 p-3 dark:bg-bg3  mt-4 rounded-10">
                 <div class="w-full bg-white dark:bg-bg3 p-4 rounded-10 shadow-md border border-gray-200">
                     <div class="flex justify-center gap-2  border-gray-200 px-4 py-3 bg-gray-50 rounded-t-2xl border-b">
-
                         <h3 class="font-semibold  text-center sm:text-lg">
                             CIBIL SCORE
                         </h3>
@@ -444,11 +451,17 @@
                     <div
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
-                            <!-- <button type="button" class="btn-primary px-2 py-1 rounded-10">
-                                <i class="las la-upload y"></i>
-                                <span>UPLOAD</span>
-                            </button> -->
-                            0.0
+                            @if($application->creditScores->isNotEmpty())
+                                @foreach($application->creditScores as $score)
+                                    <div class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
+                                        <label class="cursor-pointer">
+                                            {{ $score->cibil_score ?? 'N/A' }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-center text-gray-500 mt-3">No CIBIL score available.</div>
+                            @endif
                         </label>
                     </div>
                 </div>

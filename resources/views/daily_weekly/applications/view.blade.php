@@ -212,9 +212,11 @@
         <div class=" w-full  overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
+                     @if($application->status != 2 )
                    <a href="{{ route('daily_weekly.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
+                    @endif
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
