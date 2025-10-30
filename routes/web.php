@@ -458,6 +458,24 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('account/index', [GoldLoanAccountController::class, 'index'])
         ->name('gold-loan.account.index');
 
+    Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
+        ->name('gold-loan.account.show');
+
+    Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
+        ->name('gold-loan.account.transaction');
+
+    Route::get('goldloan-account/payemi/{id}', [GoldLoanAccountController::class, 'goldLoanPayEmi'])
+        ->name('gold-loan.account.pay-emi');
+
+    Route::post('goldloan-account/payemi/{id}/pay', [GoldLoanAccountController::class, 'payEmiLoan'])->name('goldloan.payEmiLoan');
+
+    Route::get('goldloan-account/pay/{id}', [GoldLoanAccountController::class, 'goldLoanPay'])
+        ->name('gold-loan.account.pay');
+
+    Route::post('/goldloan/pay-emi', [GoldLoanController::class, 'payEmi'])->name('goldloan.payEmi');
+
+
+
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])

@@ -121,7 +121,7 @@ class FDController extends Controller
 
             Log::info('FD Scheme Store transaction committed successfully.', [
                 'scheme_id' => $scheme->id,
-                'created_by' => auth()->id()
+                'created_by' => Auth::id()
             ]);
 
             return redirect()
@@ -324,6 +324,7 @@ class FDController extends Controller
                 : null;
 
             $fdAccount = FdAccount::create([
+
                 'member_id'             => $request->member_id,
                 'account_no'            => rand(100000, 999999), // Temporary
                 'branch_id'             => $request->branch_id,
@@ -357,7 +358,22 @@ class FDController extends Controller
             $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
             $fdAccount->save();
 
+            $fdAccount->fd_no = 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
+            $fdAccount->save();
+
             Log::info('FD Account created', ['fd_account_id' => $fdAccount->id]);
+
+            try {
+                $fdaccount = \App\Models\FdAccount::with('member')->find($fdAccount->id);
+                $mobile = $fdaccount->member->member_info_mobile_no;
+                // if ($member && !empty($member->member_info_mobile_no)) {
+                $dlttemplateid = 1707172234112046638;
+
+                $message = "Dear Customer, we have received your request for opening Fixed Deposit. Your temp. FD a/c no. is $fdaccount->fd_no. SBC GLOBAL";
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
 
             if ($request->nominees === "yes" && $request->has('nominee_name')) {
                 $totalNominees = count(array_filter($request->nominee_name));
