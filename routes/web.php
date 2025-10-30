@@ -135,13 +135,26 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
-        Route::post('/dds/deposit/store', [DdsAccountsController::class, 'storeDeposit'])->name('dds.deposit.store');
-        Route::get('/ddsaccount/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])->name('ddsaccounts.createDeposit');
-        // routes/web.php
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
-        Route::get('/ddsaccount/{id}/withdraw', [DdsAccountsController::class, 'createwithdraw'])->name('ddsaccounts.withdraw-create');
-        Route::post('/ddsaccount/withdraw/store', [DdsAccountsController::class, 'storewithdraw'])->name('ddsaccounts.withdraw-store');
+
+        // Deposit Routes
+        Route::get('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])
+            ->name('ddsaccounts.createDeposit');
+
+        Route::post('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'deposit'])
+            ->name('ddsaccounts.deposit');
+
+        // Withdraw Routes
+        Route::get('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'createWithdraw'])
+            ->name('ddsaccounts.withdraw-create');
+
+        Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
+            ->name('ddsaccounts.withdraw');
+
+        // Show Account Details
+        Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
+            ->name('ddsaccounts.show');
     });
 
     Route::resource('rd-calculator', RDCalculatorController::class)
@@ -810,9 +823,9 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('cc_od.applications.view-buttons.show-emi-chart');
 
     Route::get('cc-od/credit-score/upload/{id}', [CcOdLoanController::class, 'upload'])
-    ->name('cc_od.credit_score.upload');
+        ->name('cc_od.credit_score.upload');
 
-    
+
     // Disbursement cc_od Loan
     Route::get('disbursements/index', [CcOdLoanControllerDisburments::class, 'index'])
         ->name('cc_od.disbursements.index');

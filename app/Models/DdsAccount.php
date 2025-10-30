@@ -25,6 +25,7 @@ class DdsAccount extends Model
         'tds_deduction',
         'account_type',
         'nominee',
+        'status'
     ];
     protected $casts = [
         'open_date' => 'date',

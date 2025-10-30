@@ -9,6 +9,7 @@ class DdTransaction extends Model
     protected $fillable = [
         'account_id',
         'pay_mode',
+        'remarks',
         'transaction_date',
         'balance_available',
         'transfer_date',
@@ -25,7 +26,8 @@ class DdTransaction extends Model
         't_receipt',
         'member_sign',
         'member_photo',
-
+        'amount',
+        'type',
     ];
 
     public function ddsAccount()
