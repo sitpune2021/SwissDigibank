@@ -343,6 +343,7 @@
                                 <input type="number" id="loanAmount" name="loan_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                    <p id="amountInWords" class="text-red-600 text-sm mt-1"></p>
                                 @error('loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -1601,6 +1602,41 @@ document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
                 }
             });
         });
+    </script>
+
+    <script>
+    // Number to Words Convert Function (Indian Format)
+function numberToWords(num) {
+    if (num === 0) return "Zero Rupees Only";
+
+    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+        "Eighty", "Ninety"
+    ];
+
+    function inWords(num) {
+        if (num < 20) return a[num];
+        if (num < 100) return b[Math.floor(num / 10)] + " " + a[num % 10];
+        if (num < 1000) return a[Math.floor(num / 100)] + " Hundred " + inWords(num % 100);
+        if (num < 100000) return inWords(Math.floor(num / 1000)) + " Thousand " + inWords(num % 1000);
+        if (num < 10000000) return inWords(Math.floor(num / 100000)) + " Lakh " + inWords(num % 100000);
+        return inWords(Math.floor(num / 10000000)) + " Crore " + inWords(num % 10000000);
+    }
+
+    return inWords(num).trim() + " Rupees Only";
+}
+
+// Live Show Below Input
+document.getElementById("loanAmount").addEventListener("input", function () {
+    let amount = parseInt(this.value) || 0;
+    document.getElementById("amountInWords").textContent = amount > 0 
+        ? numberToWords(amount)
+        : "";
+});
+
     </script>
 
 @endsection

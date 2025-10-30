@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="member_id" class="md:text-lg font-medium block mb-4">
+                            <label for="member_id" class="md:text-lg font-medium block mb-2">
                                 Customer <span class="text-red-500">*</span>
                             </label>
                             
@@ -260,10 +260,10 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-6">
                                 EMI Collection <span class="text-error">* </span>
                             </label>
-                            <select name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">>
+                            <select name="emi_collection" class="w-full mt-5 text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">>
                             <option value="">Please Select</option>
                             <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
                             <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
@@ -1372,4 +1372,14 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
 });
 </script>
 
+<script>
+    // <!-- collapsed logic + - button-->
+        function toggleSection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = button.querySelector('.toggle-icon');
+ 
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
+</script>
 @endsection
