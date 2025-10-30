@@ -137,6 +137,31 @@ class ApproveController extends Controller
 
                 $fdAccount->save();
 
+                try {
+
+                    $fdaccount = \App\Models\fdAccount::find($fdAccount->id);
+                    // dd($account->account_no);
+
+                    $mobile = $fdaccount->member->member_info_mobile_no;
+
+                    $account = $fdaccount->fd_no;
+
+                    if ($fdaccount->status == 1) {
+                        // Approved message
+                        $dlttemplateid = 1707172234113442938;
+                        $message = "Congratulations! Your FD no $account has been approved. SBC GLOBAL";
+                    } elseif ($fdaccount->status == 2) {
+                        // Disapproved message
+
+                        $dlttemplateid = 1707172234115386436;
+                        $message = "Dear Customer, your FD no $account is disapproved. SBC GLOBAL";
+                    }
+
+                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+                }
+
                 // 📝 Log the update
                 Log::info('FD Account status updated', [
                     'table' => 'fd_accounts',
@@ -174,7 +199,13 @@ class ApproveController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with('success', 'Account status updated successfully.');
+            // return redirect()->back()->with('success', 'Account status updated successfully.');
+            if ($fdaccount->status == 1) {
+                return redirect()->back()->with('success', 'Account approved successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Account disapproved.');
+            }
+            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Account not found', [
                 'id' => $id,
@@ -525,34 +556,34 @@ class ApproveController extends Controller
                 return $item;
             });
 
-            // Daily Weekly Loan Applications
-            $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
-                ->whereNotIn('status', [1, 2, 3])
-                ->latest()
-                ->get()
-                ->map(function ($item) {
-                    $item->model_type = 'daily_weekly';
-                    return $item;
-                });
+        // Daily Weekly Loan Applications
+        $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'daily_weekly';
+                return $item;
+            });
 
-            // Merge all 4 collections
-            $applications = $loanApplications
-                ->concat($mortgageLoans)
-                ->concat($loanAgainst)
-                ->concat($businessLoans)
-                ->concat($cc_od)
-                ->concat($daily_weekly)
-                ->sortByDesc('created_at');
+        // Merge all 4 collections
+        $applications = $loanApplications
+            ->concat($mortgageLoans)
+            ->concat($loanAgainst)
+            ->concat($businessLoans)
+            ->concat($cc_od)
+            ->concat($daily_weekly)
+            ->sortByDesc('created_at');
 
-            // Account types array
-            $types = [
-                'loan' => 'Gold Loan',
-                'mortgage' => 'Mortgage Loan',
-                'loan_against' => 'Loan Against',
-                'business_loan' => 'Business Loan',
-                'cc_od' => 'CC OD',
-                'daily_weekly' => 'Daily Weekly',
-            ];
+        // Account types array
+        $types = [
+            'loan' => 'Gold Loan',
+            'mortgage' => 'Mortgage Loan',
+            'loan_against' => 'Loan Against',
+            'business_loan' => 'Business Loan',
+            'cc_od' => 'CC OD',
+            'daily_weekly' => 'Daily Weekly',
+        ];
 
         return view('approvals.loans', compact('applications', 'types'));
     }
@@ -616,7 +647,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'Gold loan';
             });
 
@@ -625,7 +656,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'Mortgage Loan';
             });
 
@@ -634,7 +665,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'loan_against';
             });
 
@@ -643,7 +674,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'cc_od';
             });
 
@@ -652,7 +683,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'daily_weekly';
             });
 
@@ -666,7 +697,4 @@ class ApproveController extends Controller
 
         return view('approvals.approvals_history', compact('applications'));
     }
-
-
-
 }

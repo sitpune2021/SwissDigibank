@@ -16,6 +16,8 @@ Route::post('/send-otp', [AuthController::class, 'sendOtpSms']);
 Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp']);
 Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp']);
 Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin']);
+Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus']);
+
 Route::post('/sim/request', [SimVerificationController::class, 'requestOtp']);
 Route::post('/sim/verify', [SimVerificationController::class, 'verifyOtp']);
 Route::post('/password/forgot', [ForgotLoginPasswordController::class, 'sendOtp']);

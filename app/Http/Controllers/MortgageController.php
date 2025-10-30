@@ -32,12 +32,10 @@ class MortgageController extends Controller
         return view("mortgage.schemes.index", compact('schemes'));
     } 
   
-
     public function create()
     {
         return view("mortgage.schemes.create");
     }
-
 
     public function store(Request $request)
     {
@@ -106,7 +104,6 @@ class MortgageController extends Controller
         }
     }
 
-
     public function show($id)
     {
         $scheme = MortgageScheme::findOrFail($id);
@@ -135,12 +132,15 @@ class MortgageController extends Controller
         return view("mortgage.schemes.view", compact('scheme'));
     }
 
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
     public function calculator()
     {
         $scheme = MortgageScheme::all();
         return view("mortgage.calculator.index", compact('scheme'));
     }
-
 
     public function calculateResult(Request $request)
     {
@@ -158,7 +158,9 @@ class MortgageController extends Controller
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->max_tenure;
             $payout = $request->payout;
-            $interestType = 'flat';
+           // $interestType = 'flat';
+           $interestType = $request->interest_type ?? 'flat_emi';
+
             $annualRate = (float) $request->manual_interest_rate;
 
             $processingFee = (float) ($request->manual_processing_fee ?? 0);
@@ -179,7 +181,30 @@ class MortgageController extends Controller
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
             $payout = $request->payout;
-            $interestType = 'flat';
+            //$interestType = 'flat';
+            //$interestType = strtolower($scheme->gold_loan_setting) === 'no_emi' ? 'no_emi' : 'flat';
+            $setting = strtolower($scheme->gold_loan_setting);
+
+            switch ($setting) {
+                case 'flat_advanced_interest':
+                    $interestType = 'Flat Advanced Interest';
+                    break;
+                case 'flat_advance_interest':
+                    $interestType = 'Flat Advance Interest';
+                    break;
+                case 'flat_interest':
+                    $interestType = 'Flat Interest';
+                    break;
+                case 'reducing_balance':
+                    $interestType = 'Reducing Balance';
+                    break;
+                case 'no_emi':
+                    $interestType = 'No EMI';
+                    break;
+                default:
+                    $interestType = ucfirst($setting); // fallback
+            }
+
             $annualRate = (float) ($request->annual_interest_rate ?? $scheme->annual_interest_rate ?? 0);
 
             $processingFee = (float) ($scheme->processing_fee ?? 0);
@@ -211,28 +236,53 @@ class MortgageController extends Controller
         $emi = round(($loan + $totalInterest) / $installments, 2);
 
         // EMI Schedule Generation
-        $schedule = [];
+        //$schedule = [];
+        // Interest Calculation According to Selected Type
+        if (strtolower($interestType) === 'reducing_emi') {
+            $monthlyRate = ($annualRate / 100) / 12;
+            $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
+        } else {
+            // FLAT EMI (Default)
+            $emi = round(($loan + $totalInterest) / $installments, 2);
+        }
+
         $outstanding = $loan;
         $startDate = now();
 
-         for ($i = 1; $i <= $installments; $i++) {
-
-            // Base Calculation
-            $principal = round($loan / $installments, 2);
-            $interest = round($totalInterest / $installments, 2);
-            $emiTotal = round($principal + $interest, 2);
-
-            // Adjust Final EMI to remove rounding balance
-            if ($i == $installments) {
-                $principal = round($outstanding, 2);
-                $emiTotal = round($principal + $interest, 2);
-                $outstanding = 0;
-            } else {
-                $outstanding -= $principal;
-            }
+        for ($i = 1; $i <= $installments; $i++) 
+        {
 
             $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
             $dueDate = $emiDate->copy()->addDays(10);
+
+            if ($interestType === 'No EMI') {
+                // No EMI Logic
+                if ($i == $installments) {
+                    $principal = round($loan, 2);
+                } else {
+                    $principal = 0;
+                }
+
+                $interest = null;
+                $charges = null;
+                $emiTotal = null;
+                $balance = null;
+
+            } else {
+                // Normal EMI Logic
+                if ($i == $installments) {
+                    $principal = round($outstanding, 2);
+                } else {
+                    $principal = round($loan / $installments, 2);
+                }
+
+                $interest = round($totalInterest / $installments, 2);
+                $charges = 0;
+                $emiTotal = round($principal + $interest, 2);
+
+                $outstanding -= $principal;
+                $balance = max(round($outstanding, 2), 0);
+            }
 
             $schedule[] = [
                 'no' => $i,
@@ -240,23 +290,18 @@ class MortgageController extends Controller
                 'due_date' => $dueDate->format('d/m/Y'),
                 'principal' => $principal,
                 'interest' => $interest,
-                'charges' => 0,
+                'charges' => $charges,
                 'emi' => $emiTotal,
-                'balance' => max($outstanding, 0),
+                'balance' => $balance,
             ];
         }
-
-        // Add this here 
-        $totalInterestPaid = array_sum(array_column($schedule, 'interest'));
-        $totalChargesPaid  = array_sum(array_column($schedule, 'charges'));
-        $totalEmiPaid      = array_sum(array_column($schedule, 'emi'));
 
 
         //  Grand Total (Loan + Interest + Charges)
         $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
 
         //  Return to view
-        return view('mortgage.calculator.result', [
+        return view('gold-loan.calculator.result', [
             'scheme' => $scheme,
             'is_manual' => $isManual,
             'loan' => $loan,
@@ -276,10 +321,11 @@ class MortgageController extends Controller
             'total_principal' => $loan,
             'total_emi_paid' => $loan + $totalInterest,
             'grand_total_payable' => $grandTotalPayable,
-             'total_interest_paid' => $totalInterestPaid,
-            'total_charges_paid'  => $totalChargesPaid,   
         ]);
     }
+
+
+////////////////////////////////////////////////////////////////////////////////////////
 
 
     public function appindex()

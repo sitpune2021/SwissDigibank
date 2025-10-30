@@ -643,10 +643,8 @@ class DdsAccountsController extends Controller
     {
         Log::info("DdsAccountsController@transactions called for DDS ID: $id");
 
-        // Fetch DDS account
         $ddsAccount = DdsAccount::with('member', 'branch', 'scheme')->findOrFail($id);
 
-        // Build query based on filters
         $query = DdTransaction::where('dds_account_id', $id);
 
         if ($request->filled('tranx_id')) {
@@ -683,6 +681,7 @@ class DdsAccountsController extends Controller
     }
     public function destroyTransaction($id)
     {
+        dd($id);
         Log::info("DdsAccountsController@destroyTransaction called for Transaction ID: $id");
         $tranx = DdTransaction::findOrFail($id);
         $tranx->delete();
@@ -743,17 +742,174 @@ class DdsAccountsController extends Controller
         ));
     }
 
+
+    // public function deposit(Request $request, $id)
+    // {
+    //     Log::info('Deposit function called', ['account_id' => $id, 'request_data' => $request->all()]);
+
+    //     // Step 1: Validate the request
+    //     try {
+    //         $request->validate([
+    //             'amount' => 'required|numeric|min:1',
+    //             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
+    //             'transaction_date' => 'required|date_format:d-m-Y',
+    //             'saving_account_id' => 'required_if:pay_mode,saving|exists:accounts,id',
+    //         ]);
+    //         Log::info('Validation passed');
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         Log::warning('Validation failed', ['errors' => $e->errors()]);
+    //         return redirect()->back()->withErrors($e->errors());
+    //     }
+
+    //     $amount = $request->amount;
+
+    //     // Step 2: Find DDS account
+    //     $account = DdsAccount::find($id);
+    //     if (!$account) {
+    //         Log::error('DDS Account not found', ['account_id' => $id]);
+    //         return redirect()->back()->with('error', 'Account not found!');
+    //     }
+    //     Log::info('DDS Account found', ['account_id' => $id, 'balance' => $account->balance]);
+
+    //     // Step 3: Convert dates (transaction date, transfer date, cheque date)
+    //     try {
+    //         $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
+    //         $transferDate = $request->transfer_date ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d') : null;
+    //         $chequeDate = $request->cheque_date ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d') : null;
+    //     } catch (\Exception $e) {
+    //         Log::error('Date conversion failed', ['error' => $e->getMessage()]);
+    //         return redirect()->back()->with('error', 'Invalid date format');
+    //     }
+
+    //     // Step 4: Deduct from saving account if pay_mode is saving
+    //     $savingAccountId = null;
+    //     if ($request->pay_mode === 'saving') {
+    //         $savingAccount = Account::find($request->saving_account_id);
+    //         if (!$savingAccount) {
+    //             Log::error('Saving account not found', ['saving_account_id' => $request->saving_account_id]);
+    //             return redirect()->back()->with('error', 'Saving account not found!');
+    //         }
+
+    //         if ($savingAccount->amount_deposit < $amount) {
+    //             Log::warning('Insufficient balance in saving account', ['saving_account_id' => $savingAccount->id]);
+    //             return redirect()->back()->with('error', 'Insufficient balance in saving account!');
+    //         }
+
+    //         // Deduct amount from saving account
+    //         $savingAccount->amount_deposit -= $amount;
+    //         $savingAccount->save();
+    //         $savingAccountId = $savingAccount->id;
+
+    //         Log::info('Amount deducted from saving account', ['saving_account_id' => $savingAccount->id, 'new_balance' => $savingAccount->amount_deposit]);
+    //     }
+
+    //     // Step 5: Set remarks and status
+    //     $remarks = $request->remarks;
+    //     if ($request->pay_mode === 'saving' && isset($savingAccount)) {
+    //         $remarks = $remarks ?: 'Credit from Saving a/c - ' . $savingAccount->account_no;
+    //     }
+    //     if (!$remarks) $remarks = 'Deposit via ' . ucfirst($request->pay_mode);
+    //     $status = ($request->pay_mode === 'saving') ? 'Approved' : 'Pending';
+
+    //     // Log the transaction status
+    //     Log::info('Transaction status determined', [
+    //         'status' => $status,
+    //         'pay_mode' => $request->pay_mode,
+    //         'remarks' => $remarks
+    //     ]);
+
+    //     // Step 6: Create the transaction
+    //     try {
+    //         $transaction = DdTransaction::create([
+    //             'type' => 'credit',
+    //             'dds_account_id' => $id,
+    //             'pay_mode' => $request->pay_mode,
+    //             'remarks' => $remarks,
+    //             'transaction_date' => $transactionDate,
+    //             'amount' => $amount,
+    //             'balance_available' => $account->balance + $amount, // Calculate the new balance
+    //             'collected_by' => $request->collected_by ?? null,
+    //             't_receipt' => $request->t_receipt ?? null,
+    //             'transfer_date' => $transferDate,
+    //             'transfer_mode' => $request->transfer_mode ?? null,
+    //             'utr_no' => $request->utr_no ?? null,
+    //             'bank_name' => $request->bank_name ?? null,
+    //             'cheque_no' => $request->cheque_no ?? null,
+    //             'cheque_date' => $chequeDate,
+    //             'saving_account_id' => $savingAccountId,
+    //         ]);
+    //         Log::info('Transaction created', ['transaction_id' => $transaction->id, 'status' => $status]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Failed to create transaction', ['error' => $e->getMessage()]);
+    //         return redirect()->back()->with('error', 'Failed to create transaction');
+    //     }
+
+    //     // Step 7: Recalculate the running balance for all transactions
+    //     try {
+    //         $runningBalance = 0;
+    //         $transactions = DdTransaction::where('dds_account_id', $id)
+    //             ->orderBy('transaction_date')
+    //             ->orderBy('id')
+    //             ->get();
+
+    //         foreach ($transactions as $txn) {
+    //             $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
+    //             $txn->balance_available = $runningBalance;
+    //             $txn->save();
+    //         }
+
+    //         // Update the account balance
+    //         $account->balance = $runningBalance;
+    //         $account->save();
+    //     } catch (\Exception $e) {
+    //         Log::error('Error updating balances', ['error' => $e->getMessage()]);
+    //         return redirect()->back()->with('error', 'Error updating balance');
+    //     }
+
+    //     Log::info('Deposit completed successfully', ['account_id' => $id, 'running_balance' => $runningBalance]);
+
+    //     // Return to the transactions page with a success message
+    //     return redirect()->route('dds-accounts.transactions', $id)
+    //         ->with('success', 'Deposit successful!')
+    //         ->with('transactions', $transactions);  // Pass transactions to the view
+    // }
     public function deposit(Request $request, $id)
     {
         Log::info('Deposit function called', ['account_id' => $id, 'request_data' => $request->all()]);
 
+        // Step 1: Validate the request
         try {
-            $request->validate([
+            // Default validation rules
+            $rules = [
                 'amount' => 'required|numeric|min:1',
                 'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
                 'transaction_date' => 'required|date_format:d-m-Y',
-                'saving_account_id' => 'required_if:pay_mode,saving|exists:accounts,id',
-            ]);
+            ];
+
+            // Modify validation rules based on pay_mode
+            switch ($request->pay_mode) {
+                case 'onlineTr':
+                    $rules['transfer_date'] = 'required|date_format:d-m-Y';
+                    $rules['utr_no'] = 'required|string|max:255';
+                    $rules['transfer_mode'] = 'required|in:IMPS,VPA,NEFT/RTGS';
+                    break;
+
+                case 'cheque':
+                    $rules['bank_name'] = 'required|string|max:255';
+                    $rules['cheque_no'] = 'required|string|max:255';
+                    $rules['cheque_date'] = 'required|date_format:d-m-Y';
+                    break;
+
+                case 'saving':
+                    $rules['saving_account_id'] = 'required|exists:accounts,id';
+                    break;
+
+                    // No extra validation for 'cash', since it's simple
+            }
+
+            // Validate the request data with dynamically adjusted rules
+            $request->validate($rules);
+
             Log::info('Validation passed');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::warning('Validation failed', ['errors' => $e->errors()]);
@@ -762,6 +918,7 @@ class DdsAccountsController extends Controller
 
         $amount = $request->amount;
 
+        // Step 2: Find DDS account
         $account = DdsAccount::find($id);
         if (!$account) {
             Log::error('DDS Account not found', ['account_id' => $id]);
@@ -769,28 +926,18 @@ class DdsAccountsController extends Controller
         }
         Log::info('DDS Account found', ['account_id' => $id, 'balance' => $account->balance]);
 
+        // Step 3: Convert dates (transaction date, transfer date, cheque date)
         try {
             $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
-
-            $transferDate = $request->transfer_date
-                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
-                : null;
-
-            $chequeDate = $request->cheque_date
-                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
-                : null;
-
-            Log::info('Dates converted', [
-                'transaction_date' => $transactionDate,
-                'transfer_date' => $transferDate,
-                'cheque_date' => $chequeDate
-            ]);
+            $transferDate = $request->transfer_date ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d') : null;
+            $chequeDate = $request->cheque_date ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d') : null;
         } catch (\Exception $e) {
             Log::error('Date conversion failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Invalid date format');
         }
 
-        // Step 4: Handle saving account deduction if pay_mode is 'saving'
+        // Step 4: Deduct from saving account if pay_mode is saving
+        $savingAccountId = null;
         if ($request->pay_mode === 'saving') {
             $savingAccount = Account::find($request->saving_account_id);
             if (!$savingAccount) {
@@ -803,21 +950,41 @@ class DdsAccountsController extends Controller
                 return redirect()->back()->with('error', 'Insufficient balance in saving account!');
             }
 
+            // Deduct amount from saving account
             $savingAccount->amount_deposit -= $amount;
             $savingAccount->save();
+            $savingAccountId = $savingAccount->id;
+
             Log::info('Amount deducted from saving account', ['saving_account_id' => $savingAccount->id, 'new_balance' => $savingAccount->amount_deposit]);
         }
 
-        // Step 5: Create DDS transaction
+        // Step 5: Set remarks and status
+        $remarks = $request->remarks;
+        if ($request->pay_mode === 'saving' && isset($savingAccount)) {
+            $remarks = $remarks ?: 'Credit from Saving a/c - ' . $savingAccount->account_no;
+        }
+        if ($request->pay_mode === 'cash') {
+            $remarks = null;
+        }
+        $status = ($request->pay_mode === 'saving') ? 'Approved' : 'Pending';
+
+        // Log the transaction status
+        Log::info('Transaction status determined', [
+            'status' => $status,
+            'pay_mode' => $request->pay_mode,
+            'remarks' => $remarks
+        ]);
+
+        // Step 6: Create the transaction
         try {
             $transaction = DdTransaction::create([
                 'type' => 'credit',
                 'dds_account_id' => $id,
                 'pay_mode' => $request->pay_mode,
-                'remarks' => $request->remarks ?? null,
+                'remarks' => $remarks,
                 'transaction_date' => $transactionDate,
                 'amount' => $amount,
-                'balance_available' => 0, // will update later
+                'balance_available' => $account->balance + $amount, // Calculate the new balance
                 'collected_by' => $request->collected_by ?? null,
                 't_receipt' => $request->t_receipt ?? null,
                 'transfer_date' => $transferDate,
@@ -826,37 +993,45 @@ class DdsAccountsController extends Controller
                 'bank_name' => $request->bank_name ?? null,
                 'cheque_no' => $request->cheque_no ?? null,
                 'cheque_date' => $chequeDate,
-                'saving_account_id' => $request->saving_account_id ?? null,
+                'saving_account_id' => $savingAccountId,
             ]);
-            Log::info('Transaction created', ['transaction_id' => $transaction->id]);
+            Log::info('Transaction created', ['transaction_id' => $transaction->id, 'status' => $status]);
         } catch (\Exception $e) {
             Log::error('Failed to create transaction', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Failed to create transaction');
         }
 
-        // Step 6: Recalculate running balance
+        // Step 7: Recalculate the running balance for all transactions
         try {
             $runningBalance = 0;
-            $transactions = DdTransaction::where('dds_account_id', $id)->orderBy('transaction_date')->get();
+            $transactions = DdTransaction::where('dds_account_id', $id)
+                ->orderBy('transaction_date')
+                ->orderBy('id')
+                ->get();
 
             foreach ($transactions as $txn) {
                 $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
                 $txn->balance_available = $runningBalance;
                 $txn->save();
-                Log::info('Transaction balance updated', ['transaction_id' => $txn->id, 'balance_available' => $txn->balance_available]);
             }
 
+            // Update the account balance
             $account->balance = $runningBalance;
             $account->save();
-            Log::info('DDS account balance updated', ['account_id' => $id, 'new_balance' => $runningBalance]);
         } catch (\Exception $e) {
             Log::error('Error updating balances', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Error updating balance');
         }
 
         Log::info('Deposit completed successfully', ['account_id' => $id, 'running_balance' => $runningBalance]);
-        return redirect()->route('dds-accounts.transactions', $id)->with('success', 'Deposit successful!');
+
+        // Return to the transactions page with a success message
+        return redirect()->route('dds-accounts.transactions', $id)
+            ->with('success', 'Deposit successful!')
+            ->with('transactions', $transactions);  // Pass transactions to the view
     }
+
+
 
     public function createWithdraw($id)
     {
@@ -871,128 +1046,242 @@ class DdsAccountsController extends Controller
         if (!$withraw) {
             return redirect()->back()->with('error', 'Account not found!');
         }
-        $balanceAvailable = $withraw->balance ?? 0; 
+        $balanceAvailable = $withraw->balance ?? 0;
         // Return the withdrawal creation view
         return view('fd_account.ddsaccounts.createwithdraw', compact('withraw', 'banks', 'members', 'savingAccounts', 'balanceAvailable'));
     }
-      public function withdraw(Request $request, $id)
-    {
-        Log::info('Withdrawal function called', ['account_id' => $id, 'request_data' => $request->all()]);
 
-        // Step 1: Validate request
-        try {
-            $request->validate([
-                'amount' => 'required|numeric|min:1',
-                'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
-                'transaction_date' => 'required|date_format:d-m-Y',
-                'saving_account_id' => 'required_if:pay_mode,saving|exists:accounts,id',
-            ]);
-            Log::info('Validation passed for withdrawal');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::warning('Validation failed', ['errors' => $e->errors()]);
-            return redirect()->back()->withErrors($e->errors());
-        }
+    // public function withdraw(Request $request, $id)
+    // {
+    //     Log::info('Withdrawal function called', ['account_id' => $id, 'request_data' => $request->all()]);
 
-        $amount = $request->amount;
+    //     try {
+    //         $request->validate([
+    //             'amount' => 'required|numeric|min:1',
+    //             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
+    //             'transaction_date' => 'required|date_format:d-m-Y',
+    //             'saving_account_id' => 'required_if:pay_mode,saving|exists:accounts,id',
+    //         ]);
+    //         Log::info('Validation passed for withdrawal');
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         Log::warning('Validation failed', ['errors' => $e->errors()]);
+    //         return redirect()->back()->withErrors($e->errors());
+    //     }
 
-        // Step 2: Find DDS account
-        $account = DdsAccount::find($id);
-        if (!$account) {
-            Log::error('DDS Account not found', ['account_id' => $id]);
-            return redirect()->back()->with('error', 'Account not found!');
-        }
+    //     $amount = $request->amount;
 
-        Log::info('DDS Account found', ['account_id' => $id, 'balance' => $account->balance]);
+    //     $account = DdsAccount::find($id);
+    //     if (!$account) {
+    //         Log::error('DDS Account not found', ['account_id' => $id]);
+    //         return redirect()->back()->with('error', 'Account not found!');
+    //     }
 
-        // Step 3: Check DDS account balance
-        if ($account->balance < $amount) {
-            Log::warning('Insufficient balance', [
-                'account_id' => $id,
-                'current_balance' => $account->balance,
-                'requested_amount' => $amount
-            ]);
-            return redirect()->back()->with('error', 'Insufficient balance!');
-        }
+    //     if ($account->balance < $amount) {
+    //         return redirect()->back()->with('error', 'Insufficient balance!');
+    //     }
 
-        // Step 4: Convert transaction date
-        try {
-            $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
-        } catch (\Exception $e) {
-            Log::error('Date conversion failed', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Invalid date format');
-        }
+    //     try {
+    //         $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->with('error', 'Invalid date format');
+    //     }
 
-        DB::beginTransaction();
+    //     DB::beginTransaction();
 
-        try {
-            // Step 5: Handle saving account add if pay_mode is 'saving'
-            $savingAccountId = null;
-            if ($request->pay_mode === 'saving') {
-                $savingAccount = Account::find($request->saving_account_id);
-                if (!$savingAccount) {
-                    Log::error('Saving account not found', ['saving_account_id' => $request->saving_account_id]);
-                    throw new \Exception('Saving account not found!');
-                }
+    //     try {
+    //         $savingAccount = null;
+    //         if ($request->pay_mode === 'saving') {
+    //             $savingAccount = Account::find($request->saving_account_id);
+    //             if (!$savingAccount) throw new \Exception('Saving account not found!');
+    //             $savingAccount->amount_deposit += $amount;
+    //             $savingAccount->save();
+    //         }
 
-                // Add the withdrawn amount to the saving account
-                $savingAccount->amount_deposit += $amount;
-                $savingAccount->save();
-                $savingAccountId = $savingAccount->id;
+    //         // Prepare remarks
+    //         if ($request->pay_mode === 'saving' && $savingAccount) {
+    //             $remarks = 'Debit to Saving a/c - ' . $savingAccount->account_no . '.';
+    //         } else {
+    //             $remarks = $request->remarks ?? 'Withdrawal via ' . ucfirst($request->pay_mode);
+    //         }
+    //         $status = ($request->pay_mode === 'saving') ? 'Approved' : 'Pending';
 
-                Log::info('Amount added to saving account', [
-                    'saving_account_id' => $savingAccount->id,
-                    'new_balance' => $savingAccount->amount_deposit
-                ]);
-            }
+    //         $transaction = DdTransaction::create([
+    //             'type' => 'debit',
+    //             'dds_account_id' => $id,
+    //             'pay_mode' => $request->pay_mode,
+    //             'remarks' => $remarks,
+    //             'transaction_date' => $transactionDate,
+    //             'amount' => $amount,
+    //             'balance_available' => 0, // will update below
+    //             'collected_by' => $request->collected_by ?? null,
+    //             't_receipt' => $request->t_receipt ?? null,
+    //             'saving_account_id' => $savingAccount->id ?? null,
+    //             'status' => $status,
+    //         ]);
 
-            // Step 6: Create debit transaction in DDS
-            $transaction = DdTransaction::create([
-                'type' => 'debit',
-                'dds_account_id' => $id,
-                'pay_mode' => $request->pay_mode,
-                'remarks' => $request->remarks ?? null,
-                'transaction_date' => $transactionDate,
-                'amount' => $amount,
-                'balance_available' => 0, // will update later
-                'collected_by' => $request->collected_by ?? null,
-                't_receipt' => $request->t_receipt ?? null,
-                'saving_account_id' => $savingAccountId,
-            ]);
+    //         // Recalculate running balance
+    //         $transactions = DdTransaction::where('dds_account_id', $id)
+    //             ->orderBy('transaction_date')
+    //             ->orderBy('id')
+    //             ->get();
 
-            Log::info('Withdrawal transaction created', ['transaction_id' => $transaction->id]);
+    //         $runningBalance = 0;
+    //         foreach ($transactions as $txn) {
+    //             $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
+    //             $txn->balance_available = $runningBalance;
+    //             $txn->save();
+    //         }
 
-            // Step 7: Recalculate running balance for DDS
-            $transactions = DdTransaction::where('dds_account_id', $id)
-                ->orderBy('transaction_date')
-                ->orderBy('id')
-                ->get();
+    //         $account->balance = $runningBalance;
+    //         $account->save();
 
-            $runningBalance = 0;
-            foreach ($transactions as $txn) {
-                $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
-                $txn->balance_available = $runningBalance;
-                $txn->save();
+    //         DB::commit();
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return redirect()->back()->with('error', $e->getMessage());
+    //     }
 
-                Log::info('Transaction balance updated', [
-                    'transaction_id' => $txn->id,
-                    'type' => $txn->type,
-                    'amount' => $txn->amount,
-                    'balance_available' => $txn->balance_available
-                ]);
-            }
+    //     return redirect()->route('dds-accounts.transactions', $id)->with('success', 'Withdrawal successful!');
+    // }
+public function withdraw(Request $request, $id)
+{
+    Log::info('Withdrawal function called', ['account_id' => $id, 'request_data' => $request->all()]);
 
-            // Update DDS account balance
-            $account->balance = $runningBalance;
-            $account->save();
-            Log::info('DDS account balance updated after withdrawal', ['account_id' => $id, 'new_balance' => $runningBalance]);
+    // Initial validation rules
+    $rules = [
+        'amount' => 'required|numeric|min:1',
+        'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
+        'transaction_date' => 'required|date_format:d-m-Y',
+    ];
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Withdrawal failed', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', $e->getMessage());
-        }
+    // Add additional rules based on the payment mode
+    switch ($request->pay_mode) {
+        case 'onlineTr':
+            $rules['transfer_date'] = 'required|date_format:d-m-Y';
+            $rules['utr_no'] = 'required|string|max:255';
+            $rules['transfer_mode'] = 'required|in:IMPS,VPA,NEFT/RTGS';
+            break;
 
-        return redirect()->route('dds-accounts.transactions', $id)->with('success', 'Withdrawal successful!');
+        case 'cheque':
+            $rules['bank_name'] = 'required|string|max:255';
+            $rules['cheque_no'] = 'required|string|max:255';
+            $rules['cheque_date'] = 'required|date_format:d-m-Y';
+            break;
+
+        case 'saving':
+            $rules['saving_account_id'] = 'required|exists:accounts,id';
+            break;
+
+        // No extra validation for 'cash', since it's simple
     }
+
+    // Perform validation
+    try {
+        $request->validate($rules);
+        Log::info('Validation passed for withdrawal');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::warning('Validation failed', ['errors' => $e->errors()]);
+        return redirect()->back()->withErrors($e->errors());
+    }
+
+    $amount = $request->amount;
+
+    // Find the DDS account
+    $account = DdsAccount::find($id);
+    if (!$account) {
+        Log::error('DDS Account not found', ['account_id' => $id]);
+        return redirect()->back()->with('error', 'Account not found!');
+    }
+
+    // Check if sufficient balance is available
+    if ($account->balance < $amount) {
+        return redirect()->back()->with('error', 'Insufficient balance!');
+    }
+
+    // Convert transaction date
+    try {
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Invalid date format');
+    }
+
+    DB::beginTransaction();
+
+    try {
+        $savingAccount = null;
+        // Only fetch saving account if the payment mode is saving
+        if ($request->pay_mode === 'saving') {
+            $savingAccount = Account::find($request->saving_account_id);
+            if (!$savingAccount) throw new \Exception('Saving account not found!');
+            $savingAccount->amount_deposit += $amount;
+            $savingAccount->save();
+        }
+
+        // Prepare remarks for the transaction
+        if ($request->pay_mode === 'saving' && $savingAccount) {
+            // Set the remark if the pay_mode is 'saving'
+            $remarks = 'Debit to Saving a/c - ' . $savingAccount->account_no . '.';
+        } elseif ($request->pay_mode !== 'cash') {
+            // For any other mode except 'cash', create a general remark
+            $remarks= null ;
+        } else {
+            // If pay_mode is 'cash', don't set any remarks (set it to null)
+            $remarks = null;
+        }
+
+        $status = ($request->pay_mode === 'saving') ? 'Approved' : 'Pending';
+
+        // Log the remarks before creating the transaction
+        Log::info('Creating withdrawal transaction', [
+            'remarks' => $remarks,
+            'pay_mode' => $request->pay_mode,
+            'transaction_date' => $transactionDate
+        ]);
+
+        // Create the transaction
+        $transaction = DdTransaction::create([
+            'type' => 'debit',
+            'dds_account_id' => $id,
+            'pay_mode' => $request->pay_mode,
+            'remarks' => $remarks,
+            'transaction_date' => $transactionDate,
+            'amount' => $amount,
+            'balance_available' => 0, // will update below
+            'collected_by' => $request->collected_by ?? null,
+            't_receipt' => $request->t_receipt ?? null,
+            'saving_account_id' => $savingAccount->id ?? null,
+            'status' => $status,
+        ]);
+
+        Log::info('Transaction created', ['transaction_id' => $transaction->id]);
+
+        // Recalculate running balance
+        $transactions = DdTransaction::where('dds_account_id', $id)
+            ->orderBy('transaction_date')
+            ->orderBy('id')
+            ->get();
+
+        $runningBalance = 0;
+        foreach ($transactions as $txn) {
+            $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
+            $txn->balance_available = $runningBalance;
+            $txn->save();
+        }
+
+        $account->balance = $runningBalance;
+        $account->save();
+
+        DB::commit();
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Error during withdrawal process', ['error' => $e->getMessage()]);
+        return redirect()->back()->with('error', $e->getMessage());
+    }
+
+    Log::info('Withdrawal completed successfully', ['account_id' => $id, 'new_balance' => $account->balance]);
+
+    return redirect()->route('dds-accounts.transactions', $id)->with('success', 'Withdrawal successful!');
+}
+
+
 }

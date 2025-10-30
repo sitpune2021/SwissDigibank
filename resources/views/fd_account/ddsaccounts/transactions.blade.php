@@ -135,9 +135,10 @@
                                 <td class="px-4 py-2">{{ $tran->remarks ?? '-' }}</td>
                                 <td class="px-4 py-2">
                                     <span
-                                        class="px-2 py-1 text-xs font-semibold text-white rounded {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
+                                        class="px-2 py-1 text-xs font-semibold  {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
                                         {{ $tran->status ?? 'Pending' }}
                                     </span>
+
                                 </td>
 
                                 <!-- Debit -->
@@ -164,13 +165,19 @@
 
                                 <td class="py-2 px-6">
                                     <div class="flex justify-center">
-                                        @include('partials._vertical-options', [
-                                            'id' => [$ddsAccount->id, $tran->id],
-                                            'viewRoute' => 'dds-accounts.transactions.show',
-                                            'deleteRoute' => 'dds-accounts.transactions.destroy',
-                                        ])
+                                        {{-- {{ dd($tran->pay_mode, $tran->accounted) }} <!-- Debugging --> --}}
+                                        @if ($tran->pay_mode !== 'Saving Account' && !$tran->accounted)
+                                            @include('partials._vertical-options', [
+                                                'id' => [$ddsAccount->id, $tran->id],
+                                                'viewRoute' => 'dds-accounts.transactions.show',
+                                                'deleteRoute' => 'dds-accounts.transactions.destroy',
+                                            ])
+                                        @else
+                                            <span class="text-muted">No Delete Option</span>
+                                        @endif
                                     </div>
                                 </td>
+
                             </tr>
                         @empty
                             <tr>

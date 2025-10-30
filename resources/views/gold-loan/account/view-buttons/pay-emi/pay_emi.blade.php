@@ -12,6 +12,25 @@
         }
     </style>
 </head>
+@php
+$setting = $goldLoan->scheme->gold_loan_setting ?? '';
+switch ($setting) {
+case 'reducing_emi':
+$settingLabel = 'Reducing Emi';
+break;
+case 'flat_advanced_interest':
+$settingLabel = 'Flat Advanced Interest';
+break;
+case 'flat_emi':
+$settingLabel = 'Flat Emi';
+break;
+case 'no_emi':
+$settingLabel = 'No Emi';
+break;
+default:
+$settingLabel = '';
+}
+@endphp
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -33,8 +52,9 @@
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                <form action="">
+                <form action="{{ route('goldloan.payEmiLoan', $goldLoan->id) }}" method="POST" enctype="multipart/form-data">
                     <!-- Header -->
+                    @csrf
                     <div class="px-4 py-3">
                         <h3 class="text-lg border-b font-semibold text-black">EMI DETAILS</h3>
                     </div>
@@ -45,7 +65,7 @@
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="remaining_due" name=""
+                        <input type="number" id="remaining_due" name="remaining_due" value="{{ $currentDebt ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                         <x-number-to-word for="remaining_due_amount" />
@@ -67,11 +87,11 @@
                                 <!-- Input Row -->
                                 <tr class="">
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" readonly
+                                        <input type="text" name="" id="" placeholder="0.0" value="{{ $overdueInterest ?? 0 }}" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" readonly
+                                        <input type="text" name="" id="" placeholder="0.0" value="{{ $otherCharges ?? 0 }}" readonly
                                             class="w-full px-2 py-2 text-center  bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -97,15 +117,15 @@
                                 <!-- Input Row -->
                                 <tr class="">
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="amount" placeholder="0" readonly
+                                        <input type="text" name="" value="{{ $overdueInterest ?? 0 }}" id="amount" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" readonly
+                                        <input type="text" name="" id="" value="{{ $gstRate ?? 0 }}" placeholder="0.0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="totalAmount" placeholder="0.0"
+                                        <input type="text" name="" id="totalAmount" value="{{ $totalOverdueWithGst ?? 0 }}" placeholder="0.0"
                                             class="w-full px-2 py-2 text-center border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -119,7 +139,7 @@
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="t_Amount" name=""
+                        <input type="number" id="t_Amount" name="" value="{{ $totalAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                     </div>
@@ -130,7 +150,7 @@
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="rounding" name=""
+                        <input type="number" id="rounding" name="" value="{{ $rounding ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0" readonly>
                     </div>
@@ -141,7 +161,7 @@
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="netAmount" name=""
+                        <input type="number" id="netAmount" name="" value="{{ $netAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0" readonly>
                         <x-number-to-word for="netAmount" />
@@ -155,7 +175,7 @@
                         </p>
                         <label class="md:text-lg font-medium block mb-4">Transaction Date</label>
                         <div class="relative flex items-center">
-                            <input type="text" class="datepicker-field w-full rounded-10 bg-secondary/5 dark:bg-bg3 border border-n30  dark:border-n500 border-gray-300 px-3 md:px-6 py-2 md:py-3" readonly>
+                            <input type="text" name="transaction_date" class="datepicker-field w-full rounded-10 bg-secondary/5 dark:bg-bg3 border border-n30  dark:border-n500 border-gray-300 px-3 md:px-6 py-2 md:py-3" readonly>
                             <i class="las la-calendar absolute right-3 text-gray-500 cursor-pointer"></i>
                         </div>
                     </div>
@@ -163,7 +183,7 @@
                     <div class="mb-4">
                         <label class="md:text-lg font-medium block mb-4">Amount Collected<span class="text-error">*</span></label>
                         <div class="relative flex items-center">
-                            <input type="text"
+                            <input type="text" name="amount_collected"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" placeholder="Enter Amount">
                         </div>
                     </div>
@@ -171,7 +191,7 @@
                     <div class="mb-4">
                         <label class="md:text-lg font-medium block mb-4">Remarks (if any)</label>
                         <div class="relative flex items-center">
-                            <textarea
+                            <textarea name="remarks"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" placeholder="Enter Remarks (if any)"></textarea>
                         </div>
                     </div>
@@ -181,7 +201,7 @@
                             T. Receipt
                         </label>
                         <div class="relative flex items-center">
-                            <input type="file"
+                            <input type="file" name="receipt"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         </div>
                     </div>
@@ -195,7 +215,6 @@
                         <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
                             PAY
                         </button>
-
                         <button class="btn-outline uppercase justify-center" type="reset">
                             <a href="#"> BACK</a>
                         </button>
@@ -226,43 +245,43 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
-                                <td class="px-3 py-2">00063</td>
+                                <td class="px-3 py-2">{{$goldLoan->id??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 w-1/3">Member</td>
-                                <td class="px-3 py-2">DEMO-04435 - atharv page</td>
+                                <td class="px-3 py-2">{{$goldLoan->member->member_no??''}} - {{$goldLoan->member->member_info_first_name??''}}</td>
                             </tr>
 
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Open Date</td>
-                                <td class="px-3 py-2">26/09/2025</td>
+                                <td class="px-3 py-2">{{ \Carbon\Carbon::parse($goldLoan->application_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Scheme</td>
-                                <td class="px-3 py-2">secure home scheme</td>
+                                <td class="px-3 py-2">{{$goldLoan->scheme->scheme_name??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Loan Amount</td>
-                                <td class="px-3 py-2"> ₹ 100,000.00</td>
+                                <td class="px-3 py-2"> ₹ {{$goldLoan->loan_amount??'0'}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Current Debt</td>
-                                <td class="px-3 py-2">(70,666.67)</td>
+                                <td class="px-3 py-2">{{ number_format($goldLoan->current_debt, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
-                                <td class="px-3 py-2"> 8.0 %</td>
+                                <td class="px-3 py-2"> {{$goldLoan->scheme->annual_interest_rate??''}} %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interest Type</td>
                                 <td class="px-3 py-2">
-                                    Reducing EMI
+                                    {{$settingLabel }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Tenure </td>
                                 <td class="px-3 py-2">
-                                    12 MONTHS
+                                    {{$goldLoan->tenure_value??''}} {{$goldLoan->tenure_type??''}}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
@@ -274,10 +293,8 @@
                                     </span>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
-
                 </div>
             </div>
 

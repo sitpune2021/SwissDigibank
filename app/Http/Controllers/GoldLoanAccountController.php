@@ -317,10 +317,153 @@ class GoldLoanAccountController extends Controller
     //     return CsvExportHelper::downloadCsv($headers, $data, 'transactions.csv');
     // }
 
-    public function goldLoanPayEmi()
+    public function goldLoanPayEmi($id)
     {
-        return view('gold-loan.account.view-buttons.pay-emi.pay_emi');
+        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])
+            ->whereHas('scheme', function ($query) {
+                $query->where('gold_loan_setting', 'flat_advanced_interest');
+            })
+            ->find($id);
+
+        $totalLoan = $goldLoan->loan_amount;
+
+        $totalPaid = \App\Models\GoldLoanTransaction::where('loan_id', $goldLoan->id)
+            ->sum('amount_collected');
+
+        $currentDebt = $totalLoan - $totalPaid;
+
+        $goldLoan->current_debt = $currentDebt;
+
+
+        $overdueInterest = 0;
+        $otherCharges = 0;
+        $gstRate = 18; // Example
+
+        $gstAmount = ($overdueInterest * $gstRate) / 100;
+
+        $totalOverdueWithGst = $overdueInterest + $gstAmount;
+
+        $totalAmount = $currentDebt + $overdueInterest + $otherCharges;
+
+        $rounding = round($totalAmount) - $totalAmount;
+        $netAmount = $totalAmount + $rounding;
+
+        return view('gold-loan.account.view-buttons.pay-emi.pay_emi', compact(
+            'goldLoan',
+            'currentDebt',
+            'overdueInterest',
+            'otherCharges',
+            'gstRate',
+            'totalOverdueWithGst',
+            'totalAmount',
+            'rounding',
+            'netAmount'
+        ));
     }
+
+    // public function payEmiLoan(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'transaction_date' => 'required|date',
+    //         'amount_collected' => 'required|numeric|min:1',
+    //         'remarks' => 'nullable|string|max:255',
+    //         'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    //     ]);
+
+    //     $loan = LoanApplication::findOrFail($id);
+
+    //     $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)->sum('amount_collected');
+    //     $remainingDue = max($loan->loan_amount - $totalPaid, 0);
+
+    //     $amountCollected = $request->amount_collected;
+
+    //     $newRemainingDue = max($remainingDue - $amountCollected, 0);
+
+    //     $receiptPath = null;
+    //     if ($request->hasFile('receipt')) {
+    //         $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
+    //     }
+
+    //     $transaction = new GoldLoanTransaction();
+    //     $transaction->loan_id = $loan->id;
+    //     $transaction->transaction_date = $request->transaction_date;
+    //     $transaction->amount_collected = $amountCollected;
+    //     $transaction->current_debt = $newRemainingDue;
+    //     // $transaction->overdue_interest = 0;
+    //     $transaction->other_charges = 0;
+    //     // $transaction->net_amount = $amountCollected;
+    //     $transaction->remarks = $request->remarks;
+    //     // $transaction->receipt = $receiptPath;
+    //     $transaction->status = 1;
+
+    //     $transaction->save();
+
+    //     if ($newRemainingDue <= 0) {
+    //         $loan->status = 'closed';
+    //         $loan->save();
+    //     }
+
+    //     return redirect()->route('gold-loan.account.show', $loan->id)
+    //         ->with('success', 'EMI Payment recorded successfully!');
+    // }
+
+    public function payEmiLoan(Request $request, $id)
+    {
+        $request->validate([
+            'transaction_date' => 'required|date',
+            'amount_collected' => 'required|numeric|min:1',
+            'remarks' => 'nullable|string|max:255',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        // Fetch the loan with its scheme to check gold_loan_setting type
+        $loan = LoanApplication::with('scheme')->findOrFail($id);
+
+        // Calculate total paid till date
+        $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+            ->sum('amount_collected');
+
+        // Current remaining debt before new payment
+        $remainingDue = max($loan->loan_amount - $totalPaid, 0);
+
+        $amountCollected = $request->amount_collected;
+        $newRemainingDue = max($remainingDue - $amountCollected, 0);
+
+        // Handle receipt upload (optional)
+        $receiptPath = null;
+        if ($request->hasFile('receipt')) {
+            $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
+        }
+
+        // Create new EMI transaction entry
+        $transaction = new GoldLoanTransaction();
+        $transaction->loan_id = $loan->id;
+        $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
+        $transaction->amount_collected = $amountCollected;
+        $transaction->current_debt = $newRemainingDue;
+        $transaction->other_charges = 0;
+        $transaction->total_payable = $remainingDue; // before paying this EMI
+        $transaction->status = 'paid';
+        $transaction->remarks = $request->remarks ?? null;
+        $transaction->flag = 'emi_payment';
+        $transaction->created_by = Auth::id() ?? null;
+
+        if ($receiptPath) {
+            $transaction->receipt = $receiptPath;
+        }
+
+        $transaction->save();
+
+        // If fully paid, mark loan as closed
+        if ($newRemainingDue <= 0) {
+            $loan->status = 'closed';
+            $loan->save();
+        }
+
+        return redirect()->route('gold-loan.account.show', $loan->id)
+            ->with('success', 'EMI Payment recorded successfully!');
+    }
+
 
     public function goldLoanPay($id)
     {
