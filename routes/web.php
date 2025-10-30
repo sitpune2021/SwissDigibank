@@ -155,8 +155,12 @@ Route::middleware('auth.user')->group(function () {
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
+        // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
+        Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
+            ->name('dds-accounts.transactions.printReceipt');
+        // Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt1'])
+        //     ->name('dds-accounts.transactions.printReceipt1');
     });
-
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
     Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
@@ -467,23 +471,22 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
         ->name('gold-loan.applications.upload-cibil-score');
-        
+
 
     // Collect Processing fee page in application view page
     Route::get('applications/col-process-fee/{id}', [GoldLoanController::class, 'col_process_fee'])
         ->name('daily_weekly.applications.view-buttons.col_process_fee');
     Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
-    ->name('daily_weekly.col_process_fee.store');
+        ->name('daily_weekly.col_process_fee.store');
 
 
     // Show EMI chart in a new tab
     Route::get('applications/{id}/emi-chart', [GoldLoanController::class, 'emiChart'])
-    ->name('gold-loan.applications.view-buttons.show-emi-chart');
+        ->name('gold-loan.applications.view-buttons.show-emi-chart');
 
     // Disbusrment setting
     Route::get('applications/{id}/disbursment', [GoldLoanController::class, 'disbursment'])
-    ->name('gold-loan.applications.view-buttons.disburse-setting');
-
+        ->name('gold-loan.applications.view-buttons.disburse-setting');
 });
 
 
@@ -846,8 +849,7 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('cc_od.applications.view-buttons.col_process_fee');
 
     Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
-    ->name('ccod.col_process_fee.store');
-
+        ->name('ccod.col_process_fee.store');
 });
 
 
@@ -883,7 +885,7 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::get('scheme/view/{id}', [DailyWeeklyController::class, 'view'])
         ->name('daily_weekly.schemes.view');
 
-        
+
     // daily_weekly Application page
     Route::get('applications/index', [DailyWeeklyController::class, 'appindex'])
         ->name('daily_weekly.applications.index');
@@ -911,9 +913,9 @@ Route::group(['prefix' => 'daily_weekly'], function () {
         ->name('daily_weekly.applications.view-buttons.show-emi-chart');
 
     Route::get('cc-od/credit-score/upload/{id}', [DailyWeeklyController::class, 'upload'])
-    ->name('daily_weekly.credit_score.upload');
+        ->name('daily_weekly.credit_score.upload');
 
-    
+
     // Disbursement daily_weekly Loan
     Route::get('disbursements/index', [DailyWeeklyDisburments::class, 'index'])
         ->name('daily_weekly.disbursements.index');
@@ -933,18 +935,16 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::get('daily_weekly/col-process-fee/{id}', [DailyWeeklyController::class, 'col_process_fee'])
         ->name('daily_weekly.applications.view-buttons.col_process_fee');
     Route::post('daily_weekly/col-process-fee/store/{id}', [DailyWeeklyController::class, 'storeProcessFee'])
-    ->name('daily_weekly.col_process_fee.store');
+        ->name('daily_weekly.col_process_fee.store');
 
 
     // Show EMI chart in a new tab
     Route::get('daily_weekly/{id}/emi-chart', [DailyWeeklyController::class, 'emiChart'])
-    ->name('daily_weekly.applications.view-buttons.show-emi-chart');
+        ->name('daily_weekly.applications.view-buttons.show-emi-chart');
 
     // Disbusrment setting
     Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
-    ->name('daily_weekly.applications.view-buttons.disburse-setting');
-
-
+        ->name('daily_weekly.applications.view-buttons.disburse-setting');
 });
 
 
