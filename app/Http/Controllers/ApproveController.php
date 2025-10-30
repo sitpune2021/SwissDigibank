@@ -149,7 +149,7 @@ class ApproveController extends Controller
                     if ($fdaccount->status == 1) {
                         // Approved message
                         $dlttemplateid = 1707172234113442938;
-                        $message = "Congratulations! Your FD no $account has been approved. SBC GLOBAL";
+                        $message = "Congratulations! Your FD no $account is approved. SBC GLOBAL";
                     } elseif ($fdaccount->status == 2) {
                         // Disapproved message
 
@@ -205,7 +205,7 @@ class ApproveController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Account disapproved.');
             }
-            
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Account not found', [
                 'id' => $id,
