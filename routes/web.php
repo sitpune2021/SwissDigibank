@@ -37,11 +37,13 @@ use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
 use App\Http\Controllers\GoldLoanAccountController;
 use App\Http\Controllers\GoldLoanController;
+use App\Http\Controllers\PersonalDisbursementController;
+use App\Http\Controllers\PersonalAccountController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
 use App\Http\Controllers\MortgageLoneController;
 use App\Http\Controllers\RdAccountController;
-
+use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\RdschemesController;
 use App\Http\Controllers\PassbookController;
 use App\Http\Controllers\MortgageController;
@@ -920,6 +922,53 @@ Route::group(['prefix' => 'daily_weekly'], function () {
 
 
 /////////////////////////////////////   END Daily / Weekly LOAN   ////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////   personal LOAN   ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'personal'], function () {
+
+    Route::get('scheme/index', [PersonalController::class, 'index'])->name('personal.schemes.index');
+    Route::get('scheme/create', [PersonalController::class, 'create'])->name('personal.schemes.create');
+    Route::post('scheme/store', [PersonalController::class, 'store'])->name('personal.schemes.store');
+    Route::get('scheme/{id}', [PersonalController::class, 'show'])->name('personal.schemes.show');
+    Route::get('scheme/{id}/edit', [PersonalController::class, 'edit'])->name('personal.schemes.edit');
+    Route::put('scheme/{id}', [PersonalController::class, 'update'])->name('personal.schemes.update');
+    Route::get('scheme/view/{id}', [PersonalController::class, 'view'])->name('personal.schemes.view');
+
+    Route::get('calculator/index', [PersonalController::class, 'calculator'])->name('personal.calculator.index');
+    Route::get('scheme/{id}/details', [PersonalController::class, 'getSchemeDetails'])->name('personal.scheme.details');
+    Route::get('calculator/calculation', [PersonalController::class, 'calculation'])->name('personal.calculator.calculation');
+    Route::post('calculate', [PersonalController::class, 'calculateResult'])->name('personal.calculator.calculate');
+
+    Route::get('applications/index', [PersonalController::class, 'appindex'])->name('personal.applications.index');
+    Route::get('applications/create', [PersonalController::class, 'appcreate'])->name('personal.applications.create');
+    Route::post('loan-applications/store', [PersonalController::class, 'storeLoanApplication'])->name('personal.store');
+    Route::get('members/{id}/info', [PersonalController::class, 'getMemberInfo'])->name('members.info');
+    Route::get('applications/view/{id}', [PersonalController::class, 'appview'])->name('personal.applications.view');
+    Route::get('applications/{id}/edit', [PersonalController::class, 'appedit'])->name('personal.applications.edit');
+    Route::put('applications/{id}', [PersonalController::class, 'appupdate'])->name('personal.applications.update');
+    Route::get('applications/show-emi-chart', [PersonalController::class, 'showEmiChart'])->name('personal.applications.view-buttons.show-emi-chart');
+
+    Route::get('disbursements/index', [PersonalDisbursementController::class, 'index'])->name('personal.disbursements.index');
+    Route::post('disbursements/cancel/{id}', [PersonalDisbursementController::class, 'cancelLoan'])->name('personal.cancel');
+    Route::get('disbursements/disburse-loan/{id}', [PersonalDisbursementController::class, 'show'])->name('personal.disbursements.disburse-loan');
+    Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
+
+    Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
+    Route::get('lineproperty/index', [PersonalController::class, 'linepropertyindex'])->name('personal.lineproperty.index');
+    Route::get('ornaments/export', [PersonalController::class, 'exportXls'])->name('personal.lineproperty.export');
+    Route::get('{id}/emi-chart', [PersonalController::class, 'emiChart'])->name('personal.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [PersonalController::class, 'personalcol_process_fee'])
+        ->name('mortgage.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
+        ->name('mortgage.col_process_fee.store');
+});
+
+
+/////////////////////////////////////   END personal LOAN   ////////////////////////////////////////////////////////
 
 
 Route::group(['prefix' => 'hr-managment'], function () {

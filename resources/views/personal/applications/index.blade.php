@@ -1,30 +1,12 @@
 @extends('layout.main')
 @section('content')
     <div class="main-inner">
-
-    @if(session('success'))
-    <div 
-        id="successMessage" 
-        class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out">
-        {{ session('success') }}
-    </div>
-
-    <script>
-        // Auto hide after 2 seconds
-        setTimeout(() => {
-            const msg = document.getElementById('successMessage');
-            if (msg) {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.remove(), 500); // smooth fade-out
-            }
-        }, 2000);
-    </script>
-    @endif
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">CC LIMIT APPLICATIONS</h3>
-                <a href="{{route('cc_od.applications.create')}}" class=" block flex btn-primary capitalize ">add
+                <h3 class=" flex text-xl block font-semibold uppercase">Property/ Mortgage LOAN APPLICATIONS</h3>
+                <a href="{{route('mortgage.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
+
             </div>
 
       
@@ -92,7 +74,7 @@
           
             <!-- Application No. -->
            <td class="text-start !py-5 px-6">
-                <a href="{{ route('cc_od.applications.view', $application->id) }}" 
+                <a href="{{ route('mortgage.applications.view', $application->id) }}" 
                 class="text-blue-600 hover:underline">
                     {{ $application->id }}
                 </a>
@@ -100,7 +82,7 @@
 
             <!-- Application Date -->
             <td class="text-start !py-5 px-6">
-                {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
+                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
             </td>
 
             <!-- Member No -->
@@ -138,10 +120,10 @@
                     DRAFT
                 @elseif($application->status == 1)
                     APPROVED
-                @elseif($application->status == 2)
+                    @elseif($application->status == 2)
                     DISBURSED
                 @else
-                    CANCELLED
+                    DISAPPROVED
                 @endif
             </td>
 
@@ -151,9 +133,9 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('cc_od.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('mortgage.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
                             @if($application->status != 2 )
-                            <li><a href="{{ route('cc_od.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            <li><a href="{{ route('mortgage.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
                             @endif
                         </ul>
                     </div>
@@ -165,9 +147,6 @@
 
 
                 </table>
-                <div class="mt-6">
-                    {{ $applications->links('pagination::tailwind') }}
-                </div>
             </div>
 
 
