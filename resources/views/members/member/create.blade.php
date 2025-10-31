@@ -126,8 +126,6 @@
                         </div>
                     @endif
 
-
-
                     {{-- Handle Correspondence and Permanent Address checkbox toggles --}}
                     @if (in_array($sectionName, ['CUSTOMER_CORRESPONDENCE_ADDRESS', 'CUSTOMER_PERMANENT_ADDRESS']))
                         {{-- Checkbox to toggle this address section --}}
@@ -766,140 +764,74 @@
             });
         });
     </script>
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-            // Checkbox for "Same as Correspondence Address"
-            const sameAddressCheckbox = document.createElement('div');
-            sameAddressCheckbox.innerHTML = `
+    // Checkbox for "Same as Correspondence Address"
+    const sameAddressCheckbox = document.createElement('div');
+    sameAddressCheckbox.innerHTML = `
         <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" id="sameAsCorrespondence" class="cursor-pointer">
+            <input type="checkbox" id="sameAsCorrespondence" style=" width: 28px;
+            height: 28px;
+            accent-color: green;" class="cursor-pointer">
             <span class="text-sm font-medium cursor-pointer">Same as Correspondence Address</span>
         </label>
     `;
-            // Append the checkbox just above permanent address section
-            const permSection = document.querySelector('.customer_permanent_address');
-            if (permSection) {
-                permSection.parentNode.insertBefore(sameAddressCheckbox, permSection);
+
+    // Append the checkbox just below Correspondence Address section
+    const corrSection = document.querySelector('.customer_correspondence_address');
+    if (corrSection) {
+        corrSection.parentNode.insertBefore(sameAddressCheckbox, corrSection.nextSibling);
+    }
+
+    const fieldsMap = {
+        // Correspondence → Permanent mapping
+        'address_line_1': 'address',
+        'city_district': 'city',
+        'stateDropdown': 'state',
+        'address_pincode': 'perm_address_pincode'
+    };
+
+    // Function to copy data
+    function copyAddress() {
+        for (const [currId, permId] of Object.entries(fieldsMap)) {
+            const curr = document.getElementById(currId);
+            const perm = document.getElementById(permId);
+            if (curr && perm) {
+                perm.value = curr.value;
             }
+        }
+    }
 
-            const fieldsMap = {
-                // Correspondence → Permanent mapping
-                'address_line_1': 'address',
-                'city_district': 'city',
-                'stateDropdown': 'state',
-                'address_pincode': 'perm_address_pincode'
-            };
+    // Function to clear permanent address fields
+    function clearPermanentAddress() {
+        for (const permId of Object.values(fieldsMap)) {
+            const perm = document.getElementById(permId);
+            if (perm) perm.value = '';
+        }
+    }
 
-            // Function to copy data
-            function copyAddress() {
-                for (const [currId, permId] of Object.entries(fieldsMap)) {
-                    const curr = document.getElementById(currId);
-                    const perm = document.getElementById(permId);
-                    if (curr && perm) {
-                        perm.value = curr.value;
-                    }
-                }
-            }
+    // When checkbox toggled
+    document.getElementById('sameAsCorrespondence').addEventListener('change', function() {
+        if (this.checked) {
+            copyAddress();
+        } else {
+            clearPermanentAddress();
+        }
+    });
 
-            // Function to clear permanent address fields
-            function clearPermanentAddress() {
-                for (const permId of Object.values(fieldsMap)) {
-                    const perm = document.getElementById(permId);
-                    if (perm) perm.value = '';
-                }
-            }
-
-            // When checkbox toggled
-            document.getElementById('sameAsCorrespondence').addEventListener('change', function() {
-                if (this.checked) {
+    // Optional: If user edits current address after checking "Same as" → auto-update permanent
+    for (const currId of Object.keys(fieldsMap)) {
+        const curr = document.getElementById(currId);
+        if (curr) {
+            curr.addEventListener('input', function() {
+                const sameCheck = document.getElementById('sameAsCorrespondence');
+                if (sameCheck.checked) {
                     copyAddress();
-                } else {
-                    clearPermanentAddress();
                 }
             });
-
-            // Optional: If user edits current address after checking "Same as" → auto-update permanent
-            for (const currId of Object.keys(fieldsMap)) {
-                const curr = document.getElementById(currId);
-                if (curr) {
-                    curr.addEventListener('input', function() {
-                        const sameCheck = document.getElementById('sameAsCorrespondence');
-                        if (sameCheck.checked) {
-                            copyAddress();
-                        }
-                    });
-                }
-            }
-        });
-    </script> --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- Find Permanent Address section heading ---
-            const permSectionHeading = Array.from(document.querySelectorAll('h3'))
-                .find(h3 => h3.textContent.trim().toUpperCase() === 'CUSTOMER PERMANENT ADDRESS');
-
-            if (permSectionHeading) {
-                // Create tiny checkbox and label
-                const sameAddressDiv = document.createElement('div');
-                sameAddressDiv.className = 'flex items-center justify-end gap-2 mt-1 mb-2 text-xs';
-                sameAddressDiv.innerHTML = `
-            <label class="flex items-center gap-1 text-gray-600 cursor-pointer">
-                <input type="checkbox" id="sameAsCorrespondence" class="h-3 w-3 cursor-pointer">
-                <span>Same as Correspondence Address</span>
-            </label>
-        `;
-
-                // Insert just above the "Permanent Address" heading
-                permSectionHeading.parentNode.insertBefore(sameAddressDiv, permSectionHeading);
-            }
-
-            // Map of correspondence → permanent fields
-            const fieldsMap = {
-                'address_line_1': 'address',
-                'city_district': 'city',
-                'stateDropdown': 'state',
-                'address_pincode': 'perm_address_pincode'
-            };
-
-            function copyAddress() {
-                for (const [currId, permId] of Object.entries(fieldsMap)) {
-                    const curr = document.getElementById(currId);
-                    const perm = document.getElementById(permId);
-                    if (curr && perm) perm.value = curr.value;
-                }
-            }
-
-            function clearAddress() {
-                for (const permId of Object.values(fieldsMap)) {
-                    const perm = document.getElementById(permId);
-                    if (perm) perm.value = '';
-                }
-            }
-
-            // Toggle logic
-            document.addEventListener('change', (e) => {
-                if (e.target.id === 'sameAsCorrespondence') {
-                    if (e.target.checked) {
-                        copyAddress();
-                    } else {
-                        clearAddress();
-                    }
-                }
-            });
-
-            // Auto-update if correspondence fields change
-            Object.keys(fieldsMap).forEach(currId => {
-                const curr = document.getElementById(currId);
-                if (curr) {
-                    curr.addEventListener('input', () => {
-                        const check = document.getElementById('sameAsCorrespondence');
-                        if (check && check.checked) copyAddress();
-                    });
-                }
-            });
-        });
-    </script> --}}
-
-
+        }
+    }
+});
+</script>
 @endsection

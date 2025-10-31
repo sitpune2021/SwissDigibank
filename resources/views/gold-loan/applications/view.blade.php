@@ -1,5 +1,6 @@
 @extends('layout.main')
 @section('content')
+
 <style>
     .sr-only {
         position: absolute;
@@ -102,82 +103,82 @@
 
     <div class="flex flex-wrap gap-3">
 
-    
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            Show Emi Chart
-        </a>
-    
-    @if($application->status != 2 )
-        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            Collect Processing Fee
-        </a>
-        <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            DISBURSE SETTINGS
+        <!-- Always Visible -->
+        <a href="{{ route('gold-loan.applications.view-buttons.show-emi-chart', $application->id) }}" 
+            target="_blank" class="btn-primary px-2 py-2 rounded-10">
+            Show EMI Chart
         </a>
 
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
-            REGISTER eNACH ( Fidypay )
-        </a>
-    @endif
+        {{-- Status != DISBURSEMENT (2) --}}
+        @if($application->status != 2)
 
-        <div class="relative inline-block text-left">
-            <!-- Button -->
-            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
-                onclick="toggleDropdown('printDropdown')">
-                <i class="las la-print text-lg"></i>
-                PRINT DOCUMENTS
-                <i class="las la-angle-down text-xs"></i>
+            {{-- Status == DRAFT (0) OR CANCELED (3) --}}
+            <!-- @if(in_array($application->status, [0, 3]))
+                <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
+                    class="btn-warning uppercase px-2 py-2 rounded-10">
+                    Collect Processing Fee
+                </a>
+            @endif -->
+
+            {{-- Status != CANCELED (3) --}}
+            @if($application->status != 3)
+                <a href="{{ route('gold-loan.applications.view-buttons.disburse-setting', $application->id) }}" 
+                    target="_blank" class="btn-warning uppercase px-2 py-2 rounded-10">
+                    DISBURSE SETTINGS
+                </a>
+
+                <a href="#" class="btn-primary px-2 py-2 rounded-10">
+                    REGISTER eNACH (Fidypay)
+                </a>
+            @endif
+
+        @endif
 
 
+        {{-- If NOT CANCELED (3) then show print menu --}}
+        @if($application->status != 3)
+            <div class="relative inline-block text-left">
 
-            </button>
+                <!-- Print Button -->
+                <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+                    onclick="toggleDropdown('printDropdown')">
+                    <i class="las la-print text-lg"></i>
+                    PRINT DOCUMENTS
+                    <i class="las la-angle-down text-xs"></i>
+                </button>
 
-            <!-- Dropdown Menu -->
-            <div id="printDropdown"
-                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                <div class="py-1">
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> APPLICATION FORM
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> EMI SCHEDULE CHART
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> SANCTION LETTER
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LOAN AGREEMENT
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> DISBURSE LETTER
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> PROMISSORY NOTE
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LETTER OF UNDERTAKING
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LETTER OF EVIDENCING
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> GUARANTOR AGREEMENT
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> JURISDICTION ACK LETTER
-                    </a>
+                <!-- Print Dropdown Menu -->
+                <div id="printDropdown"
+                    class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
 
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> INDEMNIFICATION LETTER
-                    </a>
+                    @php $printDocs = [
+                        'APPLICATION FORM',
+                        'EMI SCHEDULE CHART',
+                        'SANCTION LETTER',
+                        'LOAN AGREEMENT',
+                        'DISBURSE LETTER',
+                        'PROMISSORY NOTE',
+                        'LETTER OF UNDERTAKING',
+                        'LETTER OF EVIDENCING',
+                        'GUARANTOR AGREEMENT',
+                        'JURISDICTION ACK LETTER',
+                        'INDEMNIFICATION LETTER'
+                    ]; @endphp
+
+                    <div class="py-1">
+                        @foreach($printDocs as $doc)
+                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="las la-print text-secondary"></i> {{ $doc }}
+                            </a>
+                        @endforeach
+                    </div>
 
                 </div>
-            </div>
-        </div>
 
+            </div>
+        @endif
 
     </div>
-
 
 
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -190,9 +191,9 @@
                         <i class="las la-pencil-alt"></i>
                     </a>
 
-                    <a href="#" class=" p-2 btn-error">
+                    <!-- <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
-                    </a>
+                    </a> -->
 
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">
@@ -213,11 +214,13 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Application Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
+                            <td class="px-4 py-2">
+                                {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
+                            </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Loan Account No.</td>
-                            <td class="px-4 py-2 text-primary">00459</td>
+                            <td class="px-4 py-2 text-primary">-</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Gold Loan Scheme</td>
@@ -227,7 +230,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Amount Approved</td>
-                            <td class="px-4 py-2">₹ 100,000.00</td>
+                            <td class="px-4 py-2">₹ {{ $application->approved_loan_amount ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Status</td>
@@ -293,7 +296,6 @@
                     </div>
                 </div>
 
-
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto" id="cibilInfo">
                     <table class="w-full text-sm text-left">
@@ -307,9 +309,6 @@
                     </table>
                 </div>
             </div>
-
-
-
 
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
                 <table class="w-full text-md  whitesapce-nowrap">
@@ -370,24 +369,36 @@
                                 </thead>
 
                                 <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-3 py-2">Gold Jewellery</td>
-                                        <td class="px-3 py-2">abc</td>
-                                        <td class="px-3 py-2 text-center">3</td>
-                                        <td class="px-3 py-2 text-center">20000.0</td>
-                                        <td class="px-3 py-2 text-center">3.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">100.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">40000.0</td>
-                                        <td class="px-3 py-2 text-center">
-                                            <!-- Upload Button -->
-                                            <a class="btn-primary p-1">
-                                                <i class="las la-upload"></i>
-                                            </a>
-                                        </td>
-                                        <td class="px-3 py-2 text-center">Mortgage</td>
-                                    </tr>
+                                    @if($application->loanOrnaments->isNotEmpty())
+                                        @foreach($application->loanOrnaments as $ornament)
+                                            <tr>
+                                                <td class="px-3 py-2">{{ $ornament->item_type ?? 'N/A' }}</td>
+                                                <td class="px-3 py-2">{{ $ornament->item_name ?? 'N/A' }}</td>
+                                                <td class="px-3 py-2 text-center">{{ $ornament->no_of_items ?? '0' }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->value_per_gram, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->gross_weight, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->net_weight, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->tunch, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->fine_weight, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->total_value, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">
+                                                    @if(!empty($ornament->image_path))
+                                                        <a href="{{ asset('storage/' . $ornament->image_path) }}" target="_blank" class="text-blue-500 underline">
+                                                            View
+                                                        </a>
+                                                    @else
+                                                        <span class="text-gray-400">No Image</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="11" class="text-center py-3 text-gray-500">
+                                                No security deposits available.
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -432,7 +443,6 @@
             <div class="flex flex-row gap-4 p-3 dark:bg-bg3  mt-4 rounded-10">
                 <div class="w-full bg-white dark:bg-bg3 p-4 rounded-10 shadow-md border border-gray-200">
                     <div class="flex justify-center gap-2  border-gray-200 px-4 py-3 bg-gray-50 rounded-t-2xl border-b">
-
                         <h3 class="font-semibold  text-center sm:text-lg">
                             CIBIL SCORE
                         </h3>
@@ -441,10 +451,17 @@
                     <div
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
-                            <button type="button" class="btn-primary px-2 py-1 rounded-10">
-                                <i class="las la-upload y"></i>
-                                <span>UPLOAD</span>
-                            </button>
+                            @if($application->creditScores->isNotEmpty())
+                                @foreach($application->creditScores as $score)
+                                    <div class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
+                                        <label class="cursor-pointer">
+                                            {{ $score->cibil_score ?? 'N/A' }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-center text-gray-500 mt-3">No CIBIL score available.</div>
+                            @endif
                         </label>
                     </div>
                 </div>
@@ -518,56 +535,49 @@
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->scheme_name ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->scheme_name ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->scheme_code ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->scheme_code ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Amount</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Amount</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Limit</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->max_loan_limit ?? 0 }} %
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Maximum Loan Limit</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->max_loan_limit ?? 0 }} %
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->interest_type ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->interest_type ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Interest Rate</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->annual_interest_rate ?? 0 }} %
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2 uppercase">Interest Rate</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2 uppercase">Processing Fee</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            ₹ {{ $application->scheme->processing_fee ?? 0 }}
-        </td>
-    </tr>
-
-</tbody>
+                        </tbody>
                    </table>
                 </div>
             </div>
@@ -575,15 +585,11 @@
 
             <!--Gold Loan Application Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase">
                         Gold Loan Application Info
-
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanAppInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -600,13 +606,13 @@
                                     Branch
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left uppercase">
-                                    Kalyanadurgam
+                                    {{ $application->branch->branch_name ?? 'N/A' }}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Amount Requested</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 34,000.00</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{ $application->net_loan_amount }}</td>
                             </tr>
 
                             <tr class="border-b">
@@ -614,7 +620,7 @@
                                     Amount Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 36,000.00
+                                    ₹ {{ $application->maximum_approvable_amount }}
                                 </td>
                             </tr>
 
@@ -623,7 +629,7 @@
                                     Amount Approved
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 34,000.00
+                                    ₹ {{ $application->approved_loan_amount }}
                                 </td>
                             </tr>
 
@@ -632,7 +638,7 @@
                                     Interest Amount
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    ₹ 5,525.00
+                                    ₹ 0.0
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -640,7 +646,7 @@
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    19.5 %
+                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -656,7 +662,7 @@
                                     Credit Period
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    1 Days
+                                    {{ $application->credit_period }} Days
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -664,7 +670,7 @@
                                     Total Amount to Recover
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ 39,525.00
+                                    ₹ 00.00
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -672,24 +678,23 @@
                                     Tenure of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    10 MONTHS
+                                    {{ $application->tenure_value }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Collect Principal Amount as EMI
+                                    EMI Payout
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">no</span>
+                                    {{ $application->emi_collection }}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Processing Fee
+                                    Insurance Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ 118.00 (Incl. 18.0 % GST)
+                                    ₹ {{ $application->insurance_amount }} (Incl. 0.0 % GST)
                                 </td>
                             </tr>
                             <tr class="">
@@ -697,7 +702,7 @@
                                     Purpose of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    Property
+                                    {{ $application->purpose_of_loan }}
                                 </td>
                             </tr>
 

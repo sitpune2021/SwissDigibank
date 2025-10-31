@@ -16,11 +16,12 @@ use App\Models\MortgageLoanApplication;
 use App\Models\LoanAgainstApplication;
 use App\Models\BusinessLoanApplication;
 use App\Models\CcOdLoanApplication;
+use App\Models\DailyWeeklyApplication;
 
 
 class ApproveController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         try {
@@ -70,7 +71,7 @@ class ApproveController extends Controller
             $transaction->approve_status = $request->input('transaction_status');
             $transaction->remarks = $request->input('remarks');
             $transaction->payment_rev_rel = $request->input('payment_status');
-           
+
             if (strtolower($transaction->payment_mode) === 'online') {
                 $transaction->bank_name = $request->input('bank_account_id');
             }
@@ -94,7 +95,7 @@ class ApproveController extends Controller
             $validated = $request->validate([
                 'transaction_status' => 'required|in:0,1,2',
                 'remarks' => 'nullable|string|max:255',
-                'source_table' => 'required|in:accounts,fd_accounts',
+                'source_table' => 'required|in:accounts,fd_accounts,misaccounts',
             ]);
 
             if ($validated['source_table'] === 'accounts') {
@@ -104,21 +105,21 @@ class ApproveController extends Controller
                 $account->remarks = $validated['remarks'];
                 $account->save();
 
-             try {
+                try {
 
-                $member = \App\Models\Member::find($account->member_id);
-                // dd($account->account_no);
-                $dlttemplateid = 1707172181386332784;
-                $mobile = $member->member_info_mobile_no;
+                    $member = \App\Models\Member::find($account->member_id);
+                    // dd($account->account_no);
+                    $dlttemplateid = 1707172181386332784;
+                    $mobile = $member->member_info_mobile_no;
 
-                $account = $account->account_no;
+                    $account = $account->account_no;
 
-                $message = "Dear Customer, congratulations! your saving a/c  $account is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
- 
-                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-            } catch (\Exception $e) {
-                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
-            }
+                    $message = "Dear Customer, congratulations! your saving a/c  $account is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+
+                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+                }
 
                 // 📝 Log the update
                 Log::info('Account status updated', [
@@ -128,13 +129,38 @@ class ApproveController extends Controller
                     'remarks' => $validated['remarks'],
                     'updated_by' => Auth::id(),
                 ]);
-            } else {
+            } elseif ($validated['source_table'] === 'fd_accounts') {
                 // 🔹 For FD accounts
                 $fdAccount = FdAccount::findOrFail($id);
                 $fdAccount->status = $validated['transaction_status'];
                 $fdAccount->remarks = $validated['remarks'];
 
                 $fdAccount->save();
+
+                try {
+
+                    $fdaccount = \App\Models\fdAccount::find($fdAccount->id);
+                    // dd($account->account_no);
+
+                    $mobile = $fdaccount->member->member_info_mobile_no;
+
+                    $account = $fdaccount->fd_no;
+
+                    if ($fdaccount->status == 1) {
+                        // Approved message
+                        $dlttemplateid = 1707172234113442938;
+                        $message = "Congratulations! Your FD no $account is approved. SBC GLOBAL";
+                    } elseif ($fdaccount->status == 2) {
+                        // Disapproved message
+
+                        $dlttemplateid = 1707172234115386436;
+                        $message = "Dear Customer, your FD no $account is disapproved. SBC GLOBAL";
+                    }
+
+                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+                }
 
                 // 📝 Log the update
                 Log::info('FD Account status updated', [
@@ -144,9 +170,42 @@ class ApproveController extends Controller
                     'remarks' => $validated['remarks'],
                     'updated_by' => Auth::id(),
                 ]);
+            } elseif ($validated['source_table'] === 'misaccounts') {
+                // 🔹 MIS Accounts
+                $misAccount = \App\Models\MisAccount::findOrFail($id);
+                $misAccount->status = $validated['transaction_status'];
+                $misAccount->remarks = $validated['remarks'];
+                $misAccount->save();
+
+                try {
+                    $member = \App\Models\Member::find($misAccount->member_id);
+                    $dlttemplateid = 1707172181386332784;
+                    $mobile = $member->member_info_mobile_no;
+                    $misAccountNo = $misAccount->mis_account_no;
+
+                    $message = "Dear Customer, congratulations! Your MIS A/c $misAccountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+
+                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS for MIS Account', ['error' => $e->getMessage()]);
+                }
+
+                Log::info('MIS Account status updated', [
+                    'table' => 'misaccounts',
+                    'id' => $id,
+                    'new_status' => $validated['transaction_status'],
+                    'remarks' => $validated['remarks'],
+                    'updated_by' => Auth::id(),
+                ]);
             }
 
-            return redirect()->back()->with('success', 'Account status updated successfully.');
+            // return redirect()->back()->with('success', 'Account status updated successfully.');
+            if ($fdaccount->status == 1) {
+                return redirect()->back()->with('success', 'Account approved successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Account disapproved.');
+            }
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Account not found', [
                 'id' => $id,
@@ -234,6 +293,35 @@ class ApproveController extends Controller
         INNER JOIN branches ON fd_accounts.branch_id = branches.id
         INNER JOIN members ON fd_accounts.member_id = members.id
         WHERE fd_accounts.status = '0'
+ UNION ALL
+        SELECT 
+        misaccounts.id,
+        misaccounts.mis_account_no AS account_no,
+        'MIS' AS account_type,
+        NULL AS firm_name,
+        misaccounts.mis_amount AS amount_deposit,
+        NULL AS payment_mode,
+        NULL AS account_holder_type,
+        NULL AS mode_of_operation,
+        misaccounts.status AS approve_status,
+        misaccounts.open_date,
+        misaccounts.branch_id,
+        misaccounts.member_id,
+        JSON_OBJECT(
+            'id', members.id,
+            'member_no', members.member_no,
+            'member_info_first_name', members.member_info_first_name,
+            'member_info_last_name', members.member_info_last_name
+        ) AS members,
+        JSON_OBJECT(
+            'branch_name', branches.branch_name
+        ) AS branch,
+        'misaccounts' AS source_table,
+        misaccounts.created_at
+    FROM misaccounts
+    INNER JOIN branches ON misaccounts.branch_id = branches.id
+    INNER JOIN members ON misaccounts.member_id = members.id
+    WHERE misaccounts.status = '0'
         ";
 
             $query = DB::table(DB::raw("({$sql}) as combined"))
@@ -331,7 +419,7 @@ class ApproveController extends Controller
         }
     }
 
-   
+
     public function reverseTransactionView(Request $request, $id)
     {
         try {
@@ -448,44 +536,56 @@ class ApproveController extends Controller
                 return $item;
             });
 
-            // Business Loan Applications
-            $businessLoans = BusinessLoanApplication::with(['branch', 'member'])
-                ->whereNotIn('status', [1, 2, 3])
-                ->latest()
-                ->get()
-                ->map(function ($item) {
-                    $item->model_type = 'business_loan';
-                    return $item;
-                });
+        // Business Loan Applications
+        $businessLoans = BusinessLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'business_loan';
+                return $item;
+            });
 
-            // cc od Loan Applications
-            $cc_od = CcOdLoanApplication::with(['branch', 'member'])
-                ->whereNotIn('status', [1, 2, 3])
-                ->latest()
-                ->get()
-                ->map(function ($item) {
-                    $item->model_type = 'cc_od';
-                    return $item;
-                });
+        // cc od Loan Applications
+        $cc_od = CcOdLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'cc_od';
+                return $item;
+            });
 
-            // Merge all 4 collections
-            $applications = $loanApplications
-                ->concat($mortgageLoans)
-                ->concat($loanAgainst)
-                ->concat($businessLoans)
-                ->concat($cc_od)
-                ->sortByDesc('created_at');
+        // Daily Weekly Loan Applications
+        $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'daily_weekly';
+                return $item;
+            });
 
-            // Account types array
-            $types = [
-                'loan' => 'Gold Loan',
-                'mortgage' => 'Mortgage Loan',
-                'loan_against' => 'Loan Against',
-                'business_loan' => 'Business Loan',
-                'cc_od' => 'CC OD',
-            ];
+        // Merge all 4 collections
+        $applications = $loanApplications
+            ->concat($mortgageLoans)
+            ->concat($loanAgainst)
+            ->concat($businessLoans)
+            ->concat($cc_od)
+            ->concat($daily_weekly)
+            ->sortByDesc('created_at');
 
-            return view('approvals.loans', compact('applications', 'types'));
+        // Account types array
+        $types = [
+            'loan' => 'Gold Loan',
+            'mortgage' => 'Mortgage Loan',
+            'loan_against' => 'Loan Against',
+            'business_loan' => 'Business Loan',
+            'cc_od' => 'CC OD',
+            'daily_weekly' => 'Daily Weekly',
+        ];
+
+        return view('approvals.loans', compact('applications', 'types'));
     }
 
 
@@ -513,8 +613,11 @@ class ApproveController extends Controller
             case 'business_loan':
                 $application = BusinessLoanApplication::find($id);
                 break;
-                 case 'cc_od':
+            case 'cc_od':
                 $application = CcOdLoanApplication::find($id);
+                break;
+            case 'daily_weekly':
+                $application = DailyWeeklyApplication::find($id);
                 break;
             default:
                 $application = null;
@@ -539,32 +642,59 @@ class ApproveController extends Controller
 
     public function approvals_history()
     {
-        // Normal Loan Applications (approved)
+        // gold Loan Applications (approved)
         $loanApplications = LoanApplication::with(['creditScores', 'branch', 'member'])
             ->where('status', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'loan';
+            });
 
         // Mortgage Loan Applications (approved)
         $mortgageLoans = MortgageLoanApplication::with(['branch', 'member'])
             ->where('status', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->each(function($item){
+                $item->model_type = 'mortgage';
+            });
 
         // Loan Against Applications (approved)
         $loanAgainst = LoanAgainstApplication::with(['branch', 'member'])
             ->where('status', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'loan_against';
+            });
 
-        // Merge all 3 collections
+        // cc_od Applications (approved)
+        $cc_od = CcOdLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'cc_od';
+            });
+
+        // daily_weekly Applications (approved)
+        $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'daily_weekly';
+            });
+
+        // Merge all 5 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
+            ->concat($cc_od)
+            ->concat($daily_weekly)
             ->sortByDesc('created_at');
 
         return view('approvals.approvals_history', compact('applications'));
     }
-
-
 }

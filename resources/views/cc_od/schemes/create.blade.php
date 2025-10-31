@@ -87,7 +87,7 @@
                     </label>
                     <select id="tenure" name="tenure"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                        required>
+                        >
                         <option value="">Please Select</option>
                         <option value="1" {{ old('tenure', $scheme->tenure ?? '') == '1' ? 'selected' : '' }}>1 Month</option>
                         <option value="3" {{ old('tenure', $scheme->tenure ?? '') == '3' ? 'selected' : '' }}>3 Months</option>
@@ -271,7 +271,7 @@
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
             <button type="submit"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                class="btn-primary uppercase justify-center">
                 {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
             </button>
 

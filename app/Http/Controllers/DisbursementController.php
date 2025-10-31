@@ -32,8 +32,7 @@ class DisbursementController extends Controller
         return view('gold-loan.disbursements.index', compact('disbursements'));
     }
 
-
-     public function cancelLoan($id)
+    public function cancelLoan($id)
     {
         $loan = LoanApplication::find($id);
 
@@ -49,32 +48,40 @@ class DisbursementController extends Controller
 
     }
 
-
-     public function store(Request $request)
+    public function store(Request $request)
     {
         try {
-            // 🧾 Start log
+            // Start log
             Log::info('--- Loan Disbursement Store Started ---', [
                 'user_id' => auth()->id(),
                 'input' => $request->all(),
             ]);
 
-            // ✅ Validate input
+            // Validate input
             $validated = $request->validate([
-                'loan_application_id' => 'required|exists:loan_against_applications,id',
+                'loan_application_id' => 'required|exists:loan_applications,id',
                 'disbursal_date' => 'required|date_format:d-m-Y',
                 'emi_date' => 'required|date_format:d-m-Y',
                 'loan_amount' => 'required|numeric|min:1',
                 'final_amount' => 'required|numeric|min:1',
             ]);
 
-            // 🗓 Date conversion
+            // Check if this loan application already has a disbursement
+            $existing = GoldLoanDisbursement::where('loan_application_id', $request->loan_application_id)->first();
+
+            if ($existing) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['loan_application_id' => 'This loan application is already disbursed.']);
+            }
+
+            // Date conversion
             $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
             $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
 
             DB::beginTransaction();
 
-            // 💾 Insert into disbursements
+            // Insert into disbursements
             $disbursement = GoldLoanDisbursement::create([
                 'loan_application_id' => $request->loan_application_id,
                 'disbursal_date' => $disbursalDate,
@@ -114,14 +121,14 @@ class DisbursementController extends Controller
                 'saving_acc2' => $request->saving2,
             ]);
 
-            // 🟢 Update application status
+            // Update application status
             DB::table('loan_applications')
                 ->where('id', $request->loan_application_id)
                 ->update(['status' => 2]);
 
             DB::commit();
 
-            Log::info('✅ Loan Disbursement Created Successfully', [
+            Log::info('Loan Disbursement Created Successfully', [
                 'disbursement_id' => $disbursement->id,
             ]);
 
@@ -130,7 +137,7 @@ class DisbursementController extends Controller
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 
-        // ⚠️ Validation error → show on form
+        // Validation error → show on form
         catch (ValidationException $e) {
             Log::warning('Validation Failed During Loan Disbursement', [
                 'errors' => $e->errors(),
@@ -143,7 +150,7 @@ class DisbursementController extends Controller
         catch (Exception $e) {
             DB::rollBack();
 
-            Log::error('❌ Loan Disbursement Store Error', [
+            Log::error('Loan Disbursement Store Error', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -155,7 +162,6 @@ class DisbursementController extends Controller
                 ->with('error', 'Something went wrong while saving the disbursement. Please try again.');
         }
     }
-
 
     public function show($id)
     {

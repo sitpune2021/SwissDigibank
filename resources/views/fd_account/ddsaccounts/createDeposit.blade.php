@@ -60,13 +60,10 @@
                     <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
                     <hr class="my-4 border-gray-300 dark:border-gray-700">
 
-                    <form class="space-y-6" action="{{ route('dds.deposit.store') }}" method="POST"
+                    <form class="space-y-6" action="{{ route('ddsaccounts.deposit', $ddAccount->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="dds_account_id" value="{{ $ddAccount->id }}">
-                        <input type="hidden" name="account_id" value="{{ $ddAccount->account->id ?? '' }}">
-                        <input type="hidden" name="type" value="credit">
-
+                    
                         <!-- Member Signature -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer's
@@ -100,17 +97,19 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                                 Amount to Deposit <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" min="0" name="balance_available" id="amountToDeposit"
-                                placeholder="Enter Amount to Deposit"
+                            <input type="number" name="amount" id="amount" placeholder="Enter Amount to Deposit"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
-                                required>
-                            <span id="amountError" class="text-red-500 hidden">Amount can't be less than the DDS installment
-                                amount.</span>
+                                min="{{ $ddAccount->dd_amount }}" required>
+                            <x-number-to-word for="amount" />
+
+                            <span id="balanceError" class="text-red-500 hidden">
+                                Amount can't be less than the DDS installment amount.
+                            </span>
                         </div>
-                        @error('balance_available')
+
+                        @error('amount')
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3 uppercase">Remarks (if
                                 any)</label>
@@ -141,7 +140,7 @@
                             </label>
                             <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600">
+                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600" checked >
                                     Cash
                                 </label>
                                 <label class="flex items-center gap-2">
@@ -168,7 +167,7 @@
                                 UTR / Transaction No.
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="utr_no" value="utr_no"
+                            <input type="text" name="utr_no" value=""
                                 class="w-full border rounded-10 px-3 py-3 bg-secondary/5"
                                 placeholder="Enter UTR/Transaction No.">
                             <label class="block text-sm font-medium text-gray-700">
@@ -247,7 +246,6 @@
                     <div
                         class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 border-b border-green-200 dark:bg-bg3">
                         <h3 class="text-lg font-bold text-gray-800 dark:text-white dark:bg-bg3 uppercase">DD Info</h3>
-
                     </div>
                     <div class="p-4">
                         <table class="w-full text-sm">
@@ -285,11 +283,12 @@
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Amount Received</td>
-                                    <td>{{ number_format($installmentReceived, 2) }}</td>
+                                    {{-- <td>{{ number_format($installmentReceived, 2) }}</td> --}}
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Balance Available</td>
                                     <td>{{ number_format($balanceAvailable, 2) }}</td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -369,6 +368,42 @@
             if (selectedInput) {
                 togglePayModeFields(selectedInput.value);
             }
+        });
+    </script>
+    <script>
+        const amountInput = document.getElementById('balance_available');
+        const amountError = document.getElementById('balanceError');
+
+        const ddInstallmentAmount = parseFloat({{ $ddAccount->dd_amount }});
+
+        amountInput.addEventListener('input', function() {
+            const value = parseFloat(this.value);
+
+            if (value < ddInstallmentAmount) {
+                amountError.classList.remove('hidden'); // show error
+                this.setCustomValidity(`Amount must be at least ${ddInstallmentAmount}`);
+            } else {
+                amountError.classList.add('hidden'); // hide error
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const payModeSelect = document.getElementById('pay_mode');
+            const savingFields = document.getElementById('savingFields');
+
+            function toggleSavingFields() {
+                if (payModeSelect.value === 'saving') {
+                    savingFields.style.display = 'block';
+                } else {
+                    savingFields.style.display = 'none';
+                    document.getElementById('saving_account_id').value = '';
+                }
+            }
+
+            payModeSelect.addEventListener('change', toggleSavingFields);
+            toggleSavingFields(); // initialize
         });
     </script>
 @endsection

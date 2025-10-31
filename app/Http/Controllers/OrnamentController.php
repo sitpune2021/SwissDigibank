@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LoanOrnament;
-  use App\Exports\OrnamentsExport;
+use App\Exports\OrnamentsExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 

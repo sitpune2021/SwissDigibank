@@ -10,6 +10,7 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\FDAccount;
 use App\Models\FDScheme;
+use App\Models\FdSchemeSlab;
 use App\Models\Minor;
 use App\Models\Misaccount;
 use App\Models\Member;
@@ -26,7 +27,7 @@ class MisaccountController extends Controller
 {
     public function index()
     {
-        $misaccounts = MisAccount::orderBy('id','desc')->get();
+        $misaccounts = MisAccount::orderBy('id', 'desc')->get();
         return view('fd_mis_account.misaccount.index', compact('misaccounts'));
     }
 
@@ -50,6 +51,148 @@ class MisaccountController extends Controller
 
         return response()->json($accounts);
     }
+
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         Log::info('MIS Account Store Request Received', $request->all());
+
+    //         // Validate incoming request
+    //         $validated = $request->validate([
+    //             'member_id' => 'required|exists:members,id',
+    //             'member_name' => 'nullable|string|max:255',
+    //             'member_address' => 'nullable|string|max:500',
+    //             'member_mobile' => 'nullable|string|max:15',
+    //             'minor_id' => 'nullable|exists:minors,id',
+    //             'branch_id' => 'required|exists:branches,id',
+    //             'fd_scheme_id' => 'nullable|exists:fd_schemes,id',
+    //             'advisor_id' => 'nullable|integer',
+    //             'open_date' => 'required|date',
+    //             'tenure_year' => 'nullable|integer|min:0',
+    //             'tenure_month' => 'nullable|integer|min:0|max:12',
+    //             'tenure_day' => 'nullable|integer|min:0|max:31',
+    //             'mis_amount' => 'required|numeric|min:0',
+    //             'interest_payout_type' => 'required|string|max:100',
+    //             'tds_deduction' => 'required|in:yes,no',
+    //             'senior_citizen' => 'required|in:yes,no',
+    //             'account_type' => 'required|in:single,joint',
+    //             'joint_member_id' => 'nullable|exists:members,id',
+    //             'nominee' => 'required|in:yes,no',
+    //             'nominee_name' => 'nullable|array',
+    //             'nominee_relation' => 'nullable|array',
+    //             'nominee_address' => 'nullable|array',
+    //             'final_amount' => 'nullable|integer|min:0',
+    //             'transaction_date' => 'required|date',
+    //             'amount' => 'required|numeric|min:1',
+    //             'pay_mode' => 'required|in:cash,cheque,online,saving',
+    //         ]);
+
+    //         Log::info('MIS Account Validated Data', $validated);
+
+    //         // Handle joint accounts
+    //         if ($request->account_type === 'joint' && !$request->joint_member_id) {
+    //             return back()->withInput()->withErrors(['joint_member_id' => 'Joint member is required for joint accounts.']);
+    //         }
+    //         $validated['joint_member_id'] = $request->joint_member_id ?? null;
+
+    //         // Format dates
+    //         $validated['open_date'] = Carbon::parse($validated['open_date'])->format('Y-m-d');
+    //         $validated['transaction_date'] = Carbon::parse($validated['transaction_date'])->format('Y-m-d');
+
+    //         // --- Calculate MIS investment summary BEFORE inserting ---
+    //         $calc = $this->calculateInvestment(
+    //             'MIS',
+    //             $request->mis_amount,
+    //             $request->scheme->interest_rate ?? 8,
+    //             ($request->tenure_year * 12) + $request->tenure_month,
+    //             $request->date,
+    //             $request->payout
+    //         );
+
+    //         $summary = $calc->getData(true)['summary']['summary'] ?? [];
+
+    //         Log::info('MIS Summary Calculated', $summary);
+
+    //         // Add calculated fields to validated data
+    //         $validated['monthly_interest'] =  isset($summary['net_interest'])
+    //             ? (float) str_replace(',', '', $summary['net_interest'])
+    //             : 0;
+
+    //         $validated['total_interest'] = isset($summary['interest_earned'])
+    //             ? (float) str_replace(',', '', $summary['interest_earned'])
+    //             : 0;
+
+    //         $validated['final_amount'] = isset($summary['final_amount'])
+    //             ? (float) str_replace(',', '', $summary['final_amount'])
+    //             : 0;
+
+    //         $validated['maturity_amount'] = isset($summary['maturity_amount'])
+    //             ? (float) str_replace(',', '', $summary['maturity_amount'])
+    //             : 0;
+
+    //         $validated['maturity_date'] = isset($summary['maturity_date'])
+    //             ? Carbon::createFromFormat('d/m/Y', $summary['maturity_date'])->format('Y-m-d')
+    //             : null;
+
+    //         // --- Create MIS account with all fields including calculated ---
+    //         $misaccount = Misaccount::create($validated);
+    //         Log::info('MIS Account Created', $misaccount->toArray());
+
+    //         // --- Handle nominees ---
+    //         if ($request->nominee === 'yes' && $request->has('nominee_name')) {
+    //             $totalNominees = count(array_filter($request->nominee_name));
+    //             $share = $totalNominees > 0 ? round(100 / $totalNominees, 2) : 100;
+
+    //             foreach ($request->nominee_name as $key => $name) {
+    //                 if (!empty($name)) {
+    //                     AccountNominee::create([
+    //                         'account_id' => "MIS-" . $misaccount->id,
+    //                         'nominee_name' => $name,
+    //                         'nominee_relation' => $request->nominee_relation[$key] ?? null,
+    //                         'nominee_address' => $request->nominee_address[$key] ?? null,
+    //                         'share_percentage' => $share,
+    //                     ]);
+    //                 }
+    //             }
+    //             Log::info('Nominees saved', ['count' => $totalNominees]);
+    //         }
+
+    //         // --- Format cheque & transfer dates ---
+    //         $chequeDate = $request->cheque_date ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null;
+    //         $transferDate = $request->transfer_date ? Carbon::parse($request->transfer_date)->format('Y-m-d') : null;
+
+    //         // --- Create MIS Transaction ---
+    //         MisTransaction::create([
+    //             'misaccount_id' => $misaccount->id,
+    //             'amount' => $request->amount,
+    //             'pay_mode' => $request->pay_mode,
+    //             'bank_id' => $request->bank_id ?? null,
+    //             'cheque_no' => $request->cheque_no ?? null,
+    //             'cheque_date' => $chequeDate,
+    //             'transfer_date' => $transferDate,
+    //             'utr_no' => $request->utr_no ?? null,
+    //             'transfer_mode' => $request->transfer_mode ?? null,
+    //             'saving_account_id' => $request->saving_account_id ?? null,
+    //         ]);
+
+    //         Log::info('MIS Transaction Created', ['misaccount_id' => $misaccount->id]);
+
+    //         return redirect()
+    //             ->route('misaccount.index')
+    //             ->with('success', 'MIS Account created successfully.');
+    //     } catch (ValidationException $e) {
+    //         Log::warning('MIS Account Validation Failed', $e->errors());
+    //         return redirect()->back()->withErrors($e->errors())->withInput();
+    //     } catch (Exception $e) {
+    //         Log::error('MIS Account Store Error', [
+    //             'message' => $e->getMessage(),
+    //             'file' => $e->getFile(),
+    //             'line' => $e->getLine(),
+    //             'trace' => $e->getTraceAsString(),
+    //         ]);
+    //         return redirect()->back()->with('error', 'Something went wrong while creating MIS Account.')->withInput();
+    //     }
+    // }
 
     public function store(Request $request)
     {
@@ -98,43 +241,30 @@ class MisaccountController extends Controller
             $validated['open_date'] = Carbon::parse($validated['open_date'])->format('Y-m-d');
             $validated['transaction_date'] = Carbon::parse($validated['transaction_date'])->format('Y-m-d');
 
-            // --- Calculate MIS investment summary BEFORE inserting ---
-            $calc = $this->calculateInvestment(
-                'MIS',
-                $request->mis_amount,
-                $request->scheme->interest_rate ?? 8,
-                ($request->tenure_year * 12) + $request->tenure_month,
-                $request->date,
-                $request->payout
+
+            $calc = $this->calculateMISDetails(
+                fd_scheme_id: $request->fd_scheme_id,
+                principal: $request->mis_amount,
+                open_date: $request->open_date,
+                tenure_year: $request->tenure_year,
+                tenure_month: $request->tenure_month,
+                senior_citizen: $request->senior_citizen
             );
 
-            $summary = $calc->getData(true)['summary']['summary'] ?? [];
-
-            Log::info('MIS Summary Calculated', $summary);
-
-            // Add calculated fields to validated data
-            $validated['monthly_interest'] =  isset($summary['net_interest'])
-                ? (float) str_replace(',', '', $summary['net_interest'])
-                : 0;
-
-            $validated['total_interest'] = isset($summary['interest_earned'])
-                ? (float) str_replace(',', '', $summary['interest_earned'])
-                : 0;
-
-            $validated['final_amount'] = isset($summary['final_amount'])
-                ? (float) str_replace(',', '', $summary['final_amount'])
-                : 0;
-
-            $validated['maturity_amount'] = isset($summary['maturity_amount'])
-                ? (float) str_replace(',', '', $summary['maturity_amount'])
-                : 0;
-
-            $validated['maturity_date'] = isset($summary['maturity_date'])
-                ? Carbon::createFromFormat('d/m/Y', $summary['maturity_date'])->format('Y-m-d')
-                : null;
+            $validated['interest_rate']     = $calc['interest_rate'];
+            $validated['payout_type']       = $calc['payout_type'];
+            $validated['monthly_interest']  = $calc['monthly_interest'];
+            $validated['total_interest']    = $calc['total_interest'];
+            $validated['final_amount']      = $calc['final_amount'];
+            $validated['maturity_amount']   = $calc['maturity_amount'];
+            $validated['maturity_date']     = $calc['maturity_date'];
 
             // --- Create MIS account with all fields including calculated ---
             $misaccount = Misaccount::create($validated);
+
+            $misaccount->mis_account_no = 'MIS' . str_pad($misaccount->id, 9, '0', STR_PAD_LEFT);
+
+            $misaccount->save();
             Log::info('MIS Account Created', $misaccount->toArray());
 
             // --- Handle nominees ---
@@ -193,124 +323,207 @@ class MisaccountController extends Controller
         }
     }
 
-
-    function calculateInvestment(
-        $type = null,
-        $principal = null,
-        $rate = null,
-        $tenureMonths = null,
-        $startDate = null,
-        $payoutType = null
+    public function calculateMISDetails(
+        $fd_scheme_id,
+        $principal,
+        $open_date,
+        $tenure_year,
+        $tenure_month,
+        $senior_citizen = 0
     ) {
-        $results = [];
+        //Convert tenure to total days
+        $totalMonths = ($tenure_year * 12) + $tenure_month;
+        $totalDays   = $totalMonths * 30; // approximate, as per your slab table
 
-        $type         = $type ?? 'FD';
-        $principal    = (float) ($principal ?? 120000);
-        $rate         = (float) ($rate ?? 10);
-        $tenureMonths = (int) ($tenureMonths ?? 12);
-        $startDate    = $startDate ?? '2025-08-27';
-        $payoutType   = strtoupper($payoutType ?? 'CUMULATIVE_HALF_YEARLY');
+        if ($totalDays <= 0) $totalDays = 360;
 
-        $annualRate = $rate / 100;
+        $scheme = FdScheme::findOrFail($fd_scheme_id);
 
-        $currentDate    = Carbon::parse($startDate)->startOfDay();
-        $maturityCarbon = Carbon::parse($startDate)->addMonths($tenureMonths)->startOfDay();
+        //  $slab = FdSchemeSlab::where('fd_scheme_id', $scheme->id)
+        //     ->where('day_from', '<=', $totalDays)
+        //     ->orWhere('day_to', '>=', $totalDays)
+        //     ->first();
 
-        $maturityDateInternal  = $maturityCarbon->format('Y-m-d');
-        $maturityDate          = $maturityCarbon->format('d/m/Y');
-        $depositStartInternal  = Carbon::parse($startDate)->startOfDay()->format('Y-m-d');
+        $slab = FdSchemeSlab::where('fd_scheme_id', $scheme->id)
+            ->where(function ($query) use ($totalDays) {
+                $query->where('day_from', '<=', $totalDays)
+                    ->orWhere('day_to', '>=', $totalDays);
+            })
+            ->first();
 
-        $totalInterest = 0;
-        $totalTDS      = 0;
-        $maturityBonus = 0;
+        $rate = $slab->interest_rate;
 
-        $isCumulative = str_starts_with($payoutType, 'CUMULATIVE_');
+        // Determine interest rate and payout type
+        // $rate = $slab
+        //     ? ($senior_citizen ? (float)$slab->sr_citizen_rate : (float)$slab->interest_rate)
+        //     : ($senior_citizen
+        //         ? $scheme->annual_interest_rate + ($scheme->bonus_rate ?? 0)
+        //         : $scheme->annual_interest_rate);
 
+        $payoutType = strtoupper(
+            $slab->payout_type
+                ?? $scheme->payout_type
+                ?? 'MONTHLY'
+        );
+
+        //Calculate monthly interest for MIS
+        $monthlyInterest = round(($principal * $rate) / 1200, 2);
+
+        // Determine cycle months based on payout type
         $cycleMonths = match ($payoutType) {
-            'MONTHLY', 'CUMULATIVE_MONTHLY'             => 1,
-            'QUARTERLY', 'CUMULATIVE_QUARTERLY'         => 3,
-            'HALF_YEARLY', 'CUMULATIVE_HALF_YEARLY'     => 6,
-            'YEARLY', 'CUMULATIVE_YEARLY'               => 12,
-            default                                     => 1,
+            'MONTHLY' => 1,
+            'QUARTERLY' => 3,
+            'HALF_YEARLY' => 6,
+            'YEARLY' => 12,
+            default => 1,
         };
 
-        $cycleMonths = (int) $cycleMonths;
+        //total cycles
+        $totalCycles = ceil($totalMonths / $cycleMonths);
 
-        while ($currentDate < $maturityCarbon) {
-            $periodStart = $currentDate->copy()->startOfDay();
-            $periodEnd   = $currentDate->copy()->addMonths($cycleMonths)->subDay()->startOfDay();
-
-            if ($periodEnd > $maturityCarbon) {
-                $periodEnd = $maturityCarbon->copy()->startOfDay();
-            }
-
-            // March 31 adjustment
-            $marchYear = ($periodStart->month > 3) ? $periodStart->year + 1 : $periodStart->year;
-            $marchEnd  = Carbon::createFromDate($marchYear, 3, 31)->startOfDay();
-
-            if ($marchEnd >= $periodStart && $marchEnd <= $periodEnd) {
-                [$results, $totalInterest, $principal] = $this->processPeriod(
-                    $results,
-                    $periodStart,
-                    $marchEnd,
-                    $principal,
-                    $annualRate,
-                    $maturityDateInternal,
-                    $depositStartInternal,
-                    $payoutType,
-                    $totalInterest
-                );
-
-                $periodStart = $marchEnd->copy()->addDay(1)->startOfDay();
-
-                [$results, $totalInterest, $principal] = $this->processPeriod(
-                    $results,
-                    $periodStart,
-                    $periodEnd,
-                    $principal,
-                    $annualRate,
-                    $maturityDateInternal,
-                    $depositStartInternal,
-                    $payoutType,
-                    $totalInterest
-                );
-            } else {
-                [$results, $totalInterest, $principal] = $this->processPeriod(
-                    $results,
-                    $periodStart,
-                    $periodEnd,
-                    $principal,
-                    $annualRate,
-                    $maturityDateInternal,
-                    $depositStartInternal,
-                    $payoutType,
-                    $totalInterest
-                );
-            }
-
-            $currentDate = $periodEnd->copy()->addDay(1)->startOfDay();
+        // Total interest = monthlyInterest * number of months
+        $totalInterest = $monthlyInterest * $totalMonths;
+        for ($i = 0; $i < $totalCycles; $i++) {
+            $monthsInCycle = ($i == $totalCycles - 1) ? ($totalMonths - ($cycleMonths * ($totalCycles - 1))) : $cycleMonths;
+            $totalInterest += round($monthlyInterest * $monthsInCycle, 2);
         }
 
-        // ---- Final Summary ----
-        $netInterest = $totalInterest - $totalTDS;
-        $maturityAmt = $principal + $maturityBonus + $netInterest;
+        $maturity_date = Carbon::parse($open_date)->addMonths($totalMonths)->format('Y-m-d');
 
-        $summary['summary'] = [
-            'principal'       => number_format($principal, 2),
-            'interest_earned' => number_format($totalInterest, 2),
-            'tds_deducted'    => number_format($totalTDS, 2),
-            'net_interest'    => number_format($netInterest, 2),
-            'maturity_bonus'  => number_format($maturityBonus, 2),
-            'maturity_amount' => number_format($maturityAmt, 2),
-            'maturity_date'   => $maturityDate
+        $maturity_amount = $principal * $totalInterest;
+
+        $final_amount = $maturity_amount + $totalInterest;
+
+        return [
+            'interest_rate'     => $rate,
+            'payout_type'       => $payoutType,
+            'monthly_interest'  => $monthlyInterest,
+            'total_interest'    => $totalInterest,
+            'final_amount'      => $final_amount,
+            'maturity_amount'   => $maturity_amount, // principal * tenure_months
+            'maturity_date'     => $maturity_date,
+            'tenure_months'     => $totalMonths,
+            'total_days'        => $totalDays,
         ];
-
-        return response()->json([
-            'success' => true,
-            'summary' => $summary,
-            'details' => $results
-        ]);
     }
+
+    // function calculateInvestment(
+    //     $type = null,
+    //     $principal = null,
+    //     $rate = null,
+    //     $tenureMonths = null,
+    //     $startDate = null,
+    //     $payoutType = null
+    // ) {
+    //     $results = [];
+
+    //     $type         = $type ?? 'FD';
+    //     $principal    = (float) ($principal ?? 120000);
+    //     $rate         = (float) ($rate ?? 10);
+    //     $tenureMonths = (int) ($tenureMonths ?? 12);
+    //     $startDate    = $startDate ?? '2025-08-27';
+    //     $payoutType   = strtoupper($payoutType ?? 'CUMULATIVE_HALF_YEARLY');
+
+    //     $annualRate = $rate / 100;
+
+    //     $currentDate    = Carbon::parse($startDate)->startOfDay();
+    //     $maturityCarbon = Carbon::parse($startDate)->addMonths($tenureMonths)->startOfDay();
+
+    //     $maturityDateInternal  = $maturityCarbon->format('Y-m-d');
+    //     $maturityDate          = $maturityCarbon->format('d/m/Y');
+    //     $depositStartInternal  = Carbon::parse($startDate)->startOfDay()->format('Y-m-d');
+
+    //     $totalInterest = 0;
+    //     $totalTDS      = 0;
+    //     $maturityBonus = 0;
+
+    //     $isCumulative = str_starts_with($payoutType, 'CUMULATIVE_');
+
+    //     $cycleMonths = match ($payoutType) {
+    //         'MONTHLY', 'CUMULATIVE_MONTHLY'             => 1,
+    //         'QUARTERLY', 'CUMULATIVE_QUARTERLY'         => 3,
+    //         'HALF_YEARLY', 'CUMULATIVE_HALF_YEARLY'     => 6,
+    //         'YEARLY', 'CUMULATIVE_YEARLY'               => 12,
+    //         default                                     => 1,
+    //     };
+
+    //     $cycleMonths = (int) $cycleMonths;
+
+    //     while ($currentDate < $maturityCarbon) {
+    //         $periodStart = $currentDate->copy()->startOfDay();
+    //         $periodEnd   = $currentDate->copy()->addMonths($cycleMonths)->subDay()->startOfDay();
+
+    //         if ($periodEnd > $maturityCarbon) {
+    //             $periodEnd = $maturityCarbon->copy()->startOfDay();
+    //         }
+
+    //         // March 31 adjustment
+    //         $marchYear = ($periodStart->month > 3) ? $periodStart->year + 1 : $periodStart->year;
+    //         $marchEnd  = Carbon::createFromDate($marchYear, 3, 31)->startOfDay();
+
+    //         if ($marchEnd >= $periodStart && $marchEnd <= $periodEnd) {
+    //             [$results, $totalInterest, $principal] = $this->processPeriod(
+    //                 $results,
+    //                 $periodStart,
+    //                 $marchEnd,
+    //                 $principal,
+    //                 $annualRate,
+    //                 $maturityDateInternal,
+    //                 $depositStartInternal,
+    //                 $payoutType,
+    //                 $totalInterest
+    //             );
+
+    //             $periodStart = $marchEnd->copy()->addDay(1)->startOfDay();
+
+    //             [$results, $totalInterest, $principal] = $this->processPeriod(
+    //                 $results,
+    //                 $periodStart,
+    //                 $periodEnd,
+    //                 $principal,
+    //                 $annualRate,
+    //                 $maturityDateInternal,
+    //                 $depositStartInternal,
+    //                 $payoutType,
+    //                 $totalInterest
+    //             );
+    //         } else {
+    //             [$results, $totalInterest, $principal] = $this->processPeriod(
+    //                 $results,
+    //                 $periodStart,
+    //                 $periodEnd,
+    //                 $principal,
+    //                 $annualRate,
+    //                 $maturityDateInternal,
+    //                 $depositStartInternal,
+    //                 $payoutType,
+    //                 $totalInterest
+    //             );
+    //         }
+
+    //         $currentDate = $periodEnd->copy()->addDay(1)->startOfDay();
+    //     }
+
+    //     // ---- Final Summary ----
+    //     $netInterest = $totalInterest - $totalTDS;
+    //     $maturityAmt = $principal + $maturityBonus + $netInterest;
+
+    //     $summary['summary'] = [
+    //         'principal'       => number_format($principal, 2),
+    //         'interest_earned' => number_format($totalInterest, 2),
+    //         'tds_deducted'    => number_format($totalTDS, 2),
+    //         'net_interest'    => number_format($netInterest, 2),
+    //         'maturity_bonus'  => number_format($maturityBonus, 2),
+    //         'maturity_amount' => number_format($maturityAmt, 2),
+    //         'maturity_date'   => $maturityDate
+    //     ];
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'summary' => $summary,
+    //         'details' => $results
+    //     ]);
+    // }
 
     function processPeriod(
         $results,
@@ -533,8 +746,8 @@ class MisaccountController extends Controller
         $savingAccounts = Account::where('member_id', $misaccount->member_id)
             ->where('account_type', 'SAVING')
             ->get();
-            $account = $misaccount;
-            return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches'));
+        $account = $misaccount;
+        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches'));
 
         //return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches','account'));
     }
@@ -582,84 +795,79 @@ class MisaccountController extends Controller
     //     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
     // }
 
-//   public function changeAccountInfo($id)
-// {
-//     $account = Misaccount::findOrFail($id);
+    //   public function changeAccountInfo($id)
+    // {
+    //     $account = Misaccount::findOrFail($id);
 
-//     // Members list fetch -> ['id' => 'member_name']
-//     $members = Member::pluck('member_info_first_name', 'id');
+    //     // Members list fetch -> ['id' => 'member_name']
+    //     $members = Member::pluck('member_info_first_name', 'id');
 
-//     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
-// }
+    //     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
+    // }
 
 
-public function changeAccountInfo($id)
-{
-    $account = Misaccount::findOrFail($id);
+    public function changeAccountInfo($id)
+    {
+        $account = Misaccount::findOrFail($id);
 
-    // Members list fetch -> ['id' => 'member_name']
-    $members = Member::pluck('member_info_first_name', 'id');
+        // Members list fetch -> ['id' => 'member_name']
+        $members = Member::pluck('member_info_first_name', 'id');
 
-    // Joint members ke dropdown me se selected member_id hata do
-    $jointMembers = $members->except($account->member_id);
+        // Joint members ke dropdown me se selected member_id hata do
+        $jointMembers = $members->except($account->member_id);
 
-    return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members', 'jointMembers'));
-}
+        return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members', 'jointMembers'));
+    }
 
-  public function updateAccountInfo(Request $request, $id)
-{
-    $request->validate([
-        'member_id'       => 'required|integer',
-        'account_type'    => 'required|string',
-        'open_date'       => 'required|date_format:d-m-Y',
-        'mis_joint_date'  => 'required|date_format:d-m-Y',
-        'joint_member_id' => 'nullable|integer',
-    ]);
+    public function updateAccountInfo(Request $request, $id)
+    {
+        $request->validate([
+            'member_id'       => 'required|integer',
+            'account_type'    => 'required|string',
+            'open_date'       => 'required|date_format:d-m-Y',
+            'mis_joint_date'  => 'required|date_format:d-m-Y',
+            'joint_member_id' => 'nullable|integer',
+        ]);
 
-    $account = Misaccount::findOrFail($id);
+        $account = Misaccount::findOrFail($id);
 
-    $account->member_id       = $request->member_id;
-    $account->joint_member_id = $request->joint_member_id; // yaha store hoga dropdown ka id
-    $account->account_type    = $request->account_type;
-    $account->open_date       = Carbon::createFromFormat('d-m-Y', $request->open_date)->format('Y-m-d');
-    $account->mis_joint_date  = Carbon::createFromFormat('d-m-Y', $request->mis_joint_date)->format('Y-m-d');
+        $account->member_id       = $request->member_id;
+        $account->joint_member_id = $request->joint_member_id; // yaha store hoga dropdown ka id
+        $account->account_type    = $request->account_type;
+        $account->open_date       = Carbon::createFromFormat('d-m-Y', $request->open_date)->format('Y-m-d');
+        $account->mis_joint_date  = Carbon::createFromFormat('d-m-Y', $request->mis_joint_date)->format('Y-m-d');
 
-    $account->save();
+        $account->save();
 
-    return redirect()->route('misaccount.show', $id)
-                     ->with('success', 'Account info updated successfully.');
-}
+        return redirect()->route('misaccount.show', $id)
+            ->with('success', 'Account info updated successfully.');
+    }
 
 
 
     public function addNominee($id)
-{
-    $account = Misaccount::findOrFail($id);
-    return view('fd_mis_account.misaccount.add_nominee', compact('account'));
-}
-
-public function updateNominee(Request $request, $id)
-{
-    $account = Misaccount::findOrFail($id);
-
-    if ($request->has('nominees')) {
-        foreach ($request->nominees as $nominee) {
-            if (!empty($nominee['name'])) {
-                $account->misnominees()->create([
-                    'nominee_relation' => $nominee['relation'] ?? null,
-                    'nominee_name'     => $nominee['name'] ?? null,
-                    'nominee_address'  => $nominee['address'] ?? null,
-                ]);
-            }
-        }
+    {
+        $account = Misaccount::findOrFail($id);
+        return view('fd_mis_account.misaccount.add_nominee', compact('account'));
     }
 
-    return redirect()->route('misaccount.show', $id)
-                     ->with('success', 'Nominee details inserted successfully!');
-}
+    public function updateNominee(Request $request, $id)
+    {
+        $account = Misaccount::findOrFail($id);
 
+        if ($request->has('nominees')) {
+            foreach ($request->nominees as $nominee) {
+                if (!empty($nominee['name'])) {
+                    $account->misnominees()->create([
+                        'nominee_relation' => $nominee['relation'] ?? null,
+                        'nominee_name'     => $nominee['name'] ?? null,
+                        'nominee_address'  => $nominee['address'] ?? null,
+                    ]);
+                }
+            }
+        }
 
-
-
-
+        return redirect()->route('misaccount.show', $id)
+            ->with('success', 'Nominee details inserted successfully!');
+    }
 }

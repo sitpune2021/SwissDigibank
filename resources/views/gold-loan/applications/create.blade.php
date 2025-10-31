@@ -53,7 +53,9 @@
                 <input type="hidden" name="approved_loan_amount" id="approved_loan_amount">
 
                 <div class=" flex flex-col lg:flex-row  gap-2">
+                    
                     <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10  lg:col-span-12">
+                        
                         <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                            <div class="col-span-2 md:col-span-1">
@@ -62,31 +64,29 @@
                                     Application Date <span class="text-red-500">*</span>
                                 </label>
 
-                                <input type="text" name="application_date"
+                                <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                     value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                             </div>
 
-
                             <div class="col-span-2 md:col-span-1">
-                                <label for="member_id" class="md:text-lg font-medium block mb-4 uppercase">
-                                    Customer <span class="text-red-500">*</span>
+                                <label for="member_id" class="md:text-lg font-medium block mb-4">
+                                    CUSTOMER <span class="text-red-500">*</span>
                                 </label>
-
+                                
                                 <select name="member_id" id="member_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Customer No or Name</option>
-                                   @foreach($members as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->member_id ?? '')
-                                        == $member->id ? 'selected' : '' }}
-                                        data-name="{{ $member->member_info_first_name }}"
-                                        data-mobile="{{ $member->member_info_mobile_no }}">
-                                        {{ $member->member_info_first_name }}
-                                    </option>
-                                    @endforeach 
+                                    <option value="">Search Member No or Name</option>
+                                    @foreach($members as $member)
+                                        <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}"
+                                        {{ old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
+                                            data-name="{{ $member->member_info_first_name }}"
+                                            data-mobile="{{ $member->member_info_mobile_no }}">
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
-
                                 @error('member_id')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -122,7 +122,7 @@
                             </div>
 
                             <div class="col-span-2 md:col-span-1">
-                                <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                                <label for="" class="md:text-lg font-medium block mb-4">
                                     Branch
                                     <span class="text-red-500">*</span>
                                 </label>
@@ -130,15 +130,14 @@
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                     <option value="">Search Branch No or Name</option>
                                     @foreach($branch as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->branch_id ?? '')
-                                        == $member->id ? 'selected' : '' }}>
-                                        {{ $member->branch_name }}
-                                    </option>
-
+                                    <option value="{{ $member->id }}"
+                                            {{ old('member_id', $application->branch_id ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->branch_name }}
+                                        </option>                                   
                                     @endforeach
                                 </select>
                                 @error('branch_id')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -150,9 +149,6 @@
                                     placeholder="Enter Scheme Code">
                                     <option value="">select Advisor/ Staff </option>
                                 </select>
-                                @error('branch_id')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
 
                             <div class="col-span-2 md:col-span-1">
@@ -265,26 +261,28 @@
                                         <span class="text-error">*</span>
                                     </label>
                                     <div class="flex">
-                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                        <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="days" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'days' ?
                                             'checked' : '' }} >
                                             <span class="text-gray-70 capitalize">DAYS</span>
                                         </label>
-                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                        <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="weeks" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'weeks' ?
                                             'checked' : '' }} >
                                             <span class="text-gray-70 capitalize">WEEKS</span>
                                         </label>
-                                        <label class="flex items-center gap-2 space-x-2 p-2">
+                                        <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="months" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'months' ?
-                                            'checked' : '' }} >
-                                            
+                                            'checked' : '' }} >                                           
                                             <span class="text-gray-70 capitalize">MONTHS</span>
                                         </label>
                                     </div>
+                                     @error('tenure_type')
+                                        <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -295,7 +293,6 @@
                                 </label>
                                 <input type="number" id="tenure_value" name="tenure_value" value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-
                                 @error('tenure_value')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -345,6 +342,7 @@
                                 <input type="number" id="loanAmount" name="loan_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                    <p id="amountInWords" class="text-red-600 text-sm mt-1"></p>
                                 @error('loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -387,6 +385,7 @@
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
                         </div>
 
                         <!-- Credit Score Details -->
@@ -422,7 +421,7 @@
                                             @foreach($creditScores as $score)
                                                 <tr class="nested-fields border-b">
                                                     <td class="px-2 py-2" style="width:230px;">
-                                                        <select name="cibil_type[]" required
+                                                        <select name="cibil_type[]"
                                                             class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                                                             <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
                                                             <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
@@ -434,25 +433,14 @@
                                                     <td class="px-2 py-2">
                                                         <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
                                                             class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"
-                                                            value="{{ $score->cibil_score }}" required/>
+                                                            value="{{ $score->cibil_score }}">
                                                     </td>
 
                                                     <td class="px-2 py-2 relative">
                                                         <input type="text" name="report_date[]" 
                                                             value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}"
-                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"
-                                                            required/>
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                                                     </td>
-
-                                                    <!-- <td class="px-2 py-2">
-                                                        @if($score->report_file)
-                                                            <a href="{{ asset('storage/'.$score->report_file) }}" target="_blank" class="text-blue-600 underline">
-                                                                View File
-                                                            </a><br>
-                                                        @endif
-                                                        <input type="file" name="report_file[]" 
-                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
-                                                    </td> -->
 
                                                     <td class="px-2 py-2 text-center">
                                                         @if(!empty($score->report_file))
@@ -673,13 +661,13 @@
                                         </label>
                                         <div class="flex gap-4 mt-2">
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="yes" {{ old('credited',
-                                                    $application->credited ?? '') == 'yes' ? 'checked' : '' }} >
+                                                <input type="radio" name="credited" value="1" {{ old('credited',
+                                                    $application->credited ?? '') == '1' ? 'checked' : '' }} >
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="no" {{ old('credited',
-                                                    $application->credited ?? '') == 'no' ? 'checked' : '' }} >
+                                                <input type="radio" name="credited" value="0" {{ old('credited',
+                                                    $application->credited ?? '') == '0' ? 'checked' : '' }} >
                                                 <span>No</span>
                                             </label>
                                         </div>
@@ -694,6 +682,7 @@
 
                             </div>
                         </div>
+
                     </div>
 
                     <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
@@ -786,9 +775,10 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
-
+                <!-- Ornaments -->
                 <div class="w-full overflow-x-auto mt-5">
                     <table class="w-full rounded-10 whitespace-nowrap text-sm">
                         <thead class="bg-gray-100">
@@ -971,10 +961,10 @@
     </div>
 
 
-
+    <!-- Calculation & Submit Button  -->
     <script>
         let isCalculated = false; // flag set karte hain
-
+        let isValidOrnament = false;
         document.getElementById("calculateBtn").addEventListener("click", function (e) {
             if (!isCalculated) {
                 //  Pehli click pe calculation karo
@@ -982,7 +972,8 @@
 
                 // Button ko submit bana do
                 this.textContent = "Submit";
-                this.type = "submit";
+               this.type = "submit";
+            //    this.type = "button";
 
                 // Flag update karo
                 isCalculated = true;
@@ -996,6 +987,7 @@
         });
     </script>
 
+    <!-- Memeber Box -->
     <script>
         document.getElementById('member_id').addEventListener('change', function () {
             let selected = this.options[this.selectedIndex];
@@ -1009,7 +1001,7 @@
         });
     </script>
 
-
+    <!-- Member Info details -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const memberSelect = document.getElementById("member_id");
@@ -1036,7 +1028,7 @@
         });
     </script>
 
-
+    <!-- Scheme Info Details -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const schemeSelect = document.getElementById("scheme_id");
@@ -1055,6 +1047,27 @@
             const schemeCharge = document.getElementById("schemeCharge");
 
             schemeSelect.addEventListener("change", function () {
+                // ✅ Loan Amount Validation Based On Scheme
+const loanAmountInput = document.getElementById("loanAmount");
+
+loanAmountInput.addEventListener("input", function () {
+    let max = parseFloat(schemeSelect.options[schemeSelect.selectedIndex].getAttribute("data-max")) || 0;
+    let min = parseFloat(schemeSelect.options[schemeSelect.selectedIndex].getAttribute("data-min")) || 0;
+    let val = parseFloat(loanAmountInput.value) || 0;
+
+    if (val > max) {
+        alert("Loan Amount cannot be greater than Maximum Loan Amount (" + max + ")");
+        loanAmountInput.value = max;
+    }
+
+    // if (val < min) {
+    //     alert("Loan Amount cannot be less than Minimum Loan Amount (" + min + ")");
+    //     loanAmountInput.value = min;
+    // }
+
+    calculateNetLoan();
+});
+
                 const selectedOption = this.options[this.selectedIndex];
 
                 if (this.value) {
@@ -1081,6 +1094,7 @@
         });
     </script>
 
+    <!-- Net + insurance = net loan amount calculation -->
     <script>
         function calculateNetLoan() {
             let loan = parseFloat(document.getElementById('loanAmount').value) || 0;
@@ -1092,7 +1106,7 @@
         document.getElementById('insuranceAmount').addEventListener('input', calculateNetLoan);
     </script>
 
-
+    <!-- pay Mode -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -1120,13 +1134,21 @@
         });
     </script>
 
+    <!-- Final wight Ornaments calculation -->
     <script>
     document.addEventListener("DOMContentLoaded", function () {
     //  Step 1: Form को पहले select करो (form id = loanForm)
     const form = document.getElementById("loanForm");
 
     //  Step 2: Calculate button click listener
-    document.getElementById("calculateBtn").addEventListener("click", function () {
+    
+    document.getElementById("calculateBtn").addEventListener("click", function (e) {
+
+    // ⚙️ If not valid yet, prevent submission
+    if (!isValidOrnament) {
+        e.preventDefault();
+    }
+
         let rows = document.querySelectorAll("#itemsBody tr");
         let totalSecurity = 0;
 
@@ -1171,14 +1193,56 @@
         document.getElementById("resMaxLoan").textContent = maxLoan;
         document.getElementById("resLimit").textContent = limit + "%";
         document.getElementById("resApprovable").textContent = approvable.toFixed(2);
-        document.getElementById("resApproved").textContent = approvable.toFixed(2);
+        //document.getElementById("resApproved").textContent = approvable.toFixed(2);
 
         //  Step 3: Hidden inputs me assign karo
         document.getElementById("security_value").value = totalSecurity.toFixed(2);
         document.getElementById("max_loan_amount").value = maxLoan;
         document.getElementById("max_loan_limit").value = limit;
         document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
-        document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
+        //document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
+// ✅ Ornament value must cover Net Loan
+if (totalSecurity < netLoan) {
+    alert("Total Ornament Security Value must be greater than or equal to Net Loan Amount!");
+
+    isValidOrnament = false;
+
+    // Submit Button disable + back to Calculate
+    const btn = document.getElementById("calculateBtn");
+    btn.type = "button";
+    btn.textContent = "Re-Calculate";
+    btn.disabled = false;
+
+    return;
+}
+
+// ✅ Agar yahan pohonch gaye means no error
+isValidOrnament = true;
+
+// ✅ Change button back to Submit if now valid
+const btn = document.getElementById("calculateBtn");
+btn.type = "submit";
+btn.textContent = "Submit";
+btn.disabled = false;
+
+
+
+// ✅ Approved Loan Logic
+let approvedLoan = netLoan;
+
+// Rule: Net loan max loan se upar? → cap it to max loan
+if (approvedLoan > maxLoan) {
+    approvedLoan = parseFloat(maxLoan);
+}
+
+// Rule: Limit se upar? → cap it to approvable
+if (approvedLoan > approvable) {
+    approvedLoan = approvable;
+}
+
+// Final Approved Loan Display
+document.getElementById("resApproved").textContent = approvedLoan.toFixed(2);
+document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
 
         //  Step 4: Debug console (optional)
         console.log("Hidden Inputs Updated:", {
@@ -1194,19 +1258,27 @@
     });
 
     //  Step 6: Form submit hone से पहले debug check (optional)
-    form.addEventListener("submit", function () {
-        console.log("Submitting with values:", {
-            security_value: document.getElementById("security_value").value,
-            max_loan_amount: document.getElementById("max_loan_amount").value,
-            max_loan_limit: document.getElementById("max_loan_limit").value,
-            maximum_approvable_amount: document.getElementById("maximum_approvable_amount").value,
-            approved_loan_amount: document.getElementById("approved_loan_amount").value,
-        });
-    });
+    // form.addEventListener("submit", function () {
+    //     console.log("Submitting with values:", {
+    //         security_value: document.getElementById("security_value").value,
+    //         max_loan_amount: document.getElementById("max_loan_amount").value,
+    //         max_loan_limit: document.getElementById("max_loan_limit").value,
+    //         maximum_approvable_amount: document.getElementById("maximum_approvable_amount").value,
+    //         approved_loan_amount: document.getElementById("approved_loan_amount").value,
+    //     });
+    // });
+    form.addEventListener("submit", function (e) {
+    if (!isValidOrnament) {
+        e.preventDefault();
+        alert("Please correct Ornament Security Value first!");
+        return false;
+    }
+});
+
 });
     </script>
 
-
+    <!-- Credit Score -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const cibilBody = document.getElementById("cibilBody");
@@ -1459,62 +1531,118 @@
         });
     </script>
 
+    <!-- Ornaments calculation -->
     <script>
-         // Function: Calculate total of all total_value[] fields
-function calculateGrandTotal() {
-    let total = 0;
-    document.querySelectorAll('input[name="total_value[]"]').forEach(input => {
-        const val = parseFloat(input.value) || 0;
-        total += val;
-    });
-    const grandTotalInput = document.getElementById('grandTotal');
-    if (grandTotalInput) {
-        grandTotalInput.value = total.toFixed(2);
+        // Function: Calculate total of all total_value[] fields
+        function calculateGrandTotal() {
+            let total = 0;
+            document.querySelectorAll('input[name="total_value[]"]').forEach(input => {
+                const val = parseFloat(input.value) || 0;
+                total += val;
+            });
+            const grandTotalInput = document.getElementById('grandTotal');
+            if (grandTotalInput) {
+                grandTotalInput.value = total.toFixed(2);
+            }
+        }
+
+        // When page loads — calculate once
+        window.addEventListener('DOMContentLoaded', calculateGrandTotal);
+
+        // When any total_value changes dynamically — recalculate
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.name === 'total_value[]') {
+                calculateGrandTotal();
+            }
+        });
+
+        // Optional: if you have row add/remove buttons, call this function after each such event
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('removeRowBtn')) {
+                setTimeout(calculateGrandTotal, 100);
+            }
+        });
+
+        // === Recalculate for already existing rows (edit mode) ===
+        document.querySelectorAll("#itemsBody tr").forEach(row => {
+            const valuePerGram = row.querySelector(".valuePerGram");
+            const netWeight = row.querySelector(".netWeight");
+            const tunch = row.querySelector(".tunch");
+            const fineWeight = row.querySelector(".fineWeight");
+            const totalValue = row.querySelector(".totalValue");
+
+            function calculate() {
+                const net = parseFloat(netWeight.value) || 0;
+                const t = parseFloat(tunch.value) || 0;
+                const vpg = parseFloat(valuePerGram.value) || 0;
+
+                const fine = (net * t) / 100;
+                fineWeight.value = fine.toFixed(2);
+                totalValue.value = (fine * vpg).toFixed(2);
+
+                calculateGrandTotal(); // 👈 update footer total also
+            }
+
+            // attach listeners for existing rows
+            [valuePerGram, netWeight, tunch].forEach(input => {
+                input.addEventListener("input", calculate);
+            });
+        });
+    </script>
+
+    <!-- branch Auto populate when select customer -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const memberSelect = document.getElementById("member_id");
+            const branchSelect = document.getElementById("branch_id");
+
+            memberSelect.addEventListener("change", function () {
+                let selectedOption = this.options[this.selectedIndex];
+                let branchId = selectedOption.getAttribute("data-branch");
+
+                if (branchId) {
+                    branchSelect.value = branchId;
+                } else {
+                    branchSelect.value = "";
+                }
+            });
+        });
+    </script>
+
+    <!-- Subtext Massage show -->
+    <script>
+    // Number to Words Convert Function (Indian Format)
+function numberToWords(num) {
+    if (num === 0) return "Zero Rupees Only";
+
+    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+        "Eighty", "Ninety"
+    ];
+
+    function inWords(num) {
+        if (num < 20) return a[num];
+        if (num < 100) return b[Math.floor(num / 10)] + " " + a[num % 10];
+        if (num < 1000) return a[Math.floor(num / 100)] + " Hundred " + inWords(num % 100);
+        if (num < 100000) return inWords(Math.floor(num / 1000)) + " Thousand " + inWords(num % 1000);
+        if (num < 10000000) return inWords(Math.floor(num / 100000)) + " Lakh " + inWords(num % 100000);
+        return inWords(Math.floor(num / 10000000)) + " Crore " + inWords(num % 10000000);
     }
+
+    return inWords(num).trim() + " Rupees Only";
 }
 
-// When page loads — calculate once
-window.addEventListener('DOMContentLoaded', calculateGrandTotal);
-
-// When any total_value changes dynamically — recalculate
-document.addEventListener('input', function(e) {
-    if (e.target && e.target.name === 'total_value[]') {
-        calculateGrandTotal();
-    }
+// Live Show Below Input
+document.getElementById("loanAmount").addEventListener("input", function () {
+    let amount = parseInt(this.value) || 0;
+    document.getElementById("amountInWords").textContent = amount > 0 
+        ? numberToWords(amount)
+        : "";
 });
 
-// Optional: if you have row add/remove buttons, call this function after each such event
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('removeRowBtn')) {
-        setTimeout(calculateGrandTotal, 100);
-    }
-});
-
-// === Recalculate for already existing rows (edit mode) ===
-document.querySelectorAll("#itemsBody tr").forEach(row => {
-    const valuePerGram = row.querySelector(".valuePerGram");
-    const netWeight = row.querySelector(".netWeight");
-    const tunch = row.querySelector(".tunch");
-    const fineWeight = row.querySelector(".fineWeight");
-    const totalValue = row.querySelector(".totalValue");
-
-    function calculate() {
-        const net = parseFloat(netWeight.value) || 0;
-        const t = parseFloat(tunch.value) || 0;
-        const vpg = parseFloat(valuePerGram.value) || 0;
-
-        const fine = (net * t) / 100;
-        fineWeight.value = fine.toFixed(2);
-        totalValue.value = (fine * vpg).toFixed(2);
-
-        calculateGrandTotal(); // 👈 update footer total also
-    }
-
-    // attach listeners for existing rows
-    [valuePerGram, netWeight, tunch].forEach(input => {
-        input.addEventListener("input", calculate);
-    });
-});
-</script>
+    </script>
 
 @endsection

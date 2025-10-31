@@ -6,10 +6,28 @@
                 <h3 class=" flex text-xl block font-semibold">GOLD LOAN APPLICATIONS</h3>
                 <a href="{{route('gold-loan.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
-
             </div>
 
-      
+      @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
+    @endif
+    
        <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
@@ -139,7 +157,7 @@
 
                     <!-- Edit Icon -->
                      <!-- Edit Icon (show only if status ≠ 2 and ≠ 3) -->
-                    @if($application->status != 2 && $application->status != 3)
+                    @if($application->status != 2)
                     <a href="{{ route('gold-loan.applications.edit', $application->id) }}" 
                     class="text-green-500 hover:text-green-700" 
                     title="Edit">

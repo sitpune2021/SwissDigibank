@@ -567,7 +567,7 @@
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
            <button type="submit"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                class="btn-primary uppercase justify-center">
             {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
         </button>
 

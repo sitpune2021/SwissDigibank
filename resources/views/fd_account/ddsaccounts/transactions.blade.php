@@ -135,27 +135,26 @@
                                 <td class="px-4 py-2">{{ $tran->remarks ?? '-' }}</td>
                                 <td class="px-4 py-2">
                                     <span
-                                        class="px-2 py-1 text-xs font-semibold text-white rounded {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
+                                        class="px-2 py-1 text-xs font-semibold  {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
                                         {{ $tran->status ?? 'Pending' }}
                                     </span>
+
                                 </td>
 
                                 <!-- Debit -->
                                 <td class="px-4 py-2 text-right">
-                                    {{ $tran->debit ? number_format($tran->debit, 2) : '' }}
+                                    {{ $tran->type === 'debit' ? number_format($tran->amount, 2) : '' }}
                                 </td>
 
                                 <!-- Credit -->
                                 <td class="px-4 py-2 text-right">
-                                    {{number_format($tran->balance_available, 2) }}
+                                    {{ $tran->type === 'credit' ? number_format($tran->amount, 2) : '' }}
                                 </td>
 
                                 <!-- Balance -->
                                 <td class="px-4 py-2 text-right">
-                                    {{ number_format($tran->balance, 2) }}
+                                    {{ number_format($tran->balance_available, 2) }}
                                 </td>
-                                {{-- <td class="px-4 py-2 text-right">{{ number_format($tran->balance, 2) }}</td> --}}
-
                                 </td>
                                 <td class="px-4 py-2 text-center">
                                     <span
@@ -166,13 +165,21 @@
 
                                 <td class="py-2 px-6">
                                     <div class="flex justify-center">
-                                        @include('partials._vertical-options', [
-                                            'id' => [$ddsAccount->id, $tran->id],
-                                            'viewRoute' => 'dds-accounts.transactions.show',
-                                            'deleteRoute' => 'dds-accounts.transactions.destroy',
-                                        ])
+                                        @if ($tran->pay_mode !== 'Saving Account' && !$tran->accounted)
+                                            @include('partials._vertical-options', [
+                                                'id' => [$ddsAccount->id, $tran->id],
+                                                // 'id' => $tran->id, // Only pass the transaction ID
+                                                'viewRoute' => 'dds-accounts.transactions.show',
+                                                'printRoute' => 'dds-accounts.transactions.printReceipt',
+                                                // 'printRoute' => 'dds-accounts.transactions.printReceipt1',
+                                                'deleteRoute' => 'dds-accounts.transactions.destroy',
+                                            ])
+                                        @else
+                                            <span class="text-muted">No Delete Option</span>
+                                        @endif
                                     </div>
                                 </td>
+
                             </tr>
                         @empty
                             <tr>

@@ -80,7 +80,7 @@ class MemberController extends Controller
                 'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
-            $banks = Bank::all(); // Or pluck('name','id') if needed
+            $banks = Bank::all();
             $sections = config('member_form');
             $member   = null;
             $route    = route('member.store');
@@ -434,8 +434,10 @@ class MemberController extends Controller
                 'states' => State::pluck('name', 'id'),
                 'branch' => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id')
+                
             ];
             $method = 'PUT';
+             $banks = Bank::all(); 
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
             $documents = KycDocument::where('member_id', $id)->get();
             $member = array_merge(
@@ -468,7 +470,7 @@ class MemberController extends Controller
                 'pan_number'         => $existingDocs['pan_number'] ?? $empty('pan_number'),
             ];
 
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents'));
+            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents','banks'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -1434,8 +1436,6 @@ class MemberController extends Controller
 
     public function printReceipt($id)
     {
-
-        // changes done B
         // Detect which table has this transaction ID
         $isMemberOtherCharge = DB::table('member_other_charges')
             ->where('id', $id)
@@ -1551,7 +1551,7 @@ class MemberController extends Controller
             'status'                  => $transaction->status ?? 'Pending',
             'type'                    => $transaction->type ?? 'Membership Fee',
             'remarks'                 => $transaction->remarks ?? '',
-            'printed_on'              => now()->format('d/m/Y H:i'),
+            'printed_on'              => now()->format('d-m-Y H:i'),
             'printed_by'              => optional(Auth::user())->name ?? 'System',
 
             // Extra fields

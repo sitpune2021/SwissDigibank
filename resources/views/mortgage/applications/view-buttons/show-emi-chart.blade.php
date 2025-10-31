@@ -23,163 +23,130 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">
-                Gold Loan Application - 00580 - EMI Chart </h1>
-            <p class="text-gray-500">
-                <a href="#" class="text-gray-500 text-sm">Gold Loan Applications </a> >
-                <a href="#" class="text-gray-500 text-sm">00591</a> >
-                <a href="#" class="text-gray-500 text-sm">EMI Chart</a>
-            </p>
+                Mortgage Loan Application - EMI Chart </h1>
         </div>
     </div>
-    <div class="overflow-x-auto box">
-        <table class="w-full  rounded-10 ">
-            <!-- Table Head -->
-            <thead>
-                <tr class="bg-secondary/5 text-black  ">
-                    <th colspan="4" class="text-center rounded-10 px-4 py-2 text-lg font-semibold">
-                        LOAN INFORMATION
-                    </th>
-                </tr>
-            </thead>
+    
+   
+<div class="container mx-auto p-6">
+    <div class="loan-info mb-6 p-4 rounded-lg shadow" style="background-color: #f9fafb;">
+    <h2 class="text-lg font-semibold uppercase border-b pb-2 mb-3" style="color:#374151;">
+       <center>Loan Information</center> 
+    </h2>
 
-            <!-- Table Body -->
-            <tbody class="divide-y divide-gray-200 ">
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-medium">Disburse Date</td>
-                    <td class="px-4 py-2">19/09/2025</td>
-                    <td class="px-4 py-2 font-medium">Loan Amount</td>
-                    <td class="px-4 py-2">₹20,000.00</td>
-                </tr>
+    <div class="info-grid">
 
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-medium">Interest Type</td>
-                    <td class="px-4 py-2"> Flat Advanced</td>
-                    <td class="px-4 py-2 font-medium"> Processing Fee</td>
-                    <td class="px-4 py-2">118.0 (Incl. 18.0 % GST)</td>
-                </tr>
+        <div class="label">Disburse Date</div>
+        <div class="value">
+            {{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d/m/Y') }}
+        </div>
 
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-medium">Tenure </td>
-                    <td class="px-4 py-2">10 MONTHS</td>
-                    <td class="px-4 py-2 font-medium">Stamp Duty Fee</td>
-                    <td class="px-4 py-2">0.0 (Incl. 18.0 % GST)</td>
-                </tr>
+        <div class="label">Loan Amount</div>
+        <div class="value">₹ {{ number_format($loanAmount, 2) }}</div>
 
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-medium">Interest Rate (Annually)</td>
-                    <td class="px-4 py-2">19.5 %</td>
-                    <td class="px-4 py-2 font-medium">Insurance Charges</td>
-                    <td class="px-4 py-2">0.0 (Incl. 18.0 % GST)</td>
-                </tr>
+        <div class="label">Processing Fee</div>
+        <div class="value">₹ {{ number_format($processingFeeInc, 2) }} (Incl. GST)</div>
 
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-medium">EMI Count</td>
-                    <td class="px-4 py-2">1</td>
-                    <td class="px-4 py-2 font-medium">EMI Payout</td>
-                    <td class="px-4 py-2">MONTHLY</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-medium">Principal As EMI</td>
-                    <td class="px-4 py-2">
-                        <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">Yes</span>
-                    </td>
-                    <td class="px-4 py-2 font-medium"></td>
-                    <td class="px-4 py-2"></td>
-                </tr>
+        <div class="label">Stamp Duty Fee</div>
+        <div class="value">₹ {{ number_format($stampDutyInc, 2) }} (Incl. GST)</div>
 
+        <div class="label">Insurance Charges</div>
+        <div class="value">₹ {{ number_format($insuranceInc, 2) }} (Incl. GST)</div>
 
-            </tbody>
-        </table>
+        <div class="label">EMI Count</div>
+        <div class="value">{{ $tenure }}</div>
+
+        <div class="label">EMI Payout</div>
+        <div class="value">{{ ucfirst($periodName) }}</div>
+
+        <div class="label">EMI Amount</div>
+        <div class="value">₹ {{ number_format(($loanAmount / $tenure), 2) }}</div>
+
     </div>
-
-
-    <div class="overflow-x-auto box  mt-5">
-        <table class="w-full divide-y divide-gray-300">
-            <thead class="">
-                <tr class="bg-secondary/5 text-black ">
-                    <th colspan="8" class="text-center rounded-10 px-4 py-2 text-lg font-semibold">
-                        EMI CHART
-                    </th>
-                </tr>
-                <tr class=" text-gray-700 border-b">
-                    <th class="py-2 px-2 text-center text-sm md:text-base">EMI NO</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">EMI DATE</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">DUE DATE</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">PRINCIPAL (A)</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">INTEREST (B)</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">CHARGES PER EMI (C)</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">EMI (A + B + C)</th>
-                    <th class="py-2 px-2 text-center text-sm md:text-base">BAL. PRINCIPAL</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-300">
-                <tr class="bg-gray-50 border-b">
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-start text-sm md:text-base"></td>
-                    <td class="py-2 px-2 text-end text-sm md:text-base">12222.0</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="py-2 px-2 text-start">1</td>
-                    <td class="py-2 px-2 text-start">19/10/2025</td>
-                    <td class="py-2 px-2 text-start">20/10/2025</td>
-                    <td class="py-2 px-2 text-end">12222.0</td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                </tr>
-                <tr class="border-b">
-                    <td class="py-2 px-2 text-start">2</td>
-                    <td class="py-2 px-2 text-start">19/11/2025</td>
-                    <td class="py-2 px-2 text-start">20/11/2025</td>
-                    <td class="py-2 px-2 text-end">12222.0</td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                </tr>
-                <tr class="border-b">
-                    <td class="py-2 px-2 text-start">3</td>
-                    <td class="py-2 px-2 text-start">19/12/2025</td>
-                    <td class="py-2 px-2 text-start">20/12/2025</td>
-                    <td class="py-2 px-2 text-end">12222.0</td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                </tr>
-                <tr class="border-b">
-                    <td class="py-2 px-2 text-start">4</td>
-                    <td class="py-2 px-2 text-start">19/12/2025</td>
-                    <td class="py-2 px-2 text-start">20/12/2025</td>
-                    <td class="py-2 px-2 text-end">12222.0</td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                    <td class="py-2 px-2 text-start"></td>
-                </tr>
-
-                <tr class="bg-secondary/5 text-black   font-semibold">
-                    <th colspan="4" class="py-2 px-2  text-start">TOTAL</th>
-                    <th class="py-2 px-2 text-end">0.0</th>
-                    <th class="py-2 px-2 text-end">0.0</th>
-                    <th class="py-2 px-2 text-end">0.0</th>
-                    <th class="py-2 px-2"></th>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-
 </div>
 
+<style>
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px 16px;
+}
+
+.label {
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.value {
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Mobile responsive 2 columns */
+@media (max-width: 640px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
 
 
+    <div class="mt-6">
+        <h3 class="text-lg font-semibold"><center>EMI Chart</center></h3>
+        <div class="overflow-x-auto mt-3">
+            <table class="min-w-full border-collapse border">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border px-2 py-1">EMI NO</th>
+                        <th class="border px-2 py-1">EMI DATE</th>
+                        <th class="border px-2 py-1">DUE DATE</th>
+                        <th class="border px-2 py-1">PRINCIPAL (A)</th>
+                        <th class="border px-2 py-1">INTEREST (B)</th>
+                        <th class="border px-2 py-1">CHARGES PER EMI (C)</th>
+                        <th class="border px-2 py-1">EMI (A + B + C)</th>
+                        <th class="border px-2 py-1">BAL. PRINCIPAL</th>
+                    </tr>
+                </thead>
 
+                <!-- Ye New Row Yaha Add Karni Thi -->
+                <tbody>
+                    <tr class="bg-blue-50 font-semibold">
+                        <td colspan="7" class="border px-2 py-2 text-right">Starting Balance</td>
+                        <td class="border px-2 py-2 text-right">₹ {{ number_format($loanAmount, 2) }}</td>
+                    </tr>
 
+                    @foreach($schedule as $row)
+                    <tr>
+                        <td class="border px-2 py-1 text-center">{{ $row['no'] }}</td>
+                        <td class="border px-2 py-1 text-center">{{ $row['emi_date'] }}</td>
+                        <td class="border px-2 py-1 text-center">{{ $row['due_date'] }}</td>
+                        <td class="border px-2 py-1 text-right">₹ {{ $row['principal'] }}</td>
+                        <td class="border px-2 py-1 text-right">₹ {{ $row['interest'] }}</td>
+                        <td class="border px-2 py-1 text-right">₹ {{ $row['charges_per_emi'] }}</td>
+                        <td class="border px-2 py-1 text-right">₹ {{ $row['emi'] }}</td>
+                        <td class="border px-2 py-1 text-right">₹ {{ $row['bal_principal'] }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+
+                <tfoot class="font-semibold" style="color: blueviolet;">
+                    <tr>
+                        <td colspan="3" class="border px-2 py-1 text-right">TOTAL</td>
+                        <td class="border px-2 py-1 text-right">{{ number_format($totalPrincipal,2) }}</td>
+                        <td class="border px-2 py-1 text-right">{{ number_format($totalInterest,2) }}</td>
+                        <td class="border px-2 py-1 text-right">{{ number_format($totalCharges,2) }}</td>
+                        <td class="border px-2 py-1 text-right">{{ number_format($totalEmi,2) }}</td>
+                        <td class="border px-2 py-1 text-right"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- <div class="mt-6 flex gap-3">
+        <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded">Print</button>
+        <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-200 rounded">Back</a>
+    </div> -->
+</div>
 @endsection
+
