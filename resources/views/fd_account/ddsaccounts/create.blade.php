@@ -117,7 +117,7 @@
                         @enderror
                     </div>
 
-                    <div class="col-span-2 md:col-span-1">
+                    {{-- <div class="col-span-2 md:col-span-1">
                         <label for="branch_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Branch <span class="text-red-500">*</span>
                         </label>
@@ -133,7 +133,26 @@
                         @error('branch_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+                    </div> --}}
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="branch_id" class="md:text-lg font-medium block mb-4 uppercase">
+                            Branch <span class="text-red-500">*</span>
+                        </label>
+                        <select id="branch_id" name="branch_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Branch</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                    {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                    {{ $branch->branch_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('branch_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
+
                     <div class="col-span-2 md:col-span-1">
                         <label for="advisor_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Advisor / Staff
@@ -456,7 +475,7 @@
                                 @foreach ($savingAccounts as $account)
                                     <option value="{{ $account->id }}">
                                         {{ $account->account_no }}
-                                        {{ $account->members->full_name ?? ''  }}
+                                        {{ $account->members->full_name ?? '' }}
                                     </option>
                                 @endforeach
                             </select>
