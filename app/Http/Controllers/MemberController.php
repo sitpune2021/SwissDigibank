@@ -1436,8 +1436,6 @@ class MemberController extends Controller
 
     public function printReceipt($id)
     {
-
-        // changes done B
         // Detect which table has this transaction ID
         $isMemberOtherCharge = DB::table('member_other_charges')
             ->where('id', $id)
@@ -1553,7 +1551,7 @@ class MemberController extends Controller
             'status'                  => $transaction->status ?? 'Pending',
             'type'                    => $transaction->type ?? 'Membership Fee',
             'remarks'                 => $transaction->remarks ?? '',
-            'printed_on'              => now()->format('d/m/Y H:i'),
+            'printed_on'              => now()->format('d-m-Y H:i'),
             'printed_by'              => optional(Auth::user())->name ?? 'System',
 
             // Extra fields

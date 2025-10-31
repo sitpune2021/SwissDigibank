@@ -71,26 +71,22 @@ class AuthController extends Controller
             'otp' => $otp,
         ]);
     }
+   
     public function verifyOtp(Request $request)
     {
-        // Validate input: username (email or mobile) and otp
         $request->validate([
-            'username' => 'required|string',  // This will accept either email or mobile
-            'otp' => 'required|digits:6', // OTP should be exactly 6 digits
+            'username' => 'required|string',  
+            'otp' => 'required|digits:6', 
         ]);
 
-        // Initialize the user variable
         $user = null;
         $loginType = '';
 
-        // Check if the provided username is a valid email or mobile
         if (filter_var($request->username, FILTER_VALIDATE_EMAIL)) {
-            // Handle login via email
             $user = User::where('email', $request->username)->first();
             $loginType = 'email';
         } else {
-            // Handle login via mobile number (normalize mobile number)
-            $normalizedMobile = preg_replace('/[^\d\+]/', '', $request->username);  // Strip non-numeric characters
+            $normalizedMobile = preg_replace('/[^\d\+]/', '', $request->username);  
             if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
                 return response()->json([
                     'status' => false,
@@ -101,7 +97,6 @@ class AuthController extends Controller
             $loginType = 'mobile';
         }
 
-        // If user not found, return error
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -109,7 +104,6 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // Check if the OTP entered matches the stored OTP
         if ($user->otp !== $request->otp) {
             return response()->json([
                 'status' => false,
@@ -125,23 +119,20 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // OTP is valid, clear the OTP fields to prevent reuse
         $user->otp = null;
         $user->otp_expires_at = null;
         $user->save();
 
-        // Generate a new API token for the user (assuming using Laravel Sanctum or Passport)
-        $token = $user->createToken('api-token')->plainTextToken;
+        $isMpinSet = !empty($user->mpin);  
 
-        // Return success response with token and user details, including username
         return response()->json([
             'status' => true,
-            'message' => 'Login successful!',
-            'token' => $token,  // API token to authenticate the user
-            'username' => $loginType === 'email' ? $user->email : $user->mobile,  // Return the correct username (email or mobile)
+            'message' => 'mPIN verified successfully!',
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
+            'isMpinSet' => $isMpinSet,
         ]);
     }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

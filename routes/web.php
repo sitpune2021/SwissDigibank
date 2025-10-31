@@ -155,8 +155,12 @@ Route::middleware('auth.user')->group(function () {
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
+        // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
+        Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
+            ->name('dds-accounts.transactions.printReceipt');
+        // Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt1'])
+        //     ->name('dds-accounts.transactions.printReceipt1');
     });
-
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
     Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);

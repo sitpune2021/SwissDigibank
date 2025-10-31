@@ -165,11 +165,13 @@
 
                                 <td class="py-2 px-6">
                                     <div class="flex justify-center">
-                                        {{-- {{ dd($tran->pay_mode, $tran->accounted) }} <!-- Debugging --> --}}
                                         @if ($tran->pay_mode !== 'Saving Account' && !$tran->accounted)
                                             @include('partials._vertical-options', [
                                                 'id' => [$ddsAccount->id, $tran->id],
+                                                // 'id' => $tran->id, // Only pass the transaction ID
                                                 'viewRoute' => 'dds-accounts.transactions.show',
+                                                'printRoute' => 'dds-accounts.transactions.printReceipt',
+                                                // 'printRoute' => 'dds-accounts.transactions.printReceipt1',
                                                 'deleteRoute' => 'dds-accounts.transactions.destroy',
                                             ])
                                         @else

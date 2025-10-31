@@ -89,13 +89,12 @@ class ApproveController extends Controller
 
     public function updateAccountStatus(Request $request, $id)
     {
-
         try {
             //  Validate the input
             $validated = $request->validate([
                 'transaction_status' => 'required|in:0,1,2',
                 'remarks' => 'nullable|string|max:255',
-                'source_table' => 'required|in:accounts,fd_accounts,misaccounts',
+                'source_table' => 'required|in:accounts,fd_accounts,misaccounts,rd_accounts',
             ]);
 
             if ($validated['source_table'] === 'accounts') {
@@ -103,20 +102,30 @@ class ApproveController extends Controller
                 $account = Account::findOrFail($id);
                 $account->approve_status = $validated['transaction_status'];
                 $account->remarks = $validated['remarks'];
+
                 $account->save();
 
                 try {
 
-                    $member = \App\Models\Member::find($account->member_id);
-                    // dd($account->account_no);
-                    $dlttemplateid = 1707172181386332784;
-                    $mobile = $member->member_info_mobile_no;
+                    $Account = Account::with('members')->find($account->id);
 
-                    $account = $account->account_no;
+                    $mobile = $Account->members->member_info_mobile_no;
 
-                    $message = "Dear Customer, congratulations! your saving a/c  $account is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+                    $accountNo = $Account->account_no;
 
-                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                    if ($account->approve_status == "1") {
+                        $dlttemplateid = 1707172181386332784;
+                        $message = "Dear Customer, congratulations! your saving a/c  $accountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+
+                        \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                        return redirect()->back()->with('success', 'Account approved successfully.');
+                    } else {
+                        $dlttemplateid = 1707172181389479065;
+                        $message = "Dear Customer, your saving a/c $accountNo is disapproved. Please contact branch for details. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+
+                        \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                        return redirect()->back()->with('error', 'Account disapproved.');
+                    }
                 } catch (\Exception $e) {
                     Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
                 }
@@ -139,8 +148,7 @@ class ApproveController extends Controller
 
                 try {
 
-                    $fdaccount = \App\Models\fdAccount::find($fdAccount->id);
-                    // dd($account->account_no);
+                    $fdaccount = \App\Models\fdAccount::with('member')->find($fdAccount->id);
 
                     $mobile = $fdaccount->member->member_info_mobile_no;
 
@@ -158,6 +166,12 @@ class ApproveController extends Controller
                     }
 
                     \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
+                    if ($fdaccount->status == 1) {
+                        return redirect()->back()->with('success', 'Account approved successfully.');
+                    } else {
+                        return redirect()->back()->with('error', 'Account disapproved.');
+                    }
                 } catch (\Exception $e) {
                     Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
                 }
@@ -178,14 +192,25 @@ class ApproveController extends Controller
                 $misAccount->save();
 
                 try {
-                    $member = \App\Models\Member::find($misAccount->member_id);
-                    $dlttemplateid = 1707172181386332784;
-                    $mobile = $member->member_info_mobile_no;
+                    $mis_account = \App\Models\MisAccount::with('member')->find($misAccount->member_id);
+
+                    $mobile = $mis_account->member->member_info_mobile_no;
                     $misAccountNo = $misAccount->mis_account_no;
 
-                    $message = "Dear Customer, congratulations! Your MIS A/c $misAccountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+                    if ($misAccount->status == 1) {
+                   
+                        $dlttemplateid = 1707172234273006430;
+                        $message = "Congratulations! your MIS no $misAccountNo is approved. SBC GLOBAL";
 
-                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                        \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                        return redirect()->back()->with('success', 'Account approved successfully.');
+                    } else {
+                        $dlttemplateid = 1707172234274327934;
+                        $message = "Dear Customer, your MIS no $misAccountNo is disapproved. SBC GLOBAL";
+
+                        \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                        return redirect()->back()->with('error', 'Account disapproved.');
+                    }
                 } catch (\Exception $e) {
                     Log::error('Error while sending SMS for MIS Account', ['error' => $e->getMessage()]);
                 }
@@ -197,13 +222,43 @@ class ApproveController extends Controller
                     'remarks' => $validated['remarks'],
                     'updated_by' => Auth::id(),
                 ]);
-            }
+            } elseif ($validated['source_table'] === 'rd_accounts') {
+                // 🔹 RD Accounts
+                $rdAccount = \App\Models\RdAccount::findOrFail($id);
+                // $rdAccount->approve_status = $validated['transaction_status'];
+                $status = $validated['transaction_status'] == 1 ? 'Approved' : 'Disapproved';
+                $rdAccount->approve_status = $status;
 
-            // return redirect()->back()->with('success', 'Account status updated successfully.');
-            if ($fdaccount->status == 1) {
-                return redirect()->back()->with('success', 'Account approved successfully.');
-            } else {
-                return redirect()->back()->with('error', 'Account disapproved.');
+                $rdAccount->remarks = $validated['remarks'];
+
+                $rdAccount->save();
+
+                try {
+                    $member = \App\Models\Member::find($rdAccount->member_id);
+                    $dlttemplateid = 1707172234135070517;
+                    $mobile = $member->member_info_mobile_no;
+                    $rdAccountNo = $rdAccount->rd_no;
+
+                    $message = "Congratulations! your RD no. $rdAccountNo is approved. SBC GLOBAL";
+
+                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
+                    if ($rdAccount->approve_status == 'Approved') {
+                        return redirect()->back()->with('success', 'Account approved successfully.');
+                    } else {
+                        return redirect()->back()->with('error', 'Account disapproved.');
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error while sending SMS for RD Account', ['error' => $e->getMessage()]);
+                }
+
+                Log::info('RD Account status updated', [
+                    'table' => 'rd_accounts',
+                    'id' => $id,
+                    'new_status' => $validated['transaction_status'],
+                    'remarks' => $validated['remarks'],
+                    'updated_by' => Auth::id(),
+                ]);
             }
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -322,6 +377,36 @@ class ApproveController extends Controller
     INNER JOIN branches ON misaccounts.branch_id = branches.id
     INNER JOIN members ON misaccounts.member_id = members.id
     WHERE misaccounts.status = '0'
+
+    UNION ALL
+        SELECT 
+        rd_accounts.id,
+        rd_accounts.rd_no AS account_no,
+        'RD' AS account_type,
+        NULL AS firm_name,
+        rd_accounts.rd_amount AS amount_deposit,
+        NULL AS payment_mode,
+        NULL AS account_holder_type,
+        NULL AS mode_of_operation,
+        rd_accounts.approve_status AS approve_status,
+        rd_accounts.open_date,
+        rd_accounts.branch_id,
+        rd_accounts.member_id,
+        JSON_OBJECT(
+            'id', members.id,
+            'member_no', members.member_no,
+            'member_info_first_name', members.member_info_first_name,
+            'member_info_last_name', members.member_info_last_name
+        ) AS members,
+        JSON_OBJECT(
+            'branch_name', branches.branch_name
+        ) AS branch,
+        'rd_accounts' AS source_table,
+        rd_accounts.created_at
+    FROM rd_accounts
+    INNER JOIN branches ON rd_accounts.branch_id = branches.id
+    INNER JOIN members ON rd_accounts.member_id = members.id
+    WHERE rd_accounts.approve_status = 'Pending'
         ";
 
             $query = DB::table(DB::raw("({$sql}) as combined"))
