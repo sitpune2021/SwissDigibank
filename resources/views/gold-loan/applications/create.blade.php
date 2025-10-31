@@ -53,7 +53,9 @@
                 <input type="hidden" name="approved_loan_amount" id="approved_loan_amount">
 
                 <div class=" flex flex-col lg:flex-row  gap-2">
+                    
                     <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10  lg:col-span-12">
+                        
                         <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                            <div class="col-span-2 md:col-span-1">
@@ -65,7 +67,6 @@
                                 <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                     value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                             </div>
-
 
                             <div class="col-span-2 md:col-span-1">
                                 <label for="member_id" class="md:text-lg font-medium block mb-4">
@@ -148,9 +149,6 @@
                                     placeholder="Enter Scheme Code">
                                     <option value="">select Advisor/ Staff </option>
                                 </select>
-                                @error('branch_id')
-                                    <p class="text-error text-sm mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
 
                             <div class="col-span-2 md:col-span-1">
@@ -278,11 +276,13 @@
                                         <label class="flex items-center gap-2 space-x-2 p-1">
                                             <input type="radio" name="tenure_type" value="months" {{ old('tenure_type',
                                                 $application->tenure_type ?? '') == 'months' ?
-                                            'checked' : '' }} >
-                                            
+                                            'checked' : '' }} >                                           
                                             <span class="text-gray-70 capitalize">MONTHS</span>
                                         </label>
                                     </div>
+                                     @error('tenure_type')
+                                        <p class="text-error text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -293,7 +293,6 @@
                                 </label>
                                 <input type="number" id="tenure_value" name="tenure_value" value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-
                                 @error('tenure_value')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -343,6 +342,7 @@
                                 <input type="number" id="loanAmount" name="loan_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
+                                    <p id="amountInWords" class="text-red-600 text-sm mt-1"></p>
                                 @error('loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -385,6 +385,7 @@
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
                         </div>
 
                         <!-- Credit Score Details -->
@@ -420,7 +421,7 @@
                                             @foreach($creditScores as $score)
                                                 <tr class="nested-fields border-b">
                                                     <td class="px-2 py-2" style="width:230px;">
-                                                        <select name="cibil_type[]" required
+                                                        <select name="cibil_type[]"
                                                             class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                                                             <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
                                                             <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
@@ -432,25 +433,14 @@
                                                     <td class="px-2 py-2">
                                                         <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
                                                             class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"
-                                                            value="{{ $score->cibil_score }}" required/>
+                                                            value="{{ $score->cibil_score }}">
                                                     </td>
 
                                                     <td class="px-2 py-2 relative">
                                                         <input type="text" name="report_date[]" 
                                                             value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}"
-                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"
-                                                            required/>
+                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                                                     </td>
-
-                                                    <!-- <td class="px-2 py-2">
-                                                        @if($score->report_file)
-                                                            <a href="{{ asset('storage/'.$score->report_file) }}" target="_blank" class="text-blue-600 underline">
-                                                                View File
-                                                            </a><br>
-                                                        @endif
-                                                        <input type="file" name="report_file[]" 
-                                                            class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
-                                                    </td> -->
 
                                                     <td class="px-2 py-2 text-center">
                                                         @if(!empty($score->report_file))
@@ -671,13 +661,13 @@
                                         </label>
                                         <div class="flex gap-4 mt-2">
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="yes" {{ old('credited',
-                                                    $application->credited ?? '') == 'yes' ? 'checked' : '' }} >
+                                                <input type="radio" name="credited" value="1" {{ old('credited',
+                                                    $application->credited ?? '') == '1' ? 'checked' : '' }} >
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="no" {{ old('credited',
-                                                    $application->credited ?? '') == 'no' ? 'checked' : '' }} >
+                                                <input type="radio" name="credited" value="0" {{ old('credited',
+                                                    $application->credited ?? '') == '0' ? 'checked' : '' }} >
                                                 <span>No</span>
                                             </label>
                                         </div>
@@ -692,6 +682,7 @@
 
                             </div>
                         </div>
+
                     </div>
 
                     <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
@@ -784,9 +775,10 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
-
+                <!-- Ornaments -->
                 <div class="w-full overflow-x-auto mt-5">
                     <table class="w-full rounded-10 whitespace-nowrap text-sm">
                         <thead class="bg-gray-100">
@@ -1149,7 +1141,14 @@ loanAmountInput.addEventListener("input", function () {
     const form = document.getElementById("loanForm");
 
     //  Step 2: Calculate button click listener
-    document.getElementById("calculateBtn").addEventListener("click", function () {
+    
+    document.getElementById("calculateBtn").addEventListener("click", function (e) {
+
+    // ⚙️ If not valid yet, prevent submission
+    if (!isValidOrnament) {
+        e.preventDefault();
+    }
+
         let rows = document.querySelectorAll("#itemsBody tr");
         let totalSecurity = 0;
 
@@ -1219,6 +1218,13 @@ if (totalSecurity < netLoan) {
 
 // ✅ Agar yahan pohonch gaye means no error
 isValidOrnament = true;
+
+// ✅ Change button back to Submit if now valid
+const btn = document.getElementById("calculateBtn");
+btn.type = "submit";
+btn.textContent = "Submit";
+btn.disabled = false;
+
 
 
 // ✅ Approved Loan Logic
@@ -1601,6 +1607,42 @@ document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
                 }
             });
         });
+    </script>
+
+    <!-- Subtext Massage show -->
+    <script>
+    // Number to Words Convert Function (Indian Format)
+function numberToWords(num) {
+    if (num === 0) return "Zero Rupees Only";
+
+    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+        "Eighty", "Ninety"
+    ];
+
+    function inWords(num) {
+        if (num < 20) return a[num];
+        if (num < 100) return b[Math.floor(num / 10)] + " " + a[num % 10];
+        if (num < 1000) return a[Math.floor(num / 100)] + " Hundred " + inWords(num % 100);
+        if (num < 100000) return inWords(Math.floor(num / 1000)) + " Thousand " + inWords(num % 1000);
+        if (num < 10000000) return inWords(Math.floor(num / 100000)) + " Lakh " + inWords(num % 100000);
+        return inWords(Math.floor(num / 10000000)) + " Crore " + inWords(num % 10000000);
+    }
+
+    return inWords(num).trim() + " Rupees Only";
+}
+
+// Live Show Below Input
+document.getElementById("loanAmount").addEventListener("input", function () {
+    let amount = parseInt(this.value) || 0;
+    document.getElementById("amountInWords").textContent = amount > 0 
+        ? numberToWords(amount)
+        : "";
+});
+
     </script>
 
 @endsection

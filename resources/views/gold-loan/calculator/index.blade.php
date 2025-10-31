@@ -126,6 +126,7 @@
                 <label><input type="radio" name="interest_type" value="reducing_emi"> Reducing EMI</label>
                 <label><input type="radio" name="interest_type" value="flat_emi"> Flat EMI</label>
                 <label><input type="radio" name="interest_type" value="flat_advanced"> Flat Advanced</label>
+                <label><input type="radio" name="interest_type" value="flat_advanced"> No EMI</label>
               </div>
             </div>
 
@@ -266,7 +267,7 @@
           <!-- Requested Loan Amount -->
           <div class="w-full mt-4">
             <label class="block font-medium mb-2">Requested Loan Amount (₹) <span class="text-red-500">*</span></label>
-            <input type="number" name="loan_amount" id="request_loan_amount" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter loan amount">
+            <input type="number" name="loan_amount" id="request_loan_amount" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter loan amount" required>
             <x-number-to-word for="request_loan_amount" />
           </div>
 
@@ -446,6 +447,17 @@
     });
 
 });
+</script>
+
+<script>
+  // <!-- collapsed logic + - button-->
+        function toggleSection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = button.querySelector('.toggle-icon');
+ 
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
 </script>
 
 

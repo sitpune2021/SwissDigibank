@@ -732,8 +732,8 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function ($item) {
-                $item->model_type = 'Gold loan';
+            ->each(function($item){
+                $item->model_type = 'loan';
             });
 
         // Mortgage Loan Applications (approved)
@@ -741,8 +741,8 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function ($item) {
-                $item->model_type = 'Mortgage Loan';
+            ->each(function($item){
+                $item->model_type = 'mortgage';
             });
 
         // Loan Against Applications (approved)

@@ -537,10 +537,17 @@
 
         {{-- Put this ABOVE your <div id="no-emi"> --}}
         @php
-            if(isset($scheme) && $scheme->gold_loan_setting == 'no_emi') {
-                $noEmiData = $scheme->no_emi_slabs ?? [];
+            if(isset($scheme) && $scheme->gold_loan_setting == 'no_emi') 
+            {
+                //$noEmiData = $scheme->no_emi_slabs ?? [];
+                $noEmiData = is_array($scheme->no_emi_slabs)
+                ? $scheme->no_emi_slabs
+                : (json_decode($scheme->no_emi_slabs, true) ?? []);
+
                 $showNoEmi = true;
-            } else {
+            } 
+            else 
+            {
                 $noEmiData = array_fill(0, 12, [
                     'from_date' => '',
                     'to_date' => '',

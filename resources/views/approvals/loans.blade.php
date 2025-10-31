@@ -138,6 +138,8 @@
                                 <div class="flex items-center gap-1">                   
                                    @if($application->model_type == 'daily_weekly')
                                    {{ $application->loan_amount }}
+                                   @elseif($application->model_type == 'mortgage')
+                                   {{ $application->net_loan_amount }}
                                     @else
                                     {{ $application->max_loan_amount }}
                                     @endif
