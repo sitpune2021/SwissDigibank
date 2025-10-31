@@ -28,7 +28,7 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    LOAN AGAINST DEPOSITE SCHEME
+                    Mortgage Loan Scheme
                 </p>
             </div>
         </div>
@@ -38,7 +38,7 @@
         <div class="box col-span-2 md:col-span-1">
             <!-- Edit Button -->
             <div class="flex justify-end mb-4">
-                <a href="{{ route('loanagainst.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
+                <a href="{{ route('mortgage.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
                     <i class="las la-pencil-alt"></i>
                 </a>
 
@@ -159,7 +159,7 @@
         <div class="box shadow-md rounded-10">
             <!-- Header -->
             <div class="flex items-center justify-between px-4 py-3 dark:bg-bg3 bg-secondary/5 rounded-10 ">
-                <h3 class="text-lg font-semibold text-gray-800">LOAN AGAINST DEPOSITE SETTING AUDIT TRAIL</h3>
+                <h3 class="text-lg font-semibold text-gray-800">MORTGAGE LOAN SETTING AUDIT TRAIL</h3>
                 <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'auditTrail')">
                     <span class="toggle-icon text-lg font-bold">−</span>
                 </button>

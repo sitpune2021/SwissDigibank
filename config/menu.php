@@ -159,6 +159,19 @@ return [
         ],
     ],
     [
+        'title' => 'PERSONAL LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'personal.schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'personal.calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'personal.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'personal.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'personal.account.index'],
+        ],
+    ],  
+    [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',
