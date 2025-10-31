@@ -96,23 +96,44 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">CC / OD LIMIT Application - {{ $application->id }} </h1>
+            <h1 class="text-2xl uppercase font-semibold">Mortgage Loan Application </h1>
         </div>
     </div>
 
     <div class="flex flex-wrap gap-3">
-        @if($application->status == 0 )
+
+        <a href="{{ route('mortgage.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
+            Show EMI Chart
+        </a>  
+        @if($application->status != 2) 
+        <a href="{{ route('mortgage.applications.view-buttons.col_process_fee', $application->id) }}"
+            class="btn-warning uppercase px-2 py-2 rounded-10">
+            Collect Processing Fee
+            </a>
+        @endif
+        @if($application->status != 3 && $application->status != 2) 
         <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             SUBMIT FOR APPROVAL
         </a>
         @endif
-        @if($application->status == 1 )
-         <a href="{{ route('cc_od.applications.view-buttons.col_process_fee', $application->id) }}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-            Collect Processing Fee
+
+        @if($application->status != 0 && $application->status != 3 && $application->status != 2)
+        <a href="#" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+            DISBURSE SETTINGS
+        </a>
+
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Fidypay )
+        </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Rocketpay )
+        </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Rocketpay UPI )
         </a>
         @endif
-   
-    @if($application->status != 0 )
+
+    @if($application->status != 0 && $application->status != 3)
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
@@ -165,8 +186,8 @@
             </div>
         </div>
     @endif
-    </div>
 
+    </div>
 
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
@@ -175,11 +196,12 @@
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
                      @if($application->status != 2 )
-                   <a href="{{ route('cc_od.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                   <a href="{{ route('mortgage.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     @endif
                 </div>
+
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
@@ -190,7 +212,7 @@
                                 {{ $application->member->member_no }} - {{ $application->member->member_info_first_name }}
                                 </a>
                             </td>
-                        </tr>
+                        </tr>                  
 
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application No.</td>
@@ -201,16 +223,16 @@
                             <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">CC Limit Scheme</td>
+                            <td class="font-semibold px-4 py-2">Loan Scheme</td>
                            <td class="text-start !py-5 px-6">
                                 {{ $application->scheme->scheme_name ?? 'N/A' }}
                             </td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">CC Limit Approved</td>
-                            <td class="px-4 py-2">₹ {{ $application->approved_loan_amount }}</td>
+                            <td class="font-semibold px-4 py-2">Amount Approved</td>
+                            <td class="px-4 py-2">{{ $application->approved_loan_amount }}</td>
                         </tr>
-                        <tr>
+                         <tr>
                             <td class="font-semibold px-4 py-2">Status</td>
                             <td class="px-4 py-2">
                                 @php
@@ -242,14 +264,17 @@
                 </table>
             </div>
 
-
             <!--Cibil Info-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">Cibil Info</h3>
                     <div class=" flex gap-3">
-                       
+                        <a href="{{route('gold-loan.applications.upload-cibil-score')}}"
+                            class="p-2 btn-primary">
+                            <i class="las la-upload"></i>
+
+                        </a>
                         <!-- Modal Background (hidden by default) -->
                         <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
@@ -277,59 +302,17 @@
 
 
                 <!-- Body -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-300 text-sm text-left">
-                        <thead class="bg-gray-100 text-gray-700">
-                            <tr>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
-                                <th class="px-4 py-2 font-semibold border">Report Date</th>
-                                <th class="px-4 py-2 font-semibold border">View Report</th>
-                            </tr>
-                        </thead>
+                <div class="p-4 overflow-x-auto" id="cibilInfo">
+                    <table class="w-full text-sm text-left">
                         <tbody class="divide-y divide-gray-200">
-                        @if($application->creditScores && $application->creditScores->isNotEmpty())
-                            @foreach($application->creditScores as $score)
-                                @if($score)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">
-                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-2 border">
-                                            @if(!empty($score->report_file_path))
-                                                <!-- <a href="javascript:void(0);" 
-                                                onclick="showImage('{{ asset($score->report_file_path) }}')" 
-                                                class="text-blue-600 hover:underline">View Report</a> -->
-                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
-                                            
-                                            @else
-                                                <span class="text-gray-500">No File Available</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endif
-                            @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
 
-                        <!-- Modal (Reuse same from earlier) -->
-                        <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                            <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl">
-                                <img id="modalImage" src="" class="max-h-[80vh] mx-auto rounded-lg" alt="CIBIL Report">
-                                <div class="text-center mt-3">
-                                    <button onclick="closeImage()" class="bg-red-500 text-white px-4 py-2 rounded">Close</button>
-                                </div>
-                            </div>
-                        </div>
-
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/3">No Cibil Data Found</td>
+                                <td class="px-4 py-2"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
 
@@ -364,7 +347,11 @@
                     <h3 class="text-lg font-semibold text-black  capitalize">
                         Documents
                     </h3>
-                    <div class="">                     
+                    <div class="">
+                        <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
+                            <i class="las la-upload y"></i>
+                        </a>
+
                         <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Documents')">
                             <span class="toggle-icon text-lg font-bold">−</span>
                         </button>
@@ -377,11 +364,10 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
         <!-- Right: Settings -->
         <div class=" w-full ">
+
 
             <div class="flex flex-row gap-4 p-3 dark:bg-bg3  mt-4 rounded-10">
                 <div class="w-full bg-white dark:bg-bg3 p-4 rounded-10 shadow-md border border-gray-200">
@@ -391,23 +377,32 @@
                             CIBIL SCORE
                         </h3>
                     </div>
+
                     <div
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
-                            <!-- <button type="button" class="btn-primary px-2 py-1 rounded-10">
-                                <i class="las la-upload y"></i>
-                                <span>UPLOAD</span>
-                            </button> -->
-                            {{ $score->cibil_score ?? 'N/A' }}
+                            @if($application->creditScores->isNotEmpty())
+                                @foreach($application->creditScores as $score)
+                                    <div class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
+                                        <label class="cursor-pointer">
+                                            {{ $score->cibil_score ?? 'N/A' }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-center text-gray-500 mt-3">No CIBIL score available.</div>
+                            @endif
                         </label>
                     </div>
                 </div>
                 <div class="w-full bg-white dark:bg-bg3 p-4 rounded-10 shadow-md border border-gray-200">
                     <div class="flex justify-center gap-2 border-b border-gray-200 px-4 py-3 bg-gray-50 rounded-t-2xl">
+
                         <h3 class="font-semibold  text-center sm:text-lg">
                             PROCESSING FEE
                         </h3>
                     </div>
+
                     <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold ">
                         <label class="cursor-pointer">
                             <h3>0.0</h3>
@@ -449,80 +444,89 @@
 
             </div>
 
-            <!-- CC Limit Scheme Info -->
+            <!-- Gold Loan Scheme Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                       CC Limit Scheme Info
+                        Mortgage Loan Scheme Info
                     </h3>
                     <div class="">
+
+
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanSchemeInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
                         </button>
                     </div>
                 </div>
-
                 <!-- Body -->
                 <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $application->scheme->scheme_name ?? '-' }}
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->scheme_name ?? '-' }}
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">Scheme Code</td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $application->scheme->scheme_code ?? '-' }}
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">Maximum CC Limit</td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2">Scheme Code</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->scheme_code ?? '-' }}
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Interest Payout Type</td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $application->scheme->gold_loan_setting ?? '-' }}
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2">Maximum Loan Amount</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Interest Rate</td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-semibold px-4 py-2">Maximum Loan Limit</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->max_loan_limit ?? 0 }} %
+        </td>
+    </tr>
 
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Insurance Charges</td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ {{ $application->scheme->insurance_fee ?? 0 }}
-                                </td>
-                            </tr>
+    <tr class="border-b">
+        <td class="font-bold px-4 py-2">Interest Type</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->interest_type ?? '-' }}
+        </td>
+    </tr>
 
-                        </tbody>
+    <tr class="border-b">
+        <td class="font-bold px-4 py-2">Interest Rate</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            {{ $application->scheme->annual_interest_rate ?? 0 }} %
+        </td>
+    </tr>
+
+    <tr class="border-b">
+        <td class="font-bold px-4 py-2">Processing Fee</td>
+        <td class="px-4 py-2 text-right md:text-left">
+            ₹ {{ $application->scheme->processing_fee ?? 0 }}
+        </td>
+    </tr>
+
+</tbody>
+
                     </table>
                 </div>
-
             </div>
 
 
-            <!--CC Limit Application Info-->
+            <!--Gold Loan Application Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        CC Limit Application Info
+                        Mortgage Application Info
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"
@@ -533,7 +537,7 @@
                 </div>
                 <!-- Body -->
                 <div class="overflow-x-auto mt-5 " id="goldLoanAppInfo">
-                   <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
+                    <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
@@ -618,6 +622,10 @@
 
 
 
+
+
+
+
     <script>
         function toggleDropdown(id) {
             document.getElementById(id).classList.toggle("hidden");
@@ -632,6 +640,10 @@
         });
     </script>
 
+
+
+
+
     <script>
         // <!-- collapsed logic + - button-->
 
@@ -644,67 +656,4 @@
         }
     </script>
 
-
-<!-- ===================== IMAGE MODAL ===================== -->
-<div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl">
-        <img id="modalImage" src="" class="max-h-[80vh] mx-auto rounded-lg" alt="CIBIL Report">
-        <div class="text-center mt-3">
-            <button onclick="closeImage()" class="bg-red-500 text-white px-4 py-2 rounded">Close</button>
-        </div>
-    </div>
-</div>
-
-<!-- ===================== TOGGLE SECTION & MODAL SCRIPT ===================== -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-
-    // Toggle Section + / - button logic
-    window.toggleSection = function(button, sectionId) {
-        const section = document.getElementById(sectionId);
-        const icon = button.querySelector('.toggle-icon');
-        section.classList.toggle('hidden');
-        icon.textContent = section.classList.contains('hidden') ? '+' : '−';
-    };
-
-    // Show image in modal
-    window.showImage = function(src) {
-        if (!src || src.trim() === "") {
-            alert("No file found to display.");
-            return;
-        }
-        const modal = document.getElementById('imageModal');
-        const image = document.getElementById('modalImage');
-        image.src = src;
-        modal.classList.remove('hidden');
-    };
-
-    // Close image modal
-    window.closeImage = function() {
-        document.getElementById('imageModal').classList.add('hidden');
-    };
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    window.showImage = function(src) {
-        if (!src || src.trim() === "") {
-            alert("No file found to display.");
-            return;
-        }
-        const modal = document.getElementById('imageModal');
-        const image = document.getElementById('modalImage');
-        image.src = src;
-        modal.classList.remove('hidden');
-    };
-
-    window.closeImage = function() {
-        document.getElementById('imageModal').classList.add('hidden');
-    };
-});
-</script>
-
-@endsection
-
-   
+    @endsection

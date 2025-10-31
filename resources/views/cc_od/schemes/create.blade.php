@@ -223,7 +223,7 @@
 
                     <select id="gold_loan_setting" name="gold_loan_setting" value="{{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
-                        <option value="Monthaly">Monthaly</option>
+                        <option value="Monthly">Monthly</option>
                     </select>
                 </div>
 

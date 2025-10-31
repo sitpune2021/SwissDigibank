@@ -25,15 +25,17 @@
 
 
 <div class="main-inner">
+    
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW LOAN AGAINST DEPOSITE SCHEME</h1>
+            <h1 class="text-xl font-semibold">PERSONAL LOAN SCHEME</h1>
         </div>
     </div>
-    
+
     <div class="box">
         <div class="col-span-12  lg:col-span-12">
-            <form class="grid grid-cols-2 gap-4 mt-6" action="{{ isset($scheme) ? route('loanagainst.schemes.update', $scheme->id) : route('loanagainst.schemes.store') }}" method="POST">
+
+            <form class="grid grid-cols-2 gap-4 mt-6" action="{{ isset($scheme) ? route('personal.schemes.update', $scheme->id) : route('personal.schemes.store') }}" method="POST">
                 @csrf
                 @if(isset($scheme))
                     @method('PUT')
@@ -47,7 +49,7 @@
                     <input type="text" name="scheme_name"
                         value="{{ old('scheme_name', $scheme->scheme_name ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Scheme Name " >
+                        placeholder="Enter Scheme Name">
                     @error('scheme_name')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -61,100 +63,48 @@
                     <input type="text" name="scheme_code" value="{{ old('scheme_code', $scheme->scheme_code ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 uppercase"
                         placeholder="Enter Scheme Code" >
-                    @error('scheme_code')
+                        @error('scheme_code')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                        @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="deposit_loan_setting_security_type" class="md:text-lg font-medium block mb-4">
-                        Security Type
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <select class="form-control w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        name="security_type"
-                        id="deposit_loan_setting_security_type">
-                        <option value="">Please Select</option>
-                        <option value="FD_OF_SELF" {{ old('security_type', $scheme->security_type ?? '') == 'FD_OF_SELF' ? 'selected' : '' }}>FD of Self</option>
-                        <option value="RD_OF_SELF" {{ old('security_type', $scheme->security_type ?? '') == 'RD_OF_SELF' ? 'selected' : '' }}>RD of Self</option>
-                        <option value="DAILY_DEPOSIT_OF_SELF" {{ old('security_type', $scheme->security_type ?? '') == 'DAILY_DEPOSIT_OF_SELF' ? 'selected' : '' }}>DD of Self</option>
-                        <option value="FD_OF_BANK" {{ old('security_type', $scheme->security_type ?? '') == 'FD_OF_BANK' ? 'selected' : '' }}>FD of Bank</option>
-                        <option value="RD_OF_BANK" {{ old('security_type', $scheme->security_type ?? '') == 'RD_OF_BANK' ? 'selected' : '' }}>RD of Bank</option>
-                        <option value="LIC" {{ old('security_type', $scheme->security_type ?? '') == 'LIC' ? 'selected' : '' }}>LIC</option>
-                        <option value="NSC" {{ old('security_type', $scheme->security_type ?? '') == 'NSC' ? 'selected' : '' }}>NSC</option>
-                        <option value="OTHER_GOVT_SECURITY" {{ old('security_type', $scheme->security_type ?? '') == 'OTHER_GOVT_SECURITY' ? 'selected' : '' }}>Other Govt. Security</option>
-                    </select>
-                    @error('security_type')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Amount (₹)
                         <span class="text-red-500">*</span>
                     </label>
                     <input type="number" id="maxLoanAmount" name="max_loan_amount" value="{{ old('max_loan_amount', $scheme->max_loan_amount ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="0.0"  min="0" max="200000" >
-                       
+                        placeholder="0.0" min="0" max="200000" >
+                        <p id="maxLoanAmountWords" class="text-red-500 text-sm mt-1"></p>
+                        <!-- Laravel Error Message -->
                         @error('max_loan_amount')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
-                </div> -->
-                <div class="col-span-2 md:col-span-1">
-                    <label for="maxLoanAmount" class="md:text-lg font-medium block mb-4">
-                        Maximum Loan Amount (₹)
-                        <span class="text-red-500">*</span>
-                    </label>
-
-                    <!-- <input type="number" id="maxLoanAmount" name="max_loan_amount"
-                        min="0" max="200000"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
-                        placeholder="0.0">
-                    <p id="maxLoanWords" class="text-blue-700 text-sm mt-1 font-semibold"></p>
-                    <p id="maxLoanError" class="text-red-600 text-sm mt-1 font-semibold hidden"></p> -->
-                    <input type="number" id="maxLoanAmount" name="max_loan_amount"
-                            min="0" max="200000"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
-                            placeholder="0.0">
-
-                        <p id="maxLoanWords" class="text-sm mt-1 font-semibold"></p>
-                        <p id="maxLoanError" class="text-sm mt-1 font-semibold hidden"></p>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="max_loan_limit" class="md:text-lg font-medium block mb-4">
+                    <label for="" class="md:text-lg font-medium block mb-4">
                         Maximum Loan Limit (%)
                         <span class="text-red-500">*</span>
                     </label>
-
-                    <select id="max_loan_limit" name="max_loan_limit"
-                        class="form-control w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 
-                            dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 focus:outline-none transition duration-200"
-                        required>
-                        <option value="">Please Select</option>
-                        <option value="50.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '50.0' ? 'selected' : '' }}>50%</option>
-                        <option value="60.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '60.0' ? 'selected' : '' }}>60%</option>
-                        <option value="70.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '70.0' ? 'selected' : '' }}>70%</option>
-                        <option value="75.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '75.0' ? 'selected' : '' }}>75%</option>
-                        <option value="80.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '80.0' ? 'selected' : '' }}>80%</option>
-                        <option value="90.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '90.0' ? 'selected' : '' }}>90%</option>
-                        <option value="100.0" {{ old('max_loan_limit', $scheme->max_loan_limit ?? '') == '100.0' ? 'selected' : '' }}>100%</option>
-                    </select>
-                    @error('max_loan_limit')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <input type="number" id="maxLoanLimit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        placeholder="Enter Maximum Loan Limit" >
+                        <p id="maxLoanLimitWords" class="text-red-500 text-sm mt-1"></p>
+                         @error('max_loan_limit')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    <!-- This will show the words -->
+                    <x-number-to-word for="maxLoanLimit" />
                 </div>
-
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="tenure" class="md:text-lg font-medium block mb-4">
                         Max. Tenure <span class="text-red-500">*</span>
                     </label>
                     <select id="tenure" name="tenure"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                        required>
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Please Select</option>
                         <option value="1" {{ old('tenure', $scheme->tenure ?? '') == '1' ? 'selected' : '' }}>1 Month</option>
                         <option value="3" {{ old('tenure', $scheme->tenure ?? '') == '3' ? 'selected' : '' }}>3 Months</option>
@@ -173,6 +123,9 @@
                         <option value="120" {{ old('tenure', $scheme->tenure ?? '') == '120' ? 'selected' : '' }}>10 Years</option>
                         <option value="180" {{ old('tenure', $scheme->tenure ?? '') == '180' ? 'selected' : '' }}>15 Years</option>
                     </select>
+                     @error('tenure')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -183,15 +136,14 @@
                     <input type="number" id="annual_interest_rate" name="annual_interest_rate" value="{{ old('annual_interest_rate', $scheme->annual_interest_rate ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Annual Interest Rate" >
-                    @error('annual_interest_rate')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror                      
+                        @error('annual_interest_rate')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Overdue Interest Rate (%)
-                        <span class="text-red-500">*</span>
                     </label>
                     <div class="col-sm-7">
                         <div class="flex items-center gap-2">
@@ -204,10 +156,7 @@
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                placeholder="Enter Overdue Interest Rate (%) " >
-                                @error('overdue_interest_rate')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                                placeholder="Enter Overdue Interest Rate (%)">
                         </div>
                     </div>
                 </div>
@@ -311,7 +260,6 @@
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Credit Period
                     </label>
-
                     <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $scheme->credit_period ?? '') }}"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Credit Period">
@@ -325,7 +273,6 @@
                     <label class="md:text-lg font-medium block mb-2">
                         Interest Type <span class="text-red-600">*</span>
                     </label>
-
                     <div class="mt-1 flex flex-wrap gap-3">
                         <!-- Reducing EMI -->
                         <label class="flex items-center gap-2 p-2">
@@ -334,18 +281,16 @@
                                 class="text-green-600 focus:ring-green-500"
                                 data-target="charges-per-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'reducing_emi' ? 'checked' : '' }}
-                                 required checked>
+                                 checked>
                             <span>Reducing EMI</span>
                         </label>
-
                         <!-- Flat EMI -->
                         <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="flat_emi"
                                 class="text-green-600 focus:ring-green-500"
                                 data-target="charges-per-emi"
-                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_emi' ? 'checked' : '' }}
-                                required>
+                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_emi' ? 'checked' : '' }}>
                             <span>Flat EMI</span>
                         </label>
 
@@ -355,8 +300,7 @@
                                 value="flat_advanced_interest"
                                 class="text-green-600 focus:ring-green-500"
                                 data-target="charges-per-emi"
-                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_advanced_interest' ? 'checked' : '' }}
-                                required>
+                                {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'flat_advanced_interest' ? 'checked' : '' }}>
                             <span>Flat Advanced Interest Deduction</span>
                         </label>
 
@@ -364,6 +308,8 @@
                         <!-- <label class="flex items-center gap-2 p-2">
                             <input type="radio" name="gold_loan_setting" 
                                 value="no_emi"
+                                class="text-green-600 focus:ring-green-500"
+                                data-target="no-emi"
                                 {{ old('gold_loan_setting', $scheme->gold_loan_setting ?? '') == 'no_emi' ? 'checked' : '' }}
                                 >
                             <span>No EMI</span>
@@ -387,7 +333,9 @@
                             name="is_active" 
                             value="1" 
                             class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
+                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}
+                             checked
+                        >
                         <span class="text-gray-700 capitalize">Yes</span>
                     </label>
 
@@ -398,13 +346,9 @@
                             name="is_active" 
                             value="0" 
                             class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}
-                             checked>
+                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}>
                         <span class="text-gray-700 capitalize">No</span>
                     </label>
-                     @error('is_active')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                 </div>
 
             </div>
@@ -416,12 +360,11 @@
             <div class="w-full my-4">
                 <hr class="border-gray-300">
                 <h4
-                    class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
+                    class="text-center uppercase font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
                     Charges Per EMI
                     <i class="las la-info-circle"></i>
                     </button>
                 </h4>
-
             </div>
             <div class=" md:gap-5 gap-4 w-full  grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
@@ -458,7 +401,7 @@
 
                         <input type="number" name="fuel_charge" value="{{ old('fuel_charge', $scheme->fuel_charge ?? '') }}" id="fuel_charge"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Enter fuel Charges">
+                            placeholder="Enter Penalty Charges">
                     </div>
                 </div>
 
@@ -529,6 +472,37 @@
                 <!-- Blank  Block (do not remove ) -->
                 <div class="col-span-2 md:col-span-1">
 
+                    {{-- Charges Per EMI Type field  --}}
+        
+                    <label class="md:text-lg font-medium block mb-2">
+                        Charges Per EMI Type <span class="text-red-600">*</span>
+                    </label>
+
+                    <div class="mt-1 flex flex-wrap gap-3">
+                        <!-- Yes -->
+                        <label class="flex items-center gap-2 space-x-2 p-2">
+                            <input 
+                                type="radio" 
+                                name="charges_per_emi_type" 
+                                value="1" 
+                                class="text-green-600 focus:ring-green-500"
+                                {{ old('charges_per_emi_type', $scheme->charges_per_emi_type ?? '') == 'ON EMI' ? 'checked' : '' }}
+                                checked>
+                            <span class="text-gray-700 capitalize">ON EMI</span>
+                        </label>
+
+                        <!-- No -->
+                        <label class="flex items-center gap-2 space-x-2 p-2">
+                            <input 
+                                type="radio" 
+                                name="charges_per_emi_type" 
+                                value="0" 
+                                class="text-green-600 focus:ring-green-500"
+                                {{ old('charges_per_emi_type', $scheme->charges_per_emi_type ?? '') == 'ON PRINCIPAL' ? 'checked' : '' }}>
+                            <span class="text-gray-700 capitalize">ON PRINCIPAL</span>
+                        </label>
+                    </div>        
+
                 </div>
 
             </div>
@@ -585,7 +559,7 @@
                                 </td>
                                 <td class="border border-gray-300 p-1"><input type="number" name="to_date" value="{{ old('to_date', $scheme->to_date ?? '') }}" placeholder="To"
                                         class="w-full border  border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_intererst" value="{{ old('penal_rate_intererst', $scheme->penal_rate_intererst ?? '') }}"
+                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_interest" value="{{ old('penal_rate_interest', $scheme->penal_rate_interest ?? '') }}"
                                         placeholder="Penal Interest(%)"
                                         class="w-full  border border-gray-300 rounded p-1"></td>
                                 <td class="border border-gray-300 p-1"><input type="number" name="annual_rate_interest" value="{{ old('annual_rate_interest', $scheme->annual_rate_interest ?? '') }}"
@@ -601,12 +575,12 @@
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
            <button type="submit"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                class="px-6 py-3 btn-primary uppercase">
             {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
         </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('loanagainst.schemes.index')}}"> BACK</a>
+                <a href="{{ route('mortgage.schemes.index') }}"> BAck</a>
             </button>
         </div>
     </div>
@@ -648,66 +622,66 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 </script>
 
-
+<!-- Max loan amount and loan limit sub text massage -->
 <script>
-// Convert numbers to words
 function numberToWords(num) {
-    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
-        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
-        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
-    if ((num = num.toString()).length > 9) return 'Overflow';
-    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return '';
+    if (!num) return "";
 
-    let str = '';
-    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
-    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
-    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
-    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
-    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + 
-            (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
-    return str.trim() + ' Rupees Only';
+    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+    const convert = (n) => {
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + (n % 100 ? a[n % 100] : "");
+        if (n < 100000) return convert(Math.floor(n / 1000)) + " Thousand " + (n % 1000 ? convert(n % 1000) : "");
+        if (n < 10000000) return convert(Math.floor(n / 100000)) + " Lakh " + (n % 100000 ? convert(n % 100000) : "");
+        return "";
+    };
+
+    return convert(num).trim();
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const maxInput = document.getElementById('maxLoanAmount');
-    const maxWords = document.getElementById('maxLoanWords');
-    const maxError = document.getElementById('maxLoanError');
+function attachListener(inputId, outputId) {
+    const input = document.getElementById(inputId);
+    const output = document.getElementById(outputId);
 
-    // Prevent typing "-" or "e"
-    maxInput.addEventListener("keypress", function(e) {
-        if (e.key === "-" || e.key === "e" || e.key === "E") {
-            e.preventDefault();
-        }
+    if (!input || !output) return;
+
+    input.addEventListener("input", function() {
+        const num = parseInt(this.value);
+        output.textContent = num ? numberToWords(num) + " Only" : "";
     });
+}
 
-    // Handle input
-    maxInput.addEventListener("input", function() {
-        const val = this.value.trim();
-
-        // If negative or invalid
-        if (val.startsWith('-') || val < 0) {
-            this.value = '';
-            maxWords.textContent = 'Invalid input! Negative values not allowed.';
-            maxWords.style.color = 'red';
-            maxError.classList.add('hidden');
-            return;
-        }
-
-        // If valid number
-        if (val && !isNaN(val)) {
-            maxError.classList.add('hidden');
-            maxWords.textContent = numberToWords(parseInt(val));
-            maxWords.style.color = '#d8871dff'; // Tailwind "text-blue-700"
-        } else {
-            maxWords.textContent = '';
-            maxError.classList.add('hidden');
-        }
-    });
-});
+attachListener("maxLoanAmount", "maxLoanAmountWords");
+attachListener("maxLoanLimit", "maxLoanLimitWords");
 </script>
 
+<!-- Stop Negative value -->
+<script>
+  function blockMinus(inputId) {
+    const input = document.getElementById(inputId);
+
+    // Keyboard se minus block 
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "-" || event.key === "Minus") {
+            event.preventDefault();
+        }
+    });
+
+    // Copy-paste se minus remove 
+    input.addEventListener("input", function() {
+        this.value = this.value.replace(/-/g, "");
+    });
+}
+
+blockMinus("maxLoanAmount");
+blockMinus("maxLoanLimit");
+</script>
 
 @endsection

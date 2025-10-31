@@ -655,8 +655,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Gold Loan Application Info
-
+                       LOAN AGAINST DEPOSITE Application Info
                     </h3>
                     <div class="">
 
