@@ -134,7 +134,9 @@
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
                             <li><a href="{{ route('mortgage.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            @if($application->status != 2 )
                             <li><a href="{{ route('mortgage.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            @endif
                         </ul>
                     </div>
                 </div>

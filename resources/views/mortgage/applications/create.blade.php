@@ -48,10 +48,9 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="member_id" class="md:text-lg font-medium block mb-4">
+                            <label for="member_id" class="md:text-lg font-medium block mb-2">
                                 Customer <span class="text-red-500">*</span>
-                            </label>
-                            
+                            </label>                           
                             <select name="member_id" id="member_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                 <option value="">Search Member No or Name</option>
@@ -64,6 +63,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('member_id')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -81,6 +83,9 @@
                                     </option>                                   
                                 @endforeach
                             </select>
+                            @error('branch_id')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -216,6 +221,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                             @error('scheme_id')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -246,6 +254,9 @@
                                         <span class="text-gray-70 capitalize">MONTHS</span>
                                     </label>
                                 </div>
+                                 @error('tenure_type')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         
@@ -257,20 +268,25 @@
                             <input type="number" id="tenure_value" name="tenure_value"
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                 @error('tenure_value')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-6">
                                 EMI Collection <span class="text-error">* </span>
                             </label>
-                            <select name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">>
-                            <option value="">Please Select</option>
-                            <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
-                            <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
-                            <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
-                            <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
-                        </select>
-
+                            <select name="emi_collection" class="w-full mt-5 text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">>
+                                <option value="">Please Select</option>
+                                <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
+                                <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
+                                <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
+                                <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
+                            </select>
+                             @error('emi_collection')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -281,6 +297,9 @@
                             <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $application->credit_period ?? 0) }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0">
+                                @error('credit_period')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -570,13 +589,13 @@
                                     </label>
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="yes"
-                                                {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                            <input type="radio" name="credited" value="1"
+                                                {{ old('credited', $application->credited ?? '') == '1' ? 'checked' : '' }}>
                                             <span>Yes</span>
                                         </label>
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="no"
-                                                {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                            <input type="radio" name="credited" value="1"
+                                                {{ old('credited', $application->credited ?? '') == '1' ? 'checked' : '' }}>
                                             <span>No</span>
                                         </label>
                                     </div>
@@ -860,6 +879,7 @@
     </div>
 </div>
 
+
 <!-- tenure t0ggel -->
 <script>
     const radios = document.querySelectorAll('input[name="tenure_type"]');
@@ -958,7 +978,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
 <!-- // =====logic for dynamic cibil rows===== -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -989,7 +1008,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             <!-- Report Date -->
             <td class="px-2 py-2 border border-gray-300 relative">
-                <input type="text" name="report_date[]" placeholder="DD/MM/YYYY"
+                <input type="text" name="report_date[]" value="{{ now()->format('d/m/Y') }}" placeholder="DD/MM/YYYY"
                     class="w-full text-center dark:bg-bg3 border border-gray-300 rounded-10 px-2 py-2 text-sm md:text-base bg-secondary/5" required/>
             </td>
 
@@ -1014,12 +1033,12 @@ document.addEventListener("DOMContentLoaded", function() {
         window.defaultCibilRowAdded = true;
     }
 
-    // ✅ Add new row when "Add Row" button is clicked
+    // Add new row when "Add Row" button is clicked
     addRowBtn.addEventListener("click", function() {
         cibilBody.insertAdjacentHTML("beforeend", newRow());
     });
 
-    // ✅ Remove row when X is clicked
+    // Remove row when X is clicked
     cibilBody.addEventListener("click", function(e) {
         if (e.target.closest(".removeRow")) {
             e.target.closest("tr").remove();
@@ -1027,8 +1046,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-
-
 
 <!-- pay mode -->
 <script>
@@ -1058,7 +1075,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
 <!-- loan amount + insurance amount = net loan amoun -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -1084,14 +1100,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Calculation box -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     let isCalculated = false;
     const calcBtn = document.getElementById("calculateBtn");
 
     calcBtn.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // ✅ Step 1: Perform your calculation logic (same as before)
+        // Step 1: Perform your calculation logic
         let totalSecurity = 0;
         document.querySelectorAll(".expectedValue").forEach(input => {
             totalSecurity += parseFloat(input.value) || 0;
@@ -1104,7 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
 
         if (loanAmount > maxLoan) {
-            alert("⚠️ Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
+            alert("Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
             document.getElementById("loanAmount").value = maxLoan.toFixed(2);
             loanAmount = maxLoan;
         }
@@ -1112,6 +1128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let approvable = (totalSecurity * limit) / 100;
         let approved = Math.min(loanAmount, approvable);
 
+        // Step 2: Display calculation result
         document.getElementById("request-amt").textContent = loanAmount.toFixed(2);
         document.getElementById("security-amt").textContent = totalSecurity.toFixed(2);
         document.getElementById("max-loan-amount").textContent = maxLoan.toFixed(2);
@@ -1119,26 +1136,32 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("m-approval-amt").textContent = approvable.toFixed(2);
         document.getElementById("approval-amt").textContent = approved.toFixed(2);
 
+        // Step 3: Update hidden input values
+        document.getElementById("inputSecurity").value = totalSecurity.toFixed(2);
+        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+        document.getElementById("inputLimit").value = limit;
+        document.getElementById("inputApprovable").value = approvable.toFixed(2);
+        document.getElementById("inputApproved").value = approved.toFixed(2);
+
         document.getElementById("calculationBox").classList.remove("hidden");
 
-        // ✅ Step 2: Change button text to submit
+        // Step 4: Change button text to submit
         if (!isCalculated) {
             calcBtn.textContent = "Submit Application";
-            calcBtn.removeEventListener("click", arguments.callee); // remove this listener
+            calcBtn.removeEventListener("click", arguments.callee);
             calcBtn.addEventListener("click", function () {
-                calcBtn.closest("form").submit(); // ✅ actual submit
+                calcBtn.closest("form").submit(); // actual submit
             });
             isCalculated = true;
         }
     });
 });
-
 </script>
 
 
 <!-- add item container -->
  <!-- Show Security Value in Calculation box -->
-    <script>
+<script>
     document.addEventListener("DOMContentLoaded", function () {
 
     const addItemBtn = document.getElementById("additem");
@@ -1147,7 +1170,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let propertyIndex = 0;
 
-    // ✅ Property Block Template (with name attributes for form submission)
+    // Property Block Template (with name attributes for form submission)
     const getPropertyBlock = (index) => `
     <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
         <div class="flex flex-wrap gap-6">
@@ -1372,4 +1395,14 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
 });
 </script>
 
+<script>
+    // <!-- collapsed logic + - button-->
+        function toggleSection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = button.querySelector('.toggle-icon');
+ 
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
+</script>
 @endsection

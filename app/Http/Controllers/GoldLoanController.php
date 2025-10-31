@@ -61,12 +61,7 @@ class GoldLoanController extends Controller
                 'stationary_charge' => 'nullable|numeric|min:0',
                 'maintenance_charge' => 'nullable|numeric|min:0',
                 'collection' => 'nullable|numeric|min:0',
-                'from_date' => 'nullable|numeric|min:0',
-                'to_date' => 'nullable|numeric|min:0',
-                'penal_rate_interest' => 'nullable|numeric|min:0',
-                'annual_rate_interest' => 'nullable|numeric|min:0',
                 'is_active' => 'required|in:0,1',
-
                 'charge_floting' => 'nullable|in:0,1',
                 'no_emi' => 'nullable|array|max:12',
                 'no_emi.*.from_date' => 'nullable|numeric|min:1',
@@ -77,43 +72,45 @@ class GoldLoanController extends Controller
 
             Log::info('Validation Passed', ['validated' => $validated]);
 
-            $filteredSlabs = [];
-            if ($request->has('no_emi')) {
-                foreach ($request->no_emi as $slab) {
-                    if (!empty($slab['from_date']) || !empty($slab['to_date']) ||
-                        !empty($slab['penal_rate_interest']) || !empty($slab['annual_rate_interest'])) {
-                        $filteredSlabs[] = $slab;
-                    }
-                }
+            // Always prepare 12 entries (filled or null)
+            $noEmiData = [];
+            for ($i = 0; $i < 12; $i++) {
+                $noEmiData[] = [
+                    'to_date' => $request->input("no_emi.$i.to_date") ?: null,
+                    'from_date' => $request->input("no_emi.$i.from_date") ?: null,
+                    'penal_rate_interest' => $request->input("no_emi.$i.penal_rate_interest") ?: null,
+                    'annual_rate_interest' => $request->input("no_emi.$i.annual_rate_interest") ?: null,
+                ];
             }
 
-            if ($request->gold_loan_setting == 'no_emi') {
-                $validated['no_emi_slabs'] = json_encode($filteredSlabs);
+            if ($request->gold_loan_setting === 'no_emi') {
+                // Store as pure JSON array (no extra escaping)
+                $validated['no_emi_slabs'] = $noEmiData;
                 $validated['charge_floting'] = $request->charge_floting;
             } else {
                 $validated['no_emi_slabs'] = null;
             }
 
-            Log::info('Final saved data', ['data' => $validated]);
-
             GoldLoanScheme::create($validated);
-
-            Log::info('Gold Loan Scheme created Successfully');
 
             return redirect()
                 ->route('gold-loan.schemes.index')
                 ->with('success', 'Scheme created successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed', ['errors' => $e->errors()]);
+            return redirect()->back()->withErrors($e->validator)->withInput();
 
         } catch (\Throwable $e) {
             Log::error('Error while storing Scheme', [
                 'error_message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
             ]);
 
-            return back()
-                ->withErrors('Something went wrong! Check logs.')
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong! Please check logs.')
                 ->withInput();
         }
     }
@@ -289,19 +286,14 @@ class GoldLoanController extends Controller
             $dueDate = $emiDate->copy()->addDays(10);
 
             if ($interestType === 'No EMI') {
-                // No EMI Logic
-                if ($i == $installments) {
-                    $principal = round($loan, 2);
-                } else {
-                    $principal = 0;
-                }
-
+                // No EMI Logic - Show same principal in every row
+                $principal = round($loan, 2);
                 $interest = null;
                 $charges = null;
                 $emiTotal = null;
                 $balance = null;
-
-            } else {
+            }
+            else {
                 // Normal EMI Logic
                 if ($i == $installments) {
                     $principal = round($outstanding, 2);
@@ -329,6 +321,12 @@ class GoldLoanController extends Controller
             ];
         }
 
+        // If Interest Type is No EMI, override total values to zero
+        if (strtolower($interestType) === 'no emi') {
+            $totalInterest = 0;
+            $total_emi_paid = 0;
+            $grandTotalPayable = 0;
+        }
 
         //  Grand Total (Loan + Interest + Charges)
         $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
@@ -369,7 +367,6 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.index", compact('applications'));
     }
 
-
     public function appcreate() 
     {
         //$members = Member::all();
@@ -386,6 +383,22 @@ class GoldLoanController extends Controller
         Log::info('--- Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
+        ]);
+
+        // Validate before try
+        $validated = $request->validate([
+            'application_date' => 'required|date_format:d-m-Y',
+            'member_id'        => 'required|exists:members,id',
+            'branch_id'        => 'required|exists:branches,id',
+            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+            'loan_amount'      => 'required|numeric|min:1',
+            'tenure_type'      => 'required',
+            'tenure_value'      => 'required',
+            'emi_collection'      => 'required',
+            'credit_period'      => 'required',
+            'insurance_amount'      => 'required',
+            'net_loan_amount'      => 'required',
+            'purpose_of_loan'      => 'required',
         ]);
 
         try {
@@ -543,7 +556,9 @@ class GoldLoanController extends Controller
             'coApplicant1',
             'guarantor1',
             'scheme',   // <-- add scheme here
-             'branch' 
+            'branch' ,
+            'creditScores',
+            'loanOrnaments'
         ])->findOrFail($id);
 
         return view("gold-loan.applications.view", compact('application'));
@@ -907,7 +922,7 @@ class GoldLoanController extends Controller
             'totalEmi'
         ));
     }
-
+    
     public function disbursment($id)
     {
         $application = LoanApplication::with([

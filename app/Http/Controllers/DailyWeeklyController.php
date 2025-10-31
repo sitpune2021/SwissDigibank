@@ -137,7 +137,6 @@ class DailyWeeklyController extends Controller
         return view("daily_weekly.schemes.view", compact('scheme'));
     }
 
-   
     public function appindex()
     {
         // loan applications fetch with pagination
@@ -338,7 +337,6 @@ class DailyWeeklyController extends Controller
         return view("daily_weekly.applications.view", compact('application', 'processingFee'));
     }
 
-
     public function appedit($id)
     {
         $application = DailyWeeklyApplication::with([
@@ -363,7 +361,6 @@ class DailyWeeklyController extends Controller
         ));
     }
    
-
     public function appupdate(Request $request, $id)
     {
         Log::info('--- daily_weekly Loan Application Update Started ---', [

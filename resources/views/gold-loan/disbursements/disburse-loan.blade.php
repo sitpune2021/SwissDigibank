@@ -44,7 +44,6 @@
                             <h3 class="text-lg border-b mb-4 font-semibold text-black">
                                 Application No - {{ $disbursement->id }}
                                 <input type="hidden" name="loan_application_id" value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
-
                             </h3>
                         </div>
                          
@@ -322,8 +321,8 @@
                                 Final Amount To Disburse
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" id="finalAmount" name="final_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4">
+                            <input type="number" id="finalAmount" value="{{ $disbursement->approved_loan_amount }}" name="final_amount"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4" readonly>
                             <hr>
                             <h3>Disbursement Amount :</h3>
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
@@ -333,12 +332,12 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_1" name="D_mode_1"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ $disbursement->approved_loan_amount }}"
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
                                         <label>
-                                        <input type="radio" name="payment_mode" value="cash"> Cash
+                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
                                         </label>
 
                                         <label>
@@ -448,7 +447,7 @@
                                     
                                     <div class="mt-3">
                                        <label>
-                                        <input type="radio" name="payment_mode2" value="cash"> Cash
+                                        <input type="radio" name="payment_mode2" value="cash" checked> Cash
                                         </label>
                                         <label>
                                         <input type="radio" name="payment_mode2" value="cheque"> Cheque

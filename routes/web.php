@@ -516,89 +516,42 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
 Route::group(['prefix' => 'mortgage'], function () {
 
-    // Mortgage Loan Scheme
-    Route::get('scheme/index', [MortgageController::class, 'index'])
-        ->name('mortgage.schemes.index');
+    Route::get('scheme/index', [MortgageController::class, 'index'])->name('mortgage.schemes.index');
+    Route::get('scheme/create', [MortgageController::class, 'create'])->name('mortgage.schemes.create');
+    Route::post('scheme/store', [MortgageController::class, 'store'])->name('mortgage.schemes.store');
+    Route::get('scheme/{id}', [MortgageController::class, 'show'])->name('mortgage.schemes.show');
+    Route::get('scheme/{id}/edit', [MortgageController::class, 'edit'])->name('mortgage.schemes.edit');
+    Route::put('scheme/{id}', [MortgageController::class, 'update'])->name('mortgage.schemes.update');
+    Route::get('scheme/view/{id}', [MortgageController::class, 'view'])->name('mortgage.schemes.view');
 
-    // create form
-    Route::get('scheme/create', [MortgageController::class, 'create'])
-        ->name('mortgage.schemes.create');
-    // store form data
-    Route::post('scheme/store', [MortgageController::class, 'store'])
-        ->name('mortgage.schemes.store');
-
-    // view list
-    Route::get('scheme/{id}', [MortgageController::class, 'show'])
-        ->name('mortgage.schemes.show');
-
-    // edit form
-    Route::get('scheme/{id}/edit', [MortgageController::class, 'edit'])
-        ->name('mortgage.schemes.edit');
-    Route::put('scheme/{id}', [MortgageController::class, 'update'])
-        ->name('mortgage.schemes.update');
-
-    Route::get('scheme/view/{id}', [MortgageController::class, 'view'])
-        ->name('mortgage.schemes.view');
-
-    // Mortgage Loan Calculation
-    Route::get('calculator/index', [MortgageController::class, 'calculator'])
-        ->name('mortgage.calculator.index');
-    // get scheme data
-    Route::get('mortgage/scheme/{id}', [MortgageController::class, 'getSchemeDetails'])
-        ->name('mortgage.scheme.details');
-
-    // Calculation page  
+    Route::get('calculator/index', [MortgageController::class, 'calculator'])->name('mortgage.calculator.index');
+    Route::get('scheme/{id}/details', [MortgageController::class, 'getSchemeDetails'])->name('mortgage.scheme.details');
     Route::get('calculator/calculation', [MortgageController::class, 'calculation'])->name('mortgage.calculator.calculation');
-    Route::post('mortgage/calculate', [MortgageController::class, 'calculateResult'])->name('mortgage.calculator.calculate');
+    Route::post('calculate', [MortgageController::class, 'calculateResult'])->name('mortgage.calculator.calculate');
 
+    Route::get('applications/index', [MortgageController::class, 'appindex'])->name('mortgage.applications.index');
+    Route::get('applications/create', [MortgageController::class, 'appcreate'])->name('mortgage.applications.create');
+    Route::post('loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('mortgage.store');
+    Route::get('members/{id}/info', [MortgageController::class, 'getMemberInfo'])->name('members.info');
+    Route::get('applications/view/{id}', [MortgageController::class, 'appview'])->name('mortgage.applications.view');
+    Route::get('applications/{id}/edit', [MortgageController::class, 'appedit'])->name('mortgage.applications.edit');
+    Route::put('applications/{id}', [MortgageController::class, 'appupdate'])->name('mortgage.applications.update');
+    Route::get('applications/show-emi-chart', [MortgageController::class, 'showEmiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
 
-    // Mortgage Application page
-    Route::get('applications/index', [MortgageController::class, 'appindex'])
-        ->name('mortgage.applications.index');
+    Route::get('disbursements/index', [MortgageDisbursementController::class, 'index'])->name('mortgage.disbursements.index');
+    Route::post('disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('mortgagedisbursements.cancel');
+    Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])->name('mortgage.disbursements.disburse-loan');
+    Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
-    Route::get('applications/create', [MortgageController::class, 'appcreate'])
-        ->name('mortgage.applications.create');
-
-    Route::post('/loan-applications/store', [MortgageController::class, 'storeLoanApplication'])->name('mortgage.store');
-
-    Route::get('/members/{id}/info', [MortgageController::class, 'getMemberInfo'])
-        ->name('members.info');
-
-    Route::get('mortgage/applications/view/{id}', [MortgageController::class, 'appview'])
-        ->name('mortgage.applications.view');
-
-    // Edit form
-    Route::get('/mortgage/applications/{id}/edit', [MortgageController::class, 'appedit'])
-        ->name('mortgage.applications.edit');
-
-    // Update
-    Route::put('/mortgage/applications/{id}', [MortgageController::class, 'appupdate'])
-        ->name('mortgage.applications.update');
-
-    Route::get('applications/show-emi-chart', [MortgageController::class, 'showEmiChart'])
-        ->name('mortgage.applications.view-buttons.show-emi-chart');
-
-
-    // Disbursement Mortgage Loan
-    Route::get('disbursements/index', [MortgageDisbursementController::class, 'index'])
-        ->name('mortgage.disbursements.index');
-    Route::post('/mortgage/disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('mortgagedisbursements.cancel');
-
-    // disburse-loan page  
-    Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])
-        ->name('mortgage.disbursements.disburse-loan');
-    Route::post('/mortgage/disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
-
-
-    // Mortgage Loan Account Page
-    Route::get('account/index', [MortgageAccountController::class, 'index'])
-        ->name('mortgage.account.index');
-
-    // line property
-    Route::get('lineproperty/index', [MortgageController::class, 'linepropertyindex'])
-        ->name('mortgage.lineproperty.index');
-    // Download excel sheet
+    Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
+    Route::get('lineproperty/index', [MortgageController::class, 'linepropertyindex'])->name('mortgage.lineproperty.index');
     Route::get('ornaments/export', [MortgageController::class, 'exportXls'])->name('mortgage.lineproperty.export');
+    Route::get('{id}/emi-chart', [MortgageController::class, 'emiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [MortgageController::class, 'mortgagecol_process_fee'])
+        ->name('mortgage.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [MortgageController::class, 'mortgagestoreProcessFee'])
+        ->name('mortgage.col_process_fee.store');
 });
 
 
