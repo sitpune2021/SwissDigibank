@@ -270,16 +270,6 @@
             <input type="number" name="loan_amount" id="request_loan_amount" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter loan amount">
             <x-number-to-word for="request_loan_amount" />
           </div>
-
-          <!-- Interest Type -->
-          <!-- <input type="hidden" name="interest_type" id="interest_type" value="flat"> -->
-
-
-          {{--calculator checkbox- --}}
-          <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry"
-            label="Check this if you want to divide loan EMIs in ratio."
-            sublabel="(ex. 80% Principal amount in first 60 EMIs & rest 20% in next 40 EMIs of total 100 EMIs)" /> -->
-
          
            <!-- Buttons -->
           <div class="flex justify-center gap-4 pt-6">
@@ -288,7 +278,6 @@
           </div>
         </form>
       </div>
-
       
       <!--Scheme Info Table-->
       <div id="schemeBox" class="mt-5 hidden">
@@ -401,7 +390,6 @@ document.getElementById('manualEntry').addEventListener('change', function () {
   });
 </script>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const manualEntryCheckbox = document.getElementById('manualEntry');
@@ -420,6 +408,59 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<script>
+  // <!-- collapsed logic + - button-->
+        function toggleSection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = button.querySelector('.toggle-icon');
+ 
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
+</script>
 
+<!-- manual & scheme drop down hide and show -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const schemeDropdown = document.getElementById("scheme_id");
+    const manualEntry = document.getElementById("manualEntry");
+    const manualFields = document.getElementById("manualFields");
+    const schemeBox = document.getElementById("schemeBox");
+
+    function resetSchemeSelection() {
+        schemeDropdown.value = "";
+        schemeBox.classList.add("hidden");
+    }
+
+    // When Manual Entry Checked
+    manualEntry.addEventListener("change", function () {
+        const isChecked = this.checked;
+
+        // Manual Fields toggle
+        manualFields.classList.toggle("hidden", !isChecked);
+
+        if (isChecked) {
+            // Reset scheme selection only
+            resetSchemeSelection();
+        }
+    });
+
+    // When Scheme Selected
+    schemeDropdown.addEventListener("change", function () {
+        if (this.value !== "") {
+            // Manual uncheck + hide manual fields
+            manualFields.classList.add("hidden");
+            manualEntry.checked = false;
+
+            // Show Scheme Details Box
+            schemeBox.classList.remove("hidden");
+        } else {
+            schemeBox.classList.add("hidden");
+        }
+    });
+
+});
+</script>
 
 @endsection
