@@ -46,7 +46,7 @@ class RdAccountController extends Controller
         $schemes = Rdscheme::all();
         $accounts = Account::all();
 
-        return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts','banks','selectedBankId'));
+        return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts', 'banks', 'selectedBankId'));
     }
 
     // get member for rd creation
@@ -161,7 +161,21 @@ class RdAccountController extends Controller
                 'total_interest' => $summary['total_interest'],
             ]);
 
+            $rdAccount->rd_no = 'RD' . str_pad($rdAccount->id, 5, '0', STR_PAD_LEFT);
+            $rdAccount->save();
+
             Log::info('RD Account Created', $rdAccount->toArray());
+
+            try {
+                $rdaccount = \App\Models\RdAccount::with('member')->find($rdAccount->id);
+                $mobile = $rdaccount->member->member_info_mobile_no;
+                $dlttemplateid = 1707172234132264486;
+
+                $message = "Dear Customer, we have received your request for opening RD. Your temp. RD no. is  $rdaccount->rd_no. SBC GLOBAL";
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
 
             if ($validated['nominee'] === 'yes' && isset($validated['nominees'])) {
                 foreach ($validated['nominees'] as $nominee) {
