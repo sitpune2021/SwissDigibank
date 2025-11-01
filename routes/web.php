@@ -476,9 +476,6 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::post('/goldloan/pay-emi', [GoldLoanController::class, 'payEmi'])->name('goldloan.payEmi');
 
-
-
-
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
         ->name('gold-loan.applications.view-buttons.disburse-setting');
@@ -957,14 +954,14 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
 
     Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
-    Route::get('lineproperty/index', [PersonalController::class, 'linepropertyindex'])->name('personal.lineproperty.index');
-    Route::get('ornaments/export', [PersonalController::class, 'exportXls'])->name('personal.lineproperty.export');
+    
     Route::get('{id}/emi-chart', [PersonalController::class, 'emiChart'])->name('personal.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [PersonalController::class, 'personalcol_process_fee'])
-        ->name('mortgage.applications.view-buttons.col_process_fee');
+        ->name('personal.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
-        ->name('mortgage.col_process_fee.store');
+        ->name('personal.col_process_fee.store');
+        
 });
 
 

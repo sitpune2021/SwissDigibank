@@ -45,6 +45,7 @@
                                     SCHEME NAME
                                 </div>
                             </th>
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     TENURE
@@ -80,8 +81,10 @@
                                     ACTIONS
                                 </div>
                             </th>
+
                         </tr>
                     </thead>
+
                    <tbody>
                         @forelse($schemes as $scheme)
                             <tr class="border-b dark:border-bg3">
@@ -161,7 +164,6 @@
                 </div>
 
         </div>
-
 
 </div>
 

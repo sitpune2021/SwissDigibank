@@ -245,7 +245,7 @@
                                         data-collection-setting="{{ strtolower($sc->gold_loan_setting) }}"
                                         data-max-loan="{{ $sc->max_loan_amount }}"
                                     >
-                                        {{ $sc->scheme_code }}
+                                        {{ $sc->scheme_name }}
                                     </option>
                                     @endforeach
                             </select>
@@ -424,44 +424,49 @@
                                         </tr>
                                     </thead>
                                    <tbody id="cibilBody" class="bg-gray-100 whitespace-nowrap">
-    @if(isset($application) && $application->creditScores)
-        @foreach($application->creditScores as $score)
-            <tr >
-                <td class="px-2 py-2">
-                    <select name="cibil_type[]" class="w-full text-center rounded-10 px-2 py-2 border">
-                        <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
-                        <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
-                        <option value="experian" {{ $score->cibil_type == 'experian' ? 'selected' : '' }}>Experian</option>
-                        <option value="crif_highmark" {{ $score->cibil_type == 'crif_highmark' ? 'selected' : '' }}>Crif Highmark</option>
-                    </select>
-                </td>
+                                    @if(isset($application) && $application->creditScores)
+                                        @foreach($application->creditScores as $score)
+                                            <tr >
+                                                <td class="px-2 py-2">
+                                                    <select name="cibil_type[]" class="w-full text-center rounded-10 px-2 py-2 border">
+                                                        <option value="transunion" {{ $score->cibil_type == 'transunion' ? 'selected' : '' }}>TransUnion</option>
+                                                        <option value="equifax" {{ $score->cibil_type == 'equifax' ? 'selected' : '' }}>Equifax</option>
+                                                        <option value="experian" {{ $score->cibil_type == 'experian' ? 'selected' : '' }}>Experian</option>
+                                                        <option value="crif_highmark" {{ $score->cibil_type == 'crif_highmark' ? 'selected' : '' }}>Crif Highmark</option>
+                                                    </select>
+                                                </td>
 
-                <td class="px-2 py-2">
-                    <input type="number" name="cibil_score[]" value="{{ $score->cibil_score }}"
-                        class="w-full text-center rounded-10 px-2 py-2 border" />
-                </td>
+                                                    <td class="px-2 py-2">
+                                                        <input type="number" name="cibil_score[]" value="{{ $score->cibil_score }}"
+                                                            class="w-full text-center rounded-10 px-2 py-2 border" />
+                                                    </td>
 
-                <td class="px-2 py-2">
-                    <input type="text" name="report_date[]" value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}"
-                        class="w-full text-center rounded-10 px-2 py-2 border" />
-                </td>
+                                                    <td class="px-2 py-2">
+    <input 
+        type="text" 
+        name="report_date[]" 
+        value="{{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : '' }}" 
+        class="w-full text-center rounded-10 px-2 py-2 border" 
+    />
+</td>
 
-                <td class="px-2 py-2">
-                    <input type="file" name="report_file[]" class="w-full text-center rounded-10 px-2 py-2 border" />
-                    @if($score->report_file_path)
-                        <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>
-                    @endif
-                </td>
 
-                <td class="px-2 py-2 text-center">
-                    <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                        <i class="las la-times"></i>
-                    </button>
-                </td>
-            </tr>
-        @endforeach
-    @endif
-</tbody>
+                                                    <td class="px-2 py-2">
+                                                        <input type="file" name="report_file[]" class="w-full text-center rounded-10 px-2 py-2 border" />
+                                                        @if($score->report_file_path)
+                                                            <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>
+                                                        @endif
+                                                    </td>
+
+                                                    <td class="px-2 py-2 text-center">
+                                                        <button type="button" class="removeRow text-red-500 hover:text-red-700">
+                                                            <i class="las la-times"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
 
                                 </table>
                             </div>
@@ -662,7 +667,7 @@
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base capitalize font-semibold md:text-lg">Customer Info</h3>
+                        <h3 class="text-base capitalize font-semibold md:text-lg">CUSTOMER INFO</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'memberInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -690,7 +695,7 @@
                 {{--schemeBox info --}}
                  <div id="schemeBox" class=" mt-5 hidden">
                             <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                                <h3 class="text-base font-semibold md:text-lg uppercase">Scheme Info</h3>
+                                <h3 class="text-base font-semibold md:text-lg uppercase">SCHEME INFO</h3>
                                 <button type="button" class="p-1 rounded transition"
                                     onclick="toggleSection(this, 'schemeInfoBody')">
                                     <span class="toggle-icon text-lg font-bold">−</span>
@@ -773,12 +778,7 @@
                                             <tr>
                                                 <td class="font-semibold py-2 pr-4 uppercase">Penalty Charge</td>
                                                 <td class="py-2" id="schemePenalty">-</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="font-semibold py-2 pr-4 uppercase">Overdue Interest Rate (%)</td>
-                                                <td class="py-2" id="schemeOverdue">-</td>
-                                            </tr>
-
+                                            </tr>                                          
                                             <tr>
                                                 <td class="font-semibold py-2 pr-4 uppercase">Created At</td>
                                                 <td class="py-2" id="schemeCreated">-</td>
@@ -916,7 +916,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const schemeStamp = document.getElementById("schemeStamp");
     const schemeInsurance = document.getElementById("schemeInsurance");
     const schemePenalty = document.getElementById("schemePenalty");
-    const schemeOverdue = document.getElementById("schemeOverdue");
 
     const tenureValue = document.getElementById("tenure_value");
     const loanAmount = document.getElementById("loan_amount");
@@ -960,11 +959,6 @@ document.addEventListener("DOMContentLoaded", function () {
         schemeInsurance.textContent = "₹ " + selected.getAttribute("data-insurance");
         schemePenalty.textContent = selected.getAttribute("data-penalty") + " %";
 
-        schemeOverdue.textContent =
-            selected.getAttribute("data-overdue") +
-            " % of " +
-            selected.getAttribute("data-overdue-type");
-
         schemeCreated.textContent = selected.getAttribute("data-created");
         schemeUpdated.textContent = selected.getAttribute("data-updated");
 
@@ -977,7 +971,7 @@ document.addEventListener("DOMContentLoaded", function () {
         inputInsurance.value = addGST(selected.getAttribute("data-insurance"));
 
         //////////////////////////////////////////////////
-        // ✅ AUTO EMI CALCULATION ADDED HERE
+        // AUTO EMI CALCULATION ADDED HERE
         const maxLoanAmount = parseFloat(selected.getAttribute("data-max")) || 0;
         const emis = parseInt(selected.getAttribute("data-emi")) || 1;
         const emiAmountCalc = maxLoanAmount / emis;
@@ -1094,7 +1088,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const year = today.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
+        //const formattedDate = `${day}/${month}/${year}`;
+        const formattedDate = `${day}-${month}-${year}`;
+
 
         return `
             <tr class="nested-fields border-b">
@@ -1173,6 +1169,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+</script>
+
+<script>
+    // <!-- collapsed logic + - button-->
+        function toggleSection(button, sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = button.querySelector('.toggle-icon');
+ 
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
 </script>
 
 @endsection

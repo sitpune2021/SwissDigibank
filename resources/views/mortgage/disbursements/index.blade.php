@@ -116,7 +116,7 @@
     @foreach($disbursements as $disbursement)
         <tr class="border-b dark:border-bg3">
             <td class="text-start !py-5 px-6">
-               <a href="{{ route('loanagainst.applications.view', $disbursement->id) }}" 
+               <a href="{{ route('mortgage.applications.view', $disbursement->id) }}" 
                 class="text-blue-600 hover:underline">
                     {{ $disbursement->id }}
                 </a>

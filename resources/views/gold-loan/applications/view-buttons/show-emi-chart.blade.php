@@ -19,7 +19,9 @@
         accent-color: green;
     }
 </style>
-<div class="main-inner ">
+
+<div class="main-inner box dark:bg-bg3 shadow-md mt-5">
+    
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">
@@ -28,82 +30,105 @@
     </div>
     
    
-<div class="container mx-auto p-6">
-    <div class="loan-info mb-6 p-4 rounded-lg shadow" style="background-color: #f9fafb;">
-    <h2 class="text-lg font-semibold uppercase border-b pb-2 mb-3" style="color:#374151;">
-       <center>Loan Information</center> 
-    </h2>
+    <div class="container mx-auto p-6">
+        <div class="loan-info mb-6 p-4 rounded-lg shadow" style="background-color: #f9fafb;">
+        <h2 class="text-lg font-semibold uppercase border-b pb-2 mb-3" style="color:#374151;">
+        <center>Loan Information</center> 
+        </h2>
 
-    <div class="info-grid">
+       <div class="info-grid border border-gray-400 w-full text-sm">
 
-        <div class="label">Disburse Date</div>
-        <div class="value">
-            {{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d/m/Y') }}
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Disburse Date</div>
+            <div class="value p-2">
+                {{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d/m/Y') }}
+            </div>
         </div>
 
-        <div class="label">Loan Amount</div>
-        <div class="value">₹ {{ number_format($loanAmount, 2) }}</div>
-
-        <div class="label">Processing Fee</div>
-        <div class="value">₹ {{ number_format($processingFeeInc, 2) }} (Incl. GST)</div>
-
-        <div class="label">Stamp Duty Fee</div>
-        <div class="value">₹ {{ number_format($stampDutyInc, 2) }} (Incl. GST)</div>
-
-        <div class="label">Insurance Charges</div>
-        <div class="value">₹ {{ number_format($insuranceInc, 2) }} (Incl. GST)</div>
-        
-        <div class="label">Interest Type</div>
-        <div class="value">
-            @php
-                $interestTypeLabel = [
-                    'reducing_emi' => 'Reducing EMI',
-                    'flat_emi' => 'Flat EMI',
-                    'flat_advanced_interest' => 'Flat Advanced Interest',
-                    'no_emi' => 'No EMI',
-                ][$application->scheme->gold_loan_setting ?? 'flat_emi'];
-            @endphp
-
-            {{ $interestTypeLabel }}
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Loan Amount</div>
+            <div class="value p-2">₹ {{ number_format($loanAmount, 2) }}</div>
         </div>
 
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Processing Fee</div>
+            <div class="value p-2">₹ {{ number_format($processingFeeInc, 2) }} (Incl. GST)</div>
+        </div>
 
-        <div class="label">EMI Count</div>
-        <div class="value">{{ $tenure }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Stamp Duty Fee</div>
+            <div class="value p-2">₹ {{ number_format($stampDutyInc, 2) }} (Incl. GST)</div>
+        </div>
 
-        <div class="label">EMI Payout</div>
-        <div class="value">{{ ucfirst($periodName) }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Insurance Charges</div>
+            <div class="value p-2">₹ {{ number_format($insuranceInc, 2) }} (Incl. GST)</div>
+        </div>
 
-        <div class="label">EMI Amount</div>
-        <div class="value">₹ {{ number_format(($loanAmount / $tenure), 2) }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Interest Type</div>
+            <div class="value p-2">
+                @php
+                    $interestTypeLabel = [
+                        'reducing_emi' => 'Reducing EMI',
+                        'flat_emi' => 'Flat EMI',
+                        'flat_advanced_interest' => 'Flat Advanced Interest',
+                        'no_emi' => 'No EMI',
+                    ][$application->scheme->gold_loan_setting ?? 'flat_emi'];
+                @endphp
+                {{ $interestTypeLabel }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">EMI Count</div>
+            <div class="value p-2">{{ $tenure }}</div>
+        </div>
+
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">EMI Payout</div>
+            <div class="value p-2">{{ ucfirst($periodName) }}</div>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Total Interest</div>
+            <div class="value p-2">₹ {{ number_format($totalInterest, 2) }}</div>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Total EMI Amount</div>
+            <div class="value p-2">₹ {{ number_format($totalEmi, 2) }}</div>
+        </div>
 
     </div>
-</div>
 
-<style>
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px 16px;
-}
+    </div>
 
-.label {
-    font-weight: 600;
-    color: #4b5563;
-}
 
-.value {
-    font-weight: 700;
-    color: #111827;
-}
-
-/* Mobile responsive 2 columns */
-@media (max-width: 640px) {
+    <style>
     .info-grid {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px 16px;
     }
-}
-</style>
+
+    .label {
+        font-weight: 600;
+        color: #4b5563;
+    }
+
+    .value {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    /* Mobile responsive 2 columns */
+    @media (max-width: 640px) {
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    </style>
 
 
     <div class="mt-6">
@@ -162,6 +187,8 @@
         <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded">Print</button>
         <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-200 rounded">Back</a>
     </div> -->
+
 </div>
+
 @endsection
 

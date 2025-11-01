@@ -40,9 +40,9 @@ class MortgageController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('Mortgage Scheme Store Started', [
+        Log::info('personal Scheme Store Started', [
             'input' => $request->all(),
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(), 
         ]);
 
         // Step 1: Validation (add new fields)
@@ -171,7 +171,7 @@ class MortgageController extends Controller
         } else {
             //  Scheme Mode
             $request->validate([
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:mortgage_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
                 'tenure_months' => 'required|integer|min:1',
                 'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
@@ -340,7 +340,7 @@ class MortgageController extends Controller
 
 
         //  Return to view
-        return view('gold-loan.calculator.result', [
+        return view('mortgage.calculator.result', [
             'scheme' => $scheme,
             'is_manual' => $isManual,
             'loan' => $loan,
@@ -648,17 +648,17 @@ class MortgageController extends Controller
 
         // Convert application_date from d-m-Y → Y-m-d
         if (!empty($data['application_date'])) {
-            $data['application_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
+            $data['application_date'] = Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
         }
 
         // Convert cheque_date if it exists and not already in Y-m-d
         if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
-            $data['cheque_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
+            $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
         }
 
         // Convert transfer_date if exists
         if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
-            $data['transfer_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
+            $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
         }
 
         // Now safely update
@@ -678,7 +678,7 @@ class MortgageController extends Controller
                 $application->creditScores()->create([
                     'cibil_type' => $type,
                     'cibil_score' => $request->cibil_score[$index],
-                    'report_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
+                    'report_date' => Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
                     'report_file_path' => $filePath,
                 ]);
             }
@@ -943,10 +943,10 @@ class MortgageController extends Controller
     }
 
     
-    public function exportXls()
-    {
-        return Excel::download(new LinePropertExport, 'lineproperty.xlsx');
-    }
+    // public function exportXls()
+    // {
+    //     return Excel::download(new LinePropertExport, 'lineproperty.xlsx');
+    // }
     
 
 
