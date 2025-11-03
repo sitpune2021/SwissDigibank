@@ -30,6 +30,7 @@ class DdsAccount extends Model
     protected $casts = [
         'open_date' => 'date',
         'maturity_date' => 'date',
+
     ];
 
     public function member()
@@ -44,11 +45,12 @@ class DdsAccount extends Model
 
     public function minor()
     {
-        return $this->belongsTo(Member::class, 'minor_id');     }
+        return $this->belongsTo(Member::class, 'minor_id');
+    }
 
     public function transactions()
     {
-        return $this->hasMany(DdTransaction::class, 'dds_account_id'); 
+        return $this->hasMany(DdTransaction::class, 'dds_account_id');
     }
     public function scheme()
     {

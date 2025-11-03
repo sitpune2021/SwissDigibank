@@ -39,13 +39,6 @@ return new class extends Migration
                 ->references('id')->on('branches')
                 ->onDelete('cascade');
 
-            // $table->foreign('advisor_id')
-            //     ->references('id')->on('staff')
-            //     ->onDelete('set null'); // Handle set null if advisor_id is nullable
-
-            // $table->foreign('collection_advisor_id')
-            //     ->references('id')->on('staff')
-            //     ->onDelete('set null'); // Handle set null if collection_advisor_id is nullable
         });
     }
 
