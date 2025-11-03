@@ -267,6 +267,19 @@ class MisaccountController extends Controller
             $misaccount->save();
             Log::info('MIS Account Created', $misaccount->toArray());
 
+            try {
+                $member = \App\Models\Member::find($misaccount->member_id);
+                $dlttemplateid = 1707172234271737114;
+                $mobile = $member->member_info_mobile_no;
+                $misAccountNo = $misaccount->mis_account_no;
+
+                $message = "Dear Customer, we have received your request for opening MIS. Your temp. MIS a/c no. is $misAccountNo. SBC GLOBAL";
+
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS for RD Account', ['error' => $e->getMessage()]);
+            }
+
             // --- Handle nominees ---
             if ($request->nominee === 'yes' && $request->has('nominee_name')) {
                 $totalNominees = count(array_filter($request->nominee_name));

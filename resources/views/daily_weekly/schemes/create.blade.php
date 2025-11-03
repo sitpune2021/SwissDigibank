@@ -27,7 +27,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">New Daily / Weekly Loan Scheme</h1>
+            <h1 class="text-xl font-semibold">New DAILY WEEKLY LOAN SCHEME</h1>
         </div>
     </div>
     
@@ -228,24 +228,22 @@
                 <div class="mt-1 flex flex-wrap gap-3">
                     <!-- Yes -->
                     <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input 
-                            type="radio" 
-                            name="is_active" 
-                            value="1" 
-                            class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
-                        <span class="text-gray-700 capitalize">Yes</span>
+                         <input 
+                    type="radio" 
+                    name="is_active" 
+                    value="1"
+                    class="text-green-600 focus:ring-green-500"
+                    {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
                     </label>
 
                     <!-- No -->
                     <label class="flex items-center gap-2 space-x-2 p-2">
                         <input 
-                            type="radio" 
-                            name="is_active" 
-                            value="0" 
-                            class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}
-                             checked>
+                    type="radio" 
+                    name="is_active" 
+                    value="0"
+                    class="text-green-600 focus:ring-green-500"
+                    {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}>
                         <span class="text-gray-700 capitalize">No</span>
                     </label>
                      @error('is_active')
@@ -384,7 +382,7 @@
             </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('cc_od.schemes.index')}}"> BAck</a>
+                <a href="{{route('daily_weekly.schemes.index')}}"> BAck</a>
             </button>
         </div>
 

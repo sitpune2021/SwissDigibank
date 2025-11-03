@@ -13,6 +13,7 @@ use App\Models\LoanApplication;
 use App\Models\LoanOrnament;
 use App\Models\Calculator;
 use App\Models\LoanCreditScore;
+use App\Models\GoldloanProcessingFee;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +27,7 @@ class GoldLoanController extends Controller
     {       
         //$schemes = GoldLoanScheme::all();
         // paginate(10) => 10 records per page
-        $schemes = GoldLoanScheme::orderBy('id', 'desc')->paginate(10);
+        $schemes = GoldLoanScheme::orderBy('id', 'desc')->paginate(20);
         return view("gold-loan.schemes.index", compact('schemes'));
     }
 
@@ -362,7 +363,7 @@ class GoldLoanController extends Controller
     public function appindex()
     {
         //  loan applications fetch 
-        $applications = LoanApplication::with(['creditScores'])->latest()->get();
+        $applications = LoanApplication::with(['creditScores'])->latest()->paginate(20);
 
         return view("gold-loan.applications.index", compact('applications'));
     }
@@ -671,21 +672,10 @@ class GoldLoanController extends Controller
 ////////////////////////////////////////////////////////////////////////////////
 
 
-    public function showEmiChart()
-    {
-        // $banks = Bank::all(); // or your logic here
-        return view("gold-loan.applications.view-buttons.show-emi-chart");
-    }
     public function showdisbursesetting()
     {
 
         return view("gold-loan.applications.view-buttons.disburse-setting");
-    }
-
-    public function upload_documents()
-    {
-
-        return view("gold-loan.applications.upload_documents");
     }
 
     public function upload_cibil_score()
@@ -705,7 +695,7 @@ class GoldLoanController extends Controller
         ])->findOrFail($id);
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("daily_weekly.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("gold-loan.applications.view-buttons.col_process_fee", compact('application','banks'));
     }
 
     public function storeProcessFee(Request $request, $id)
@@ -735,18 +725,15 @@ class GoldLoanController extends Controller
             ]);
         }
 
-        DailyWeeklyProcessingFee::create($data);
+        GoldloanProcessingFee::create($data);
 
-        return redirect()->route('daily_weekly.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+        return redirect()->route('gold-loan.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
     public function emiChart($id)
     {
         $application = LoanApplication::with(['scheme', 'member', 'branch'])->findOrFail($id);
 
-        // Interest Type
-        //$interestType = strtolower($application->scheme->interest_type ?? 'flat_emi');
-        
         $interestTypeRaw = strtolower(trim($application->scheme->gold_loan_setting ?? 'flat_emi'));
 
         $interestType = 'flat_emi'; // default
@@ -761,13 +748,13 @@ class GoldLoanController extends Controller
             $interestType = 'flat_emi';
         }
 
-
         // Basic inputs
         $disburseDate = $application->disbursal_date
             ? Carbon::parse($application->disbursal_date)
             : Carbon::now();
 
-        $loanAmount = floatval($application->loan_amount ?? 0);
+        //$loanAmount = floatval($application->loan_amount ?? 0);
+        $loanAmount = floatval($application->approved_loan_amount ?? $application->loan_amount ?? 0);
         $tenure = intval($application->tenure_value ?? ($application->scheme->no_of_emi ?? 1));
         if ($tenure <= 0) $tenure = 1;
 

@@ -81,8 +81,8 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Loan Amount" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
                         </div>
-                        <hr>
 
+                        <hr>
                         <h4>Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
@@ -135,7 +135,7 @@
                                         <!-- Total -->
                                         <td class="px-2 py-2">
                                             <input type="number" name="processing_fee_total" id="processing_fee_total"
-                                                value="{{ number_format($total, 2, '.', '') }}" readonly
+                                                value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
                                                 class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
                                         </td>
                                     </tr>
@@ -153,146 +153,110 @@
                             </div>
                         </div>
 
-
                         <hr>
-                        <h4>
-                            Stamp Duty Fee
-                        </h4>
+                        <h4>Stamp Duty Fee</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
-                                    <!-- Column Labels -->
-                                    <tr class="">
-                                        <th class="text-center px-3 py-2 ">Value</th>
-                                        <th class="text-center px-3 py-2 ">GST (%)</th>
-                                        <th class="text-center px-3 py-2 ">SGST</th>
-                                        <th class="text-center px-3 py-2 ">CGST</th>
-                                        <th class="text-center px-3 py-2 ">IGST</th>
-                                        <th class="text-center px-3 py-2 ">Total</th>
+                                    <tr>
+                                        <th class="text-center px-3 py-2">Value</th>
+                                        <th class="text-center px-3 py-2">GST (%)</th>
+                                        <th class="text-center px-3 py-2">SGST</th>
+                                        <th class="text-center px-3 py-2">CGST</th>
+                                        <th class="text-center px-3 py-2">IGST</th>
+                                        <th class="text-center px-3 py-2">Total</th>
                                     </tr>
 
-                                    <!-- Input Row -->
-                                    <tr class="">
+                                    <tr>
                                         <!-- Value -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="stamp_duty_fee" id="stamp_duty_fee"
+                                                value="{{ number_format($stampDutyFee, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- GST (%) -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="18.0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="stamp_gst_percent" id="stamp_gst_percent"
+                                                value="{{ $gstPercent }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
                                         </td>
 
                                         <!-- SGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
 
                                         <!-- CGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
 
                                         <!-- IGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="stamp_duty_fee" id="" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border  rounded-10 text-sm md:text-base" />
-                                        </td>
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
 
                                         <!-- Total -->
                                         <td class="px-2 py-2">
-                                            <input type="number" name="stamp_duty_fee" id="" placeholder="0"
-                                                class="w-full px-2 py-2 text-center  border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" name="stamp_duty_total" id="stamp_duty_total"
+                                                value="{{ number_format($stampTotal, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-
-
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="" data-target="paymode2" class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
-                            </div>
-
-                            <div id="paymode2" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" :showSaving="false" id="amount"
-                                    :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true"
-                                    :checkedDefault="'cash'" groupName="stampduty" />
-                            </div>
                         </div>
+
                         <hr>
                         <h4>Insurance Fee</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                           <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
-                                </tr>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-center px-3 py-2">Value</th>
+                                        <th class="text-center px-3 py-2">GST (%)</th>
+                                        <th class="text-center px-3 py-2">SGST</th>
+                                        <th class="text-center px-3 py-2">CGST</th>
+                                        <th class="text-center px-3 py-2">IGST</th>
+                                        <th class="text-center px-3 py-2">Total</th>
+                                    </tr>
 
-                                <!-- Input Row -->
-                                <tr class="">
-                                    <!-- Value -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="insurance" name="insurance_fee"
-                                            value="{{ $disbursement->insurance_amount ?? 0 }}" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
+                                    <tr>
+                                        <!-- Value -->
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="insurance_fee" id="insurance_fee"
+                                                value="{{ number_format($insuranceFee, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                        </td>
 
-                                    <!-- GST (%) -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="gst" value="0.0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
+                                        <!-- GST (%) -->
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="insurance_gst_percent" id="insurance_gst_percent"
+                                                value="{{ $gstPercent }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                        </td>
 
-                                    <!-- SGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="sgst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
+                                        <!-- SGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
 
-                                    <!-- CGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="cgst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
+                                        <!-- CGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
 
-                                    <!-- IGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" id="igst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                    </td>
+                                        <!-- IGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
 
-                                    <!-- Total -->
-                                    <td class="px-2 py-2">
-                                        <input type="number" id="total" placeholder="0"
-                                            class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" readonly />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="collect_fee" data-target="paymode3"
-                                    class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
-                            </div>
-
-                            <div id="paymode3" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
-                                    id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
-                                    :hiddenheading="true" :checkedDefault="'cash'" groupName="insurance-fee" />
-                            </div>
+                                        <!-- Total -->
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="insurance_total" id="insurance_total"
+                                                value="{{ number_format($insuranceTotal, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
+
  
                          <hr>
                         <h4>Advance Interest</h4>
@@ -318,12 +282,16 @@
                          <hr>
                         <div class="col-span-2 md:col-span-1 mb-4">
                             <label for="" class="md:text-lg font-medium block mb-4 mt-4">
-                                Final Amount To Disburse
-                                <span class="text-red-500">*</span>
+                                Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" id="finalAmount" value="{{ $disbursement->approved_loan_amount }}" name="final_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4" readonly>
+                            <input type="number" id="finalAmount"
+                                value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
+                                name="final_amount"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
+                                readonly>
                             <hr>
+
+
                             <h3>Disbursement Amount :</h3>
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
@@ -332,7 +300,7 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ $disbursement->approved_loan_amount }}"
+                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
                                         class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
@@ -442,7 +410,7 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_2" name="D_mode_2"
+                                    <input type="text" id="D_mode_2" name="D_mode_2" value="0"
                                         class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     
                                     <div class="mt-3">
@@ -661,7 +629,7 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
-                                    {{ number_format($total, 2, '.', '') }}  (Incl. 18.0 % GST)
+                                    {{ number_format($processingTotal, 2, '.', '') }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">

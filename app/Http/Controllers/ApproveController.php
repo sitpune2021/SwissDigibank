@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccountsTransactionsHelper;
 use App\Models\ShareTransfer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -19,10 +20,13 @@ use App\Models\CcOdLoanApplication;
 use App\Models\DailyWeeklyApplication;
 use App\Models\DdsAccount;
 
+use App\Models\PersonalLoanApplication;
+
 
 class ApproveController extends Controller
 {
 
+    // Pending transaction 
     public function index(Request $request)
     {
         try {
@@ -67,17 +71,38 @@ class ApproveController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $transaction = Transaction::with('accounts')->findOrFail($id);
+            $transaction = Transaction::with('accounts.members')->findOrFail($id);
 
             $transaction->approve_status = $request->input('transaction_status');
             $transaction->remarks = $request->input('remarks');
             $transaction->payment_rev_rel = $request->input('payment_status');
+            $amount = $transaction->amount;
 
             if (strtolower($transaction->payment_mode) === 'online') {
                 $transaction->bank_name = $request->input('bank_account_id');
             }
 
             if ($transaction->save()) {
+
+                // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
+
+                $mobile = $transaction->accounts->members->member_info_mobile_no;
+
+                $AccountNo = $transaction->accounts->account_no;
+
+                $type = $transaction->transaction_type;
+
+                $account_id = $transaction->accounts->id;
+                $updated_balances = AccountsTransactionsHelper::getAccountBalacec([$account_id]);
+                $available_balance = $updated_balances['total_balance'];
+
+                $date = $transaction->transaction_date;
+
+                $dlttemplateid = 1707172234108850512;
+                $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
+
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
                 return redirect()->back()->with('success', 'Transaction updated successfully.');
             } else {
                 return redirect()->back()->with('error', 'Failed to update transaction.');
@@ -86,12 +111,12 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    // pending transaction ends
 
-
+    // Approve account status
     public function updateAccountStatus(Request $request, $id)
     {
         try {
-            //  Validate the input
             $validated = $request->validate([
                 'transaction_status' => 'required|in:0,1,2',
                 'remarks' => 'nullable|string|max:255',
@@ -103,27 +128,21 @@ class ApproveController extends Controller
                 $account = Account::findOrFail($id);
                 $account->approve_status = $validated['transaction_status'];
                 $account->remarks = $validated['remarks'];
-
                 $account->save();
 
                 try {
-
                     $Account = Account::with('members')->find($account->id);
-
                     $mobile = $Account->members->member_info_mobile_no;
-
                     $accountNo = $Account->account_no;
 
                     if ($account->approve_status == "1") {
                         $dlttemplateid = 1707172181386332784;
                         $message = "Dear Customer, congratulations! your saving a/c  $accountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
-
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('success', 'Account approved successfully.');
                     } else {
                         $dlttemplateid = 1707172181389479065;
                         $message = "Dear Customer, your saving a/c $accountNo is disapproved. Please contact branch for details. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
-
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('error', 'Account disapproved.');
                     }
@@ -131,7 +150,6 @@ class ApproveController extends Controller
                     Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
                 }
 
-                // 📝 Log the update
                 Log::info('Account status updated', [
                     'table' => 'accounts',
                     'id' => $id,
@@ -144,24 +162,17 @@ class ApproveController extends Controller
                 $fdAccount = FdAccount::findOrFail($id);
                 $fdAccount->status = $validated['transaction_status'];
                 $fdAccount->remarks = $validated['remarks'];
-
                 $fdAccount->save();
 
                 try {
-
-                    $fdaccount = \App\Models\fdAccount::with('member')->find($fdAccount->id);
-
+                    $fdaccount = \App\Models\FdAccount::with('member')->find($fdAccount->id);
                     $mobile = $fdaccount->member->member_info_mobile_no;
-
                     $account = $fdaccount->fd_no;
 
                     if ($fdaccount->status == 1) {
-                        // Approved message
                         $dlttemplateid = 1707172234113442938;
                         $message = "Congratulations! Your FD no $account is approved. SBC GLOBAL";
                     } elseif ($fdaccount->status == 2) {
-                        // Disapproved message
-
                         $dlttemplateid = 1707172234115386436;
                         $message = "Dear Customer, your FD no $account is disapproved. SBC GLOBAL";
                     }
@@ -177,7 +188,6 @@ class ApproveController extends Controller
                     Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
                 }
 
-                // 📝 Log the update
                 Log::info('FD Account status updated', [
                     'table' => 'fd_accounts',
                     'id' => $id,
@@ -194,21 +204,17 @@ class ApproveController extends Controller
 
                 try {
                     $mis_account = \App\Models\MisAccount::with('member')->find($misAccount->member_id);
-
                     $mobile = $mis_account->member->member_info_mobile_no;
                     $misAccountNo = $misAccount->mis_account_no;
 
                     if ($misAccount->status == 1) {
-
                         $dlttemplateid = 1707172234273006430;
                         $message = "Congratulations! your MIS no $misAccountNo is approved. SBC GLOBAL";
-
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('success', 'Account approved successfully.');
                     } else {
                         $dlttemplateid = 1707172234274327934;
                         $message = "Dear Customer, your MIS no $misAccountNo is disapproved. SBC GLOBAL";
-
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('error', 'Account disapproved.');
                     }
@@ -226,12 +232,9 @@ class ApproveController extends Controller
             } elseif ($validated['source_table'] === 'rd_accounts') {
                 // 🔹 RD Accounts
                 $rdAccount = \App\Models\RdAccount::findOrFail($id);
-                // $rdAccount->approve_status = $validated['transaction_status'];
                 $status = $validated['transaction_status'] == 1 ? 'Approved' : 'Disapproved';
                 $rdAccount->approve_status = $status;
-
                 $rdAccount->remarks = $validated['remarks'];
-
                 $rdAccount->save();
 
                 try {
@@ -239,9 +242,7 @@ class ApproveController extends Controller
                     $dlttemplateid = 1707172234135070517;
                     $mobile = $member->member_info_mobile_no;
                     $rdAccountNo = $rdAccount->rd_no;
-
                     $message = "Congratulations! your RD no. $rdAccountNo is approved. SBC GLOBAL";
-
                     \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
 
                     if ($rdAccount->approve_status == 'Approved') {
@@ -261,14 +262,13 @@ class ApproveController extends Controller
                     'updated_by' => Auth::id(),
                 ]);
             } elseif ($validated['source_table'] === 'dds_accounts') {
-                // 🔹 For DDS accounts
-                $ddsAccount = DdsAccount::findOrFail($id);
-                $ddsAccount->status = (int) $validated['transaction_status']; // Ensure integer
+                // 🔹 DDS Accounts (✅ Corrected Section)
+                $ddsAccount = \App\Models\DdsAccount::findOrFail($id);
+                $ddsAccount->status = (int) $validated['transaction_status'];
                 $ddsAccount->remarks = $validated['remarks'];
                 $ddsAccount->save();
 
                 try {
-                    // Use correct mobile column from your table
                     $mobile = $ddsAccount->member_mobile;
                     $accountNo = $ddsAccount->dd_no;
 
@@ -277,21 +277,19 @@ class ApproveController extends Controller
                         return redirect()->back()->with('error', 'Mobile number missing. SMS not sent.');
                     }
 
-                    // Choose message and template based on status
-                    if ($ddsAccount->status === 1) {
+                    if ($ddsAccount->status == 1) {
+                        // ✅ Approved Message
                         $dlttemplateid = '1707172234296830000';
-                        
-                        $message = "Congratulations! Your DD no. $accountNo is approved. SBC GLOBAL";
+                        $message = "Congratulations! your DD no. $accountNo is approved. SBC GLOBAL";
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('success', 'DDS Account approved successfully.');
-                    } elseif ($ddsAccount->status === 2) {
+                    } elseif ($ddsAccount->status == 2) {
+                        // ❌ Disapproved Message
                         $dlttemplateid = '1707172234298090000';
                         $message = "Dear Customer, your DD no. $accountNo is disapproved. SBC GLOBAL";
-                        
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('error', 'DDS Account disapproved.');
                     } else {
-                        // Pending or unknown status
                         return redirect()->back()->with('info', 'DDS Account status updated but no SMS sent.');
                     }
                 } catch (\Exception $e) {
@@ -299,10 +297,9 @@ class ApproveController extends Controller
                     return redirect()->back()->with('error', 'Something went wrong while sending SMS.');
                 }
 
-                // 📝 Log the update
                 Log::info('DDS Account status updated', [
                     'table' => 'dds_accounts',
-                    'id' => $id,
+                    'id' => $ddsAccount->id,
                     'new_status' => $ddsAccount->status,
                     'remarks' => $ddsAccount->remarks,
                     'updated_by' => Auth::id(),
@@ -312,7 +309,7 @@ class ApproveController extends Controller
             Log::error('Account not found', [
                 'id' => $id,
                 'source_table' => $request->input('source_table'),
-                'updated_by' =>  Auth::id(),
+                'updated_by' => Auth::id(),
             ]);
             abort(404);
         } catch (\Exception $e) {
@@ -325,8 +322,7 @@ class ApproveController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong while updating account status.']);
         }
     }
-
-
+   
     public function approveAccounts(Request $request)
     {
         try {
@@ -482,9 +478,7 @@ class ApproveController extends Controller
     FROM dds_accounts
     INNER JOIN branches ON dds_accounts.branch_id = branches.id
     INNER JOIN members ON dds_accounts.member_id = members.id
-    WHERE dds_accounts.status = 0
- 
-           ";
+    WHERE dds_accounts.status = 0";
 
             $query = DB::table(DB::raw("({$sql}) as combined"))
                 ->orderBy('created_at', 'desc');
@@ -522,7 +516,9 @@ class ApproveController extends Controller
             return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
         }
     }
+    // Approve account status ends
 
+    // Approve Share Transfer 
     public function approveTransfer(Request $request)
     {
         try {
@@ -580,8 +576,9 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    // Approve share Transfer ends
 
-
+    // Approve reverse transaction
     public function reverseTransactionView(Request $request, $id)
     {
         try {
@@ -728,6 +725,16 @@ class ApproveController extends Controller
                 return $item;
             });
 
+        // Personal Loan Applications
+        $personal = PersonalLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'personal';
+                return $item;
+            });
+
         // Merge all 4 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
@@ -735,6 +742,7 @@ class ApproveController extends Controller
             ->concat($businessLoans)
             ->concat($cc_od)
             ->concat($daily_weekly)
+            ->concat($personal)
             ->sortByDesc('created_at');
 
         // Account types array
@@ -745,6 +753,7 @@ class ApproveController extends Controller
             'business_loan' => 'Business Loan',
             'cc_od' => 'CC OD',
             'daily_weekly' => 'Daily Weekly',
+            'personal' => 'Personal Loan',
         ];
 
         return view('approvals.loans', compact('applications', 'types'));
@@ -780,6 +789,9 @@ class ApproveController extends Controller
                 break;
             case 'daily_weekly':
                 $application = DailyWeeklyApplication::find($id);
+                break;
+            case 'personal':
+                $application = PersonalLoanApplication::find($id);
                 break;
             default:
                 $application = null;
@@ -849,12 +861,22 @@ class ApproveController extends Controller
                 $item->model_type = 'daily_weekly';
             });
 
+        // Personal Loan Applications (approved)
+        $personal = PersonalLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'personal';
+            });
+
         // Merge all 5 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
             ->concat($cc_od)
             ->concat($daily_weekly)
+            ->concat($personal)
             ->sortByDesc('created_at');
 
         return view('approvals.approvals_history', compact('applications'));

@@ -274,9 +274,12 @@ class DailyWeeklyController extends Controller
                         $loanApplication->creditScores()->create([
                             'cibil_type'       => $type,
                             'cibil_score'      => $request->cibil_score[$index] ?? null,
-                            'report_date'      => isset($request->report_date[$index])
-                                ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
-                                : null,
+                            // 'report_date'      => isset($request->report_date[$index])
+                            //     ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                            //     : null,
+                             'report_date'      => isset($request->report_date[$index])
+                            ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d') // ✅ Correct format
+                            : null,
                             'report_file_path' => $filePath,
                         ]);
                     } catch (Exception $e) {
@@ -489,7 +492,6 @@ class DailyWeeklyController extends Controller
             return back()->with('error', 'Something went wrong while updating the application.');
         }
     }
-    
     
     public function col_process_fee($id)
     {

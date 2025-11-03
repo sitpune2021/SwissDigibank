@@ -30,7 +30,7 @@
       <div class="flex items-start flex-col  gap-2">
         <div class="flex items-center gap-3">
           <h1 class="text-xl font-semibold capitalize">
-            Property/ Mortgage LOAN CALCULATOR
+            PERSONAL LOAN CALCULATOR
           </h1>
         </div>
       </div>
@@ -39,7 +39,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
       <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
-        <form action="{{ route('mortgage.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
+        <form action="{{ route('personal.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
           @csrf
           <!-- Scheme -->
           <div class="mb-4">

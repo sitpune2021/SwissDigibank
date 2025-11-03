@@ -51,6 +51,7 @@ class PersonalLoanApplication extends Model
         'maximum_approvable_amount',
         'approved_loan_amount',
         'status',
+        'charges_per_emi_type',
     ];
 
 

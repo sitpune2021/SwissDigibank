@@ -102,18 +102,18 @@
 
     <div class="flex flex-wrap gap-3">
 
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+        <a href="#" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             Show Emi Chart
         </a>
 
-        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+        <a href="#" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
             Collect Processing Fee
         </a>
-        <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+        <a href="#" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
             DISBURSE SETTINGS
         </a>
 
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
             REGISTER eNACH ( Fidypay )
         </a>
 
@@ -215,7 +215,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Loan Account No.</td>
@@ -243,6 +243,8 @@
                 </table>
             </div>
 
+            
+            @if($application->status == 2 )
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
@@ -250,8 +252,6 @@
                         Disbursement Settings
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanSchemeInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -268,13 +268,13 @@
                                     Disbursement Date
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    24/09/2025
+                                    24-09-2025
                                 </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2">First EMI Date </td>
-                                <td class="px-4 py-2 text-right md:text-left"> 24/07/2026</td>
+                                <td class="px-4 py-2 text-right md:text-left"> 24-07-2026</td>
                             </tr>
 
                             <tr class="border-b">
@@ -326,6 +326,8 @@
                     </table>
                 </div>
             </div>
+            @endif
+
 
             <!--Cibil Info-->
             <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
@@ -333,11 +335,7 @@
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">Cibil Info</h3>
                     <div class=" flex gap-3">
-                        <a href="{{route('gold-loan.applications.upload-cibil-score')}}"
-                            class="p-2 btn-primary">
-                            <i class="las la-upload"></i>
-
-                        </a>
+                       
                         <!-- Modal Background (hidden by default) -->
                         <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
@@ -365,17 +363,49 @@
 
 
                 <!-- Body -->
-                <div class="p-4 overflow-x-auto" id="cibilInfo">
-                    <table class="w-full text-sm text-left">
-                        <tbody class="divide-y divide-gray-200">
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/3">No Cibil Data Found</td>
-                                <td class="px-4 py-2"></td>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                        <thead class="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
+                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
+                                <th class="px-4 py-2 font-semibold border">Report Date</th>
+                                <th class="px-4 py-2 font-semibold border">View Report</th>
                             </tr>
-                        </tbody>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                        @if($application->creditScores && $application->creditScores->isNotEmpty())
+                            @foreach($application->creditScores as $score)
+                                @if($score)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 border">
+                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-2 border">
+                                            @if(!empty($score->report_file_path))
+                                                <!-- <a href="javascript:void(0);" 
+                                                onclick="showImage('{{ asset($score->report_file_path) }}')" 
+                                                class="text-blue-600 hover:underline">View Report</a> -->
+                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
+                                            
+                                            @else
+                                                <span class="text-gray-500">No File Available</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
                     </table>
                 </div>
+
             </div>
 
 
@@ -404,84 +434,12 @@
 
 
 
-
-
-
-
-            <!--Security Deposits-->
-            <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
-
-                <div
-                    class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold capitalize">Security Deposits</h3>
-                    <div class="">
-
-
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'SecurityDeposits')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Body -->
-                <div class="p-4" id="SecurityDeposits">
-                    <div class="overflow-x-auto text-center mt-5">
-                        <div class="w-full overflow-x-auto">
-                            <table class="w-full  rounded-lg text-sm">
-                                <thead class="bg-secondary/5">
-                                    <tr>
-                                        <th class="px-3 py-2 text-left">Item Type</th>
-                                        <th class="px-3 py-2 text-left">Name</th>
-                                        <th class="px-3 py-2 text-center">Qty</th>
-                                        <th class="px-3 py-2 text-center">Val./gm (₹)</th>
-                                        <th class="px-3 py-2 text-center">Gross Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center">Net Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center">Tunch (%)</th>
-                                        <th class="px-3 py-2 text-center">Fine Weight (gm)</th>
-                                        <th class="px-3 py-2 text-center">Total Val. (₹)</th>
-                                        <th class="px-3 py-2 text-center">Image</th>
-                                        <th class="px-3 py-2 text-center">Status</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-3 py-2">Gold Jewellery</td>
-                                        <td class="px-3 py-2">abc</td>
-                                        <td class="px-3 py-2 text-center">3</td>
-                                        <td class="px-3 py-2 text-center">20000.0</td>
-                                        <td class="px-3 py-2 text-center">3.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">100.0</td>
-                                        <td class="px-3 py-2 text-center">2.0</td>
-                                        <td class="px-3 py-2 text-center">40000.0</td>
-                                        <td class="px-3 py-2 text-center">
-                                            <!-- Upload Button -->
-                                            <a class="btn-primary p-1">
-                                                <i class="las la-upload"></i>
-                                            </a>
-                                        </td>
-                                        <td class="px-3 py-2 text-center">Mortgage</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-
-
             <!--documents-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
                         Documents
-
                     </h3>
                     <div class="">
                         <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
@@ -517,10 +475,7 @@
                     <div
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
-                            <button type="button" class="btn-primary px-2 py-1 rounded-10">
-                                <i class="las la-upload y"></i>
-                                <span>UPLOAD</span>
-                            </button>
+                            {{ $score->cibil_score ?? 'N/A' }}
                         </label>
                     </div>
                 </div>
@@ -578,7 +533,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Gold Loan Scheme Info
+                        LOAN AGAINST DEPOSITE SCHEME INFO
                     </h3>
                     <div class="">
 
@@ -655,11 +610,9 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                       LOAN AGAINST DEPOSITE Application Info
+                       LOAN AGAINST DEPOSITE APPLICATION INFO
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanAppInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -669,62 +622,54 @@
                 <!-- Body -->
                 <div class="overflow-x-auto mt-5 " id="goldLoanAppInfo">
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">
                                     Branch
                                 </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    Kalyanadurgam
+                                <td class="px-4 py-2 text-right md:text-left uppercase">
+                                    {{ $application->branch->branch_name ?? 'N/A' }}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">Amount Requested</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ 34,000.00</td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Amount Approvable
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 36,000.00
-                                </td>
+                                <td class="font-semibold px-4 py-2 uppercase">Limit Requested</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{ $application->net_loan_amount }}</td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2">
-                                    Amount Approved
+                                    Limit Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ 34,000.00
+                                    ₹ {{ $application->maximum_approvable_amount }}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
-                                    Interest Amount
+                                <td class="font-semibold px-4 py-2">
+                                    Limit Approved
                                 </td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    ₹ 5,525.00
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->approved_loan_amount }}
                                 </td>
                             </tr>
+
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    19.5 %
+                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Annualized Percentage Rate (APR)
+                                    Interest Payout Type
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    0 % | %
+                                    {{ $application->scheme->gold_loan_setting }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -732,15 +677,7 @@
                                     Credit Period
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    1 Days
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
-                                    Total Amount to Recover
-                                </td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ 39,525.00
+                                    {{ $application->credit_period }} Days
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -748,36 +685,17 @@
                                     Tenure of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    10 MONTHS
+                                    {{ $application->tenure_value }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Collect Principal Amount as EMI
+                                    Insurance Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">no</span>
+                                    ₹ {{ $application->scheme->insurance_fee }} (Incl. 0.0 % GST)
                                 </td>
                             </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
-                                    Processing Fee
-                                </td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ 118.00 (Incl. 18.0 % GST)
-                                </td>
-                            </tr>
-                            <tr class="">
-                                <td class="font-bold px-4 py-2">
-                                    Purpose of Loan
-                                </td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    Property
-                                </td>
-                            </tr>
-
-
                         </tbody>
                     </table>
                 </div>

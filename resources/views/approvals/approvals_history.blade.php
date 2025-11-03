@@ -168,6 +168,9 @@
                                         @case('daily_weekly')
                                             Daily / Weekly Loan
                                             @break
+                                             @case('personal')
+                                            Personal Loan
+                                            @break
                                         @default
                                             Unknown Type
                                     @endswitch
@@ -195,6 +198,8 @@
                                 <div class="flex items-center gap-1 uppercase">
                                     @if($application->model_type == 'daily_weekly')
                                         {{ $application->loan_amount }}
+                                    @elseif($application->model_type == 'personal')
+                                    {{ $application->approved_loan_amount }}
                                     @else
                                         {{ $application->maximum_approvable_amount }}
                                     @endif

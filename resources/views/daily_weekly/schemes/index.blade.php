@@ -23,7 +23,7 @@
     @endif
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h1 class=" flex text-xl block font-semibold">New Daily / Weekly Loan Scheme</h1>
+                <h1 class=" flex text-xl block font-semibold">DAILY WEEKLY LOAN SCHEME</h1>
                 <a href="{{route('daily_weekly.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
                 </a>
             </div>  

@@ -97,6 +97,7 @@ class DdsAccountsController extends Controller
     }
     public function store(Request $request)
     {
+        // dd($request->all());
         Log::info('🔹 DdsAccountsController@store called');
         Log::info('Request data:', $request->all());
         if ($request->branch_id === 'null' || $request->branch_id === '') {
@@ -115,7 +116,6 @@ class DdsAccountsController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        // Additional validation logic as required
         try {
             Log::info('✅ Validation successful', $validated);
 
@@ -174,7 +174,6 @@ class DdsAccountsController extends Controller
             $lastDdNo = $lastAccount ? (int) substr($lastAccount->dd_no, 2) : 0;
             $newDdNo = 'DD' . str_pad($lastDdNo + 1, 3, '0', STR_PAD_LEFT);
 
-            // Create the DDS account
             $ddsAccount = new DdsAccount();
             $ddsAccount->dd_no = $newDdNo;  // Store the generated dd_no
             $ddsAccount->member_id = $request->member_id;
@@ -206,7 +205,6 @@ class DdsAccountsController extends Controller
 
             Log::info('✅ DDS Account created', ['dds_account_id' => $ddsAccount->id]);
 
-            // Send SMS with generated dd_no
             try {
                 $ddsaccount = DdsAccount::with('member')->find($ddsAccount->id);
                 $mobile = $ddsaccount->member->member_info_mobile_no;
@@ -220,14 +218,12 @@ class DdsAccountsController extends Controller
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             }
-            // Create the transaction
             $transaction = new DdTransaction();
             $transaction->dds_account_id = $ddsAccount->id;
             $transaction->transaction_date = now()->format('Y-m-d');
             $transaction->balance_available = $request->amount;
             $transaction->account_id = null;
             $transaction->pay_mode = $request->pay_mode;
-            // Additional logic for transaction as required
             $transaction->save();
 
             Log::info('✅ Transaction saved', ['transaction_id' => $transaction->id]);
