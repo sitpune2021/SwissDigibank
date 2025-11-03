@@ -13,6 +13,7 @@ use App\Models\LoanApplication;
 use App\Models\LoanOrnament;
 use App\Models\Calculator;
 use App\Models\LoanCreditScore;
+use App\Models\GoldloanProcessingFee;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -694,7 +695,7 @@ class GoldLoanController extends Controller
         ])->findOrFail($id);
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("daily_weekly.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("gold-loan.applications.view-buttons.col_process_fee", compact('application','banks'));
     }
 
     public function storeProcessFee(Request $request, $id)
@@ -724,9 +725,9 @@ class GoldLoanController extends Controller
             ]);
         }
 
-        DailyWeeklyProcessingFee::create($data);
+        GoldloanProcessingFee::create($data);
 
-        return redirect()->route('daily_weekly.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+        return redirect()->route('gold-loan.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
     public function emiChart($id)

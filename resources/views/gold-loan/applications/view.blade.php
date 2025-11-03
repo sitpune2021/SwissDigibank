@@ -113,12 +113,12 @@
         @if($application->status != 2)
 
             {{-- Status == DRAFT (0) OR CANCELED (3) --}}
-            <!-- @if(in_array($application->status, [0, 3]))
+            @if(in_array($application->status, [3]))
                 <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
                     class="btn-warning uppercase px-2 py-2 rounded-10">
                     Collect Processing Fee
                 </a>
-            @endif -->
+            @endif 
 
             {{-- Status != CANCELED (3) --}}
             @if($application->status != 3)

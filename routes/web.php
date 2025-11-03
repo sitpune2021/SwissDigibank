@@ -492,9 +492,9 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     // Collect Processing fee page in application view page
     Route::get('applications/col-process-fee/{id}', [GoldLoanController::class, 'col_process_fee'])
-        ->name('daily_weekly.applications.view-buttons.col_process_fee');
+        ->name('gold-loan.applications.view-buttons.col_process_fee');
     Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
-        ->name('daily_weekly.col_process_fee.store');
+        ->name('gold-loan.col_process_fee.store');
 
 
     // Show EMI chart in a new tab
