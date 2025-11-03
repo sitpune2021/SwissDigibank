@@ -49,13 +49,13 @@
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  MEMBER NO
+                                  CUSTOMER NO
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  	MEMBER NAME
+                                  	CUSTOMER NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -108,7 +108,7 @@
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $application->member_id }}
+                    {{ str_pad($application->member_id, 6, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
 

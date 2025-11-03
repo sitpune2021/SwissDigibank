@@ -84,22 +84,6 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        Maximum Loan Limit (%)
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="maxLoanLimit" name="max_loan_limit" value="{{ old('max_loan_limit', $scheme->max_loan_limit ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Maximum Loan Limit" >
-                        <p id="maxLoanLimitWords" class="text-red-500 text-sm mt-1"></p>
-                         @error('max_loan_limit')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    <!-- This will show the words -->
-                    <x-number-to-word for="maxLoanLimit" />
-                </div>
-
-                <div class="col-span-2 md:col-span-1">
                     <label for="tenure" class="md:text-lg font-medium block mb-4">
                         Max. Tenure <span class="text-red-500">*</span>
                     </label>
@@ -484,7 +468,7 @@
                             <input 
                                 type="radio" 
                                 name="charges_per_emi_type" 
-                                value="1" 
+                                value="ON EMI" 
                                 class="text-green-600 focus:ring-green-500"
                                 {{ old('charges_per_emi_type', $scheme->charges_per_emi_type ?? '') == 'ON EMI' ? 'checked' : '' }}
                                 checked>
@@ -496,7 +480,7 @@
                             <input 
                                 type="radio" 
                                 name="charges_per_emi_type" 
-                                value="0" 
+                                value="ON PRINCIPAL" 
                                 class="text-green-600 focus:ring-green-500"
                                 {{ old('charges_per_emi_type', $scheme->charges_per_emi_type ?? '') == 'ON PRINCIPAL' ? 'checked' : '' }}>
                             <span class="text-gray-700 capitalize">ON PRINCIPAL</span>
@@ -580,7 +564,7 @@
         </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{ route('mortgage.schemes.index') }}"> BAck</a>
+                <a href="{{ route('personal.schemes.index') }}"> BAck</a>
             </button>
         </div>
     </div>

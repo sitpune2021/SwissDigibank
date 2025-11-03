@@ -28,7 +28,7 @@
                     {{ $scheme->scheme_name }}
                 </h1>
                 <p class="text-gray-500 text-sm font-semibold">
-                    New Daily / Weekly Loan Scheme
+                    DAILY WEEKLY LOAN SCHEME
                 </p>
             </div>
         </div>

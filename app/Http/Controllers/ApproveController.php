@@ -18,7 +18,8 @@ use App\Models\LoanAgainstApplication;
 use App\Models\BusinessLoanApplication;
 use App\Models\CcOdLoanApplication;
 use App\Models\DailyWeeklyApplication;
-use App\Models\DdsAccount;
+
+use App\Models\PersonalLoanApplication;
 
 
 class ApproveController extends Controller
@@ -723,6 +724,16 @@ class ApproveController extends Controller
                 return $item;
             });
 
+        // Personal Loan Applications
+        $personal = PersonalLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'personal';
+                return $item;
+            });
+
         // Merge all 4 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
@@ -730,6 +741,7 @@ class ApproveController extends Controller
             ->concat($businessLoans)
             ->concat($cc_od)
             ->concat($daily_weekly)
+            ->concat($personal)
             ->sortByDesc('created_at');
 
         // Account types array
@@ -740,6 +752,7 @@ class ApproveController extends Controller
             'business_loan' => 'Business Loan',
             'cc_od' => 'CC OD',
             'daily_weekly' => 'Daily Weekly',
+            'personal' => 'Personal Loan',
         ];
 
         return view('approvals.loans', compact('applications', 'types'));
@@ -775,6 +788,9 @@ class ApproveController extends Controller
                 break;
             case 'daily_weekly':
                 $application = DailyWeeklyApplication::find($id);
+                break;
+            case 'personal':
+                $application = PersonalLoanApplication::find($id);
                 break;
             default:
                 $application = null;
@@ -844,12 +860,22 @@ class ApproveController extends Controller
                 $item->model_type = 'daily_weekly';
             });
 
+        // Personal Loan Applications (approved)
+        $personal = PersonalLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'personal';
+            });
+
         // Merge all 5 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
             ->concat($cc_od)
             ->concat($daily_weekly)
+            ->concat($personal)
             ->sortByDesc('created_at');
 
         return view('approvals.approvals_history', compact('applications'));

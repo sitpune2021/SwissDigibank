@@ -230,42 +230,44 @@
         </div>
 
            
-         {{-- Active field Yes/No --}}
+        
+        {{-- Active field Yes/No --}}
         <div class="w-full">
             <div class="mb-4">
                 <label class="md:text-lg font-medium block mb-2">
                     Active <span class="text-red-600">*</span>
                 </label>
+
                 <div class="mt-1 flex flex-wrap gap-3">
                     <!-- Yes -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
+                    <label class="flex items-center gap-2 p-2">
                         <input 
                             type="radio" 
                             name="is_active" 
-                            value="1" 
+                            value="1"
                             class="text-green-600 focus:ring-green-500"
                             {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
                         <span class="text-gray-700 capitalize">Yes</span>
                     </label>
 
                     <!-- No -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
+                    <label class="flex items-center gap-2 p-2">
                         <input 
                             type="radio" 
                             name="is_active" 
-                            value="0" 
+                            value="0"
                             class="text-green-600 focus:ring-green-500"
-                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}
-                             checked>
+                            {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}>
                         <span class="text-gray-700 capitalize">No</span>
                     </label>
-                     @error('is_active')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                 </div>
 
+                @error('is_active')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
+
 
 
         <!-- Buttons -->

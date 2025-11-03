@@ -119,6 +119,7 @@
                                         @elseif($application->model_type === 'business_loan') text-purple-600
                                         @elseif($application->model_type === 'cc_od') text-yellow-600
                                         @elseif($application->model_type === 'daily_weekly') text-green-600
+                                         @elseif($application->model_type === 'personal') text-green-600
                                         @endif
                                     ">
                                         {{ $types[$application->model_type] ?? 'Unknown' }}
@@ -128,7 +129,7 @@
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center  gap-1">
-                                <a href="{{ route('gold-loan.applications.view', $application->id) }}" 
+                                <a href="#" 
                                 class="text-blue-600 hover:underline">
                                     {{ $application->id }}
                                 </a>
@@ -149,6 +150,8 @@
                                 <div class="flex items-center gap-1 uppercase">
                                     @if($application->model_type == 'daily_weekly')
                                         {{ $application->loan_amount }}
+                                    @elseif($application->model_type == 'personal')
+                                   {{ $application->approved_loan_amount }}
                                     @else
                                         {{ $application->maximum_approvable_amount }}
                                     @endif
