@@ -586,6 +586,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('scheme/view/{id}', [LoanAgainstController::class, 'view'])
         ->name('loanagainst.schemes.view');
 
+
     // loanagainst Loan Calculation
     Route::get('calculator/index', [LoanAgainstController::class, 'calculator'])
         ->name('loanagainst.calculator.index');
@@ -645,6 +646,14 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.lineproperty.index');
     // Download excel sheet
     Route::get('loanagainst/export', [LoanAgainstController::class, 'exportLoanAgainst'])->name('loanagainst.lineproperty.export');
+
+    // Show emi chart 
+    Route::get('{id}/emi-chart', [LoanAgainstController::class, 'emiChart'])->name('loanagainst.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [LoanAgainstController::class, 'loanagainst_process_fee'])
+        ->name('loanagainst.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [LoanAgainstController::class, 'loanagainststoreProcessFee'])
+        ->name('loanagainst.col_process_fee.store');
 });
 
 

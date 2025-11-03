@@ -1,25 +1,26 @@
 @extends('layout.main')
 @section('content')
-    <div class="main-inner">
 
-   @if(session('success'))
-    <div 
-        id="successMessage" 
-        class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
-    >
-        {{ session('success') }}
-    </div>
+<div class="main-inner">
 
-    <script>
-        // Auto hide after 2 seconds
-        setTimeout(() => {
-            const msg = document.getElementById('successMessage');
-            if (msg) {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.remove(), 500); // smooth fade-out
-            }
-        }, 2000);
-    </script>
+  @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
     @endif
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
@@ -30,25 +31,28 @@
               
         <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
+                
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     SCHEME CODE
                                 </div>
                             </th>
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     SCHEME NAME
                                 </div>
                             </th>
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     TENURE
                                 </div>
                             </th>
-
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
@@ -61,6 +65,7 @@
                                     INTEREST TYPE
                                 </div>
                             </th>
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     A. INTEREST RATE (%)
@@ -72,11 +77,13 @@
                                     ACTIVE
                                 </div>
                             </th>
+
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     ACTIONS
                                 </div>
                             </th>
+
                         </tr>
                     </thead>
                    <tbody>
@@ -153,6 +160,7 @@
                 <div class="mt-6">
                     {{ $schemes->links('pagination::tailwind') }}
                 </div>
+
             </div>
 
 
