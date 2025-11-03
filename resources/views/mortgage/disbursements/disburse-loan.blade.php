@@ -30,7 +30,7 @@
         
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">Loan Againsts Disbursements</h3>
+                <h3 class="uppercase font-semibold">Property / Mortgage Loan Disbursement</h3>
             </div>
         </div>
 
@@ -39,44 +39,54 @@
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                   
-                <form method="POST" action="{{ route('mortgagedisbursements.store') }}">
-                    @csrf
+                        <form action="{{ route('mortgagedisbursements.store') }}" method="POST">
+                        @csrf
+                        <!-- Header -->
+                        
+                        <div class="px-4 py-3 ">
+                            <h3 class="text-lg border-b mb-4 font-semibold text-black">
+                                Application No - {{ $disbursement->id }}
+                                <input type="hidden" name="loan_application_id" value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
+                            </h3>
+                        </div>
+                         
+                        <!-- Body -->
 
-                    <!-- Header -->
-                    <div class="px-4 py-3">
-                        <h3 class="text-lg border-b mb-4 font-semibold text-black">
-                            Application No - {{ $disbursement->id }}
-                        </h3>
-                        <input type="hidden" name="loan_application_id" 
-                            value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
-                    </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                Loan Disbursement Date
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    <!-- Loan Disbursement Date -->
-                    <div class="mb-4">
-                        <label class="md:text-lg font-medium block mb-2">
-                            Loan Disbursement Date <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="disbursal_date" class="form-input"
-                            value="{{ date('d-m-Y') }}" required>
-                    </div>
+                            <input type="text" id="disbursalDate" name="disbursal_date"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                value="{{ date('d-m-Y') }}">
+                        </div>
 
-                    <!-- First EMI Date -->
-                    <div class="mb-4">
-                        <label class="md:text-lg font-medium block mb-2">
-                            First EMI Date <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="emi_date" class="form-input"
-                            value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
-                    </div>
+                        <div class="col-span-2 md:col-span-1 mt-1 mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                First EMI Date
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    <!-- Loan Amount -->
-                    <div class="mb-4">
-                        <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-                        <input type="number" name="loan_amount" class="form-input"
-                            value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-                    </div>
+                            <input type="text" id="emiDate" name="emi_date"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}">
+                        </div>
 
-                    <h4>Processing Fee</h4>                     
+                        <hr>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4">
+                                Loan Amount
+                            </label>
+
+                            <input type="number" id="loan_amount" name="loan_amount"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="Loan Amount" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                        </div>
+
+                        <hr>
+                        <h4>Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
@@ -88,6 +98,7 @@
                                         <th class="text-center px-3 py-2 ">IGST</th>
                                         <th class="text-center px-3 py-2 ">Total</th>
                                     </tr>
+
                                     <tr>
                                         <!-- Value -->
                                         <td class="px-2 py-2 ">
@@ -127,7 +138,7 @@
                                         <!-- Total -->
                                         <td class="px-2 py-2">
                                             <input type="number" name="processing_fee_total" id="processing_fee_total"
-                                                value="{{ number_format($total, 2, '.', '') }}" readonly
+                                                value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
                                                 class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
                                         </td>
                                     </tr>
@@ -145,16 +156,146 @@
                             </div>
                         </div>
 
-                        <!-- Final Amount -->
-                        <div class="mb-4">
-                            <label class="md:text-lg font-medium block mb-2">
-                                Final Amount To Disburse <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" name="final_amount" id="finalAmount" class="form-input" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                        <hr>
+                        <h4>Stamp Duty Fee</h4>
+                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-center px-3 py-2">Value</th>
+                                        <th class="text-center px-3 py-2">GST (%)</th>
+                                        <th class="text-center px-3 py-2">SGST</th>
+                                        <th class="text-center px-3 py-2">CGST</th>
+                                        <th class="text-center px-3 py-2">IGST</th>
+                                        <th class="text-center px-3 py-2">Total</th>
+                                    </tr>
+
+                                    <tr>
+                                        <!-- Value -->
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="stamp_duty_fee" id="stamp_duty_fee"
+                                                value="{{ number_format($stampDutyFee, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                        </td>
+
+                                        <!-- GST (%) -->
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="stamp_gst_percent" id="stamp_gst_percent"
+                                                value="{{ $gstPercent }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                        </td>
+
+                                        <!-- SGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+
+                                        <!-- CGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+
+                                        <!-- IGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+
+                                        <!-- Total -->
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="stamp_duty_total" id="stamp_duty_total"
+                                                value="{{ number_format($stampTotal, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
-                        <h3>Disbursement Amount :</h3>
+                        <hr>
+                        <h4>Insurance Fee</h4>
+                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-center px-3 py-2">Value</th>
+                                        <th class="text-center px-3 py-2">GST (%)</th>
+                                        <th class="text-center px-3 py-2">SGST</th>
+                                        <th class="text-center px-3 py-2">CGST</th>
+                                        <th class="text-center px-3 py-2">IGST</th>
+                                        <th class="text-center px-3 py-2">Total</th>
+                                    </tr>
 
+                                    <tr>
+                                        <!-- Value -->
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="insurance_fee" id="insurance_fee"
+                                                value="{{ number_format($insuranceFee, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                        </td>
+
+                                        <!-- GST (%) -->
+                                        <td class="px-2 py-2">
+                                            <input type="text" name="insurance_gst_percent" id="insurance_gst_percent"
+                                                value="{{ $gstPercent }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                        </td>
+
+                                        <!-- SGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+
+                                        <!-- CGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+
+                                        <!-- IGST -->
+                                        <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+
+                                        <!-- Total -->
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="insurance_total" id="insurance_total"
+                                                value="{{ number_format($insuranceTotal, 2, '.', '') }}" readonly
+                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+ 
+                         <hr>
+                        <h4>Advance Interest</h4>
+                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+
+                            <input type="number" id="finalAmount" name="advance_interest"
+                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
+                            value="{{ $advanceInterest }}" readonly>
+
+                            <div class="flex items-center gap-1 mt-3">
+                                <input type="checkbox" name="" id="" data-target="advance-interest"
+                                    class="block toggle-paymode">
+                                <span class="block">Collect Processing Fee Separately</span>
+                            </div>
+
+                            <div id="advance-interest" class="mt-3 hidden">
+                                <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
+                                    id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
+                                    :hiddenheading="true" :checkedDefault="'cash'" groupName="advance-interest" />
+                            </div>
+                        </div>
+
+                         <hr>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-4 mt-4">
+                                Final Amount To Disburse <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="finalAmount"
+                                value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
+                                name="final_amount"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
+                                readonly>
+                            <hr>
+
+
+                            <h3>Disbursement Amount :</h3>
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
                                     <label for="" class="md:text-lg font-medium block mb-4 mt-4">
@@ -162,8 +303,8 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ $disbursement->net_loan_amount ?? '' }}"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
                                         <label>
@@ -217,7 +358,7 @@
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
                                     <input type="date" id="transfer_date" name="transfer_date" 
-                                    value="{{ old('transfer_date', date('Y-m-d')) }}" 
+                                    value="{{ old('transfer_date', date('Y-m-d')) }}"
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                                 <div>
@@ -258,6 +399,13 @@
                             </select>
                             </div>
 
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
                                     <label for="" class="md:text-lg font-medium block mb-4 mt-4">
@@ -266,7 +414,7 @@
                                     </label>
 
                                     <input type="text" id="D_mode_2" name="D_mode_2" value="0"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     
                                     <div class="mt-3">
                                        <label>
@@ -315,7 +463,7 @@
                                                     Transfer Date <span class="text-red-500">*</span>
                                                 </label>
                                                 <input type="date" id="transfer_date2" name="transfer_date2" 
-                                                value="{{ old('transfer_date2', date('Y-m-d')) }}" 
+                                                value="{{ old('transfer_date2', date('Y-m-d')) }}"
                                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                             <div>
@@ -359,23 +507,22 @@
 
                                 </div>   
 
-                                 </div> </div>                                
-
                                 </div>
+
                             </div>
 
-                            <!-- Dynamic Fields -->
-                            <div id="extraFields" class="mb-4"></div>
 
-                            <!-- Submit Buttons -->
-                            <div class="flex flex-col sm:flex-row justify-center gap-3 mt-5">
-                                <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
+                            <!-- Buttons -->
+                            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+                                <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
                                     DISBURSE LOAN
                                 </button>
-                                <a href="{{ route ('mortgage.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
+
+                                <button class="btn-outline uppercase justify-center" type="reset">
+                                    <a href="{{route('mortgage.disbursements.index')}}">BACK</a>
+                                </button>
                             </div>
-                    
-                        </form>
+                    </form>
 
     <!-- Script -->
     <script>
@@ -445,7 +592,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">Property / Mortgage Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
@@ -479,65 +626,55 @@
                                 <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} - {{ $disbursement->member->member_info_first_name ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">1st Co-Applicant Member</td>
-                                <td class="px-3 py-2">{{ $disbursement->coApplicant1->id ?? '' }} - {{ $disbursement->coApplicant1->member_info_first_name ?? '' }}
-                            </tr>
-                            <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Requested</td>
                                 <td class="px-3 py-2">{{ $disbursement->net_loan_amount ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approvable</td>
-                                <td class="px-3 py-2">
-                                 ₹ 100,000.00
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
-                                    ₹ 200,000.00
+                                 ₹  {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
-                                 FLAT ADVANCED
+                                 {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interest Amount</td>
                                 <td class="px-3 py-2">
-                                ₹ 10,500.00
+                                ₹ 
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
-                                    15.0 %
+                                    {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
-                                   1 Days
+                                   {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
-                                   ₹ 80,501.00
+                                   ₹ 
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
-                                   12 MONTHS
+                                   {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
-                               <span                                         class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                               <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                           Yes
                                         </span>
                                 </td>
@@ -545,19 +682,19 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
-                                    {{ number_format($total, 2, '.', '') }}  (Incl. 18.0 % GST)
+                                    {{ number_format($processingTotal, 2, '.', '') }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
-                                   ₹ 1.00  (Incl. 18.0 % GST)
+                                   ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
-                                   {{ $disbursement->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
+                                   {{ $disbursement->scheme->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                           
