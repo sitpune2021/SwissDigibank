@@ -221,7 +221,7 @@
                                         data-type="{{ $sc->gold_loan_setting ?? '' }}"
                                         data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
                                         data-charge="{{ $sc->charge_floting ?? '' }}">
-                                        {{ $sc->scheme_code }}
+                                        {{ $sc->scheme_name }}
                                     </option>
                                 @endforeach
                             </select>

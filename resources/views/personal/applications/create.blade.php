@@ -28,13 +28,32 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold uppercase">NEW MORTGAGE LOAN APPLICATION</h1>
+            <h1 class="text-xl font-semibold uppercase">PERSONAL LOAN APPLICATION</h1>
         </div>
     </div>
 
+    @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out">
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
+    @endif
+
     <div class="box">
         <form method="POST" 
-                        action="{{ isset($application) ? route('mortgage.applications.update', $application->id) : route('mortgage.store') }}" enctype="multipart/form-data">
+                        action="{{ isset($application) ? route('personal.applications.update', $application->id) : route('personal.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if(isset($application))
                             @method('PUT')
@@ -217,7 +236,7 @@
                                         data-type="{{ $sc->gold_loan_setting ?? '-' }}"
                                         data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
                                         data-charge="{{ $sc->charge_floting ?? '-' }}">
-                                        {{ $sc->scheme_code }}
+                                        {{ $sc->scheme_name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -347,6 +366,38 @@
                                 placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
                         </div>
 
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="md:text-lg font-medium block mb-2">
+                                Charges Per EMI Type <span class="text-red-600">*</span>
+                            </label>
+
+                            <div class="mt-1 flex gap-4">
+                                <label class="flex items-center gap-2 p-2">
+                                    <input 
+                                        type="radio" 
+                                        name="charges_per_emi_type" 
+                                        value="ON EMI" 
+                                        class="text-green-600 focus:ring-green-500"
+                                        {{ old('charges_per_emi_type') == 'ON EMI' ? 'checked' : '' }} checked>
+                                    <span class="text-gray-700">ON EMI</span>
+                                </label>
+
+                                <label class="flex items-center gap-2 p-2">
+                                    <input 
+                                        type="radio" 
+                                        name="charges_per_emi_type" 
+                                        value="ON PRINCIPAL" 
+                                        class="text-green-600 focus:ring-green-500"
+                                        {{ old('charges_per_emi_type') == 'ON PRINCIPAL' ? 'checked' : '' }}>
+                                    <span class="text-gray-700">ON PRINCIPAL</span>
+                                </label>
+                            </div>
+
+                            @error('charges_per_emi_type')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                 </div>
 
                       <!-- Credit Score Details -->
@@ -435,8 +486,8 @@
 
                     </div>
 
-                        <!-- Collect Advance Processing Fee -->
-                    <div class="col-span-12  lg:col-span-12 ">
+                <!-- Collect Advance Processing Fee -->
+                <div class="col-span-12  lg:col-span-12 ">
                         <hr>
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                         Collect Advance Processing Fee
@@ -609,9 +660,10 @@
 
                     </div>
                 </div>
+                
             </div>
 
-            <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
+            <div class="w-64 flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
                     {{--memberBox info --}}
                     <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
@@ -639,8 +691,8 @@
                     </div>
                 </div>
 
-                    {{--schemeBox info --}}
-                    <div id="schemeBox" class=" mt-5 hidden">
+                {{--schemeBox info --}}
+                <div id="schemeBox" class=" mt-5 hidden">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
                         <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
                         <button type="button" class="p-1 rounded transition"
@@ -651,46 +703,46 @@
 
                     <div id="schemeInfoBody" class="px-4 py-3">
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
+                            <table class="w-full text-sm text-left whitespace-nowrap">
                                 <tbody>
-                                    <tr>
+                                    <tr class="border-b">
                                         <td class="font-semibold py-2 pr-4">Scheme Code</td>
                                         <td class="py-2" id="schemeCode">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Scheme Name</td>
                                         <td class="py-2" id="schemeName">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Max Tenure</td>
                                         <td class="py-2" id="schemeTenure">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
                                         <td class="py-2" id="schemeMax">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
                                         <td class="py-2" id="schemeLimit">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
                                         <td class="py-2" id="schemeMin">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
                                         <td class="py-2" id="schemeInterest">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Interest Type</td>
                                         <td class="py-2" id="schemeType">-</td>
                                     </tr>
                                 
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Active</td>
                                         <td class="py-2" id="schemeActive">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr  class="border-b">
                                         <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
                                         <td class="py-2" id="schemeCharge">-</td>
                                     </tr>
@@ -699,158 +751,26 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
            
-           
-        <div id="itemsContainer">
-            @if(isset($application) && $application->properties->count() > 0)
-            @foreach($application->properties as $index => $prop)
-            <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
-                <div class="flex flex-wrap gap-6">
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Property Type</label>
-                        <select name="properties[{{ $index }}][property_type]" class="w-full border rounded-10 px-3 py-2">
-                            <option value="">Select Property Type</option>
-                            <option value="agriculture_land" {{ $prop->property_type == 'agriculture_land' ? 'selected' : '' }}>Agriculture Land</option>
-                            <option value="urban_land" {{ $prop->property_type == 'urban_land' ? 'selected' : '' }}>Urban Land</option>
-                            <option value="plot" {{ $prop->property_type == 'plot' ? 'selected' : '' }}>Plot</option>
-                            <option value="house" {{ $prop->property_type == 'house' ? 'selected' : '' }}>House</option>
-                            <option value="shop" {{ $prop->property_type == 'shop' ? 'selected' : '' }}>Shop</option>
-                        </select>
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Doc Number</label>
-                        <input type="text" name="properties[{{ $index }}][doc_number]" value="{{ $prop->doc_number }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Registrar Name</label>
-                        <input type="text" name="properties[{{ $index }}][registrar_name]" value="{{ $prop->registrar_name }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Owner Name</label>
-                        <input type="text" name="properties[{{ $index }}][owner_name]" value="{{ $prop->owner_name }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Parent Name</label>
-                        <input type="text" name="properties[{{ $index }}][parent_name]" value="{{ $prop->parent_name }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Plot No</label>
-                        <input type="text" name="properties[{{ $index }}][plot_no]" value="{{ $prop->plot_no }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Tehsil</label>
-                        <input type="text" name="properties[{{ $index }}][tehsil]" value="{{ $prop->tehsil }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">District</label>
-                        <input type="text" name="properties[{{ $index }}][district]" value="{{ $prop->district }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Area (SQ FT)</label>
-                        <input type="text" name="properties[{{ $index }}][area_sqft]" value="{{ $prop->area_sqft }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-
-                    {{-- Boundaries Sale --}}
-                    <div class="w-full border-t mt-4 pt-4">
-                        <h4 class="text-lg font-semibold mb-2">Boundaries as per Sale Deed</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_east]" value="{{ $prop->boundary_sale_east }}" placeholder="East" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_west]" value="{{ $prop->boundary_sale_west }}" placeholder="West" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_north]" value="{{ $prop->boundary_sale_north }}" placeholder="North" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_south]" value="{{ $prop->boundary_sale_south }}" placeholder="South" class="border rounded-10 px-3 py-2">
-                        </div>
-                    </div>
-
-                    {{-- Boundaries Tech --}}
-                    <div class="w-full border-t mt-4 pt-4">
-                        <h4 class="text-lg font-semibold mb-2">Boundaries as per Technical</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_east]" value="{{ $prop->boundary_tech_east }}" placeholder="East" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_west]" value="{{ $prop->boundary_tech_west }}" placeholder="West" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_north]" value="{{ $prop->boundary_tech_north }}" placeholder="North" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_south]" value="{{ $prop->boundary_tech_south }}" placeholder="South" class="border rounded-10 px-3 py-2">
-                        </div>
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Expected Value</label>
-                        <input type="number" name="properties[{{ $index }}][expected_value]" value="{{ $prop->expected_value }}" class="expectedValue w-full border rounded-10 px-3 py-2">
-                    </div>
-
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Registered</label>
-                        <select name="properties[{{ $index }}][registered]" class="w-full border rounded-10 px-3 py-2">
-                            <option value="yes" {{ $prop->registered == 'yes' ? 'selected' : '' }}>Yes</option>
-                            <option value="no" {{ $prop->registered == 'no' ? 'selected' : '' }}>No</option>
-                        </select>
-                    </div>
-
-                    <div class="w-full text-end mb-3">
-                        <button type="button" class="btn-error text-white rounded-10 px-4 py-2 remove-item">❌ Remove</button>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        @endif
-    </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <label for="" class="uppercase:text-lg font-medium block mb-4">
-                    Total Security Amount
-                </label>
-                <input type="number" id="totalSecurityInput" name="total_security_amount"
-                    class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="0" readonly>
-            </div>
-            <div class="mt-3">
-                <button type="button" id="additem" class="btn-primary uppercase rounded-10 px-4 py-2">
-                    + Add NEW Items
-                </button>
-            </div>
- 
-
-            <!-- Loan Calculation Summary Table -->
-             <!-- Calculation Result Box -->
-         <!-- Hidden fields for saving calculation result -->
-        <input type="hidden" name="security_value" id="inputSecurity">
+        <!-- Calculation Result Box -->
+        <!-- Hidden fields for saving calculation result -->
         <input type="hidden" name="max_loan_amount" id="inputMaxLoan">
         <input type="hidden" name="max_loan_limit" id="inputLimit">
         <input type="hidden" name="maximum_approvable_amount" id="inputApprovable">
-        <input type="hidden" name="approved_loan_amount" id="inputApproved"> 
+        <input type="hidden" name="approved_loan_amount" id="inputApproved">
 
-           <!-- Calculation Box -->
+
+            <!-- Calculation Box -->
             <div id="calculationBox" class="flex justify-center hidden">
                 <table class="w-1/2 overflow-x-auto mt-6 bg-primary/20 rounded-lg text-sm">
                     <tbody>
                         <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2 w-1/2">Requested Loan Amount</th>
-                            <th class="text-start font-medium p-2 w-1/2" id="request-amt">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Security Value</th>
-                            <th class="text-start font-medium p-2" id="security-amt">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Max Loan Amount</th>
-                            <th class="text-start font-medium p-2" id="max-loan-amount">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Max Loan Limit</th>
-                            <th class="text-start font-medium p-2" id="max-loan-limit">-</th>
+                            <th class="uppercase text-center font-semibold p-2 w-1/2">Net Loan Amount</th>
+                            <th class="text-start font-medium p-2 w-1/2" id="net-loan-amt">-</th>
                         </tr>
                         <tr class="border-b border-gray-300">
                             <th class="uppercase text-center font-semibold p-2">Maximum Approvable Amount</th>
@@ -864,6 +784,7 @@
                 </table>
             </div>
 
+
             <!-- Buttons -->
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                 <button id="calculateBtn" class="btn-primary uppercase justify-center" type="button">
@@ -871,7 +792,7 @@
                 </button>
 
                 <button class="btn-outline uppercase justify-center" type="reset">
-                    <a href="{{ route('mortgage.applications.index') }}">BACK</a>
+                    <a href="{{ route('personal.applications.index') }}">BACK</a>
                 </button>
             </div>
 
@@ -1098,7 +1019,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 </script>
 
-<!-- Calculation box -->
+<!-- Calculation Script -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     let isCalculated = false;
@@ -1107,228 +1028,54 @@ document.addEventListener("DOMContentLoaded", function () {
     calcBtn.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // Step 1: Perform your calculation logic
-        let totalSecurity = 0;
-        document.querySelectorAll(".expectedValue").forEach(input => {
-            totalSecurity += parseFloat(input.value) || 0;
-        });
-
+        // (1) Get entered values
         let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        let insuranceAmount = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        let netLoanAmount = parseFloat(document.getElementById("netLoanAmount")?.value) || 0; // loan + insurance
+
+        // (2) Get selected scheme attributes
         let scheme = document.getElementById("scheme_id");
         let selected = scheme.options[scheme.selectedIndex];
         let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
         let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
 
-        if (loanAmount > maxLoan) {
-            alert("Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
-            document.getElementById("loanAmount").value = maxLoan.toFixed(2);
-            loanAmount = maxLoan;
+        // (3) Validate requested (net loan) amount
+        if (netLoanAmount > maxLoan) {
+            alert("Requested Loan Amount (₹" + netLoanAmount + ") cannot exceed Maximum Loan Limit of ₹" + maxLoan);
+            document.getElementById("netLoanAmount").value = maxLoan.toFixed(2);
+            netLoanAmount = maxLoan;
         }
 
-        let approvable = (totalSecurity * limit) / 100;
-        let approved = Math.min(loanAmount, approvable);
+        // (4) Maximum Approvable Amount = scheme's max loan
+        let approvable = maxLoan;
 
-        // Step 2: Display calculation result
-        document.getElementById("request-amt").textContent = loanAmount.toFixed(2);
-        document.getElementById("security-amt").textContent = totalSecurity.toFixed(2);
-        document.getElementById("max-loan-amount").textContent = maxLoan.toFixed(2);
-        document.getElementById("max-loan-limit").textContent = limit + "%";
+        // (5) Approved Loan Amount = min(net loan, max loan)
+        let approved = Math.min(netLoanAmount, maxLoan);
+
+        // (6) Show calculated values in the calculation box
+        document.getElementById("net-loan-amt").textContent = netLoanAmount.toFixed(2);
         document.getElementById("m-approval-amt").textContent = approvable.toFixed(2);
         document.getElementById("approval-amt").textContent = approved.toFixed(2);
 
-        // Step 3: Update hidden input values
-        document.getElementById("inputSecurity").value = totalSecurity.toFixed(2);
+        // (7) Update hidden fields for backend
         document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
         document.getElementById("inputLimit").value = limit;
         document.getElementById("inputApprovable").value = approvable.toFixed(2);
         document.getElementById("inputApproved").value = approved.toFixed(2);
 
+        // (8) Show calculation box
         document.getElementById("calculationBox").classList.remove("hidden");
 
-        // Step 4: Change button text to submit
+        // (9) Change button text to "Submit Application"
         if (!isCalculated) {
             calcBtn.textContent = "Submit Application";
             calcBtn.removeEventListener("click", arguments.callee);
             calcBtn.addEventListener("click", function () {
-                calcBtn.closest("form").submit(); // actual submit
+                calcBtn.closest("form").submit();
             });
             isCalculated = true;
         }
     });
-});
-</script>
-
-
-<!-- add item container -->
- <!-- Show Security Value in Calculation box -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-    const addItemBtn = document.getElementById("additem");
-    const itemsContainer = document.getElementById("itemsContainer");
-    const totalSecurityInput = document.getElementById("totalSecurityInput");
-
-    let propertyIndex = 0;
-
-    // Property Block Template (with name attributes for form submission)
-    const getPropertyBlock = (index) => `
-    <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
-        <div class="flex flex-wrap gap-6">
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Property Type <span class="text-error">*</span></label>
-                <select name="properties[${index}][property_type]" class="w-full border rounded-10 px-3 py-2">
-                    <option value="">Select Property Type</option>
-                    <option value="agriculture_land">Agriculture Land</option>
-                    <option value="urban_land">Urban Land</option>
-                    <option value="plot">Plot</option>
-                    <option value="house">House</option>
-                    <option value="shop">Shop</option>
-                </select>
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Doc Number</label>
-                <input type="text" name="properties[${index}][doc_number]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Doc Number">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Registrar Name</label>
-                <input type="text" name="properties[${index}][registrar_name]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Registrar Name">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Owner Name</label>
-                <input type="text" name="properties[${index}][owner_name]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Owner Name">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Parent Name</label>
-                <input type="text" name="properties[${index}][parent_name]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Parent Name">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Plot No</label>
-                <input type="text" name="properties[${index}][plot_no]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Plot No / House No">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Tehsil</label>
-                <input type="text" name="properties[${index}][tehsil]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Tehsil">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">District</label>
-                <input type="text" name="properties[${index}][district]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter District">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Area (SQ FT)</label>
-                <input type="text" name="properties[${index}][area_sqft]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Area">
-            </div>
-
-            <div class="w-full border-t mt-4 pt-4">
-    <h4 class="text-lg font-semibold mb-2">Boundaries as per Sale Deed</h4>
-    <div class="grid grid-cols-2 gap-4">
-        <div>
-            <label class="block mb-1">East</label>
-            <input type="text" name="properties[${index}][boundary_sale_east]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter East">
-        </div>
-        <div>
-            <label class="block mb-1">West</label>
-            <input type="text" name="properties[${index}][boundary_sale_west]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter West">
-        </div>
-        <div>
-            <label class="block mb-1">North</label>
-            <input type="text" name="properties[${index}][boundary_sale_north]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter North">
-        </div>
-        <div>
-            <label class="block mb-1">South</label>
-            <input type="text" name="properties[${index}][boundary_sale_south]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter South">
-        </div>
-    </div>
-</div>
-
-<div class="w-full border-t mt-4 pt-4">
-    <h4 class="text-lg font-semibold mb-2">Boundaries as per Technical</h4>
-    <div class="grid grid-cols-2 gap-4">
-        <div>
-            <label class="block mb-1">East</label>
-            <input type="text" name="properties[${index}][boundary_tech_east]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter East">
-        </div>
-        <div>
-            <label class="block mb-1">West</label>
-            <input type="text" name="properties[${index}][boundary_tech_west]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter West">
-        </div>
-        <div>
-            <label class="block mb-1">North</label>
-            <input type="text" name="properties[${index}][boundary_tech_north]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter North">
-        </div>
-        <div>
-            <label class="block mb-1">South</label>
-            <input type="text" name="properties[${index}][boundary_tech_south]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter South">
-        </div>
-    </div>
-</div>
-
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Expected Value <span class="text-red-500">*</span></label>
-                <input type="number" name="properties[${index}][expected_value]" class="expectedValue w-full border rounded-10 px-3 py-2" placeholder="Enter Expected Value">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Registered</label>
-                <select name="properties[${index}][registered]" class="w-full border rounded-10 px-3 py-2">
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
-
-            <div class="w-full text-end mb-3">
-                <button type="button" class="btn-error text-white rounded-10 px-4 py-2 remove-item">❌ Remove</button>
-            </div>
-        </div>
-    </div>`;
-
-    // Add property block
-    function addPropertyBlock() {
-        itemsContainer.insertAdjacentHTML("beforeend", getPropertyBlock(propertyIndex++));
-        attachExpectedValueListeners();
-    }
-
-    // Remove property block
-    itemsContainer.addEventListener("click", (e) => {
-        if (e.target.closest(".remove-item")) {
-            e.target.closest(".property-block").remove();
-            calculateTotalSecurity();
-        }
-    });
-
-    // Calculate total
-    function calculateTotalSecurity() {
-        let total = 0;
-        document.querySelectorAll(".expectedValue").forEach(input => {
-            total += parseFloat(input.value) || 0;
-        });
-        totalSecurityInput.value = total.toFixed(2);
-    }
-
-    // Attach input event listener to each property_value input
-    function attachExpectedValueListeners() {
-        document.querySelectorAll(".expectedValue").forEach(input => {
-            input.removeEventListener("input", calculateTotalSecurity);
-            input.addEventListener("input", calculateTotalSecurity);
-        });
-    }
-
-    // Initial load
-    //addPropertyBlock();
-    if (document.querySelectorAll('.property-block').length === 0) {
-    addPropertyBlock(); // only add default if none exist
-}
-
-    addItemBtn.addEventListener("click", addPropertyBlock);
 });
 </script>
 
@@ -1405,4 +1152,5 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
             icon.textContent = section.classList.contains('hidden') ? '+' : '−';
         }
 </script>
+
 @endsection

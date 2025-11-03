@@ -117,7 +117,7 @@
                         @enderror
                     </div>
 
-                    <div class="col-span-2 md:col-span-1">
+                    {{-- <div class="col-span-2 md:col-span-1">
                         <label for="branch_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Branch <span class="text-red-500">*</span>
                         </label>
@@ -133,7 +133,26 @@
                         @error('branch_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+                    </div> --}}
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="branch_id" class="md:text-lg font-medium block mb-4 uppercase">
+                            Branch <span class="text-red-500">*</span>
+                        </label>
+                        <select id="branch_id" name="branch_id"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Branch</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                    {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                                    {{ $branch->branch_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('branch_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
+
                     <div class="col-span-2 md:col-span-1">
                         <label for="advisor_id" class="md:text-lg font-medium block mb-4 uppercase">
                             Advisor / Staff
@@ -456,7 +475,7 @@
                                 @foreach ($savingAccounts as $account)
                                     <option value="{{ $account->id }}">
                                         {{ $account->account_no }}
-                                        {{ $account->members->full_name ?? ''  }}
+                                        {{ $account->members->full_name ?? '' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -638,7 +657,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-    <script>
+    {{-- <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
             let memberId = this.value;
             let url = this.getAttribute('data-url').replace(':id', memberId);
@@ -707,8 +726,81 @@
                 document.getElementById('date5').value = '';
             }
         });
-    </script>
+    </script> --}}
+    <script>
+        document.getElementById('memberDropdown').addEventListener('change', function() {
+            const memberId = this.value;
+            const url = this.getAttribute('data-url').replace(':id', memberId);
 
+            if (memberId) {
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        // ✅ Auto-fill member fields
+                        document.getElementById('memberName').value =
+                            (data.member_info_first_name ?? '') + ' ' + (data.member_info_last_name ?? '');
+                        document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
+                        document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
+                        document.getElementById('date5').value = data.open_date ?? '';
+
+                        // ✅ Branch logic
+                        const branchSelect = document.getElementById('branch_id');
+
+                        // Use empty string if branch_id is null/undefined/0
+                        const branchId = data.branch_id ? String(data.branch_id) : '';
+
+                        // Only add new branch option if it doesn't exist and branch_id is valid
+                        if (branchId && data.branch_name) {
+                            let optionExists = Array.from(branchSelect.options)
+                                .some(opt => opt.value === branchId);
+
+                            if (!optionExists) {
+                                const newOption = document.createElement('option');
+                                newOption.value = branchId;
+                                newOption.textContent = data.branch_name;
+                                branchSelect.appendChild(newOption);
+                            }
+                            branchSelect.value = branchId;
+                        } else {
+                            branchSelect.value = ''; // Reset to default "Select Branch"
+                        }
+
+                        // Trigger change event (if other logic depends on it)
+                        branchSelect.dispatchEvent(new Event('change'));
+
+                        // ✅ Minor dropdown logic
+                        const minorSelect = document.getElementById('minor_id');
+                        minorSelect.innerHTML = '<option value="">Select Minor</option>';
+
+                        if (data.minors && data.minors.length > 0) {
+                            data.minors.forEach(minor => {
+                                const option = document.createElement('option');
+                                option.value = minor.id;
+                                option.textContent = `${minor.first_name} ${minor.last_name}`;
+                                minorSelect.appendChild(option);
+                            });
+                        } else {
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No minors found';
+                            minorSelect.appendChild(option);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Customer details could not be fetched.');
+                    });
+            } else {
+                // Reset all fields if no member is selected
+                document.getElementById('memberName').value = '';
+                document.getElementById('memberAddress').value = '';
+                document.getElementById('memberMobile').value = '';
+                document.getElementById('branch_id').selectedIndex = 0;
+                document.getElementById('minor_id').innerHTML = '<option value="">Select Minor</option>';
+                document.getElementById('date5').value = '';
+            }
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const schemeSelect = document.getElementById('scheme_id');

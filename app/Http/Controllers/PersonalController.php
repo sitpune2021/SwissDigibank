@@ -13,7 +13,7 @@ use App\Models\PersonalLoanApplication;
 use App\Models\MortgageProperty;
 use App\Models\Calculator;
 use App\Models\MortgageProcessingFee;
-use App\Models\MortgageCreditScore;
+use App\Models\PersonalCreditScore;
 use Carbon\Carbon;
 use App\Exports\LinePropertExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -40,7 +40,7 @@ class PersonalController extends Controller
     {
         Log::info('personal Scheme Store Started', [
             'input' => $request->all(),
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
 
         // Step 1: Validation (add new fields)
@@ -48,7 +48,6 @@ class PersonalController extends Controller
             'scheme_name' => 'required|string|max:255',
             'tenure' => 'required|string|max:255',
             'scheme_code' => 'required|string|max:50|unique:personal_schemes,scheme_code',
-            'max_loan_limit' => 'required|numeric|min:1',
             'max_loan_amount' => 'required|numeric|min:1|max:200000',
             'annual_interest_rate' => 'required|numeric|min:0',
             'is_active' => 'required|in:0,1',
@@ -71,7 +70,6 @@ class PersonalController extends Controller
         ], [
             'scheme_name.required' => 'Please enter scheme name.',
             'scheme_code.required' => 'Scheme code is required.',
-            'max_loan_limit.required' => 'Max loan limit is required.',
             'tenure.required' => 'Tenure type is required.',
             'annual_interest_rate.required' => 'Annual interest rate is required.',
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
@@ -170,7 +168,7 @@ class PersonalController extends Controller
         } else {
             //  Scheme Mode
             $request->validate([
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:personal_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
                 'tenure_months' => 'required|integer|min:1',
                 'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
@@ -316,9 +314,6 @@ class PersonalController extends Controller
             ];
         }
 
-
-        //  Grand Total (Loan + Interest + Charges)
-        //  Grand Total (Loan + Interest + Charges)
         if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
         {
             // Interest deducted upfront, EMIs = only principal, total payable = loan amount
@@ -331,15 +326,13 @@ class PersonalController extends Controller
             $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
         }
 
-
         $disbursedAmount = $loan;
         if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
             $disbursedAmount = $loan - $totalInterest;
         }
 
-
         //  Return to view
-        return view('gold-loan.calculator.result', [
+        return view('personal.calculator.result', [
             'scheme' => $scheme,
             'is_manual' => $isManual,
             'loan' => $loan,
@@ -389,202 +382,121 @@ class PersonalController extends Controller
    
     public function storeLoanApplication(Request $request)
     {
-        Log::info('--- Loan Application Store Started ---', [
-            'user_id' => Auth::id(),
-            'input_data' => $request->all(),
-        ]);
+    Log::info('--- Loan Application Store Started ---', [
+        'user_id' => Auth::id(),
+        'input_data' => $request->all(),
+    ]);
 
-        // Validate before try
+    try {
+        // Step 1: Validate main fields
         $validated = $request->validate([
-            'application_date' => 'required|date_format:d-m-Y',
-            'member_id'        => 'required|exists:members,id',
-            'branch_id'        => 'required|exists:branches,id',
-            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-            'loan_amount'      => 'required|numeric|min:1',
-            'tenure_type'      => 'required',
-            'tenure_value'      => 'required',
-            'emi_collection'      => 'required',
-            'credit_period'      => 'required',
-            'insurance_amount'      => 'required',
-            'net_loan_amount'      => 'required',
-            'purpose_of_loan'      => 'required',
+            'application_date'   => 'required|date_format:d-m-Y',
+            'member_id'          => 'required|exists:members,id',
+            'branch_id'          => 'required|exists:branches,id',
+            'scheme_id'          => 'required|exists:personal_schemes,id',
+            'loan_amount'        => 'required|numeric|min:1',
+            'insurance_amount'   => 'required|numeric|min:0',
+            'net_loan_amount'    => 'required|numeric|min:1',
+            'tenure_type'        => 'required|string',
+            'tenure_value'       => 'required|numeric|min:1',
+            'emi_collection'     => 'required|string',
+            'credit_period'      => 'required|numeric|min:1',
+            'purpose_of_loan'    => 'required|string|max:255',
+            // Optional (if not always sent)
+            'total_security_amount' => 'nullable|numeric|min:0',
+            'charges_per_emi_type' => 'required|in:ON EMI,ON PRINCIPAL',
+
         ]);
 
-        try {
-            // Step 1: Convert application_date (DD-MM-YYYY → YYYY-MM-DD)
-            if ($request->filled('application_date')) {
-                try {
-                    $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
-                    $request->merge(['application_date' => $formattedDate]);
-                    Log::info('Converted application_date', ['formatted' => $formattedDate]);
-                } catch (Exception $e) {
-                    Log::warning('Invalid application_date format', ['value' => $request->application_date]);
-                }
-            }
+        // Step 2: Convert application_date to MySQL format
+        $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
+        $request->merge(['application_date' => $formattedDate]);
 
-            // Step 2: Map total_security_amount → security_amount
-            if ($request->filled('total_security_amount')) {
-                $request->merge(['security_amount' => $request->total_security_amount]);
-                Log::info('Mapped total_security_amount → security_amount', [
-                    'security_amount' => $request->total_security_amount,
-                ]);
-            }
-
-            // Step 3: Validation
-            $validated = $request->validate([
-                'application_date' => 'required|date',
-                'member_id' => 'required|exists:members,id',
-                'branch_id' => 'required|exists:branches,id',
-                'scheme_id' => 'required|exists:personal_schemes,id',
-                'loan_amount' => 'required|numeric|min:1',
-                'security_amount' => 'required|numeric|min:1',
-                'purpose_of_loan' => 'required|string|max:255',
-                'tenure_type' => 'required|string',
-                'tenure_value' => 'required|numeric|min:1',
-                'emi_collection' => 'required|string',
-                'credit_period' => 'required|numeric|min:1',
-                'insurance_amount' => 'required|numeric|min:1',
-                'net_loan_amount' => 'required|numeric|min:1',
-            ]);
-
-            Log::info('Validation Passed');
-
-            // Step 4: Create main loan application
-            $loanApplication = PersonalLoanApplication::create([
-                'application_date' => $request->application_date,
-                'member_id' => $request->member_id,
-                'branch_id' => $request->branch_id,
-                'scheme_id' => $request->scheme_id,
-                'co_applicant_1_id' => $request->co_applicant_1_id,
-                'co_applicant_2_id' => $request->co_applicant_2_id,
-                'guarantor_1_id' => $request->guarantor_1_id,
-                'guarantor_2_id' => $request->guarantor_2_id,
-                'guarantor_3_id' => $request->guarantor_3_id,
-                'guarantor_4_id' => $request->guarantor_4_id,
-                'tenure_type' => $request->tenure_type,
-                'tenure_value' => $request->tenure_value,
-                'emi_collection' => $request->emi_collection,
-                'credit_period' => $request->credit_period,
-                'loan_amount' => $request->loan_amount,
-                'insurance_amount' => $request->insurance_amount,
-                'net_loan_amount' => $request->net_loan_amount,
-                'purpose_of_loan' => $request->purpose_of_loan,
-                'security_amount' => $request->security_amount,
-                'securety_type' => $request->securety_type ?? 'Property',
-                'max_loan_amount' => $request->max_loan_amount,
-                'max_loan_limit' => $request->max_loan_limit,
-                'maximum_approvable_amount' => $request->maximum_approvable_amount,
-                'approved_loan_amount' => $request->approved_loan_amount,
-                'created_by' => Auth::id(),
-            ]);
-
-            Log::info('Loan Application Inserted Successfully', [
-                'loan_application_id' => $loanApplication->id,
-            ]);
-
-            // Step 5: Insert multiple CIBIL records
-            if ($request->has('cibil_type') && is_array($request->cibil_type)) {
-                foreach ($request->cibil_type as $index => $type) {
-                    if (empty($type)) continue;
-
-                    try {
-                        $reportDate = null;
-                        if (!empty($request->report_date[$index])) {
-                            $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
-                        }
-
-                        $filePath = null;
-                        if ($request->hasFile("report_file.$index")) {
-                            $filePath = $request->file("report_file.$index")
-                                ->store('uploads/cibil_reports', 'public');
-                        }
-
-                        personalCreditScore::create([
-                            'loan_application_id' => $loanApplication->id,
-                            'cibil_type' => $type,
-                            'cibil_score' => $request->cibil_score[$index] ?? null,
-                            'report_date' => $reportDate,
-                            'report_file_path' => $filePath,
-                        ]);
-
-                        Log::info('CIBIL Record Inserted', [
-                            'type' => $type,
-                            'score' => $request->cibil_score[$index] ?? null,
-                        ]);
-                    } catch (Exception $e) {
-                        Log::warning('Failed to insert CIBIL record', [
-                            'index' => $index,
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
-                }
-            }
-
-            // Step 6: Insert property details
+        // Step 3: Map total_security_amount → security_amount
+        $securityAmount = $request->filled('total_security_amount') 
+            ? $request->total_security_amount 
+            : ($request->security_amount ?? 0);
         
-            if ($request->has('properties') && is_array($request->properties)) {
-                foreach ($request->properties as $i => $prop) {
-                    if (empty($prop['property_type'])) continue;
+        // Step 4: Create main loan application
+        $loanApplication = PersonalLoanApplication::create([
+            'application_date'            => $request->application_date,
+            'member_id'                   => $request->member_id,
+            'branch_id'                   => $request->branch_id,
+            'scheme_id'                   => $request->scheme_id,
+            'co_applicant_1_id'           => $request->co_applicant_1_id,
+            'co_applicant_2_id'           => $request->co_applicant_2_id,
+            'guarantor_1_id'              => $request->guarantor_1_id,
+            'guarantor_2_id'              => $request->guarantor_2_id,
+            'guarantor_3_id'              => $request->guarantor_3_id,
+            'guarantor_4_id'              => $request->guarantor_4_id,
+            'tenure_type'                 => $request->tenure_type,
+            'tenure_value'                => $request->tenure_value,
+            'emi_collection'              => $request->emi_collection,
+            'credit_period'               => $request->credit_period,
+            'loan_amount'                 => $request->loan_amount,
+            'insurance_amount'            => $request->insurance_amount,
+            'net_loan_amount'             => $request->net_loan_amount,
+            'purpose_of_loan'             => $request->purpose_of_loan,
+            'security_amount'             => $securityAmount,
+            'securety_type'               => $request->securety_type ?? 'Property',
+            'max_loan_amount'             => $request->max_loan_amount,
+            'max_loan_limit'              => $request->max_loan_limit,
+            'maximum_approvable_amount'   => $request->maximum_approvable_amount,
+            'approved_loan_amount'        => $request->approved_loan_amount,
+            'charges_per_emi_type' => $request->charges_per_emi_type,
+            'created_by'                  => Auth::id(),
+        ]);
 
-                        try {
-                        personalProperty::create([
+        Log::info('Loan Application Created', ['loan_application_id' => $loanApplication->id]);
+
+        // Step 5: Save CIBIL details if available
+        if ($request->has('cibil_type') && is_array($request->cibil_type)) {
+            foreach ($request->cibil_type as $index => $type) {
+                if (empty($type)) continue;
+
+                try {
+                    $reportDate = null;
+                    if (!empty($request->report_date[$index])) {
+                        $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
+                    }
+
+                    $filePath = null;
+                    if ($request->hasFile("report_file.$index")) {
+                        $filePath = $request->file("report_file.$index")
+                            ->store('uploads/cibil_reports', 'public');
+                    }
+
+                    PersonalCreditScore::create([
                         'loan_application_id' => $loanApplication->id,
-                        'property_type' => $prop['property_type'] ?? null,
-                        'doc_number' => $prop['doc_number'] ?? null,
-                        'registrar_name' => $prop['registrar_name'] ?? null,
-                        'owner_name' => $prop['owner_name'] ?? null,
-                        'parent_name' => $prop['parent_name'] ?? null,
-                        'plot_no' => $prop['plot_no'] ?? null,
-                        'tehsil' => $prop['tehsil'] ?? null,
-                        'district' => $prop['district'] ?? null,
-                        'area_sqft' => $prop['area'] ?? null,
-                        'expected_value' => $prop['property_value'] ?? null,
-                        'registered' => $prop['registered'] ?? 'no',
-                        // Boundaries as per Sale Deed
-                        'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
-                        'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
-                        'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
-                        'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
-                        // Boundaries as per Technical
-                        'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
-                        'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
-                        'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
-                        'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
+                        'cibil_type'          => $type,
+                        'cibil_score'         => $request->cibil_score[$index] ?? null,
+                        'report_date'         => $reportDate,
+                        'report_file_path'    => $filePath,
                     ]);
 
-
-                            Log::info('Property Record Inserted', [
-                                'property_type' => $prop['property_type'],
-                                'expected_value' => $prop['property_value'] ?? null,
-                            ]);
-                        } catch (Exception $e) {
-                            Log::warning('Failed to insert one property record', [
-                                'index' => $i,
-                                'error' => $e->getMessage(),
-                            ]);
-                        }
-                    }
-                } else {
-                    Log::info('No property details found in request');
+                } catch (Exception $e) {
+                    Log::warning('CIBIL Record Insert Failed', [
+                        'index' => $index,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
-
-
-            // Step 7: Final success response
-            Log::info('All Data Saved Successfully', [
-                'loan_application_id' => $loanApplication->id,
-            ]);
-
-            return redirect()->route('personal.applications.index')
-                ->with('success', 'Loan, Credit Score & Property details saved successfully.');
-
-        } catch (Exception $e) {
-            Log::error('Error while storing Loan Application', [
-                'error_message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return back()->with('error', 'Something went wrong while saving the loan application.');
+            }
         }
+
+        Log::info('All Data Saved Successfully', ['loan_application_id' => $loanApplication->id]);
+
+        return redirect()
+            ->route('personal.applications.index')
+            ->with('success', 'Loan application saved successfully.');
+
+    } catch (Exception $e) {
+        Log::error('Error while storing Loan Application', [
+            'error_message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return back()->with('error', 'Something went wrong while saving the loan application.');
+    }
     }
 
     public function getMemberInfo($id)
@@ -633,70 +545,69 @@ class PersonalController extends Controller
 
     public function appupdate(Request $request, $id)
     {
-        $request->validate([
-            'application_date' => 'required|date',
+        // Step 1: Validate inputs
+        $validated = $request->validate([
+            'application_date' => 'required|date_format:d-m-Y',
             'member_id'        => 'required|exists:members,id',
             'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-            'loan_amount'      => 'required|numeric',
+            'loan_amount'      => 'required|numeric|min:1',
         ]);
 
+        // Step 2: Find application
         $application = PersonalLoanApplication::findOrFail($id);
-        //$application->update($request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']));
-        // Convert date format before update
-        $data = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
 
-        // Convert application_date from d-m-Y → Y-m-d
-        if (!empty($data['application_date'])) {
-            $data['application_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
-        }
+        // Step 3: Clean incoming data (exclude CIBIL + property fields)
+        $data = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file', 'properties']);
 
-        // Convert cheque_date if it exists and not already in Y-m-d
-        if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
-            $data['cheque_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
-        }
+        // Step 4: Convert date fields (only if needed)
+        $convertDate = fn($date) => !empty($date) && strpos($date, '-') === 2
+            ? Carbon::createFromFormat('d-m-Y', $date)->format('Y-m-d')
+            : $date;
 
-        // Convert transfer_date if exists
-        if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
-            $data['transfer_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
-        }
+        $data['application_date'] = $convertDate($data['application_date'] ?? null);
+        if (!empty($data['cheque_date'])) $data['cheque_date'] = $convertDate($data['cheque_date']);
+        if (!empty($data['transfer_date'])) $data['transfer_date'] = $convertDate($data['transfer_date']);
 
-        // Now safely update
+        // Step 5: Update application record
         $application->update($data);
 
-        // Delete old CIBIL reports (if editing)
+        // Step 6: Update CIBIL reports
         $application->creditScores()->delete();
 
-        // Insert new/updated CIBIL rows
         if ($request->has('cibil_type')) {
             foreach ($request->cibil_type as $index => $type) {
-                $filePath = null;
-                if ($request->hasFile("report_file.$index")) {
-                    $filePath = $request->file("report_file.$index")->store('cibil_reports', 'public');
-                }
+                if (empty($type)) continue;
+
+                $filePath = $request->hasFile("report_file.$index")
+                    ? $request->file("report_file.$index")->store('uploads/cibil_reports', 'public')
+                    : null;
+
+                $reportDate = !empty($request->report_date[$index])
+                    ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                    : null;
 
                 $application->creditScores()->create([
-                    'cibil_type' => $type,
-                    'cibil_score' => $request->cibil_score[$index],
-                    'report_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
-                    'report_file_path' => $filePath,
+                    'cibil_type'        => $type,
+                    'cibil_score'       => $request->cibil_score[$index] ?? null,
+                    'report_date'       => $reportDate,
+                    'report_file_path'  => $filePath,
                 ]);
             }
         }
 
-        // Delete old property details
-    $application->properties()->delete();
+        // Step 7: Update property details
+        $application->properties()->delete();
 
-    // Insert updated property details
-    if ($request->has('properties')) {
-        foreach ($request->properties as $prop) {
-            $application->properties()->create($prop);
+        if ($request->has('properties') && is_array($request->properties)) {
+            foreach ($request->properties as $prop) {
+                $application->properties()->create($prop);
+            }
         }
-    }
 
-
+        // Step 8: Redirect success
         return redirect()
             ->route('personal.applications.view', $application->id)
-            ->with('success', 'Application updated successfully');
+            ->with('success', 'Application updated successfully.');
     }
 
 
@@ -925,29 +836,10 @@ class PersonalController extends Controller
             ]);
         }
 
-        personalProcessingFee::create($data);
+        MortgageProcessingFee::create($data);
 
         return redirect()->route('personal.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
-    
-    public function linepropertyindex()
-    {
-        // loan applications fetch excluding status 1 and 2
-        $applications = PersonalLoanApplication::with(['creditScores', 'branch', 'member'])
-            ->whereNotIn('status', [4])
-            ->latest()
-            ->get(['id', 'status']);
-
-        return view("personal.lineproperty.index", compact('applications'));
-    }
-
-    
-    public function exportXls()
-    {
-        return Excel::download(new LinePropertExport, 'lineproperty.xlsx');
-    }
-    
-
 
     
 }

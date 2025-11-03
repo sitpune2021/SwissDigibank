@@ -96,17 +96,17 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Mortgage Loan Application </h1>
+            <h1 class="text-2xl uppercase font-semibold">PERSONAL LOAN</h1>
         </div>
     </div>
 
     <div class="flex flex-wrap gap-3">
 
-        <a href="{{ route('mortgage.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
+        <a href="{{ route('personal.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
             Show EMI Chart
         </a>  
         @if($application->status != 2) 
-        <a href="{{ route('mortgage.applications.view-buttons.col_process_fee', $application->id) }}"
+        <a href="{{ route('personal.applications.view-buttons.col_process_fee', $application->id) }}"
             class="btn-warning uppercase px-2 py-2 rounded-10">
             Collect Processing Fee
             </a>
@@ -196,7 +196,7 @@
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
                      @if($application->status != 2 )
-                   <a href="{{ route('mortgage.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                   <a href="{{ route('personal.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     @endif
@@ -270,11 +270,7 @@
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">Cibil Info</h3>
                     <div class=" flex gap-3">
-                        <a href="{{route('gold-loan.applications.upload-cibil-score')}}"
-                            class="p-2 btn-primary">
-                            <i class="las la-upload"></i>
 
-                        </a>
                         <!-- Modal Background (hidden by default) -->
                         <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
@@ -303,15 +299,46 @@
 
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto" id="cibilInfo">
-                    <table class="w-full text-sm text-left">
-                        <tbody class="divide-y divide-gray-200">
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/3">No Cibil Data Found</td>
-                                <td class="px-4 py-2"></td>
+                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                        <thead class="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
+                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
+                                <th class="px-4 py-2 font-semibold border">Report Date</th>
+                                <th class="px-4 py-2 font-semibold border">View Report</th>
                             </tr>
-                        </tbody>
-                    </table>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                        @if($application->creditScores && $application->creditScores->isNotEmpty())
+                            @foreach($application->creditScores as $score)
+                                @if($score)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 border">
+                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-2 border">
+                                            @if(!empty($score->report_file_path))
+                                                <!-- <a href="javascript:void(0);" 
+                                                onclick="showImage('{{ asset($score->report_file_path) }}')" 
+                                                class="text-blue-600 hover:underline">View Report</a> -->
+                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
+                                            
+                                            @else
+                                                <span class="text-gray-500">No File Available</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                 </div>
             </div>
 
@@ -449,7 +476,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Mortgage Loan Scheme Info
+                        Personal Loan Scheme Info
                     </h3>
                     <div class="">
 
@@ -526,7 +553,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Mortgage Application Info
+                        Personal Application Info
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"

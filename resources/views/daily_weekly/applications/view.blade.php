@@ -281,11 +281,7 @@
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">Cibil Info</h3>
                     <div class=" flex gap-3">
-                        <a href="{{ route('cc_od.credit_score.upload', $application->id) }}"
-                            class="p-2 btn-primary">
-                            <i class="las la-upload"></i>
-
-                        </a>
+    
                         <!-- Modal Background (hidden by default) -->
                         <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
@@ -353,8 +349,8 @@
                                         </tr>
                                     @endif
                                 </tbody>
-                            </table>
-                        </div>
+                    </table>
+                </div>
 
                         <!-- Modal (Reuse same from earlier) -->
                         <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">

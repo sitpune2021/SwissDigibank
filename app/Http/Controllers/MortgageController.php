@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
+
 class MortgageController extends Controller
 {
     
@@ -40,9 +41,9 @@ class MortgageController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('Mortgage Scheme Store Started', [
+        Log::info('personal Scheme Store Started', [
             'input' => $request->all(),
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(), 
         ]);
 
         // Step 1: Validation (add new fields)
@@ -171,7 +172,7 @@ class MortgageController extends Controller
         } else {
             //  Scheme Mode
             $request->validate([
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:mortgage_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
                 'tenure_months' => 'required|integer|min:1',
                 'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
@@ -340,7 +341,7 @@ class MortgageController extends Controller
 
 
         //  Return to view
-        return view('gold-loan.calculator.result', [
+        return view('mortgage.calculator.result', [
             'scheme' => $scheme,
             'is_manual' => $isManual,
             'loan' => $loan,
@@ -648,17 +649,17 @@ class MortgageController extends Controller
 
         // Convert application_date from d-m-Y → Y-m-d
         if (!empty($data['application_date'])) {
-            $data['application_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
+            $data['application_date'] = Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
         }
 
         // Convert cheque_date if it exists and not already in Y-m-d
         if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
-            $data['cheque_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
+            $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
         }
 
         // Convert transfer_date if exists
         if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
-            $data['transfer_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
+            $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
         }
 
         // Now safely update
@@ -678,7 +679,7 @@ class MortgageController extends Controller
                 $application->creditScores()->create([
                     'cibil_type' => $type,
                     'cibil_score' => $request->cibil_score[$index],
-                    'report_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
+                    'report_date' => Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
                     'report_file_path' => $filePath,
                 ]);
             }
@@ -931,23 +932,85 @@ class MortgageController extends Controller
         return redirect()->route('mortgage.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
     
-    public function linepropertyindex()
+   public function linepropertyindex()
     {
-        // loan applications fetch excluding status 1 and 2
-        $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member'])
+        $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member', 'properties'])
             ->whereNotIn('status', [4])
             ->latest()
             ->get(['id', 'status']);
 
         return view("mortgage.lineproperty.index", compact('applications'));
     }
-
     
-    public function exportXls()
+    public function exportLineProperty()
     {
-        return Excel::download(new LinePropertExport, 'lineproperty.xlsx');
+        $fileName = "line_property_export.xls";
+
+        // Fetch data with LEFT JOIN to mortgage_properties
+        $data = DB::table('mortgage_loan_applications as mla')
+            ->leftJoin('mortgage_properties as mp', 'mp.loan_application_id', '=', 'mla.id')
+            ->select(
+                'mla.id',
+                'mla.status',
+                DB::raw('NULL as loan_account_no'),
+                DB::raw('NULL as loan_account_status'),
+                'mp.property_type',
+                'mp.expected_value',
+                DB::raw('NULL as registered')
+            )
+            ->get();
+
+        // Define headers for columns
+        $headers = [
+            'LOAN APPLICATION NO',
+            'LOAN APPLICATION STATUS',
+            'LOAN ACCOUNT NO',
+            'LOAN ACCOUNT STATUS',
+            'PROPERTY TYPE',
+            'EXPECTED VALUE',
+            'REGISTERED',
+        ];
+
+        // Create output buffer
+        $output = fopen('php://temp', 'w');
+
+        // Write headings
+        fputcsv($output, $headers, "\t");
+
+        // Write rows
+        foreach ($data as $row) {
+            $statusText = match ((int) $row->status) {
+                0 => 'Draft',
+                1 => 'Approved',
+                2 => 'Disbursed',
+                3 => 'Cancelled',
+                default => 'Unknown',
+            };
+
+            fputcsv($output, [
+                $row->id ?? '',
+                $statusText,
+                '-', // loan_account_no
+                '-', // loan_account_status
+                $row->property_type ?? '-',
+                $row->expected_value ? '₹ ' . number_format($row->expected_value, 2) : '-',
+                $row->registered ? 'Yes' : 'No',
+            ], "\t");
+        }
+
+        rewind($output);
+        $content = stream_get_contents($output);
+        fclose($output);
+
+        // Return proper Laravel response
+        return response($content)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', "attachment; filename={$fileName}")
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
-    
+
+
 
 
     

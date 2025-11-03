@@ -107,7 +107,7 @@
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $application->member->member_no??'' }}
+                    {{ str_pad($application->member_id, 6, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
 
@@ -155,7 +155,6 @@
                         <i class="las la-eye text-xl"></i>
                     </a>
 
-                    <!-- Edit Icon -->
                      <!-- Edit Icon (show only if status ≠ 2 and ≠ 3) -->
                     @if($application->status != 2)
                     <a href="{{ route('gold-loan.applications.edit', $application->id) }}" 
@@ -170,8 +169,11 @@
     @endforeach
 </tbody>
 
-
                 </table>
+                <!-- Pagination Links -->
+<div class="mt-4">
+    {{ $applications->links() }}
+</div>
             </div>
 
 

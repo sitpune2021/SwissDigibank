@@ -42,7 +42,9 @@
             </td>
             <td class="p-2">-</td>
             <td class="p-2">-</td>
-            <td class="p-2">-</td>
+            <td class="p-2">
+                {{ $application->properties->pluck('property_type')->implode(', ') ?: '-' }}
+            </td>
             <td class="p-2">₹ </td>
             <td class="p-2">
                 <span

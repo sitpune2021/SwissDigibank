@@ -236,7 +236,8 @@
                 <!-- Content -->
                 <div x-show="open" x-transition class="p-4 text-sm bg-white">
                     <ul class="space-y-2">
-                        <li class="flex justify-between"><strong class="uppercase">Customer:</strong><span>{{ $member->accounts->members->member_no 
+                        <li class="flex justify-between"><strong class="uppercase">Customer:</strong><span>
+                                {{ $member->accounts?->members?->member_no 
     ?? ($member->accounts->members->id ? str_pad($member->accounts->members->id, 6, '0', STR_PAD_LEFT) : 'NA') }}-{{ $member->accounts->members->member_info_first_name ?? "NA"}}</span></li>
                         <hr class="my-2 border-gray-300">
                         <li class="flex justify-between"><strong class="uppercase">PAN No.:</strong><span>{{$member->accounts->members?->kyc?->member_kyc_pan_no??'NA'}}</span></li>

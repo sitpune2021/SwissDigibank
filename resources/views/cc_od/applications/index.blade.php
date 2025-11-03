@@ -107,12 +107,11 @@
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $application->member_id }}
+                    {{ str_pad($application->member_id, 6, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
 
-
-            <!-- Member Name (अगर relation है तो member->name, अभी के लिए member_id ही दिखा रहा हूँ) -->
+            <!-- Member Name (relation member->name, member_id ) -->
             <td class="text-start !py-5 px-6">
                 {{ $application->member->member_info_first_name ?? 'N/A' }}
             </td>
