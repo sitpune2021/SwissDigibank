@@ -12,21 +12,16 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Auth;
 
 class DisbursementController extends Controller
 {
     
     public function index()
     {
-             $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
+        $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-             ->paginate(20);
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
+            ->paginate(20);
 
         return view('gold-loan.disbursements.index', compact('disbursements'));
     }
@@ -52,7 +47,7 @@ class DisbursementController extends Controller
         try {
             // Start log
             Log::info('--- Loan Disbursement Store Started ---', [
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'input' => $request->all(),
             ]);
 

@@ -544,7 +544,7 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
     Route::get('lineproperty/index', [MortgageController::class, 'linepropertyindex'])->name('mortgage.lineproperty.index');
-    Route::get('ornaments/export', [MortgageController::class, 'exportXls'])->name('mortgage.lineproperty.export');
+    Route::get('lineproperty/export', [MortgageController::class, 'exportLineProperty'])->name('mortgage.lineproperty.export');
     Route::get('{id}/emi-chart', [MortgageController::class, 'emiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [MortgageController::class, 'mortgagecol_process_fee'])
@@ -644,7 +644,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('lineproperty/index', [LoanAgainstController::class, 'linepropertyindex'])
         ->name('loanagainst.lineproperty.index');
     // Download excel sheet
-    Route::get('loanagainst/export', [LoanAgainstController::class, 'exportXls'])->name('loanagainst.lineproperty.export');
+    Route::get('loanagainst/export', [LoanAgainstController::class, 'exportLoanAgainst'])->name('loanagainst.lineproperty.export');
 });
 
 

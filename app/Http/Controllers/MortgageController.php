@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
+
 class MortgageController extends Controller
 {
     
@@ -931,23 +932,85 @@ class MortgageController extends Controller
         return redirect()->route('mortgage.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
     
-    public function linepropertyindex()
+   public function linepropertyindex()
     {
-        // loan applications fetch excluding status 1 and 2
-        $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member'])
+        $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member', 'properties'])
             ->whereNotIn('status', [4])
             ->latest()
             ->get(['id', 'status']);
 
         return view("mortgage.lineproperty.index", compact('applications'));
     }
+    
+    public function exportLineProperty()
+    {
+        $fileName = "line_property_export.xls";
 
-    
-    // public function exportXls()
-    // {
-    //     return Excel::download(new LinePropertExport, 'lineproperty.xlsx');
-    // }
-    
+        // Fetch data with LEFT JOIN to mortgage_properties
+        $data = DB::table('mortgage_loan_applications as mla')
+            ->leftJoin('mortgage_properties as mp', 'mp.loan_application_id', '=', 'mla.id')
+            ->select(
+                'mla.id',
+                'mla.status',
+                DB::raw('NULL as loan_account_no'),
+                DB::raw('NULL as loan_account_status'),
+                'mp.property_type',
+                'mp.expected_value',
+                DB::raw('NULL as registered')
+            )
+            ->get();
+
+        // Define headers for columns
+        $headers = [
+            'LOAN APPLICATION NO',
+            'LOAN APPLICATION STATUS',
+            'LOAN ACCOUNT NO',
+            'LOAN ACCOUNT STATUS',
+            'PROPERTY TYPE',
+            'EXPECTED VALUE',
+            'REGISTERED',
+        ];
+
+        // Create output buffer
+        $output = fopen('php://temp', 'w');
+
+        // Write headings
+        fputcsv($output, $headers, "\t");
+
+        // Write rows
+        foreach ($data as $row) {
+            $statusText = match ((int) $row->status) {
+                0 => 'Draft',
+                1 => 'Approved',
+                2 => 'Disbursed',
+                3 => 'Cancelled',
+                default => 'Unknown',
+            };
+
+            fputcsv($output, [
+                $row->id ?? '',
+                $statusText,
+                '-', // loan_account_no
+                '-', // loan_account_status
+                $row->property_type ?? '-',
+                $row->expected_value ? '₹ ' . number_format($row->expected_value, 2) : '-',
+                $row->registered ? 'Yes' : 'No',
+            ], "\t");
+        }
+
+        rewind($output);
+        $content = stream_get_contents($output);
+        fclose($output);
+
+        // Return proper Laravel response
+        return response($content)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', "attachment; filename={$fileName}")
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+    }
+
+
 
 
     
