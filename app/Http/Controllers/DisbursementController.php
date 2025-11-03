@@ -12,22 +12,16 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Auth;
 
 class DisbursementController extends Controller
 {
     
     public function index()
     {
-             $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
+        $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            // ->whereNotIn('id', $disbursedIds)
-            ->get();
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
+            ->paginate(20);
 
         return view('gold-loan.disbursements.index', compact('disbursements'));
     }
@@ -53,7 +47,7 @@ class DisbursementController extends Controller
         try {
             // Start log
             Log::info('--- Loan Disbursement Store Started ---', [
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'input' => $request->all(),
             ]);
 
@@ -165,45 +159,67 @@ class DisbursementController extends Controller
 
     public function show($id)
     {
+        // Load loan + scheme + member + branch
         $disbursement = LoanApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
         $banks = Bank::pluck('name', 'id');
 
-        $processingFee = optional($disbursement->scheme)->processing_fee ?? 0;
-        $gstPercent = 18;
-        $gstAmount = ($processingFee * $gstPercent) / 100;
+        // Base scheme values
+        $scheme = optional($disbursement->scheme);
+        $processingFee = $scheme->processing_fee ?? 0;
+        $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
+        $insuranceFee = $scheme->insurance_fee ?? 0;
 
-        // sgst, cgst, igst ko fix 0
+        // Common GST percent
+        $gstPercent = 18;
+
+        // ===== Processing Fee Logic =====
+        $processingGst = ($processingFee * $gstPercent) / 100;
+        $processingTotal = $processingFee + $processingGst;
+
+        // ===== Stamp Duty Logic =====
+        $stampGst = ($stampDutyFee * $gstPercent) / 100;
+        $stampTotal = $stampDutyFee + $stampGst;
+
+        // ===== Insurance Fee Logic =====
+        $insuranceGst = ($insuranceFee * $gstPercent) / 100;
+        $insuranceTotal = $insuranceFee + $insuranceGst;
+
+        // ===== SGST / CGST / IGST fix 0 =====
         $sgst = 0;
         $cgst = 0;
         $igst = 0;
 
-        $total = $processingFee + $gstAmount;
-
-        // Interest calculation from scheme
-        $maxLoanAmount = optional($disbursement->scheme)->max_loan_amount ?? 0;
-        $annualInterestRate = optional($disbursement->scheme)->annual_interest_rate ?? 0;
-
-        // Example: Advance Interest = (maxLoanAmount * annualInterestRate / 100)
+        // ===== Interest calculation =====
+        $maxLoanAmount = $scheme->max_loan_amount ?? 0;
+        $annualInterestRate = $scheme->annual_interest_rate ?? 0;
         $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
+
+        // ===== Total deductions =====
+        $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+
+        // ===== Final amount to disburse =====
+        $loanAmount = $disbursement->net_loan_amount ?? 0;
+        $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
         return view(
             "gold-loan.disbursements.disburse-loan",
             compact(
                 'disbursement',
                 'banks',
-                'processingFee',
+                'processingFee', 'processingGst', 'processingTotal',
+                'stampDutyFee', 'stampGst', 'stampTotal',
+                'insuranceFee', 'insuranceGst', 'insuranceTotal',
                 'gstPercent',
-                'gstAmount',
-                'sgst',
-                'cgst',
-                'igst',
-                'total',
-                'maxLoanAmount',
-                'annualInterestRate',
-                'advanceInterest'
+                'sgst', 'cgst', 'igst',
+                'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
+                'finalAmountToDisburse',
+                'loanAmount',
+                'totalDeductions'
             )
         );
     }
+
 
 
    

@@ -138,6 +138,9 @@ class LoanAgainstController extends Controller
     }
 
 
+//////////////////////////////////////////////////////////////////////////////////
+
+
     public function calculator()
     {
         $scheme = LoanAgainstScheme::all();
@@ -285,6 +288,9 @@ class LoanAgainstController extends Controller
     }
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+
     public function appindex()
     {
         // loan applications fetch with pagination
@@ -294,7 +300,6 @@ class LoanAgainstController extends Controller
 
         return view("loanagainst.applications.index", compact('applications'));
     }
-
 
     public function appcreate() 
     {
@@ -306,7 +311,6 @@ class LoanAgainstController extends Controller
         return view("loanagainst.applications.create", compact('members','branch','scheme','banks'));
     }
    
-
     public function storeLoanApplication(Request $request)
     {
         Log::info('--- Loan Against Deposite Application Store Started ---', [
@@ -464,8 +468,6 @@ class LoanAgainstController extends Controller
             }
     }
 
-
-
     public function getMemberInfo($id)
     {
         $member = Member::select('id', 'member_info_first_name', 'member_info_mobile_no')
@@ -484,7 +486,6 @@ class LoanAgainstController extends Controller
         }
     }
 
-
     public function appview($id)
     {
         $application = LoanAgainstApplication::with([
@@ -496,7 +497,6 @@ class LoanAgainstController extends Controller
 
         return view("loanagainst.applications.view", compact('application'));
     }
-
 
     public function appedit($id)
     {
@@ -521,7 +521,6 @@ class LoanAgainstController extends Controller
             'application', 'members', 'scheme', 'branch', 'banks'
         ));
     }
-   
 
     public function appupdate(Request $request, $id)
     {
@@ -649,6 +648,9 @@ class LoanAgainstController extends Controller
     }
 
 
+//////////////////////////////////////////////////////////////////////////////////
+   
+
     public function linepropertyindex()
     {
         // loan applications fetch excluding status 1 and 0
@@ -660,10 +662,65 @@ class LoanAgainstController extends Controller
         return view("loanagainst.lineproperty.index", compact('applications'));
     }
 
-    public function exportXls()
+    public function exportLoanAgainst()
     {
-        return Excel::download(new LoanAgainstExport, 'loanagainst.xlsx');
+        $fileName = "loan_against_export_" . now()->format('d-m-Y_H-i-s') . ".xls";
+
+        //  loan_against_applications data fetch 
+        $data = DB::table('loan_against_applications as laa')
+            ->select('laa.id', 'laa.status')
+            ->orderBy('laa.id', 'DESC')
+            ->get();
+
+        // Define Excel headers
+        $headers = [
+            'LOAN APPLICATION NO',
+            'LOAN APPLICATION STATUS',
+            'LIEN ACCOUNT TYPE',
+            'LOAN ACCOUNT STATUS',
+            'LIEN ACCOUNT STATUS',
+            'LIEN ACCOUNT NUMBER',
+            'LIEN ACCOUNT ASSIGNED',
+        ];
+
+        // HTTP headers for file download
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=\"$fileName\"");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        // Open output stream
+        $file = fopen('php://output', 'w');
+
+        // Write headings
+        fputcsv($file, $headers, "\t");
+
+        // Write data rows
+        foreach ($data as $row) {
+            $statusText = match ((int) $row->status) {
+                0 => 'Draft',
+                1 => 'Approved',
+                2 => 'Disbursed',
+                3 => 'Cancelled',
+                default => 'Unknown',
+            };
+
+            fputcsv($file, [
+                $row->id ?? '',
+                $statusText,
+                '-',  // LIEN ACCOUNT TYPE
+                '-',  // LOAN ACCOUNT STATUS
+                '-',  // LIEN ACCOUNT STATUS
+                '-',  // LIEN ACCOUNT NUMBER
+                'Yes' // LIEN ACCOUNT ASSIGNED (static)
+            ], "\t");
+        }
+
+        fclose($file);
+        exit;
     }
+
+
     
 
 

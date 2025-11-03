@@ -115,7 +115,7 @@
     @if($application->status != 0 )
         <div class="relative inline-block text-left">
             <!-- Button -->
-            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+            <button type="button" class="btn-primary px-2 py-2 rounded-10 flex items-center gap-2"
                 onclick="toggleDropdown('printDropdown')">
                 <i class="las la-print text-lg"></i>
                 PRINT DOCUMENTS
@@ -175,10 +175,13 @@
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
                      @if($application->status != 2 )
-                   <a href="{{ route('cc_od.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                    <a href="{{ route('cc_od.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     @endif
+                    <a href="#" class=" p-2 btn-error">
+                        <i class="las la-trash-alt"></i>
+                    </a>
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
@@ -224,7 +227,7 @@
                                         $statusText = 'APPROVED';
                                         $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
                                     } elseif ($application->status == 2) {
-                                        $statusText = 'DISBURSEMENT';
+                                        $statusText = 'DISBURSED';
                                         $statusClass = 'bg-green-200 text-green-600 border-green-300';
                                     } elseif ($application->status == 3) {
                                         $statusText = 'CANCELED';

@@ -47,12 +47,73 @@ class OrnamentController extends Controller
         return view('gold-loan.ornaments.index', compact('ornaments', 'mortgageItems', 'releasedItems'));
     }
 
-
     public function exportXls()
     {
-        return Excel::download(new OrnamentsExport, 'ornaments.xlsx');
-    }
+        $fileName = 'ornaments_' . date('Y-m-d') . '.csv';
 
+        $ornaments = LoanOrnament::query()
+            ->join('loan_applications', 'loan_applications.id', '=', 'loan_ornaments.application_id')
+            ->join('branches', 'branches.id', '=', 'loan_applications.branch_id')
+            ->join('members', 'members.id', '=', 'loan_applications.member_id')
+            ->select(
+                'branches.branch_name as BRANCH_NAME',
+                'members.id as MEMBER_NO',
+                'members.member_info_first_name as MEMBER_NAME',
+                'loan_applications.id as APPLICATION_NO',
+                'loan_ornaments.item_type as ITEM_TYPE',
+                'loan_ornaments.item_name as ITEM_NAME',
+                'loan_ornaments.no_of_items as TOTAL_ITEMS',
+                'loan_ornaments.value_per_gram as VALUE_PER_GRAM',
+                'loan_ornaments.net_weight as NET_WEIGHT',
+                'loan_ornaments.tunch as TUNCH',
+                'loan_ornaments.fine_weight as FINE_WEIGHT',
+                'loan_ornaments.total_value as TOTAL_VALUE',
+                'loan_ornaments.status as STATUS',
+                'loan_ornaments.remark as REMARK'
+            )
+            ->get();
+
+        // Convert to array
+        $headers = [
+            'BRANCH NAME',
+            'MEMBER NO',
+            'MEMBER NAME',
+            'APPLICATION NO',
+            'ITEM TYPE',
+            'ITEM NAME',
+            'TOTAL ITEMS',
+            'VALUE PER GRAM (INR)',
+            'NET WEIGHT (gm)',
+            'TUNCH (%)',
+            'FINE WEIGHT (gm)',
+            'TOTAL VALUE (INR)',
+            'STATUS',
+            'REMARK',
+        ];
+
+        // Set headers for download
+        $responseHeaders = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0",
+        ];
+
+        // Stream CSV content
+        $callback = function () use ($ornaments, $headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers); // headings
+
+            foreach ($ornaments as $row) {
+                fputcsv($file, $row->toArray());
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $responseHeaders);
+    }
 
     public function update(Request $request, $id)
     {

@@ -24,7 +24,7 @@ class WithdrawController extends Controller
         try {
             $id = base64_decode($encodedId);
             $banks = Bank::all();
-            $member=Transaction::with(['accounts.members.kyc','accounts.scheme'])->where('id', $id)->first();
+            $member=Transaction::with(['accounts.members.kyc','accounts.scheme'])->where('account_id', $id)->first();
 
             return view('saving-current-ac.withdraws.withdraw-create', compact('id', 'banks','member'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

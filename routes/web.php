@@ -476,9 +476,6 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::post('/goldloan/pay-emi', [GoldLoanController::class, 'payEmi'])->name('goldloan.payEmi');
 
-
-
-
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
         ->name('gold-loan.applications.view-buttons.disburse-setting');
@@ -495,9 +492,9 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     // Collect Processing fee page in application view page
     Route::get('applications/col-process-fee/{id}', [GoldLoanController::class, 'col_process_fee'])
-        ->name('daily_weekly.applications.view-buttons.col_process_fee');
+        ->name('gold-loan.applications.view-buttons.col_process_fee');
     Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
-        ->name('daily_weekly.col_process_fee.store');
+        ->name('gold-loan.col_process_fee.store');
 
 
     // Show EMI chart in a new tab
@@ -547,7 +544,7 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
     Route::get('lineproperty/index', [MortgageController::class, 'linepropertyindex'])->name('mortgage.lineproperty.index');
-    Route::get('ornaments/export', [MortgageController::class, 'exportXls'])->name('mortgage.lineproperty.export');
+    Route::get('lineproperty/export', [MortgageController::class, 'exportLineProperty'])->name('mortgage.lineproperty.export');
     Route::get('{id}/emi-chart', [MortgageController::class, 'emiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [MortgageController::class, 'mortgagecol_process_fee'])
@@ -647,7 +644,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('lineproperty/index', [LoanAgainstController::class, 'linepropertyindex'])
         ->name('loanagainst.lineproperty.index');
     // Download excel sheet
-    Route::get('loanagainst/export', [LoanAgainstController::class, 'exportXls'])->name('loanagainst.lineproperty.export');
+    Route::get('loanagainst/export', [LoanAgainstController::class, 'exportLoanAgainst'])->name('loanagainst.lineproperty.export');
 });
 
 
@@ -957,14 +954,14 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
 
     Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
-    Route::get('lineproperty/index', [PersonalController::class, 'linepropertyindex'])->name('personal.lineproperty.index');
-    Route::get('ornaments/export', [PersonalController::class, 'exportXls'])->name('personal.lineproperty.export');
+    
     Route::get('{id}/emi-chart', [PersonalController::class, 'emiChart'])->name('personal.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [PersonalController::class, 'personalcol_process_fee'])
-        ->name('mortgage.applications.view-buttons.col_process_fee');
+        ->name('personal.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
-        ->name('mortgage.col_process_fee.store');
+        ->name('personal.col_process_fee.store');
+        
 });
 
 

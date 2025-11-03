@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccountsTransactionsHelper;
 use App\Models\ShareTransfer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -19,10 +20,13 @@ use App\Models\CcOdLoanApplication;
 use App\Models\DailyWeeklyApplication;
 use App\Models\DdsAccount;
 
+use App\Models\PersonalLoanApplication;
+
 
 class ApproveController extends Controller
 {
 
+    // Pending transaction 
     public function index(Request $request)
     {
         try {
@@ -67,17 +71,38 @@ class ApproveController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $transaction = Transaction::with('accounts')->findOrFail($id);
+            $transaction = Transaction::with('accounts.members')->findOrFail($id);
 
             $transaction->approve_status = $request->input('transaction_status');
             $transaction->remarks = $request->input('remarks');
             $transaction->payment_rev_rel = $request->input('payment_status');
+            $amount = $transaction->amount;
 
             if (strtolower($transaction->payment_mode) === 'online') {
                 $transaction->bank_name = $request->input('bank_account_id');
             }
 
             if ($transaction->save()) {
+
+                // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
+
+                $mobile = $transaction->accounts->members->member_info_mobile_no;
+
+                $AccountNo = $transaction->accounts->account_no;
+
+                $type = $transaction->transaction_type;
+
+                $account_id = $transaction->accounts->id;
+                $updated_balances = AccountsTransactionsHelper::getAccountBalacec([$account_id]);
+                $available_balance = $updated_balances['total_balance'];
+
+                $date = $transaction->transaction_date;
+
+                $dlttemplateid = 1707172234108850512;
+                $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
+
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
                 return redirect()->back()->with('success', 'Transaction updated successfully.');
             } else {
                 return redirect()->back()->with('error', 'Failed to update transaction.');
@@ -86,7 +111,9 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    // pending transaction ends
 
+    // Approve account status
     public function updateAccountStatus(Request $request, $id)
     {
         try {
@@ -451,9 +478,7 @@ class ApproveController extends Controller
     FROM dds_accounts
     INNER JOIN branches ON dds_accounts.branch_id = branches.id
     INNER JOIN members ON dds_accounts.member_id = members.id
-    WHERE dds_accounts.status = 0
- 
-           ";
+    WHERE dds_accounts.status = 0";
 
             $query = DB::table(DB::raw("({$sql}) as combined"))
                 ->orderBy('created_at', 'desc');
@@ -491,7 +516,9 @@ class ApproveController extends Controller
             return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
         }
     }
+    // Approve account status ends
 
+    // Approve Share Transfer 
     public function approveTransfer(Request $request)
     {
         try {
@@ -549,8 +576,9 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    // Approve share Transfer ends
 
-
+    // Approve reverse transaction
     public function reverseTransactionView(Request $request, $id)
     {
         try {
@@ -697,6 +725,16 @@ class ApproveController extends Controller
                 return $item;
             });
 
+        // Personal Loan Applications
+        $personal = PersonalLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'personal';
+                return $item;
+            });
+
         // Merge all 4 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
@@ -704,6 +742,7 @@ class ApproveController extends Controller
             ->concat($businessLoans)
             ->concat($cc_od)
             ->concat($daily_weekly)
+            ->concat($personal)
             ->sortByDesc('created_at');
 
         // Account types array
@@ -714,6 +753,7 @@ class ApproveController extends Controller
             'business_loan' => 'Business Loan',
             'cc_od' => 'CC OD',
             'daily_weekly' => 'Daily Weekly',
+            'personal' => 'Personal Loan',
         ];
 
         return view('approvals.loans', compact('applications', 'types'));
@@ -749,6 +789,9 @@ class ApproveController extends Controller
                 break;
             case 'daily_weekly':
                 $application = DailyWeeklyApplication::find($id);
+                break;
+            case 'personal':
+                $application = PersonalLoanApplication::find($id);
                 break;
             default:
                 $application = null;
@@ -818,12 +861,22 @@ class ApproveController extends Controller
                 $item->model_type = 'daily_weekly';
             });
 
+        // Personal Loan Applications (approved)
+        $personal = PersonalLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'personal';
+            });
+
         // Merge all 5 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
             ->concat($cc_od)
             ->concat($daily_weekly)
+            ->concat($personal)
             ->sortByDesc('created_at');
 
         return view('approvals.approvals_history', compact('applications'));

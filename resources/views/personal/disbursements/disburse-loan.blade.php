@@ -30,7 +30,7 @@
         
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">Loan Againsts Disbursements</h3>
+                <h3 class="uppercase font-semibold">Personal Loan Disbursements</h3>
             </div>
         </div>
 
@@ -39,7 +39,7 @@
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                   
-                <form method="POST" action="{{ route('mortgagedisbursements.store') }}">
+                <form method="POST" action="{{ route('personaldisbursements.store') }}">
                     @csrf
 
                     <!-- Header -->
@@ -372,7 +372,7 @@
                                 <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
                                     DISBURSE LOAN
                                 </button>
-                                <a href="{{ route ('mortgage.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
+                                <a href="{{ route ('personal.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
                             </div>
                     
                         </form>
@@ -414,27 +414,6 @@
     });
     </script>
 
-<style>
-.form-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-.btn-outline {
-    border: 1px solid #2563eb;
-    color: #2563eb;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-</style>
 
                 </div>
             </div>
@@ -445,7 +424,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">Personal Loan Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
