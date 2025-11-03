@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccountsTransactionsHelper;
 use App\Models\ShareTransfer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ use App\Models\DailyWeeklyApplication;
 class ApproveController extends Controller
 {
 
+    // Pending transaction 
     public function index(Request $request)
     {
         try {
@@ -66,17 +68,38 @@ class ApproveController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $transaction = Transaction::with('accounts')->findOrFail($id);
+            $transaction = Transaction::with('accounts.members')->findOrFail($id);
 
             $transaction->approve_status = $request->input('transaction_status');
             $transaction->remarks = $request->input('remarks');
             $transaction->payment_rev_rel = $request->input('payment_status');
+            $amount = $transaction->amount;
 
             if (strtolower($transaction->payment_mode) === 'online') {
                 $transaction->bank_name = $request->input('bank_account_id');
             }
 
             if ($transaction->save()) {
+
+                // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
+
+                $mobile = $transaction->accounts->members->member_info_mobile_no;
+
+                $AccountNo = $transaction->accounts->account_no;
+
+                $type = $transaction->transaction_type;
+
+                $account_id = $transaction->accounts->id;
+                $updated_balances = AccountsTransactionsHelper::getAccountBalacec([$account_id]);
+                $available_balance = $updated_balances['total_balance'];
+
+                $date = $transaction->transaction_date;
+
+                $dlttemplateid = 1707172234108850512;
+                $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
+
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
                 return redirect()->back()->with('success', 'Transaction updated successfully.');
             } else {
                 return redirect()->back()->with('error', 'Failed to update transaction.');
@@ -85,8 +108,9 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    // pending transaction ends
 
-
+    // Approve account status
     public function updateAccountStatus(Request $request, $id)
     {
         try {
@@ -198,7 +222,7 @@ class ApproveController extends Controller
                     $misAccountNo = $misAccount->mis_account_no;
 
                     if ($misAccount->status == 1) {
-                   
+
                         $dlttemplateid = 1707172234273006430;
                         $message = "Congratulations! your MIS no $misAccountNo is approved. SBC GLOBAL";
 
@@ -225,7 +249,6 @@ class ApproveController extends Controller
             } elseif ($validated['source_table'] === 'rd_accounts') {
                 // 🔹 RD Accounts
                 $rdAccount = \App\Models\RdAccount::findOrFail($id);
-                // $rdAccount->approve_status = $validated['transaction_status'];
                 $status = $validated['transaction_status'] == 1 ? 'Approved' : 'Disapproved';
                 $rdAccount->approve_status = $status;
 
@@ -260,7 +283,6 @@ class ApproveController extends Controller
                     'updated_by' => Auth::id(),
                 ]);
             }
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Account not found', [
                 'id' => $id,
@@ -407,6 +429,129 @@ class ApproveController extends Controller
     INNER JOIN branches ON rd_accounts.branch_id = branches.id
     INNER JOIN members ON rd_accounts.member_id = members.id
     WHERE rd_accounts.approve_status = 'Pending'
+
+       UNION ALL
+
+        SELECT 
+            fd_accounts.id,
+            fd_accounts.account_no AS account_no,
+            'FD' AS account_type,
+            null,
+            fd_accounts.fd_amount AS amount_deposit,
+            fd_accounts.payment_mode,
+            fd_accounts.account_holder_type,
+            fd_accounts.mode_of_operation,
+            fd_accounts.status AS approve_status,
+            fd_accounts.open_date,
+            fd_accounts.branch_id,
+            fd_accounts.member_id,
+            JSON_OBJECT(
+             'id', members.id,
+             'member_no', members.member_no,
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+            JSON_OBJECT(
+            'branch_name', branches.branch_name
+             ) AS branch,
+            'fd_accounts' AS source_table,
+            fd_accounts.created_at
+        FROM fd_accounts
+        INNER JOIN branches ON fd_accounts.branch_id = branches.id
+        INNER JOIN members ON fd_accounts.member_id = members.id
+        WHERE fd_accounts.status = '0'
+ UNION ALL
+        SELECT 
+        misaccounts.id,
+        misaccounts.mis_account_no AS account_no,
+        'MIS' AS account_type,
+        NULL AS firm_name,
+        misaccounts.mis_amount AS amount_deposit,
+        NULL AS payment_mode,
+        NULL AS account_holder_type,
+        NULL AS mode_of_operation,
+        misaccounts.status AS approve_status,
+        misaccounts.open_date,
+        misaccounts.branch_id,
+        misaccounts.member_id,
+        JSON_OBJECT(
+            'id', members.id,
+            'member_no', members.member_no,
+            'member_info_first_name', members.member_info_first_name,
+            'member_info_last_name', members.member_info_last_name
+        ) AS members,
+        JSON_OBJECT(
+            'branch_name', branches.branch_name
+        ) AS branch,
+        'misaccounts' AS source_table,
+        misaccounts.created_at
+    FROM misaccounts
+    INNER JOIN branches ON misaccounts.branch_id = branches.id
+    INNER JOIN members ON misaccounts.member_id = members.id
+    WHERE misaccounts.status = '0'
+
+
+       UNION ALL
+
+        SELECT 
+            fd_accounts.id,
+            fd_accounts.account_no AS account_no,
+            'FD' AS account_type,
+            null,
+            fd_accounts.fd_amount AS amount_deposit,
+            fd_accounts.payment_mode,
+            fd_accounts.account_holder_type,
+            fd_accounts.mode_of_operation,
+            fd_accounts.status AS approve_status,
+            fd_accounts.open_date,
+            fd_accounts.branch_id,
+            fd_accounts.member_id,
+            JSON_OBJECT(
+             'id', members.id,
+             'member_no', members.member_no,
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+            JSON_OBJECT(
+            'branch_name', branches.branch_name
+             ) AS branch,
+            'fd_accounts' AS source_table,
+            fd_accounts.created_at
+        FROM fd_accounts
+        INNER JOIN branches ON fd_accounts.branch_id = branches.id
+        INNER JOIN members ON fd_accounts.member_id = members.id
+        WHERE fd_accounts.status = '0'
+
+ UNION ALL
+
+        SELECT 
+        dds_accounts.id,
+        dds_accounts.dd_no AS account_no,
+        'DDS' AS account_type,
+        NULL AS firm_name,
+        dds_accounts.dd_amount AS amount_deposit,
+        NULL AS payment_mode,
+        NULL AS account_holder_type,
+        NULL AS mode_of_operation,
+        dds_accounts.status AS approve_status,
+        dds_accounts.open_date,
+        dds_accounts.branch_id,
+        dds_accounts.member_id,
+        JSON_OBJECT(
+            'id', members.id,
+            'member_no', members.member_no,
+            'member_info_first_name', members.member_info_first_name,
+            'member_info_last_name', members.member_info_last_name
+        ) AS members,
+        JSON_OBJECT(
+            'branch_name', branches.branch_name
+        ) AS branch,
+        'dds_accounts' AS source_table,
+        dds_accounts.created_at
+    FROM dds_accounts
+    INNER JOIN branches ON dds_accounts.branch_id = branches.id
+    INNER JOIN members ON dds_accounts.member_id = members.id
+    WHERE dds_accounts.status = 0
         ";
 
             $query = DB::table(DB::raw("({$sql}) as combined"))
@@ -444,8 +589,9 @@ class ApproveController extends Controller
             return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
         }
     }
+    // Approve account status ends
 
-
+    // Approve Share Transfer 
     public function approveTransfer(Request $request)
     {
         try {
@@ -503,8 +649,9 @@ class ApproveController extends Controller
             abort(404);
         }
     }
+    // Approve share Transfer ends
 
-
+    // Approve reverse transaction
     public function reverseTransactionView(Request $request, $id)
     {
         try {
@@ -732,7 +879,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'loan';
             });
 
@@ -741,7 +888,7 @@ class ApproveController extends Controller
             ->where('status', 1)
             ->latest()
             ->get()
-            ->each(function($item){
+            ->each(function ($item) {
                 $item->model_type = 'mortgage';
             });
 
