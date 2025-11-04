@@ -170,6 +170,11 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
+Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+
+        // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+        Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
+        
         Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
         Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
         Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');
@@ -954,14 +959,13 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
 
     Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
-    
+
     Route::get('{id}/emi-chart', [PersonalController::class, 'emiChart'])->name('personal.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [PersonalController::class, 'personalcol_process_fee'])
         ->name('personal.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
-        
 });
 
 

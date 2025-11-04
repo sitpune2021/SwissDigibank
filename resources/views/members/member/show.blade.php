@@ -287,7 +287,7 @@
                                 <div class="flex items-center gap-3 uppercase"><span>Religion</span></div>
                             </th>
                             <td class="p-2">
-                                <div><span>{{ $member->member_info_religion?->name ?? 'N/A' }}</span></div>
+                                <div><span>{{ $member->religion?->name ?? 'N/A' }}</span></div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
@@ -359,139 +359,139 @@
             {{-- Member KYC Info --}}
             <!-- <div x-data="{ open: true }" class="mt-4 rounded-md shadow">
 
-                            <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
-                                @click="open = !open">
-                                <span class="font-semibold uppercase">Member KYC Info</span>
-                                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-                            </div>
+                                    <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
+                                        @click="open = !open">
+                                        <span class="font-semibold uppercase">Member KYC Info</span>
+                                        <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                                    </div>
 
-                            <div x-show="open" x-transition class="bg-white rounded-md">
-                                <table class="w-full text-sm">
-                                    <tbody>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
-                                            <td class="flex items-center justify-between px-6 py-2" text-start>
-                                                <span>{{ $member->kyc?->member_kyc_aadhaar_no ?? '' }}</span>
-                                                <i class="text-green-600 fa fa-check-circle"></i>
-                                            </td>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Voter ID No.</th>
-                                            <td class="flex items-center justify-between px-6 py-2" text-start>
-                                                {{ $member->kyc?->member_kyc_voter_id_no ?? '' }}
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
-                                            <td class="flex items-center justify-between px-6 py-2" text-start>
-                                                <span>{{ $member->kyc?->member_kyc_pan_no ?? '' }}</span>
-                                                <i class="text-green-600 fa fa-check-circle"></i>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
-                                            <td class="flex items-center justify-between px-6 py-2" text-start>
-                                                <span>{{ $member->kyc?->member_kyc_ration_card_no ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
-                                            <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ?? '' }}</td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">CI No.</th>
-                                            <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no ?? '' }}</td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
-                                            <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation ?? '' }}</td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">DL No</th>
-                                            <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no ?? '' }}</td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
-                                            {{-- <td class="px-6 py-2">{{$member->kyc?->member_kyc_ci_no??''}}</td> --}}
-                                        </tr>
-                                        <tr>
-                                            <th class="px-6 py-2 font-semibold text-start">CKYC Updated At</th>
-                                            <td class="px-6 py-2">-</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
+                                    <div x-show="open" x-transition class="bg-white rounded-md">
+                                        <table class="w-full text-sm">
+                                            <tbody>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
+                                                    <td class="flex items-center justify-between px-6 py-2" text-start>
+                                                        <span>{{ $member->kyc?->member_kyc_aadhaar_no ?? '' }}</span>
+                                                        <i class="text-green-600 fa fa-check-circle"></i>
+                                                    </td>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Voter ID No.</th>
+                                                    <td class="flex items-center justify-between px-6 py-2" text-start>
+                                                        {{ $member->kyc?->member_kyc_voter_id_no ?? '' }}
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
+                                                    <td class="flex items-center justify-between px-6 py-2" text-start>
+                                                        <span>{{ $member->kyc?->member_kyc_pan_no ?? '' }}</span>
+                                                        <i class="text-green-600 fa fa-check-circle"></i>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
+                                                    <td class="flex items-center justify-between px-6 py-2" text-start>
+                                                        <span>{{ $member->kyc?->member_kyc_ration_card_no ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Meter No.</th>
+                                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_meter_no ?? '' }}</td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">CI No.</th>
+                                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_no ?? '' }}</td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">CI Relation</th>
+                                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_ci_relation ?? '' }}</td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">DL No</th>
+                                                    <td class="px-6 py-2">{{ $member->kyc?->member_kyc_dl_no ?? '' }}</td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">CKYC No</th>
+                                                    {{-- <td class="px-6 py-2">{{$member->kyc?->member_kyc_ci_no??''}}</td> --}}
+                                                </tr>
+                                                <tr>
+                                                    <th class="px-6 py-2 font-semibold text-start">CKYC Updated At</th>
+                                                    <td class="px-6 py-2">-</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> -->
             {{-- Member Nominee Info --}}
             <!-- <div x-data="{ open: true }" class="mt-4 rounded shadow">
-                            <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
-                                @click="open = !open">
-                                <span class="font-semibold uppercase">Member Nominee Info</span>
-                                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
-                            </div>
+                                    <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
+                                        @click="open = !open">
+                                        <span class="font-semibold uppercase">Member Nominee Info</span>
+                                        <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                                    </div>
 
-                            <div x-show="open" x-transition class="bg-white">
-                                <table class="w-full text-sm">
-                                    <tbody>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Name</th>
-                                            <td class="flex items-center justify-between px-6 py-2">
-                                                <span>{{ $member->kyc?->nominee_name ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">DOB</th>
-                                            <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Gender</th>
-                                            <td class="flex items-center justify-between px-6 py-2">
-                                                <span>{{ $member->kyc?->nominee_gender ?? '' }}</span>
+                                    <div x-show="open" x-transition class="bg-white">
+                                        <table class="w-full text-sm">
+                                            <tbody>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Name</th>
+                                                    <td class="flex items-center justify-between px-6 py-2">
+                                                        <span>{{ $member->kyc?->nominee_name ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">DOB</th>
+                                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_dob ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Gender</th>
+                                                    <td class="flex items-center justify-between px-6 py-2">
+                                                        <span>{{ $member->kyc?->nominee_gender ?? '' }}</span>
 
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Relation</th>
-                                            <td class="px-6 py-2">
-                                                <span>{{ $member->kyc?->nominee_relation ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Mobile No.</th>
-                                            <td class="px-6 py-2">
-                                                <span>{{ $member->kyc?->nominee_mobile_no ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
-                                            <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Voter ID No. </th>
-                                            <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
-                                            <td class="px-6 py-2">
-                                                <span>{{ $member->kyc?->nominee_pan_no ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <th class="px-6 py-2 font-semibold text-start">Address</th>
-                                            <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
-                                            <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no ?? '' }}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Relation</th>
+                                                    <td class="px-6 py-2">
+                                                        <span>{{ $member->kyc?->nominee_relation ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Mobile No.</th>
+                                                    <td class="px-6 py-2">
+                                                        <span>{{ $member->kyc?->nominee_mobile_no ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Aadhaar No.</th>
+                                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_aadhaar_no ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Voter ID No. </th>
+                                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_voter_id_no ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
+                                                    <td class="px-6 py-2">
+                                                        <span>{{ $member->kyc?->nominee_pan_no ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-b">
+                                                    <th class="px-6 py-2 font-semibold text-start">Address</th>
+                                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_address ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="px-6 py-2 font-semibold text-start">Ration Card No.</th>
+                                                    <td class="px-6 py-2"><span>{{ $member->kyc?->nominee_ration_card_no ?? '' }}</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> -->
 
             <div x-data="{ open: true }" class="mt-4 rounded shadow">
                 <!-- Header -->
@@ -861,32 +861,59 @@
                 </div>
             </div>
 
-            <!-- COMMENTS -->
             <div x-data="{ open: true }" class="mt-4 border rounded shadow">
-                <!-- Header -->
+                <!-- Header for Collapsible Comments Section -->
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-600 rounded-t cursor-pointer"
                     @click="open = !open">
                     <span class="font-semibold uppercase">Comments</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
-                <!-- Content -->
+                <!-- Content (Show comments or No comments message) -->
                 <div x-show="open" x-transition class="p-4 bg-white">
-                    <p class="mb-4 text-sm text-gray-700">No Comment Found</p>
-                    <!-- Add an anchor link with the route -->
-                    <a href="{{ route('member.addComment', ['member_id' => $id]) }}">
-                        <button class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">
-                            ADD COMMENT
-                        </button>
-                    </a>
+                    @if ($comments->isEmpty())
+                        <p class="mb-4 text-sm text-gray-700">No Comment Found</p>
+                    @else
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-start text-lg">
+                                <thead class="text-start">
+                                    <tr class="bg-secondary/5 dark:bg-bg3 text-start text-black">
+                                        <th class="px-4 py-2 font-semibold text-start">DATE</th>
+                                        <th class="px-4 py-2 font-semibold text-start">COMMENT BY</th>
+                                        <th class="px-4 py-2 font-semibold text-start">COMMENT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($comments as $comment)
+                                        <tr
+                                            class="border-b text-center border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-4 py-2 text-start">
+                                                {{ \Carbon\Carbon::parse($comment->transaction_date)->format('d-m-Y H:i') }}
+                                            </td>
+                                            <td class="px-4 py-2 text-start">{{ $comment->member->name ?? '-' }}</td>
+                                            <td class="px-4 py-2 text-start">{{ $comment->comment }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
 
+                    <!-- Add Comment Button -->
+                    <div class="flex justify-center gap-4 mt-4">
+                        <a href="{{ route('member.addComment', ['member_id' => $member->id]) }}">
+                            <button class="btn-primary rounded-10 py-2 hover:bg-green-600">
+                                ADD COMMENT
+                            </button>
+                        </a>
+                        <a class="btn-primary rounded-10 py-2"
+                            href="{{ route('member.addComment', ['member_id' => $member->id]) }}">
+                            VIEW ALL
+                        </a>
+                    </div>
                 </div>
-
             </div>
-
         </div>
-
-
 
         <!-- Right Panel -->
         <div class="col-span-12 lg:col-span-6" x-data="{
