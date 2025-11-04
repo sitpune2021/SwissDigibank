@@ -72,22 +72,25 @@ class AuthController extends Controller
             'otp' => $otp,
         ]);
     }
-   
+
     public function verifyOtp(Request $request)
     {
+        // Validate the incoming request
         $request->validate([
             'username' => 'required|string',
             'otp' => 'required|digits:6',
         ]);
-        $user = Auth::user();
 
         $user = null;
         $loginType = '';
 
+        // Check if the username is an email or mobile number and find the user
         if (filter_var($request->username, FILTER_VALIDATE_EMAIL)) {
+            // Login via email
             $user = User::where('email', $request->username)->first();
             $loginType = 'email';
         } else {
+            // Normalize and check if it's a valid mobile number
             $normalizedMobile = preg_replace('/[^\d\+]/', '', $request->username);
             if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
                 return response()->json([
@@ -95,10 +98,12 @@ class AuthController extends Controller
                     'message' => 'Invalid mobile number format.',
                 ], 422);
             }
+            // Login via mobile number
             $user = User::where('mobile', $normalizedMobile)->first();
             $loginType = 'mobile';
         }
 
+        // If no user found, return an error
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -106,6 +111,7 @@ class AuthController extends Controller
             ], 404);
         }
 
+        // Check if the OTP matches
         if ($user->otp !== $request->otp) {
             return response()->json([
                 'status' => false,
@@ -113,7 +119,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Check if OTP expired
+        // Check if OTP has expired
         if (now()->gt($user->otp_expires_at)) {
             return response()->json([
                 'status' => false,
@@ -126,19 +132,21 @@ class AuthController extends Controller
         $user->otp_expires_at = null;
         $user->save();
 
+        // Check if mPIN is set for the user
         $isMpinSet = !empty($user->mpin);
 
-        // ✅ Generate token (using Laravel Sanctum or Passport)
+        // Generate API token (using Laravel Sanctum or Passport)
         $token = $user->createToken('AuthToken')->plainTextToken;
 
         return response()->json([
             'status' => true,
-            'token' => $token, 
+            'token' => $token,
             'message' => 'OTP verified successfully!',
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
             'isMpinSet' => $isMpinSet,
         ]);
     }
+
 
     public function logout(Request $request)
     {
