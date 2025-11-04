@@ -102,21 +102,38 @@
 
     <div class="flex flex-wrap gap-3">
 
-        <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            Show Emi Chart
-        </a>
-        @if($application->status != 2)
-            <a href="{{route('gold-loan.applications.view-buttons.col_process_fee')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-                Collect Processing Fee
-            </a>
-            <a href="{{route('gold-loan.applications.view-buttons.disburse-setting')}}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
-                DISBURSE SETTINGS
-            </a>
-
-            <a href="{{route('gold-loan.applications.view-buttons.show-emi-chart')}}" class="btn-primary   px-2 py-2 rounded-10 ">
-                REGISTER eNACH ( Fidypay )
+        <a href="{{ route('bussiness.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
+            Show EMI Chart
+        </a>  
+        @if($application->status != 2) 
+        <a href="{{ route('loanagainst.applications.view-buttons.col_process_fee', $application->id) }}"
+            class="btn-warning uppercase px-2 py-2 rounded-10">
+            Collect Processing Fee
             </a>
         @endif
+        @if($application->status != 3 && $application->status != 2 && ($application->status != 1)) 
+        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            SUBMIT FOR APPROVAL
+        </a>
+        @endif
+
+        @if($application->status != 0 && $application->status != 3 && $application->status != 2)
+        <a href="#" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+            DISBURSE SETTINGS
+        </a>
+
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Fidypay )
+        </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Rocketpay )
+        </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Rocketpay UPI )
+        </a>
+        @endif
+
+    @if($application->status != 0 && $application->status != 3)
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
@@ -168,6 +185,7 @@
                 </div>
             </div>
         </div>
+    @endif
 
     </div>
 
@@ -233,7 +251,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Amount Approved</td>
-                            <td class="px-4 py-2">₹ 100,000.00</td>
+                            <td class="px-4 py-2">₹ {{ $application->approved_loan_amount }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Status</td>
