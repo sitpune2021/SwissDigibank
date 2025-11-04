@@ -606,8 +606,12 @@
                                     <!-- Cheque Date -->
                                     <div class="mt-3">
                                         <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                        <input type="date" id="cheque_date" name="cheque_date" value="    {{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                        <input 
+                                        type="date" 
+                                        id="cheque_date" 
+                                        name="cheque_date" 
+                                        value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
                                 </div>
 
@@ -617,7 +621,7 @@
                                         <label class="block text-sm font-medium text-gray-700 uppercase">
                                             Transfer Date <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="date" id="transfer_date" name="transfer_date" value=" {{ old('transfer_date', $application->transfer_date ?? '') }} "
+                                        <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }} "
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
 
