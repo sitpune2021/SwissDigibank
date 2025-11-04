@@ -29,6 +29,7 @@ class MembershipChargeTransaction extends Model
         'cheque_no',
         'cheque_date',
         'saving_account_id',
+        'comment',
 
     ];
 
@@ -36,6 +37,7 @@ class MembershipChargeTransaction extends Model
         'transaction_date',
         'transfer_date',
         'cheque_date',
+        
     ];
     public function account()
     {

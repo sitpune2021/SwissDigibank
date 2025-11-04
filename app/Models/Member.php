@@ -118,13 +118,17 @@ class Member extends Model
     {
         return $this->hasMany(MemberOtherCharge::class, 'member_id');
     }
-     public function kycDocuments()
+    public function kycDocuments()
     {
         return $this->hasMany(KycDocument::class, 'member_id');
     }
     public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    {
+        return $this->belongsTo(User::class);
+    }
 
+    public function religion()
+    {
+        return $this->belongsTo(Religion::class, 'member_info_religion');
+    }
 }
