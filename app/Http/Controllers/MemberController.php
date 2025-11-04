@@ -369,7 +369,8 @@ class MemberController extends Controller
                 'documents',
                 'shareholdings',
                 'chargeId',
-                'charge'
+                'charge',
+                'id'
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -434,10 +435,10 @@ class MemberController extends Controller
                 'states' => State::pluck('name', 'id'),
                 'branch' => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id')
-                
+
             ];
             $method = 'PUT';
-             $banks = Bank::all(); 
+            $banks = Bank::all();
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
             $documents = KycDocument::where('member_id', $id)->get();
             $member = array_merge(
@@ -470,7 +471,7 @@ class MemberController extends Controller
                 'pan_number'         => $existingDocs['pan_number'] ?? $empty('pan_number'),
             ];
 
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents','banks'));
+            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents', 'banks'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -1580,5 +1581,36 @@ class MemberController extends Controller
             ->setPaper([0, 0, 238.346, 1000], 'portrait');
 
         return $pdf->stream('receipt.pdf');
+    }
+
+    public function addComment($member_id)
+    {
+        $comments = MembershipChargeTransaction::where('member_id', $member_id)->get();
+        return view('members.member.addComments', compact('comments', 'member_id'));
+    }
+    public function storeComment(Request $request)
+    {
+        Log::debug('Store Comment Request Data: ', $request->all());
+        // Validate the incoming request
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'member_id' => 'required|exists:members,id',  // Ensure member exists
+        ]);
+
+        try {
+            // Store the comment with member_id and current date
+            MembershipChargeTransaction::create([
+                'member_id' => $validated['member_id'],
+                'transaction_date' => now(),
+                'comment' => $validated['comment'],
+            ]);
+
+            // Redirect with success message
+            return redirect()->route('member.addComment', ['member_id' => $validated['member_id']])
+                ->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+            // Handle error
+            return back()->withErrors('There was an error storing your comment.');
+        }
     }
 }
