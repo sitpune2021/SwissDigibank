@@ -996,7 +996,6 @@ class BusinessLoan extends Controller
     }
 
 
-
     public function loanagainst_process_fee($id)
     {
         $application = LoanAgainstApplication::with([

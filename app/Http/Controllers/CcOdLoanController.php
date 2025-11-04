@@ -180,6 +180,7 @@ class CcOdLoanController extends Controller
                 'net_loan_amount'    => 'required|numeric|min:1',
                 'credit_period'      => 'required|numeric|min:1',
                 'charge_per_emi'     => 'required|in:0,1',
+                'tenure_value'     => 'required',
             ], [
                 'application_date.required' => 'Please select the application date.',
                 'member_id.required'        => 'Please select a member.',
