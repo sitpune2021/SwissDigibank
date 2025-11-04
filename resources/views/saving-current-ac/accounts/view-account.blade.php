@@ -17,12 +17,33 @@
         <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('deposit.create',base64_encode($account->id))}}">Deposit Money</a>
         <a class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700" href="{{route('withdraw.create',base64_encode($account->id))}}">Withdraw Money</a>
         <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('saving.passbook', base64_encode($account->id))}}">Print Documents</a>
-         
-        <!-- <button class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700">Withdraw Money</button> -->
+        <div class="relative inline-block text-left">
+            <!-- Dropdown button -->
+            <button id="dropdownButton"
+                class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600 flex items-center">
+                Debit Other Charges
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div id="dropdownMenu"
+                class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <a href="{{route('accounts.other.debit-charges', base64_encode($account->id))}}"
+                    class="block px-4 py-2 text-gray-700 hover:bg-yellow-100 rounded-t-lg">Other Charge List</a>
+                <a href=""
+                    class="block px-4 py-2 text-gray-700 hover:bg-yellow-100">Debit Other Charges</a>
+
+                <a href="{{route('accounts.clear.due',base64_encode($account->id))}}"
+                    class="block px-4 py-2 text-gray-700 hover:bg-yellow-100 rounded-b-lg">Clear Due</a>
+            </div>
+        </div>
         <!-- <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other Charges</button> -->
-        <!-- <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button> -->
-        <!-- <button class="px-4 py-2 text-base text-white bg-gray-800 rounded hover:bg-gray-900">Print Documents</button> -->
-        <!-- <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button> -->
+        <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button>
+
+        <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button>
     </div>
 
     <div class="container px-2 mx-auto">
@@ -217,7 +238,7 @@
                         <input type="checkbox" disabled>
                     </div>
                     <div class="flex justify-between">
-                        <label  class="uppercase">Deduct Charges</label>
+                        <label class="uppercase">Deduct Charges</label>
                         <input type="checkbox" disabled>
                     </div>
                 </div>
@@ -355,4 +376,19 @@
         </div>
     </div>
 </div>
+<script>
+    const dropdownButton = document.getElementById('dropdownButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Optional: close dropdown if clicked outside
+    document.addEventListener('click', (e) => {
+        if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+</script>
 @endsection

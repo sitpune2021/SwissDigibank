@@ -278,13 +278,13 @@ class ApproveController extends Controller
 
                     if ($ddsAccount->status == 1) {
                         // ✅ Approved Message
-                        $dlttemplateid = '1707172234296830000';
+                        $dlttemplateid = '1707172234296835518';
                         $message = "Congratulations! your DD no. $accountNo is approved. SBC GLOBAL";
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('success', 'DDS Account approved successfully.');
                     } elseif ($ddsAccount->status == 2) {
                         // ❌ Disapproved Message
-                        $dlttemplateid = '1707172234298090000';
+                        $dlttemplateid = '1707172234298099036';
                         $message = "Dear Customer, your DD no. $accountNo is disapproved. SBC GLOBAL";
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
                         return redirect()->back()->with('error', 'DDS Account disapproved.');
