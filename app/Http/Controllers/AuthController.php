@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -71,73 +72,14 @@ class AuthController extends Controller
             'otp' => $otp,
         ]);
     }
-
-    // public function verifyOtp(Request $request)
-    // {
-    //     $request->validate([
-    //         'username' => 'required|string',  
-    //         'otp' => 'required|digits:6', 
-    //     ]);
-
-    //     $user = null;
-    //     $loginType = '';
-
-    //     if (filter_var($request->username, FILTER_VALIDATE_EMAIL)) {
-    //         $user = User::where('email', $request->username)->first();
-    //         $loginType = 'email';
-    //     } else {
-    //         $normalizedMobile = preg_replace('/[^\d\+]/', '', $request->username);  
-    //         if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
-    //             return response()->json([
-    //                 'status' => false,
-    //                 'message' => 'Invalid mobile number format.',
-    //             ], 422);
-    //         }
-    //         $user = User::where('mobile', $normalizedMobile)->first();
-    //         $loginType = 'mobile';
-    //     }
-
-    //     if (!$user) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'User not found.',
-    //         ], 404);
-    //     }
-
-    //     if ($user->otp !== $request->otp) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Invalid OTP.',
-    //         ], 401);
-    //     }
-
-    //     // Check if the OTP has expired
-    //     if (now()->gt($user->otp_expires_at)) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'OTP has expired.',
-    //         ], 401);
-    //     }
-
-    //     $user->otp = null;
-    //     $user->otp_expires_at = null;
-    //     $user->save();
-
-    //     $isMpinSet = !empty($user->mpin);  
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'mPIN verified successfully!',
-    //         'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
-    //         'isMpinSet' => $isMpinSet,
-    //     ]);
-    // }
+   
     public function verifyOtp(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
             'otp' => 'required|digits:6',
         ]);
+        $user = Auth::user();
 
         $user = null;
         $loginType = '';
