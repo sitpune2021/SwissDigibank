@@ -11,18 +11,19 @@ use App\Http\Controllers\Api\ForgotLoginPasswordController;
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
-Route::post('/send-otp', [AuthController::class, 'sendOtpSms']);
-Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp']);
-Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp']);
-Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin']);
-Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->middleware('auth:sanctum');
+Route::post('/send-otp', [AuthController::class, 'sendOtpSms'])->middleware('auth:sanctum');
+Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp'])->middleware('auth:sanctum');
+Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp'])->middleware('auth:sanctum');
+Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin'])->middleware('auth:sanctum');
+// Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus']);
+Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus'])->middleware('auth:sanctum');
 
-Route::post('/sim/request', [SimVerificationController::class, 'requestOtp']);
-Route::post('/sim/verify', [SimVerificationController::class, 'verifyOtp']);
-Route::post('/password/forgot', [ForgotLoginPasswordController::class, 'sendOtp']);
-Route::post('/password/verify-otp', [ForgotLoginPasswordController::class, 'verifyOtp']);
-Route::post('/password/reset', [ForgotLoginPasswordController::class, 'resetPassword']);
+Route::post('/sim/request', [SimVerificationController::class, 'requestOtp'])->middleware('auth:sanctum');
+Route::post('/sim/verify', [SimVerificationController::class, 'verifyOtp'])->middleware('auth:sanctum');
+Route::post('/password/forgot', [ForgotLoginPasswordController::class, 'sendOtp'])->middleware('auth:sanctum');
+Route::post('/password/verify-otp', [ForgotLoginPasswordController::class, 'verifyOtp'])->middleware('auth:sanctum');
+Route::post('/password/reset', [ForgotLoginPasswordController::class, 'resetPassword'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
     Route::get('transactions', [ApiTransactionController::class, 'transactionHistory']);

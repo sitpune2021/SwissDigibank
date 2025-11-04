@@ -75,6 +75,7 @@ class AuthController extends Controller
 
     public function verifyOtp(Request $request)
     {
+        // dd($request->all());
         // Validate the incoming request
         $request->validate([
             'username' => 'required|string',
@@ -147,7 +148,6 @@ class AuthController extends Controller
         ]);
     }
 
-
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -159,6 +159,7 @@ class AuthController extends Controller
 
     public function requestMpinOtp(Request $request)
     {
+        $user = Auth::user();
         $request->validate([
             'username' => 'required|string',
         ]);
@@ -334,43 +335,41 @@ class AuthController extends Controller
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
         ]);
     }
-
     public function checkMpinStatus(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string',
-        ]);
-
-        $username = $request->input('username');
-
-        // Find user by email or mobile
-        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
-            ? User::where('email', $username)->first()
-            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+        // Get the authenticated user
+        $user = Auth::user();
 
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User not found.',
-            ], 404);
+                'message' => 'User not authenticated.',
+            ], 401);  // Unauthorized if no user is logged in
         }
 
-        // Check if mPIN is already set
+        // Check if mPIN is already set for the authenticated user
         $isMpinSet = !empty($user->mpin);
         $mpinValue = null;
 
         if ($isMpinSet) {
             try {
-                $mpinValue = Crypt::decryptString($user->mpin);
+                $mpinValue = Crypt::decryptString($user->mpin);  // Decrypt the mPIN value
             } catch (\Exception $e) {
-                $mpinValue = null; // If decryption fails
+                $mpinValue = null; // If decryption fails, return null
             }
         }
 
         return response()->json([
             'status' => $isMpinSet,
             'message' => $isMpinSet ? 'mPIN already set.' : 'mPIN not set yet.',
-            'mpin_value' => $mpinValue, // <-- This will show the actual mPIN like "2002"
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'mobile' => $user->mobile,
+                'user_active' => $user->user_active,
+            ],
+            'mpin_value' => $mpinValue, // Shows the mPIN value if set
         ]);
     }
 }
