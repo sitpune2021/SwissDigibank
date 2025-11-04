@@ -237,7 +237,8 @@ class BusinessLoan extends Controller
             }
 
             $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-            $dueDate = $emiDate->copy()->addDays(10);
+            //$dueDate = $emiDate->copy()->addDays(10);
+            $dueDate = $emiDate->copy()->addDay();
 
             $schedule[] = [
                 'no' => $i,

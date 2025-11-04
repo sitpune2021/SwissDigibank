@@ -413,27 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<style>
-.form-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-.btn-outline {
-    border: 1px solid #2563eb;
-    color: #2563eb;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-</style>
+
 
                 </div>
             </div>
@@ -444,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">LOAN AGAINST DEPOSITE APLICATION INFO</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">

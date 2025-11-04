@@ -112,8 +112,7 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Maximum Loan Limit"
                         max="100"
-                        oninput="this.value = Math.min(Math.max(this.value, 0), 100)"
-                    >
+                        oninput="this.value = Math.min(Math.max(this.value, 0), 100)">
 
                     @error('max_loan_limit')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -697,71 +696,6 @@
     });
 </script>
 
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const minInput = document.querySelector('input[name="min_loan_amount"]');
-    const maxInput = document.querySelector('input[name="max_loan_amount"]');
-
-    function validateLimit(input, output) {
-    if (parseFloat(input.value) > 200000) {
-        alert("Loan amount cannot exceed ₹2,00,000!");
-        input.value = 200000;
-        output.textContent = numberToWords(200000); //  Words update yaha
-    }
-}
-
-
-   const minOutput = document.getElementById('minLoanWords');
-const maxOutput = document.getElementById('maxLoanWords');
-
-minInput.addEventListener('input', () => validateLimit(minInput, minOutput));
-maxInput.addEventListener('input', () => validateLimit(maxInput, maxOutput));
-
-});
-</script>
-
-<script>
-// Function to convert numbers into words
-function numberToWords(num) {
-    const a = [
-        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
-        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
-        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
-    ];
-    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-
-    if ((num = num.toString()).length > 9) return 'Overflow';
-    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return '';
-
-    let str = '';
-    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
-    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
-    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
-    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
-    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + 
-            (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
-    return str.trim() + ' Rupees Only';
-}
-
-// Event listeners for both fields
-['minLoanAmount', 'maxLoanAmount'].forEach(id => {
-    const input = document.getElementById(id);
-    const output = document.getElementById(id === 'minLoanAmount' ? 'minLoanWords' : 'maxLoanWords');
-
-    input.addEventListener('input', () => {
-        const val = input.value;
-        if (val && val > 0) {
-            output.textContent = numberToWords(parseInt(val));
-            output.classList.remove('hidden');
-        } else {
-            output.textContent = '';
-        }
-    });
-});
-</script>
-
 <!-- Stop Negative Value -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -784,5 +718,93 @@ function numberToWords(num) {
     });
 });
 </script>
+
+<!-- max & min loan amount validation with sub text -->
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const minInput = document.getElementById('minLoanAmount');
+    const maxInput = document.getElementById('maxLoanAmount');
+    const minText = document.getElementById('minLoanWords');
+    const maxText = document.getElementById('maxLoanWords');
+    const form = document.getElementById('loanForm');
+    const LIMIT = 200000; // Max limit
+
+    // Convert number to words
+    function numberToWords(num) {
+        const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+            'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+            'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        if ((num = num.toString()).length > 9) return 'Overflow';
+        const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        if (!n) return '';
+
+        let str = '';
+        str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+        str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+        str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+        str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+        str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + 
+                (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
+        return str.trim() + ' Rupees Only';
+    }
+
+    // Validation + Display Function
+    function validateAndDisplay() {
+        let min = parseFloat(minInput.value) || 0;
+        let max = parseFloat(maxInput.value) || 0;
+        let valid = true;
+
+        // Reset old styles/messages
+        minText.textContent = '';
+        maxText.textContent = '';
+        minInput.classList.remove('border-red-500');
+        maxInput.classList.remove('border-red-500');
+
+        // Limit check (₹2,00,000) + auto cap
+        if (min > LIMIT) {
+            minInput.value = LIMIT;
+            min = LIMIT;
+            minText.textContent = "Minimum loan amount cannot exceed ₹2,00,000.";
+            minInput.classList.add('border-red-500');
+            valid = false;
+        }
+
+        if (max > LIMIT) {
+            maxInput.value = LIMIT;
+            max = LIMIT;
+            maxText.textContent = "Maximum loan amount cannot exceed ₹2,00,000.";
+            maxInput.classList.add('border-red-500');
+            valid = false;
+        }
+
+        // Show amount in words (after corrections)
+        if (min > 0) minText.textContent += "\n" + numberToWords(min);
+        if (max > 0) maxText.textContent += "\n" + numberToWords(max);
+
+        // Comparison check (max > min)
+        if (min > 0 && max > 0 && min >= max) {
+            maxText.textContent = "Maximum amount must be greater than minimum amount.";
+            minInput.classList.add('border-red-500');
+            maxInput.classList.add('border-red-500');
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    // Real-time validation & display
+    minInput.addEventListener('input', validateAndDisplay);
+    maxInput.addEventListener('input', validateAndDisplay);
+
+    // Prevent submit if invalid
+    form.addEventListener('submit', function(e) {
+        if (!validateAndDisplay()) e.preventDefault();
+    });
+});
+</script>
+
+
 
 @endsection
