@@ -284,7 +284,9 @@ class GoldLoanController extends Controller
         {
 
             $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-            $dueDate = $emiDate->copy()->addDays(10);
+            //$dueDate = $emiDate->copy()->addDays(10);
+            $dueDate = $emiDate->copy()->addDay(); // just 1 day difference
+
 
             if ($interestType === 'No EMI') {
                 // No EMI Logic - Show same principal in every row
@@ -400,6 +402,11 @@ class GoldLoanController extends Controller
             'insurance_amount'      => 'required',
             'net_loan_amount'      => 'required',
             'purpose_of_loan'      => 'required',
+            'min_loan_amount'   => 'required|numeric|min:1',
+            'max_loan_amount'   => 'required|numeric|min:1|gt:min_loan_amount',
+        ], [
+            // Custom messages
+            'max_loan_amount.gt' => 'Maximum loan amount must be greater than minimum loan amount.',
         ]);
 
         try {
@@ -407,7 +414,7 @@ class GoldLoanController extends Controller
              // 🩵 Fix date format
         if ($request->filled('application_date')) {
             $request->merge([
-                'application_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
+                'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
             ]);
         }
             // Loan Application Save
@@ -556,7 +563,7 @@ class GoldLoanController extends Controller
             'member',
             'coApplicant1',
             'guarantor1',
-            'scheme',   // <-- add scheme here
+            'scheme',   
             'branch' ,
             'creditScores',
             'loanOrnaments'

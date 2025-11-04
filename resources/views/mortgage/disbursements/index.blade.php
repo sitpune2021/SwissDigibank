@@ -71,14 +71,14 @@
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                  MEMBER NO
+                                  CUSTOMER NO
                                 </div>
                             </th>
 
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                   MEMBER NAME
+                                   CUSTOMER NAME
                                 </div>
                             </th>
 
@@ -127,12 +127,10 @@
                 </div>
             </td>
             <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1 text-secondary">
-                    <a href="{{ url('members/member/' . $disbursement->member_id) }}" 
+                <a href="{{ url('members/member/' . $disbursement->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $disbursement->member_id }}
+                    {{ str_pad($disbursement->member_id, 6, '0', STR_PAD_LEFT) }}
                 </a>
-                </div>
             </td>
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1">

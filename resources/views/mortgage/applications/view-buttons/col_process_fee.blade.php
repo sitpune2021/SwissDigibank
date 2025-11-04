@@ -236,7 +236,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Daily Weekly Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">Mortgage Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -263,7 +263,7 @@
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Amount Requested</td>
-                                <td class="px-4 py-2 text-right md:text-left">₹ {{ $application->loan_amount }}</td>
+                                <td class="px-4 py-2 text-right md:text-left">₹ {{ $application->net_loan_amount }}</td>
                             </tr>
 
                             <tr class="border-b">
@@ -271,7 +271,32 @@
                                     Amount Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ {{ $application->loan_amount }}
+                                    ₹ {{ $application->approved_loan_amount }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                    Annual Interest Rate
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->annual_interest_rate }} %
+                                </td>
+                            </tr>
+                             <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                   EMI Payout
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    MONTHLY
+                                </td>
+                            </tr>
+                             <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">
+                                   No. of EMIs
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->tenure }}
                                 </td>
                             </tr>
 
@@ -297,7 +322,7 @@
                                     Processing Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ {{ $application->processing_fee }} (Incl. 18 % GST)
+                                    ₹ {{ $application->scheme->processing_fee }} (Incl. 18 % GST)
                                 </td>
                             </tr>                           
                         </tbody>

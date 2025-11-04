@@ -20,6 +20,8 @@ use App\Mail\AccountOpenedMail;
 use App\Models\Bank;
 use App\Models\MembershipChargeTransaction;
 use App\Helpers\AccountHelper;
+use App\Models\SavingOtherCharge;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -53,54 +55,6 @@ class AccountsController extends Controller
 
     public function create()
     {
-
-        // echo "Hii";
-
-        // $msisdn = "7020672418";
-        // $message = "dsadsad";
-        // $url = "https://api.voicensms.in/SMSAPI/webresources/CreateSMSCampaignPost";
-
-        // // Prepare the payload
-        // $data = [
-        //     "filetype"    => 2,
-        //     "msisdn"      => ['9307133589'], // must be array
-        //     "language"    => 0,
-        //     "credittype"  => 7,
-        //     "senderid"    => "SBCGLB",
-        //     "templateid"  => 0,
-        //     "message"     => $message,
-        //     "ukey"        => "8ZSyxFHP9LOCSZZUotdWMdzoK",
-        //     "isrefno"     => true
-        // ];
-
-        // // Initialize cURL
-        // $ch = curl_init($url);
-
-        // // Set cURL options
-        // curl_setopt_array($ch, [
-        //     CURLOPT_RETURNTRANSFER => true,
-        //     CURLOPT_POST           => true,
-        //     CURLOPT_HTTPHEADER     => [
-        //         "Content-Type: application/json"
-        //     ],
-        //     CURLOPT_POSTFIELDS     => json_encode($data, JSON_UNESCAPED_UNICODE), // ✅ ensure JSON encoding
-        // ]);
-
-        // // Execute cURL
-        // $response = curl_exec($ch);
-
-        // // Check for cURL errors
-        // if (curl_errno($ch)) {
-        //     throw new \Exception('cURL Error: ' . curl_error($ch));
-        // }
-
-        // // Close cURL
-        // curl_close($ch);
-
-        // // Decode and return response
-        // return json_decode($response, true);
-        // die;
-
         try {
             $members = Member::pluck('member_info_first_name', 'id', 'member_info_mobile_no');
             $branches = Branch::pluck('branch_name', 'id');
@@ -299,7 +253,6 @@ class AccountsController extends Controller
 
             return redirect()->route('accounts.show', base64_encode($account->id))
                 ->with('success', 'Please approve status!.');
-
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
@@ -424,5 +377,79 @@ class AccountsController extends Controller
             'fromDate' => $request->from_date,
             'toDate' => $request->to_date,
         ]);
+    }
+
+    // Other debit charges list
+    public function debitChargeList(string $id)
+    {
+        $account_id = base64_decode($id);
+        // $charges  = SavingOtherCharge::with('account')->where('account_id', $account_id)->first();
+        $charges  = Account::with('savingOtherCharges')->where('id', $account_id)->first();
+
+        return view('saving-current-ac.accounts.debit-other-charges.debit-other-chargelist', compact('charges'));
+    }
+
+    public function otherCharges(string $id)
+    {
+        $account = Account::with(['members.kyc', 'scheme', 'branch'])->findOrFail($id);
+        return view('saving-current-ac.accounts.debit-other-charges.debit-other-charges', compact('account'));
+    }
+
+    public function storeOtherCharges(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'charge_type'  => 'required',
+                'amount'       => 'required|numeric|min:0',
+                'gst_rate'     => 'required|numeric|min:0',
+                'total_amount' => 'required|numeric|min:0',
+                'charge_date'  => 'required|date',
+            ]);
+
+            $formattedDate = \Carbon\Carbon::parse($request->charge_date)->format('Y-m-d');
+
+            $charge = SavingOtherCharge::create([
+                'account_id'   => $id,
+                'charge_type'  => $request->charge_type,
+                'amount'       => $request->amount,
+                'gst_rate'     => $request->gst_rate,
+                'total_amount' => $request->total_amount,
+                'charge_date'  => $formattedDate,
+                'remarks'      => $request->remarks,
+                'created_by'   => Auth::id(),
+            ]);
+
+            Log::info('Other charge debited successfully', [
+                'user_id'     => Auth::id(),
+                'account_id'  => $request->account_id,
+                'charge_id'   => $charge->id ?? null,
+                'data'        => $request->all(),
+            ]);
+
+            return redirect()->route('accounts.other.debit-charges', base64_encode($id))->with('success', 'Other charge debited successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed while debiting other charge', [
+                'errors' => $e->errors(),
+                'user_id' => Auth::id(),
+            ]);
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error occurred while storing other charge', [
+                'error'      => $e->getMessage(),
+                'trace'      => $e->getTraceAsString(),
+                'user_id'    => Auth::id(),
+                'input_data' => $request->all(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving the other charge. Please try again.');
+        }
+    }
+
+    // clear due
+    public function clearDue(string $id)
+    {
+        $account_id = base64_decode($id);
+       
+        return view('saving-current-ac.accounts.debit-other-charges.clear-dues');
     }
 }

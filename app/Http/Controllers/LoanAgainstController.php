@@ -12,6 +12,7 @@ use App\Models\Scheme;
 use App\Models\LoanAgainstApplication;
 use App\Models\Calculator;
 use App\Models\LoanCreditScore;
+use App\Models\LoanagainstProcessingFee;
 use Carbon\Carbon;
 use App\Exports\LoanAgainstExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -163,7 +164,9 @@ class LoanAgainstController extends Controller
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->max_tenure;
             $payout = $request->payout;
-            $interestType = 'flat';
+           // $interestType = 'flat';
+           $interestType = $request->interest_type ?? 'flat_emi';
+
             $annualRate = (float) $request->manual_interest_rate;
 
             $processingFee = (float) ($request->manual_processing_fee ?? 0);
@@ -173,7 +176,7 @@ class LoanAgainstController extends Controller
         } else {
             //  Scheme Mode
             $request->validate([
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:loan_against_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
                 'tenure_months' => 'required|integer|min:1',
                 'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
@@ -184,7 +187,30 @@ class LoanAgainstController extends Controller
             $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
             $payout = $request->payout;
-            $interestType = 'flat';
+            //$interestType = 'flat';
+            //$interestType = strtolower($scheme->gold_loan_setting) === 'no_emi' ? 'no_emi' : 'flat';
+            $setting = strtolower($scheme->gold_loan_setting);
+
+            switch ($setting) {
+                case 'flat_advanced_interest':
+                    $interestType = 'Flat Advanced Interest';
+                    break;
+                case 'flat_advance_interest':
+                    $interestType = 'Flat Advance Interest';
+                    break;
+                case 'flat_interest':
+                    $interestType = 'Flat Interest';
+                    break;
+                case 'reducing_balance':
+                    $interestType = 'Reducing Balance';
+                    break;
+                case 'no_emi':
+                    $interestType = 'No EMI';
+                    break;
+                default:
+                    $interestType = ucfirst($setting); // fallback
+            }
+
             $annualRate = (float) ($request->annual_interest_rate ?? $scheme->annual_interest_rate ?? 0);
 
             $processingFee = (float) ($scheme->processing_fee ?? 0);
@@ -216,28 +242,74 @@ class LoanAgainstController extends Controller
         $emi = round(($loan + $totalInterest) / $installments, 2);
 
         // EMI Schedule Generation
-        $schedule = [];
+        $lowerType = strtolower($interestType);
+
+        if (in_array($lowerType, ['reducing_emi', 'reducing balance', 'reducing_balance'])) {
+            // Reducing Balance EMI (Declining interest each month)
+            $monthlyRate = ($annualRate / 100) / 12;
+            $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
+
+            // recompute total interest dynamically
+            $balance = $loan;
+            $totalInterest = 0;
+            for ($i = 1; $i <= $installments; $i++) {
+                $interestForMonth = $balance * $monthlyRate;
+                $principalPaid = $emi - $interestForMonth;
+                $balance -= $principalPaid;
+                $totalInterest += $interestForMonth;
+            }
+            $totalInterest = round($totalInterest, 2);
+        }
+        elseif (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
+            // Flat Advanced Interest: interest deducted upfront, not added to EMIs
+            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
+            $emi = round($loan / $installments, 2); // Only principal EMIs
+        }
+        else {
+            // Flat EMI
+            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
+            $emi = round(($loan + $totalInterest) / $installments, 2);
+        }
+
+
         $outstanding = $loan;
         $startDate = now();
 
-        for ($i = 1; $i <= $installments; $i++) {
-
-            // Base Calculation
-            $principal = round($loan / $installments, 2);
-            $interest = round($totalInterest / $installments, 2);
-            $emiTotal = round($principal + $interest, 2);
-
-            // Adjust Final EMI to remove rounding balance
-            if ($i == $installments) {
-                $principal = round($outstanding, 2);
-                $emiTotal = round($principal + $interest, 2);
-                $outstanding = 0;
-            } else {
-                $outstanding -= $principal;
-            }
+        for ($i = 1; $i <= $installments; $i++) 
+        {
 
             $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-            $dueDate = $emiDate->copy()->addDays(10);
+            //$dueDate = $emiDate->copy()->addDays(10);
+            $dueDate = $emiDate->copy()->addDay();
+
+            if ($interestType === 'No EMI') {
+                // No EMI Logic
+                if ($i == $installments) {
+                    $principal = round($loan, 2);
+                } else {
+                    $principal = 0;
+                }
+
+                $interest = null;
+                $charges = null;
+                $emiTotal = null;
+                $balance = null;
+
+            } else {
+                // Normal EMI Logic
+                if ($i == $installments) {
+                    $principal = round($outstanding, 2);
+                } else {
+                    $principal = round($loan / $installments, 2);
+                }
+
+                $interest = round($totalInterest / $installments, 2);
+                $charges = 0;
+                $emiTotal = round($principal + $interest, 2);
+
+                $outstanding -= $principal;
+                $balance = max(round($outstanding, 2), 0);
+            }
 
             $schedule[] = [
                 'no' => $i,
@@ -245,20 +317,33 @@ class LoanAgainstController extends Controller
                 'due_date' => $dueDate->format('d/m/Y'),
                 'principal' => $principal,
                 'interest' => $interest,
-                'charges' => 0,
+                'charges' => $charges,
                 'emi' => $emiTotal,
-                'balance' => max($outstanding, 0),
+                'balance' => $balance,
             ];
         }
 
-        // Add this here 
-        $totalInterestPaid = array_sum(array_column($schedule, 'interest'));
-        $totalChargesPaid  = array_sum(array_column($schedule, 'charges'));
-        $totalEmiPaid      = array_sum(array_column($schedule, 'emi'));
-
 
         //  Grand Total (Loan + Interest + Charges)
-        $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
+        //  Grand Total (Loan + Interest + Charges)
+        if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
+        {
+            // Interest deducted upfront, EMIs = only principal, total payable = loan amount
+            $totalInterest = 0;
+            $totalEmiPaid = $loan;
+            $grandTotalPayable = round($loan + $processingFee + $stampAmount + $insuranceAmount, 2);
+        } else {
+            // Flat / Reducing EMI = normal interest added
+            $totalEmiPaid = $loan + $totalInterest;
+            $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
+        }
+
+
+        $disbursedAmount = $loan;
+        if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
+            $disbursedAmount = $loan - $totalInterest;
+        }
+
 
         //  Return to view
         return view('loanagainst.calculator.result', [
@@ -277,13 +362,13 @@ class LoanAgainstController extends Controller
             'stamp_incl_gst' => $stampAmount,
             'insurance_amount' => $insuranceAmount,
             'schedule' => $schedule,
-            'total_interest' => $totalInterest,
+            //'total_interest' => $totalInterest,
             'total_principal' => $loan,
-            'total_emi_paid' => $loan + $totalInterest,
+            //'total_emi_paid' => $loan + $totalInterest,
+            'total_emi_paid' => $totalEmiPaid,
+            'total_interest' => $totalInterest,
             'grand_total_payable' => $grandTotalPayable,
-            'total_interest_paid' => $totalInterestPaid,
-            'total_charges_paid'  => $totalChargesPaid,   
-
+            'disbursed_amount' => $disbursedAmount,
         ]);
     }
 
@@ -318,41 +403,72 @@ class LoanAgainstController extends Controller
             'input_data' => $request->all(),
         ]);
 
-        // ✅ 1️⃣ Validation (Before try-catch)
-        $validated = $request->validate([
-            'application_date' => 'required|date',
-            'member_id' => 'required|exists:members,id',
-            'branch_id' => 'required|exists:branches,id',
-            'scheme_id' => 'required|exists:loan_against_schemes,id',
-            'loan_amount' => 'required|numeric|min:1',
-            'security_amount' => 'required|numeric|min:1',
-            'purpose_of_loan' => 'required|string|max:255',
-            'securety_type' => 'required|string',
-            'tenure_type' => 'required|string',
-            'net_loan_amount' => 'required|numeric|min:1',
-            'insurance_amount' => 'required|numeric|min:1',
-            'credit_period' => 'required|numeric|min:1',
-            'emi_collection' => 'required|string',
-            'tenure_value' => 'required|numeric|min:1',
-        ], [
-            // ✅ 2️⃣ Custom error messages
-            'application_date.required' => 'Please select the application date.',
-            'member_id.required' => 'Please select a member.',
-            'branch_id.required' => 'Please select a branch.',
-            'scheme_id.required' => 'Please select a loan scheme.',
-            'loan_amount.required' => 'Please enter the loan amount.',
-            'security_amount.required' => 'Please enter the security amount.',
-            'loan_amount.numeric' => 'Loan amount must be a number.',
-            'tenure_value.numeric' => 'tenure value must be a number.',
-            'purpose_of_loan.required' => 'Please enter the purpose of the loan.',
-            'securety_type.required' => 'Please select the security type.',
-            'tenure_type.required' => 'Please select the tenure type.',
-            'emi_collection.required' => 'Please select the emi collection.',
-            'net_loan_amount.required' => 'Please Enter Net Loan Amount.',
-            'insurance_amount.required' => 'Please Enter Insurance Amount.',
-            'credit_period.required' => 'Please Enter Credit Period.',
-        ]);
+        // Step 1: Convert application_date (d-m-Y → Y-m-d) before validation
+        if ($request->filled('application_date')) {
+            try {
+                $convertedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
+                $request->merge(['application_date' => $convertedDate]);
+                Log::info('Converted application_date successfully', [
+                    'original' => $request->application_date,
+                    'converted' => $convertedDate,
+                ]);
+            } catch (Exception $e) {
+                Log::error('Invalid application_date format', [
+                    'value' => $request->application_date,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        } else {
+            Log::warning('application_date field is empty');
+        }
 
+        // Step 2: Validation (with detailed logging)
+        try {
+            $validated = $request->validate([
+                'application_date' => 'required|date',
+                'member_id' => 'required|exists:members,id',
+                'branch_id' => 'required|exists:branches,id',
+                'scheme_id' => 'required|exists:loan_against_schemes,id',
+                'loan_amount' => 'required|numeric|min:1',
+                'security_amount' => 'required|numeric|min:1',
+                'purpose_of_loan' => 'required|string|max:255',
+                'securety_type' => 'required|string',
+                'tenure_type' => 'required|string',
+                'net_loan_amount' => 'required|numeric|min:1',
+                'insurance_amount' => 'required|numeric|min:0',
+                'credit_period' => 'required|numeric|min:1',
+                'emi_collection' => 'required|string',
+                'tenure_value' => 'required|numeric|min:1',
+            ], [
+                'application_date.required' => 'Please select the application date.',
+                'member_id.required' => 'Please select a member.',
+                'branch_id.required' => 'Please select a branch.',
+                'scheme_id.required' => 'Please select a loan scheme.',
+                'loan_amount.required' => 'Please enter the loan amount.',
+                'security_amount.required' => 'Please enter the security amount.',
+                'loan_amount.numeric' => 'Loan amount must be a number.',
+                'tenure_value.numeric' => 'Tenure value must be a number.',
+                'purpose_of_loan.required' => 'Please enter the purpose of the loan.',
+                'securety_type.required' => 'Please select the security type.',
+                'tenure_type.required' => 'Please select the tenure type.',
+                'emi_collection.required' => 'Please select the EMI collection.',
+                'net_loan_amount.required' => 'Please enter Net Loan Amount.',
+                'insurance_amount.required' => 'Please enter Insurance Amount.',
+                'credit_period.required' => 'Please enter Credit Period.',
+            ]);
+
+            Log::info('Validation passed successfully', [
+                'validated_data' => $validated,
+            ]);
+        } catch (ValidationException $e) {
+            Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'input'  => $request->all(),
+            ]);
+            throw $e; // rethrow to show validation errors in UI
+        }
+
+        // Step 3: Store data
         try {
             $loanApplication = LoanAgainstApplication::create($request->only([
                 'application_date',
@@ -399,44 +515,40 @@ class LoanAgainstController extends Controller
                 'approved_loan_amount',
             ]));
 
-            Log::info('Checking CIBIL data', [
-                    'cibil_type' => $request->cibil_type,
-                    'cibil_score' => $request->cibil_score,
-                    'report_date' => $request->report_date,
-                ]);
-
-
-            // ==== Credit Score Details Save (Dynamic Rows) ====
-            if ($request->has('cibil_type')) {
-                Log::info('CIBIL block triggered', [
-                'cibil_type_count' => count($request->cibil_type),
+            Log::info('Loan Against Deposit created successfully', [
+                'loan_application_id' => $loanApplication->id,
             ]);
 
-            foreach ($request->cibil_type as $index => $type) 
-            {
-                try {
-                    $filePath = null;
-                    if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
-                        $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
-                    }
+            // Step 4: Handle CIBIL details
+            if ($request->has('cibil_type')) {
+                Log::info('CIBIL block triggered', [
+                    'cibil_type_count' => count($request->cibil_type),
+                ]);
 
-                    Log::info('Saving CIBIL Entry', [
-                        'loan_application_id' => $loanApplication->id,
-                        'index' => $index,
-                        'type' => $type,
-                        'score' => $request->cibil_score[$index] ?? null,
-                        'date' => $request->report_date[$index] ?? null,
-                        'path' => $filePath,
-                    ]);
+                foreach ($request->cibil_type as $index => $type) {
+                    try {
+                        $filePath = null;
+                        if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                            $filePath = $request->file('report_file')[$index]->store('cibil_reports', 'public');
+                        }
 
-                    $loanApplication->creditScores()->create([
-                        'cibil_type'       => $type,
-                        'cibil_score'      => $request->cibil_score[$index] ?? null,
-                        'report_date'      => isset($request->report_date[$index])
-                            ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                        Log::info('Saving CIBIL Entry', [
+                            'loan_application_id' => $loanApplication->id,
+                            'index' => $index,
+                            'type' => $type,
+                            'score' => $request->cibil_score[$index] ?? null,
+                            'date' => $request->report_date[$index] ?? null,
+                            'path' => $filePath,
+                        ]);
+
+                        $loanApplication->creditScores()->create([
+                            'cibil_type'       => $type,
+                            'cibil_score'      => $request->cibil_score[$index] ?? null,
+                            'report_date'      => isset($request->report_date[$index])
+                            ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d') // ✅ Correct format
                             : null,
-                        'report_file_path' => $filePath,
-                    ]);
+                            'report_file_path' => $filePath,
+                        ]);
                     } catch (Exception $e) {
                         Log::error('Error while saving credit score entry', [
                             'index' => $index,
@@ -448,24 +560,16 @@ class LoanAgainstController extends Controller
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-
-            Log::info('Loan Against Deposite created successfully', [
-                'loan_application_id' => $loanApplication->id,
-            ]);
-
-            // ... (rest of your code — credit score logic etc.)
-
             return redirect()->route('loanagainst.applications.index')
-                ->with('success', 'Loan Against Deposite + Credit Scores saved successfully!');
+                ->with('success', 'Loan Against Deposit + Credit Scores saved successfully!');
 
-            } catch (Exception $e) {
-                Log::error('Error while storing Loan Against Deposite', [
-                    'error_message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
-
-                return back()->with('error', 'Something went wrong while saving loan application.');
-            }
+        } catch (Exception $e) {
+            Log::error('Error while storing Loan Against Deposit', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->with('error', 'Something went wrong while saving loan application.');
+        }
     }
 
     public function getMemberInfo($id)
@@ -721,8 +825,235 @@ class LoanAgainstController extends Controller
     }
 
 
-    
+///////////////////////////////////////////////////////////////////////////////////
+  
 
+    public function emiChart($id)
+    {
+        $application = LoanAgainstApplication::with(['scheme', 'member', 'branch'])->findOrFail($id);
+
+        $interestTypeRaw = strtolower(trim($application->scheme->gold_loan_setting ?? 'flat_emi'));
+
+        $interestType = 'flat_emi'; // default
+
+        if (str_contains($interestTypeRaw, 'no')) {
+            $interestType = 'no_emi';
+        }
+        elseif (str_contains($interestTypeRaw, 'reduce')) {
+            $interestType = 'reducing';
+        }
+        elseif (str_contains($interestTypeRaw, 'flat')) {
+            $interestType = 'flat_emi';
+        }
+
+
+        // Basic inputs
+        $disburseDate = $application->disbursal_date
+            ? Carbon::parse($application->disbursal_date)
+            : Carbon::now();
+
+        $loanAmount = floatval($application->loan_amount ?? 0);
+        $tenure = intval($application->tenure_value ?? ($application->scheme->no_of_emi ?? 1));
+        if ($tenure <= 0) $tenure = 1;
+
+        // Charges
+        $processingFeeInc = floatval($application->processing_fee ?? 0);
+        $stampDutyInc     = floatval($application->stamp_duty ?? 0);
+        $insuranceInc     = floatval($application->insurance_fee ?? 0);
+        $fitnessInc       = floatval($application->fitness_fee ?? 0);
+
+        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+
+        // Interest rate
+        $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);
+
+        // Collection Frequency
+        $collection = strtolower($application->emi_collection ?? 'monthly');
+
+        switch ($collection) 
+        {
+            case 'daily':
+                $periodIncrement = 'addDay';
+                $periodsPerYear = 365;
+                $periodName = 'Daily';
+                $periodUnit = 'day';
+                break;
+            case 'weekly':
+            case 'bi_weekly':
+            case '4_weekly':
+                $periodIncrement = 'addWeek';
+                $periodsPerYear = 52;
+                $periodName = 'Weekly';
+                $periodUnit = 'week';
+                break;
+            default:
+                $periodIncrement = 'addMonth';
+                $periodsPerYear = 12;
+                $periodName = 'Monthly';
+                $periodUnit = 'month';
+        }
+
+        $periodicRate = ($annualRate / 100) / $periodsPerYear;
+        $principalPerEmi = round($loanAmount / $tenure, 2);
+
+        $schedule = [];
+        $remainingPrincipal = $loanAmount;
+        $emiDate = $disburseDate->copy();
+
+        for ($i = 1; $i <= $tenure; $i++) 
+        {
+
+            $emiDate = $emiDate->copy()->{$periodIncrement}(1);
+
+            /* -------- CASE : NO EMI -------- */
+            
+            if ($interestType == 'no_emi') 
+            {
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $emiDate->format('d/m/Y'),
+                    'principal' => number_format($loanAmount, 2, '.', ''), // Full principal for display only
+                    'interest' => '',  
+                    'charges_per_emi' => '',
+                    'emi' => '',
+                    'bal_principal' => '',
+                ];
+
+                continue;
+            }
+
+            /* -------- CASE : FLAT ADVANCED -------- */
+
+            if ($interestType == 'flat_advanced') {
+
+                if ($i == $tenure) {
+                    $principalThis = round($remainingPrincipal, 2);
+                } else {
+                    $principalThis = $principalPerEmi;
+                }
+
+                $emiTotal = $principalThis;
+                $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $emiDate->format('d/m/Y'),
+                    'principal' => number_format($principalThis, 2, '.', ''),
+                    'interest' => number_format(0, 2, '.', ''),
+                    'charges_per_emi' => number_format(0, 2, '.', ''),
+                    'emi' => number_format($emiTotal, 2, '.', ''),
+                    'bal_principal' => number_format($remainingPrincipal, 2, '.', ''),
+                ];
+
+                continue;
+            }
+
+            /* -------- DEFAULT CASE : FLAT EMI -------- */
+            $interestForPeriod = round($remainingPrincipal * $periodicRate, 2);
+            if ($i == $tenure) {
+                $principalThis = round($remainingPrincipal, 2);
+            } else {
+                $principalThis = $principalPerEmi;
+            }
+
+            $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
+            $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
+
+            $schedule[] = [
+                'no' => $i,
+                'emi_date' => $emiDate->format('d/m/Y'),
+                'due_date' => $emiDate->format('d/m/Y'),
+                'principal' => number_format($principalThis, 2, '.', ''),
+                'interest' => number_format($interestForPeriod, 2, '.', ''),
+                'charges_per_emi' => number_format($chargesPerEmi, 2, '.', ''),
+                'emi' => number_format($emiTotal, 2, '.', ''),
+                'bal_principal' => number_format($remainingPrincipal, 2, '.', ''),
+            ];
+        }
+
+        // Totals
+        if ($interestType == 'no_emi') {
+            $totalPrincipal = 0;
+            $totalInterest = 0;
+            $totalCharges = 0;
+            $totalEmi = 0;
+        } else {
+            $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
+            $totalInterest = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
+            $totalCharges = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
+            $totalEmi = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        }
+
+        return view('loanagainst.applications.view-buttons.show-emi-chart', compact(
+            'application',
+            'loanAmount',
+            'disburseDate',
+            'processingFeeInc',
+            'stampDutyInc',
+            'insuranceInc',
+            'fitnessInc',
+            'tenure',
+            'periodName',
+            'periodUnit',
+            'chargesPerEmi',
+            'schedule',
+            'totalPrincipal',
+            'totalInterest',
+            'totalCharges',
+            'totalEmi'
+        ));
+    }
+
+    public function loanagainst_process_fee($id)
+    {
+        $application = LoanAgainstApplication::with([
+            'member',
+            'coApplicant1',
+            'guarantor1',
+            'scheme',
+            'creditScores'
+        ])->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        return view("loanagainst.applications.view-buttons.col_process_fee", compact('application','banks'));
+    }
+
+    public function loanagainststoreProcessFee(Request $request, $id)
+    {
+        $request->validate([
+            'total' => 'required|numeric|min:0',
+            'fee_mode' => 'required|in:cash,cheque,online'
+        ]);
+
+        $data = $request->all();
+        $data['application_id'] = $id;
+
+        if ($request->fee_mode == 'cheque') {
+            $request->validate([
+                'bank_id' => 'required',
+                'cheque_no' => 'required',
+                'cheque_date' => 'required|date',
+            ]);
+        }
+
+        if ($request->fee_mode == 'online') {
+            $request->validate([
+                'transfer_date' => 'required|date',
+                'utr_no' => 'required',
+                'transfer_mode' => 'required|in:imps,vpa,neft_rtgs',
+                'credited' => 'required|in:yes,no',
+            ]);
+        }
+
+        LoanagainstProcessingFee::create($data);
+
+        return redirect()->route('loanagainst.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+    }
 
     
 }

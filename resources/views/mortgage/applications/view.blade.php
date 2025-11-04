@@ -111,7 +111,7 @@
             Collect Processing Fee
             </a>
         @endif
-        @if($application->status != 3 && $application->status != 2) 
+        @if($application->status != 3 && $application->status != 2 && ($application->status != 1)) 
         <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             SUBMIT FOR APPROVAL
         </a>
@@ -270,11 +270,7 @@
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">Cibil Info</h3>
                     <div class=" flex gap-3">
-                        <a href="{{route('gold-loan.applications.upload-cibil-score')}}"
-                            class="p-2 btn-primary">
-                            <i class="las la-upload"></i>
-
-                        </a>
+                       
                         <!-- Modal Background (hidden by default) -->
                         <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
@@ -303,14 +299,41 @@
 
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto" id="cibilInfo">
-                    <table class="w-full text-sm text-left">
-                        <tbody class="divide-y divide-gray-200">
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/3">No Cibil Data Found</td>
-                                <td class="px-4 py-2"></td>
+                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                        <thead class="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
+                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
+                                <th class="px-4 py-2 font-semibold border">Report Date</th>
+                                <th class="px-4 py-2 font-semibold border">View Report</th>
                             </tr>
-                        </tbody>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                        @if($application->creditScores && $application->creditScores->isNotEmpty())
+                            @foreach($application->creditScores as $score)
+                                @if($score)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 border">
+                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-2 border">
+                                            @if(!empty($score->report_file_path))                               
+                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>                                           
+                                            @else
+                                                <span class="text-gray-500">No File Available</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
                     </table>
                 </div>
             </div>
@@ -348,9 +371,9 @@
                         Documents
                     </h3>
                     <div class="">
-                        <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
+                        <!-- <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
                             <i class="las la-upload y"></i>
-                        </a>
+                        </a> -->
 
                         <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Documents')">
                             <span class="toggle-icon text-lg font-bold">−</span>
