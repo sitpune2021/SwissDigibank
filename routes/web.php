@@ -170,6 +170,11 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
+Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+
+        // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+        Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
+        
         Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
         Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
         Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');

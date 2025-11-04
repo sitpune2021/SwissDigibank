@@ -18,7 +18,6 @@ class MemberController extends Controller
         $member = Member::where('user_id', $id)->firstOrFail();
 
             $fullName = trim(
-                ($member->member_info_title ?? '') . ' ' .
                 ($member->member_info_first_name ?? '') . ' ' .
                 ($member->member_info_middle_name ?? '') . ' ' .
                 ($member->member_info_last_name ?? '')
