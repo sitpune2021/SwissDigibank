@@ -2,24 +2,24 @@
 @section('content')
     <div class="main-inner">
 
-    @if(session('success'))
-    <div 
-        id="successMessage" 
-        class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
-    >
-        {{ session('success') }}
-    </div>
+     @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
 
-    <script>
-        // Auto hide after 2 seconds
-        setTimeout(() => {
-            const msg = document.getElementById('successMessage');
-            if (msg) {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.remove(), 500); // smooth fade-out
-            }
-        }, 2000);
-    </script>
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
     @endif
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
@@ -101,7 +101,7 @@
 
             <!-- Application Date -->
             <td class="text-start !py-5 px-6">
-                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
+                {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
             </td>
 
             <!-- Member No -->
@@ -153,7 +153,9 @@
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
                             <li><a href="{{ route('loanagainst.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            @if($application->status != 2)
                             <li><a href="{{ route('loanagainst.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            @endif
                         </ul>
                     </div>
                 </div>

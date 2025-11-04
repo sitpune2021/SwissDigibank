@@ -89,8 +89,12 @@
             @foreach($schedule as $row)
             <tr class="border border-gray-300">
                 <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
-                <td class="p-2 text-center border border-gray-300">{{ $row['emi_date'] }}</td>
-                <td class="p-2 text-center border border-gray-300">{{ $row['due_date'] }}</td>
+                 <td class="p-2 text-center border border-gray-300">
+                    {{ !empty($row['emi_date']) ? \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') : '-' }}
+                </td>
+                <td class="p-2 text-center border border-gray-300">
+                    {{ !empty($row['due_date']) ? \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') : '-' }}
+                </td>
                 <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'],2) }}</td>
                 <td class="p-2 text-right border border-gray-300">{{ $row['interest'] !== null ? '₹ '.number_format($row['interest'],2) : '' }}</td>
                 <td class="p-2 text-right border border-gray-300">{{ $row['charges'] !== null ? '₹ '.number_format($row['charges'],2) : '' }}</td>

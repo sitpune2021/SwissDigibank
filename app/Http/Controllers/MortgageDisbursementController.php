@@ -15,10 +15,6 @@ use Illuminate\Validation\ValidationException;
 
 class MortgageDisbursementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-   
    
     public function index()
     {
@@ -34,7 +30,6 @@ class MortgageDisbursementController extends Controller
 
         return view('mortgage.disbursements.index', compact('disbursements'));
     }
-
 
     public function cancelLoan($id)
     {
@@ -57,7 +52,6 @@ class MortgageDisbursementController extends Controller
             return redirect()->back()->with('error', ' Loan status not updated.');
         }
     }
-
 
     public function store(Request $request)
     {
@@ -165,45 +159,65 @@ class MortgageDisbursementController extends Controller
         }
     }
 
-
     public function show($id)
     {
+        // Load loan + scheme + member + branch
         $disbursement = MortgageLoanApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
         $banks = Bank::pluck('name', 'id');
 
-        $processingFee = optional($disbursement->scheme)->processing_fee ?? 0;
-        $gstPercent = 18;
-        $gstAmount = ($processingFee * $gstPercent) / 100;
+        // Base scheme values
+        $scheme = optional($disbursement->scheme);
+        $processingFee = $scheme->processing_fee ?? 0;
+        $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
+        $insuranceFee = $scheme->insurance_fee ?? 0;
 
-        // sgst, cgst, igst ko fix 0
+        // Common GST percent
+        $gstPercent = 18;
+
+        // ===== Processing Fee Logic =====
+        $processingGst = ($processingFee * $gstPercent) / 100;
+        $processingTotal = $processingFee + $processingGst;
+
+        // ===== Stamp Duty Logic =====
+        $stampGst = ($stampDutyFee * $gstPercent) / 100;
+        $stampTotal = $stampDutyFee + $stampGst;
+
+        // ===== Insurance Fee Logic =====
+        $insuranceGst = ($insuranceFee * $gstPercent) / 100;
+        $insuranceTotal = $insuranceFee + $insuranceGst;
+
+        // ===== SGST / CGST / IGST fix 0 =====
         $sgst = 0;
         $cgst = 0;
         $igst = 0;
 
-        $total = $processingFee + $gstAmount;
-
-        // Interest calculation from scheme
-        $maxLoanAmount = optional($disbursement->scheme)->max_loan_amount ?? 0;
-        $annualInterestRate = optional($disbursement->scheme)->annual_interest_rate ?? 0;
-
-        // Example: Advance Interest = (maxLoanAmount * annualInterestRate / 100)
+        // ===== Interest calculation =====
+        $maxLoanAmount = $scheme->max_loan_amount ?? 0;
+        $annualInterestRate = $scheme->annual_interest_rate ?? 0;
         $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
+
+        // ===== Total deductions =====
+        $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+
+        // ===== Final amount to disburse =====
+        $loanAmount = $disbursement->net_loan_amount ?? 0;
+        $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
         return view(
             "mortgage.disbursements.disburse-loan",
             compact(
                 'disbursement',
                 'banks',
-                'processingFee',
+                'processingFee', 'processingGst', 'processingTotal',
+                'stampDutyFee', 'stampGst', 'stampTotal',
+                'insuranceFee', 'insuranceGst', 'insuranceTotal',
                 'gstPercent',
-                'gstAmount',
-                'sgst',
-                'cgst',
-                'igst',
-                'total',
-                'maxLoanAmount',
-                'annualInterestRate',
-                'advanceInterest'
+                'sgst', 'cgst', 'igst',
+                'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
+                'finalAmountToDisburse',
+                'loanAmount',
+                'totalDeductions'
             )
         );
     }

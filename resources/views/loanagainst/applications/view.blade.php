@@ -100,15 +100,24 @@
         </div>
     </div>
 
-    <div class="flex flex-wrap gap-3">
+   <div class="flex flex-wrap gap-3">
 
-        <a href="#" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            Show Emi Chart
-        </a>
-
-        <a href="#" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
+        <a href="{{ route('loanagainst.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
+            Show EMI Chart
+        </a>  
+        @if($application->status != 2) 
+        <a href="{{ route('loanagainst.applications.view-buttons.col_process_fee', $application->id) }}"
+            class="btn-warning uppercase px-2 py-2 rounded-10">
             Collect Processing Fee
+            </a>
+        @endif
+        @if($application->status != 3 && $application->status != 2 && ($application->status != 1)) 
+        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            SUBMIT FOR APPROVAL
         </a>
+        @endif
+
+        @if($application->status != 0 && $application->status != 3 && $application->status != 2)
         <a href="#" class="btn-warning  uppercase px-2 py-2 rounded-10 ">
             DISBURSE SETTINGS
         </a>
@@ -116,8 +125,15 @@
         <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
             REGISTER eNACH ( Fidypay )
         </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Rocketpay )
+        </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( Rocketpay UPI )
+        </a>
+        @endif
 
-
+    @if($application->status != 0 && $application->status != 3)
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
@@ -169,6 +185,7 @@
                 </div>
             </div>
         </div>
+    @endif
 
     </div>
 
@@ -179,9 +196,11 @@
         <div class=" w-full  overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
+                    @if($application->status != 2 )
                    <a href="{{ route('loanagainst.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
+                    @endif
                 </div>
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
@@ -194,20 +213,21 @@
                                 </a>
                             </td>
                         </tr>
-
+                        @if($application->status != 3)
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">1st Co-Applicant Member</td>
                             <td class="px-4 py-2 capitalize text-primary">
                                 {{ optional($application->coApplicant1)->member_no }} - {{ optional($application->coApplicant1)->member_info_first_name }}
                             </td>
                         </tr>
+                        @endif
 
-                        <tr class="border-b">
+                        <!-- <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
                             <td class="px-4 py-2 capitalize text-primary">
                                 {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
                             </td>
-                        </tr>
+                        </tr> -->
 
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application No.</td>
@@ -219,23 +239,47 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Loan Account No.</td>
-                            <td class="px-4 py-2 text-primary">00459</td>
+                            <td class="px-4 py-2 text-primary">-</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Gold Loan Scheme</td>
+                            <td class="font-semibold px-4 py-2">Deposit Loan Scheme</td>
                            <td class="text-start !py-5 px-6">
-                                {{ $application->scheme->scheme_name ?? 'N/A' }}
+                                {{ $application->scheme->scheme_code ?? 'N/A' }}
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Amount Approved</td>
-                            <td class="px-4 py-2">₹ 100,000.00</td>
+                            <td class="px-4 py-2">₹ {{ $application->approved_loan_amount }}</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">Security Value</td>
+                            <td class="px-4 py-2">₹ {{ $application->security_value }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Status</td>
                             <td class="px-4 py-2">
-                                <span
-                                    class="block w-32 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary ">DISBURSED</span>
+                                @php
+                                    $statusText = 'UNKNOWN';
+                                    $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
+
+                                    if ($application->status == 0) {
+                                        $statusText = 'DRAFT';
+                                        $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
+                                    } elseif ($application->status == 1) {
+                                        $statusText = 'APPROVED';
+                                        $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
+                                    } elseif ($application->status == 2) {
+                                        $statusText = 'DISBURSEMENT';
+                                        $statusClass = 'bg-green-200 text-green-600 border-green-300';
+                                    } elseif ($application->status == 3) {
+                                        $statusText = 'CANCELED';
+                                        $statusClass = 'bg-red-200 text-red-600 border-red-300';
+                                    }
+                                @endphp
+
+                                <span class="block w-32 rounded-[30px] border py-2 text-center text-xs {{ $statusClass }}">
+                                    {{ $statusText }}
+                                </span>
                             </td>
                         </tr>
 
@@ -243,90 +287,6 @@
                 </table>
             </div>
 
-            
-            @if($application->status == 2 )
-            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
-                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black  capitalize">
-                        Disbursement Settings
-                    </h3>
-                    <div class="">
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Body -->
-                <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
-                    <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
-                                    Disbursement Date
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    24-09-2025
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">First EMI Date </td>
-                                <td class="px-4 py-2 text-right md:text-left"> 24-07-2026</td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Collect Processing Fee Separately
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/10 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16"> Yes </span>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
-                                    Collect Stamp Duty Fee Separately
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2"> Collect Insurance Fee Separately</td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
-                                    Collect Adv. Interest Separately
-                                </td>
-                                <td class="px-4 py-2  text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Collect Off Adv. EMI Interest Separately</td>
-                                <td class="px-4 py-2   text-right md:text-left">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16"> No </span>
-                                </td>
-                            </tr>
-
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            @endif
 
 
             <!--Cibil Info-->

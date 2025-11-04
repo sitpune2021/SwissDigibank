@@ -55,9 +55,6 @@ class LoanAgainstApplication extends Model
         'status',
     ];
 
-    protected $attributes = [
-    'model_type' => 'loan_against',
-];
 
 
 public function creditScores()

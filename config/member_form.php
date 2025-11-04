@@ -47,7 +47,7 @@ return [
         [
             'label' => 'ENROLLMENT DATE',
             'name' => 'general_enrollment_date',
-            'id' => 'date',
+            'id' => 'date3',
             'type' => 'text',
             'required' => true,
             'default' => now()->format('d-m-Y'), // <- This line
