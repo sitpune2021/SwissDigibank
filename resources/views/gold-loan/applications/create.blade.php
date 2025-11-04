@@ -355,6 +355,7 @@
                                 <input type="number" id="insuranceAmount" name="insurance_amount"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="Enter Insurance Amount (₹)" value="{{ old('insurance_amount', $application->insurance_amount ?? 0) }}">
+                                    <p id="insuranceInWords" class="text-red-600 text-sm mt-1"></p>
                                 @error('insurance_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -367,6 +368,7 @@
                                 <input type="number" id="netLoanAmount" name="net_loan_amount" readonly
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
                                     placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
+                                    <p id="netAmountInWords" class="text-red-600 text-sm mt-1"></p>
                                 @error('net_loan_amount')
                                     <p class="text-error text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -1612,37 +1614,46 @@ document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
     <!-- Subtext Massage show -->
     <script>
     // Number to Words Convert Function (Indian Format)
-function numberToWords(num) {
-    if (num === 0) return "Zero Rupees Only";
+    function numberToWords(num) {
+        if (num === 0) return "Zero Rupees Only";
 
-    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-        "Seventeen", "Eighteen", "Nineteen"
-    ];
-    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
-        "Eighty", "Ninety"
-    ];
+        const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+            "Seventeen", "Eighteen", "Nineteen"
+        ];
+        const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+            "Eighty", "Ninety"
+        ];
 
-    function inWords(num) {
-        if (num < 20) return a[num];
-        if (num < 100) return b[Math.floor(num / 10)] + " " + a[num % 10];
-        if (num < 1000) return a[Math.floor(num / 100)] + " Hundred " + inWords(num % 100);
-        if (num < 100000) return inWords(Math.floor(num / 1000)) + " Thousand " + inWords(num % 1000);
-        if (num < 10000000) return inWords(Math.floor(num / 100000)) + " Lakh " + inWords(num % 100000);
-        return inWords(Math.floor(num / 10000000)) + " Crore " + inWords(num % 10000000);
+        function inWords(num) {
+            if (num < 20) return a[num];
+            if (num < 100) return b[Math.floor(num / 10)] + " " + a[num % 10];
+            if (num < 1000) return a[Math.floor(num / 100)] + " Hundred " + inWords(num % 100);
+            if (num < 100000) return inWords(Math.floor(num / 1000)) + " Thousand " + inWords(num % 1000);
+            if (num < 10000000) return inWords(Math.floor(num / 100000)) + " Lakh " + inWords(num % 100000);
+            return inWords(Math.floor(num / 10000000)) + " Crore " + inWords(num % 10000000);
+        }
+
+        return inWords(num).trim() + " Rupees Only";
     }
 
-    return inWords(num).trim() + " Rupees Only";
-}
+    // Function to update text in words
+    function updateWords(inputId, textId) {
+        const input = document.getElementById(inputId);
+        const text = document.getElementById(textId);
+        if (input && text) {
+            input.addEventListener("input", function () {
+                let amount = parseInt(this.value) || 0;
+                text.textContent = amount > 0 ? numberToWords(amount) : "";
+            });
+        }
+    }
 
-// Live Show Below Input
-document.getElementById("loanAmount").addEventListener("input", function () {
-    let amount = parseInt(this.value) || 0;
-    document.getElementById("amountInWords").textContent = amount > 0 
-        ? numberToWords(amount)
-        : "";
-});
-
+    // Attach for all fields
+    updateWords("loanAmount", "amountInWords");
+    updateWords("insuranceAmount", "insuranceInWords");
+    updateWords("netLoanAmount", "netAmountInWords");
     </script>
+
 
 @endsection

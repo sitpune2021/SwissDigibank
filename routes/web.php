@@ -170,6 +170,11 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
+Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+
+        // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+        Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
+        
         Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
         Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
         Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');
@@ -241,14 +246,18 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('accounts', AccountsController::class);
     Route::get('/saving/passbook/{id}', [AccountsController::class, 'viewPassbook'])->name('saving.passbook');
     Route::post('/accounts/passbook/search', [AccountsController::class, 'passbookSearch'])->name('accounts.passbook.search');
-
-
     Route::post('/ajax/get-account-balance', [AccountsController::class, 'getBalance'])->name('ajax.get.account.balance');
 
     Route::get('/view/{id}/transaction', [AccountTransactionController::class, 'index'])->name('account.transaction');
     Route::resource('transaction', AccountTransactionController::class);
     Route::get('/export-transaction/{id}', [AccountTransactionController::class, 'downloadCsvExample'])->name('export.transaction');
     Route::get('/transaction/{id}/print', [AccountTransactionController::class, 'printReceipt'])->name('transaction.print');
+
+    Route::get('/accounts/other-debit-charges/{id}', [AccountsController::class, 'debitChargeList'])->name('accounts.other.debit-charges');
+    Route::get('/accounts/other-charges/{id}', [AccountsController::class, 'otherCharges'])->name('accounts.other.charges');
+    Route::post('/saving-other-charges/store/{id}', [AccountsController::class, 'storeOtherCharges'])->name('storeOtherCharges');
+
+    Route::get('/accounts/clear-due/{id}', [AccountsController::class, 'clearDue'])->name('accounts.clear.due');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
@@ -586,6 +595,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('scheme/view/{id}', [LoanAgainstController::class, 'view'])
         ->name('loanagainst.schemes.view');
 
+
     // loanagainst Loan Calculation
     Route::get('calculator/index', [LoanAgainstController::class, 'calculator'])
         ->name('loanagainst.calculator.index');
@@ -645,6 +655,14 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.lineproperty.index');
     // Download excel sheet
     Route::get('loanagainst/export', [LoanAgainstController::class, 'exportLoanAgainst'])->name('loanagainst.lineproperty.export');
+
+    // Show emi chart 
+    Route::get('{id}/emi-chart', [LoanAgainstController::class, 'emiChart'])->name('loanagainst.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [LoanAgainstController::class, 'loanagainst_process_fee'])
+        ->name('loanagainst.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [LoanAgainstController::class, 'loanagainststoreProcessFee'])
+        ->name('loanagainst.col_process_fee.store');
 });
 
 
@@ -954,14 +972,13 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
 
     Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
-    
+
     Route::get('{id}/emi-chart', [PersonalController::class, 'emiChart'])->name('personal.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [PersonalController::class, 'personalcol_process_fee'])
         ->name('personal.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
-        
 });
 
 

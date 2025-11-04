@@ -149,7 +149,65 @@
             </div>
         </div>
 
-        <div></div>
+
+            @php
+                // If it's already array, use it directly; otherwise decode
+                $emiSlabs = is_array($scheme->no_emi_slabs)
+                    ? $scheme->no_emi_slabs
+                    : json_decode($scheme->no_emi_slabs ?? '[]', true);
+
+                $goldLoanSetting = strtolower($scheme->gold_loan_setting ?? '');
+            @endphp
+
+
+            {{-- Show only when gold_loan_setting = "no_emi" and valid slab data --}}
+            @if($goldLoanSetting === 'no_emi' && !empty($emiSlabs) && collect($emiSlabs)->whereNotNull('from_date')->count() > 0)
+            <div class="box col-span-2 md:col-span-1">
+                <div class="flex items-center gap-3">
+                    <h1 class="text-lg capitalize">INTEREST CHART</h1>
+                    <p class="text-gray-500 text-sm font-semibold">
+                        Charge Floating Interest Rate per Slab
+                    </p>
+                    <span
+                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3">
+                        {{ $scheme->floating_interest ?? 'No' }}
+                    </span>
+                </div>
+
+                <hr class="mb-3 mt-2">
+
+                <div class="tableWidth mt-2 px-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-secondary/5 text-sm text-black">
+                                <tr>
+                                    <th colspan="2" class="text-center py-3">DAYS</th>
+                                    <th rowspan="2" class="text-center">PENAL INTEREST<br>RATE (%) (MONTHLY)</th>
+                                    <th rowspan="2" class="text-center py-3">ANNUAL INTEREST RATE (%)</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">FROM</th>
+                                    <th class="text-center">TO</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 text-sm text-center">
+                                @foreach($emiSlabs as $slab)
+                                    @if(!empty($slab['from_date']) && !empty($slab['to_date']))
+                                        <tr class="bg-gray-50 border-b">
+                                            <td class="px-4 py-2 text-sm">{{ $slab['from_date'] }}</td>
+                                            <td class="px-4 py-2 text-sm">{{ $slab['to_date'] }}</td>
+                                            <td class="px-4 py-2 text-sm">{{ $slab['penal_rate_interest'] ?? 0 }} %</td>
+                                            <td class="px-4 py-2 text-sm">{{ $slab['annual_rate_interest'] ?? 0 }} %</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
+
 
         </div>
 
@@ -185,6 +243,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <script>
@@ -198,4 +257,5 @@
         icon.textContent = section.classList.contains('hidden') ? '+' : '−';
     }
 </script>
+
 @endsection

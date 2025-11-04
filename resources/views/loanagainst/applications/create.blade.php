@@ -42,13 +42,14 @@
           <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
-                        <div class="col-span-2 md:col-span-1">
-                             {{-- Application Date --}}           
+                       <div class="col-span-2 md:col-span-1">
+                            {{-- Application Date --}}
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
+
+                            <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                         </div>
                         
                         <div class="col-span-2 md:col-span-1">
@@ -599,7 +600,7 @@
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="transfer_mode" value="imps"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>
                                             <span>IMPS</span>
                                         </label>
                                         <label class="flex items-center gap-2">
@@ -622,13 +623,13 @@
                                     </label>
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="yes"
-                                                {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                            <input type="radio" name="credited" value="2"
+                                                {{ old('credited', $application->credited ?? '') == '1' ? 'checked' : '' }}>
                                             <span>Yes</span>
                                         </label>
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="no"
-                                                {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                            <input type="radio" name="credited" value="0"
+                                                {{ old('credited', $application->credited ?? '') == '0' ? 'checked' : '' }}>
                                             <span>No</span>
                                         </label>
                                     </div>
@@ -999,7 +1000,8 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const year = today.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
+        //const formattedDate = `${day}/${month}/${year}`;
+        const formattedDate = `${day}-${month}-${year}`;
 
         return `
             <tr class="nested-fields border-b">
@@ -1123,7 +1125,6 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
     updateWords("insuranceAmount", "insuranceAmountWords");
 });
 </script>
-
 
 
 @endsection

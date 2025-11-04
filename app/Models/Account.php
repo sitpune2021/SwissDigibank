@@ -74,4 +74,9 @@ class Account extends Model
     {
         return $this->hasMany(DdTransaction::class, 'saving_account_id');
     }
+
+    public function savingOtherCharges()
+    {
+        return $this->hasMany(SavingOtherCharge::class, 'account_id', 'id');
+    }
 }

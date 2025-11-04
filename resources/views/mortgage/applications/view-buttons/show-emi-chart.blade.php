@@ -19,7 +19,8 @@
         accent-color: green;
     }
 </style>
-<div class="main-inner ">
+
+<div class="main-inner box">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">
@@ -34,33 +35,69 @@
        <center>Loan Information</center> 
     </h2>
 
-    <div class="info-grid">
+    <div class="info-grid ">
 
-        <div class="label">Disburse Date</div>
-        <div class="value">
-            {{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d/m/Y') }}
+       <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Disburse Date</div>
+            <div class="value p-2">
+                {{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d/m/Y') }}
+            </div>
         </div>
 
-        <div class="label">Loan Amount</div>
-        <div class="value">₹ {{ number_format($loanAmount, 2) }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Loan Amount</div>
+            <div class="value p-2">₹ {{ number_format($loanAmount, 2) }}</div>
+        </div>
 
-        <div class="label">Processing Fee</div>
-        <div class="value">₹ {{ number_format($processingFeeInc, 2) }} (Incl. GST)</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Processing Fee</div>
+            <div class="value p-2">₹ {{ number_format($processingFeeInc, 2) }} (Incl. GST)</div>
+        </div>
 
-        <div class="label">Stamp Duty Fee</div>
-        <div class="value">₹ {{ number_format($stampDutyInc, 2) }} (Incl. GST)</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Stamp Duty Fee</div>
+            <div class="value p-2">₹ {{ number_format($stampDutyInc, 2) }} (Incl. GST)</div>
+        </div>
 
-        <div class="label">Insurance Charges</div>
-        <div class="value">₹ {{ number_format($insuranceInc, 2) }} (Incl. GST)</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Insurance Charges</div>
+            <div class="value p-2">₹ {{ number_format($insuranceInc, 2) }} (Incl. GST)</div>
+        </div>
 
-        <div class="label">EMI Count</div>
-        <div class="value">{{ $tenure }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Interest Type</div>
+            <div class="value p-2">
+                @php
+                    $interestTypeLabel = [
+                        'reducing_emi' => 'Reducing EMI',
+                        'flat_emi' => 'Flat EMI',
+                        'flat_advanced_interest' => 'Flat Advanced Interest',
+                        'no_emi' => 'No EMI',
+                    ][$application->scheme->gold_loan_setting ?? 'flat_emi'];
+                @endphp
+                {{ $interestTypeLabel }}
+            </div>
+        </div>
 
-        <div class="label">EMI Payout</div>
-        <div class="value">{{ ucfirst($periodName) }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">EMI Count</div>
+            <div class="value p-2">{{ $tenure }}</div>
+        </div>
 
-        <div class="label">EMI Amount</div>
-        <div class="value">₹ {{ number_format(($loanAmount / $tenure), 2) }}</div>
+        <div class="grid grid-cols-2 border-b border-gray-400">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">EMI Payout</div>
+            <div class="value p-2">{{ ucfirst($periodName) }}</div>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Total Interest</div>
+            <div class="value p-2">₹ {{ number_format($totalInterest, 2) }}</div>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <div class="label p-2 font-semibold bg-gray-50 border-r border-gray-400">Total EMI Amount</div>
+            <div class="value p-2">₹ {{ number_format($totalEmi, 2) }}</div>
+        </div>
 
     </div>
 </div>
