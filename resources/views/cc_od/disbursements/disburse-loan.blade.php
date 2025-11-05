@@ -50,7 +50,7 @@
                         </h3>
                         <input type="hidden" name="loan_application_id" 
                             value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
-                    </div>
+                    </div><br>
 
                     <!-- Loan Disbursement Date -->
                     <div>
@@ -60,7 +60,7 @@
                         <input type="text" id="disbursal_date" name="disbursal_date" 
                             class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             value="{{ date('d-m-Y') }}" required readonly>
-                    </div>
+                    </div><br>
 
                     <!-- Approved CC Limit -->
                     <div>
@@ -70,7 +70,7 @@
                         <input type="number" id="loan_amount" name="loan_amount" 
                             class="w-full border rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed"
                             value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-                    </div>
+                    </div><br>
 
                     <!-- Available CC Limit -->
                     <div>
@@ -80,7 +80,7 @@
                         <input type="number" id="finalAmount" name="final_amount" 
                             class="w-full border rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed"
                             value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-                    </div>
+                    </div><br>
 
                     <!-- Buttons -->
                     <div class="flex flex-col sm:flex-row justify-center gap-3 mt-5"> <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn"> DISBURSE LOAN </button> <a href="{{ route('cc_od.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a> </div>

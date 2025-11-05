@@ -449,7 +449,68 @@ class AccountsController extends Controller
     public function clearDue(string $id)
     {
         $account_id = base64_decode($id);
-       
+
         return view('saving-current-ac.accounts.debit-other-charges.clear-dues');
+    }
+
+    public function storeDebitCharge(Request $request, $id)
+    {
+        $account_id = base64_decode($id);
+dd($account_id );
+        $validated = $request->validate([
+            'charges_due'   => 'nullable|numeric',
+            'waived_amount' => 'required|numeric|min:0',
+            'amount'        => 'required|numeric|min:0',
+            'gst_rate'      => 'nullable|numeric|min:0|max:100',
+            'total_amount'  => 'required|numeric|min:0',
+            'remarks'       => 'nullable|string|max:255',
+            'charge_date'   => 'required|date',
+        ]);
+
+        $state = null;
+        if ($validated['waived_amount'] > 0 && $validated['waived_amount'] < $validated['total_amount']) {
+            $state = 'PARTIAL_WAIVED';
+        } elseif ($validated['waived_amount'] == $validated['total_amount']) {
+            $state = 'WAIVED';
+        }
+
+        try {
+            $charge = new SavingOtherCharge();
+            $charge->account_id    = $account_id;
+            $charge->charge_date   = $validated['charge_date'];
+            $charge->amount        = $validated['amount'];
+            $charge->gst_rate      = $validated['gst_rate'] ?? 0;
+            $charge->total_amount  = $validated['total_amount'];
+            $charge->waived_amount = $validated['waived_amount'];
+            $charge->remarks       = $validated['remarks'] ?? null;
+            $charge->state         = $state;
+            $charge->status        = 1; // active
+            $charge->created_by    = Auth::id();
+            $charge->save();
+
+            Log::info('Debit charge recorded successfully', [
+                'user_id'       => Auth::id(),
+                'account_id'    => $account_id,
+                'charge_id'     => $charge->id,
+                'charge_date'   => $validated['charge_date'],
+                'amount'        => $validated['amount'],
+                'gst_rate'      => $validated['gst_rate'],
+                'total_amount'  => $validated['total_amount'],
+                'waived_amount' => $validated['waived_amount'],
+                'state'         => $state,
+                'remarks'       => $validated['remarks'] ?? null,
+            ]);
+
+            return redirect()->back()->with('success', 'Debit charge recorded successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error while recording debit charge', [
+                'user_id'    => Auth::id(),
+                'account_id' => $account_id,
+                'error'      => $e->getMessage(),
+                'trace'      => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to record debit charge. Please try again.');
+        }
     }
 }
