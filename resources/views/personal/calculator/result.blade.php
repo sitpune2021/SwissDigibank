@@ -44,15 +44,15 @@
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate (Annually)</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Payable (EMIs)</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_emi_paid,2) }}</td>
+          <td class="py-2 px-3 text-gray-800 border border-gray-300">CHARGES PER EMI</td>
+          <td class="py-2 px-3 text-green-700 font-bold border border-gray-300">₹ {{ number_format($total_charges,2) }}</td>
         </tr>
 
         <tr class="bg-gray-50 font-semibold">
-          <td class="py-2 px-3 border border-gray-300"> </td>
-          <td class="py-2 px-3 border border-gray-300"> </td>
-          <td class="py-2 px-3 text-gray-800 border border-gray-300">Grand Total Payable</td>
-          <td class="py-2 px-3 text-green-700 font-bold border border-gray-300">₹ {{ number_format($grand_total_payable,2) }}</td>
+          <td class="py-2 px-3 border border-gray-300">Charge Per EMI Type </td>
+          <td>{{ $charge_per_emi }}</td>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Total Payable (EMIs)</td>
+          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_emi_paid,2) }}</td>       
         </tr>
       </tbody>
     </table>
@@ -86,32 +86,58 @@
         </tr>
 
         <tbody>
-            @foreach($schedule as $row)
+    @if(strtolower($interest_type) === 'flat advanced interest')
+        @foreach($schedule as $row)
             <tr class="border border-gray-300">
                 <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
                 <td class="p-2 text-center border border-gray-300">
-                    {{ !empty($row['emi_date']) ? \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') : '-' }}
+                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
                 </td>
                 <td class="p-2 text-center border border-gray-300">
-                    {{ !empty($row['due_date']) ? \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') : '-' }}
+                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
+                </td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'], 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['charges'], 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['emi'], 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+            </tr>
+        @endforeach
+    @else
+        @foreach($schedule as $row)
+            <tr class="border border-gray-300">
+                <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
+                <td class="p-2 text-center border border-gray-300">
+                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
+                </td>
+                <td class="p-2 text-center border border-gray-300">
+                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
                 </td>
                 <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'],2) }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['interest'] !== null ? '₹ '.number_format($row['interest'],2) : '' }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['charges'] !== null ? '₹ '.number_format($row['charges'],2) : '' }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['emi'] !== null ? '₹ '.number_format($row['emi'],2) : '' }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['balance'] !== null ? '₹ '.number_format($row['balance'],2) : '' }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['interest'],2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['charges'],2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['emi'],2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['balance'],2) }}</td>
             </tr>
-            @endforeach
-        </tbody>
+        @endforeach
+    @endif
+</tbody>
 
-        <tr class="bg-blue-600 text-white font-bold border border-gray-300">
-            <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
-            <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td>
-            <td class="p-2 text-right border border-gray-300">{{ $total_interest > 0 ? '₹ '.number_format($total_interest,2) : '' }}</td>
-            <td class="p-2 text-center border border-gray-300">-</td>
-            <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
-            <td class="p-2 text-center border border-gray-300">-</td>
-        </tr>
+
+       <tr class="bg-blue-600 text-white font-bold border border-gray-300">
+    <td colspan="4" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
+    <td class="p-2 text-right border border-gray-300">
+        ₹ {{ number_format($total_interest ?? 0, 2) }}
+    </td>
+    <td class="p-2 text-right border border-gray-300">
+        ₹ {{ number_format($total_charges ?? 0, 2) }}
+    </td>
+    <td class="p-2 text-right border border-gray-300">
+        ₹ {{ number_format($total_emi_sum ?? 0, 2) }}
+    </td>
+    <td class="p-2 text-center border border-gray-300">-</td>
+</tr>
+
 
     </table>
 

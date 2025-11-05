@@ -754,6 +754,14 @@ Route::group(['prefix' => 'bussiness'], function () {
     // bussiness Loan Account Page
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])
         ->name('bussiness.account.index');
+
+        // Show emi chart 
+    Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [BusinessLoan::class, 'bussiness_process_fee'])
+        ->name('bussiness.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
+        ->name('bussiness.col_process_fee.store');
 });
 
 
