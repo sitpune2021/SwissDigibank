@@ -483,6 +483,19 @@ class PersonalController extends Controller
 
         ]);
 
+         // Validate CIBIL scores (each must be 3 digits between 300–900)
+            if ($request->has('cibil_score')) {
+                foreach ($request->cibil_score as $index => $score) {
+                    if (!empty($score)) {
+                        if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
+                            return back()
+                                ->withInput()
+                                ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
+                        }
+                    }
+                }
+            }
+
         // Step 2: Convert application_date to MySQL format
         $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
         $request->merge(['application_date' => $formattedDate]);

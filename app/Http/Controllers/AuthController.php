@@ -337,39 +337,44 @@ class AuthController extends Controller
     }
     public function checkMpinStatus(Request $request)
     {
-        // Get the authenticated user
-        $user = Auth::user();
+        $request->validate([
+            'username' => 'required|string',
+        ]);
+
+        $username = $request->input('username');
+
+        // Find the user by email or mobile
+        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
+            ? User::where('email', $username)->first()
+            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
 
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User not authenticated.',
-            ], 401);  // Unauthorized if no user is logged in
+                'message' => 'User not found.',
+                'mpin_value' => null,
+            ], 404);
         }
 
-        // Check if mPIN is already set for the authenticated user
-        $isMpinSet = !empty($user->mpin);
-        $mpinValue = null;
+        // Decrypt mPIN if set
+        $mpin = null;
+        $isMpinSet = false;
 
-        if ($isMpinSet) {
+        if (!empty($user->mpin)) {
             try {
-                $mpinValue = Crypt::decryptString($user->mpin);  // Decrypt the mPIN value
+                $mpin = Crypt::decryptString($user->mpin);
+                $isMpinSet = true;
             } catch (\Exception $e) {
-                $mpinValue = null; // If decryption fails, return null
+                $mpin = null; // fallback if decryption fails
             }
         }
 
         return response()->json([
-            'status' => $isMpinSet,
-            'message' => $isMpinSet ? 'mPIN already set.' : 'mPIN not set yet.',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'mobile' => $user->mobile,
-                'user_active' => $user->user_active,
-            ],
-            'mpin_value' => $mpinValue, // Shows the mPIN value if set
+            'status' => $isMpinSet, // true if set, false if not
+            'message' => $isMpinSet ? 'mPIN is set' : 'mPIN not set',
+        'mpin_value' => $mpin,
         ]);
     }
+
+
 }

@@ -483,7 +483,7 @@ class BusinessLoan extends Controller
                 'purpose_of_loan'    => 'required|string|max:255',
                 'tenure_type'        => 'required|string',
                 'net_loan_amount'    => 'required|numeric|min:1',
-                'insurance_amount'   => 'required|numeric|min:1',
+                'insurance_amount'   => 'required|numeric|min:0',
                 'credit_period'      => 'required|numeric|min:1',
                 'emi_collection'     => 'required|string',
                 'tenure_value'       => 'required|numeric|min:1',
@@ -503,6 +503,19 @@ class BusinessLoan extends Controller
             'insurance_amount.required' => 'Please enter Insurance Amount.',
             'credit_period.required'    => 'Please enter Credit Period.',
         ]);
+
+         // Validate CIBIL scores (each must be 3 digits between 300–900)
+            if ($request->has('cibil_score')) {
+                foreach ($request->cibil_score as $index => $score) {
+                    if (!empty($score)) {
+                        if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
+                            return back()
+                                ->withInput()
+                                ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
+                        }
+                    }
+                }
+            }
 
             Log::info('Validation passed successfully.');
         } catch (ValidationException $e) {

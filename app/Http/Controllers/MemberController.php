@@ -336,7 +336,11 @@ class MemberController extends Controller
             ];
             // Fetch the member by ID
             $member = Member::with('address', 'kyc', 'minors', 'religion')->findOrFail($id);
+            // $comments = MembershipChargeTransaction::where('member_id', $id)
+            //     ->orderBy('transaction_date', 'desc')
+            //     ->paginate(5);
             $comments = MembershipChargeTransaction::where('member_id', $id)
+                ->where('status', 'comment')
                 ->orderBy('transaction_date', 'desc')
                 ->paginate(5);
             // Fetch the first due charge for this member (or adjust the query as needed)
@@ -1588,11 +1592,16 @@ class MemberController extends Controller
 
     public function addComment($member_id)
     {
-        $comments = MembershipChargeTransaction::where('member_id', $member_id)->get();
+        $comments = MembershipChargeTransaction::where('member_id', $member_id)
+            ->where('status', 'comment')
+            ->orderBy('transaction_date', 'desc')
+            ->paginate(5);
         return view('members.member.addComments', compact('comments', 'member_id'));
     }
+
     public function storeComment(Request $request)
     {
+        // dd($request->all());
         Log::debug('Store Comment Request Data: ', $request->all());
 
         // Validate the incoming request
@@ -1602,10 +1611,11 @@ class MemberController extends Controller
         ]);
 
         try {
-            // Store the comment with member_id and current date
+            // Store the comment with member_id, current date as transaction_date, and 'comment' status
             MembershipChargeTransaction::create([
                 'member_id' => $validated['member_id'],
-                'transaction_date' => $validated['transaction_date'],
+                'status' => 'comment',  // Set status as 'comment'
+                'transaction_date' => now(),  // Store the current date and time
                 'comment' => $validated['comment'],
             ]);
 
@@ -1613,7 +1623,7 @@ class MemberController extends Controller
             Log::info('Comment stored successfully', [
                 'member_id' => $validated['member_id'],
                 'comment' => $validated['comment'],
-                'transaction_date' => $validated['transaction_date'],
+                'transaction_date' => now(),
             ]);
 
             // Redirect with success message
@@ -1630,6 +1640,7 @@ class MemberController extends Controller
             return back()->withErrors('There was an error storing your comment.');
         }
     }
+
 
     // public function storeComment(Request $request)
     // {
