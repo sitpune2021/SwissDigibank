@@ -15,7 +15,7 @@ return [
         [
             'label' => 'ENROLLMENT DATE',
             'name' => 'enrollment_date',
-            'id' => 'date',
+            'id' => 'date2',
             'type' => 'text',
             'default' => now()->format('d-m-Y'),
             'required' => true,
@@ -29,7 +29,7 @@ return [
         ['label' => 'FIRST NAME', 'name' => 'first_name', 'id' => 'first_name', 'type' => 'text', 'required' => true],
         ['label' => 'MIDDLE NAME', 'name' => 'middle_name', 'id' => 'middle_name', 'type' => 'text', 'required' => false],
         ['label' => 'LAST NAME', 'name' => 'last_name', 'id' => 'last_name', 'type' => 'text', 'required' => true],
-        ['label' => 'DATE OF BIRTH', 'name' => 'date_of_birth', 'id' => 'datep2', 'type' => 'text', 'required' => true],
+        ['label' => 'DATE OF BIRTH', 'name' => 'date_of_birth', 'id' => 'datep', 'type' => 'text', 'required' => true],
         ['label' => 'OCCUPATION', 'name' => 'occupation', 'id' => 'occupation', 'type' => 'text', 'required' => false],
         ['label' => 'FATHER NAME', 'name' => 'father_name', 'id' => 'father_name', 'type' => 'text', 'required' => false],
         ['label' => 'MOTHER NAME', 'name' => 'mother_name', 'id' => 'mother_name', 'type' => 'text', 'required' => false],
