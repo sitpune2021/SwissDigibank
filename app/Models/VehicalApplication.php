@@ -51,6 +51,28 @@ class VehicalApplication extends Model
         'maximum_approvable_amount',
         'approved_loan_amount',
         'status',
+
+        'distributor_id',      
+        'vehicle_type',        
+        'vehicle_segment',     
+        'vehicle_category',    
+        'vehicle_brand',       
+        'vehicle_model',       
+        'vehicle_color',       
+        'manufacture_year',    
+        'vehicle_no',          
+        'chassis_no',          
+        'engine_no',           
+        'registration_no',     
+        'vehicle_delivery_date',  
+        'insurance_policy_no',    
+        'insurance_expiry_date',  
+        'motor_power',            
+        'battery_capacity',       
+        'battery_warranty',       
+        'current_valuation',      
+        'vehicle_price',          
+        'down_payment',           
     ];
 
 public function member()

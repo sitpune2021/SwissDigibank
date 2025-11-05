@@ -452,6 +452,177 @@
 
                     </div>
 
+                    <!-- Vehicle Info -->
+                    <br>
+                        <div class="mt-6">
+                            <p class="uppercase  text-xl ">Vehicle Info</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mt-3 xxxxxl:gap-6">
+                            {{-- Distributor --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="distributor_id" class="md:text-lg uppercase font-medium block mb-2">
+                                    Distributor <span class="text-red-500">*</span>
+                                </label>
+                                <select name="distributor_id" id="distributor_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select</option>
+                                    <option value="1"
+                                        {{ old('distributor_id', $application->distributor_id ?? '') == 1 ? 'selected' : '' }}>
+                                        OSL BAJAJ LTD
+                                    </option>
+                                </select>
+                                @error('distributor_id')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Vehicle Type --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_type" class="md:text-lg uppercase font-medium block mb-4">
+                                    Vehicle Type <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_type" id="vehicle_type"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Type</option>
+                                    <option value="used" {{ old('vehicle_type', $application->vehicle_type ?? '') == 'used' ? 'selected' : '' }}>Used</option>
+                                    <option value="new" {{ old('vehicle_type', $application->vehicle_type ?? '') == 'new' ? 'selected' : '' }}>New</option>
+                                </select>
+                                @error('vehicle_type')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Vehicle Segment --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_segment" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Segment <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_segment" id="vehicle_segment"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Segment</option>
+                                    <option value="commercial" {{ old('vehicle_segment', $application->vehicle_segment ?? '') == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                                    <option value="non_commercial" {{ old('vehicle_segment', $application->vehicle_segment ?? '') == 'non_commercial' ? 'selected' : '' }}>Non Commercial</option>
+                                </select>
+                            </div>
+
+                            {{-- Vehicle Category --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_category" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Category <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_category" id="vehicle_category"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Category</option>
+                                    <option value="two_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'two_wheeler' ? 'selected' : '' }}>Two Wheeler</option>
+                                    <option value="three_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'three_wheeler' ? 'selected' : '' }}>Three Wheeler</option>
+                                    <option value="four_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'four_wheeler' ? 'selected' : '' }}>Four Wheeler</option>
+                                </select>
+                            </div>
+
+                            {{-- Vehicle Brand --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_brand" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Brand <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_brand" id="vehicle_brand"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Brand</option>
+                                    @foreach(['SAMPOORN_EV', 'YAMAHA', 'HONDA', 'DUCATI', 'HARLEY_DAVIDSON', 'SUZUKI', 'BAJAJ', 'TVS', 'PIAGGIO', 'ATUL', 'MAHINDRA', 'TOYOTA', 'FORD', 'BMW', 'MERCEDES', 'HYUNDAI', 'TATA'] as $brand)
+                                        <option value="{{ $brand }}" {{ old('vehicle_brand', $application->vehicle_brand ?? '') == $brand ? 'selected' : '' }}>
+                                            {{ ucfirst(strtolower(str_replace('_', ' ', $brand))) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Vehicle Model --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_model" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Model <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="vehicle_model" id="vehicle_model"
+                                    value="{{ old('vehicle_model', $application->vehicle_model ?? '') }}"
+                                    placeholder="Enter Vehicle Model"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Vehicle Color --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_color" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Color <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="vehicle_color" id="vehicle_color"
+                                    value="{{ old('vehicle_color', $application->vehicle_color ?? '') }}"
+                                    placeholder="Enter Vehicle Color"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                            </div>
+
+                            {{-- Manufacture Year --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="manufacture_year" class="uppercase md:text-lg font-medium block mb-4">
+                                    Manufacture Year <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="manufacture_year" id="manufacture_year"
+                                    value="{{ old('manufacture_year', $application->manufacture_year ?? '') }}"
+                                    placeholder="Enter Manufacture Year"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Vehicle No --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_no" class="uppercase md:text-lg font-medium block mb-4">Vehicle No</label>
+                                <input type="text" name="vehicle_no" id="vehicle_no"
+                                    value="{{ old('vehicle_no', $application->vehicle_no ?? '') }}"
+                                    placeholder="Enter Vehicle No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Chassis No --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="chassis_no" class="uppercase md:text-lg font-medium block mb-4">Chassis No</label>
+                                <input type="text" name="chassis_no" id="chassis_no"
+                                    value="{{ old('chassis_no', $application->chassis_no ?? '') }}"
+                                    placeholder="Enter Chassis No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Engine No --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="engine_no" class="uppercase md:text-lg font-medium block mb-4">Engine No</label>
+                                <input type="text" name="engine_no" id="engine_no"
+                                    value="{{ old('engine_no', $application->engine_no ?? '') }}"
+                                    placeholder="Enter Engine No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Vehicle Price --}}
+                            <div class="col-span-2 md:col-span-1 mb-3">
+                                <label for="vehicle_price" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Price <span class="text-error">*</span>
+                                </label>
+                                <input type="number" name="vehicle_price" id="vehicle_price"
+                                    value="{{ old('vehicle_price', $application->vehicle_price ?? '') }}"
+                                    placeholder="Enter Vehicle Price"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <x-number-to-word for="vehicle_price" />
+                            </div>
+
+                            {{-- Down Payment --}}
+                            <div class="col-span-2 md:col-span-1 mb-3">
+                                <label for="down_payment" class="uppercase md:text-lg font-medium block mb-4">
+                                    Down Payment <span class="text-error">*</span>
+                                </label>
+                                <input type="number" name="down_payment" id="down_payment"
+                                    value="{{ old('down_payment', $application->down_payment ?? '') }}"
+                                    placeholder="Enter Down Payment"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <x-number-to-word for="down_payment" />
+                            </div>
+                        </div>
+                      
+
+
                         <!-- Collect Advance Processing Fee -->
                     <div class="col-span-12  lg:col-span-12 ">
                         <hr>
@@ -657,7 +828,7 @@
                 </div>
 
                     {{--schemeBox info --}}
-                    <div id="schemeBox" class=" mt-5 hidden">
+                <div id="schemeBox" class=" mt-5 hidden">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
                         <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
                         <button type="button" class="p-1 rounded transition"
@@ -716,6 +887,88 @@
                         </div>
                     </div>
                 </div>
+
+
+                 {{-- Vehical Table  --}}
+                        <div id="distributorBox"
+                            class="hidden bg-white overflow-hidden mt-4">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between rounded-10 bg-secondary/5  px-4 py-3">
+                                <h3 class="text-lg font-semibold uppercase">Distributor Info</h3>
+                                <button type="button" class="text-white hover:text-gray-200 transition"
+                                    onclick="toggleDistributorBox()">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+
+                            <!-- Body -->
+                            <div id="distributorBody" class="p-4 overflow-x-auto">
+                                <table class="w-full whitespace-nowrap p-3 border-collapse text-sm md:text-base">
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase w-1/3 py-2">Distributor Code</td>
+                                            <td id="distCode" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Distributor Name</td>
+                                            <td id="distName" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Active</td>
+                                            <td id="distActive" class="py-2"><span
+                                                    class="inline-block px-2 py-1 text-xs font-semibold text-white bg-gray-400 rounded">
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Distribution Type</td>
+                                            <td id="distType" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Contact No</td>
+                                            <td id="distContact" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Email</td>
+                                            <td id="distEmail" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">City</td>
+                                            <td id="distCity" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">State</td>
+                                            <td id="distState" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Pincode</td>
+                                            <td id="distPincode" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Address</td>
+                                            <td id="distAddress" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">GST No</td>
+                                            <td id="distGST" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">License No</td>
+                                            <td id="distLicense" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Created At</td>
+                                            <td id="distCreated" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Updated At</td>
+                                            <td id="distUpdated" class="py-2">-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
             </div>
         </div>
  
@@ -1166,5 +1419,66 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+{{-- Vehicle Info Distributer --}}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const select = document.getElementById("distributor_id");
+            const box = document.getElementById("distributorBox");
+
+            const fields = {
+                code: document.getElementById("distCode"),
+                name: document.getElementById("distName"),
+                active: document.getElementById("distActive"),
+                type: document.getElementById("distType"),
+                contact: document.getElementById("distContact"),
+                email: document.getElementById("distEmail"),
+                city: document.getElementById("distCity"),
+                state: document.getElementById("distState"),
+                pincode: document.getElementById("distPincode"),
+                address: document.getElementById("distAddress"),
+                gst: document.getElementById("distGST"),
+                license: document.getElementById("distLicense"),
+                created: document.getElementById("distCreated"),
+                updated: document.getElementById("distUpdated"),
+            };
+
+            select.addEventListener("change", function () {
+                const selected = this.options[this.selectedIndex];
+                if (this.value) {
+                    fields.code.textContent = selected.getAttribute("data-code") || "-";
+                    fields.name.textContent = selected.getAttribute("data-name") || "-";
+
+                    const activeValue = selected.getAttribute("data-active") || "-";
+                    const activeEl = fields.active.querySelector("span");
+                    activeEl.textContent = activeValue;
+                    activeEl.className = `inline-block px-2 py-1 text-xs font-semibold text-white rounded ${activeValue.toLowerCase() === "yes" ? "bg-green-600" : "bg-red-500"
+                        }`;
+
+                    fields.type.textContent = selected.getAttribute("data-type") || "-";
+                    fields.contact.textContent = selected.getAttribute("data-contact") || "-";
+                    fields.email.textContent = selected.getAttribute("data-email") || "-";
+                    fields.city.textContent = selected.getAttribute("data-city") || "-";
+                    fields.state.textContent = selected.getAttribute("data-state") || "-";
+                    fields.pincode.textContent = selected.getAttribute("data-pincode") || "-";
+                    fields.address.textContent = selected.getAttribute("data-address") || "-";
+                    fields.gst.textContent = selected.getAttribute("data-gst") || "-";
+                    fields.license.textContent = selected.getAttribute("data-license") || "-";
+                    fields.created.textContent = selected.getAttribute("data-created") || "-";
+                    fields.updated.textContent = selected.getAttribute("data-updated") || "-";
+
+                    box.classList.remove("hidden");
+                } else {
+                    box.classList.add("hidden");
+                }
+            });
+        });
+
+        // optional collapse button function
+        function toggleDistributorBox() {
+            const body = document.getElementById("distributorBody");
+            body.classList.toggle("hidden");
+        }
+    </script>
 
 @endsection
