@@ -1659,5 +1659,42 @@ document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
     updateWords("netLoanAmount", "netAmountInWords");
     </script>
 
+    <!-- Max Tenure & tenure vaule Validation -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const schemeSelect = document.getElementById("scheme_id");
+        const tenureInput = document.getElementById("tenure_value");
+
+        function validateTenure() {
+            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+            const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
+            const val = parseInt(tenureInput.value) || 0;
+
+            // If maxTenure not defined, skip
+            if (!maxTenure) return;
+
+            // Validate
+            if (val > maxTenure) {
+                tenureInput.classList.add("border-red-500");
+                document.getElementById("tenureError")?.remove();
+
+                const errorMsg = document.createElement("p");
+                errorMsg.id = "tenureError";
+                errorMsg.className = "text-error text-sm mt-1";
+                errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
+                tenureInput.insertAdjacentElement("afterend", errorMsg);
+
+                tenureInput.value = maxTenure; // optional cap
+            } else {
+                tenureInput.classList.remove("border-red-500");
+                document.getElementById("tenureError")?.remove();
+            }
+        }
+
+        schemeSelect.addEventListener("change", validateTenure);
+        tenureInput.addEventListener("input", validateTenure);
+    });
+    </script>
+
 
 @endsection

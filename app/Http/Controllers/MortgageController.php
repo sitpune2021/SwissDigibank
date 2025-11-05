@@ -446,7 +446,7 @@ class MortgageController extends Controller
                 'tenure_value' => 'required|numeric|min:1',
                 'emi_collection' => 'required|string',
                 'credit_period' => 'required|numeric|min:1',
-                'insurance_amount' => 'required|numeric|min:1',
+                'insurance_amount' => 'required|numeric|min:0',
                 'net_loan_amount' => 'required|numeric|min:1',
             ]);
 

@@ -382,13 +382,12 @@ class GoldLoanController extends Controller
    
     public function storeLoanApplication(Request $request)
     {
-        // dd($request->all());
+        //dd('ghf');
         Log::info('--- Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
         ]);
 
-        // Validate before try
         $validated = $request->validate([
             'application_date' => 'required|date_format:d-m-Y',
             'member_id'        => 'required|exists:members,id',
@@ -396,18 +395,18 @@ class GoldLoanController extends Controller
             'scheme_id'        => 'required|exists:gold_loan_schemes,id',
             'loan_amount'      => 'required|numeric|min:1',
             'tenure_type'      => 'required',
-            'tenure_value'      => 'required',
-            'emi_collection'      => 'required',
-            'credit_period'      => 'required',
-            'insurance_amount'      => 'required',
-            'net_loan_amount'      => 'required',
-            'purpose_of_loan'      => 'required',
-            'min_loan_amount'   => 'required|numeric|min:1',
-            'max_loan_amount'   => 'required|numeric|min:1|gt:min_loan_amount',
+            'tenure_value'     => 'required',
+            'emi_collection'   => 'required',
+            'credit_period'    => 'required',
+            'insurance_amount' => 'required',
+            'net_loan_amount'  => 'required',
+            'purpose_of_loan'  => 'required',
+            'max_loan_amount'  => 'nullable|numeric|min:1',
         ], [
-            // Custom messages
             'max_loan_amount.gt' => 'Maximum loan amount must be greater than minimum loan amount.',
         ]);
+
+        Log::info('✅ Validation passed successfully');
 
         try {
 
