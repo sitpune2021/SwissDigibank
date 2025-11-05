@@ -193,6 +193,18 @@ class DailyWeeklyController extends Controller
                 'credit_period.required'    => 'Please enter Credit Period.',
             ]);
 
+             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            if ($request->has('cibil_score')) {
+                foreach ($request->cibil_score as $index => $score) {
+                    if (!empty($score)) {
+                        if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
+                            return back()
+                                ->withInput()
+                                ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
+                        }
+                    }
+                }
+            }
 
             Log::info('Validation passed successfully.');
         } catch (ValidationException $e) {
