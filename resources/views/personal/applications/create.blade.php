@@ -24,6 +24,21 @@
 
 @section('content')
 
+@if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="bg-red-50 border border-red-300 text-red-600 px-4 py-2 rounded mb-3">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
@@ -1152,5 +1167,42 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
             icon.textContent = section.classList.contains('hidden') ? '+' : '−';
         }
 </script>
+
+<!-- Max Tenure & tenure vaule Validation -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const schemeSelect = document.getElementById("scheme_id");
+        const tenureInput = document.getElementById("tenure_value");
+
+        function validateTenure() {
+            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+            const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
+            const val = parseInt(tenureInput.value) || 0;
+
+            // If maxTenure not defined, skip
+            if (!maxTenure) return;
+
+            // Validate
+            if (val > maxTenure) {
+                tenureInput.classList.add("border-red-500");
+                document.getElementById("tenureError")?.remove();
+
+                const errorMsg = document.createElement("p");
+                errorMsg.id = "tenureError";
+                errorMsg.className = "text-error text-sm mt-1";
+                errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
+                tenureInput.insertAdjacentElement("afterend", errorMsg);
+
+                tenureInput.value = maxTenure; // optional cap
+            } else {
+                tenureInput.classList.remove("border-red-500");
+                document.getElementById("tenureError")?.remove();
+            }
+        }
+
+        schemeSelect.addEventListener("change", validateTenure);
+        tenureInput.addEventListener("input", validateTenure);
+    });
+    </script>
 
 @endsection

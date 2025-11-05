@@ -450,6 +450,19 @@ class MortgageController extends Controller
                 'net_loan_amount' => 'required|numeric|min:1',
             ]);
 
+             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            if ($request->has('cibil_score')) {
+                foreach ($request->cibil_score as $index => $score) {
+                    if (!empty($score)) {
+                        if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
+                            return back()
+                                ->withInput()
+                                ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
+                        }
+                    }
+                }
+            }
+
             Log::info('Validation Passed');
 
             // Step 4: Create main loan application
@@ -578,16 +591,36 @@ class MortgageController extends Controller
             ]);
 
             return redirect()->route('mortgage.applications.index')
-                ->with('success', 'Loan, Credit Score & Property details saved successfully.');
+                ->with('success', 'Mortgage Loan, Credit Score details saved successfully.');
 
-        } catch (Exception $e) {
+        } 
+        // catch (Exception $e) {
+        //     Log::error('Error while storing Loan Application', [
+        //         'error_message' => $e->getMessage(),
+        //         'trace' => $e->getTraceAsString(),
+        //     ]);
+
+        //     return back()->with('error', 'Something went wrong while saving the loan application.');
+        // }
+        catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Something went wrong while saving the loan application.');
+            // For development: show exact error in browser
+            if (app()->environment('local')) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Error: ' . $e->getMessage());
+            }
+
+            // For production: keep generic but log detailed
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong while saving the loan application.');
         }
+
     }
 
     public function getMemberInfo($id)

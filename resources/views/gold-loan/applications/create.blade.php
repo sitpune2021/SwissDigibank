@@ -28,6 +28,23 @@
         }
     </style>
 
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="bg-red-50 border border-red-300 text-red-600 px-4 py-2 rounded mb-3">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
@@ -1150,7 +1167,7 @@ loanAmountInput.addEventListener("input", function () {
     
     document.getElementById("calculateBtn").addEventListener("click", function (e) {
 
-    // ⚙️ If not valid yet, prevent submission
+    // If not valid yet, prevent submission
     if (!isValidOrnament) {
         e.preventDefault();
     }
@@ -1207,48 +1224,46 @@ loanAmountInput.addEventListener("input", function () {
         document.getElementById("max_loan_limit").value = limit;
         document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
         //document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
-// ✅ Ornament value must cover Net Loan
-if (totalSecurity < netLoan) {
-    alert("Total Ornament Security Value must be greater than or equal to Net Loan Amount!");
+        // Ornament value must cover Net Loan
+        if (totalSecurity < netLoan) {
+            alert("Total Ornament Security Value must be greater than or equal to Net Loan Amount!");
 
-    isValidOrnament = false;
+            isValidOrnament = false;
 
-    // Submit Button disable + back to Calculate
+            // Submit Button disable + back to Calculate
+            const btn = document.getElementById("calculateBtn");
+            btn.type = "button";
+            btn.textContent = "Re-Calculate";
+            btn.disabled = false;
+
+            return;
+        }
+
+    // Agar yahan pohonch gaye means no error
+    isValidOrnament = true;
+
+    // Change button back to Submit if now valid
     const btn = document.getElementById("calculateBtn");
-    btn.type = "button";
-    btn.textContent = "Re-Calculate";
+    btn.type = "submit";
+    btn.textContent = "Submit";
     btn.disabled = false;
 
-    return;
-}
+    // Approved Loan Logic
+    let approvedLoan = netLoan;
 
-// ✅ Agar yahan pohonch gaye means no error
-isValidOrnament = true;
+    // Rule: Net loan max loan se upar? → cap it to max loan
+    if (approvedLoan > maxLoan) {
+        approvedLoan = parseFloat(maxLoan);
+    }
 
-// ✅ Change button back to Submit if now valid
-const btn = document.getElementById("calculateBtn");
-btn.type = "submit";
-btn.textContent = "Submit";
-btn.disabled = false;
+    // Rule: Limit se upar? → cap it to approvable
+    if (approvedLoan > approvable) {
+        approvedLoan = approvable;
+    }
 
-
-
-// ✅ Approved Loan Logic
-let approvedLoan = netLoan;
-
-// Rule: Net loan max loan se upar? → cap it to max loan
-if (approvedLoan > maxLoan) {
-    approvedLoan = parseFloat(maxLoan);
-}
-
-// Rule: Limit se upar? → cap it to approvable
-if (approvedLoan > approvable) {
-    approvedLoan = approvable;
-}
-
-// Final Approved Loan Display
-document.getElementById("resApproved").textContent = approvedLoan.toFixed(2);
-document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
+    // Final Approved Loan Display
+    document.getElementById("resApproved").textContent = approvedLoan.toFixed(2);
+    document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
 
         //  Step 4: Debug console (optional)
         console.log("Hidden Inputs Updated:", {
@@ -1263,16 +1278,6 @@ document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
         document.getElementById("calculationBox").classList.remove("hidden");
     });
 
-    //  Step 6: Form submit hone से पहले debug check (optional)
-    // form.addEventListener("submit", function () {
-    //     console.log("Submitting with values:", {
-    //         security_value: document.getElementById("security_value").value,
-    //         max_loan_amount: document.getElementById("max_loan_amount").value,
-    //         max_loan_limit: document.getElementById("max_loan_limit").value,
-    //         maximum_approvable_amount: document.getElementById("maximum_approvable_amount").value,
-    //         approved_loan_amount: document.getElementById("approved_loan_amount").value,
-    //     });
-    // });
     form.addEventListener("submit", function (e) {
     if (!isValidOrnament) {
         e.preventDefault();

@@ -18,7 +18,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Validation\ValidationException;
+use Exception;
 
 class GoldLoanController extends Controller
 {
@@ -406,16 +407,29 @@ class GoldLoanController extends Controller
             'max_loan_amount.gt' => 'Maximum loan amount must be greater than minimum loan amount.',
         ]);
 
-        Log::info('✅ Validation passed successfully');
+        // Validate CIBIL scores (each must be 3 digits between 300–900)
+        if ($request->has('cibil_score')) {
+            foreach ($request->cibil_score as $index => $score) {
+                if (!empty($score)) {
+                    if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
+                        return back()
+                            ->withInput()
+                            ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
+                    }
+                }
+            }
+        }
+
+        Log::info('Validation passed successfully');
 
         try {
 
-             // 🩵 Fix date format
-        if ($request->filled('application_date')) {
-            $request->merge([
-                'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
-            ]);
-        }
+            // 🩵 Fix date format
+            if ($request->filled('application_date')) {
+                $request->merge([
+                    'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
+                ]);
+            }
             // Loan Application Save
             $loanApplication = LoanApplication::create($request->only([
                 'application_date',
@@ -528,7 +542,7 @@ class GoldLoanController extends Controller
 
             return redirect()->route('gold-loan.applications.index')
                 ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
