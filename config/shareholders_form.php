@@ -40,7 +40,7 @@ return [
             'id' => 'date',
             'type' => 'text',
             'required' => true,
-            'default' => \Carbon\Carbon::now()->format('Y-m-d')  // ✅ आजची तारीख
+            // 'default' => \Carbon\Carbon::now()->format('Y-m-d')  // ✅ आजची तारीख
         ],
 
         [

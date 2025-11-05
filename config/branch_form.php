@@ -18,7 +18,7 @@ return [
     [
         'label' => 'OPEN DATE',
         'name' => 'open_date',
-        'id' => 'date',
+        'id' => 'date3',
         'type' => 'text',
         'default' => now()->format('d-m-Y'),
         'required' => false,
