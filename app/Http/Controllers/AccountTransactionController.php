@@ -9,6 +9,7 @@ use App\Helpers\CsvExportHelper;
 use App\Models\Account;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 
@@ -19,19 +20,66 @@ class AccountTransactionController extends Controller
      */
 
     // view transaction
+    // public function index($id = null)
+    // {
+
+    //     try {
+    //         $id = base64_decode($id);
+    //         $Transactions = Transaction::with(['accounts'])
+    //             ->where('account_id', $id)
+    //             ->orderBy('created_at', 'desc')
+    //             ->paginate(10);
+
+    //         $account = Account::findOrFail($id);
+
+    //         return view('saving-current-ac.accounts.view-transactions', compact('Transactions', 'account'));
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
+
     public function index($id = null)
     {
-
         try {
-            $id = base64_decode($id);
-            //    dd($id);
-            $Transactions = Transaction::with(['accounts'])
-                ->where('account_id', $id)
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+            $account_id = base64_decode($id);
 
-            $account = Account::findOrFail($id);
+            $transactionsQuery = DB::table('transactions')
+                ->select(
+                    'id',
+                    'account_id',
+                    DB::raw("'TRANSACTION' as source_type"),
+                    'transaction_date as date',
+                    'payment_mode',
+                    'amount',
+                    'approve_status as status',
+                    DB::raw('NULL as waived_amount'),
+                    'remarks'
+                )
+                ->where('account_id', $account_id);
 
+            // Second query: saving_other_charges
+            $chargesQuery = DB::table('saving_other_charges')
+                ->select(
+                    'id',
+                    'account_id',
+                    DB::raw("'OTHER_CHARGE' as source_type"),
+                    'charge_date as date',
+                    DB::raw('NULL as payment_mode'), // doesn't exist in this table
+                    'total_amount as amount',
+                    DB::raw('status as status'),
+                    DB::raw('NULL as waived_amount'), // this column doesn't exist either
+                    'remarks'
+                )
+                ->where('account_id', $account_id);
+
+            // Combine both
+            $Transactions = $transactionsQuery
+                ->unionAll($chargesQuery)
+                ->orderBy('date', 'desc')
+                ->get();
+
+            $account = DB::table('accounts')->find($account_id);
+// dd( $account );
             return view('saving-current-ac.accounts.view-transactions', compact('Transactions', 'account'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -192,7 +240,7 @@ class AccountTransactionController extends Controller
 
         return redirect()->route('transaction.index')->with('success', 'Transaction deleted successfully.');
     }
-    
+
     public function printReceipt($id)
     {
         $id = base64_decode($id);
@@ -220,7 +268,7 @@ class AccountTransactionController extends Controller
             'amount' => number_format($transaction->amount, 2),
             'amount_suffix' => 'CR',
             'payment_mode' => $transaction->payment_mode ?? 'N/A',
-            'avl_balance' => number_format($balances['total_balance']??0,2),
+            'avl_balance' => number_format($balances['total_balance'] ?? 0, 2),
             'approve_status' => $transaction->approve_status == 1 ? 'Approved' : 'Pending',
             'type' => $transaction->transaction_type ?? 'Membership Fee',
             'remarks' => $transaction->remarks ?? '',
