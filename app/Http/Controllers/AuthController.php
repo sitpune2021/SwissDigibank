@@ -72,22 +72,26 @@ class AuthController extends Controller
             'otp' => $otp,
         ]);
     }
-   
+
     public function verifyOtp(Request $request)
     {
+        // dd($request->all());
+        // Validate the incoming request
         $request->validate([
             'username' => 'required|string',
             'otp' => 'required|digits:6',
         ]);
-        $user = Auth::user();
 
         $user = null;
         $loginType = '';
 
+        // Check if the username is an email or mobile number and find the user
         if (filter_var($request->username, FILTER_VALIDATE_EMAIL)) {
+            // Login via email
             $user = User::where('email', $request->username)->first();
             $loginType = 'email';
         } else {
+            // Normalize and check if it's a valid mobile number
             $normalizedMobile = preg_replace('/[^\d\+]/', '', $request->username);
             if (!preg_match('/^\+?\d{7,15}$/', $normalizedMobile)) {
                 return response()->json([
@@ -95,10 +99,12 @@ class AuthController extends Controller
                     'message' => 'Invalid mobile number format.',
                 ], 422);
             }
+            // Login via mobile number
             $user = User::where('mobile', $normalizedMobile)->first();
             $loginType = 'mobile';
         }
 
+        // If no user found, return an error
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -106,6 +112,7 @@ class AuthController extends Controller
             ], 404);
         }
 
+        // Check if the OTP matches
         if ($user->otp !== $request->otp) {
             return response()->json([
                 'status' => false,
@@ -113,7 +120,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Check if OTP expired
+        // Check if OTP has expired
         if (now()->gt($user->otp_expires_at)) {
             return response()->json([
                 'status' => false,
@@ -126,14 +133,15 @@ class AuthController extends Controller
         $user->otp_expires_at = null;
         $user->save();
 
+        // Check if mPIN is set for the user
         $isMpinSet = !empty($user->mpin);
 
-        // ✅ Generate token (using Laravel Sanctum or Passport)
+        // Generate API token (using Laravel Sanctum or Passport)
         $token = $user->createToken('AuthToken')->plainTextToken;
 
         return response()->json([
             'status' => true,
-            'token' => $token, 
+            'token' => $token,
             'message' => 'OTP verified successfully!',
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
             'isMpinSet' => $isMpinSet,
@@ -151,6 +159,7 @@ class AuthController extends Controller
 
     public function requestMpinOtp(Request $request)
     {
+        $user = Auth::user();
         $request->validate([
             'username' => 'required|string',
         ]);
@@ -326,43 +335,41 @@ class AuthController extends Controller
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
         ]);
     }
-
     public function checkMpinStatus(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string',
-        ]);
-
-        $username = $request->input('username');
-
-        // Find user by email or mobile
-        $user = filter_var($username, FILTER_VALIDATE_EMAIL)
-            ? User::where('email', $username)->first()
-            : User::where('mobile', preg_replace('/[^\d\+]/', '', $username))->first();
+        // Get the authenticated user
+        $user = Auth::user();
 
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User not found.',
-            ], 404);
+                'message' => 'User not authenticated.',
+            ], 401);  // Unauthorized if no user is logged in
         }
 
-        // Check if mPIN is already set
+        // Check if mPIN is already set for the authenticated user
         $isMpinSet = !empty($user->mpin);
         $mpinValue = null;
 
         if ($isMpinSet) {
             try {
-                $mpinValue = Crypt::decryptString($user->mpin);
+                $mpinValue = Crypt::decryptString($user->mpin);  // Decrypt the mPIN value
             } catch (\Exception $e) {
-                $mpinValue = null; // If decryption fails
+                $mpinValue = null; // If decryption fails, return null
             }
         }
 
         return response()->json([
             'status' => $isMpinSet,
             'message' => $isMpinSet ? 'mPIN already set.' : 'mPIN not set yet.',
-            'mpin_value' => $mpinValue, // <-- This will show the actual mPIN like "2002"
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'mobile' => $user->mobile,
+                'user_active' => $user->user_active,
+            ],
+            'mpin_value' => $mpinValue, // Shows the mPIN value if set
         ]);
     }
 }

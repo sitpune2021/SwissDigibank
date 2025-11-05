@@ -38,7 +38,7 @@
         <div class="box col-span-2 md:col-span-1">
             <!-- Edit Button -->
             <div class="flex justify-end mb-4">
-                <a href="{{ route('mortgage.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
+                <a href="{{ route('personal.schemes.edit', $scheme->id) }}" class="btn-primary px-2 py-2">
                     <i class="las la-pencil-alt"></i>
                 </a>
 

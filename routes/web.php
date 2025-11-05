@@ -170,11 +170,11 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
-Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
+        Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
 
         // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
         Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
-        
+
         Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
         Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
         Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');
@@ -258,6 +258,8 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::post('/saving-other-charges/store/{id}', [AccountsController::class, 'storeOtherCharges'])->name('storeOtherCharges');
 
     Route::get('/accounts/clear-due/{id}', [AccountsController::class, 'clearDue'])->name('accounts.clear.due');
+    Route::post('/saving/other-charge/debit/{id}', [AccountsController::class, 'storeDebitCharge'])
+        ->name('saving.other.charge.debit');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
@@ -752,6 +754,14 @@ Route::group(['prefix' => 'bussiness'], function () {
     // bussiness Loan Account Page
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])
         ->name('bussiness.account.index');
+
+        // Show emi chart 
+    Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [BusinessLoan::class, 'bussiness_process_fee'])
+        ->name('bussiness.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
+        ->name('bussiness.col_process_fee.store');
 });
 
 

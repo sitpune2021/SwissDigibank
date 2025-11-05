@@ -31,14 +31,15 @@
                 <h3>CHARGES - CLEAR DUES</h3>
             </div>
             <hr class="mt-3">
-            <form action="">
+            <form action="{{ route('saving.other.charge.debit', $account->id) }}" method="POST">
+                @csrf
                 <div class="col-span-2 md:col-span-1 mt-5 mb-2 ">
                     <label for="" class="md:text-lg uppercase font-medium block mb-4">
                         Charges / Penalty Due
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" name="" id="" placeholder="0.0"
+                    <input type="number" name="charges_due" id="charges_due" placeholder="0.0"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
                 </div>
                 <div class="col-span-2 md:col-span-1 mt-5 mb-2">
@@ -47,7 +48,7 @@
                         <span class="text-red-500">*</span>
                     </label>
 
-                    <input type="number" name="" id="" placeholder="0.0"
+                    <input type="number" name="waived_amount" id="waived_amount" placeholder="0.0"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
 
@@ -71,19 +72,19 @@
                             <tr class="">
 
                                 <td class="px-2 py-2 ">
-                                    <input type="text" name="" id="" placeholder="0" readonly
+                                    <input type="text" name="amount" id="amount" placeholder="0" readonly
                                         class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                 </td>
 
 
                                 <td class="px-2 py-2 ">
-                                    <input type="text" name="" id="" placeholder="0" readonly
+                                    <input type="text" name="gst_rate" id="gst_rate" placeholder="0" readonly
                                         class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                 </td>
 
 
                                 <td class="px-2 py-2 ">
-                                    <input type="text" name="" id="" placeholder="0"
+                                    <input type="text" name="total_amount" id="total_amount" placeholder="0"
                                         class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                 </td>
                             </tr>
@@ -97,7 +98,7 @@
 
                     </label>
 
-                    <textarea name="" id=""
+                    <textarea name="remarks" id="remarks"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Remarks (if any)"></textarea>
 
