@@ -335,7 +335,7 @@ class MemberController extends Controller
                 'religion' => Religion::pluck('name', 'id')
             ];
             // Fetch the member by ID
-            $member = Member::with('address', 'kyc', 'minors','religion')->findOrFail($id);
+            $member = Member::with('address', 'kyc', 'minors', 'religion')->findOrFail($id);
             $comments = MembershipChargeTransaction::where('member_id', $id)
                 ->orderBy('transaction_date', 'desc')
                 ->paginate(5);
@@ -1605,7 +1605,7 @@ class MemberController extends Controller
             // Store the comment with member_id and current date
             MembershipChargeTransaction::create([
                 'member_id' => $validated['member_id'],
-                'transaction_date' => now(),
+                'transaction_date' => $validated['transaction_date'],
                 'comment' => $validated['comment'],
             ]);
 
@@ -1613,11 +1613,11 @@ class MemberController extends Controller
             Log::info('Comment stored successfully', [
                 'member_id' => $validated['member_id'],
                 'comment' => $validated['comment'],
-                'transaction_date' => now(),
+                'transaction_date' => $validated['transaction_date'],
             ]);
 
             // Redirect with success message
-            return redirect()->route('member.show', ['member' => $validated['member_id']])
+            return redirect()->route('member.addComment', ['member_id' => $validated['member_id']])
                 ->with('success', 'Comment added successfully!');
         } catch (\Exception $e) {
             // Log error

@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\ForgotLoginPasswordController;
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->middleware('auth:sanctum');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/send-otp', [AuthController::class, 'sendOtpSms'])->middleware('auth:sanctum');
 Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp'])->middleware('auth:sanctum');
 Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp'])->middleware('auth:sanctum');
