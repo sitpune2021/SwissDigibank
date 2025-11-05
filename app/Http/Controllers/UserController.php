@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB; // to use DB facade
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -65,6 +65,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validate the input data
             $validated = $request->validate([
                 'employee'           => 'nullable|integer',
                 'designation'        => 'nullable|string|max:100',
@@ -79,35 +80,43 @@ class UserController extends Controller
                 'login_on_holidays'  => 'required|in:0,1',
                 'searchable_account' => 'required|in:0,1',
                 'user_active'        => 'required|in:0,1',
-                'name' => 'nullable',
+                'name'               => 'nullable',
             ]);
+
+            // Log the validated input data (for debugging purposes)
+            Log::info('Validated data:', $validated);
 
             // Save user
             User::create([
                 'name' =>                $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
-                'emp_id'              => $validated['employee'],
-                'designation'         => $validated['designation'],
-                'username'            => $validated['user_name'],
-                'fname'               => $validated['first_name'],
-                'lname'               => $validated['last_name'],
-                'email'               => $validated['email'],
-                'mobile'              => $validated['mobile_no'],
-                'back_edate_days'     => $validated['back_date'],
-                'role_id'             => $validated['permission_role'],
-                'branch_id'           => $validated['branch'],
-                // 'login_on_holidays'   => 0,
-                // 'searchable_accounts' => 1,
-                // 'user_active'         => 0,
-                // 'password'            => Hash::make('123456'),
-                'login_on_holidays'   => $validated['login_on_holidays'],
-                'searchable_accounts' => $validated['searchable_account'],
-                'user_active'         => $validated['user_active'],
-                'password'            => Hash::make('123456'),
+                'emp_id'               => $validated['employee'],
+                'designation'          => $validated['designation'],
+                'username'             => $validated['user_name'],
+                'fname'                => $validated['first_name'],
+                'lname'                => $validated['last_name'],
+                'email'                => $validated['email'],
+                'mobile'               => $validated['mobile_no'],
+                'back_edate_days'      => $validated['back_date'],
+                'role_id'              => $validated['permission_role'],
+                'branch_id'            => $validated['branch'],
+                'login_on_holidays'    => $validated['login_on_holidays'],
+                'searchable_accounts'  => $validated['searchable_account'],
+                'user_active'          => $validated['user_active'],
+                'password'             => Hash::make('123456'),
             ]);
+
+            // Log the success message
+            Log::info('User created successfully.');
 
             return redirect()->route('users.index')->with('success', 'User created successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Log the exception if ModelNotFoundException is caught
+            Log::error('ModelNotFoundException: ' . $e->getMessage());
             abort(404);
+        } catch (\Exception $e) {
+            // Log any other exceptions that occur
+            Log::error('Error creating user: ' . $e->getMessage());
+            return redirect()->route('users.index')->with('error', 'Error occurred while creating user.');
         }
     }
 
@@ -156,9 +165,14 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            // Decrypt the ID and find the user
             $decryptedId = base64_decode($id);
             $user = User::findOrFail($decryptedId);
 
+            // Log the user being updated
+            Log::info('Attempting to update user.', ['user_id' => $user->id, 'user_name' => $user->username]);
+
+            // Validate the incoming request data
             $validated = $request->validate([
                 'employee'           => 'nullable|integer',
                 'designation'        => 'nullable|string|max:100',
@@ -175,8 +189,12 @@ class UserController extends Controller
                 'user_active'        => 'required|in:0,1',
             ]);
 
+            // Log the validated input data for debugging purposes
+            Log::info('Validated data for update:', $validated);
+
+            // Update user data
             $user->update([
-                'name' => $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
+                'name'                => $validated['first_name'] . ' ' . ($validated['last_name'] ?? ''),
                 'emp_id'              => $validated['employee'],
                 'designation'         => $validated['designation'],
                 'username'            => $validated['user_name'],
@@ -193,9 +211,19 @@ class UserController extends Controller
                 'password'            => Hash::make('123456'),
             ]);
 
+            // Log success message after update
+            Log::info('User updated successfully.', ['user_id' => $user->id]);
+
+            // Redirect with success message
             return redirect()->route('users.index')->with('success', 'User updated successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Log the error if the user is not found
+            Log::error('ModelNotFoundException: User not found for ID: ' . $decryptedId);
             abort(404);
+        } catch (\Exception $e) {
+            // Log any other errors that may occur
+            Log::error('Error updating user: ' . $e->getMessage(), ['user_id' => $decryptedId]);
+            return redirect()->route('users.index')->with('error', 'Error occurred while updating user.');
         }
     }
 
