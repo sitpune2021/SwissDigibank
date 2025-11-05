@@ -30,6 +30,7 @@ class MembershipChargeTransaction extends Model
         'cheque_date',
         'saving_account_id',
         'comment',
+        'status',
 
     ];
 

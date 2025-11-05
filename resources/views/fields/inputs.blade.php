@@ -1,6 +1,6 @@
 @if ($type === 'textarea')
     <textarea id="{{ $id }}" name="{{ $name }}" rows="4"
-        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 resize-none"
+        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 resize-none"
         placeholder="Enter {{ strtolower($label) }}"{{ !empty($readonly) ? 'readonly' : '' }}>{{ $value }}</textarea>
    @elseif ($type === 'date')
     @if (!empty($show))
@@ -9,17 +9,17 @@
             value="{{ $value }}" readonly />
     @else
         <input type="date" id="{{ $id }}" name="{{ $name }}"
-            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
             value="{{ $value }}" />
     @endif
 @elseif ($type === 'number')
     <input type="number" id="{{ $id }}" name="{{ $name }}"
-        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
         placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
         {{ !empty($readonly) ? 'readonly' : '' }} />
 @elseif ($type === 'select')
     <select name="{{ $name }}" id="{{ $id }}"
-        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
         {{ empty($readonly) ? '' : 'disabled' }}>
 
         <option value="">-- Select {{ $label }} --</option>
@@ -72,11 +72,11 @@
 @endif
 
 <input type="file" id="{{ $id }}" name="{{ $name }}"
-    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
     {{ !empty($readonly) ? 'readonly disabled' : '' }} />
 @else
 <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
-    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
     placeholder="Enter {{ strtolower($label) }}" value="{{ $value }}"
     @if (!empty($field['maxlength'])) maxlength="{{ $field['maxlength'] }}" @endif
     @if (!empty($field['pattern'])) pattern="{{ $field['pattern'] }}" @endif
