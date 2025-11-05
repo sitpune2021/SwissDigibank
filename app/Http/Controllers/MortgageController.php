@@ -553,8 +553,11 @@ class MortgageController extends Controller
                         'plot_no' => $prop['plot_no'] ?? null,
                         'tehsil' => $prop['tehsil'] ?? null,
                         'district' => $prop['district'] ?? null,
-                        'area_sqft' => $prop['area'] ?? null,
-                        'expected_value' => $prop['property_value'] ?? null,
+                        //'area_sqft' => $prop['area'] ?? null,
+                        'area_sqft' => $prop['area_sqft'] ?? null,
+                        //'expected_value' => $prop['property_value'] ?? null,
+                        'expected_value' => $prop['expected_value'] ?? null,
+                        'total_security_amount' => $request->total_security_amount ?? null, 
                         'registered' => $prop['registered'] ?? 'no',
                         // Boundaries as per Sale Deed
                         'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
@@ -656,7 +659,8 @@ class MortgageController extends Controller
 
     public function appedit($id)
     {
-        $application = MortgageLoanApplication::with(['member', 'scheme', 'creditScores', 'properties'])->findOrFail($id);
+        $application = MortgageLoanApplication::with(['member', 'scheme', 'creditScores', 'properties'])
+            ->findOrFail($id);
 
         $members = Member::all();
         $schemes = MortgageScheme::all();
@@ -664,7 +668,18 @@ class MortgageController extends Controller
         $branch  = Branch::all();
         $banks   = Bank::pluck('name', 'id');
 
-        return view('mortgage.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks'));
+        // Total Security Amount calculate (sum of all property expected_value)
+        $totalSecurityAmount = $application->properties->sum('expected_value');
+
+        return view('mortgage.applications.create', compact(
+            'application',
+            'members',
+            'schemes',
+            'branch',
+            'scheme',
+            'banks',
+            'totalSecurityAmount' 
+        ));
     }
 
     public function appupdate(Request $request, $id)
