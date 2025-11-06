@@ -30,7 +30,7 @@
         
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">Property / Mortgage Loan Disbursement</h3>
+                <h3 class="uppercase font-semibold">Vehical Loan Disbursement</h3>
             </div>
         </div>
 
@@ -39,7 +39,7 @@
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                   
-                        <form action="{{ route('mortgagedisbursements.store') }}" method="POST">
+                        <form action="{{ route('vehicaldisbursements.store') }}" method="POST">
                         @csrf
                         <!-- Header -->
                         
@@ -561,27 +561,6 @@
     });
     </script>
 
-<style>
-.form-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-.btn-outline {
-    border: 1px solid #2563eb;
-    color: #2563eb;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-</style>
 
                 </div>
             </div>
@@ -592,13 +571,11 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Property / Mortgage Application Info</h3>
-
+                    <h3 class="text-black font-semibold text-lg">Vehical Application Info</h3>
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
                     </button>
-
                 </div>
 
                 <!-- Content (Initially Hidden) -->

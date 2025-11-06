@@ -50,8 +50,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h1 class=" flex text-xl block  uppercase font-semibold">
               Loan Approval - History
-            </h1>
-         
+            </h1>  
         </div>
 
       
@@ -170,6 +169,9 @@
                                             @break
                                              @case('personal')
                                             Personal Loan
+                                            @break
+                                             @case('vehical')
+                                            Vehical Loan
                                             @break
                                         @default
                                             Unknown Type
