@@ -131,4 +131,6 @@ class Member extends Model
     {
         return $this->belongsTo(Religion::class, 'member_info_religion');
     }
+ 
+
 }
