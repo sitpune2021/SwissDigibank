@@ -260,6 +260,10 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::get('/accounts/clear-due/{id}', [AccountsController::class, 'clearDue'])->name('accounts.clear.due');
     Route::post('/saving/other-charge/debit/{id}', [AccountsController::class, 'storeDebitCharge'])
         ->name('saving.other.charge.debit');
+
+    Route::get('/accounts/credit-interest/{id}', [AccountsController::class, 'creditInterest'])->name('accounts.credit.interest');
+    Route::post('/store-accounts/credit-interest/{id}', [AccountsController::class, 'storeCreditDebitInterest'])
+        ->name('storeCreditDebitInterest');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
@@ -755,7 +759,7 @@ Route::group(['prefix' => 'bussiness'], function () {
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])
         ->name('bussiness.account.index');
 
-        // Show emi chart 
+    // Show emi chart 
     Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [BusinessLoan::class, 'bussiness_process_fee'])

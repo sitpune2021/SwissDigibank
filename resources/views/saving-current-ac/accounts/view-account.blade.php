@@ -40,8 +40,44 @@
                     class="block px-4 py-2 text-gray-700 hover:bg-yellow-100 rounded-b-lg">Clear Due</a>
             </div>
         </div>
+        <div class="relative inline-block text-left">
+            <!-- Button -->
+            <button id="accountDropdownButton"
+                class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600 flex items-center gap-2">
+                Account Details
+                <svg class="w-4 h-4 ml-1 transition-transform duration-200"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div id="accountDropdownMenu"
+                class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <ul class="py-2 text-gray-700">
+                    <li>
+                        <a href="{{route('accounts.credit.interest',base64_encode($account->id))}}" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Credit Interest</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Change Account Type</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Add Nominee</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Upgrade Account</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Close Account</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Remove Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!-- <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other Charges</button> -->
-        <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button>
+        <!-- <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button> -->
 
         <button class="px-4 py-2 text-base text-white bg-gray-500 rounded hover:bg-gray-600">Show Audit Trail</button>
     </div>
@@ -370,12 +406,11 @@
                         </table>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
 </div>
+
 <script>
     const dropdownButton = document.getElementById('dropdownButton');
     const dropdownMenu = document.getElementById('dropdownMenu');
@@ -384,10 +419,22 @@
         dropdownMenu.classList.toggle('hidden');
     });
 
-    // Optional: close dropdown if clicked outside
     document.addEventListener('click', (e) => {
         if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
             dropdownMenu.classList.add('hidden');
+        }
+    });
+
+    const dropdownBtn = document.getElementById('accountDropdownButton');
+    const accountDropdownMenu = document.getElementById('accountDropdownMenu');
+
+    dropdownBtn.addEventListener('click', () => {
+        accountDropdownMenu.classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!dropdownBtn.contains(e.target) && !accountDropdownMenu.contains(e.target)) {
+            accountDropdownMenu.classList.add('hidden');
         }
     });
 </script>

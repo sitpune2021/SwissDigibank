@@ -449,14 +449,14 @@ class AccountsController extends Controller
     public function clearDue(string $id)
     {
         $account_id = base64_decode($id);
-
-        return view('saving-current-ac.accounts.debit-other-charges.clear-dues');
+        $account = SavingOtherCharge::with('account')->where('account_id', $account_id)->first();
+        return view('saving-current-ac.accounts.debit-other-charges.clear-dues', compact('account'));
     }
 
     public function storeDebitCharge(Request $request, $id)
     {
         $account_id = base64_decode($id);
-dd($account_id );
+
         $validated = $request->validate([
             'charges_due'   => 'nullable|numeric',
             'waived_amount' => 'required|numeric|min:0',
@@ -484,8 +484,9 @@ dd($account_id );
             $charge->waived_amount = $validated['waived_amount'];
             $charge->remarks       = $validated['remarks'] ?? null;
             $charge->state         = $state;
-            $charge->status        = 1; // active
+            $charge->status        = 'approved'; // active
             $charge->created_by    = Auth::id();
+
             $charge->save();
 
             Log::info('Debit charge recorded successfully', [
@@ -512,5 +513,51 @@ dd($account_id );
 
             return redirect()->back()->with('error', 'Failed to record debit charge. Please try again.');
         }
+    }
+
+    public function creditInterest(string $id)
+    {
+        $account_id = base64_decode($id);
+        $account = SavingOtherCharge::with('account')->where('account_id', $account_id)->first();
+
+        return view('saving-current-ac.accounts.account-details.credit_debit_interest', compact('account'));
+    }
+
+    public function storeCreditDebitInterest(Request $request, $id)
+    {
+        $request->validate([
+            'transaction_date' => 'required|date',
+            'amount'           => 'required|numeric|min:0.01',
+            'remarks'          => 'nullable|string|max:255',
+        ]);
+
+        $account = Account::findOrFail($id);
+
+        $transaction                   = new Transaction();
+        $transaction->account_id    = $account->id;
+        $transaction->transaction_date = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
+        $transaction->transaction_type = "credit"; // CREDIT / DEBIT
+        $transaction->amount           = $request->amount;
+        $transaction->remarks           = $request->remarks ?? null;
+        $transaction->payment_mode         = "system";
+        $transaction->comment = "Deposit";
+
+        $transaction->save();
+
+        Log::info('Interest transaction recorded', [
+            'user_id'            => Auth::id(),
+            'account_id'         => $account->id,
+            'transaction_id'     => $transaction->id,
+            'transaction_type'   => $transaction->transaction_type,
+            'payment_mode'       => $transaction->payment_mode,
+            'amount'             => $transaction->amount,
+            'remarks'            => $transaction->remarks,
+            'transaction_date'   => $transaction->transaction_date,
+            'timestamp'          => now()->toDateTimeString(),
+        ]);
+
+        return redirect()
+            ->route('accounts.show',base64_encode( $account->id))
+            ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
     }
 }
