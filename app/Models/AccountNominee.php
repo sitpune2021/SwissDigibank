@@ -8,6 +8,8 @@ class AccountNominee extends Model
 {
     protected $fillable = [
         'account_id',
+        'fd_account_id',
+        'rd_account_id',
         'nominee_name',
         'nominee_relation',
         'nominee_address',

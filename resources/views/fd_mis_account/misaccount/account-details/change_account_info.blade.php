@@ -1,38 +1,37 @@
-
 @extends('layout.main')
 
 @section('content')
 
-    <style>
-        input[type="checkbox"] {
-            width: 28px;
-            height: 28px;
-            accent-color: green;
-            /* For modern browsers */
-        }
+<style>
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
 
-        input[type="checkbox"]:checked {
-            background-color: green;
-            border: none;
-        }
+    input[type="checkbox"]:checked {
+        background-color: green;
+        border: none;
+    }
 
-        input[type="radio"] {
-            width: 24px;
-            height: 24px;
-            accent-color: green;
-            /* Modern browser support */
-        }
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+        /* Modern browser support */
+    }
 
-        .tableWidth {
-            width: 90%;
-            margin: auto;
+    .tableWidth {
+        width: 90%;
+        margin: auto;
 
-        }
+    }
 
-        .bg-yellow {
-            background-color: #e17100;
-        }
-    </style>
+    .bg-yellow {
+        background-color: #e17100;
+    }
+</style>
 <style>
     input[type="checkbox"] {
         width: 28px;
@@ -65,19 +64,27 @@
 <div class="main-inner dark:bg-gray-900 dark:text-gray-200">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold dark:text-white">FD - 03754</h1>
+            <h1 class="text-xl font-semibold dark:text-white">MIS - {{ $account->id }}</h1>
             <!-- <p class="text-gray-500 dark:text-gray-400">
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Fd Accounts</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">03754</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">change Account Info</a>
             </p> -->
         </div>
+        <!-- Warning Note -->
+        <div id="warning-box" class="hidden mt-4 p-4 rounded bg-warning text-white text-sm border-l-6  font-semibold">
+            <h4>NOTE:</h4> <br>
+            <p>If there are changes to the SCHEME or the account OPEN DATE,
+                please be aware that all INTEREST and TDS transactions will be automatically deleted
+                from the account ledger. Therefore, make sure to proceed with these changes carefully.
+            </p>
+        </div>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-6">
         <!-- Left Side: Form -->
         <div class="flex-1 w-full bg-white dark:bg-bg3 rounded-xl shadow p-6">
-        
+
             <form action="{{ route('misaccount.updateAccountInfo', $account->id) }}" method="POST">
                 @csrf
                 <h3 class="text-2xl text-black dark:text-white p-1">CHANGE ACCOUNT INFO</h3>
@@ -86,6 +93,21 @@
                 <p class="text-sm mt-3 text-black dark:text-gray-300">
                     Are you sure you want to change account info?
                 </p>
+
+                <!-- Scheme -->
+                <div class="mt-4">
+                    <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        Scheme <span class="text-red-500">*</span>
+                    </label>
+                    <select name="scheme_id" class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
+                        <option value="">-- Select Scheme --</option>
+                        @foreach($schemes as $id => $name)
+                        <option value="{{ $id }}" {{ $account->fd_scheme_id == $id ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <!-- Member -->
                 <div class="mt-4">
@@ -96,33 +118,32 @@
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         <option value="">-- Select Customer --</option>
                         @foreach($members as $id => $name)
-                            <option value="{{ $id }}" {{ $account->member_id == $id ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
+                        <option value="{{ $id }}" {{ $account->member_id == $id ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
 
-                   <!-- Account Type -->
+                <!-- Account Type -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium uppercase">Account Type <span class="text-red-500">*</span></label>
                     <div class="mt-2 flex gap-6">
                         <label class="flex items-center gap-2">
                             <input type="radio" name="account_type" value="single"
                                 {{ $account->account_type == 'single' ? 'checked' : '' }}
-                                 checked>
+                                checked>
                             <span>Single</span>
                         </label>
                         <label class="flex items-center gap-2">
                             <input type="radio" name="account_type" value="joint"
-                                {{ $account->account_type == 'joint' ? 'checked' : '' }}
-                                >
+                                {{ $account->account_type == 'joint' ? 'checked' : '' }}>
                             <span>Joint A/C</span>
                         </label>
                     </div>
                 </div>
 
-                   <!-- Joint Account Member -->
+                <!-- Joint Account Member -->
                 <div class="mt-4" id="jointAccountInput">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Joint Account Customer
@@ -131,13 +152,13 @@
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         <option value="">-- Select Joint Customer --</option>
                         @foreach($jointMembers as $id => $name)
-                            <option value="{{ $id }}" {{ $account->joint_member_id == $id ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
+                        <option value="{{ $id }}" {{ $account->joint_member_id == $id ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
- 
+
                 <!-- Minor -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
@@ -161,14 +182,6 @@
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" />
                 </div>
 
-                <!-- MIS Joint Date -->
-                <div class="mt-4">
-                    <label class="block text-sm font-medium uppercase">MIS Joint Date <span class="text-red-500">*</span></label>
-                    <input type="text" name="mis_joint_date" id="date2"
-                        value="{{ old('mis_joint_date', $account->mis_joint_date ? \Carbon\Carbon::parse($account->mis_joint_date)->format('d-m-Y') : '') }}"
-                        placeholder="DD/MM/YYYY"
-                        class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" />
-                </div>
 
                 <!-- Buttons -->
                 <div class="flex mt-6 gap-3">
@@ -215,7 +228,7 @@
                         </tr>
                         <tr>
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Available Balance</td>
-                            <td class="py-2">45,000.00</td>
+                            <td class="py-2">₹{{ number_format($balances, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -225,12 +238,12 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const radios = document.querySelectorAll("input[name='account_type']");
         const jointInput = document.getElementById("jointAccountInput");
- 
+
         radios.forEach(radio => {
-            radio.addEventListener("change", function () {
+            radio.addEventListener("change", function() {
                 if (this.value === "joint") {
                     jointInput.classList.remove("hidden");
                 } else {
@@ -241,5 +254,32 @@
     });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const schemeSelect = document.querySelector("select[name='scheme_id']");
+        const openDateInput = document.querySelector("input[name='open_date']");
+        const warningBox = document.getElementById("warning-box");
+
+        // Store original backend values
+        const originalScheme = "{{ $account->fd_scheme_id }}";
+        const originalDate = "{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}";
+
+        // Function to check if changed
+        function checkForChanges() {
+            const schemeChanged = schemeSelect.value !== originalScheme;
+            const dateChanged = openDateInput.value !== originalDate;
+
+            if (schemeChanged || dateChanged) {
+                warningBox.classList.remove("hidden");
+            } else {
+                warningBox.classList.add("hidden");
+            }
+        }
+
+        // Add event listeners
+        schemeSelect.addEventListener("change", checkForChanges);
+        openDateInput.addEventListener("input", checkForChanges);
+    });
+</script>
 
 @endsection

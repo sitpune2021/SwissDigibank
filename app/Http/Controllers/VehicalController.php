@@ -11,7 +11,7 @@ use App\Models\Branch;
 use App\Models\Scheme;
 use App\Models\VehicalApplication;
 use App\Models\Calculator;
-use App\Models\MortgageProcessingFee;
+use App\Models\VehicalProcessingFee;
 use App\Models\VehicalCreditScore;
 use Carbon\Carbon;
 use App\Exports\LinePropertExport;
@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use App\Models\VehicleDistributor;
 
 
 class VehicalController extends Controller
@@ -396,8 +397,9 @@ class VehicalController extends Controller
         $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
         $branch = Branch::all();
         $scheme = VehicalScheme::all();
-        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("vehical.applications.create", compact('members','branch','scheme','banks'));
+        $banks = Bank::pluck('name', 'id'); 
+        $distributors = VehicleDistributor::all();
+        return view("vehical.applications.create", compact('members','branch','scheme','banks','distributors'));
     }
    
     public function storeLoanApplication(Request $request)
@@ -407,7 +409,7 @@ class VehicalController extends Controller
             'input_data' => $request->all(),
         ]);
 
-        // Validate before try
+        // Step 1: Validation (Removed security_amount)
         $validated = $request->validate([
             'application_date' => 'required|date_format:d-m-Y',
             'member_id'        => 'required|exists:members,id',
@@ -415,16 +417,26 @@ class VehicalController extends Controller
             'scheme_id'        => 'required|exists:vehical_schemes,id',
             'loan_amount'      => 'required|numeric|min:1',
             'tenure_type'      => 'required',
-            'tenure_value'      => 'required',
-            'emi_collection'      => 'required',
-            'credit_period'      => 'required',
-            'insurance_amount'      => 'required',
-            'net_loan_amount'      => 'required',
-            'purpose_of_loan'      => 'required',
+            'tenure_value'     => 'required',
+            'emi_collection'   => 'required',
+            'credit_period'    => 'required',
+            'insurance_amount' => 'required',
+            'net_loan_amount'  => 'required',
+            'purpose_of_loan'  => 'required',
+            'distributor_id'   => 'required',
+            'vehicle_type'     => 'required',
+            'vehicle_segment'  => 'required',
+            'vehicle_category' => 'required',
+            'vehicle_brand'    => 'required',
+            'vehicle_model'    => 'required',
+            'vehicle_color'    => 'required',
+            'manufacture_year' => 'required',
+            'vehicle_price'    => 'required|numeric|min:1',
+            'down_payment'     => 'required|numeric|min:0',
         ]);
 
         try {
-            // Step 1: Convert application_date (DD-MM-YYYY → YYYY-MM-DD)
+            // Step 2: Convert Date Format
             if ($request->filled('application_date')) {
                 try {
                     $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
@@ -435,103 +447,71 @@ class VehicalController extends Controller
                 }
             }
 
-            // Step 2: Map total_security_amount → security_amount
-            if ($request->filled('total_security_amount')) {
-                $request->merge(['security_amount' => $request->total_security_amount]);
-                Log::info('Mapped total_security_amount → security_amount', [
-                    'security_amount' => $request->total_security_amount,
-                ]);
-            }
-
-            // Step 3: Validation
-            $validated = $request->validate([
-                'application_date' => 'required|date',
-                'member_id' => 'required|exists:members,id',
-                'branch_id' => 'required|exists:branches,id',
-                'scheme_id' => 'required|exists:vehical_schemes,id',
-                'loan_amount' => 'required|numeric|min:1',
-                'security_amount' => 'required|numeric|min:1',
-                'purpose_of_loan' => 'required|string|max:255',
-                'tenure_type' => 'required|string',
-                'tenure_value' => 'required|numeric|min:1',
-                'emi_collection' => 'required|string',
-                'credit_period' => 'required|numeric|min:1',
-                'insurance_amount' => 'required|numeric|min:0',
-                'net_loan_amount' => 'required|numeric|min:1',
-            ]);
-
-             // Validate CIBIL scores (each must be 3 digits between 300–900)
-            if ($request->has('cibil_score')) {
-                foreach ($request->cibil_score as $index => $score) {
-                    if (!empty($score)) {
-                        if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
-                            return back()
-                                ->withInput()
-                                ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
-                        }
-                    }
-                }
-            }
-
-            Log::info('Validation Passed');
-
-            // Step 4: Create main loan application
+            // Step 3: Create Loan Application
             $loanApplication = VehicalApplication::create([
                 'application_date' => $request->application_date,
-                'member_id' => $request->member_id,
-                'branch_id' => $request->branch_id,
-                'scheme_id' => $request->scheme_id,
+                'member_id'        => $request->member_id,
+                'branch_id'        => $request->branch_id,
+                'scheme_id'        => $request->scheme_id,
                 'co_applicant_1_id' => $request->co_applicant_1_id,
                 'co_applicant_2_id' => $request->co_applicant_2_id,
-                'guarantor_1_id' => $request->guarantor_1_id,
-                'guarantor_2_id' => $request->guarantor_2_id,
-                'guarantor_3_id' => $request->guarantor_3_id,
-                'guarantor_4_id' => $request->guarantor_4_id,
-                'tenure_type' => $request->tenure_type,
-                'tenure_value' => $request->tenure_value,
-                'emi_collection' => $request->emi_collection,
-                'credit_period' => $request->credit_period,
+                'guarantor_1_id'   => $request->guarantor_1_id,
+                'guarantor_2_id'   => $request->guarantor_2_id,
+                'guarantor_3_id'   => $request->guarantor_3_id,
+                'guarantor_4_id'   => $request->guarantor_4_id,
+                'tenure_type'      => $request->tenure_type,
+                'tenure_value'     => $request->tenure_value,
+                'emi_collection'   => $request->emi_collection,
+                'credit_period'    => $request->credit_period,
 
-                'distributor_id' => $request->distributor_id,
-                'vehicle_type' => $request->vehicle_type,
-                'vehicle_segment' => $request->vehicle_segment,
+                'distributor_id'   => $request->distributor_id,
+                'vehicle_type'     => $request->vehicle_type,
+                'vehicle_segment'  => $request->vehicle_segment,
                 'vehicle_category' => $request->vehicle_category,
-                'vehicle_brand' => $request->vehicle_brand,
-                'vehicle_model' => $request->vehicle_model,
-                'vehicle_color' => $request->vehicle_color,
+                'vehicle_brand'    => $request->vehicle_brand,
+                'vehicle_model'    => $request->vehicle_model,
+                'vehicle_color'    => $request->vehicle_color,
                 'manufacture_year' => $request->manufacture_year,
-                'vehicle_no' => $request->vehicle_no,
-                'chassis_no' => $request->chassis_no,
-                'engine_no' => $request->engine_no,
-                'registration_no' => $request->registration_no,
+                'vehicle_no'       => $request->vehicle_no,
+                'chassis_no'       => $request->chassis_no,
+                'engine_no'        => $request->engine_no,
+                'registration_no'  => $request->registration_no,
                 'vehicle_delivery_date' => $request->vehicle_delivery_date,
-                'insurance_policy_no' => $request->insurance_policy_no,
+                'insurance_policy_no'   => $request->insurance_policy_no,
                 'insurance_expiry_date' => $request->insurance_expiry_date,
-                'motor_power' => $request->motor_power,
+                'motor_power'      => $request->motor_power,
                 'battery_capacity' => $request->battery_capacity,
                 'battery_warranty' => $request->battery_warranty,
-                'current_valuation' => $request->current_valuation,
-                'vehicle_price' => $request->vehicle_price,
-                'down_payment' => $request->down_payment,
+                'current_valuation'=> $request->current_valuation,
 
-                'loan_amount' => $request->loan_amount,
-                'insurance_amount' => $request->insurance_amount,
-                'net_loan_amount' => $request->net_loan_amount,
-                'purpose_of_loan' => $request->purpose_of_loan,
-                'security_amount' => $request->security_amount,
-                'securety_type' => $request->securety_type ?? 'Property',
-                'max_loan_amount' => $request->max_loan_amount,
-                'max_loan_limit' => $request->max_loan_limit,
-                'maximum_approvable_amount' => $request->maximum_approvable_amount,
-                'approved_loan_amount' => $request->approved_loan_amount,
-                'created_by' => Auth::id(),
+                // New important fields
+                'vehicle_price'    => $request->vehicle_price,
+                'down_payment'     => $request->down_payment,
+
+                'loan_amount'              => $request->loan_amount,
+                'insurance_amount'         => $request->insurance_amount,
+                'net_loan_amount'          => $request->net_loan_amount,
+                'purpose_of_loan'          => $request->purpose_of_loan,
+                'max_loan_amount'          => $request->max_loan_amount,
+                'max_loan_limit'           => $request->max_loan_limit,
+                'maximum_approvable_amount'=> $request->maximum_approvable_amount,
+                'approved_loan_amount'     => $request->approved_loan_amount,
+                'fee_mode'     => $request->fee_mode,        
+                'bank_id'     => $request->bank_id,        
+                'cheque_no'     => $request->cheque_no,        
+                'cheque_date'     => $request->cheque_date,        
+                'transfer_date'     => $request->transfer_date,        
+                'utr_no'     => $request->utr_no,        
+                'transfer_mode'     => $request->transfer_mode,        
+                'credited'     => $request->credited ?? 0,        
+                'created_by'               => Auth::id(),
             ]);
 
             Log::info('vehical Loan Application Inserted Successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
 
-            // Step 5: Insert multiple CIBIL records
+            // Step 4: CIBIL Data (no change)
             if ($request->has('cibil_type') && is_array($request->cibil_type)) {
                 foreach ($request->cibil_type as $index => $type) {
                     if (empty($type)) continue;
@@ -569,34 +549,17 @@ class VehicalController extends Controller
                 }
             }
 
-            // Step 6: Final success response
-            Log::info('All Data Saved Successfully', [
-                'loan_application_id' => $loanApplication->id,
-            ]);
-
             return redirect()->route('vehical.applications.index')
                 ->with('success', 'vehical Loan, Credit Score details saved successfully.');
 
-        } 
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            // For development: show exact error in browser
-            if (app()->environment('local')) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Error: ' . $e->getMessage());
-            }
-
-            // For production: keep generic but log detailed
-            return back()
-                ->withInput()
-                ->with('error', 'Something went wrong while saving the loan application.');
+            return back()->withInput()->with('error', 'Something went wrong while saving the loan application.');
         }
-
     }
 
     public function getMemberInfo($id)
@@ -632,15 +595,16 @@ class VehicalController extends Controller
 
     public function appedit($id)
     {
-        $application = VehicalApplication::with(['member', 'scheme', 'creditScores', 'properties'])->findOrFail($id);
+        $application = VehicalApplication::with(['member', 'scheme', 'creditScores'])->findOrFail($id);
 
         $members = Member::all();
         $schemes = VehicalScheme::all();
         $scheme  = VehicalScheme::all();
         $branch  = Branch::all();
         $banks   = Bank::pluck('name', 'id');
+        $distributors = VehicleDistributor::all();
 
-        return view('vehical.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks'));
+        return view('vehical.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks','distributors'));
     }
 
     public function appupdate(Request $request, $id)
@@ -694,16 +658,6 @@ class VehicalController extends Controller
                 ]);
             }
         }
-
-        // Delete old property details
-    $application->properties()->delete();
-
-    // Insert updated property details
-    if ($request->has('properties')) {
-        foreach ($request->properties as $prop) {
-            $application->properties()->create($prop);
-        }
-    }
 
 
         return redirect()
@@ -797,11 +751,16 @@ class VehicalController extends Controller
             
             if ($interestType == 'no_emi') 
             {
+                // EMI Date format change
+                $formattedEmiDate = $emiDate->format('d-m-Y');
+
+                // Due date = EMI date + 1 day
+                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
                 $schedule[] = [
                     'no' => $i,
-                    'emi_date' => $emiDate->format('d/m/Y'),
-                    'due_date' => $emiDate->format('d/m/Y'),
+                    'emi_date' => $formattedEmiDate,
+                    'due_date' => $dueDate,
                     'principal' => number_format($loanAmount, 2, '.', ''), // Full principal for display only
                     'interest' => '',  
                     'charges_per_emi' => '',
@@ -824,11 +783,16 @@ class VehicalController extends Controller
 
                 $emiTotal = $principalThis;
                 $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
+                  
+                $formattedEmiDate = $emiDate->format('d-m-Y');
+
+                // Due date = EMI date + 1 day
+                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
                 $schedule[] = [
                     'no' => $i,
-                    'emi_date' => $emiDate->format('d/m/Y'),
-                    'due_date' => $emiDate->format('d/m/Y'),
+                    'emi_date' => $formattedEmiDate,
+                    'due_date' => $dueDate,
                     'principal' => number_format($principalThis, 2, '.', ''),
                     'interest' => number_format(0, 2, '.', ''),
                     'charges_per_emi' => number_format(0, 2, '.', ''),
@@ -850,10 +814,15 @@ class VehicalController extends Controller
             $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
             $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
 
+            $formattedEmiDate = $emiDate->format('d-m-Y');
+
+            // Due date = EMI date + 1 day
+            $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+
             $schedule[] = [
                 'no' => $i,
-                'emi_date' => $emiDate->format('d/m/Y'),
-                'due_date' => $emiDate->format('d/m/Y'),
+                'emi_date' => $formattedEmiDate,
+                'due_date' => $dueDate,
                 'principal' => number_format($principalThis, 2, '.', ''),
                 'interest' => number_format($interestForPeriod, 2, '.', ''),
                 'charges_per_emi' => number_format($chargesPerEmi, 2, '.', ''),
@@ -875,7 +844,7 @@ class VehicalController extends Controller
             $totalEmi = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
         }
 
-        return view('mortgage.applications.view-buttons.show-emi-chart', compact(
+        return view('vehical.applications.view-buttons.show-emi-chart', compact(
             'application',
             'loanAmount',
             'disburseDate',
@@ -895,7 +864,7 @@ class VehicalController extends Controller
         ));
     }
 
-    public function mortgagecol_process_fee($id)
+    public function vehical_col_process_fee($id)
     {
         $application = VehicalApplication::with([
             'member',
@@ -907,10 +876,10 @@ class VehicalController extends Controller
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("mortgage.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("vehical.applications.view-buttons.col_process_fee", compact('application','banks'));
     }
 
-    public function mortgagestoreProcessFee(Request $request, $id)
+    public function VehicalstoreProcessFee(Request $request, $id)
     {
         $request->validate([
             'total' => 'required|numeric|min:0',
@@ -937,9 +906,9 @@ class VehicalController extends Controller
             ]);
         }
 
-        MortgageProcessingFee::create($data);
+        VehicalProcessingFee::create($data);
 
-        return redirect()->route('mortgage.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+        return redirect()->route('vehical.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
 

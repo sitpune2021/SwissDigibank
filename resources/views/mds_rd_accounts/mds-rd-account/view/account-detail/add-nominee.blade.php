@@ -44,6 +44,9 @@
 
                 <x-add-nominee
                     :rdAccount="$rdAccount"
+                    :member="$member"
+                    :isUpdate="false"
+                    type="rd"
                     submitText="{{ $rdAccount->nominees->isNotEmpty() ? 'Update' : 'Add' }}"
                     backText="Back" />
 

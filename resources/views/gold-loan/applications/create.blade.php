@@ -685,15 +685,16 @@
                                         <label class="block text-sm font-medium text-gray-700 uppercase">
                                             Credited in Company Account <span class="text-red-500">*</span>
                                         </label>
-                                        <div class="flex gap-4 mt-2">
+                                        <div class="flex gap-4">
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="1" {{ old('credited',
-                                                    $application->credited ?? '') == '1' ? 'checked' : '' }} >
+                                                <input type="radio" name="credited" value="1"
+                                                    {{ old('credited') == 1 ? 'checked' : '' }} checked>
                                                 <span>Yes</span>
                                             </label>
+
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="credited" value="0" {{ old('credited',
-                                                    $application->credited ?? '') == '0' ? 'checked' : '' }} >
+                                                <input type="radio" name="credited" value="0"
+                                                    {{ old('credited') == 0 ? 'checked' : '' }}>
                                                 <span>No</span>
                                             </label>
                                         </div>
