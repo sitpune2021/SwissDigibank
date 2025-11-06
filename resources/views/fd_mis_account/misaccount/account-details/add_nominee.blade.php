@@ -20,16 +20,17 @@
             }
         </style>
     </head>
+    
     <div class="main-inner dark:bg-gray-900 dark:text-gray-200">
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold dark:text-white">RD - {{$rdAccount->id}}</h1>
-                <!-- <p class="text-gray-500 dark:text-gray-400">
-                    <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Recurring Deposits</a> >
-                    <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">{{$rdAccount->id}}</a> >
+                <h1 class="text-2xl font-semibold dark:text-white">MIS - {{$account->id}}</h1>
+                <p class="text-gray-500 dark:text-gray-400">
+                    <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">MIS Account</a> >
+                    <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">{{$account->id}}</a> >
                     <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Nominee</a>
-                </p> -->
+                </p>
             </div>
         </div>
 
@@ -39,22 +40,19 @@
                 Update Nominee Details
             </h1>
 
-            <form method="POST" action="{{ route('rd-accounts.saveNominee', $rdAccount->id) }}">
+            <form method="POST" action="{{ route('misaccount.updateNominee', $account->id) }}">
                 @csrf
 
                 <x-add-nominee
-                    :rdAccount="$rdAccount"
-                    :member="$member"
-                    :isUpdate="false"
-                    type="rd"
-                    submitText="{{ $rdAccount->nominees->isNotEmpty() ? 'Update' : 'Add' }}"
+                    :Account="$account"
+                    submitText="{{ $account->nominees->isNotEmpty() ? 'Update' : 'Add' }}"
                     backText="Back" />
 
                 <!-- Buttons -->
                 <div class="flex flex-col mt-6 sm:flex-row gap-3 justify-center">
                     <button type="submit"
                         class="sm:w-auto btn-primary uppercase justify-center">
-                        {{ $rdAccount->nominees->isNotEmpty() ? 'Update' : 'Add' }}
+                        {{ $account->nominees->isNotEmpty() ? 'Update' : 'Add' }}
                     </button>
                     <a href="{{ $backUrl ?? 'javascript:history.back()' }}"
                         class="sm:w-auto btn-outline uppercase justify-center">
