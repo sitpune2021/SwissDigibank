@@ -923,11 +923,16 @@ class LoanAgainstController extends Controller
             
             if ($interestType == 'no_emi') 
             {
+                 // EMI Date format change
+                $formattedEmiDate = $emiDate->format('d-m-Y');
+
+                // Due date = EMI date + 1 day
+                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
                 $schedule[] = [
                     'no' => $i,
-                    'emi_date' => $emiDate->format('d/m/Y'),
-                    'due_date' => $emiDate->format('d/m/Y'),
+                   'emi_date' => $formattedEmiDate,
+                'due_date' => $dueDate,
                     'principal' => number_format($loanAmount, 2, '.', ''), // Full principal for display only
                     'interest' => '',  
                     'charges_per_emi' => '',
@@ -951,10 +956,16 @@ class LoanAgainstController extends Controller
                 $emiTotal = $principalThis;
                 $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
 
+                // EMI Date format change
+                $formattedEmiDate = $emiDate->format('d-m-Y');
+
+                // Due date = EMI date + 1 day
+                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+
                 $schedule[] = [
                     'no' => $i,
-                    'emi_date' => $emiDate->format('d/m/Y'),
-                    'due_date' => $emiDate->format('d/m/Y'),
+                   'emi_date' => $formattedEmiDate,
+                'due_date' => $dueDate,
                     'principal' => number_format($principalThis, 2, '.', ''),
                     'interest' => number_format(0, 2, '.', ''),
                     'charges_per_emi' => number_format(0, 2, '.', ''),
@@ -976,10 +987,16 @@ class LoanAgainstController extends Controller
             $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
             $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
 
+            // EMI Date format change
+                $formattedEmiDate = $emiDate->format('d-m-Y');
+
+                // Due date = EMI date + 1 day
+                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+
             $schedule[] = [
                 'no' => $i,
-                'emi_date' => $emiDate->format('d/m/Y'),
-                'due_date' => $emiDate->format('d/m/Y'),
+                'emi_date' => $formattedEmiDate,
+                'due_date' => $dueDate,
                 'principal' => number_format($principalThis, 2, '.', ''),
                 'interest' => number_format($interestForPeriod, 2, '.', ''),
                 'charges_per_emi' => number_format($chargesPerEmi, 2, '.', ''),
