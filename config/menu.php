@@ -170,6 +170,20 @@ return [
             ['title' => 'DISBURSEMENTS', 'route' => 'personal.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'personal.account.index'],
         ],
+    ],
+     [
+        'title' => 'VEHICLE LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'vehical.schemes.index'],
+            ['title' => 'CALCULATOR', 'route' => 'vehical.calculator.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'vehical.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'vehical.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'vehical.account.index'],
+            ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
+        ],
     ],  
     [
         'title' => 'APPROVALS',

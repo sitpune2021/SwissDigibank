@@ -45,13 +45,13 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold uppercase">NEW MORTGAGE LOAN APPLICATION</h1>
+            <h1 class="text-xl font-semibold uppercase">NEW VEHICAL LOAN APPLICATION</h1>
         </div>
     </div>
 
     <div class="box">
         <form method="POST" 
-                        action="{{ isset($application) ? route('mortgage.applications.update', $application->id) : route('mortgage.store') }}" enctype="multipart/form-data">
+                        action="{{ isset($application) ? route('vehical.applications.update', $application->id) : route('vehical.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if(isset($application))
                             @method('PUT')
@@ -452,6 +452,177 @@
 
                     </div>
 
+                    <!-- Vehicle Info -->
+                    <br>
+                        <div class="mt-6">
+                            <p class="uppercase  text-xl ">Vehicle Info</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mt-3 xxxxxl:gap-6">
+                            {{-- Distributor --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="distributor_id" class="md:text-lg uppercase font-medium block mb-2">
+                                    Distributor <span class="text-red-500">*</span>
+                                </label>
+                                <select name="distributor_id" id="distributor_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select</option>
+                                    <option value="1"
+                                        {{ old('distributor_id', $application->distributor_id ?? '') == 1 ? 'selected' : '' }}>
+                                        OSL BAJAJ LTD
+                                    </option>
+                                </select>
+                                @error('distributor_id')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Vehicle Type --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_type" class="md:text-lg uppercase font-medium block mb-4">
+                                    Vehicle Type <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_type" id="vehicle_type"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Type</option>
+                                    <option value="used" {{ old('vehicle_type', $application->vehicle_type ?? '') == 'used' ? 'selected' : '' }}>Used</option>
+                                    <option value="new" {{ old('vehicle_type', $application->vehicle_type ?? '') == 'new' ? 'selected' : '' }}>New</option>
+                                </select>
+                                @error('vehicle_type')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Vehicle Segment --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_segment" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Segment <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_segment" id="vehicle_segment"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Segment</option>
+                                    <option value="commercial" {{ old('vehicle_segment', $application->vehicle_segment ?? '') == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                                    <option value="non_commercial" {{ old('vehicle_segment', $application->vehicle_segment ?? '') == 'non_commercial' ? 'selected' : '' }}>Non Commercial</option>
+                                </select>
+                            </div>
+
+                            {{-- Vehicle Category --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_category" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Category <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_category" id="vehicle_category"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Category</option>
+                                    <option value="two_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'two_wheeler' ? 'selected' : '' }}>Two Wheeler</option>
+                                    <option value="three_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'three_wheeler' ? 'selected' : '' }}>Three Wheeler</option>
+                                    <option value="four_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'four_wheeler' ? 'selected' : '' }}>Four Wheeler</option>
+                                </select>
+                            </div>
+
+                            {{-- Vehicle Brand --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_brand" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Brand <span class="text-red-500">*</span>
+                                </label>
+                                <select name="vehicle_brand" id="vehicle_brand"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Please Select Vehicle Brand</option>
+                                    @foreach(['SAMPOORN_EV', 'YAMAHA', 'HONDA', 'DUCATI', 'HARLEY_DAVIDSON', 'SUZUKI', 'BAJAJ', 'TVS', 'PIAGGIO', 'ATUL', 'MAHINDRA', 'TOYOTA', 'FORD', 'BMW', 'MERCEDES', 'HYUNDAI', 'TATA'] as $brand)
+                                        <option value="{{ $brand }}" {{ old('vehicle_brand', $application->vehicle_brand ?? '') == $brand ? 'selected' : '' }}>
+                                            {{ ucfirst(strtolower(str_replace('_', ' ', $brand))) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Vehicle Model --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_model" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Model <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="vehicle_model" id="vehicle_model"
+                                    value="{{ old('vehicle_model', $application->vehicle_model ?? '') }}"
+                                    placeholder="Enter Vehicle Model"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Vehicle Color --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_color" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Color <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="vehicle_color" id="vehicle_color"
+                                    value="{{ old('vehicle_color', $application->vehicle_color ?? '') }}"
+                                    placeholder="Enter Vehicle Color"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                            </div>
+
+                            {{-- Manufacture Year --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="manufacture_year" class="uppercase md:text-lg font-medium block mb-4">
+                                    Manufacture Year <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="manufacture_year" id="manufacture_year"
+                                    value="{{ old('manufacture_year', $application->manufacture_year ?? '') }}"
+                                    placeholder="Enter Manufacture Year"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Vehicle No --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="vehicle_no" class="uppercase md:text-lg font-medium block mb-4">Vehicle No</label>
+                                <input type="text" name="vehicle_no" id="vehicle_no"
+                                    value="{{ old('vehicle_no', $application->vehicle_no ?? '') }}"
+                                    placeholder="Enter Vehicle No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Chassis No --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="chassis_no" class="uppercase md:text-lg font-medium block mb-4">Chassis No</label>
+                                <input type="text" name="chassis_no" id="chassis_no"
+                                    value="{{ old('chassis_no', $application->chassis_no ?? '') }}"
+                                    placeholder="Enter Chassis No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Engine No --}}
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="engine_no" class="uppercase md:text-lg font-medium block mb-4">Engine No</label>
+                                <input type="text" name="engine_no" id="engine_no"
+                                    value="{{ old('engine_no', $application->engine_no ?? '') }}"
+                                    placeholder="Enter Engine No"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            </div>
+
+                            {{-- Vehicle Price --}}
+                            <div class="col-span-2 md:col-span-1 mb-3">
+                                <label for="vehicle_price" class="uppercase md:text-lg font-medium block mb-4">
+                                    Vehicle Price <span class="text-error">*</span>
+                                </label>
+                                <input type="number" name="vehicle_price" id="vehicle_price"
+                                    value="{{ old('vehicle_price', $application->vehicle_price ?? '') }}"
+                                    placeholder="Enter Vehicle Price"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <x-number-to-word for="vehicle_price" />
+                            </div>
+
+                            {{-- Down Payment --}}
+                            <div class="col-span-2 md:col-span-1 mb-3">
+                                <label for="down_payment" class="uppercase md:text-lg font-medium block mb-4">
+                                    Down Payment <span class="text-error">*</span>
+                                </label>
+                                <input type="number" name="down_payment" id="down_payment"
+                                    value="{{ old('down_payment', $application->down_payment ?? '') }}"
+                                    placeholder="Enter Down Payment"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <x-number-to-word for="down_payment" />
+                            </div>
+                        </div>
+                      
+
+
                         <!-- Collect Advance Processing Fee -->
                     <div class="col-span-12  lg:col-span-12 ">
                         <hr>
@@ -657,7 +828,7 @@
                 </div>
 
                     {{--schemeBox info --}}
-                    <div id="schemeBox" class=" mt-5 hidden">
+                <div id="schemeBox" class=" mt-5 hidden">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
                         <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
                         <button type="button" class="p-1 rounded transition"
@@ -716,132 +887,93 @@
                         </div>
                     </div>
                 </div>
+
+
+                 {{-- Vehical Table  --}}
+                        <div id="distributorBox"
+                            class="hidden bg-white overflow-hidden mt-4">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between rounded-10 bg-secondary/5  px-4 py-3">
+                                <h3 class="text-lg font-semibold uppercase">Distributor Info</h3>
+                                <button type="button" class="text-white hover:text-gray-200 transition"
+                                    onclick="toggleDistributorBox()">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+
+                            <!-- Body -->
+                            <div id="distributorBody" class="p-4 overflow-x-auto">
+                                <table class="w-full whitespace-nowrap p-3 border-collapse text-sm md:text-base">
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase w-1/3 py-2">Distributor Code</td>
+                                            <td id="distCode" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Distributor Name</td>
+                                            <td id="distName" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Active</td>
+                                            <td id="distActive" class="py-2"><span
+                                                    class="inline-block px-2 py-1 text-xs font-semibold text-white bg-gray-400 rounded">
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Distribution Type</td>
+                                            <td id="distType" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Contact No</td>
+                                            <td id="distContact" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Email</td>
+                                            <td id="distEmail" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">City</td>
+                                            <td id="distCity" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">State</td>
+                                            <td id="distState" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Pincode</td>
+                                            <td id="distPincode" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Address</td>
+                                            <td id="distAddress" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">GST No</td>
+                                            <td id="distGST" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">License No</td>
+                                            <td id="distLicense" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Created At</td>
+                                            <td id="distCreated" class="py-2">-</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Updated At</td>
+                                            <td id="distUpdated" class="py-2">-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
             </div>
         </div>
-
-           
-           
-        <div id="itemsContainer">
-            @if(isset($application) && $application->properties->count() > 0)
-            @foreach($application->properties as $index => $prop)
-            <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
-                <div class="flex flex-wrap gap-6">
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Property Type</label>
-                        <select name="properties[{{ $index }}][property_type]" class="w-full border rounded-10 px-3 py-2">
-                            <option value="">Select Property Type</option>
-                            <option value="agriculture_land" {{ $prop->property_type == 'agriculture_land' ? 'selected' : '' }}>Agriculture Land</option>
-                            <option value="urban_land" {{ $prop->property_type == 'urban_land' ? 'selected' : '' }}>Urban Land</option>
-                            <option value="plot" {{ $prop->property_type == 'plot' ? 'selected' : '' }}>Plot</option>
-                            <option value="house" {{ $prop->property_type == 'house' ? 'selected' : '' }}>House</option>
-                            <option value="shop" {{ $prop->property_type == 'shop' ? 'selected' : '' }}>Shop</option>
-                        </select>
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Doc Number</label>
-                        <input type="text" name="properties[{{ $index }}][doc_number]" value="{{ $prop->doc_number }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Registrar Name</label>
-                        <input type="text" name="properties[{{ $index }}][registrar_name]" value="{{ $prop->registrar_name }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Owner Name</label>
-                        <input type="text" name="properties[{{ $index }}][owner_name]" value="{{ $prop->owner_name }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Parent Name</label>
-                        <input type="text" name="properties[{{ $index }}][parent_name]" value="{{ $prop->parent_name }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Plot No</label>
-                        <input type="text" name="properties[{{ $index }}][plot_no]" value="{{ $prop->plot_no }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Tehsil</label>
-                        <input type="text" name="properties[{{ $index }}][tehsil]" value="{{ $prop->tehsil }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">District</label>
-                        <input type="text" name="properties[{{ $index }}][district]" value="{{ $prop->district }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Area (SQ FT)</label>
-                        <input type="text" name="properties[{{ $index }}][area_sqft]" value="{{ $prop->area_sqft }}" class="w-full border rounded-10 px-3 py-2">
-                    </div>
-
-
-                    {{-- Boundaries Sale --}}
-                    <div class="w-full border-t mt-4 pt-4">
-                        <h4 class="text-lg font-semibold mb-2">Boundaries as per Sale Deed</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_east]" value="{{ $prop->boundary_sale_east }}" placeholder="East" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_west]" value="{{ $prop->boundary_sale_west }}" placeholder="West" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_north]" value="{{ $prop->boundary_sale_north }}" placeholder="North" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_sale_south]" value="{{ $prop->boundary_sale_south }}" placeholder="South" class="border rounded-10 px-3 py-2">
-                        </div>
-                    </div>
-
-                    {{-- Boundaries Tech --}}
-                    <div class="w-full border-t mt-4 pt-4">
-                        <h4 class="text-lg font-semibold mb-2">Boundaries as per Technical</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_east]" value="{{ $prop->boundary_tech_east }}" placeholder="East" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_west]" value="{{ $prop->boundary_tech_west }}" placeholder="West" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_north]" value="{{ $prop->boundary_tech_north }}" placeholder="North" class="border rounded-10 px-3 py-2">
-                            <input type="text" name="properties[{{ $index }}][boundary_tech_south]" value="{{ $prop->boundary_tech_south }}" placeholder="South" class="border rounded-10 px-3 py-2">
-                        </div>
-                    </div>
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Expected Value</label>
-                        <input type="number" name="properties[{{ $index }}][expected_value]" value="{{ $prop->expected_value }}" class="expectedValue w-full border rounded-10 px-3 py-2">
-                    </div>
-
-
-                    <div class="w-1/2 mb-3">
-                        <label class="uppercase font-medium block mb-2">Registered</label>
-                        <select name="properties[{{ $index }}][registered]" class="w-full border rounded-10 px-3 py-2">
-                            <option value="yes" {{ $prop->registered == 'yes' ? 'selected' : '' }}>Yes</option>
-                            <option value="no" {{ $prop->registered == 'no' ? 'selected' : '' }}>No</option>
-                        </select>
-                    </div>
-
-                    <div class="w-full text-end mb-3">
-                        <button type="button" class="btn-error text-white rounded-10 px-4 py-2 remove-item">❌ Remove</button>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        @endif
-    </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <label for="" class="uppercase:text-lg font-medium block mb-4">
-                    Total Security Amount
-                </label>
-                <input type="number" id="totalSecurityInput" name="total_security_amount"
-                class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                placeholder="0" value="{{ old('total_security_amount', $totalSecurityAmount ?? 0) }}" readonly>
-            </div>
-            <div class="mt-3">
-                <button type="button" id="additem" class="btn-primary uppercase rounded-10 px-4 py-2">
-                    + Add NEW Items
-                </button>
-            </div>
  
 
             <!-- Loan Calculation Summary Table -->
-             <!-- Calculation Result Box -->
          <!-- Hidden fields for saving calculation result -->
         <input type="hidden" name="security_value" id="inputSecurity">
         <input type="hidden" name="max_loan_amount" id="inputMaxLoan">
@@ -888,7 +1020,7 @@
                 </button>
 
                 <button class="btn-outline uppercase justify-center" type="reset">
-                    <a href="{{ route('mortgage.applications.index') }}">BACK</a>
+                    <a href="{{ route('vehical.applications.index') }}">BACK</a>
                 </button>
             </div>
 
@@ -1175,183 +1307,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
-<!-- add item container -->
- <!-- Show Security Value in Calculation box -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-    const addItemBtn = document.getElementById("additem");
-    const itemsContainer = document.getElementById("itemsContainer");
-    const totalSecurityInput = document.getElementById("totalSecurityInput");
-
-    let propertyIndex = 0;
-
-    // Property Block Template (with name attributes for form submission)
-    const getPropertyBlock = (index) => `
-    <div class="box bg-secondary/10 border-b mb-4 mt-4 property-block">
-        <div class="flex flex-wrap gap-6">
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Property Type <span class="text-error">*</span></label>
-                <select name="properties[${index}][property_type]" class="w-full border rounded-10 px-3 py-2">
-                    <option value="">Select Property Type</option>
-                    <option value="agriculture_land">Agriculture Land</option>
-                    <option value="urban_land">Urban Land</option>
-                    <option value="plot">Plot</option>
-                    <option value="house">House</option>
-                    <option value="shop">Shop</option>
-                </select>
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Doc Number</label>
-                <input type="text" name="properties[${index}][doc_number]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Doc Number">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Registrar Name</label>
-                <input type="text" name="properties[${index}][registrar_name]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Registrar Name">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Owner Name</label>
-                <input type="text" name="properties[${index}][owner_name]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Owner Name">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Parent Name</label>
-                <input type="text" name="properties[${index}][parent_name]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Parent Name">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Plot No</label>
-                <input type="text" name="properties[${index}][plot_no]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Plot No / House No">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Tehsil</label>
-                <input type="text" name="properties[${index}][tehsil]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Tehsil">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">District</label>
-                <input type="text" name="properties[${index}][district]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter District">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Area (SQ FT)</label>
-                <input type="text" name="properties[${index}][area_sqft]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter Area">
-            </div>
-
-            <div class="w-full border-t mt-4 pt-4">
-    <h4 class="text-lg font-semibold mb-2">Boundaries as per Sale Deed</h4>
-    <div class="grid grid-cols-2 gap-4">
-        <div>
-            <label class="block mb-1">East</label>
-            <input type="text" name="properties[${index}][boundary_sale_east]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter East">
-        </div>
-        <div>
-            <label class="block mb-1">West</label>
-            <input type="text" name="properties[${index}][boundary_sale_west]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter West">
-        </div>
-        <div>
-            <label class="block mb-1">North</label>
-            <input type="text" name="properties[${index}][boundary_sale_north]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter North">
-        </div>
-        <div>
-            <label class="block mb-1">South</label>
-            <input type="text" name="properties[${index}][boundary_sale_south]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter South">
-        </div>
-    </div>
-</div>
-
-<div class="w-full border-t mt-4 pt-4">
-    <h4 class="text-lg font-semibold mb-2">Boundaries as per Technical</h4>
-    <div class="grid grid-cols-2 gap-4">
-        <div>
-            <label class="block mb-1">East</label>
-            <input type="text" name="properties[${index}][boundary_tech_east]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter East">
-        </div>
-        <div>
-            <label class="block mb-1">West</label>
-            <input type="text" name="properties[${index}][boundary_tech_west]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter West">
-        </div>
-        <div>
-            <label class="block mb-1">North</label>
-            <input type="text" name="properties[${index}][boundary_tech_north]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter North">
-        </div>
-        <div>
-            <label class="block mb-1">South</label>
-            <input type="text" name="properties[${index}][boundary_tech_south]" class="w-full border rounded-10 px-3 py-2" placeholder="Enter South">
-        </div>
-    </div>
-</div>
-
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Expected Value <span class="text-red-500">*</span></label>
-                <input type="number" name="properties[${index}][expected_value]" class="expectedValue w-full border rounded-10 px-3 py-2" placeholder="Enter Expected Value">
-            </div>
-
-            <div class="w-1/2 mb-3">
-                <label class="uppercase font-medium block mb-2">Registered</label>
-                <select name="properties[${index}][registered]" class="w-full border rounded-10 px-3 py-2">
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
-
-            <div class="w-full text-end mb-3">
-                <button type="button" class="btn-error text-white rounded-10 px-4 py-2 remove-item">❌ Remove</button>
-            </div>
-        </div>
-    </div>`;
-
-    // Add property block
-    function addPropertyBlock() {
-        itemsContainer.insertAdjacentHTML("beforeend", getPropertyBlock(propertyIndex++));
-        attachExpectedValueListeners();
-    }
-
-    // Remove property block
-    itemsContainer.addEventListener("click", (e) => {
-        if (e.target.closest(".remove-item")) {
-            e.target.closest(".property-block").remove();
-            calculateTotalSecurity();
-        }
-    });
-
-    // Calculate total
-    function calculateTotalSecurity() {
-        let total = 0;
-        document.querySelectorAll(".expectedValue").forEach(input => {
-            total += parseFloat(input.value) || 0;
-        });
-        totalSecurityInput.value = total.toFixed(2);
-    }
-
-    // Attach input event listener to each property_value input
-    function attachExpectedValueListeners() {
-        document.querySelectorAll(".expectedValue").forEach(input => {
-            input.removeEventListener("input", calculateTotalSecurity);
-            input.addEventListener("input", calculateTotalSecurity);
-        });
-    }
-
-    // Initial load
-    //addPropertyBlock();
-    if (document.querySelectorAll('.property-block').length === 0) {
-    addPropertyBlock(); // only add default if none exist
-}
-
-    addItemBtn.addEventListener("click", addPropertyBlock);
-    // Attach listeners for preloaded property blocks (edit mode)
-    attachExpectedValueListeners();
-    calculateTotalSecurity();
-});
-</script>
-
 <!-- branch Auto populate when select customer -->
  <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -1415,6 +1370,7 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
 });
 </script>
 
+<!-- side box minimize -->
 <script>
     // <!-- collapsed logic + - button-->
         function toggleSection(button, sectionId) {
@@ -1427,41 +1383,102 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
 </script>
 
  <!-- Max Tenure & tenure vaule Validation -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const schemeSelect = document.getElementById("scheme_id");
-        const tenureInput = document.getElementById("tenure_value");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const schemeSelect = document.getElementById("scheme_id");
+    const tenureInput = document.getElementById("tenure_value");
 
-        function validateTenure() {
-            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-            const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
-            const val = parseInt(tenureInput.value) || 0;
+    function validateTenure() {
+        const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+        const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
+        const val = parseInt(tenureInput.value) || 0;
 
-            // If maxTenure not defined, skip
-            if (!maxTenure) return;
+        // If maxTenure not defined, skip
+        if (!maxTenure) return;
 
-            // Validate
-            if (val > maxTenure) {
-                tenureInput.classList.add("border-red-500");
-                document.getElementById("tenureError")?.remove();
+        // Validate
+        if (val > maxTenure) {
+            tenureInput.classList.add("border-red-500");
+            document.getElementById("tenureError")?.remove();
 
-                const errorMsg = document.createElement("p");
-                errorMsg.id = "tenureError";
-                errorMsg.className = "text-error text-sm mt-1";
-                errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
-                tenureInput.insertAdjacentElement("afterend", errorMsg);
+            const errorMsg = document.createElement("p");
+            errorMsg.id = "tenureError";
+            errorMsg.className = "text-error text-sm mt-1";
+            errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
+            tenureInput.insertAdjacentElement("afterend", errorMsg);
 
-                tenureInput.value = maxTenure; // optional cap
-            } else {
-                tenureInput.classList.remove("border-red-500");
-                document.getElementById("tenureError")?.remove();
-            }
+            tenureInput.value = maxTenure; // optional cap
+        } else {
+            tenureInput.classList.remove("border-red-500");
+            document.getElementById("tenureError")?.remove();
         }
+    }
 
-        schemeSelect.addEventListener("change", validateTenure);
-        tenureInput.addEventListener("input", validateTenure);
-    });
+    schemeSelect.addEventListener("change", validateTenure);
+    tenureInput.addEventListener("input", validateTenure);
+});
+</script>
+
+{{-- Vehicle Info Distributer --}}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const select = document.getElementById("distributor_id");
+            const box = document.getElementById("distributorBox");
+
+            const fields = {
+                code: document.getElementById("distCode"),
+                name: document.getElementById("distName"),
+                active: document.getElementById("distActive"),
+                type: document.getElementById("distType"),
+                contact: document.getElementById("distContact"),
+                email: document.getElementById("distEmail"),
+                city: document.getElementById("distCity"),
+                state: document.getElementById("distState"),
+                pincode: document.getElementById("distPincode"),
+                address: document.getElementById("distAddress"),
+                gst: document.getElementById("distGST"),
+                license: document.getElementById("distLicense"),
+                created: document.getElementById("distCreated"),
+                updated: document.getElementById("distUpdated"),
+            };
+
+            select.addEventListener("change", function () {
+                const selected = this.options[this.selectedIndex];
+                if (this.value) {
+                    fields.code.textContent = selected.getAttribute("data-code") || "-";
+                    fields.name.textContent = selected.getAttribute("data-name") || "-";
+
+                    const activeValue = selected.getAttribute("data-active") || "-";
+                    const activeEl = fields.active.querySelector("span");
+                    activeEl.textContent = activeValue;
+                    activeEl.className = `inline-block px-2 py-1 text-xs font-semibold text-white rounded ${activeValue.toLowerCase() === "yes" ? "bg-green-600" : "bg-red-500"
+                        }`;
+
+                    fields.type.textContent = selected.getAttribute("data-type") || "-";
+                    fields.contact.textContent = selected.getAttribute("data-contact") || "-";
+                    fields.email.textContent = selected.getAttribute("data-email") || "-";
+                    fields.city.textContent = selected.getAttribute("data-city") || "-";
+                    fields.state.textContent = selected.getAttribute("data-state") || "-";
+                    fields.pincode.textContent = selected.getAttribute("data-pincode") || "-";
+                    fields.address.textContent = selected.getAttribute("data-address") || "-";
+                    fields.gst.textContent = selected.getAttribute("data-gst") || "-";
+                    fields.license.textContent = selected.getAttribute("data-license") || "-";
+                    fields.created.textContent = selected.getAttribute("data-created") || "-";
+                    fields.updated.textContent = selected.getAttribute("data-updated") || "-";
+
+                    box.classList.remove("hidden");
+                } else {
+                    box.classList.add("hidden");
+                }
+            });
+        });
+
+        // optional collapse button function
+        function toggleDistributorBox() {
+            const body = document.getElementById("distributorBody");
+            body.classList.toggle("hidden");
+        }
     </script>
-
 
 @endsection

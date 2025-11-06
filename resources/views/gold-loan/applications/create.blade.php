@@ -638,8 +638,12 @@
                                         <label class="block text-sm font-medium text-gray-700 uppercase">
                                             Transfer Date <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }} "
-                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                        <input 
+                                        type="date" 
+                                        id="transfer_date" 
+                                        name="transfer_date" 
+                                        value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
 
                                     <div>
@@ -657,22 +661,21 @@
                                         </label>
                                         <div class="flex gap-4 mt-2">
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="transfer_mode" value="imps" {{
-                                                    old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ?
-                                                'checked' : '' }} >
+                                                <input type="radio" name="transfer_mode" 
+                                                value="imps"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ?
+                                                'checked' : '' }}>
                                                 <span>IMPS</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="transfer_mode" value="vpa" {{
-                                                    old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ?
-                                                'checked' : '' }} >
-
+                                                <input type="radio" name="transfer_mode" 
+                                                value="vpa"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ?
+                                                'checked' : '' }}>
                                                 <span>VPA</span>
                                             </label>
                                             <label class="flex items-center gap-2">
-                                                <input type="radio" name="transfer_mode" value="neft_rtgs" {{
-                                                    old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ?
-                                                'checked' : '' }} >
+                                                <input type="radio" name="transfer_mode" 
+                                                value="neft_rtgs"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ?
+                                                'checked' : '' }}>
                                                 <span>NEFT/RTGS</span>
                                             </label>
                                         </div>

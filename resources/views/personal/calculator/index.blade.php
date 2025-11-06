@@ -475,4 +475,87 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<!-- validation for max loan & Request loan -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const schemeSelect = document.getElementById("scheme_id");
+    const requestLoanInput = document.getElementById("request_loan_amount");
+    const tenureInput = document.getElementById("tenure_months");
+    const form = requestLoanInput.closest("form");
+    const submitBtn = form.querySelector('[type="submit"]');
+
+    // Create error message elements
+    const loanError = document.createElement("p");
+    loanError.classList.add("text-red-500", "text-sm", "mt-1");
+    requestLoanInput.insertAdjacentElement("afterend", loanError);
+
+    const tenureError = document.createElement("p");
+    tenureError.classList.add("text-red-500", "text-sm", "mt-1");
+    tenureInput.insertAdjacentElement("afterend", tenureError);
+
+    let maxLoanAmount = null;
+    let maxTenure = null;
+
+    // When user selects a scheme
+    schemeSelect.addEventListener("change", function () {
+        const selectedOption = this.options[this.selectedIndex];
+        maxLoanAmount = parseFloat(selectedOption.dataset.max) || null;
+        maxTenure = parseFloat(selectedOption.dataset.tenure) || null;
+
+        // Reset values and messages
+        loanError.textContent = "";
+        tenureError.textContent = "";
+        requestLoanInput.value = "";
+        tenureInput.value = "";
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    });
+
+    // Validation function
+    function validateForm() {
+        const loanEntered = parseFloat(requestLoanInput.value);
+        const tenureEntered = parseFloat(tenureInput.value);
+        let valid = true;
+
+        // Loan amount validation
+        if (maxLoanAmount && loanEntered > maxLoanAmount) {
+            loanError.textContent = `⚠️ Requested amount cannot exceed ₹${maxLoanAmount.toLocaleString()}`;
+            valid = false;
+        } else {
+            loanError.textContent = "";
+        }
+
+        // Tenure validation
+        if (maxTenure && tenureEntered > maxTenure) {
+            tenureError.textContent = `⚠️ Tenure cannot exceed ${maxTenure} months`;
+            valid = false;
+        } else {
+            if (!tenureError.textContent || tenureEntered <= maxTenure) {
+                tenureError.textContent = "";
+            }
+        }
+
+        // Toggle submit button
+        if (!valid) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+    }
+
+    // Listen to input changes
+    requestLoanInput.addEventListener("input", validateForm);
+    tenureInput.addEventListener("input", validateForm);
+
+    // Prevent form submit if invalid
+    form.addEventListener("submit", function (e) {
+        if (submitBtn.disabled) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+
 @endsection

@@ -1008,10 +1008,9 @@ class BusinessLoan extends Controller
         ));
     }
 
-
     public function loanagainst_process_fee($id)
     {
-        $application = LoanAgainstApplication::with([
+        $application = BusinessLoanApplication::with([
             'member',
             'coApplicant1',
             'guarantor1',
@@ -1021,7 +1020,7 @@ class BusinessLoan extends Controller
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("loanagainst.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("business.applications.view-buttons.col_process_fee", compact('application','banks'));
     }
 
     public function loanagainststoreProcessFee(Request $request, $id)
