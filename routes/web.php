@@ -62,6 +62,10 @@ use App\Http\Controllers\BusinessLoanAccount;
 use App\Http\Controllers\DailyWeeklyController;
 use App\Http\Controllers\DailyWeeklyDisburments;
 use App\Http\Controllers\DailyWeeklyAccount;
+use App\Http\Controllers\VehicalDisbursementController;
+use App\Http\Controllers\VehicalController;
+use App\Http\Controllers\VehicalAccountController;
+use App\Http\Controllers\VehicalDistributorController;
 
 // Clear cache 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -260,6 +264,10 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::get('/accounts/clear-due/{id}', [AccountsController::class, 'clearDue'])->name('accounts.clear.due');
     Route::post('/saving/other-charge/debit/{id}', [AccountsController::class, 'storeDebitCharge'])
         ->name('saving.other.charge.debit');
+
+    Route::get('/accounts/credit-interest/{id}', [AccountsController::class, 'creditInterest'])->name('accounts.credit.interest');
+    Route::post('/store-accounts/credit-interest/{id}', [AccountsController::class, 'storeCreditDebitInterest'])
+        ->name('storeCreditDebitInterest');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
@@ -755,7 +763,7 @@ Route::group(['prefix' => 'bussiness'], function () {
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])
         ->name('bussiness.account.index');
 
-        // Show emi chart 
+    // Show emi chart 
     Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');
 
     Route::get('col-process-fee/{id}', [BusinessLoan::class, 'bussiness_process_fee'])
@@ -993,6 +1001,56 @@ Route::group(['prefix' => 'personal'], function () {
 
 
 /////////////////////////////////////   END personal LOAN   ////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////   Vehical LOAN   ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'vehical'], function () {
+
+    Route::get('scheme/index', [VehicalController::class, 'index'])->name('vehical.schemes.index');
+    Route::get('scheme/create', [VehicalController::class, 'create'])->name('vehical.schemes.create');
+    Route::post('scheme/store', [VehicalController::class, 'store'])->name('vehical.schemes.store');
+    Route::get('scheme/{id}', [VehicalController::class, 'show'])->name('vehical.schemes.show');
+    Route::get('scheme/{id}/edit', [VehicalController::class, 'edit'])->name('vehical.schemes.edit');
+    Route::put('scheme/{id}', [VehicalController::class, 'update'])->name('vehical.schemes.update');
+    Route::get('scheme/view/{id}', [VehicalController::class, 'view'])->name('vehical.schemes.view');
+
+    Route::get('calculator/index', [VehicalController::class, 'calculator'])->name('vehical.calculator.index');
+    Route::get('scheme/{id}/details', [VehicalController::class, 'getSchemeDetails'])->name('vehical.scheme.details');
+    Route::get('calculator/calculation', [VehicalController::class, 'calculation'])->name('vehical.calculator.calculation');
+    Route::post('calculate', [VehicalController::class, 'calculateResult'])->name('vehical.calculator.calculate');
+
+    Route::get('applications/index', [VehicalController::class, 'appindex'])->name('vehical.applications.index');
+    Route::get('applications/create', [VehicalController::class, 'appcreate'])->name('vehical.applications.create');
+    Route::post('loan-applications/store', [VehicalController::class, 'storeLoanApplication'])->name('vehical.store');
+    Route::get('members/{id}/info', [VehicalController::class, 'getMemberInfo'])->name('members.info');
+    Route::get('applications/view/{id}', [VehicalController::class, 'appview'])->name('vehical.applications.view');
+    Route::get('applications/{id}/edit', [VehicalController::class, 'appedit'])->name('vehical.applications.edit');
+    Route::put('applications/{id}', [VehicalController::class, 'appupdate'])->name('vehical.applications.update');
+    Route::get('applications/show-emi-chart', [VehicalController::class, 'showEmiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
+
+    Route::get('disbursements/index', [VehicalDisbursementController::class, 'index'])->name('vehical.disbursements.index');
+    Route::post('disbursements/cancel/{id}', [VehicalDisbursementController::class, 'cancelLoan'])->name('vehicaldisbursements.cancel');
+    Route::get('disbursements/disburse-loan/{id}', [VehicalDisbursementController::class, 'show'])->name('vehical.disbursements.disburse-loan');
+    Route::post('disbursements/store', [VehicalDisbursementController::class, 'store'])->name('vehicaldisbursements.store');
+
+    Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
+   
+    Route::get('distributor/index', [VehicalDistributorController::class, 'index'])->name('vehical.distributors.index');
+   
+
+    Route::get('{id}/emi-chart', [VehicalController::class, 'emiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
+
+    Route::get('col-process-fee/{id}', [VehicalController::class, 'vehical_col_process_fee'])
+        ->name('vehical.applications.view-buttons.col_process_fee');
+    Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
+        ->name('vehical.col_process_fee.store');
+});
+
+
+/////////////////////////////////////   END Vehical LOAN   ////////////////////////////////////////////////////////
+
 
 
 Route::group(['prefix' => 'hr-managment'], function () {

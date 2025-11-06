@@ -47,29 +47,33 @@
                 <tbody>
                     @foreach($Transactions as $index => $Transaction)
                     <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                        {{-- Transaction date (transaction_date) --}}
+                        {{-- Transaction date --}}
                         <td class="text-start py-5 px-6">
-                            {{ $Transaction->accounts->transaction_date ? \Carbon\Carbon::parse($Transaction->accounts->transaction_date)->format('d-m-Y') : '-' }}
+                            {{ $Transaction->date ? \Carbon\Carbon::parse($Transaction->date)->format('d-m-Y') : '-' }}
                         </td>
 
-                        {{-- payment_mode --}}
-                        <td class="text-start py-5 px-6">{{ $Transaction->payment_mode ?? '-' }}</td>
+                        {{-- Payment mode --}}
+                        <td class="text-start py-5 px-6 capitalize">
+                            {{ $Transaction->source_type === 'TRANSACTION' ? ($Transaction->payment_mode ?? '-') : 'System' }}
+                        </td>
 
                         {{-- Remarks --}}
-                        <td class="text-start py-5 px-6">{{ $Transaction->reverse_status == 1 ? ($Transaction->comment ?? '-') : '' }}</td>
+                        <td class="text-start py-5 px-6">{{ $Transaction->remarks ?? '-' }}</td>
 
                         {{-- Status --}}
-                        <td class="text-start py-5 px-6">
-                            {{ $Transaction->approve_status ?? '-' }}
-                        </td>
+                        <td class="text-start py-5 px-6">{{ $Transaction->status ?? '-' }}</td>
 
-                        {{--Debit--}}
+                        {{-- Debit --}}
                         <td class="text-start py-5 px-6">
-                            {{ $Transaction->transaction_type == 'debit' ? $Transaction->amount : '-' }}
+                         
+                            {{ $Transaction->source_type === 'TRANSACTION' && ($Transaction->transaction_type ?? '') === 'debit' ? $Transaction->amount : '-' }}
                         </td>
 
                         {{-- Credit --}}
-                        <td class="text-start py-5 px-6">{{ $Transaction->transaction_type == 'credit' ? $Transaction->amount : '-' }}</td>
+
+                        <td class="text-start py-5 px-6">
+                            {{ $Transaction->source_type === 'TRANSACTION' && ($Transaction->transaction_type ?? '') === 'credit' ? $Transaction->amount : '-' }}
+                        </td>
 
                         {{-- Balance --}}
                         <td class="text-start py-5 px-6">-</td>
@@ -80,6 +84,7 @@
                                 Yes
                             </span>
                         </td>
+
                         {{-- Action --}}
                         <td class="text-center py-5 px-6">
                             <div class="flex justify-center">

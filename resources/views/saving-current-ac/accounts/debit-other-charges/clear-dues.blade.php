@@ -78,14 +78,14 @@
 
 
                                 <td class="px-2 py-2 ">
-                                    <input type="text" name="gst_rate" id="gst_rate" placeholder="0" readonly
+                                    <input type="text" name="gst_rate" id="gst_rate" placeholder="0" value="18" readonly
                                         class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                 </td>
 
 
                                 <td class="px-2 py-2 ">
                                     <input type="text" name="total_amount" id="total_amount" placeholder="0"
-                                        class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        class="w-full px-2 py-2 text-center bg-secondary/5 border rounded-10 text-sm md:text-base" />
                                 </td>
                             </tr>
                         </tbody>
@@ -138,4 +138,26 @@
         icon.textContent = section.classList.contains('hidden') ? '+' : '−';
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const amountInput = document.getElementById('amount');
+        const gstRateInput = document.getElementById('gst_rate');
+        const totalAmountInput = document.getElementById('total_amount');
+
+        function calculateGST() {
+            let amount = parseFloat(amountInput.value) || 0;
+            let gstRate = parseFloat(gstRateInput.value) || 0;
+
+            let gstAmount = (amount * gstRate) / 100;
+            let totalAmount = amount + gstAmount;
+
+            totalAmountInput.value = totalAmount.toFixed(2);
+        }
+
+        amountInput.addEventListener('input', calculateGST);
+
+        calculateGST();
+    });
+</script>
+
 @endsection

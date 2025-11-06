@@ -830,8 +830,8 @@
                     Total Security Amount
                 </label>
                 <input type="number" id="totalSecurityInput" name="total_security_amount"
-                    class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="0" readonly>
+                class="w-1/3 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                placeholder="0" value="{{ old('total_security_amount', $totalSecurityAmount ?? 0) }}" readonly>
             </div>
             <div class="mt-3">
                 <button type="button" id="additem" class="btn-primary uppercase rounded-10 px-4 py-2">
@@ -1346,6 +1346,9 @@ document.addEventListener("DOMContentLoaded", function () {
 }
 
     addItemBtn.addEventListener("click", addPropertyBlock);
+    // Attach listeners for preloaded property blocks (edit mode)
+    attachExpectedValueListeners();
+    calculateTotalSecurity();
 });
 </script>
 

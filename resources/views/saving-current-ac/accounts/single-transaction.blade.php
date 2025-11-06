@@ -75,7 +75,7 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Payment Mode</td>
-                    <td class="px-4 py-2 border border-gray-300">{{$transactions->accounts->payment_mode}}</td>
+                    <td class="px-4 py-2 border border-gray-300">  {{ $transactions->source_type === 'OTHER_CHARGE' ? 'System' : ($transactions->payment_mode ?? '-') }}</td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 font-semibold border border-gray-300 bg-gray-50">Tranx Receipt</td>

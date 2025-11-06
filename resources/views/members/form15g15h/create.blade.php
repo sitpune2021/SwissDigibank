@@ -142,7 +142,7 @@
                             </label>
                             @if ($type === 'select')
                                 <select name="{{ $name }}" id="{{ $id }}"
-                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10  px-3 md:px-6 py-2 md:py-3"
+                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     {{ isset($show) ? 'disabled' : '' }}>
                                     <option value="">-- Select {{ $label }} --</option>
 
@@ -222,19 +222,19 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let today = new Date().toISOString().split('T')[0];
-        document.getElementById('date2').setAttribute('max', today);
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let today = new Date().toISOString().split('T')[0];
-        flatpickr("#date2", {
-            maxDate: today,
-            dateFormat: "Y-m-d"
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('date2').setAttribute('max', today);
         });
-    });
-</script>
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let today = new Date().toISOString().split('T')[0];
+            flatpickr("#date2", {
+                maxDate: today,
+                dateFormat: "Y-m-d"
+            });
+        });
+    </script>
 @endsection
