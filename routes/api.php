@@ -26,8 +26,8 @@ Route::post('/password/reset', [ForgotLoginPasswordController::class, 'resetPass
 
 Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
     Route::get('transactions', [ApiTransactionController::class, 'transactionHistory']);
-    Route::get('passbook', [ApiTransactionController::class, 'viewPassbook']);
-    Route::get('balance', [ApiTransactionController::class, 'getBalance']); 
+    Route::get('balance', [ApiTransactionController::class, 'getBalance']);
+    Route::post('/filter-transactions', [ApiTransactionController::class, 'filterTransactions']);
 });
 
 //member  api route

@@ -97,22 +97,22 @@
   </div>
 
   <div class="flex flex-wrap gap-3">
-    <!-- FD Payout Plan -->
-    <button type="" class="btn-primary text-sm px-2 py-2 rounded-10 ">
-      FD PAYOUT PLAN
-    </button>
+    <!--  Payout Plan -->
+    <a href="{{route('misaccount.mispayout', $misaccount->id)}}" class="btn-primary text-sm px-2 py-2 rounded-10 ">
+      PAYOUT PLAN
+    </a>
 
     <!-- View Transactions -->
-    <button class="btn-secondary text-sm px-2 py-2 rounded-10 ">
+    <a href="{{ route('mis.transaction',$misaccount->id) }}" class="btn-secondary text-sm px-2 py-2 rounded-10 ">
       VIEW TRANSACTIONS
-    </button>
+    </a>
 
     <!-- Account Details -->
     <div class="relative inline-block text-left">
-      <button id="accountButton" class="flex items-center px-2 py-2 rounded-10 btn-warning text-sm text-white">
+      <a id="accountButton" class="flex items-center px-2 py-2 rounded-10 btn-warning text-sm text-white">
         ACCOUNT DETAILS
         <i id="accountArrow" class="las la-angle-down ml-2"></i>
-      </button>
+      </a>
 
       <!-- Dropdown menu -->
       <!-- <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
@@ -130,47 +130,55 @@
           class="block px-4 py-2 uppercase hover:bg-warning">
           Add Nominee
         </a>
+        <a href="{{ route('misaccount.foreclose', $misaccount->id) }}"
+          class="block px-4 py-2 uppercase hover:bg-warning">
+          Fore Close
+        </a>
+        <a href="{{ route('misaccount.removeAccount', $misaccount->id) }}"
+          class="block px-4 py-2 uppercase hover:bg-warning">
+          Remove Account
+        </a>
       </div>
 
 
     </div>
 
     <!--   RELEASE INTEREStT-->
-    <button class="btn-primary text-sm px-2 py-2  rounded-10 ">
+    <a class="btn-primary text-sm px-2 py-2  rounded-10 ">
       RELEASE INTEREST
-    </button>
+    </a>
     <!--   RELEASE INTEREStT-->
-    <button class="btn-warning text-sm px-2 py-2  rounded-10 ">
+    <a class="btn-warning text-sm px-2 py-2  rounded-10 ">
       LINK SAVING ACCOUNT(AUTO CREDIT)
-    </button>
+    </a>
 
     <!--  MARK LIEN AGAINST LOAN-->
-    <button class="btn-error text-sm px-2 py-2   rounded-10 ">
+    <a href="{{ route('misaccount.makelien', $misaccount->id) }}" class="btn-error text-sm px-2 py-2   rounded-10 ">
       MARK LIEN AGAINST LOAN
-    </button>
+    </a>
 
     <!-- INTEREST/TDS Button -->
     <div class="relative inline-block text-left">
-      <button id="interestButton" class="btn-secondary text-sm px-2 py-2 rounded-10 flex items-center">
+      <a id="interestButton" class="btn-secondary text-sm px-2 py-2 rounded-10 flex items-center">
         INTEREST/TDS
         <i id="interestArrow" class="las la-angle-down ml-2"></i>
-      </button>
+      </a>
 
       <div id="interestMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
-        <a href="#" class="block px-4 py-2 uppercase hover:bg-secondary">CREDIT/DEBIT INTEREST</a>
-        <a href="#" class="block px-4 py-2 uppercase hover:bg-secondary">DEDUCT/REVESRE TDS</a>
+        <a href="{{ route('misaccount.creditDebitInterest', $misaccount->id) }}" class="block px-4 py-2 uppercase ">CREDIT/DEBIT INTEREST</a>
+        <a href="{{ route('misaccount.deductReverseTds', $misaccount->id) }}" class="block px-4 py-2 uppercase ">DEDUCT/REVESRE TDS</a>
 
       </div>
     </div>
 
 
     <div class="relative inline-block text-left">
-      <button id="dropdownButton" class="flex items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
+      <a id="dropdownButton" class="flex items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
         <i class="las la-print mr-2"></i>
         PRINT DOCUMENTS
         <i id="dropdownArrow" class="las la-angle-down ml-2"></i>
 
-      </button>
+      </a>
 
       <!-- Dropdown menu -->
       <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
@@ -183,15 +191,10 @@
 
 
     <!-- Show Audit Trail -->
-    <button class="btn-secondary text-sm px-2 py-2  rounded-10  ">
+    <a class="btn-secondary text-sm px-2 py-2  rounded-10  ">
       SHOW AUDIT TRAIL
-    </button>
+    </a>
   </div>
-
-
-
-
-
 
   <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
@@ -204,14 +207,13 @@
               <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
               <td class="px-4 py-2">
                 <a href="" class="text-primary hover:underline">
-                  {{ $misaccount->member->member_no 
-    ?? ($misaccount->member_id ? str_pad($misaccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
+                  {{ $misaccount->member->member_no ?? ($misaccount->member_id ? str_pad($misaccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }} - {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
                 </a>
               </td>
             </tr>
             <tr>
               <td class="font-semibold  px-4 py-2 uppercase">Create on</td>
-              <td class="px-4 py-2">-</td>
+              <td class="px-4 py-2">{{ \Carbon\Carbon::parse($misaccount->created_at)->format('d-m-Y') }}</td>
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Created by</td>
@@ -227,7 +229,7 @@
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
-              <td class="px-4 py-2">-</td>
+              <td class="px-4 py-2">{{ $misaccount->fdScheme->scheme_name ?? '-' }}</td>
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Principal Amount</td>
@@ -242,7 +244,7 @@
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
               <td class="px-4 py-2">
-                {{ \Carbon\Carbon::parse($misaccount->transaction_date)->format('d-m-Y') }}
+                {{ \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y') }}
 
               </td>
             </tr>
@@ -254,12 +256,10 @@
               <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
               <td class="px-4 py-2">-</td>
             </tr>
-            @foreach($savingAccounts as $account)
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Balance Available</td>
-              <td class="px-4 py-2">₹ {{ $account->amount_deposit }}</td>
+              <td class="px-4 py-2">₹{{ number_format($balance, 2) }}</td>
             </tr>
-            @endforeach
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Status</td>
               <td class="px-4 py-2">-</td>
@@ -306,13 +306,11 @@
               <tr>
                 <td class="font-semibold px-4 py-2 w-1/3">Customer Name</td>
                 <td class="px-4 py-2">
-                  {{
-    ($misaccount->member->member_no ?? ($misaccount->member->id ? str_pad($misaccount->member->id, 6, '0', STR_PAD_LEFT) : '-')) 
-    . ' - ' . 
-    (($misaccount->member->member_info_first_name || $misaccount->member->member_info_last_name) 
-        ? ucfirst($misaccount->member->member_info_first_name) . ' ' . ucfirst($misaccount->member->member_info_last_name) 
-        : 'N/A')
-}}
+                  {{ ($misaccount->member->member_no ?? ($misaccount->member->id ? str_pad($misaccount->member->id, 6, '0', STR_PAD_LEFT) : '-'))
+                      . ' - ' .
+                      (($misaccount->member->member_info_first_name || $misaccount->member->member_info_last_name)
+                      ? ucfirst($misaccount->member->member_info_first_name) . ' ' . ucfirst($misaccount->member->member_info_last_name)
+                      : 'N/A') }}
                 </td>
               </tr>
 
@@ -406,9 +404,9 @@
                 @forelse($misaccount->transactions as $transaction)
                 <tr class="border-b">
                   <td class="px-4 py-2 text-start text-sm font-semibold">
-                    {{ $transaction->created_at->format('d-m-Y H:i') }}
+                    {{ $transaction->created_at->format('d-m-Y') }}
                   </td>
-                  <td class="px-4 py-2 text-start text-sm font-semibold">N/A</td>
+                  <td class="px-4 py-2 text-start text-sm font-semibold"> {{ $transaction->credited }}</td>
                   <td class="px-4 py-2 text-start text-sm font-semibold">{{ ucfirst($transaction->pay_mode) }}</td>
                   {{-- <td>
                         @if($transaction->bank)
@@ -505,7 +503,6 @@
                   </label>
                 </td>
               </tr>
-
             </tbody>
           </table>
         </div>
@@ -602,7 +599,7 @@
         <form action="" class="mt-2 px-3">
           <label for="" class="block uppercase">Advisor/ Staff</label>
           <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
-            <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3 
+            <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3
            dark:bg-bg3 dark:text-white">
               <option>Select option</option>
 
@@ -637,10 +634,11 @@
 
       </div>
 
+      <!-- Fore Close  -->
       <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="border-b px-4 py-3 bg-red-100">
-          <h3 class="text-lg font-semibold text-black uppercase uppercase">Fore Closure Info</h3>
+          <h3 class="text-lg font-semibold text-black uppercase ">Fore Closure Info</h3>
         </div>
 
         <!-- Body -->
@@ -739,7 +737,9 @@
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Tenure of FD/ MIS</td>
                 <td class="px-4 py-2 text-right md:text-left">
-                  N/A
+                  {{ $misaccount->tenure_year ? $misaccount->tenure_year . ' Year(s) ' : '' }}
+                  {{ $misaccount->tenure_month ? $misaccount->tenure_month . ' Month(s) ' : '' }}
+                  {{ $misaccount->tenure_day ? $misaccount->tenure_day . ' Day(s)' : '' }}
                 </td>
               </tr>
 
@@ -753,7 +753,7 @@
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                 <td class="px-4 py-2 text-right md:text-left">
-                  N/A
+                  {{ $misaccount->total_interest ?? '' }}
                 </td>
               </tr>
 
@@ -778,27 +778,28 @@
         <!-- Body -->
 
         <div class="overflow-x-auto mt-5">
+
           <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
               <tr>
                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Maturity Date</td>
-                <td class="px-4 py-2 text-right md:text-left">02/03/2029</td>
+                <td class="px-4 py-2 text-right md:text-left">{{ \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y') }}</td>
               </tr>
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Principal Amount (A)</td>
-                <td class="px-4 py-2 text-right md:text-left">₹ 500,000.00</td>
+                <td class="px-4 py-2 text-right md:text-left">₹{{$misaccount->mis_amount ?? ''}}</td>
               </tr>
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Total Interest (B)</td>
-                <td class="px-4 py-2 text-right md:text-left">₹ 225,000.00</td>
+                <td class="px-4 py-2 text-right md:text-left">₹ {{$misaccount->total_interest ?? '' }}</td>
               </tr>
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Total TDS Deducted (C)</td>
-                <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
+                <td class="px-4 py-2 text-right md:text-left">{{$misaccount->tds_deduction ?? ''}}</td>
               </tr>
 
               <tr>
@@ -808,14 +809,13 @@
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (A + B + D)</td>
-                <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00</td>
+                <td class="px-4 py-2 text-right md:text-left">₹ {{$misaccount->maturity_amount ?? ''}}</td>
               </tr>
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Net Maturity Amount (A + B + D - C)</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00 </td>
               </tr>
-
 
             </tbody>
           </table>
@@ -856,8 +856,6 @@
                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted</td>
                 <td class="px-4 py-2 text-right md:text-left"> N/A Months</td>
               </tr>
-
-
             </tbody>
           </table>
         </div>

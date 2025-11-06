@@ -1640,45 +1640,5 @@ class MemberController extends Controller
             return back()->withErrors('There was an error storing your comment.');
         }
     }
-
-
-    // public function storeComment(Request $request)
-    // {
-    //     Log::debug('Store Comment Request Data: ', $request->all());
-
-    //     // Validate the incoming request
-    //     $validated = $request->validate([
-    //         'comment' => 'required|string',
-    //         'member_id' => 'required|exists:members,id',  // Ensure member exists
-    //     ]);
-
-    //     try {
-    //         // Store the comment with member_id and current date
-    //         MembershipChargeTransaction::create([
-    //             'member_id' => $validated['member_id'],
-    //             'transaction_date' => now(),
-    //             'comment' => $validated['comment'],
-    //         ]);
-
-    //         // Log the successful store operation
-    //         Log::info('Comment stored successfully', [
-    //             'member_id' => $validated['member_id'],
-    //             'comment' => $validated['comment'],
-    //             'transaction_date' => now(),
-    //         ]);
-
-    //         // Redirect with success message
-    //         return redirect()->route('members.member.show', ['member_id' => $validated['member_id']])
-    //             ->with('success', 'Comment added successfully!');
-    //     } catch (\Exception $e) {
-    //         // Log error
-    //         Log::error('Error storing comment', [
-    //             'error_message' => $e->getMessage(),
-    //             'stack_trace' => $e->getTraceAsString(),
-    //         ]);
-
-    //         // Handle error
-    //         return back()->withErrors('There was an error storing your comment.');
-    //     }
-    // }
+    
 }

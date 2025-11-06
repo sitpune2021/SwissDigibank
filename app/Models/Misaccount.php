@@ -27,6 +27,9 @@ class Misaccount extends Model
         'account_type',
         'joint_member_id',
         'nominee',
+        'nominee_name',
+        'nominee_relation',
+        'nominee_address',
         'final_amount',
         'transaction_date',
         'mis_joint_date',
@@ -34,7 +37,12 @@ class Misaccount extends Model
         'total_interest',
         'maturity_amount',
         'maturity_date',
+        
     ];
+    
+protected $casts = [
+    'open_date' => 'date',
+];
 
 
     public function member()
@@ -48,13 +56,8 @@ class Misaccount extends Model
 
     public function nominees()
     {
-        return $this->hasMany(AccountNominee::class, 'account_id');
+        return $this->hasMany(AccountNominee::class, 'mis_account_id');
     }
-
-   public function misnominees()
-{
-    return $this->hasMany(MisaccountNominee::class, 'mis_account_id'); // 👈 fix
-}
 
 
     public function fdScheme()

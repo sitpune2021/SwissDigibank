@@ -75,10 +75,10 @@
                         <button type="submit" class="btn-primary transition" data-confirm="Are you sure to add comment?">
                             SAVE
                         </button>
-                        <a href="{{ route('member.addComment', ['member_id' => $member_id]) }}"
-                            class="btn-outline transition">
+                        <a href="{{ route('member.show', $member_id) }}" class="btn-outline transition">
                             Back
                         </a>
+
                     </div>
                 </form>
             </div>

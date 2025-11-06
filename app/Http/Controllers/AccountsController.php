@@ -557,7 +557,118 @@ class AccountsController extends Controller
         ]);
 
         return redirect()
-            ->route('accounts.show',base64_encode( $account->id))
+            ->route('accounts.show', base64_encode($account->id))
             ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
+    }
+
+
+    // Account Nominee
+    public function accountNominee(string $id)
+    {
+        $account_id = base64_decode($id);
+        $account = Account::with('members', 'nominee')->where('id', $account_id)->first();
+        $member = $account->members;
+        return view('saving-current-ac.accounts.account-details.account-nominee', compact('account', 'member'));
+    }
+
+    public function saveNominees(Request $request, $id)
+    {
+        $account = Account::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+            Log::info('Nominee update process started', [
+                'account_id' => $account->id,
+                'request_data' => $request->all(),
+            ]);
+
+            // If "no" selected → delete all old nominees
+            if ($request->nominee === 'no') {
+                $deletedCount = $account->nominee()->count();
+                $account->nominee()->delete();
+
+                Log::info('All nominees removed for account', [
+                    'account_id' => $account->id,
+                    'deleted_count' => $deletedCount,
+                ]);
+
+                DB::commit();
+                return back()->with('success', 'Nominee information removed successfully.');
+            }
+
+            // Validate input
+            $validated = $request->validate([
+                'nominees' => 'required|array|min:1',
+                'nominees.*.name' => 'required|string|max:255',
+                'nominees.*.address' => 'required|string|max:255',
+                'nominees.*.relation' => 'required|string|max:100',
+            ]);
+
+            $submittedNominees = collect($validated['nominees']);
+            $existingNominees = $account->nominee()->pluck('id')->toArray();
+            $updatedNominees = [];
+
+            foreach ($submittedNominees as $nomineeData) {
+                // Update existing
+                if (isset($nomineeData['id']) && in_array($nomineeData['id'], $existingNominees)) {
+                    $nominee = AccountNominee::find($nomineeData['id']);
+                    $nominee->update([
+                        'nominee_name' => $nomineeData['name'],
+                        'nominee_address' => $nomineeData['address'],
+                        'nominee_relation' => strtolower($nomineeData['relation']),
+                    ]);
+                    $updatedNominees[] = $nominee->id;
+
+                    Log::info('Nominee updated', [
+                        'account_id' => $account->id,
+                        'nominee_id' => $nominee->id,
+                        'data' => $nomineeData,
+                    ]);
+                } else {
+                    // Create new
+                    $newNominee = $account->nominee()->create([
+                        'nominee_name' => $nomineeData['name'],
+                        'nominee_address' => $nomineeData['address'],
+                        'nominee_relation' => strtolower($nomineeData['relation']),
+                    ]);
+
+                    Log::info('New nominee added', [
+                        'account_id' => $account->id,
+                        'nominee_id' => $newNominee->id,
+                        'data' => $nomineeData,
+                    ]);
+                }
+            }
+
+            // Delete removed ones
+            $nomineesToDelete = array_diff($existingNominees, $updatedNominees);
+            if (!empty($nomineesToDelete)) {
+                AccountNominee::whereIn('id', $nomineesToDelete)->delete();
+
+                Log::info('Nominees deleted', [
+                    'account_id' => $account->id,
+                    'deleted_nominee_ids' => $nomineesToDelete,
+                ]);
+            }
+
+            DB::commit();
+
+            Log::info('Nominee update process completed successfully', [
+                'account_id' => $account->id,
+            ]);
+
+            return back()->with('success', 'Nominee details updated successfully.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error('Error while updating nominees', [
+                'account_id' => $account->id,
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+        }
     }
 }

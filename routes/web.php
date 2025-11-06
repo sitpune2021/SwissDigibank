@@ -268,6 +268,9 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::get('/accounts/credit-interest/{id}', [AccountsController::class, 'creditInterest'])->name('accounts.credit.interest');
     Route::post('/store-accounts/credit-interest/{id}', [AccountsController::class, 'storeCreditDebitInterest'])
         ->name('storeCreditDebitInterest');
+
+    Route::get('/accounts/account-nominee/{id}', [AccountsController::class, 'accountNominee'])->name('saving.accounts.nominee');
+    Route::post('/accounts/{id}/nominees', [AccountsController::class, 'saveNominees'])->name('accounts.nominees.save');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
@@ -292,14 +295,46 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
     Route::get('/fd-add-nominee/{id}', [FdController::class, 'addNominee'])->name('fd.add.nominee');
 
-    Route::resource('misaccount', MisaccountController::class);
+    // Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
     // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
 
 
     //Transactions Info
-    Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
+    // Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
 
+
+    //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
+    // Show change account info form
+    // Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
+    //     ->name('misaccount.changeAccountInfo');
+
+    // Update account info (form submit)
+    // Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
+    //     ->name('misaccount.updateAccountInfo');
+
+    // Add Nominee
+    // Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
+    //     ->name('misaccount.addNominee');
+
+    // Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
+    //     ->name('misaccount.updateNominee');
+
+    //edit and update branches
+
+    // Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
+    //     ->name('misaccount.update-branch');
+
+    Route::resource('misaccount', MisaccountController::class);
+    // Route::get('misaccount/create', [MisaccountController::class, 'create']);
+    // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
+    Route::get('/misaccount/payout/{id}', [MisaccountController::class, 'misPayout'])->name('misaccount.mispayout');
+    Route::Post('/misaccount/process/payout/{id}', [MisaccountController::class, 'processPayout'])->name('mis.processPayout');
+
+    //Transactions Info
+    Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
+    Route::get('/mistransaction/{id}', [MisaccountController::class, 'viewTransaction'])->name('mis.transaction');
+    Route::get('/mistransaction/view/{id}', [MisaccountController::class, 'transaction'])->name('mis.transaction.view');
 
     //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
     // Show change account info form
@@ -321,6 +356,20 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
         ->name('misaccount.update-branch');
+
+    Route::get('/misaccount/foreclose/{id}', [MisaccountController::class, 'foreclose'])->name('misaccount.foreclose');
+    Route::get('/misaccount/{id}/remove-account', [MisaccountController::class, 'removeAccount'])->name('misaccount.removeAccount');
+
+    Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');
+
+    Route::get('/misaccount/credit-debit-interest/{id}', [MisaccountController::class, 'creditDebitInterest'])->name('misaccount.creditDebitInterest');
+    Route::post('/misaccount/{id}/credit-debit-interest', [MisAccountController::class, 'storeCreditDebitInterestAndTDS'])
+        ->name('mis.creditdebit.store');
+
+
+    Route::get('/misaccount/deduct-reverse-tds/{id}', [MisaccountController::class, 'deductReverseTds'])->name('misaccount.deductReverseTds');
+    Route::post('/misaccount/{id}/deduct-reverse-tds', [MisAccountController::class, 'storeCreditDebitInterestAndTDS'])
+        ->name('mis.creditdebit.store');
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -562,6 +611,18 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
+    Route::get('account/show/{id}', [MortgageAccountController::class, 'show'])
+        ->name('mortgage.account.show');
+    Route::get('mortgage-account/transaction/{id}', [MortgageAccountController::class, 'mortgageTransaction'])
+        ->name('mortgage.account.transaction');
+    Route::get('mortgage-account/payemi/{id}', [MortgageAccountController::class, 'mortgagePayEmi'])
+        ->name('mortgage.account.pay-emi');
+    Route::post('mortgage-account/payemi/{id}/pay', [MortgageAccountController::class, 'payEmiLoan'])->name('mortgage.payEmiLoan');
+    Route::get('mortgage-account/pay/{id}', [MortgageAccountController::class, 'mortgagePay'])
+        ->name('mortgage.account.pay');
+    Route::post('/mortgage/pay-emi', [MortgageAccountController::class, 'payEmi'])->name('mortgage.payEmi');
+
+
     Route::get('lineproperty/index', [MortgageController::class, 'linepropertyindex'])->name('mortgage.lineproperty.index');
     Route::get('lineproperty/export', [MortgageController::class, 'exportLineProperty'])->name('mortgage.lineproperty.export');
     Route::get('{id}/emi-chart', [MortgageController::class, 'emiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
@@ -1008,6 +1069,7 @@ Route::group(['prefix' => 'personal'], function () {
 
 Route::group(['prefix' => 'vehical'], function () {
 
+    // Scheme
     Route::get('scheme/index', [VehicalController::class, 'index'])->name('vehical.schemes.index');
     Route::get('scheme/create', [VehicalController::class, 'create'])->name('vehical.schemes.create');
     Route::post('scheme/store', [VehicalController::class, 'store'])->name('vehical.schemes.store');
@@ -1016,11 +1078,13 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::put('scheme/{id}', [VehicalController::class, 'update'])->name('vehical.schemes.update');
     Route::get('scheme/view/{id}', [VehicalController::class, 'view'])->name('vehical.schemes.view');
 
+    // Calculation
     Route::get('calculator/index', [VehicalController::class, 'calculator'])->name('vehical.calculator.index');
     Route::get('scheme/{id}/details', [VehicalController::class, 'getSchemeDetails'])->name('vehical.scheme.details');
     Route::get('calculator/calculation', [VehicalController::class, 'calculation'])->name('vehical.calculator.calculation');
     Route::post('calculate', [VehicalController::class, 'calculateResult'])->name('vehical.calculator.calculate');
 
+    // Application
     Route::get('applications/index', [VehicalController::class, 'appindex'])->name('vehical.applications.index');
     Route::get('applications/create', [VehicalController::class, 'appcreate'])->name('vehical.applications.create');
     Route::post('loan-applications/store', [VehicalController::class, 'storeLoanApplication'])->name('vehical.store');
@@ -1030,22 +1094,33 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::put('applications/{id}', [VehicalController::class, 'appupdate'])->name('vehical.applications.update');
     Route::get('applications/show-emi-chart', [VehicalController::class, 'showEmiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
 
+    // Disbursment
     Route::get('disbursements/index', [VehicalDisbursementController::class, 'index'])->name('vehical.disbursements.index');
     Route::post('disbursements/cancel/{id}', [VehicalDisbursementController::class, 'cancelLoan'])->name('vehicaldisbursements.cancel');
     Route::get('disbursements/disburse-loan/{id}', [VehicalDisbursementController::class, 'show'])->name('vehical.disbursements.disburse-loan');
     Route::post('disbursements/store', [VehicalDisbursementController::class, 'store'])->name('vehicaldisbursements.store');
 
+    // Account
     Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
-   
-    Route::get('distributor/index', [VehicalDistributorController::class, 'index'])->name('vehical.distributors.index');
-   
 
+    // Distributors 
+    Route::get('distributor/index', [VehicalDistributorController::class, 'index'])->name('vehical.distributors.index');
+    Route::get('distributor/create', [VehicalDistributorController::class, 'create'])->name('vehical.distributors.create');
+    Route::post('vehicle-distributor/store', [VehicalDistributorController::class, 'store'])->name('vehicle-distributor.store');
+    Route::get('distributors/{id}', [VehicalDistributorController::class, 'show'])->name('distributors.show');
+    Route::get('distributors/{id}/edit', [VehicalDistributorController::class, 'edit'])->name('edit');
+    Route::put('distributors/{id}', [VehicalDistributorController::class, 'update'])
+     ->name('vehical.distributors.update');
+
+    // Application view emi chart
     Route::get('{id}/emi-chart', [VehicalController::class, 'emiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
 
+    // Application view page collcet processing fee
     Route::get('col-process-fee/{id}', [VehicalController::class, 'vehical_col_process_fee'])
         ->name('vehical.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
+        
 });
 
 

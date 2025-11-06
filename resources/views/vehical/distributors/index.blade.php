@@ -1,234 +1,176 @@
 @extends('layout.main')
-@section('content')
-    <style>
-        .breadcrumb {
-            list-style: none;
-            display: flex;
-            padding: 0;
-            margin-bottom: 1rem;
-            font-size: 14px;
-        }
 
-        .breadcrumb li+li::before {
-            content: "/";
-            padding: 0 8px;
-            color: #888;
-        }
+<style>
+    .breadcrumb {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 14px;
+    }
 
-        .breadcrumb li a {
-            text-decoration: none;
-            color: #007bff;
-        }
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 8px;
+        color: #888;
+    }
 
-        .breadcrumb li.active {
-            color: #555;
-        }
+    .breadcrumb li a {
+        text-decoration: none;
+        color: #007bff;
+    }
 
+    .breadcrumb li.active {
+        color: #555;
+    }
+
+    .custom-thead {
+        background-color: #e6f4ea;
+        color: #14532d;
+    }
+
+    .custom-thead th {
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+    }
+
+    @media (prefers-color-scheme: dark) {
         .custom-thead {
-            background-color: #e6f4ea;
-            color: #14532d;
-        }
-
-        .custom-thead th {
-            font-weight: 600;
-            border-bottom: 1px solid #ccc;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .custom-thead {
-                background-color: #14532d;
-                color: #d1fae5;
-            }
-        }
-
-        .bg-greens {
             background-color: #14532d;
+            color: #d1fae5;
         }
-    </style>
+    }
+
+    .bg-greens {
+        background-color: #14532d;
+    }
+</style>
+
+@section('content')
+
+ @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
+    @endif
+    
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h1 class=" flex text-xl block  uppercase font-semibold">Mortgage Account Loans</h1>
-            <a href="#" class=" block flex btn-primary capitalize ">
-                Add
+            <h3 class=" flex text-xl block uppercase font-semibold">
+                Vehicle lone Distributors
+            </h3>
+            <a href="{{ route('vehical.distributors.create') }}" class=" block flex btn-primary uppercase ">add
+                {{-- <i class="las la-plus text-lg"></i> --}}
             </a>
         </div>
 
         <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
+                
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    ASSOCIATE
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer ">
+                                <div class="flex items-center gap-1 uppercase">
+                                    DISTRIBUTOR CODE
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    GROUP
+                                <div class="flex items-center gap-1 uppercase">
+                                    DISTRIBUTOR NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    LOAN NO
+                                <div class="flex items-center gap-1 uppercase">
+                                    DISTRIBUTOR TYPE
                                 </div>
                             </th>
-
-
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    MEMBER NO
-                                </div>
-                            </th>
-
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    MEMBER NAME
+                                <div class="flex items-center gap-1 uppercase">
+                                    CONTACT NO
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    BRANCH
-                                </div>
-                            </th>
-
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    SCHEME
-                                </div>
-                            </th>
-
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    EMI COLLECTION
+                                <div class="flex items-center gap-1 uppercase">
+                                    EMAIL
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    OPEN DATE
+                                <div class="flex items-center gap-1 uppercase">
+                                    STATE
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    CLOSE DATE
+                                <div class="flex items-center gap-1 uppercase">
+                                    ACTIVE
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    STATUS
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    LOAN AMT.
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    CURRENT DEBT
-                                </div>
-                            </th>
-
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1 uppercase">
                                     ACTIONS
                                 </div>
                             </th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        <tr class="border-b dark:border-bg3">
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    SAMADHAN JADHAV
-                                </div>
+                    @forelse($distributors as $row)
+                        <tr class="border-b">
+                            <td class="py-3 px-6 uppercase text-primary"><a href="{{ route('distributors.show', $row->id) }}" class="single-option capitalize" style="color:#007bff">{{ $row->distributor_code }}</a></td>
+                            <td class="py-3 px-6 uppercase">{{ $row->distributor_name }}</td>
+                            <td class="py-3 px-6 uppercase">{{ $row->distributor_type }}</td>
+                            <td class="py-3 px-6 lowercase">{{ $row->contact_no }}</td>
+                            <td class="py-3 px-6 lowercase">{{ $row->email }}</td>
+                            <td class="py-3 px-6">{{ $row->state }}</td>
+                            <td class="py-3 px-6">
+                                @if($row->active)
+                                    <span class="block w-20 rounded-full border border-n30 bg-primary/20 py-1 text-center text-xs text-primary">Yes</span>
+                                @else
+                                    <span class="block w-20 rounded-full border border-n30 bg-error/20 py-1 text-center text-xs text-error">No</span>
+                                @endif
                             </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 Capitalize">
-                                    Suvarna shree yojana no emi
-                                </div>
-                            </td>
-
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center text-secondary gap-1">
-                                    00460
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center text-secondary gap-1">
-                                    DEMO-04435
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    atharv page
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    MADHA
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 Capitalize">
-                                    Suvarna shree yojana flat advanced interest deduction
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    MONTHLY
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    24/09/2025
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                        Active
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    100,000.00
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-
-                                </div>
-                            </td>
-
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                    
+                            <!-- Actions -->
+                            <td class="text-start !py-5 px-6">
                                 <div class="flex justify-center">
                                     <div class="relative">
                                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                         <ul class="horiz-option popover-content">
-                                            <li><a href="" class="single-option">View</a></li>
-
+                                            <li><a href="{{ route('distributors.show', $row->id) }}" class="single-option capitalize">View</a></li>                            
+                                            <li><a href="{{ route('edit', $row->id) }}" class="single-option capitalize">Edit</a></li>              
                                         </ul>
-
-                                        {{-- @include('partials._vertical-options', [
-                                        /* 'id' =>base64_encode($director->id),
-                                        'viewRoute' => 'director.show',
-                                        'editRoute' => 'director.edit'*/
-                                        ]) --}}
                                     </div>
                                 </div>
                             </td>
                         </tr>
+
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-gray-500">No distributors found.</td>
+                            </tr>
+                        @endforelse
+
                     </tbody>
+
                 </table>
+
             </div>
+
         </div>
+
 @endsection

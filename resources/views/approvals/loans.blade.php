@@ -120,6 +120,7 @@
                                         @elseif($application->model_type === 'cc_od') text-yellow-600
                                         @elseif($application->model_type === 'daily_weekly') text-green-600
                                          @elseif($application->model_type === 'personal') text-green-600
+                                         @elseif($application->model_type === 'vehical') text-green-600
                                         @endif
                                     ">
                                         {{ $types[$application->model_type] ?? 'Unknown' }}

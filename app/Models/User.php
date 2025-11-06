@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Address;
 
 
 class User extends Authenticatable
@@ -79,4 +80,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(CompanyCertificate::class);
     }
+    public function member()
+    {
+        return $this->hasOne(Member::class, 'user_id', 'id');
+    }
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'member_id', 'id');
+    }
+    
 }
