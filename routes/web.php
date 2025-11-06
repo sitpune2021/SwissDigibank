@@ -558,6 +558,18 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
+    Route::get('account/show/{id}', [MortgageAccountController::class, 'show'])
+        ->name('mortgage.account.show');
+    Route::get('mortgage-account/transaction/{id}', [MortgageAccountController::class, 'mortgageTransaction'])
+        ->name('mortgage.account.transaction');
+    Route::get('mortgage-account/payemi/{id}', [MortgageAccountController::class, 'mortgagePayEmi'])
+        ->name('mortgage.account.pay-emi');
+    Route::post('mortgage-account/payemi/{id}/pay', [MortgageAccountController::class, 'payEmiLoan'])->name('mortgage.payEmiLoan');
+    Route::get('mortgage-account/pay/{id}', [MortgageAccountController::class, 'mortgagePay'])
+        ->name('mortgage.account.pay');
+    Route::post('/mortgage/pay-emi', [MortgageAccountController::class, 'payEmi'])->name('mortgage.payEmi');
+
+
     Route::get('lineproperty/index', [MortgageController::class, 'linepropertyindex'])->name('mortgage.lineproperty.index');
     Route::get('lineproperty/export', [MortgageController::class, 'exportLineProperty'])->name('mortgage.lineproperty.export');
     Route::get('{id}/emi-chart', [MortgageController::class, 'emiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
@@ -1004,6 +1016,7 @@ Route::group(['prefix' => 'personal'], function () {
 
 Route::group(['prefix' => 'vehical'], function () {
 
+    // Scheme
     Route::get('scheme/index', [VehicalController::class, 'index'])->name('vehical.schemes.index');
     Route::get('scheme/create', [VehicalController::class, 'create'])->name('vehical.schemes.create');
     Route::post('scheme/store', [VehicalController::class, 'store'])->name('vehical.schemes.store');
@@ -1012,11 +1025,13 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::put('scheme/{id}', [VehicalController::class, 'update'])->name('vehical.schemes.update');
     Route::get('scheme/view/{id}', [VehicalController::class, 'view'])->name('vehical.schemes.view');
 
+    // Calculation
     Route::get('calculator/index', [VehicalController::class, 'calculator'])->name('vehical.calculator.index');
     Route::get('scheme/{id}/details', [VehicalController::class, 'getSchemeDetails'])->name('vehical.scheme.details');
     Route::get('calculator/calculation', [VehicalController::class, 'calculation'])->name('vehical.calculator.calculation');
     Route::post('calculate', [VehicalController::class, 'calculateResult'])->name('vehical.calculator.calculate');
 
+    // Application
     Route::get('applications/index', [VehicalController::class, 'appindex'])->name('vehical.applications.index');
     Route::get('applications/create', [VehicalController::class, 'appcreate'])->name('vehical.applications.create');
     Route::post('loan-applications/store', [VehicalController::class, 'storeLoanApplication'])->name('vehical.store');
@@ -1026,22 +1041,33 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::put('applications/{id}', [VehicalController::class, 'appupdate'])->name('vehical.applications.update');
     Route::get('applications/show-emi-chart', [VehicalController::class, 'showEmiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
 
+    // Disbursment
     Route::get('disbursements/index', [VehicalDisbursementController::class, 'index'])->name('vehical.disbursements.index');
     Route::post('disbursements/cancel/{id}', [VehicalDisbursementController::class, 'cancelLoan'])->name('vehicaldisbursements.cancel');
     Route::get('disbursements/disburse-loan/{id}', [VehicalDisbursementController::class, 'show'])->name('vehical.disbursements.disburse-loan');
     Route::post('disbursements/store', [VehicalDisbursementController::class, 'store'])->name('vehicaldisbursements.store');
 
+    // Account
     Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
-   
-    Route::get('distributor/index', [VehicalDistributorController::class, 'index'])->name('vehical.distributors.index');
-   
 
+    // Distributors 
+    Route::get('distributor/index', [VehicalDistributorController::class, 'index'])->name('vehical.distributors.index');
+    Route::get('distributor/create', [VehicalDistributorController::class, 'create'])->name('vehical.distributors.create');
+    Route::post('vehicle-distributor/store', [VehicalDistributorController::class, 'store'])->name('vehicle-distributor.store');
+    Route::get('distributors/{id}', [VehicalDistributorController::class, 'show'])->name('distributors.show');
+    Route::get('distributors/{id}/edit', [VehicalDistributorController::class, 'edit'])->name('edit');
+    Route::put('distributors/{id}', [VehicalDistributorController::class, 'update'])
+     ->name('vehical.distributors.update');
+
+    // Application view emi chart
     Route::get('{id}/emi-chart', [VehicalController::class, 'emiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
 
+    // Application view page collcet processing fee
     Route::get('col-process-fee/{id}', [VehicalController::class, 'vehical_col_process_fee'])
         ->name('vehical.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
+        
 });
 
 

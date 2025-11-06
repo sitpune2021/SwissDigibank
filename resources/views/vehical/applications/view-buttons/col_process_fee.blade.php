@@ -15,14 +15,14 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg font-semibold capitalize">Mortgage Processing Fee</h1>
+            <h1 class="text-lg font-semibold capitalize">Vehical Processing Fee</h1>
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                <form action="{{ route('mortgage.col_process_fee.store', $application->id) }}" method="POST">
+                <form action="{{ route('vehical.col_process_fee.store', $application->id) }}" method="POST">
                     @csrf
 
                     <input type="hidden" name="value" value="0">
@@ -224,7 +224,7 @@
                         </button>
 
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="{{ route('mortgage.applications.view', $application->id) }}"> BACK</a>
+                            <a href="{{ route('vehical.applications.view', $application->id) }}"> BACK</a>
                         </button>
                     </div>
                 </form>

@@ -496,7 +496,7 @@ class GoldLoanController extends Controller
                                 : null,
                             'report_file_path' => $filePath,
                         ]);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Log::error('Error while saving credit score entry', [
                             'index' => $index,
                             'error_message' => $e->getMessage(),
