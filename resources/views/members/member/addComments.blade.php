@@ -5,7 +5,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    Add Comment - FD Account
+                    Add Comment - Member
                 </h1>
             </div>
         </div>

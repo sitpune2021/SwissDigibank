@@ -23,6 +23,22 @@
     }
 </style>
 
+@if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="bg-red-50 border border-red-300 text-red-600 px-4 py-2 rounded mb-3">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -1181,6 +1197,7 @@ document.addEventListener("DOMContentLoaded", function () {
             icon.textContent = section.classList.contains('hidden') ? '+' : '−';
         }
 </script>
+
 
 @endsection
 

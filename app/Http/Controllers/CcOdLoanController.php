@@ -36,8 +36,7 @@ class CcOdLoanController extends Controller
     {
         return view("cc_od.schemes.create");
     }
-
-   
+ 
     public function store(Request $request)
     {
         Log::info('--- cc_od Loan Scheme Store Started ---', [
@@ -109,7 +108,6 @@ class CcOdLoanController extends Controller
         }
     }
 
-
     public function show($id)
     {
         $scheme = CcOdLoanScheme::findOrFail($id);
@@ -137,8 +135,6 @@ class CcOdLoanController extends Controller
         $scheme = CcOdLoanScheme::findOrFail($id);
         return view("cc_od.schemes.view", compact('scheme'));
     }
-
-
      
     public function appindex()
     {
@@ -150,7 +146,6 @@ class CcOdLoanController extends Controller
         return view("cc_od.applications.index", compact('applications'));
     }
 
-
     public function appcreate() 
     {
         //$members = Member::all();
@@ -161,7 +156,6 @@ class CcOdLoanController extends Controller
         return view("cc_od.applications.create", compact('members','branch','scheme','banks'));
     }
    
-
     public function storeLoanApplication(Request $request)
     {
         Log::info('--- cc od Loan Application Store Started ---', [
@@ -190,6 +184,19 @@ class CcOdLoanController extends Controller
                 'net_loan_amount.required'  => 'Please enter Net Loan Amount.',
                 'credit_period.required'    => 'Please enter Credit Period.',
             ]);
+
+             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            if ($request->has('cibil_score')) {
+                foreach ($request->cibil_score as $index => $score) {
+                    if (!empty($score)) {
+                        if (!preg_match('/^\d{3}$/', $score) || $score < 300 || $score > 900) {
+                            return back()
+                                ->withInput()
+                                ->with('error', "CIBIL Score at row " . ($index + 1) . " must be a 3-digit number between 300 and 900.");
+                        }
+                    }
+                }
+            }
 
 
             Log::info('Validation passed successfully.');
@@ -321,7 +328,6 @@ class CcOdLoanController extends Controller
         return view("cc_od.applications.view", compact('application'));
     }
 
-
     public function appedit($id)
     {
         $application = CcOdLoanApplication::with([
@@ -344,8 +350,7 @@ class CcOdLoanController extends Controller
         return view('cc_od.applications.create', compact(
             'application', 'members', 'scheme', 'branch', 'banks'
         ));
-    }
-   
+    } 
 
     public function appupdate(Request $request, $id)
     {
@@ -476,7 +481,6 @@ class CcOdLoanController extends Controller
         }
     }
     
-
     public function col_process_fee($id)
     {
          $application = CcOdLoanApplication::with([

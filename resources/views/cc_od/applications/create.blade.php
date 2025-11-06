@@ -23,6 +23,22 @@
     }
 </style>
 
+ @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="bg-red-50 border border-red-300 text-red-600 px-4 py-2 rounded mb-3">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
@@ -264,6 +280,7 @@
                             <input type="number" id="netLoanAmount" name="net_loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
                                 placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
+                                <p id="amountInWords" class="text-red-500 text-xs mt-1 italic">Zero</p>
                                 @error('net_loan_amount')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -946,6 +963,76 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+</script>
+
+<!-- Max Tenure & tenure vaule Validation -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const schemeSelect = document.getElementById("scheme_id");
+        const tenureInput = document.getElementById("tenure_value");
+
+        function validateTenure() {
+            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+            const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
+            const val = parseInt(tenureInput.value) || 0;
+
+            // If maxTenure not defined, skip
+            if (!maxTenure) return;
+
+            // Validate
+            if (val > maxTenure) {
+                tenureInput.classList.add("border-red-500");
+                document.getElementById("tenureError")?.remove();
+
+                const errorMsg = document.createElement("p");
+                errorMsg.id = "tenureError";
+                errorMsg.className = "text-error text-sm mt-1";
+                errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
+                tenureInput.insertAdjacentElement("afterend", errorMsg);
+
+                tenureInput.value = maxTenure; // optional cap
+            } else {
+                tenureInput.classList.remove("border-red-500");
+                document.getElementById("tenureError")?.remove();
+            }
+        }
+
+        schemeSelect.addEventListener("change", validateTenure);
+        tenureInput.addEventListener("input", validateTenure);
+    });
+    </script>
+
+<!-- sub text massage show -->
+<script>
+function numberToWords(num) {
+    const a = [
+        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+    ];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    if ((num = num.toString()).length > 9) return 'Overflow';
+    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return; 
+    let str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
+    return str.trim();
+}
+
+document.getElementById('netLoanAmount').addEventListener('input', function() {
+    const val = parseInt(this.value);
+    const textElement = document.getElementById('amountInWords');
+    if (!val) {
+        textElement.textContent = 'Zero';
+    } else {
+        textElement.textContent = numberToWords(val);
+    }
+});
 </script>
 
 @endsection

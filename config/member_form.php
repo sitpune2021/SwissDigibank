@@ -47,7 +47,7 @@ return [
         [
             'label' => 'ENROLLMENT DATE',
             'name' => 'general_enrollment_date',
-            'id' => 'date3',
+            'id' => 'date2',
             'type' => 'text',
             'required' => true,
             'default' => now()->format('d-m-Y'), // <- This line
@@ -161,7 +161,7 @@ return [
         [
             'label' => 'HUSBAND/ WIFE DOB',
             'name' => 'member_info_spouse_dob',
-            'id' => 'datep2',
+            'id' => 'datep3',
             'type' => 'text',
             'required' => false,
         ],
@@ -541,7 +541,7 @@ return [
         [
             'label' => 'NOMINEE DOB',
             'name' => 'nominee_dob',
-            'id' => 'datep4',
+            'id' => 'datep5',
             'type' => 'text',
             'required' => false,
         ],
@@ -600,7 +600,7 @@ return [
         [
             'label' => 'TRANSACTION DATE',
             'name' => 'charges_transaction_date',
-            'id' => 'date5',
+            'id' => 'date3',
             'type' => 'string',
             'required' => true,
             'default' => now()->format('d-m-Y'), // <- This line
@@ -647,7 +647,7 @@ return [
         [
             'label' => 'TRANSFER DATE ',
             'name' => 'online_transfer_date',
-            'id' => 'date',
+            'id' => 'date4',
             'type' => 'text',
             'required' => true,
             'default' =>  now()->format('d-m-Y'),
@@ -695,7 +695,7 @@ return [
             'label' => 'CHEQUE DATE ',
             'name' => 'cheque_date',
             'id' => 'cheque_date',
-            'id' => 'date',
+            'id' => 'date5',
             'type' => 'text',
             'required' => true,
             'default' =>  now()->format('d-m-Y'),
