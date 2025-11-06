@@ -151,6 +151,20 @@ return [
             'type' => 'text',
             'required' => false,
         ],
+         [
+            'label' => 'MARITAL STATUS',
+            'name' => 'member_info_marital_status',
+            'id' => 'marital_status',
+            'type' => 'select',
+            'required' => false,
+            'options' => [
+                'single' => 'Single',
+                'married' => 'Married',
+                'divorced' => 'Divorced',
+                'widowed' => 'Widowed',
+                'separated' => 'Separated',
+            ],
+        ],
         [
             'label' => 'HUSBAND/ WIFE NAME',
             'name' => 'member_info_spouse_name',
@@ -176,25 +190,18 @@ return [
             'required' => true,
         ],
         [
+            'label' => 'EMAIL',
+            'name' => 'member_info_email',
+            'id' => 'email',
+            'type' => 'email',
+            'required' => false,
+        ],
+        [
             'label' => 'COLLECTION TIME',
             'name' => 'member_info_collection_time',
             'id' => 'collection_time',
             'type' => 'text',
             'required' => false,
-        ],
-        [
-            'label' => 'MARITAL STATUS',
-            'name' => 'member_info_marital_status',
-            'id' => 'marital_status',
-            'type' => 'select',
-            'required' => false,
-            'options' => [
-                'single' => 'Single',
-                'married' => 'Married',
-                'divorced' => 'Divorced',
-                'widowed' => 'Widowed',
-                'separated' => 'Separated',
-            ],
         ],
         [
             'label' => 'CUSTOMER RELIGION',
@@ -205,13 +212,7 @@ return [
             'dynamic' => true,
             'options_key' => 'religion',
         ],
-        [
-            'label' => 'EMAIL',
-            'name' => 'member_info_email',
-            'id' => 'email',
-            'type' => 'email',
-            'required' => false,
-        ],
+        
     ],
 
     // Member Address

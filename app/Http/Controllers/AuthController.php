@@ -75,7 +75,6 @@ class AuthController extends Controller
 
     public function verifyOtp(Request $request)
     {
-        // dd($request->all());
         // Validate the incoming request
         $request->validate([
             'username' => 'required|string',

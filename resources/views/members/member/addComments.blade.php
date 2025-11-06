@@ -77,7 +77,7 @@
                         </button>
                         <a href="{{ route('member.addComment', ['member_id' => $member_id]) }}"
                             class="btn-outline transition">
-                            CANCEL
+                            Back
                         </a>
                     </div>
                 </form>

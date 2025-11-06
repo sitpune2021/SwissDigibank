@@ -12,13 +12,35 @@ use Illuminate\Support\Facades\Log;
 
 class Form15Gor15HController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $form15g15hs = Form15G15H::latest()->get();
+            $perPage = $request->input('perPage', 10);
+            $query = Form15G15H::with(['member', 'promotor'])->latest();
+
+            if ($request->has('search')) {
+                $search = $request->input('search');
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('financial_year', 'like', "%$search%")
+                        ->orWhereHas('member', function ($memberQuery) use ($search) {
+                            $memberQuery->where('member_no', 'like', "%$search%")
+                                ->orWhere('member_info_first_name', 'like', "%$search%");
+                        })
+                        ->orWhereHas('promotor', function ($promotorQuery) use ($search) {
+                            $promotorQuery->where('first_name', 'like', "%$search%");
+                        });
+                });
+            }
+
+            $form15g15hs = $query->paginate($perPage)->appends($request->all());
+
             return view('members.form15g15h.index', compact('form15g15hs'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
+        } catch (\Exception $e) {
+            Log::error('Form15G15H index error', ['error' => $e->getMessage()]);
+            abort(500, 'Unexpected error while fetching Form 15G/15H records');
         }
     }
 

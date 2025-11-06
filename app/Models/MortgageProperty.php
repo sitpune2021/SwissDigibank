@@ -23,6 +23,7 @@ class MortgageProperty extends Model
     'district',
     'area_sqft',
     'expected_value',
+    'total_security_amount',
     'registered',
     'boundary_sale_east',
     'boundary_sale_west',

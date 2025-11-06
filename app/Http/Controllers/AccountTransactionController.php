@@ -20,29 +20,11 @@ class AccountTransactionController extends Controller
      */
 
     // view transaction
-    // public function index($id = null)
-    // {
-
-    //     try {
-    //         $id = base64_decode($id);
-    //         $Transactions = Transaction::with(['accounts'])
-    //             ->where('account_id', $id)
-    //             ->orderBy('created_at', 'desc')
-    //             ->paginate(10);
-
-    //         $account = Account::findOrFail($id);
-
-    //         return view('saving-current-ac.accounts.view-transactions', compact('Transactions', 'account'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
 
     public function index($id = null)
     {
         try {
             $account_id = base64_decode($id);
-
             $transactionsQuery = DB::table('transactions')
                 ->select(
                     'id',
@@ -53,33 +35,33 @@ class AccountTransactionController extends Controller
                     'amount',
                     'approve_status as status',
                     DB::raw('NULL as waived_amount'),
-                    'remarks'
+                    'remarks',
+                    'transaction_type',
                 )
                 ->where('account_id', $account_id);
 
-            // Second query: saving_other_charges
             $chargesQuery = DB::table('saving_other_charges')
                 ->select(
                     'id',
                     'account_id',
                     DB::raw("'OTHER_CHARGE' as source_type"),
                     'charge_date as date',
-                    DB::raw('NULL as payment_mode'), // doesn't exist in this table
+                    DB::raw('NULL as payment_mode'),
                     'total_amount as amount',
                     DB::raw('status as status'),
-                    DB::raw('NULL as waived_amount'), // this column doesn't exist either
-                    'remarks'
+                    DB::raw('NULL as waived_amount'), 
+                    'remarks',
+                    'charge_type as transaction_type',
                 )
                 ->where('account_id', $account_id);
 
-            // Combine both
             $Transactions = $transactionsQuery
                 ->unionAll($chargesQuery)
                 ->orderBy('date', 'desc')
                 ->get();
 
             $account = DB::table('accounts')->find($account_id);
-// dd( $account );
+            // dd( $Transactions );
             return view('saving-current-ac.accounts.view-transactions', compact('Transactions', 'account'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
@@ -127,17 +109,57 @@ class AccountTransactionController extends Controller
             'Customer Gst No'
         ];
 
-        $transactions = Transaction::with('accounts.scheme')
-            ->where('account_id', $id)
-            ->select('*')
-            ->selectRaw("
-        CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END as credited_amount,
-        CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END as debited_amount
-    ")
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $account_id = $id;
+
+        $transactionsQuery = DB::table('transactions')
+            ->select(
+                'transactions.id',
+                'transactions.account_id',
+                DB::raw("'TRANSACTION' as source_type"),
+                'transactions.transaction_date as date',
+                'transactions.payment_mode',
+                'transactions.transaction_type',
+                'transactions.amount',
+                'transactions.approve_status as status',
+                'transactions.remarks',
+                DB::raw('NULL as is_accounted'),
+                DB::raw("CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END as credited_amount"),
+                DB::raw("CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END as debited_amount")
+            )
+            ->where('transactions.account_id', $account_id);
+
+        $chargesQuery = DB::table('saving_other_charges')
+            ->select(
+                'saving_other_charges.id',
+                'saving_other_charges.account_id',
+                DB::raw("'OTHER_CHARGE' as source_type"),
+                'saving_other_charges.charge_date as date',
+                DB::raw("NULL as payment_mode"),
+                DB::raw("saving_other_charges.charge_type as transaction_type"),
+                DB::raw("saving_other_charges.total_amount as amount"),
+                DB::raw("saving_other_charges.status as status"),
+                DB::raw('NULL as is_accounted'),
+                'saving_other_charges.remarks',
+                DB::raw("saving_other_charges.total_amount as credited_amount"),
+                DB::raw("0 as debited_amount"),
+
+            )
+            ->where('saving_other_charges.account_id', $account_id);
+
+        $unionSql = $transactionsQuery->toSql() . ' UNION ALL ' . $chargesQuery->toSql() . ' ORDER BY date DESC';
+        $bindings = array_merge($transactionsQuery->getBindings(), $chargesQuery->getBindings());
+        $mergedData = DB::select($unionSql, $bindings);
+
+        $transactions = collect($mergedData);
+        $accounts = Account::with(['scheme', 'members'])->find($account_id);
+
+        $transactions = $transactions->map(function ($txn) use ($accounts) {
+            $txn->accounts = $accounts;
+            return $txn;
+        });
 
         $data = $transactions->map(function ($txn) {
+
             return [
                 $txn->accounts->branches->branch_name ?? '',
                 $txn->agent->name ?? '',
@@ -151,35 +173,37 @@ class AccountTransactionController extends Controller
                 $txn->accounts->account_no  ?? '',
                 $txn->accounts->scheme->scheme_name ?? '',
                 $txn->accounts->payment_mode ?? '',
-                $txn->accounts->transaction_date,
-                $txn->transaction_type,
-                $txn->accounts->opening_balance,
-                $txn->credited_amount,
-                $txn->debited_amount,
-                $txn->closing_balance,
-                $txn->approve_status,
+                $txn->accounts->transaction_date ?? '',
+                $txn->transaction_type ?? '',
+                $txn->accounts->opening_balance ?? '',
+                $txn->credited_amount ?? '',
+                $txn->debited_amount ?? '',
+                $txn->closing_balance ?? '',
+                $txn->approve_status ?? '',
                 $txn->approvedBy->name ?? 'System',
                 $txn->is_accounted ? 'Yes' : 'No',
-                $txn->message,
-                $txn->tranx,
-                $txn->reference_type,
-                $txn->collected_by_name,
+                $txn->message ?? '',
+                $txn->tranx ?? '',
+                $txn->reference_type ?? '',
+                $txn->collected_by_name ?? '',
                 $txn->createdBy->name ?? '',
-                $txn->cheque_number,
-                $txn->cheque_date,
-                $txn->bank_name,
-                $txn->transfer_date,
-                $txn->transfer_mode,
-                $txn->transaction_number,
-                $txn->bank_account,
-                $txn->cheque_clearing_date,
-                $txn->gst_rate,
-                $txn->customer_gst_no
+                $txn->cheque_number ?? '',
+                $txn->cheque_date ?? '',
+                $txn->bank_name ?? '',
+                $txn->transfer_date ?? '',
+                $txn->transfer_mode ?? '',
+                $txn->transaction_number ?? '',
+                $txn->bank_account ?? '',
+                $txn->cheque_clearing_date ?? '',
+                $txn->gst_rate ?? '',
+                $txn->customer_gst_no ?? ''
             ];
         })->toArray();
 
+
         return CsvExportHelper::downloadCsv($headers, $data, 'transactions.csv');
     }
+
 
     /**
      * Show the form for creating a new resource.
