@@ -56,7 +56,6 @@ class ApiTransactionController extends Controller
         $userId = Auth::id();
         $member = Member::where('user_id', $userId)->firstOrFail();
         $account = Account::where('member_id', $member->id)->firstOrFail();
-        // dd($account);
 
         $query = Transaction::where('account_id', $account->id);
         $filter = $request->input('filter');
@@ -98,13 +97,17 @@ class ApiTransactionController extends Controller
                         ], 422);
                     }
 
-                    $query->whereBetween('created_at', [$from->startOfDay(), $to->endOfDay()]);
+                    $query->whereBetween('created_at', [
+                        $from->startOfDay(),
+                        $to->endOfDay()
+                    ]);
                     break;
             }
         }
 
         $transactions = $query->orderBy('created_at', 'desc')->get();
 
+        // 📥 If download requested
         if ($request->boolean('download')) {
             $filename = 'transactions_' . now()->format('Ymd_His') . '.csv';
             $headers = [
@@ -112,7 +115,7 @@ class ApiTransactionController extends Controller
                 'Content-Disposition' => "attachment; filename=\"$filename\"",
             ];
 
-            $columns = ['Date', 'Narration'];
+            $columns = ['Date', 'Narration', 'Transaction Type'];
 
             $callback = function () use ($transactions, $columns) {
                 $file = fopen('php://output', 'w');
@@ -120,10 +123,9 @@ class ApiTransactionController extends Controller
 
                 foreach ($transactions as $transaction) {
                     fputcsv($file, [
-                        $transaction->created_at->format('Y-m-d'),
+                        $transaction->created_at->format('d-m-y'),
                         $transaction->comment,
                         $transaction->transaction_type,
-
                     ]);
                 }
 
@@ -133,9 +135,9 @@ class ApiTransactionController extends Controller
             return Response::stream($callback, 200, $headers);
         }
 
+        // 📤 Otherwise return JSON
         return response()->json([
             'status' => true,
-            // 'account' => $account,
             'transactions' => $transactions->map(function ($t) {
                 return [
                     'date' => $t->created_at->format('d-m-Y'),
