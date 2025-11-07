@@ -60,8 +60,17 @@
             <div class=" flex flex-col lg:flex-row  gap-2">
                 <div class="w-full col-span-12 bg-primary/5 px-3 py-1 rounded-10 lg:col-span-12">
                     <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
-                        <div class="col-span-2 md:col-span-1">                           
-                            <x-datepicker-disabled label="Application Date" name="application_date" />
+                        
+                        <div class="col-span-2 md:col-span-1">
+                            <label for="member_id" class="md:text-lg font-medium block mb-2">
+                                Application Date <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                type="text"
+                                name="application_date"
+                                value="{{ date('d-m-Y') }}" 
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                readonly>
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -362,6 +371,9 @@
                             <input type="text" id="purpose_of_loan" name="purpose_of_loan"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter Purpose of Loan" value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
+                                 @error('purpose_of_loan')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                 </div>
@@ -467,10 +479,28 @@
                                 <select name="distributor_id" id="distributor_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                     <option value="">Please Select</option>
-                                    <option value="1"
-                                        {{ old('distributor_id', $application->distributor_id ?? '') == 1 ? 'selected' : '' }}>
-                                        OSL BAJAJ LTD
-                                    </option>
+
+                                    @foreach($distributors as $dist)
+                                        <option 
+                                            value="{{ $dist->id }}"
+                                            data-code="{{ $dist->distributor_code }}"
+                                            data-name="{{ $dist->distributor_name }}"
+                                            data-active="{{ $dist->is_active ? 'Yes' : 'No' }}"
+                                            data-type="{{ $dist->distributor_type }}"
+                                            data-contact="{{ $dist->contact_no }}"
+                                            data-email="{{ $dist->email }}"
+                                            data-city="{{ $dist->city }}"
+                                            data-state="{{ $dist->state }}"
+                                            data-pincode="{{ $dist->pincode }}"
+                                            data-address="{{ $dist->address }}"
+                                            data-gst="{{ $dist->gst_no }}"
+                                            data-license="{{ $dist->license_no }}"
+                                            data-created="{{ $dist->created_at ? $dist->created_at->format('d-m-Y H:i') : '-' }}"
+                                            data-updated="{{ $dist->updated_at ? $dist->updated_at->format('d-m-Y H:i') : '-' }}"
+                                            {{ old('distributor_id', $application->distributor_id ?? '') == $dist->id ? 'selected' : '' }}>
+                                            {{ $dist->distributor_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 @error('distributor_id')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -504,6 +534,9 @@
                                     <option value="commercial" {{ old('vehicle_segment', $application->vehicle_segment ?? '') == 'commercial' ? 'selected' : '' }}>Commercial</option>
                                     <option value="non_commercial" {{ old('vehicle_segment', $application->vehicle_segment ?? '') == 'non_commercial' ? 'selected' : '' }}>Non Commercial</option>
                                 </select>
+                                 @error('vehicle_segment')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Vehicle Category --}}
@@ -518,6 +551,9 @@
                                     <option value="three_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'three_wheeler' ? 'selected' : '' }}>Three Wheeler</option>
                                     <option value="four_wheeler" {{ old('vehicle_category', $application->vehicle_category ?? '') == 'four_wheeler' ? 'selected' : '' }}>Four Wheeler</option>
                                 </select>
+                                 @error('vehicle_category')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Vehicle Brand --}}
@@ -534,6 +570,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                 @error('vehicle_brand')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Vehicle Model --}}
@@ -545,6 +584,9 @@
                                     value="{{ old('vehicle_model', $application->vehicle_model ?? '') }}"
                                     placeholder="Enter Vehicle Model"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    @error('vehicle_model')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Vehicle Color --}}
@@ -556,6 +598,9 @@
                                     value="{{ old('vehicle_color', $application->vehicle_color ?? '') }}"
                                     placeholder="Enter Vehicle Color"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                     @error('vehicle_color')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Manufacture Year --}}
@@ -567,6 +612,9 @@
                                     value="{{ old('manufacture_year', $application->manufacture_year ?? '') }}"
                                     placeholder="Enter Manufacture Year"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                     @error('manufacture_year')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Vehicle No --}}
@@ -606,6 +654,9 @@
                                     placeholder="Enter Vehicle Price"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 <x-number-to-word for="vehicle_price" />
+                                 @error('vehicle_price')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Down Payment --}}
@@ -618,182 +669,186 @@
                                     placeholder="Enter Down Payment"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 <x-number-to-word for="down_payment" />
+                                 @error('down_payment')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                       
 
 
-                        <!-- Collect Advance Processing Fee -->
+                    <!-- Collect Advance Processing Fee -->
                     <div class="col-span-12  lg:col-span-12 ">
                         <hr>
-                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                        Collect Advance Processing Fee
-                    </label>
-                    <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
-
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Collect Processing Fee :</label>
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
-                                </tr>
-                                <!-- Input Row -->
-                                <tr class="">
-                                    <!-- Value -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="0" readonly
-                                            class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <!-- GST (%) -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="processing_fee_gst" id="processing_fee_gst" value="18.0" readonly
-                                            class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <!-- SGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="processing_fee_sgst" id="processing_fee_sgst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <!-- CGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="processing_fee_cgst" id="processing_fee_cgst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <!-- IGST -->
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="processing_fee_igst" id="processing_fee_igst" value="0" readonly
-                                            class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <!-- Total -->
-                                    <td class="px-2 py-2">
-                                        <input type="number" name="processing_fee_total" id="processing_fee_total" placeholder="0"
-                                            class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            Collect Advance Processing Fee
+                        </label>
+                        <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
 
-                        <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Pay Mode :</label>
-                            <!-- Radio Buttons -->
-                            <div class="mt-3">
-                                <!-- Pay Mode -->
-                                <label class="mr-4">
-                                    <input type="radio" name="fee_mode" value="cash"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> Cash
-                                </label>
-                                <label class="mr-4">
-                                    <input type="radio" name="fee_mode" value="cheque"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
-                                </label>
-                                <label>
-                                    <input type="radio" name="fee_mode" value="online"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
-                                </label>
-                            </div>
+                            <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                                Collect Processing Fee :</label>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <!-- Column Labels -->
+                                    <tr class="">
+                                        <th class="text-center px-3 py-2 ">Value</th>
+                                        <th class="text-center px-3 py-2 ">GST (%)</th>
+                                        <th class="text-center px-3 py-2 ">SGST</th>
+                                        <th class="text-center px-3 py-2 ">CGST</th>
+                                        <th class="text-center px-3 py-2 ">IGST</th>
+                                        <th class="text-center px-3 py-2 ">Total</th>
+                                    </tr>
+                                    <!-- Input Row -->
+                                    <tr class="">
+                                        <!-- Value -->
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="" id="" value="0" readonly
+                                                class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <!-- GST (%) -->
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="processing_fee_gst" id="processing_fee_gst" value="18.0" readonly
+                                                class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <!-- SGST -->
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="processing_fee_sgst" id="processing_fee_sgst" value="0" readonly
+                                                class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <!-- CGST -->
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="processing_fee_cgst" id="processing_fee_cgst" value="0" readonly
+                                                class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <!-- IGST -->
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="processing_fee_igst" id="processing_fee_igst" value="0" readonly
+                                                class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <!-- Total -->
+                                        <td class="px-2 py-2">
+                                            <input type="number" name="processing_fee_total" id="processing_fee_total" placeholder="0"
+                                                class="w-full px-2 py-2 text-center  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                            <!-- Bank + Cheque Fields -->
-                            <div id="bankDropdownWrapper" class="mt-3 hidden">
-                                <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
-                               <select id="bank_id" name="bank_id"
-                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                    <option value="">-- Select Bank --</option>
-                                    @foreach($banks as $id => $name)
-                                        <option value="{{ $id }}"
-                                            {{ old('bank_id', $application->bank_id ?? '') == $id ? 'selected' : '' }}>
-                                            {{ $name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                <!-- Cheque No -->
+                            <label for="" class="md:text-lg font-medium block mt-3 mb-4">
+                                Pay Mode :</label>
+                                <!-- Radio Buttons -->
                                 <div class="mt-3">
-                                    <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
-                                    <input type="text" name="cheque_no"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-                                        placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
-                                </div>
-
-                                <!-- Cheque Date -->
-                                <div class="mt-3">
-                                    <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div>
-                            </div>
-
-                            <!-- Online Transaction Fields -->
-                            <div id="onlineFields" class="space-y-4 hidden">
-                                <div class="mt-3">
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Transfer Date <span class="text-red-500">*</span>
+                                    <!-- Pay Mode -->
+                                    <label class="mr-4">
+                                        <input type="radio" name="fee_mode" value="cash"
+                                            {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> Cash
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <label class="mr-4">
+                                        <input type="radio" name="fee_mode" value="cheque"
+                                            {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="fee_mode" value="online"
+                                            {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                    </label>
                                 </div>
 
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        UTR / Transaction No. <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                <!-- Bank + Cheque Fields -->
+                                <div id="bankDropdownWrapper" class="mt-3 hidden">
+                                    <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                                <select id="bank_id" name="bank_id"
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div>
+                                        <option value="">-- Select Bank --</option>
+                                        @foreach($banks as $id => $name)
+                                            <option value="{{ $id }}"
+                                                {{ old('bank_id', $application->bank_id ?? '') == $id ? 'selected' : '' }}>
+                                                {{ $name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Transfer Mode <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="flex gap-4 mt-2">
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="imps"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
-                                            <span>IMPS</span>
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="vpa"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
+                                    <!-- Cheque No -->
+                                    <div class="mt-3">
+                                        <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                        <input type="text" name="cheque_no"
+                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                            placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
+                                    </div>
 
-                                            <span>VPA</span>
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="neft_rtgs"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
-                                            <span>NEFT/RTGS</span>
-                                        </label>
+                                    <!-- Cheque Date -->
+                                    <div class="mt-3">
+                                        <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                        <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Credited in Company Account <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="flex gap-4 mt-2">
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="1"
-                                                {{ old('credited', $application->credited ?? '') == '1' ? 'checked' : '' }}>
-                                            <span>Yes</span>
+                                <!-- Online Transaction Fields -->
+                                <div id="onlineFields" class="space-y-4 hidden">
+                                    <div class="mt-3">
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Transfer Date <span class="text-red-500">*</span>
                                         </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="1"
-                                                {{ old('credited', $application->credited ?? '') == '1' ? 'checked' : '' }}>
-                                            <span>No</span>
+                                        <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            UTR / Transaction No. <span class="text-red-500">*</span>
                                         </label>
+                                        <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Transfer Mode <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="flex gap-4 mt-2">
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="transfer_mode" value="imps"
+                                                    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>
+                                                <span>IMPS</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="transfer_mode" value="vpa"
+                                                    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
+
+                                                <span>VPA</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="transfer_mode" value="neft_rtgs"
+                                                    {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
+                                                <span>NEFT/RTGS</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Credited in Company Account <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="flex gap-4">
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="credited" value="1"
+                                                    {{ old('credited') == 1 ? 'checked' : '' }} checked>
+                                                <span>Yes</span>
+                                            </label>
+
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="credited" value="0"
+                                                    {{ old('credited') == 0 ? 'checked' : '' }}>
+                                                <span>No</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         
-                        <p for="" class=" text-error text-sm block mt-3 mb-4">
-                            Note: If you wish to collect processing fee at the time of disbursement, then enter 0. Fees
-                            will be calculated accordingly.
-                        </p>
+                                <p for="" class=" text-error text-sm block mt-3 mb-4">
+                                    Note: If you wish to collect processing fee at the time of disbursement, then enter 0. Fees
+                                    will be calculated accordingly.
+                                </p>
 
                     </div>
                 </div>
@@ -973,45 +1028,51 @@
         </div>
  
 
-            <!-- Loan Calculation Summary Table -->
-         <!-- Hidden fields for saving calculation result -->
-        <input type="hidden" name="security_value" id="inputSecurity">
-        <input type="hidden" name="max_loan_amount" id="inputMaxLoan">
-        <input type="hidden" name="max_loan_limit" id="inputLimit">
-        <input type="hidden" name="maximum_approvable_amount" id="inputApprovable">
-        <input type="hidden" name="approved_loan_amount" id="inputApproved"> 
 
-           <!-- Calculation Box -->
-            <div id="calculationBox" class="flex justify-center hidden">
-                <table class="w-1/2 overflow-x-auto mt-6 bg-primary/20 rounded-lg text-sm">
-                    <tbody>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2 w-1/2">Requested Loan Amount</th>
-                            <th class="text-start font-medium p-2 w-1/2" id="request-amt">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Security Value</th>
-                            <th class="text-start font-medium p-2" id="security-amt">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Max Loan Amount</th>
-                            <th class="text-start font-medium p-2" id="max-loan-amount">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Max Loan Limit</th>
-                            <th class="text-start font-medium p-2" id="max-loan-limit">-</th>
-                        </tr>
-                        <tr class="border-b border-gray-300">
-                            <th class="uppercase text-center font-semibold p-2">Maximum Approvable Amount</th>
-                            <th class="text-start font-medium p-2" id="m-approval-amt">-</th>
-                        </tr>
-                        <tr>
-                            <th class="uppercase text-center font-semibold p-2">Approved Loan Amount</th>
-                            <th class="text-start font-medium p-2" id="approval-amt">-</th>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- Hidden fields for saving calculation result -->
+            <input type="hidden" name="vehicle_price" id="inputVehiclePrice">
+            <input type="hidden" name="max_loan_amount" id="inputMaxLoan">
+            <input type="hidden" name="max_loan_limit" id="inputLimit">
+            <input type="hidden" name="maximum_approvable_amount" id="inputApprovable">
+            <input type="hidden" name="approved_loan_amount" id="inputApproved">
+            <input type="hidden" name="down_payment" id="inputDownPayment">
+
+                <!-- Calculation Box -->
+                <div id="calculationBox" class="flex justify-center hidden">
+                    <table class="w-1/2 overflow-x-auto mt-6 bg-primary/20 rounded-lg text-sm">
+                        <tbody>
+                            <tr class="border-b border-gray-300">
+                                <th class="uppercase text-center font-semibold p-2 w-1/2">Requested Loan Amount</th>
+                                <th class="text-start font-medium p-2 w-1/2" id="request-amt">-</th>
+                            </tr>
+                            <tr class="border-b border-gray-300">
+                                <th class="uppercase text-center font-semibold p-2">Vehicle Price</th>
+                                <th class="text-start font-medium p-2" id="vehicle-price">-</th>
+                            </tr>
+                            <tr class="border-b border-gray-300">
+                                <th class="uppercase text-center font-semibold p-2">Max Loan Amount</th>
+                                <th class="text-start font-medium p-2" id="max-loan-amount">-</th>
+                            </tr>
+                            <tr class="border-b border-gray-300">
+                                <th class="uppercase text-center font-semibold p-2">Max Loan Limit</th>
+                                <th class="text-start font-medium p-2" id="max-loan-limit">-</th>
+                            </tr>
+                            <tr class="border-b border-gray-300">
+                                <th class="uppercase text-center font-semibold p-2">Maximum Approvable Amount</th>
+                                <th class="text-start font-medium p-2" id="m-approval-amt">-</th>
+                            </tr>
+                            <tr class="border-b border-gray-300">
+                                <th class="uppercase text-center font-semibold p-2">Approved Loan Amount</th>
+                                <th class="text-start font-medium p-2" id="approval-amt">-</th>
+                            </tr>
+                            <tr>
+                                <th class="uppercase text-center font-semibold p-2">Down Payment</th>
+                                <th class="text-start font-medium p-2" id="down-payment">-</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
 
             <!-- Buttons -->
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -1256,41 +1317,38 @@ document.addEventListener("DOMContentLoaded", function () {
     calcBtn.addEventListener("click", function (e) {
         e.preventDefault();
 
-        // Step 1: Perform your calculation logic
-        let totalSecurity = 0;
-        document.querySelectorAll(".expectedValue").forEach(input => {
-            totalSecurity += parseFloat(input.value) || 0;
-        });
-
         let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        let vehiclePrice = parseFloat(document.getElementById("vehicle_price")?.value) || 0;
         let scheme = document.getElementById("scheme_id");
         let selected = scheme.options[scheme.selectedIndex];
         let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
         let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
 
-        if (loanAmount > maxLoan) {
-            alert("Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
-            document.getElementById("loanAmount").value = maxLoan.toFixed(2);
-            loanAmount = maxLoan;
-        }
+        // Calculate maximum approvable based on vehicle price
+        let approvable = (vehiclePrice * limit) / 100;
 
-        let approvable = (totalSecurity * limit) / 100;
+        // Approved loan = min(loanAmount, approvable)
         let approved = Math.min(loanAmount, approvable);
 
-        // Step 2: Display calculation result
+        // Down payment
+        let downPayment = Math.max(vehiclePrice - approved, 0);
+
+        // Display calculation
         document.getElementById("request-amt").textContent = loanAmount.toFixed(2);
-        document.getElementById("security-amt").textContent = totalSecurity.toFixed(2);
+        document.getElementById("vehicle-price").textContent = vehiclePrice.toFixed(2);
         document.getElementById("max-loan-amount").textContent = maxLoan.toFixed(2);
-        document.getElementById("max-loan-limit").textContent = limit + "%";
+        document.getElementById("max-loan-limit").textContent = limit + "% of Vehicle Price";
         document.getElementById("m-approval-amt").textContent = approvable.toFixed(2);
         document.getElementById("approval-amt").textContent = approved.toFixed(2);
+        document.getElementById("down-payment").textContent = downPayment.toFixed(2);
 
-        // Step 3: Update hidden input values
-        document.getElementById("inputSecurity").value = totalSecurity.toFixed(2);
+        // Hidden input updates
+        document.getElementById("inputVehiclePrice").value = vehiclePrice.toFixed(2);
         document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
         document.getElementById("inputLimit").value = limit;
         document.getElementById("inputApprovable").value = approvable.toFixed(2);
         document.getElementById("inputApproved").value = approved.toFixed(2);
+        document.getElementById("inputDownPayment").value = downPayment.toFixed(2);
 
         document.getElementById("calculationBox").classList.remove("hidden");
 
@@ -1306,6 +1364,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
 
 <!-- branch Auto populate when select customer -->
  <script>
@@ -1327,7 +1386,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <!-- loan amount & insurance amount sub text massage -->
- <script>
+<script>
 function numberToWords(num) {
     const a = [
         '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
@@ -1420,65 +1479,64 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 {{-- Vehicle Info Distributer --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const select = document.getElementById("distributor_id");
+        const box = document.getElementById("distributorBox");
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const select = document.getElementById("distributor_id");
-            const box = document.getElementById("distributorBox");
+        const fields = {
+            code: document.getElementById("distCode"),
+            name: document.getElementById("distName"),
+            active: document.getElementById("distActive"),
+            type: document.getElementById("distType"),
+            contact: document.getElementById("distContact"),
+            email: document.getElementById("distEmail"),
+            city: document.getElementById("distCity"),
+            state: document.getElementById("distState"),
+            pincode: document.getElementById("distPincode"),
+            address: document.getElementById("distAddress"),
+            gst: document.getElementById("distGST"),
+            license: document.getElementById("distLicense"),
+            created: document.getElementById("distCreated"),
+            updated: document.getElementById("distUpdated"),
+        };
 
-            const fields = {
-                code: document.getElementById("distCode"),
-                name: document.getElementById("distName"),
-                active: document.getElementById("distActive"),
-                type: document.getElementById("distType"),
-                contact: document.getElementById("distContact"),
-                email: document.getElementById("distEmail"),
-                city: document.getElementById("distCity"),
-                state: document.getElementById("distState"),
-                pincode: document.getElementById("distPincode"),
-                address: document.getElementById("distAddress"),
-                gst: document.getElementById("distGST"),
-                license: document.getElementById("distLicense"),
-                created: document.getElementById("distCreated"),
-                updated: document.getElementById("distUpdated"),
-            };
+        select.addEventListener("change", function () {
+            const selected = this.options[this.selectedIndex];
+            if (this.value) {
+                fields.code.textContent = selected.getAttribute("data-code") || "-";
+                fields.name.textContent = selected.getAttribute("data-name") || "-";
 
-            select.addEventListener("change", function () {
-                const selected = this.options[this.selectedIndex];
-                if (this.value) {
-                    fields.code.textContent = selected.getAttribute("data-code") || "-";
-                    fields.name.textContent = selected.getAttribute("data-name") || "-";
+                const activeValue = selected.getAttribute("data-active") || "-";
+                const activeEl = fields.active.querySelector("span");
+                activeEl.textContent = activeValue;
+                activeEl.className = `inline-block px-2 py-1 text-xs font-semibold text-white rounded ${activeValue.toLowerCase() === "yes" ? "bg-green-600" : "bg-red-500"
+                    }`;
 
-                    const activeValue = selected.getAttribute("data-active") || "-";
-                    const activeEl = fields.active.querySelector("span");
-                    activeEl.textContent = activeValue;
-                    activeEl.className = `inline-block px-2 py-1 text-xs font-semibold text-white rounded ${activeValue.toLowerCase() === "yes" ? "bg-green-600" : "bg-red-500"
-                        }`;
+                fields.type.textContent = selected.getAttribute("data-type") || "-";
+                fields.contact.textContent = selected.getAttribute("data-contact") || "-";
+                fields.email.textContent = selected.getAttribute("data-email") || "-";
+                fields.city.textContent = selected.getAttribute("data-city") || "-";
+                fields.state.textContent = selected.getAttribute("data-state") || "-";
+                fields.pincode.textContent = selected.getAttribute("data-pincode") || "-";
+                fields.address.textContent = selected.getAttribute("data-address") || "-";
+                fields.gst.textContent = selected.getAttribute("data-gst") || "-";
+                fields.license.textContent = selected.getAttribute("data-license") || "-";
+                fields.created.textContent = selected.getAttribute("data-created") || "-";
+                fields.updated.textContent = selected.getAttribute("data-updated") || "-";
 
-                    fields.type.textContent = selected.getAttribute("data-type") || "-";
-                    fields.contact.textContent = selected.getAttribute("data-contact") || "-";
-                    fields.email.textContent = selected.getAttribute("data-email") || "-";
-                    fields.city.textContent = selected.getAttribute("data-city") || "-";
-                    fields.state.textContent = selected.getAttribute("data-state") || "-";
-                    fields.pincode.textContent = selected.getAttribute("data-pincode") || "-";
-                    fields.address.textContent = selected.getAttribute("data-address") || "-";
-                    fields.gst.textContent = selected.getAttribute("data-gst") || "-";
-                    fields.license.textContent = selected.getAttribute("data-license") || "-";
-                    fields.created.textContent = selected.getAttribute("data-created") || "-";
-                    fields.updated.textContent = selected.getAttribute("data-updated") || "-";
-
-                    box.classList.remove("hidden");
-                } else {
-                    box.classList.add("hidden");
-                }
-            });
+                box.classList.remove("hidden");
+            } else {
+                box.classList.add("hidden");
+            }
         });
+    });
 
-        // optional collapse button function
-        function toggleDistributorBox() {
-            const body = document.getElementById("distributorBody");
-            body.classList.toggle("hidden");
-        }
-    </script>
+    // optional collapse button function
+    function toggleDistributorBox() {
+        const body = document.getElementById("distributorBody");
+        body.classList.toggle("hidden");
+    }
+</script>
 
 @endsection

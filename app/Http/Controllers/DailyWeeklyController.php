@@ -632,11 +632,16 @@ class DailyWeeklyController extends Controller
             $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
             $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
             if ($remainingPrincipal < 0) $remainingPrincipal = 0.00;
+            // EMI Date format change
+                $formattedEmiDate = $emiDate->format('d-m-Y');
+
+                // Due date = EMI date + 1 day
+                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
             $schedule[] = [
                 'no' => $i,
-                'emi_date' => $emiDate->format('d/m/Y'),
-                'due_date' => $emiDate->format('d/m/Y'),
+                'emi_date' => $formattedEmiDate,
+                    'due_date' => $dueDate,
                 'principal' => number_format($principalThis, 2, '.', ''),
                 'interest' => number_format($interestForPeriod, 2, '.', ''),
                 'charges_per_emi' => number_format($chargesPerEmi, 2, '.', ''),

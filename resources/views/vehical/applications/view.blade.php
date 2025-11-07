@@ -102,11 +102,11 @@
 
     <div class="flex flex-wrap gap-3">
 
-        <a href="{{ route('mortgage.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
+        <a href="{{ route('vehical.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary   px-2 py-2 rounded-10 ">
             Show EMI Chart
         </a>  
         @if($application->status != 2) 
-        <a href="{{ route('mortgage.applications.view-buttons.col_process_fee', $application->id) }}"
+        <a href="{{ route('vehical.applications.view-buttons.col_process_fee', $application->id) }}"
             class="btn-warning uppercase px-2 py-2 rounded-10">
             Collect Processing Fee
             </a>
@@ -196,7 +196,7 @@
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
                      @if($application->status != 2 )
-                   <a href="{{ route('mortgage.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                   <a href="{{ route('vehical.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     @endif
