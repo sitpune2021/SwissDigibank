@@ -58,7 +58,7 @@ class SimVerificationController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'OTP sent successfully to your registered mobile number.',
-            'otp' => $otp,
+            // 'otp' => $otp,
         ]);
     }
 

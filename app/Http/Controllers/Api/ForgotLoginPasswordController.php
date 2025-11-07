@@ -74,7 +74,7 @@ class ForgotLoginPasswordController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'OTP sent successfully for password reset.',
-            'otp' => $otp,
+            // 'otp' => $otp,
         ]);
     }
 
@@ -115,13 +115,6 @@ class ForgotLoginPasswordController extends Controller
     if (!$user) {
         return response()->json(['status' => false, 'message' => 'User not found.'], 404);
     }
-
-    // Optional: If you want to skip OTP check entirely, comment this out
-    /*
-    if ($user->otp !== $data['otp'] || now()->greaterThan($user->otp_expires_at)) {
-        return response()->json(['status' => false, 'message' => 'Invalid or expired OTP.'], 400);
-    }
-    */
 
     $user->password = Hash::make($data['password']);
     $user->otp = null;

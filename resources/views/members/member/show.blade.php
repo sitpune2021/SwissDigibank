@@ -798,7 +798,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t cursor-pointer"
                     @click="open = !open">
-                    <span class="font-semibold uppercase">Co Applications Loan</span>
+                    <span class="font-semibold uppercase">CO APPLICANT LOANS</span>
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
