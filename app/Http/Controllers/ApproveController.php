@@ -198,13 +198,13 @@ class ApproveController extends Controller
                 ]);
             } elseif ($validated['source_table'] === 'misaccounts') {
                 // 🔹 MIS Accounts
-                $misAccount = \App\Models\MisAccount::findOrFail($id);
+                $misAccount = \App\Models\Misaccount::findOrFail($id);
                 $misAccount->status = $validated['transaction_status'];
                 $misAccount->remarks = $validated['remarks'];
                 $misAccount->save();
 
                 try {
-                    $mis_account = \App\Models\MisAccount::with('member')->find($misAccount->member_id);
+                    $mis_account = \App\Models\Misaccount::with('member')->find($misAccount->member_id);
                     $mobile = $mis_account->member->member_info_mobile_no;
                     $misAccountNo = $misAccount->mis_account_no;
 
