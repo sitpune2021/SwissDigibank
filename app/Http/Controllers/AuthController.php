@@ -77,7 +77,6 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'OTP sent successfully.',
-            'otp' => $otp,
         ]);
     }
 
@@ -127,16 +126,9 @@ class AuthController extends Controller
         $user->otp = null;
         $user->otp_expires_at = null;
         $user->save();
-
-        $member = $user->member;
-        if (!$member || $member->share_allocated <= 0) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Dashboard access denied.',
-            ], 403);
-        }
-
         $token = $user->createToken('AuthToken')->plainTextToken;
+        $member = $user->member;
+        $canAccessDashboard = $member && $member->share_allocated > 0;
 
         $isMpinSet = !empty($user->mpin);
         $addresses = $user->addresses()->first(['member_address_line_1']);
@@ -148,7 +140,7 @@ class AuthController extends Controller
             'user' => $user->only(['id', 'name', 'email', 'mobile', 'user_active']),
             'addresses' => $addresses ? $addresses->only('member_address_line_1') : null,
             'isMpinSet' => $isMpinSet,
-            'can_access_dashboard' => true,
+            'can_access_dashboard' => $canAccessDashboard,
         ]);
     }
 
@@ -214,7 +206,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'OTP sent successfully to your registered mobile number. Please verify to set mPIN.',
-            'otp' => $otp,
+            // 'otp' => $otp,
         ]);
     }
 
