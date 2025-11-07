@@ -53,6 +53,7 @@ use App\Http\Controllers\LoanAgainstDisbursementController;
 use App\Http\Controllers\MortgageDisbursementController;
 use App\Http\Controllers\MortgageAccountController;
 use App\Helpers\SmsHelper;
+use App\Http\Controllers\AdvisorController;
 use App\Http\Controllers\BusinessLoan;
 use App\Http\Controllers\CcOdLoanController;
 use App\Http\Controllers\CcOdLoanControllerDisburments;
@@ -62,10 +63,15 @@ use App\Http\Controllers\BusinessLoanAccount;
 use App\Http\Controllers\DailyWeeklyController;
 use App\Http\Controllers\DailyWeeklyDisburments;
 use App\Http\Controllers\DailyWeeklyAccount;
+use App\Http\Controllers\DaybookController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LedgergroupController;
+use App\Http\Controllers\LockerController;
 use App\Http\Controllers\VehicalDisbursementController;
 use App\Http\Controllers\VehicalController;
 use App\Http\Controllers\VehicalAccountController;
 use App\Http\Controllers\VehicalDistributorController;
+use App\Http\Controllers\VendorController;
 
 // Clear cache 
 Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -1110,7 +1116,7 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::get('distributors/{id}', [VehicalDistributorController::class, 'show'])->name('distributors.show');
     Route::get('distributors/{id}/edit', [VehicalDistributorController::class, 'edit'])->name('edit');
     Route::put('distributors/{id}', [VehicalDistributorController::class, 'update'])
-     ->name('vehical.distributors.update');
+        ->name('vehical.distributors.update');
 
     // Application view emi chart
     Route::get('{id}/emi-chart', [VehicalController::class, 'emiChart'])->name('vehical.applications.view-buttons.show-emi-chart');
@@ -1120,7 +1126,6 @@ Route::group(['prefix' => 'vehical'], function () {
         ->name('vehical.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
-        
 });
 
 
@@ -1130,7 +1135,210 @@ Route::group(['prefix' => 'vehical'], function () {
 
 Route::group(['prefix' => 'hr-managment'], function () {
     Route::resource('employee', HRController::class);
+
+    Route::get('employee/index', [HRController::class, 'index'])
+        ->name('hr-management.employee.index');
+
+    Route::get('employee/view', [HRController::class, 'view'])
+        ->name('hr-management.employee.view');
+
+    Route::get('employee/view-transactions', [EmployeeController::class, 'view_transactions'])
+        ->name('hr-management.employee.view-transactions');
+
+    Route::get('employee/view-transactions-view', [EmployeeController::class, 'view_trans'])
+        ->name('hr-management.employee.view-trans-view');
+
+    Route::get('employee/pay-salary', [EmployeeController::class, 'pay_salary'])
+        ->name('hr-management.employee.pay-salary');
+
+    Route::get('employee/salary-settelment', [EmployeeController::class, 'salary_settelment'])
+        ->name('hr-management.employee.salary-settelment');
+
+    Route::get('employee/new-salary', [EmployeeController::class, 'new_salary'])
+        ->name('hr-management.employee.new-salary');
+
+    Route::get('employee/change-photo', [EmployeeController::class, 'change_photo'])
+        ->name('hr-management.employee.change-photo');
+
+    Route::get('employee/web-cam', [EmployeeController::class, 'web_cam'])
+        ->name('hr-management.employee.web-cam');
+
+    Route::get('employee/upload-documents', [EmployeeController::class, 'upload_documents'])
+        ->name('hr-management.employee.upload-documents');
+
+    Route::get('employee/calender', [EmployeeController::class, 'calender'])
+        ->name('hr-management.employee.calender');
+
+    Route::get('employee/discard-employee', [EmployeeController::class, 'discard_employee'])
+        ->name('hr-management.employee.discard-employee');
+
+    Route::get('employee/view-tran', [EmployeeController::class, 'view_tran'])
+        ->name('hr-management.employee.view-trans');
 });
+
+Route::group(['prefix' => 'associate-advisor'], function () {
+    Route::get('associates/index', [AdvisorController::class, 'index'])
+        ->name('associates-advisor.rank-structure.index');
+
+    Route::get('associates/add-new-rank', [AdvisorController::class, 'add_new_rank'])
+        ->name('associates-advisor.rank-structure.add-new-rank');
+
+    Route::get('associates/view', [AdvisorController::class, 'view_rank'])
+        ->name('associates-advisor.rank-structure.add-new-rank');
+
+    Route::get('associates/add', [AdvisorController::class, 'add_adc_asc'])
+        ->name('associates-advisor.associates-advisors.add');
+
+    Route::get('associates/adv-index', [AdvisorController::class, 'adv_index'])
+        ->name('associates-advisor.associates-advisors.index');
+
+    Route::get('associates/adv-view', [AdvisorController::class, 'adv_view'])
+        ->name('associates-advisor.associates-advisors.view');
+
+    Route::get('associates/chnage-photo', [AdvisorController::class, 'change_photo'])
+        ->name('associates-advisor.associates-advisors.change-photo');
+
+    Route::get('associates/link-saving-account', [AdvisorController::class, 'link_saving_account'])
+        ->name('associates-advisor.associates-advisors.link-saving-account');
+
+    Route::get('associates/reset-password', [AdvisorController::class, 'reset_password'])
+        ->name('associates-advisor.associates-advisors.reset-password');
+
+    Route::get('associates/commission-index', [AdvisorController::class, 'commission_index'])
+        ->name('associates-advisor.commission-payout.index');
+
+    Route::get('associates/new-com-pay', [AdvisorController::class, 'new_com_pay'])
+        ->name('associates-advisor.commission-payout.new-com-pay');
+
+    Route::get('commission/view', [AdvisorController::class, 'com_view'])
+        ->name('associates-advisor.commission-payout.view');
+
+    Route::get('commission/multiple-payout', [AdvisorController::class, 'multiple_payout'])
+        ->name('associates-advisor.commission-payout.multiple-payout');
+
+    Route::get('commission/regenerate-commission', [AdvisorController::class, 'regenerate_com'])
+        ->name('associates-advisor.commission-payout.regenerate-com');
+
+    Route::get('commission/remove-payout-com', [AdvisorController::class, 'remove_payout_com'])
+        ->name('associates-advisor.commission-payout.remove-payout-com');
+
+    Route::get('commission/commission-charts-index', [AdvisorController::class, 'commission_charts_index'])
+        ->name('associates-advisor.commission-charts.index');
+
+    Route::get('commission/add-chart', [AdvisorController::class, 'add_chart'])
+        ->name('associates-advisor.commission-charts.add-chart');
+
+    Route::get('commission/view', [AdvisorController::class, 'comission_view'])
+        ->name('associates-advisor.commission-charts.view');
+});
+
+// Locker
+Route::group(['prefix' => 'associate-advisor'], function () {
+    Route::get('locker-list/index', [LockerController::class, 'locker_list_index'])
+        ->name('lockers.locker-list.index');
+
+    Route::get('locker-list/add', [LockerController::class, 'locker_list_add'])
+        ->name('lockers.locker-list.add');
+
+    Route::get('locker-list/view', [LockerController::class, 'locker_list_view'])
+        ->name('lockers.locker-list.view');
+
+    Route::get('locker-list/assign-locker', [LockerController::class, 'assign_locker'])
+        ->name('lockers.locker-list.assign-locker');
+
+    Route::get('locker-list/release-locker', [LockerController::class, 'release_locker'])
+        ->name('lockers.locker-list.release-locker');
+
+    Route::get('member-locker/index', [LockerController::class, 'member_locker_index'])
+        ->name('lockers.member-locker.index');
+    Route::get('member-locker/view', [LockerController::class, 'member_locker_view'])
+        ->name('lockers.member-locker.view');
+});
+
+// ledger 
+Route::group(['prefix' => 'ledger-group'], function () {
+    Route::get('ledger-group/index', [LedgergroupController::class, 'index'])
+        ->name('ledger-group.index');
+
+    Route::get('ledger-group/add-ledger-group', [LedgergroupController::class, 'add_ledger_group'])
+        ->name('ledger-group.add-ledger-group');
+
+    Route::get('ledger-group/view', [LedgergroupController::class, 'view'])
+        ->name('ledger-group.view');
+
+    Route::get('ledger-group/asset-ledger', [LedgergroupController::class, 'asset_ledger'])
+        ->name('ledger-group.asset-ledger');
+
+
+
+    Route::get('ledger-group/edit-ledger', [LedgergroupController::class, 'edit_ledger'])
+        ->name('ledger-group.edit-ledger');
+
+    Route::get('ledger-group/journal-entry', [LedgergroupController::class, 'journal_entry'])
+        ->name('ledger-group.journal-entry');
+});
+
+// ledger
+Route::group(['prefix' => 'ledger'], function () {
+    Route::get('ledger/index', [LedgergroupController::class, 'led_index'])
+        ->name('ledger.index');
+
+    Route::get('ledger/add-ledger', [LedgergroupController::class, 'add_leg'])
+        ->name('ledger.add-ledger');
+
+    Route::get('ledger/update-bulkrisk', [LedgergroupController::class, 'update_bulkrisk'])
+        ->name('ledger.update-bulkrisk');
+
+    Route::get('ledger/view', [LedgergroupController::class, 'revenue_ledger'])
+        ->name('ledger.view');
+
+    Route::get('ledger/edit-ledger', [LedgergroupController::class, 'edit_ledgers'])
+        ->name('ledger.edit-ledger');
+
+    Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
+        ->name('ledger.journal-entry');
+});
+
+// vendors
+Route::group(['prefix' => 'vendor'], function () {
+    Route::get('vendor/index', [VendorController::class, 'vendor_index'])
+        ->name('vendors.index');
+    Route::get('vendor/add-vendor', [VendorController::class, 'add_vendor'])
+        ->name('vendors.add-vendor');
+    Route::get('vendor/view', [VendorController::class, 'vendor_view'])
+        ->name('vendors.view');
+
+    Route::get('vendor/libality-ledger', [VendorController::class, 'libality_ledger'])
+        ->name('vendors.libality-ledger');
+
+    Route::get('vendor/edit-ledger', [VendorController::class, 'edit_ledger'])
+        ->name('vendors.edit-ledger');
+});
+
+// Day Book
+Route::group(['prefix' => 'day-book'], function () {
+    Route::get('daybook/day-book', [DaybookController::class, 'day_book'])
+        ->name('day-book.day-book');
+
+    Route::get('daybook/cash-book', [DaybookController::class, 'cash_book'])
+        ->name('day-book.cash-book');
+
+    Route::get('daybook/bank-book', [DaybookController::class, 'bank_book'])
+        ->name('day-book.bank-book');
+
+
+    Route::get('daybook/wallet-book', [DaybookController::class, 'wallet_book'])
+        ->name('day-book.wallet-book');
+
+    Route::get('daybook/edit-ledger', [DaybookController::class, 'edit_ledger'])
+        ->name('day-book.edit-ledger');
+
+    Route::get('daybook/journal-entry', [DaybookController::class, 'journal_entry'])
+        ->name('day-book.journal-entry');
+    Route::get('daybook/ledger-book', [DaybookController::class, 'ledger_book'])
+        ->name('day-book.ledger-book');
+});
+
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');

@@ -79,7 +79,7 @@ return [
             ['title' => 'MDS / RD ACCOUNTS', 'route' => 'mds-rd-accounts.rd-account-index'],
         ]
     ],
-       [
+    [
         'title' => 'GOLD LOAN',
         'icon' => 'las la-university',
         'position' => '9',
@@ -93,7 +93,7 @@ return [
             ['title' => 'ACCOUNTS', 'route' => 'gold-loan.account.index'],
         ],
     ],
-     [
+    [
         'title' => 'PROP./MORTGAGE LOAN',
         'icon' => 'las la-university',
         'position' => '9',
@@ -171,7 +171,7 @@ return [
             ['title' => 'ACCOUNTS', 'route' => 'personal.account.index'],
         ],
     ],
-     [
+    [
         'title' => 'VEHICLE LOAN',
         'icon' => 'las la-university',
         'position' => '9',
@@ -184,7 +184,7 @@ return [
             ['title' => 'ACCOUNTS', 'route' => 'vehical.account.index'],
             ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
         ],
-    ],  
+    ],
     [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
@@ -200,6 +200,18 @@ return [
         ]
     ],
     [
+        'title' => 'ASSOCIATES / ADVISORS',
+        'icon' => 'las la-user',
+        'position' => '8',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'RANK STRUCTURE', 'route' => 'associates-advisor.rank-structure.index'],
+            ['title' => 'COMMISSION CHARTS', 'route' => 'associates-advisor.commission-charts.index'],
+            ['title' => 'ASSOCIATES/ADVISORS', 'route' => 'associates-advisor.associates-advisors.index'],
+            ['title' => 'COMMISSION PAYOUTS', 'route' => 'associates-advisor.commission-payout.index'],
+        ],
+    ],
+    [
         'title' => 'HR MANAGEMENT',
         'icon' => 'las la-user',
         'position' => '6',
@@ -208,5 +220,6 @@ return [
             ['title' => 'EMPLOYEES', 'route' => 'employee.index'],
         ],
     ],
+
 
 ];

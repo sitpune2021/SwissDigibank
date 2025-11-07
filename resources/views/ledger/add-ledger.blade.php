@@ -1,0 +1,236 @@
+@extends('layout.main')
+
+<style>
+    .breadcrumb {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 14px;
+    }
+
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 8px;
+        color: #888;
+    }
+
+    .breadcrumb li a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .breadcrumb li.active {
+        color: #555;
+    }
+
+    .custom-thead {
+        background-color: #e6f4ea;
+        color: #14532d;
+    }
+
+    .custom-thead th {
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .custom-thead {
+            background-color: #14532d;
+            color: #d1fae5;
+        }
+    }
+
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
+
+    input[type="radio"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
+
+    .bg-greens {
+        background-color: #14532d;
+    }
+</style>
+
+@section('content')
+    <div class="main-inner">
+
+        <div class="flex flex-wrap items-center justify-start gap-3 mb-6 px-4 lg:mb-8">
+            <h3 class="flex text-xl block  uppercase font-semibold">
+                ADD LEDGER
+            </h3>
+        </div>
+
+        <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
+            <!-- Left: Details -->
+            <div class=" w-full overflow-x-auto   overflow-hidden">
+                <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
+                    <div class="min-w-full p-4">
+                        <form>
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Ledger Type
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <select id="" name=""
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Select Ledger Type</option>
+                                    <option value="">Asset</option>
+                                    <option value="">Liability</option>
+                                    <option value="">Equity</option>
+                                    <option value="">Expense</option>
+                                    <option value="">Revenue</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Ledger Group 
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <select id="" name=""
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option>Select Group</option>
+                                   
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Display Name
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="" name="" placeholder="Enter Ledger Display Name"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
+                                <p class="text-xs text-primary mt-1">
+                                    (e.g. Accumulated Depreciation - Vehicles)
+                                </p>
+                            </div>
+
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    System Name
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="" name="" value=""  placeholder="Enter Ledger Name"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
+                                <p class="text-xs text-primary mt-1">
+                                    (e.g. Accumulated Depreciation - Vehicles)
+                                </p>
+                            </div>
+
+                            <!-- Code -->
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Code
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="" name=""  placeholder="Enter Code" style="text-transform: uppercase"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
+                                <p class="text-xs text-primary mt-1">
+                                    (e.g. 501, XYZ)
+                                </p>
+                            </div>
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Is Bank Account
+                                </label>
+                                <div class="flex gap-6">
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="is_bank_acc" value="true"  class="" />
+                                        <span>Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="is_bank_acc" value="false" checked  class="" />
+                                        <span>No</span>
+                                    </label>
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">Show In Day
+                                    Book</label>
+                                <div class="flex gap-6">
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="show_in_day"  class="" />
+                                        <span>Yes</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" name="show_in_day" checked class="text-blue-600 focus:ring-blue-500" />
+                                        <span>No</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex flex-wrap gap-3 justify-center pt-4">
+                                <button type="submit" class="btn-primary uppercase">
+                                    ADD ACCOUNT
+                                </button>
+                                <a href="" class="btn-outline uppercase ">
+                                    BAck
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Settings -->
+            <div class=" w-full overflow-x-auto "></div>
+        </div>
+    </div>
+
+
+
+    <!-- Datepicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
+
+    <!-- Datepicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const datepickers = document.querySelectorAll('.datepicker-field');
+
+            datepickers.forEach(function (dateInput, index) {
+                // Create the datepicker with maxDate = today
+                const picker = new Datepicker(dateInput, {
+                    autohide: true,
+                    format: 'dd-mm-yyyy',
+                    maxDate: new Date(),
+                });
+
+                // Determine which default date to set
+                let defaultDate;
+                const today = new Date();
+
+                if (index === 0) {
+                    // First datepicker → first day of this month
+                    defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                } else {
+                    // Second datepicker → today's date
+                    defaultDate = today;
+                }
+
+                // Format as dd-mm-yyyy
+                const formattedDate = defaultDate.toLocaleDateString('en-GB').split('/').join('-');
+                dateInput.value = formattedDate;
+
+                // If there’s a calendar icon near the field, make it open the picker
+                const calendarIcon = dateInput.parentElement.querySelector('.la-calendar');
+                if (calendarIcon) {
+                    calendarIcon.addEventListener('click', () => picker.show());
+                }
+            });
+        });
+    </script>
+@endsection
