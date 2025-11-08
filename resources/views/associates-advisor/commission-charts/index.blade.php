@@ -54,7 +54,7 @@
                 Commission Charts
             </h3>
             <div class="flex flex-col md:flex-row  lg:flex-row gap-3">
-                <a href="" class=" block flex btn-primary justify-center uppercase ">
+                <a href="{{ route('associates-advisor.commission-charts.add-chart') }}" class=" block flex btn-primary justify-center uppercase ">
                     add
                 </a>
 

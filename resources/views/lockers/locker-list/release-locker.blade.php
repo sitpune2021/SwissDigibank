@@ -58,27 +58,32 @@
         <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
             <div class=" col-span-2 box md:col-span-1 ">
-                <form action="">
-                  
+                
+                <form action="{{ route('lockers.locker-list.release.store', $locker->id) }}" method="POST">
+                    @csrf
+
                     <div class="col-span-2 md:col-span-1 mt-4 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-2 uppercase">
-                          End Date 
-                            <span class="text-red-500">*</span>
+                        <label class="md:text-lg font-medium block mb-2 uppercase">
+                        End Date <span class="text-red-500">*</span>
                         </label>
 
-                        <input type="text" name="" id="dates" placeholder="DD/MM/YYYY"
-                            class="datepicker-field scheme-select w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
+                        <input type="text" name="end_date" id="dates" placeholder="DD/MM/YYYY"
+                            class="datepicker-field scheme-select w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        
+                        @error('end_date')
+                            <p class="text-red-500 text-xs">{{ $message }}</p>
+                        @enderror
                     </div>
+
                     <div class="flex justify-center gap-3">
-                        <button class="btn-primary uppercase">
-                            Release Locker
-                        </button>
-                        <a href="" class="btn-outline uppercase">
-                            back
-                        </a>
+                        <button class="btn-primary uppercase">Release Locker</button>
+                        <a href="{{ route('lockers.locker-list.index') }}" class="btn-outline uppercase">Back</a>
                     </div>
+
                 </form>
+
             </div>
+
             <div class=" col-span-2 box md:col-span-1 ">
                 <div class="bg-secondary/5 rounded-10  px-5 py-3">
                     <h3 class="text-lg font-semibold uppercase tracking-wide">
@@ -87,52 +92,51 @@
                 </div>
                 <div class="bg-white dark:bg-gray-900">
                     <div class="overflow-x-auto whitespace-nowrap">
-                        <table class="w-full  text-sm md:text-base">
+                    <table class="w-full  text-sm md:text-base">
                         <tbody class="divide-y divide-gray-200">
                             <tr class="bg-gray-50 border-b ">
                                 <td class="font-semibold uppercase p-3 w-1/2">Locker No</td>
-                                <td class="p-3">2222</td>
+                                <td class="p-3">{{ $locker->locker_no }}</td>
                             </tr>
                             <tr class="bg-gray-50 uppercase border-b ">
                                 <td class="font-semibold p-3">Locker Name</td>
-                                <td class="p-3">Suvarna shree </td>
+                                <td class="p-3">{{ $locker->locker_name }}</td>
                             </tr>
                             <tr class="bg-gray-50 uppercase border-b ">
                                 <td class="font-semibold p-3">Member Name</td>
-                                <td class="p-3">kuldeeeeeeep </td>
+                                <td class="p-3">{{ $notReleasedName }}</td>
                             </tr>
                             <tr class="bg-gray-50 uppercase border-b ">
                                 <td class="font-semibold p-3">Locker Charge	</td>
-                                <td class="p-3">222.0  </td>
+                                <td class="p-3">{{ number_format($locker->monthly_charges, 2) }}</td>
                             </tr>
                             <tr class="bg-gray-50 border-b ">
                                 <td class="font-semibold uppercase p-3">
                                     Assigned Date	
                                 </td>
-                                <td class="p-3">10-10-2024  </td>
+                                <td class="p-3">{{ $notReleasedAssignDate }}</td>
                             </tr>
                             <tr class="bg-gray-50 border-b ">
                                 <td class="font-semibold uppercase p-3">
                                     Release Date	
                                 </td>
-                                <td class="p-3">  </td>
+                                <td class="p-3">{{ $notReleasedReleaseDate }}</td>
                             </tr>
                              <tr class="bg-gray-50 border-b ">
                                 <td class="font-semibold uppercase p-3">
                                     Locker Assigned		
                                 </td>
-                                <td class="p-3">
-                                    <div class="flex items-center gap-1">
-                                    <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                Yes
-                            </span>
-                             <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                No
-                            </span>
-                                </div>
-                                </td>
+                               <td class="text-start !py-5 px-6">
+                                    @if($locker->assigned == 1)
+                                        <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                            Yes
+                                        </span>
+                                    @else
+                                        <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                                            No
+                                        </span>
+                                    @endif
+                                </td>       
                             </tr>
                             
                         </tbody>
@@ -141,6 +145,8 @@
                 </div>  
             </div>
         </div>
+
+
 <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css"
@@ -149,8 +155,9 @@
 <!-- Datepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
 
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".datepicker-field").forEach(function (dateInput) {
         const today = new Date();
         const picker = new Datepicker(dateInput, {
@@ -177,4 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
+
 @endsection

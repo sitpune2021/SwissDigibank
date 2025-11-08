@@ -61,14 +61,15 @@
 </style>
 
 @section('content')
+
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-start gap-3 mb-6 px-4 lg:mb-8">
             <h3 class="flex text-xl block  uppercase font-semibold">
-                Field Head Officer
+                {{ $rank->name }}
             </h3>
             <p class="text-xs text-gray-500">
-                Rank
+                RANK
             </p>
         </div>
 
@@ -76,54 +77,68 @@
             <!-- Left: Details -->
             <div class=" w-full overflow-x-auto   overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
+                    
                     <div class="text-end p-2">
-                        <a href="" class="btn-primary p-1 rounded-10">
+                        <a href="{{ route('associates-advisor.rank-structure.edit',$rank->id) }}" class="btn-primary p-1 rounded-10">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
+
                     <div class="w-full p-4">
-                        <table class="w-full ">
+
+                        <table class="w-full">
                             <tbody class="divide-y divide-gray-200 bg-white">
+
                                 <tr class="border-b">
                                     <td class="font-semibold text-gray-700 px-4 py-3 w-1/2 sm:w-1/3 bg-gray-50 uppercase">Name</td>
-                                    <td class="px-4 py-3 text-gray-800">Field Head Officer</td>
+                                    <td class="px-4 py-3 text-gray-800">{{ $rank->name }}</td>
                                 </tr>
+
                                 <tr class="border-b">
                                     <td class="font-semibold text-gray-700 px-4 py-3 bg-gray-50 uppercase">Position</td>
-                                    <td class="px-4 py-3 text-gray-800">1</td>
+                                    <td class="px-4 py-3 text-gray-800">{{ $rank->working_position }}</td>
                                 </tr>
+
                                 <tr class="border-b">
                                     <td class="font-semibold text-gray-700 px-4 py-3 bg-gray-50 uppercase">Display Position</td>
-                                    <td class="px-4 py-3 text-gray-800">1</td>
+                                    <td class="px-4 py-3 text-gray-800">{{ $rank->display_position }}</td>
                                 </tr>
+
                                 <tr class="border-b">
-                                    <td class="font-semibold text-gray-700 px-4 py-3 bg-gray-50 uppercase">Collection Commission
-                                        Enabled</td>
+                                    <td class="font-semibold text-gray-700 px-4 py-3 bg-gray-50 uppercase">
+                                        Collection Commission Enabled
+                                    </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
+
+                                            @if($rank->collection_commission == 1)
+                                                <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-center text-xs text-primary">
+                                                    Yes
+                                                </span>
+                                            @else
+                                                <span class="block w-28 rounded-[30px] border bg-error/20 py-2 text-center text-xs text-error">
+                                                    No
+                                                </span>
+                                            @endif
+
                                         </div>
                                     </td>
                                 </tr>
+
                             </tbody>
                         </table>
-                    </div>
-                </div>
 
+                    </div>
+
+                </div>
             </div>
 
             <!-- Right: Settings -->
             <div class=" w-full overflow-x-auto "></div>
-        </div>
-    </div>
 
+        </div>
+
+    </div>
 
 
     <!-- Datepicker CSS -->
@@ -131,6 +146,7 @@
 
     <!-- Datepicker JS -->
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const datepickers = document.querySelectorAll('.datepicker-field');
@@ -167,4 +183,6 @@
             });
         });
     </script>
+
+
 @endsection

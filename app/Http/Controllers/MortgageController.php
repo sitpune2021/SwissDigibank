@@ -392,7 +392,7 @@ class MortgageController extends Controller
    
     public function storeLoanApplication(Request $request)
     {
-        Log::info('--- Loan Application Store Started ---', [
+        Log::info('--- Mortgage Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
         ]);
@@ -494,7 +494,7 @@ class MortgageController extends Controller
                 'created_by' => Auth::id(),
             ]);
 
-            Log::info('Loan Application Inserted Successfully', [
+            Log::info('Mortgage Loan Application Inserted Successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
 
