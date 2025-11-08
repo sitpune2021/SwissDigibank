@@ -17,5 +17,8 @@ class GoldLoanTransaction extends Model
         'created_by',
     ];
 
-   
+    public function goldApplication()
+    {
+        return $this->belongsTo(LoanApplication::class, 'loan_id');
+    }
 }
