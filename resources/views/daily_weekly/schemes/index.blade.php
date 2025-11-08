@@ -43,22 +43,28 @@
                                     SCHEME NAME
                                 </div>
                             </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                           
+                            <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    TENURE
+                                    LOAN AMOUNT
                                 </div>
                             </th>
-
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    MAX. LOAN AMOUNT
+                                    No of EMI
+                                </div>
+                            </th>
+
+                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                                <div class="flex items-center gap-1">
+                                    EMI AMOUNT
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    INTEREST TYPE
+                                    EMI PAYOUT
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -95,14 +101,20 @@
                     {{ $scheme->scheme_name }}
                 </div>
             </td>
+
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1">
-                    {{ $scheme->tenure }} Months
+                    {{ number_format($scheme->max_loan_amount, 2) }}
                 </div>
             </td>
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1">
-                    {{ number_format($scheme->max_loan_amount, 2) }}
+                    {{ number_format($scheme->no_of_emi) }}
+                </div>
+            </td>
+             <td class="text-start !py-5 px-6">
+                <div class="flex items-center gap-1">
+                    {{ number_format($scheme->emi_amount) }}
                 </div>
             </td>
             <td class="text-start !py-5 px-6">

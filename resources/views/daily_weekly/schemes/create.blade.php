@@ -233,7 +233,7 @@
                     name="is_active" 
                     value="1"
                     class="text-green-600 focus:ring-green-500"
-                    {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>
+                    {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>Yes
                     </label>
 
                     <!-- No -->

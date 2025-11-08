@@ -22,7 +22,7 @@
     @endif
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">New Daily / Weekly Loan Application</h3>
+                <h3 class=" flex text-xl block font-semibold">DAILY / WEEKLY LOAN APPLICATION</h3>
                 <a href="{{route('daily_weekly.applications.create')}}" class=" block flex btn-primary capitalize ">add
                 </a>
             </div>
@@ -96,7 +96,7 @@
 
             <!-- Application Date -->
             <td class="text-start !py-5 px-6">
-                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
+                {{ \Carbon\Carbon::make($application->application_date)->format('d-m-Y') }}
             </td>
 
             <!-- Member No -->
