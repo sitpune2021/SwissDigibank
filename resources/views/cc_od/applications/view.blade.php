@@ -126,17 +126,12 @@
             <div id="printDropdown"
                 class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                 <div class="py-1">
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> APPLICATION FORM
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> EMI SCHEDULE CHART
-                    </a>
+                    
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> SANCTION LETTER
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LOAN AGREEMENT
+                        <i class="las la-print text-secondary"></i> CC LIMIT AGREEMENT
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> DISBURSE LETTER
@@ -147,16 +142,6 @@
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LETTER OF UNDERTAKING
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> LETTER OF EVIDENCING
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> GUARANTOR AGREEMENT
-                    </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> JURISDICTION ACK LETTER
-                    </a>
-
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> INDEMNIFICATION LETTER
                     </a>

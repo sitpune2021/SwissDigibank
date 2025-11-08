@@ -583,7 +583,6 @@ class AccountsController extends Controller
                 'request_data' => $request->all(),
             ]);
 
-            // If "no" selected → delete all old nominees
             if ($request->nominee === 'no') {
                 $deletedCount = $account->nominee()->count();
                 $account->nominee()->delete();
@@ -597,9 +596,9 @@ class AccountsController extends Controller
                 return back()->with('success', 'Nominee information removed successfully.');
             }
 
-            // Validate input
             $validated = $request->validate([
                 'nominees' => 'required|array|min:1',
+                'nominees.*.id' => 'nullable|integer',
                 'nominees.*.name' => 'required|string|max:255',
                 'nominees.*.address' => 'required|string|max:255',
                 'nominees.*.relation' => 'required|string|max:100',
@@ -608,10 +607,11 @@ class AccountsController extends Controller
             $submittedNominees = collect($validated['nominees']);
             $existingNominees = $account->nominee()->pluck('id')->toArray();
             $updatedNominees = [];
+            $addedNominees = [];
 
             foreach ($submittedNominees as $nomineeData) {
-                // Update existing
                 if (isset($nomineeData['id']) && in_array($nomineeData['id'], $existingNominees)) {
+
                     $nominee = AccountNominee::find($nomineeData['id']);
                     $nominee->update([
                         'nominee_name' => $nomineeData['name'],
@@ -626,12 +626,14 @@ class AccountsController extends Controller
                         'data' => $nomineeData,
                     ]);
                 } else {
-                    // Create new
+
                     $newNominee = $account->nominee()->create([
                         'nominee_name' => $nomineeData['name'],
                         'nominee_address' => $nomineeData['address'],
                         'nominee_relation' => strtolower($nomineeData['relation']),
                     ]);
+
+                    $addedNominees[] = $newNominee->id;
 
                     Log::info('New nominee added', [
                         'account_id' => $account->id,
@@ -641,7 +643,6 @@ class AccountsController extends Controller
                 }
             }
 
-            // Delete removed ones
             $nomineesToDelete = array_diff($existingNominees, $updatedNominees);
             if (!empty($nomineesToDelete)) {
                 AccountNominee::whereIn('id', $nomineesToDelete)->delete();
@@ -658,7 +659,32 @@ class AccountsController extends Controller
                 'account_id' => $account->id,
             ]);
 
-            return back()->with('success', 'Nominee details updated successfully.');
+            try {
+                $member = \App\Models\Member::find($account->member_id);
+                $mobile = $member->member_info_mobile_no;
+                $accountNo = $account->account_no;
+
+                if (count($addedNominees) > 0 && count($updatedNominees) === 0) {
+
+                    $dlttemplateid = 1707172234105629218;
+                    $message = "Dear Customer, nominee has been successfully added to your saving a/c $accountNo. SBC GLOBAL";
+                    $successMessage = 'Nominee details added successfully.';
+                } elseif (count($updatedNominees) > 0 && count($addedNominees) === 0) {
+                    $dlttemplateid = 1707172234104394971;
+                    $message = "Dear Customer, nominee has been successfully updated in your saving a/c {$accountNo}. SBC GLOBAL";
+                    $successMessage = 'Nominee details updated successfully.';
+                } else {
+                    $dlttemplateid = 1707172234104394971;
+                    $message = "Dear Customer, nominee details have been successfully updated for your saving a/c {$accountNo}. SBC GLOBAL";
+                    $successMessage = 'Nominee details updated successfully.';
+                }
+
+                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+            } catch (\Exception $e) {
+                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
+
+            return redirect()->route('accounts.show', base64_encode($account->id))->with('success',  $successMessage );
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -668,7 +694,61 @@ class AccountsController extends Controller
                 'trace' => $th->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+            return redirect()->route('accounts.show', base64_encode($account->id))->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
         }
+    }
+
+
+    public function closeAccount($id)
+    {
+        $account_id = base64_decode($id);
+        $account = Account::with(['transaction', 'members.kyc', 'scheme', 'savingOtherCharges'])->where('id', $account_id)->first();
+
+        $balance = AccountsTransactionsHelper::getAccountBalacec($account_id);
+        $available_balance = $balance['total_balance'];
+
+        $interest_accrued  = $this->calculateInterestAccrued($account);
+        // $penalty_charges   = $account->penaltyCharges->sum('amount');
+        // $other_charges     = $account->savingOtherCharges->sum('amount');
+
+        $penalty_charges = optional($account->penaltyCharges)->sum('amount') ?? 0;
+        $other_charges   = optional($account->savingOtherCharges)->sum('amount') ?? 0;
+
+        // Formula: E = A + B - C - D
+        $total_value = $available_balance + $interest_accrued - $penalty_charges - $other_charges;
+
+        // Rounding off
+        $round_off = round($total_value, 0);
+
+
+        return view('saving-current-ac.accounts.close-acc', compact(
+            'account',
+            'available_balance',
+            'interest_accrued',
+            'penalty_charges',
+            'other_charges',
+            'total_value',
+            'round_off'
+        ));
+    }
+
+    private function calculateInterestAccrued($account)
+    {
+
+        // Example logic — replace with your business logic
+        $rate = $account->scheme->interest_rate ?? 0;
+        $available_balance = AccountsTransactionsHelper::getAccountBalacec($account->id);
+        $balance = $available_balance['total_balance'];
+        $days = now()->diffInDays($account->created_at);
+
+        return round(($balance * $rate * $days) / (365 * 100), 2);
+    }
+
+    public function accountOpenForm($id)
+    {
+
+        $account_id = base64_decode($id);
+        $account = Account::with(['transaction', 'members.kyc', 'members.address.state', 'scheme', 'savingOtherCharges'])->where('id', $account_id)->first();
+        return view('saving-current-ac.accounts.saving-account-application-form', compact('account'));
     }
 }
