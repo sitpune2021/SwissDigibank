@@ -277,6 +277,9 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
 
     Route::get('/accounts/account-nominee/{id}', [AccountsController::class, 'accountNominee'])->name('saving.accounts.nominee');
     Route::post('/accounts/{id}/nominees', [AccountsController::class, 'saveNominees'])->name('accounts.nominees.save');
+
+     Route::get('/accounts/close-account/{id}', [AccountsController::class, 'closeAccount'])->name('saving.accounts.close.account');
+    Route::get('/accounts/account-form/{id}', [AccountsController::class, 'accountOpenForm'])->name('saving.accounts.open.form');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {

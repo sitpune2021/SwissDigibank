@@ -16,67 +16,13 @@ class GoldLoanAccountController extends Controller
     {
         $goldLoan = LoanApplication::with(['member', 'branch', 'scheme'])->where('status', 1)
             ->orderBy('id', 'desc')->get();
-        // dd( $goldLoan);
         return view('gold-loan.account.index', compact('goldLoan'));
     }
 
-    // public function show(Request $request, $id)
-    // {
-    //     $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
-
-    //     $applicationDate = Carbon::parse($goldLoan->application_date);
-    //     $firstEmiDate = $applicationDate->copy()->addMonthNoOverflow();
-
-    //     $emiCount = $goldLoan->tenure_value;
-    //     $emiDates = [];
-    //     $emiSchedule = [];
-
-    //     $principal = $goldLoan->loan_amount;
-    //     $emiPrincipal = $principal / $emiCount; // equal principal
-    //     $interestRate = $goldLoan->interest_rate ?? 0; // in % per month
-    //     $balance = $principal;
-
-    //     for ($i = 0; $i < $emiCount; $i++) {
-    //         switch (strtolower($goldLoan->tenure_type)) {
-    //             case 'days':
-    //                 $emiDate = $firstEmiDate->copy()->addDays($i);
-    //                 break;
-    //             case 'weeks':
-    //                 $emiDate = $firstEmiDate->copy()->addWeeks($i);
-    //                 break;
-    //             case 'months':
-    //             default:
-    //                 $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
-    //                 break;
-    //         }
-
-    //         $interest = ($balance * $interestRate) / 100; // simple interest calculation
-    //         $emiAmount = $emiPrincipal + $interest;
-    //         $balance -= $emiPrincipal;
-
-    //         $emiSchedule[] = [
-    //             'emi_no' => $i + 1,
-    //             'emi_date' => $emiDate->format('d-m-Y'),
-    //             'emi_due_date' => $emiDate->copy()->addDay()->format('d-m-Y'),
-    //             'principal' => number_format($emiPrincipal, 2),
-    //             'interest' => number_format($interest, 2),
-    //             'other_charges' => '0.00',
-    //             'emi_amount' => number_format($emiAmount, 2),
-    //             'balance_principal' => number_format(max($balance, 0), 2),
-    //             'remaining_amount' => '0.00',
-    //             'paid_date' => '',
-    //             'status' => 'PENDING',
-    //             'processed' => 'No',
-    //         ];
-    //     }
-    //     // dd($emiSchedule);
-    //     $lastEmiDate = end($emiDates);
-    //     return view('gold-loan.account.view', compact('goldLoan','principal','firstEmiDate', 'lastEmiDate', 'emiSchedule'));
-    // }
 
     public function show(Request $request, $id)
     {
-        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
+        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'goldLoanTransactions'])->find($id);
 
         if (!$goldLoan) {
             return redirect()->back()->with('error', 'Loan not found.');
@@ -88,22 +34,15 @@ class GoldLoanAccountController extends Controller
         $emiCount = $goldLoan->tenure_value;
         $principal = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->annual_interest_rate ?? 0;
+
         $interestType = strtolower($goldLoan->scheme->gold_loan_setting ?? 'flat_emi'); // default
         $emiSchedule = [];
         $balance = $principal;
 
-        // Monthly interest rate
         $monthlyRate = $interestRate / 12 / 100;
-
-        // ==========================
-        // INTEREST TYPE CONDITIONS
-        // ==========================
 
         switch ($interestType) {
 
-            // ---------------------------------
-            // 1️⃣ REDUCING EMI
-            // ---------------------------------
             case 'reducing_emi':
 
                 $emi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
@@ -128,12 +67,9 @@ class GoldLoanAccountController extends Controller
                         'processed' => 'No',
                     ];
                 }
-                //    dd($emiSchedule);
+
                 break;
 
-            // ---------------------------------
-            // 2️⃣ FLAT EMI
-            // ---------------------------------
             case 'flat_emi':
                 $totalInterest = $principal * ($interestRate / 100) * ($emiCount / 12);
                 $emi = ($principal + $totalInterest) / $emiCount;
@@ -161,45 +97,75 @@ class GoldLoanAccountController extends Controller
                 }
                 break;
 
-            // ---------------------------------
-            // 3️⃣ FLAT ADVANCED INTEREST DEDUCTION
-            // ---------------------------------
             case 'flat_advanced_interest':
                 $totalInterest = $principal * ($interestRate / 100) * ($emiCount / 12);
                 $netDisbursed = $principal - $totalInterest;
+                $monthlyRate = $interestRate / (12 * 100);
+                $firstEmiDate = $applicationDate->copy()->addMonth();
+                $lastEmiDate  = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
 
-                $firstEmiDate = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
+                $monthlyPrincipal = $principal / $emiCount;
                 $lastEmiDate  = $firstEmiDate;
 
-                $emiSchedule = [];
+                $totalPayable =
+                    $emiSchedule = [];
+
+                $emi = $monthlyPrincipal * $monthlyRate * pow(1 + $monthlyRate, 12) / (pow(1 + $monthlyRate, 12) - 1);
+
+                $emi = round($emi, 2);
+
+                $payableAmount= $monthlyPrincipal+ $emi ;
+
+
 
                 // Row 2: Single EMI (principal only)
-                $emiSchedule[] = [
-                    'emi_no' => 1,
-                    'emi_date' => $firstEmiDate->format('d/m/Y'),
-                    'emi_due_date' => $firstEmiDate->copy()->addDay()->format('d/m/Y'),
-                    'principal' => number_format($principal, 2),
-                    'interest' => '0.00',
-                    'other_charges' => '0.00',
-                    'emi_amount' => number_format($principal, 2),
-                    'balance_principal' => '0.00',
-                    'remaining_amount' => number_format($principal, 2),
-                    'paid_date' => '',
-                    'status' => 'DUE',
-                    'processed' => 'No',
-                ];
+                // $emiSchedule[] = [
+                //     'emi_no' => 1,
+                //     'emi_date' => $firstEmiDate->format('d/m/Y'),
+                //     'emi_due_date' => $firstEmiDate->copy()->addDay()->format('d/m/Y'),
+                //     'principal' => number_format($principal, 2),
+                //     'interest' => '0.00',
+                //     'other_charges' => '0.00',
+                //     'emi_amount' => number_format($principal, 2),
+                //     'balance_principal' => '0.00',
+                //     'remaining_amount' => number_format($principal, 2),
+                //     'paid_date' => '',
+                //     'status' => 'DUE',
+                //     'processed' => 'No',
+                // ];
+
+                for ($i = 0; $i < $emiCount; $i++) {
+                    $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
+                    $balancePrincipal = max($principal - ($monthlyPrincipal * ($i + 1)), 0);
+
+                    $emiSchedule[] = [
+                        'emi_no' => $i + 1,
+                        'emi_date' => $emiDate->format('d/m/Y'),
+                        'emi_due_date' => $emiDate->copy()->addDay()->format('d/m/Y'),
+                        'principal' => number_format($monthlyPrincipal, 2),
+                        'interest' =>   $emi,
+                        'other_charges' => '0.00',
+                        'emi_amount' => number_format($payableAmount, 2),
+                        'balance_principal' => number_format($balancePrincipal, 2),
+                        'remaining_amount' => number_format($payableAmount, 2),
+                        'paid_date' => '',
+                        'status' => 'UNPAID',
+                        'processed' => 'No',
+                    ];
+                }
 
                 $lastEmiDate = $firstEmiDate;
 
                 $goldLoan->net_disbursed = number_format($netDisbursed, 2);
                 break;
-            // ---------------------------------
-            // 4️⃣ NO EMI (BULLET PAYMENT)
-            // ---------------------------------
+
             case 'no_emi':
                 $interestPerMonth = $principal * ($interestRate / 100) / 12;
                 for ($i = 0; $i < $emiCount; $i++) {
                     $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
+
+                    $emiAmount = $interestPerMonth;
+                    $balancePrincipal = max($principal - ($interestPerMonth * ($i + 1)), 0);
 
                     $emiSchedule[] = [
                         'emi_no' => $i + 1,
@@ -217,7 +183,6 @@ class GoldLoanAccountController extends Controller
                     ];
                 }
 
-                // Add one final bullet payment (principal)
                 $finalDate = $firstEmiDate->copy()->addMonthsNoOverflow($emiCount);
                 $emiSchedule[] = [
                     'emi_no' => $emiCount + 1,
@@ -250,73 +215,6 @@ class GoldLoanAccountController extends Controller
 
         return view('gold-loan.account.view-buttons.view-transactions.view_transactions');
     }
-    // public function downloadCsvExample($id)
-    // {
-    //     $headers = [
-    //         'DATE',
-    //     'PAY MODE',
-    //     'REMARKS',
-    //     'STATUS',
-    //     'DEBIT',
-    //     'CREDIT',
-    //     'BALANCE',
-    //     'ACCOUNTED',
-    //     ];
-
-    //     $transactions = Transaction::with('accounts.scheme')
-    //         ->where('account_id', $id)
-    //         ->select('*')
-    //         ->selectRaw("
-    //     CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END as credited_amount,
-    //     CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END as debited_amount
-    // ")
-    //         ->orderBy('created_at', 'desc')
-    //         ->get();
-
-    //     $data = $transactions->map(function ($txn) {
-    //         return [
-    //             $txn->accounts->branches->branch_name ?? '',
-    //             $txn->agent->name ?? '',
-    //             $txn->agent->code ?? '',
-    //             $txn->supervisor->name ?? '',
-    //             $txn->supervisor->code ?? '',
-    //             $txn->group->name ?? '',
-    //             $txn->collectionCenter->name ?? '',
-    //             $txn->accounts->members->member_info_first_name ?? '',
-    //             $txn->accounts->members->id ?? '',
-    //             $txn->accounts->account_no  ?? '',
-    //             $txn->accounts->scheme->scheme_name ?? '',
-    //             $txn->accounts->payment_mode ?? '',
-    //             $txn->accounts->transaction_date,
-    //             $txn->transaction_type,
-    //             $txn->accounts->opening_balance,
-    //             $txn->credited_amount,
-    //             $txn->debited_amount,
-    //             $txn->closing_balance,
-    //             $txn->approve_status,
-    //             $txn->approvedBy->name ?? 'System',
-    //             $txn->is_accounted ? 'Yes' : 'No',
-    //             $txn->message,
-    //             $txn->tranx,
-    //             $txn->reference_type,
-    //             $txn->collected_by_name,
-    //             $txn->createdBy->name ?? '',
-    //             $txn->cheque_number,
-    //             $txn->cheque_date,
-    //             $txn->bank_name,
-    //             $txn->transfer_date,
-    //             $txn->transfer_mode,
-    //             $txn->transaction_number,
-    //             $txn->bank_account,
-    //             $txn->cheque_clearing_date,
-    //             $txn->gst_rate,
-    //             $txn->customer_gst_no
-    //         ];
-    //     })->toArray();
-
-    //     return CsvExportHelper::downloadCsv($headers, $data, 'transactions.csv');
-    // }
-
     public function goldLoanPayEmi($id)
     {
         $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])
@@ -361,51 +259,6 @@ class GoldLoanAccountController extends Controller
         ));
     }
 
-    // public function payEmiLoan(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'transaction_date' => 'required|date',
-    //         'amount_collected' => 'required|numeric|min:1',
-    //         'remarks' => 'nullable|string|max:255',
-    //         'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-    //     ]);
-
-    //     $loan = LoanApplication::findOrFail($id);
-
-    //     $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)->sum('amount_collected');
-    //     $remainingDue = max($loan->loan_amount - $totalPaid, 0);
-
-    //     $amountCollected = $request->amount_collected;
-
-    //     $newRemainingDue = max($remainingDue - $amountCollected, 0);
-
-    //     $receiptPath = null;
-    //     if ($request->hasFile('receipt')) {
-    //         $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
-    //     }
-
-    //     $transaction = new GoldLoanTransaction();
-    //     $transaction->loan_id = $loan->id;
-    //     $transaction->transaction_date = $request->transaction_date;
-    //     $transaction->amount_collected = $amountCollected;
-    //     $transaction->current_debt = $newRemainingDue;
-    //     // $transaction->overdue_interest = 0;
-    //     $transaction->other_charges = 0;
-    //     // $transaction->net_amount = $amountCollected;
-    //     $transaction->remarks = $request->remarks;
-    //     // $transaction->receipt = $receiptPath;
-    //     $transaction->status = 1;
-
-    //     $transaction->save();
-
-    //     if ($newRemainingDue <= 0) {
-    //         $loan->status = 'closed';
-    //         $loan->save();
-    //     }
-
-    //     return redirect()->route('gold-loan.account.show', $loan->id)
-    //         ->with('success', 'EMI Payment recorded successfully!');
-    // }
 
     public function payEmiLoan(Request $request, $id)
     {
@@ -416,33 +269,28 @@ class GoldLoanAccountController extends Controller
             'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        // Fetch the loan with its scheme to check gold_loan_setting type
         $loan = LoanApplication::with('scheme')->findOrFail($id);
 
-        // Calculate total paid till date
         $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
             ->sum('amount_collected');
 
-        // Current remaining debt before new payment
         $remainingDue = max($loan->loan_amount - $totalPaid, 0);
 
         $amountCollected = $request->amount_collected;
         $newRemainingDue = max($remainingDue - $amountCollected, 0);
 
-        // Handle receipt upload (optional)
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
             $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
         }
 
-        // Create new EMI transaction entry
         $transaction = new GoldLoanTransaction();
         $transaction->loan_id = $loan->id;
         $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
         $transaction->amount_collected = $amountCollected;
         $transaction->current_debt = $newRemainingDue;
         $transaction->other_charges = 0;
-        $transaction->total_payable = $remainingDue; // before paying this EMI
+        $transaction->total_payable = $remainingDue;
         $transaction->status = 'paid';
         $transaction->remarks = $request->remarks ?? null;
         $transaction->flag = 'emi_payment';
@@ -454,7 +302,6 @@ class GoldLoanAccountController extends Controller
 
         $transaction->save();
 
-        // If fully paid, mark loan as closed
         if ($newRemainingDue <= 0) {
             $loan->status = 'closed';
             $loan->save();
@@ -558,7 +405,7 @@ class GoldLoanAccountController extends Controller
         if ($loan->balance_amount < 0) $loan->balance_amount = 0;
 
 
-        dd($loan);
+        // dd($loan);
         $loan->save();
 
         return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');

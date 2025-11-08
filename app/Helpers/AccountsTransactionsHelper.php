@@ -8,6 +8,7 @@ class AccountsTransactionsHelper
 {
     public static function getAccountBalacec($account_nos, $payment_details = null)
     {
+    
         // Convert single ID to array
         if (!is_array($account_nos)) {
             $account_nos = [$account_nos];
@@ -114,24 +115,6 @@ class AccountsTransactionsHelper
         $tdata = \App\Models\Transaction::create($transactionData);
         //     // Step 4: Return updated balance
         $updated_balances = self::getAccountBalacec([$account_id]);
-
-        // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
-
-        // $mobile = $transaction->accounts->members->member_info_mobile_no;
-
-        // $AccountNo = $transaction->accounts->account_no;
-        // $type = $tdata->transaction_type;
-
-        // $available_balance = $updated_balances['total_balance'];
-
-        // $amount = $amount;
-        // $date = $transaction->transaction_date;
-
-        // $dlttemplateid = 1707172234108850512;
-        // $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
-
-        // \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-
         return $updated_balances[array_key_first($updated_balances)] ?? 0;
     }
 

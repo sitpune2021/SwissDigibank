@@ -38,7 +38,7 @@
 
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class=" w-full  box overflow-hidden">
-            <form action="{{route('storeCreditDebitInterest',$account->id)}}" method="POST">
+            <form action="{{route('storeCreditDebitInterest',$account->id?? 0)}}" method="POST">
                 @csrf
                 <hr>
 
