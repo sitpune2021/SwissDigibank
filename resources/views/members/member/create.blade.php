@@ -164,6 +164,7 @@
                                     : $member[$name] ?? ($field['default'] ?? ''),
                             );
                         }
+
                     @endphp
                     <div class="w-full  col-span-2 md:col-span-1 mb-4 {{ str_replace('_', ' ', $sectionName) }}">
                         @include('fields.label', [
@@ -557,6 +558,9 @@
                                 'field' => $field,
                             ])
                         @endif
+                        @if ($id === 'monthly_income')
+                            <x-number-to-word for="monthly_income" />
+                        @endif
 
                         @error($name)
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
@@ -764,12 +768,12 @@
             });
         });
     </script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    // Checkbox for "Same as Correspondence Address"
-    const sameAddressCheckbox = document.createElement('div');
-    sameAddressCheckbox.innerHTML = `
+            // Checkbox for "Same as Correspondence Address"
+            const sameAddressCheckbox = document.createElement('div');
+            sameAddressCheckbox.innerHTML = `
         <label class="flex items-center gap-2 mt-2">
             <input type="checkbox" id="sameAsCorrespondence" style=" width: 28px;
             height: 28px;
@@ -778,60 +782,60 @@ document.addEventListener('DOMContentLoaded', function() {
         </label>
     `;
 
-    // Append the checkbox just below Correspondence Address section
-    const corrSection = document.querySelector('.customer_correspondence_address');
-    if (corrSection) {
-        corrSection.parentNode.insertBefore(sameAddressCheckbox, corrSection.nextSibling);
-    }
-
-    const fieldsMap = {
-        // Correspondence → Permanent mapping
-        'address_line_1': 'address',
-        'city_district': 'city',
-        'stateDropdown': 'state',
-        'address_pincode': 'perm_address_pincode'
-    };
-
-    // Function to copy data
-    function copyAddress() {
-        for (const [currId, permId] of Object.entries(fieldsMap)) {
-            const curr = document.getElementById(currId);
-            const perm = document.getElementById(permId);
-            if (curr && perm) {
-                perm.value = curr.value;
+            // Append the checkbox just below Correspondence Address section
+            const corrSection = document.querySelector('.customer_correspondence_address');
+            if (corrSection) {
+                corrSection.parentNode.insertBefore(sameAddressCheckbox, corrSection.nextSibling);
             }
-        }
-    }
 
-    // Function to clear permanent address fields
-    function clearPermanentAddress() {
-        for (const permId of Object.values(fieldsMap)) {
-            const perm = document.getElementById(permId);
-            if (perm) perm.value = '';
-        }
-    }
+            const fieldsMap = {
+                // Correspondence → Permanent mapping
+                'address_line_1': 'address',
+                'city_district': 'city',
+                'stateDropdown': 'state',
+                'address_pincode': 'perm_address_pincode'
+            };
 
-    // When checkbox toggled
-    document.getElementById('sameAsCorrespondence').addEventListener('change', function() {
-        if (this.checked) {
-            copyAddress();
-        } else {
-            clearPermanentAddress();
-        }
-    });
+            // Function to copy data
+            function copyAddress() {
+                for (const [currId, permId] of Object.entries(fieldsMap)) {
+                    const curr = document.getElementById(currId);
+                    const perm = document.getElementById(permId);
+                    if (curr && perm) {
+                        perm.value = curr.value;
+                    }
+                }
+            }
 
-    // Optional: If user edits current address after checking "Same as" → auto-update permanent
-    for (const currId of Object.keys(fieldsMap)) {
-        const curr = document.getElementById(currId);
-        if (curr) {
-            curr.addEventListener('input', function() {
-                const sameCheck = document.getElementById('sameAsCorrespondence');
-                if (sameCheck.checked) {
+            // Function to clear permanent address fields
+            function clearPermanentAddress() {
+                for (const permId of Object.values(fieldsMap)) {
+                    const perm = document.getElementById(permId);
+                    if (perm) perm.value = '';
+                }
+            }
+
+            // When checkbox toggled
+            document.getElementById('sameAsCorrespondence').addEventListener('change', function() {
+                if (this.checked) {
                     copyAddress();
+                } else {
+                    clearPermanentAddress();
                 }
             });
-        }
-    }
-});
-</script>
+
+            // Optional: If user edits current address after checking "Same as" → auto-update permanent
+            for (const currId of Object.keys(fieldsMap)) {
+                const curr = document.getElementById(currId);
+                if (curr) {
+                    curr.addEventListener('input', function() {
+                        const sameCheck = document.getElementById('sameAsCorrespondence');
+                        if (sameCheck.checked) {
+                            copyAddress();
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 @endsection
