@@ -417,6 +417,7 @@ Route::group(['prefix' => 'withdraws'], function () {
 
 ////////////////////////////////////    APPROVALS    /////////////////////////////////////////////////////////////
 
+
 Route::group(['prefix' => 'approvals'], function () {
     Route::resource('pending-transaction', ApproveController::class);
 
@@ -437,6 +438,7 @@ Route::group(['prefix' => 'approvals'], function () {
 
     Route::get('approvals_history', [ApproveController::class, 'approvals_history'])->name('approvals_history');
 });
+
 
 ////////////////////////////////////   END APPROVALS    /////////////////////////////////////////////////////////////
 
@@ -1129,8 +1131,59 @@ Route::group(['prefix' => 'vehical'], function () {
 });
 
 
-/////////////////////////////////////   END Vehical LOAN   ////////////////////////////////////////////////////////
+/////////////////////////////////////  END Vehical LOAN   ////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////    START LOCKER    ///////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'locker'], function () {
+
+    Route::get('locker-list/index', [LockerController::class, 'locker_list_index'])
+        ->name('lockers.locker-list.index');
+
+     // Create Form
+    Route::get('locker-list/add', [LockerController::class, 'locker_list_add'])
+        ->name('lockers.locker-list.add');
+    // Store Form
+    Route::post('locker-list/store', [LockerController::class, 'locker_list_store'])
+    ->name('lockers.locker-list.store');
+
+    // View Form details
+    Route::get('locker-list/view/{id}', [LockerController::class, 'locker_list_view'])
+    ->name('lockers.locker-list.view');
+
+    // Edit Form
+    Route::get('locker-list/edit/{id}', [LockerController::class, 'locker_list_edit'])
+        ->name('lockers.locker-list.edit');
+    // Update
+    Route::post('locker-list/update/{id}', [LockerController::class, 'locker_list_update'])
+        ->name('lockers.locker-list.update');
+
+    // show assign form (GET)
+    Route::get('locker-list/assign/{id}', [LockerController::class, 'assign_locker'])
+        ->name('lockers.locker-list.assign-locker');
+    // get member details
+    Route::get('/get-member-accounts/{member_id}', [LockerController::class, 'getMemberAccounts']);
+    // handle assign form submit (POST)
+    Route::post('locker-list/assign/{id}', [LockerController::class, 'assign_locker_store'])
+        ->name('lockers.locker-list.assign-locker.store');
+
+
+    Route::get('locker-list/release-locker/{id}', [LockerController::class, 'release_locker'])
+        ->name('lockers.locker-list.release-locker');
+    Route::post('locker-list/release/{id}', [LockerController::class, 'release_locker_store'])
+    ->name('lockers.locker-list.release.store');
+
+    Route::get('member-locker/index', [LockerController::class, 'member_locker_index'])
+        ->name('lockers.member-locker.index');
+    Route::get('member-locker/view', [LockerController::class, 'member_locker_view'])
+        ->name('lockers.member-locker.view');
+
+});
+
+
+///////////////////////////////////////////////     END LOCKER      /////////////////////////////////////////////
 
 
 Route::group(['prefix' => 'hr-managment'], function () {
@@ -1230,29 +1283,6 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
     Route::get('commission/view', [AdvisorController::class, 'comission_view'])
         ->name('associates-advisor.commission-charts.view');
-});
-
-// Locker
-Route::group(['prefix' => 'associate-advisor'], function () {
-    Route::get('locker-list/index', [LockerController::class, 'locker_list_index'])
-        ->name('lockers.locker-list.index');
-
-    Route::get('locker-list/add', [LockerController::class, 'locker_list_add'])
-        ->name('lockers.locker-list.add');
-
-    Route::get('locker-list/view', [LockerController::class, 'locker_list_view'])
-        ->name('lockers.locker-list.view');
-
-    Route::get('locker-list/assign-locker', [LockerController::class, 'assign_locker'])
-        ->name('lockers.locker-list.assign-locker');
-
-    Route::get('locker-list/release-locker', [LockerController::class, 'release_locker'])
-        ->name('lockers.locker-list.release-locker');
-
-    Route::get('member-locker/index', [LockerController::class, 'member_locker_index'])
-        ->name('lockers.member-locker.index');
-    Route::get('member-locker/view', [LockerController::class, 'member_locker_view'])
-        ->name('lockers.member-locker.view');
 });
 
 // ledger 

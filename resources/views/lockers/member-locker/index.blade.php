@@ -61,6 +61,7 @@
                 <div>
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse whitespace-nowrap text-sm">
+                            
                             <thead>
                                 <tr class="bg-secondary/5 dark:bg-bg3">
                                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -106,79 +107,75 @@
 
                                 </tr>
                             </thead>
+
                             <tbody>
+                                @foreach ($lockers as $locker)
+                                    <tr class="border-b dark:border-bg3">
 
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            2222	
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                          MY LOCKER - 0063	
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <a href="" class="text-primary">
-                                                	DEMO-04287 - kuldeeeeeeep
-                                            </a>	
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <a href="" class="text-primary">
-                                                01715
-                                            </a>	
-                                        </div>
-                                    </td>
-                                     <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                           10-10-2024	
-                                        </div>
-                                    </td>
-                                     <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                           16-01-2024	
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
-                                    </td>
-                                    
-                                    
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
+                                        {{-- Locker No --}}
+                                        <td class="px-6 py-5 uppercase text-sm">
+                                            {{ $locker->locker_no }}
+                                        </td>
+
+                                        {{-- Locker Name --}}
+                                        <td class="px-6 py-5 text-sm capitalize">
+                                            {{ $locker->locker_name }}
+                                        </td>
+
+                                        {{-- Member Name --}}
+                                        <td class="px-6 py-5 text-sm">
+                                            <a href="#" class="text-primary">
+                                                {{ $locker->member_no }} - {{ $locker->member_name }}
+                                            </a>
+                                        </td>
+
+                                        {{-- Account No --}}
+                                        <td class="px-6 py-5 text-sm">
+                                            <a href="#" class="text-primary">
+                                                {{ $locker->account_no }}
+                                            </a>
+                                        </td>
+
+                                        {{-- Assigned Date --}}
+                                        <td class="px-6 py-5 text-sm">
+                                            {{ $locker->assign_on ? \Carbon\Carbon::parse($locker->assign_on)->format('d-m-Y') : '—' }}
+                                        </td>
+
+                                        {{-- Release Date --}}
+                                        <td class="px-6 py-5 text-sm">
+                                            {{ $locker->release_on ? \Carbon\Carbon::parse($locker->release_on)->format('d-m-Y') : '—' }}
+                                        </td>
+
+                                        {{-- Assigned --}}
+                                        <td class="px-6 py-5 text-sm">
+                                            @if ($locker->is_assigned == 'Yes')
+                                                <span class="block w-20 rounded-[30px] bg-primary/20 text-primary py-2 text-center">
+                                                    Yes
+                                                </span>
+                                            @else
+                                                <span class="block w-20 rounded-[30px] bg-error/20 text-error py-2 text-center">
+                                                    No
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        {{-- Actions --}}
+                                        <td class="px-6 py-5 text-sm">
                                             <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
+                                                <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                                 <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">RELEASE</a></li>
-                                                     
+                                                    <li><a href="{{ url('locker/locker-list/view/'.$locker->id) }}" class="single-option uppercase">View</a></li>
+
+                                                    @if ($locker->is_assigned == 'Yes')
+                                                        <li><a href="{{ route('lockers.locker-list.release-locker', $locker->id) }}" class="single-option uppercase">Release</a></li>
+                                                    @endif
                                                 </ul>
-
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
                                             </div>
-                                        </div>
-                                    </td>
-
-                                </tr>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
+
                         </table>
                     </div>
                 </div> 
