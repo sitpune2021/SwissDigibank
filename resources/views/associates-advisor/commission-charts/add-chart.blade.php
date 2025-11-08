@@ -181,28 +181,30 @@
                                     chart.
                                 </p>
                             </div>
-                            <div class="tab tab-fd_payout hidden"> 
+                            <div class="tab tab-fd_payout hidden">
                                 <strong class="block text-lg font-semibold mb-2">Payout Based Incentive:</strong>
                                 <p class="mb-4 text-gray-700 dark:text-gray-300">
-                                   This is per interest payout based incentive payout according to commission chart.
+                                    This is per interest payout based incentive payout according to commission chart.
                                 </p>
                             </div>
                             <div class="tab tab-mis_one hidden">
-                                 <strong class="block text-lg font-semibold mb-2">One Time Incentive:</strong>
+                                <strong class="block text-lg font-semibold mb-2">One Time Incentive:</strong>
                                 <p class="mb-4 text-gray-700 dark:text-gray-300">
-                                  his is per account open or maturity based incentive payout according to commission chart.
+                                    his is per account open or maturity based incentive payout according to commission
+                                    chart.
                                 </p>
                             </div>
                             <div class="tab tab-mis_payout hidden">
-                                 <strong class="block text-lg font-semibold mb-2">Payout Based Incentive:</strong>
+                                <strong class="block text-lg font-semibold mb-2">Payout Based Incentive:</strong>
                                 <p class="mb-4 text-gray-700 dark:text-gray-300">
-                                   This is per interest payout based incentive payout according to commission chart.
+                                    This is per interest payout based incentive payout according to commission chart.
                                 </p>
                             </div>
                             <div class="tab tab-saving hidden">
-                                 <strong class="block text-lg font-semibold mb-2">Account Opening Incentive:</strong>
+                                <strong class="block text-lg font-semibold mb-2">Account Opening Incentive:</strong>
                                 <p class="mb-4 text-gray-700 dark:text-gray-300">
-                                  This is one time incentive payout according to commission chart when Saving Account Open.
+                                    This is one time incentive payout according to commission chart when Saving Account
+                                    Open.
                                 </p>
                             </div>
                         </div>
@@ -529,7 +531,215 @@
                                                 class="invoice_input text-center" />
                                         </td>
                                     </tr>
-
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                        <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
                                     <tr class="months-row border-b">
                                         <td
                                             class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
@@ -580,6 +790,215 @@
                                                 class="invoice_input text-center" />
                                         </td>
                                     </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                        <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
 
                                     <tr class="months-row border-b">
                                         <td
@@ -617,6 +1036,7 @@
                                             class="text-center text-lg  quantity ft-600 text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                             RANK / MONTHS</th>
                                     </tr>
+
                                 </thead>
 
                                 <tbody>
@@ -628,6 +1048,215 @@
                                         <td
                                             class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
                                             <input type="text" value="Field Head Officer" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                        <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
                                                 class="invoice_input text-center" />
                                         </td>
                                     </tr>
@@ -657,6 +1286,215 @@
                                         <th
                                             class="text-center text-lg  quantity ft-600 text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                             RANK / MONTHS</th>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                        <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
                                     </tr>
                                 </thead>
 
@@ -698,6 +1536,215 @@
                                         <th
                                             class="text-center text-lg  quantity ft-600 text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                             RANK / MONTHS</th>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                        <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
                                     </tr>
                                 </thead>
 
@@ -754,6 +1801,215 @@
                                                 class="invoice_input text-center" />
                                         </td>
                                     </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                        <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                    <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                       <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                      <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
+                                     <tr class="months-row border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                    </tr>
 
                                     <tr class="months-row border-b">
                                         <td
@@ -803,6 +2059,291 @@
                                                 class="dynamic-placeholder text-start px-3 border  py-1" />
                                         </td>
                                     </tr>
+                                     <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="2" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field officer " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                       <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="3" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship ManageR " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                      <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="4" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Relationship Manager " disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                      <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="5" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Area Relationship Manager" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                     <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="6" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="Regional Relationship MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                        <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="7" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                    <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="8" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ASSOSIATE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                       <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="9" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD EXCUTIVE" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                     <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="10" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                    <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="11" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="FIELD ORGANIZER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                      <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="12" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="field associate" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                      <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="13" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value=" FIELD OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                      <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="14" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ADVISER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                       <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="15" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES MANAGER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                    <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="16" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="DEL OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                      <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="17" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST DEV OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                        <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="18" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                       <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="19" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="ASST SALES OFFICER" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
+                                        <tr class=" border-b">
+                                        <td
+                                            class="text-center  text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="20" disabled class="invoice_input text-center " />
+                                        </td>
+                                        <td
+                                            class="text-center text-start !py-5 px-6 min-w-[100px] cursor-pointer bg-secondary/5 ">
+                                            <input type="text" value="C DIRECTOR" disabled
+                                                class="invoice_input text-center" />
+                                        </td>
+                                        <td class="text-center !py-5 px-6 min-w-[100px]">
+                                            <input type="text" placeholder="percent"
+                                                class="dynamic-placeholder text-start px-3 border  py-1" />
+                                        </td>
+                                    </tr>
 
                                     <tr class="months-row border-b">
                                         <td
@@ -842,6 +2383,8 @@
             </div>
         </form>
     </div>
+
+    
 
     {{-- Chart Type --}}
     <script>
@@ -959,8 +2502,6 @@
         });
     </script>
 
-
-
     {{-- Payout Type --}}
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -988,6 +2529,7 @@
             });
         });
     </script>
+
     <script>
         document.getElementById("schemeSelect").addEventListener("change", function () {
             const selected = this.value;
@@ -997,6 +2539,7 @@
             }
         });
     </script>
+
     <script>
         function toggleSection(button, sectionId) {
             const section = document.getElementById(sectionId);
