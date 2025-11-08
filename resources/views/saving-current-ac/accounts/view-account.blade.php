@@ -1,6 +1,25 @@
 @extends('layout.main')
 
 @section('content')
+<!-- <style>
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(227, 226, 226, 0.5);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+</style> -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
@@ -16,9 +35,36 @@
         </a>
         <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('deposit.create',base64_encode($account->id))}}">Deposit Money</a>
         <a class="px-4 py-2 text-base text-white bg-red-600 rounded hover:bg-red-700" href="{{route('withdraw.create',base64_encode($account->id))}}">Withdraw Money</a>
-        <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('saving.passbook', base64_encode($account->id))}}">Print Documents</a>
+        <!-- <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('saving.passbook', base64_encode($account->id))}}">Print Documents</a> -->
+
         <div class="relative inline-block text-left">
-            <!-- Dropdown button -->
+            <button id="dropdownPrintMenuBtn" type="button"
+                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-green-600 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                Print Documents
+                <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <!-- Dropdown menu -->
+            <div id="printDropdownMenu"
+                class="hidden absolute right-0 mt-2 w-56 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                <div class="py-1">
+                    <!-- Passbook -->
+                    <a href="{{ route('saving.passbook', base64_encode($account->id)) }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Passbook
+                    </a>
+                    <!-- Account Opening Form -->
+                    <a href="{{ route('saving.accounts.open.form', base64_encode($account->id)) }}" id="openModalBtn"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Account Opening Form
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="relative inline-block text-left">
             <button id="dropdownButton"
                 class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600 flex items-center">
                 Debit Other Charges
@@ -27,8 +73,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-
-            <!-- Dropdown menu -->
             <div id="dropdownMenu"
                 class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                 <a href="{{route('accounts.other.debit-charges', base64_encode($account->id))}}"
@@ -68,7 +112,7 @@
                         <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Upgrade Account</a>
                     </li>
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Close Account</a>
+                        <a href="{{route('saving.accounts.close.account',base64_encode($account->id))}}" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Close Account</a>
                     </li>
                     <li>
                         <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Remove Account</a>
@@ -87,7 +131,6 @@
 
             <!-- Left Panel -->
             <div class="space-y-3 md:w-7/12">
-
                 {{-- Account Info Table --}}
                 <div class="bg-white rounded shadow">
                     <div class="flex items-center justify-between px-3 py-2 font-semibold bg-green-500 cursor-pointer" @click="open=!open">
@@ -411,7 +454,42 @@
     </div>
 </div>
 
+
+<!-- Modal -->
+<!-- <div id="printing_modal" class="modal-overlay">
+    <div class="box rounded-2xl shadow-xl relative p-6" style="width: 500px;">
+        <div class="flex justify-between items-center border-b pb-4">
+            <h3 class="text-2xl font-semibold text-center w-full">OPENING FORM</h3>
+            <button id="closeModalBtn" class="text-gray-400 hidden hover:text-gray-600 text-2xl absolute right-5 top-4">&times;</button>
+        </div>
+
+        <form id="introducerForm" class="mt-6 space-y-6" action="" method="">
+            @csrf
+            <div>
+                <label for="introducer_details" class="block uppercase text-lg font-medium text-gray-700 mb-2">
+                    Introducer Details
+                </label>
+                <input
+                    type="text"
+                    id="introducer_details"
+                    class="w-full border border-gray-300 rounded-10 bg-secondary/5 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="Enter Introducer Details">
+            </div>
+            <hr class="mt-5">
+            <div class="flex justify-between pt-4 ">
+                <button type="button" id="cancelBtn" class="px-4 py-2 btn-outline rounded-10 uppercase transition">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-10 uppercase btn-primary transition">
+                    Submit <i class="las la-arrow-circle-right ml-2"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div> -->
+
 <script>
+    // 🔹 Debit Other Charges Dropdown
     const dropdownButton = document.getElementById('dropdownButton');
     const dropdownMenu = document.getElementById('dropdownMenu');
 
@@ -424,7 +502,7 @@
             dropdownMenu.classList.add('hidden');
         }
     });
-
+    // 🔹 Account Details Dropdown
     const dropdownBtn = document.getElementById('accountDropdownButton');
     const accountDropdownMenu = document.getElementById('accountDropdownMenu');
 
@@ -437,5 +515,59 @@
             accountDropdownMenu.classList.add('hidden');
         }
     });
+
+    // 🔹 Print Documents Dropdown (Fixed)
+    const dropdownPrintMenuBtn = document.getElementById('dropdownPrintMenuBtn');
+    const printDropdownMenu = document.getElementById('printDropdownMenu');
+
+    dropdownPrintMenuBtn.addEventListener('click', () => {
+        printDropdownMenu.classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!dropdownPrintMenuBtn.contains(e.target) && !dropdownPrintMenuBtn.contains(e.target)) {
+            printDropdownMenu.classList.add('hidden');
+        }
+    });
 </script>
+<!-- <script>
+    const modal = document.getElementById('printing_modal');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const form = modal.querySelector('form'); 
+
+    openBtn.addEventListener('click', (e) => {
+        e.preventDefault(); 
+        modal.classList.add('show');
+    });
+
+    const closeModal = () => {
+        modal.classList.remove('show');
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    form.addEventListener('submit', function(e) {
+        const introducer = document.getElementById('introducer_details').value;
+        console.log('Introducer details:', introducer);
+
+        fetch('{{ route('saving.accounts.open.form', base64_encode($account->id)) }}', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: JSON.stringify({ introducer_details: introducer })
+        }).then(response => response.json())
+          .then(data => console.log('Success:', data));
+
+        closeModal();
+    });
+    
+</script> -->
+
+
 @endsection
