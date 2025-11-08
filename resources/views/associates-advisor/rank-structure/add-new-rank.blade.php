@@ -61,6 +61,7 @@
 </style>
 
 @section('content')
+
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-start gap-3 mb-6 px-4 lg:mb-8">
@@ -74,71 +75,101 @@
             <div class=" w-full overflow-x-auto   overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="min-w-full p-4">
-                        <form>
+
+                        <form action="{{ $rank ? route('associates-advisor.rank-structure.update', $rank->id) 
+                            : route('associates-advisor.rank-structure.store') }}" 
+                            method="POST">
+                            @csrf
+
+                            {{-- Rank Name --}}
                             <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                  Rank Name
-                                    <span class="text-red-500">*</span>
+                                <label class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Rank Name <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="" name="" 
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" placeholder="Enter Rank Name">
-                                    
-                            </div>
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Rank Display Position 
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <select id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option>Select Display Position</option>
-                                </select>
-                            </div>
-                         <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                   Rank Working Position  
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <select id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option>Select Position</option>
-                                </select>
-                                 <p class="text-xs text-primary mt-1">
-                                   Top Level (1 - Manager) & Bottom (20 - Field Officer)
-                                </p>
+                                <input type="text" name="name"
+                                    value="{{ old('name', $rank->name ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                    placeholder="Enter Rank Name">
+                                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
 
+                            {{-- Rank Display Position --}}
                             <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                  Collection Charge Commission
-                                  <span class="text-error">*</span>
+                                <label class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Rank Display Position <span class="text-red-500">*</span>
+                                </label>
+
+                                <select name="display_position"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Select Display Position</option>
+
+                                    @foreach([16,17,18,19,20] as $pos)
+                                        <option value="{{ $pos }}" {{ old('display_position', $rank->display_position ?? '') == $pos ? 'selected' : '' }}>
+                                            {{ $pos }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @error('display_position') 
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                                @enderror
+                            </div>
+
+                            {{-- Rank Working Position --}}
+                            <div>
+                                <label class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Rank Working Position <span class="text-red-500">*</span>
+                                </label>
+
+                                <select name="working_position"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Select Position</option>
+
+                                    @foreach([1,17,18,19,20] as $pos)
+                                        <option value="{{ $pos }}"
+                                            {{ old('working_position', $rank->working_position ?? '') == $pos ? 'selected' : '' }}>
+                                            {{ $pos }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-xs text-primary mt-1">
+                                    Top Level (1 - Manager) & Bottom (20 - Field Officer)
+                                </p>
+                                @error('working_position') 
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                                @enderror
+                            </div>
+
+                            {{-- Collection Charge Commission --}}
+                            <div>
+                                <label class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Collection Charge Commission <span class="text-error">*</span>
                                 </label>
                                 <div class="flex gap-6">
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" name="Collection" value="true"  checked
-                                            class="" />
+                                        <input type="radio" name="collection_commission" value="1"
+                                            {{ old('collection_commission', $rank->collection_commission ?? 1) == 1 ? 'checked' : '' }}>
                                         <span>Yes</span>
                                     </label>
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" name="Collection" value="false" 
-                                            class="" />
+                                        <input type="radio" name="collection_commission" value="0"
+                                            {{ old('collection_commission', $rank->collection_commission ?? '') == 0 ? 'checked' : '' }}>
                                         <span>No</span>
                                     </label>
                                 </div>
+                                @error('collection_commission') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
-                       
-                            <!-- Buttons -->
+
+                            {{-- Buttons --}}
                             <div class="flex flex-wrap gap-3 justify-center pt-4">
-                                <button type="submit"
-                                    class="btn-primary uppercase">
-                                   ADD RANK
+                                <button type="submit" class="btn-primary uppercase">
+                                    {{ $rank ? 'UPDATE RANK' : 'ADD RANK' }}
                                 </button>
-                                <a href=""
-                                    class="btn-outline uppercase ">
-                                    BAck
-                                </a>
+                                <a href="{{ route('associates-advisor.rank-structure.index') }}" class="btn-outline uppercase">Back</a>
                             </div>
+
                         </form>
+
                     </div>
                 </div>
 
