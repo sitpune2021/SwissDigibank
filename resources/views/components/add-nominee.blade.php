@@ -3,8 +3,8 @@
 </label>
 
 @php
-    $nomineeSource = $isUpdate ? $savingAccount : $rdAccount;
-    $hasNominee = isset($nomineeSource) && $nomineeSource->nominee && $nomineeSource->nominee->count() > 0;
+$nomineeSource = $isUpdate ? $savingAccount : $rdAccount;
+$hasNominee = isset($nomineeSource) && $nomineeSource->nominee && $nomineeSource->nominee->count() > 0;
 @endphp
 
 <div class="flex items-center gap-4">
@@ -21,7 +21,7 @@
         No
     </label>
     @error('nominee')
-        <span class="text-red-500 text-sm">{{ $message }}</span>
+    <span class="text-red-500 text-sm">{{ $message }}</span>
     @enderror
 </div>
 
@@ -39,63 +39,64 @@
 
     {{-- Prefilled Nominees (for update) --}}
     @if($hasNominee)
-        @foreach($nomineeSource->nominee as $index => $nominee)
-            <div class="w-full nominee-item columns-4 border-t gap-4 items-end bg-white p-4 rounded dark:bg-bg3">
-                <div class="nominee-row flex flex-wrap justify-start gap-6">
-                    <!-- Relation -->
-                    <div class="flex-center flex-1 min-w-[300px] max-w-full">
-                        <label class="font-medium block mb-2 uppercase">Relation <span class="text-red-500">*</span></label>
-                        <select name="nominees[{{ $index }}][relation]"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Relation</option>
-                            @foreach(['Father','Mother','Spouse','Son','Daughter','Brother','Sister','Grandfather','Grandmother',
-                                'Uncle','Aunt','Cousin','Nephew','Niece','Father-in-law','Mother-in-law',
-                                'Brother-in-law','Sister-in-law','Son-in-law','Daughter-in-law','Guardian','Friend','Other'] as $relation)
-                                <option value="{{ $relation }}"
-                                    {{ strtolower($nominee->nominee_relation) == strtolower($relation) ? 'selected' : '' }}>
-                                    {{ $relation }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Name -->
-                    <div class="flex-1 min-w-[300px] max-w-full">
-                        <label class="font-medium block mb-2 uppercase">Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="nominees[{{ $index }}][name]" value="{{ $nominee->nominee_name }}"
-                            placeholder="Enter Nominee Name"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
-                    </div>
-
-                    <!-- Address -->
-                    <div class="flex-1 min-w-[300px] max-w-full">
-                        <label class="font-medium block mb-2 uppercase">Address <span class="text-red-500">*</span></label>
-                        <input type="text" name="nominees[{{ $index }}][address]" value="{{ $nominee->nominee_address }}"
-                            placeholder="Enter Nominee Address"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
-                    </div>
-
-                    <!-- Remove -->
-                    <div class="flex-1 min-w-[60px] max-w-full flex justify-end items-center">
-                        <button type="button" onclick="removeNominee(this)"
-                            class="text-red-500 mt-8 font-bold text-lg hover:text-red-700">✕</button>
-                    </div>
-                </div>
+    @foreach($nomineeSource->nominee as $index => $nominee)
+    <div class="w-full nominee-item columns-4 border-t gap-4 items-end bg-white p-4 rounded dark:bg-bg3">
+        <div class="nominee-row flex flex-wrap justify-start gap-6">
+            <!-- Relation -->
+            <input type="hidden" name="nominees[{{ $index }}][id]" value="{{ $nominee->id ?? '' }}">
+            <div class="flex-center flex-1 min-w-[300px] max-w-full">
+                <label class="font-medium block mb-2 uppercase">Relation <span class="text-red-500">*</span></label>
+                <select name="nominees[{{ $index }}][relation]"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <option value="">Select Relation</option>
+                    @foreach(['Father','Mother','Spouse','Son','Daughter','Brother','Sister','Grandfather','Grandmother',
+                    'Uncle','Aunt','Cousin','Nephew','Niece','Father-in-law','Mother-in-law',
+                    'Brother-in-law','Sister-in-law','Son-in-law','Daughter-in-law','Guardian','Friend','Other'] as $relation)
+                    <option value="{{ $relation }}"
+                        {{ strtolower($nominee->nominee_relation) == strtolower($relation) ? 'selected' : '' }}>
+                        {{ $relation }}
+                    </option>
+                    @endforeach
+                </select>
             </div>
-        @endforeach
+
+            <!-- Name -->
+            <div class="flex-1 min-w-[300px] max-w-full">
+                <label class="font-medium block mb-2 uppercase">Name <span class="text-red-500">*</span></label>
+                <input type="text" name="nominees[{{ $index }}][name]" value="{{ $nominee->nominee_name }}"
+                    placeholder="Enter Nominee Name"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
+            </div>
+
+            <!-- Address -->
+            <div class="flex-1 min-w-[300px] max-w-full">
+                <label class="font-medium block mb-2 uppercase">Address <span class="text-red-500">*</span></label>
+                <input type="text" name="nominees[{{ $index }}][address]" value="{{ $nominee->nominee_address }}"
+                    placeholder="Enter Nominee Address"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3">
+            </div>
+
+            <!-- Remove -->
+            <div class="flex-1 min-w-[60px] max-w-full flex justify-end items-center">
+                <button type="button" onclick="removeNominee(this)"
+                    class="text-red-500 mt-8 font-bold text-lg hover:text-red-700">✕</button>
+            </div>
+        </div>
+    </div>
+    @endforeach
     @endif
 </div>
 
 <div class="flex justify-end gap-3 mt-6">
     @if ($isUpdate ?? false)
-        <button type="submit" class="sm:w-auto btn-primary uppercase justify-center">Update</button>
-        <a href="{{ url()->previous() }}" class="sm:w-auto btn-outline uppercase justify-center">Back</a>
+    <button type="submit" class="sm:w-auto btn-primary uppercase justify-center">Update</button>
+    <a href="{{ url()->previous() }}" class="sm:w-auto btn-outline uppercase justify-center">Back</a>
     @endif
 </div>
 
 {{-- JavaScript --}}
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const yesBtn = document.querySelector("input[name='nominee'][value='yes']");
         const hasNominee = @json($hasNominee);
 

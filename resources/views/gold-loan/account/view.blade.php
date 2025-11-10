@@ -320,12 +320,12 @@ $settingLabel = '';
                             <td class="px-4 py-2">₹ {{$goldLoan->loan_amount ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2"> Total Deposit</td>
-                            <td class="px-4 py-2">₹ </td>
+                            <td class="font-semibold px-4 py-2">Total Deposit</td>
+                            <td class="px-4 py-2">₹ {{$goldLoan->goldLoanTransactions->sum('amount_collected') ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Current Debt</td>
-                            <td class="px-4 py-2">(91,667.00)</td>
+                            <td class="px-4 py-2">{{$goldLoan->goldLoanTransactions->sum('current_debt') ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Close Date</td>
@@ -1122,7 +1122,7 @@ $settingLabel = '';
                                 <!-- PROCESSED -->
                                 <td class="p-2 processed">
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
                                         {{ $emi['processed'] }}
                                     </span>
                                 </td>
@@ -1353,9 +1353,6 @@ $settingLabel = '';
 
         applyBtnStateForRow(active, btn);
 
-        // Click handler: only act when enabled. After click, update row (status -> DUE, processed -> No),
-        // clear action cell of current row, and move the button to the next unpaid EMI row (if any),
-        // then evaluate enable/disable on the new row.
         btn.addEventListener("click", function() {
             if (btn.disabled) return;
 

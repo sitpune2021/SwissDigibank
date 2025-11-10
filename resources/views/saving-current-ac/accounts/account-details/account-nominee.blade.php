@@ -57,8 +57,6 @@
                 :isUpdate="true"
                 submitText="Change account info"
                 backText="Back" />
-
-
            
         </form>
     </div>

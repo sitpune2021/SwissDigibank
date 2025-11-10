@@ -185,6 +185,16 @@ return [
             ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
         ],
     ],
+     [
+        'title' => 'LOCKERS',
+        'icon' => 'las la-lock',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'LOCKER LIST', 'route' => 'lockers.locker-list.index'],
+            ['title' => 'MEMBER LOCKERS', 'route' => 'lockers.member-locker.index'],
+        ],
+    ],
     [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
