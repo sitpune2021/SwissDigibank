@@ -12,8 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('account_nominees', function (Blueprint $table) {
-            $table->unsignedBigInteger('mis_account_id')->nullable()->change();
+             $table->unsignedBigInteger('mis_account_id')->after('id')->nullable();
+
+            // Add foreign key constraint
+            $table->foreign('mis_account_id')
+                  ->references('id')
+                  ->on('misaccounts')
+                  ->onDelete('cascade');
         });
+       
     }
 
     /**
@@ -22,7 +29,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('account_nominees', function (Blueprint $table) {
-            $table->unsignedBigInteger('mis_account_id')->nullable(false)->change();
+            // Drop foreign key first, then the column
+            $table->dropForeign(['mis_account_id']);
+            $table->dropColumn('mis_account_id');
         });
     }
 };
