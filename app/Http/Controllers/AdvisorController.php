@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Mpdf\Mpdf;
 use App\Models\Rank;
+use App\Models\CommissionChart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -25,7 +26,8 @@ class AdvisorController extends Controller
 
         public function add_new_rank()
         {
-            return view('associates-advisor.rank-structure.add-new-rank');
+            $rank = null;
+            return view('associates-advisor.rank-structure.add-new-rank', compact('rank'));
         }
 
         public function store_new_rank(Request $request)
@@ -187,14 +189,245 @@ class AdvisorController extends Controller
 
 
     // Commission Chart 
+
         public function commission_charts_index()
         {
-            return view('associates-advisor.commission-charts.index');
+            $charts = CommissionChart::orderBy('id', 'DESC')->get();
+            return view('associates-advisor.commission-charts.index', compact('charts'));
         }
+
         public function add_chart()
         {
-            return view('associates-advisor.commission-charts.add-chart');
+            // prepare rank list (as you had in UI). Change titles as needed.
+            $rankData = [
+                1  => "Field Head Officer",
+                2  => "Field Officer",
+                3  => "Relationship Manager",
+                4  => "Relationship Manager",
+                5  => "Area Relationship Manager",
+                6  => "Regional Relationship Manager",
+                7  => "Field Manager",
+                8  => "Field Associate",
+                9  => "Field Executive",
+                10 => "Sales Officer",
+                11 => "Field Organizer",
+                12 => "Field Associate",
+                13 => "Field Officer",
+                14 => "Adviser",
+                15 => "Sales Manager",
+                16 => "DEL Officer",
+                17 => "Asst Dev Officer",
+                18 => "Sales Officer",
+                19 => "Asst Sales Officer",
+                20 => "C Director",
+                // add more if required
+            ];
+
+            // pass to view
+            return view('associates-advisor.commission-charts.add-chart', compact('rankData'));
+        }     
+       
+        // public function chartstore(Request $request)
+        // {
+        //     // Rank master list (same as in add_chart)
+        //     $rankData = [
+        //         1  => "Field Head Officer",
+        //         2  => "Field Officer",
+        //         3  => "Relationship Manager",
+        //         4  => "Relationship Manager",
+        //         5  => "Area Relationship Manager",
+        //         6  => "Regional Relationship Manager",
+        //         7  => "Field Manager",
+        //         8  => "Field Associate",
+        //         9  => "Field Executive",
+        //         10 => "Sales Officer",
+        //         11 => "Field Organizer",
+        //         12 => "Field Associate",
+        //         13 => "Field Officer",
+        //         14 => "Adviser",
+        //         15 => "Sales Manager",
+        //         16 => "DEL Officer",
+        //         17 => "Asst Dev Officer",
+        //         18 => "Sales Officer",
+        //         19 => "Asst Sales Officer",
+        //         20 => "C Director",
+        //     ];
+
+        //     $cleanData = [];
+
+        //     if (!empty($request->rank)) 
+        //     {
+
+        //         foreach ($request->rank as $rankNo => $months) 
+        //         {
+
+        //             if (!is_numeric($rankNo) || $rankNo <= 0) continue;
+
+        //             // Get rank name instead of number
+        //             $rankName = $rankData[$rankNo] ?? null;
+        //             if (!$rankName) continue;
+
+        //             // Check if row has any value
+        //             $rowHasValue = false;
+        //             foreach ($months as $v) {
+        //                 if ($v !== null && $v !== "") {
+        //                     $rowHasValue = true;
+        //                     break;
+        //                 }
+        //             }
+
+        //             if (!$rowHasValue) continue;
+
+        //             // Clean values
+        //             $cleanMonths = [];
+        //             foreach ($months as $m => $v) {
+        //                 $cleanMonths[$m] = ($v !== "" && $v !== null) ? $v : null;
+        //             }
+
+        //             // Store using rank name
+        //             $cleanData[$rankName] = $cleanMonths;
+        //         }
+        //     }
+
+        //     CommissionChart::create([
+        //         'chart_name'        => $request->chart_name,
+        //         'payout_type'       => $request->payout_type,
+        //         'commission_type'   => $request->commission_type,
+        //         'chart_type'        => $request->chart_type,
+        //         'tenure_months'     => $request->tenure_months,
+        //         'rank_month_values' => $cleanData, // No json_encode
+        //     ]);
+
+        //     return redirect()
+        //         ->route('associates-advisor.commission-charts.index')
+        //         ->with('success', 'Commission Chart Saved Successfully!');
+        // }
+
+        
+        public function chartstore(Request $request)
+        {
+            $rankData = [
+                1  => "Field Head Officer",
+                2  => "Field Officer",
+                3  => "Relationship Manager",
+                4  => "Relationship Manager",
+                5  => "Area Relationship Manager",
+                6  => "Regional Relationship Manager",
+                7  => "Field Manager",
+                8  => "Field Associate",
+                9  => "Field Executive",
+                10 => "Sales Officer",
+                11 => "Field Organizer",
+                12 => "Field Associate",
+                13 => "Field Officer",
+                14 => "Adviser",
+                15 => "Sales Manager",
+                16 => "DEL Officer",
+                17 => "Asst Dev Officer",
+                18 => "Sales Officer",
+                19 => "Asst Sales Officer",
+                20 => "C Director",
+            ];
+
+            $cleanData = [];
+
+            if (!empty($request->rank)) 
+            {
+                // foreach ($request->rank as $rankNo => $months) 
+                // {
+                //     // ✅ Allow "total" row and numeric rows
+                //     if ($rankNo !== "total" && (!is_numeric($rankNo) || $rankNo <= 0)) {
+                //         continue;
+                //     }
+
+                //     // ✅ Assign name
+                //     if ($rankNo === "total") {
+                //         $rankName = "TOTAL";
+                //     } else {
+                //         $rankName = $rankData[$rankNo] ?? null;
+                //     }
+
+                //     if (!$rankName) continue;
+
+                //     // ✅ Check if at least one value is present
+                //     $rowHasValue = false;
+                //     foreach ($months as $v) {
+                //         if ($v !== null && $v !== "") {
+                //             $rowHasValue = true;
+                //             break;
+                //         }
+                //     }
+
+                //     if (!$rowHasValue) continue;
+
+                //     // ✅ Clean values
+                //     $cleanMonths = [];
+                //     foreach ($months as $m => $v) {
+                //         $cleanMonths[$m] = ($v !== "" && $v !== null) ? $v : null;
+                //     }
+
+                //     $cleanData[$rankName] = $cleanMonths;
+                // }
+
+                foreach ($request->rank as $rankNo => $months) 
+                {
+                    if ($rankNo !== "total" && (!is_numeric($rankNo) || $rankNo <= 0)) {
+                        continue;
+                    }
+
+                    if ($rankNo === "total") {
+                        continue; // bottom total row ignore
+                    }
+
+                    // Rank name
+                    $rankName = $rankData[$rankNo] ?? null;
+                    if (!$rankName) continue;
+
+                    // Check if row has values
+                    $rowHasValue = false;
+                    foreach ($months as $v) {
+                        if ($v !== null && $v !== "") {
+                            $rowHasValue = true;
+                            break;
+                        }
+                    }
+                    if (!$rowHasValue) continue;
+
+                    // Clean months
+                    $cleanMonths = [];
+                    $sum = 0;
+
+                    foreach ($months as $m => $v) {
+                        $cleanMonths[$m] = ($v !== "" && $v !== null) ? $v : null;
+
+                        if ($v !== null && $v !== "" && is_numeric($v)) {
+                            $sum += floatval($v);
+                        }
+                    }
+
+                    // FINAL STRUCTURE
+                    $cleanData[$rankName] = [
+                        $cleanMonths,        // monthly values
+                        ["total" => $sum]    // total
+                    ];
+                }
+
+            }
+
+            CommissionChart::create([
+                'chart_name'        => $request->chart_name,
+                'payout_type'       => $request->payout_type,
+                'commission_type'   => $request->commission_type,
+                'chart_type'        => $request->chart_type,
+                'tenure_months'     => $request->tenure_months,
+                'rank_month_values' => $cleanData,
+            ]);
+
+            return redirect()
+                ->route('associates-advisor.commission-charts.index')
+                ->with('success', 'Commission Chart Saved Successfully!');
         }
+
         public function comission_view()
         {
             return view('associates-advisor.commission-charts.view');
