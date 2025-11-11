@@ -50,14 +50,14 @@
                     <tr>
                     <td class="font-semibold py-2 px-3 border border-gray-300">Interest Type</td>
                     <td class="py-2 px-3 border border-gray-300"> @php
-                                        $interestTypeLabel = [
-                                            'reducing_emi' => 'Reducing EMI',
-                                            'flat_emi' => 'Flat EMI',
-                                            'flat_advanced_interest' => 'Flat Advanced Interest',
-                                            'no_emi' => 'No EMI',
-                                        ][$application->scheme->gold_loan_setting ?? 'flat_emi'];
-                                    @endphp
-                                    {{ $interestTypeLabel }}</td>
+                            $interestTypeLabel = [
+                                'reducing_emi' => 'Reducing EMI',
+                                'flat_emi' => 'Flat EMI',
+                                'flat_advanced_interest' => 'Flat Advanced Interest',
+                                'no_emi' => 'No EMI',
+                            ][$application->scheme->gold_loan_setting ?? 'flat_emi'];
+                        @endphp
+                        {{ $interestTypeLabel }}</td>
                     <td class="font-semibold py-2 px-3 border border-gray-300">Processing Charges</td>
                     <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($processingFeeInc,2) }} (Incl. 18% GST)</td>
                     </tr>
@@ -153,15 +153,29 @@
                     </tbody>
 
                     <tfoot class="font-semibold" style="color: blueviolet;">
+
+                        @if(strtolower($interestType) === 'no_emi')
+                        <tr>
+                            <td colspan="3" class="border px-2 py-1 text-right">TOTAL</td>
+                            <td class="p-2 text-right border border-gray-300"></td>        
+                            <td class="p-2 text-right border border-gray-300">0.00</td>
+                            <td class="p-2 text-right border border-gray-300">0.00</td>
+                            <td class="p-2 text-right border border-gray-300">0.00</td>
+                            <td class="p-2 text-right border border-gray-300"></td>        
+                        </tr>
+                        @else
                         <tr>
                             <td colspan="3" class="border px-2 py-1 text-right">TOTAL</td>
                             <td class="border px-2 py-1 text-right">{{ number_format($totalPrincipal,2) }}</td>
                             <td class="border px-2 py-1 text-right">{{ number_format($totalInterest,2) }}</td>
                             <td class="border px-2 py-1 text-right">{{ number_format($totalCharges,2) }}</td>
                             <td class="border px-2 py-1 text-right">{{ number_format($totalEmi,2) }}</td>
-                            <td class="border px-2 py-1 text-right"></td>
+                            <td class="border px-2 py-1"></td>
                         </tr>
+                        @endif
+
                     </tfoot>
+
                 </table>
             </div>
         </div>
