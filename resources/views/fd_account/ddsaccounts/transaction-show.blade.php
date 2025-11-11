@@ -10,8 +10,8 @@
 
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200  shadow-md rounded-lg  overflow-x-auto p-4">
                     <div class="flex  justify-end gap-3 mb-3">
-                        <a class=" btn-primary p-1"
-                            href="{{ url('/print-documents/transaction-receipt?t_id=' . $transaction->id . '&t_type=DdAccountTransaction') }}">
+                        <a class="btn-primary p-1"
+                            href="{{ url('/print-documents/transaction-receipt/' . $transaction->dds_account_id . '/' . $transaction->id) }}">
                             <i class="las la-print"></i>
                         </a>
                         <a class=" btn-error p-1" title="Delete" data-confirm="Are you sure to delete transaction?"
@@ -116,7 +116,7 @@
                             <tr class="border-t">
                                 <td class="font-semibold px-4 py-2 uppercase">Branch</td>
                                 <td class="px-4 py-2">
-                                    {{ $transaction->branch->branch_name ?? '-' }}
+                                    {{ $transaction->ddsAccount->branch->branch_name ?? '-' }}
                                 </td>
                             </tr>
                             <tr class="border-t">
@@ -144,8 +144,6 @@
                                     {{ $transaction->approval_date ? \Carbon\Carbon::parse($transaction->approval_date)->format('d-m-Y') : '-' }}
                                 </td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>

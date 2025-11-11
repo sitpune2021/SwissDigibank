@@ -168,6 +168,7 @@
                                         @if ($tran->pay_mode !== 'Saving Account' && !$tran->accounted)
                                             @include('partials._vertical-options', [
                                                 'id' => [$ddsAccount->id, $tran->id],
+                                                // 'id' => $tran->id,
                                                 // 'id' => $tran->id, // Only pass the transaction ID
                                                 'viewRoute' => 'dds-accounts.transactions.show',
                                                 'printRoute' => 'dds-accounts.transactions.printReceipt',

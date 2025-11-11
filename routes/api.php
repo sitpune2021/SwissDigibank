@@ -25,12 +25,10 @@ Route::post('/password/verify-otp', [ForgotLoginPasswordController::class, 'veri
 Route::post('/password/reset', [ForgotLoginPasswordController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
-    Route::get('transactions', [ApiTransactionController::class, 'transactionHistory']);
     Route::get('balance', [ApiTransactionController::class, 'getBalance']);
-    // Route::post('/filter-transactions', [ApiTransactionController::class, 'filterTransactions']);
+    Route::get('transactions', [ApiTransactionController::class, 'transactionHistory']);
+    Route::get('/transactions/filter', [ApiTransactionController::class, 'filterTransactions']);
 });
 
-//member  api route
 Route::middleware('auth:sanctum')->get('members/details', [MemberController::class, 'fetchMemberDetails']);
-//Account 
 Route::middleware('auth:sanctum')->get('account/details', [AccountController::class, 'fetchAccountInfo']);
