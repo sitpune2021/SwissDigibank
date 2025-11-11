@@ -325,7 +325,7 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Current Debt</td>
-                            <td class="px-4 py-2">{{$goldLoan->goldLoanTransactions->sum('current_debt') ?? 'N/A'}}</td>
+                            <td class="px-4 py-2">{{$lastCurrentDebt ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Close Date</td>
@@ -1003,81 +1003,7 @@ $settingLabel = '';
         <div class="tab-content p-4">
             <div id="tab1" class="tab-pane block">
                 <div class="overflow-x-auto">
-                    <!-- <table class="w-full border-collapse whitespace-nowrap  text-sm">
-                        <thead class="bg-secondary/5 ">
-                            <tr>
-                                <th class=" p-2 ">EMI No.</th>
-                                <th class=" p-2 ">EMI DATE</th>
-                                <th class=" p-2 ">EMI DUE DATE</th>
-                                <th class=" p-2 ">PRINCIPAL</th>
-                                <th class=" p-2 ">INTEREST</th>
-                                <th class=" p-2 ">OTHER CHRG.</th>
-                                <th class=" p-2 ">EMI</th>
-                                <th class=" p-2 ">BAL. PRINCIPAL</th>
-                                <th class=" p-2 ">REMAINING AMT</th>
-                                <th class=" p-2 ">PAID DATE</th>
-                                <th class=" p-2 ">STATUS</th>
-                                <th class=" p-2 ">PROCESSED</th>
-                                <th class=" p-2 ">ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-green-50 border-b">
-                                <td class=" p-2"></td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2">20000.00</td>
-                                <td class=" p-2">0.00</td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2">{{$principal}}</td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2">
-                                <td class=" p-2">
-
-                                </td>
-                                <td class=" p-2">
-
-                                </td>
-                            </tr>
-                            @foreach ($emiSchedule as $emi)
-                            <tr class="border-b {{ $emi['status'] == 'PAID' ? 'bg-green-50' : '' }}">
-                                <td class="p-2">{{ $emi['emi_no'] }}</td>
-                                <td class="p-2">{{ $emi['emi_date'] }}</td>
-                                <td class="p-2">{{ $emi['emi_due_date'] }}</td>
-                                <td class="p-2">{{ $emi['principal'] }}</td>
-                                <td class="p-2">{{ $emi['interest'] }}</td>
-                                <td class="p-2">{{ $emi['other_charges'] }}</td>
-                                <td class="p-2">{{ $emi['emi_amount'] }}</td>
-                                <td class="p-2">{{ $emi['balance_principal'] }}</td>
-                                <td class="p-2">{{ $emi['remaining_amount'] }}</td>
-                                <td class="p-2">{{ $emi['paid_date'] }}</td>
-                                <td class="p-2">
-                                    <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
-                                        {{ $emi['status'] }}
-                                    </span>
-                                </td>
-                                <td class="p-2">
-                                    <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
-                                        {{ $emi['processed'] }}
-                                    </span>
-                                </td>
-                                <td class="p-2">
-                                    <button
-                                        class="btn btn-sm process-btn 
-               {{ $emi['status'] === 'UNPAID' ? 'bg-gray-400' : ($emi['status'] === 'DUE' ? 'bg-yellow-500' : 'bg-green-600') }} 
-               text-white px-3 py-1 rounded"
-                                        data-loan="{{ $goldLoan->id }}"
-                                        data-emi="{{ $emi['emi_no'] }}"
-                                        {{ $emi['status'] === 'PAID' ? 'disabled' : '' }}>
-                                        {{ $emi['status'] === 'UNPAID' ? 'PROCESS' : ($emi['status'] === 'DUE' ? 'PAY EMI' : 'PAID') }}
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table> -->
+                    <input type="hidden" id="loan_id" value="{{ $goldLoan->id }}">
 
                     <table class="w-full border-collapse whitespace-nowrap  text-sm" id="emiTable">
                         <thead class="bg-secondary/5">
@@ -1205,18 +1131,11 @@ $settingLabel = '';
         </div>
     </div>
 </div>
-
-
-
-
-
-
 <script>
     function toggleDropdown(id) {
         document.getElementById(id).classList.toggle("hidden");
     }
 
-    // Close dropdown if clicked outside
     window.addEventListener("click", function(e) {
         const dropdown = document.getElementById("printDropdown");
         if (!e.target.closest("button") && !e.target.closest("#printDropdown")) {
@@ -1225,9 +1144,6 @@ $settingLabel = '';
     });
 </script>
 
-
-
-<!-- Tailwind Tab Script -->
 <script>
     const tabBtns = document.querySelectorAll(".tab-btn");
     const tabPanes = document.querySelectorAll(".tab-pane");
@@ -1244,8 +1160,6 @@ $settingLabel = '';
         });
     });
 
-    // <!-- collapsed logic + - button-->
-
     function toggleSection(button, sectionId) {
         const section = document.getElementById(sectionId);
         const icon = button.querySelector('.toggle-icon');
@@ -1254,26 +1168,21 @@ $settingLabel = '';
         icon.textContent = section.classList.contains('hidden') ? '+' : '−';
     }
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const rows = Array.from(document.querySelectorAll("#emiTable tbody tr"));
         if (!rows.length) return;
 
-        // ----- helpers -----
-        // make a date-only (midnight) JS Date
         const toDateOnly = d => d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : null;
 
-        // parse "DD-MM-YYYY" or "DD/MM/YYYY" or "YYYY-MM-DD" robustly
         function parseAny(dateStr) {
             if (!dateStr) return null;
             const s = dateStr.trim();
-            // yyyy-mm-dd
             let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
             if (m) return toDateOnly(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
-            // dd-mm-yyyy or dd/mm/yyyy
             m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
             if (m) return toDateOnly(new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])));
-            // fallback
             const p = new Date(s);
             return isNaN(p) ? null : toDateOnly(p);
         }
@@ -1281,12 +1190,10 @@ $settingLabel = '';
         const today = toDateOnly(new Date());
         console.log("today:", today);
 
-        // Hide all process buttons produced by Blade loop (we will show exactly one)
         document.querySelectorAll(".process-btn").forEach(b => {
             b.style.display = "none";
         });
 
-        // Build array of rows that actually have emi-date cells and are not PAID
         const emiRows = rows.map((row, idx) => {
             const emiDateText = row.querySelector(".emi-date")?.textContent?.trim() || "";
             const emiDueText = row.querySelector(".emi-due-date")?.textContent?.trim() || "";
@@ -1309,18 +1216,13 @@ $settingLabel = '';
             return;
         }
 
-        // Find the single row that should host the process button:
-        // Priority:
-        // 1) first row where emiDate <= today <= emiDueDate  (inclusive)
-        // 2) else first unpaid EMI row (future) — button will be disabled (btn-warning)
         let pos = emiRows.findIndex(r => r.emiDate && r.emiDueDate && (today >= r.emiDate && today <= r.emiDueDate));
         if (pos === -1) {
-            pos = 0; // fallback to first unpaid row
+            pos = 0;
         }
         const active = emiRows[pos];
         console.log("Selected row for button:", pos, active.emiDateText, active.emiDueText, "parsed:", active.emiDate, active.emiDueDate);
 
-        // Show button on that active row (use existing server-rendered button)
         const btn = active.row.querySelector(".process-btn");
         if (!btn) {
             console.warn("No .process-btn found in selected row");
@@ -1328,11 +1230,10 @@ $settingLabel = '';
         }
         btn.style.display = "inline-block";
 
-        // Set enable/disable and classes: enabled only when emiDate <= today <= emiDueDate (inclusive).
         function applyBtnStateForRow(r, button) {
             const emiDate = r.emiDate;
             const emiDue = r.emiDueDate;
-            // If emiDue missing, require exact emiDate equality
+
             let enabled = false;
             if (emiDate && emiDue) {
                 enabled = (today >= emiDate && today <= emiDue);
@@ -1353,33 +1254,107 @@ $settingLabel = '';
 
         applyBtnStateForRow(active, btn);
 
+        // btn.addEventListener("click", function() {
+        //     if (btn.disabled) return;
+
+        //     const curStatusSpan = active.row.querySelector(".status span");
+        //     const curProcessedSpan = active.row.querySelector(".processed span");
+        //     if (curStatusSpan) {
+        //         curStatusSpan.textContent = "DUE";
+        //         curStatusSpan.classList.remove("text-primary");
+        //         curStatusSpan.classList.add("text-yellow-600");
+        //     }
+        //     if (curProcessedSpan) curProcessedSpan.textContent = "No";
+
+        //     const curActionCell = active.row.querySelector("td:last-child");
+        //     if (curActionCell) curActionCell.innerHTML = "";
+
+        //     const currentIndexInEmiRows = pos;
+        //     let nextIndex = currentIndexInEmiRows + 1;
+        //     if (nextIndex >= emiRows.length) {
+        //         btn.remove();
+        //         console.log("No more unpaid EMI rows; button removed.");
+        //         return;
+        //     }
+        //     const next = emiRows[nextIndex];
+        //     const nextActionCell = next.row.querySelector("td:last-child");
+        //     if (!nextActionCell) {
+        //         console.warn("No action cell for next row");
+        //         btn.remove();
+        //         return;
+        //     }
+        //     nextActionCell.innerHTML = "";
+        //     nextActionCell.appendChild(btn);
+
+        //     pos = nextIndex;
+
+        //     applyBtnStateForRow(next, btn);
+        // });
+
         btn.addEventListener("click", function() {
             if (btn.disabled) return;
 
-            // Update current row UI
+            // ---- Get today's date (format DD-MM-YYYY) ----
+            const todayDate = new Date();
+            const day = String(todayDate.getDate()).padStart(2, '0');
+            const month = String(todayDate.getMonth() + 1).padStart(2, '0');
+            const year = todayDate.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`; // ✅ DD-MM-YYYY
+
+            // ---- Update current row UI ----
             const curStatusSpan = active.row.querySelector(".status span");
             const curProcessedSpan = active.row.querySelector(".processed span");
+            const curPaidDateCell = active.row.querySelector("td:nth-child(10)"); // 10th column = PAID DATE
+
             if (curStatusSpan) {
                 curStatusSpan.textContent = "DUE";
                 curStatusSpan.classList.remove("text-primary");
                 curStatusSpan.classList.add("text-yellow-600");
             }
+
             if (curProcessedSpan) curProcessedSpan.textContent = "No";
 
-            // remove button from current cell
+            // ✅ Set current date in the PAID DATE column
+            if (curPaidDateCell) curPaidDateCell.textContent = formattedDate;
+
+
+            const emiNo = btn.getAttribute("data-emi");
+            const loanId = document.getElementById("loan_id")?.value; // or pass via hidden input
+
+            fetch("{{ route('emi.updateStatus') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        loan_id: loanId,
+                        emi_no: emiNo,
+                        status: "DUE"
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("✅ EMI status updated in DB:", data);
+                    } else {
+                        console.error("⚠️ Failed to update EMI:", data.message);
+                    }
+                })
+                .catch(err => console.error("❌ AJAX Error:", err));
+
             const curActionCell = active.row.querySelector("td:last-child");
             if (curActionCell) curActionCell.innerHTML = "";
 
-            // find next unpaid EMI row in emiRows list
             const currentIndexInEmiRows = pos;
             let nextIndex = currentIndexInEmiRows + 1;
             if (nextIndex >= emiRows.length) {
-                // no more unpaid rows -> remove button
+
                 btn.remove();
                 console.log("No more unpaid EMI rows; button removed.");
                 return;
             }
-            // attach to next
+
             const next = emiRows[nextIndex];
             const nextActionCell = next.row.querySelector("td:last-child");
             if (!nextActionCell) {
@@ -1390,13 +1365,9 @@ $settingLabel = '';
             nextActionCell.innerHTML = "";
             nextActionCell.appendChild(btn);
 
-            // update pos/active reference
             pos = nextIndex;
-            // re-evaluate enable/disable for next
             applyBtnStateForRow(next, btn);
         });
-
-        // Debug helper: log all EMI rows parsed
         console.table(emiRows.map(r => ({
             idx: r.idx,
             emiDate: r.emiDate,
@@ -1405,4 +1376,108 @@ $settingLabel = '';
         })));
     });
 </script>
+<!-- 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = Array.from(document.querySelectorAll("#emiTable tbody tr"));
+        if (!rows.length) return;
+
+        // Helper to parse date
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split(/[-\/]/);
+            if (parts[0].length === 4)
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+            else
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Hide all process buttons
+        document.querySelectorAll(".process-btn").forEach(btn => btn.style.display = "none");
+
+        // Prepare EMI rows
+        const emiRows = rows.map((row, idx) => {
+            const emiDateStr = row.querySelector(".emi-date")?.textContent?.trim() || "";
+            const status = row.querySelector(".status span")?.textContent?.trim().toUpperCase() || "";
+            const emiDate = parseDate(emiDateStr);
+            return {
+                row,
+                idx,
+                emiDate,
+                status
+            };
+        }).filter(r => r.status !== "PAID");
+
+        if (!emiRows.length) return;
+
+        // Find first unpaid EMI row
+        let currentIndex = emiRows.findIndex(r => r.status === "UNPAID");
+        if (currentIndex === -1) currentIndex = 0;
+
+        const currentRow = emiRows[currentIndex];
+        const processBtn = currentRow.row.querySelector(".process-btn");
+        processBtn.style.display = "inline-block";
+
+        // Enable button only on EMI date
+        function setButtonState(btn, emiDate) {
+            btn.disabled = true;
+            btn.classList.remove("btn-primary", "btn-warning");
+
+            if (emiDate && today.getTime() === emiDate.getTime()) {
+                btn.disabled = false;
+                btn.classList.add("btn-primary");
+                btn.style.cursor = "pointer";
+            } else {
+                btn.classList.add("btn-warning");
+                btn.style.cursor = "not-allowed";
+            }
+        }
+
+        setButtonState(processBtn, currentRow.emiDate);
+
+        // Handle click
+        processBtn.addEventListener("click", function() {
+            if (processBtn.disabled) return;
+
+            const emiId = processBtn.dataset.emiId;
+
+            fetch(`/update-emi-status/${emiId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        status: "DUE"
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const statusSpan = currentRow.row.querySelector(".status span");
+                        const processedSpan = currentRow.row.querySelector(".processed span");
+
+                        statusSpan.textContent = "DUE";
+                        statusSpan.classList.remove("text-primary");
+                        statusSpan.classList.add("text-yellow-600");
+                        processedSpan.textContent = "No";
+
+                        processBtn.style.display = "none";
+
+                        const nextRow = emiRows[currentIndex + 1];
+                        if (nextRow) {
+                            const nextBtn = nextRow.row.querySelector(".process-btn");
+                            nextBtn.style.display = "inline-block";
+                            setButtonState(nextBtn, nextRow.emiDate);
+                        }
+                    }
+                })
+                .catch(err => console.error("Error updating EMI:", err));
+        });
+    });
+</script> -->
+
 @endsection

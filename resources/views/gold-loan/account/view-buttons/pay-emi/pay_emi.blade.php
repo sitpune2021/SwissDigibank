@@ -65,7 +65,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="remaining_due" name="remaining_due" value="{{ $currentDebt ?? 0 }}"
+                        <input type="number" id="remaining_due" name="remaining_due" value="{{ $emiAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                         <x-number-to-word for="remaining_due_amount" />
@@ -87,11 +87,11 @@ $settingLabel = '';
                                 <!-- Input Row -->
                                 <tr class="">
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" value="{{ $overdueInterest ?? 0 }}" readonly
+                                        <input type="text" name="overdueInterest" id="overdueInterest" placeholder="0.0" value="{{ $overdueInterest ?? 0 }}" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" value="{{ $otherCharges ?? 0 }}" readonly
+                                        <input type="text" name="otherCharges" id="otherCharges" placeholder="0.0" value="{{ $otherCharges ?? 0 }}" readonly
                                             class="w-full px-2 py-2 text-center  bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -117,15 +117,15 @@ $settingLabel = '';
                                 <!-- Input Row -->
                                 <tr class="">
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" value="{{ $overdueInterest ?? 0 }}" id="amount" placeholder="0" readonly
+                                        <input type="text" name="amount" value="{{ $overdueInterest ?? 0 }}" id="amount" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="{{ $gstRate ?? 0 }}" placeholder="0.0" readonly
+                                        <input type="text" name="gstRate" id="gstRate" value="{{ $gstRate ?? 0 }}" placeholder="0.0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="totalAmount" value="{{ $totalOverdueWithGst ?? 0 }}" placeholder="0.0"
+                                        <input type="text" name="totalAmount" id="totalAmount" value="{{ $totalOverdueWithGst ?? 0 }}" placeholder="0.0"
                                             class="w-full px-2 py-2 text-center border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -139,7 +139,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="t_Amount" name="" value="{{ $totalAmount ?? 0 }}"
+                        <input type="number" id="t_Amount" name="t_Amount" value="{{ $emiAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                     </div>
@@ -150,7 +150,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="rounding" name="" value="{{ $rounding ?? 0 }}"
+                        <input type="number" id="rounding" name="rounding" value="{{ $rounding ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0" readonly>
                     </div>
@@ -161,7 +161,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="netAmount" name="" value="{{ $netAmount ?? 0 }}"
+                        <input type="number" id="netAmount" name="netAmount" value="{{ $emiAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0" readonly>
                         <x-number-to-word for="netAmount" />
