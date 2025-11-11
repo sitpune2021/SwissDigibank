@@ -135,11 +135,10 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
             ->name('dds-accounts.calculate-deposit');
         Route::get('/dds-accounts/{id}/transactions', [DdsAccountsController::class, 'transactions'])->name('dds-accounts.transactions');
-        Route::delete(
-            '/dds-accounts/transactions/{id}',
-            [DdsAccountsController::class, 'destroyTransaction']
-        )
+        // Route::delete('/dds-accounts/transactions/{id}', [DdsAccountsController::class, 'destroyTransaction'])->name('dds-accounts.transactions.destroy');
+        Route::delete('/dds-accounts/transactions/{ddsAccountId}/{tranxId}', [DdsAccountsController::class, 'destroyTransaction'])
             ->name('dds-accounts.transactions.destroy');
+
         Route::get('/dds-accounts/{account}/transactions/{transaction}', [DdsAccountsController::class, 'transactionShow'])
             ->name('dds-accounts.transactions.show');
         Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
@@ -170,8 +169,10 @@ Route::middleware('auth.user')->group(function () {
         // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
         Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
             ->name('dds-accounts.transactions.printReceipt');
-        // Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt1'])
-        //     ->name('dds-accounts.transactions.printReceipt1');
+        Route::get(
+            '/print-documents/transaction-receipt/{accountId}/{transactionId}',
+            [DdsAccountsController::class, 'printReceipt1']
+        )->name('dds.transaction.receipt');
     });
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
