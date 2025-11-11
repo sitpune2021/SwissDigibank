@@ -104,6 +104,10 @@ class GoldLoanAccountController extends Controller
                 $firstEmiDate = $applicationDate->copy()->addMonth();
                 $lastEmiDate  = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
 
+                $lastCurrentDebt = \App\Models\GoldLoanTransaction::where('loan_id', $goldLoan->id)
+                    ->orderByDesc('id')
+                    ->value('current_debt');
+
                 $monthlyPrincipal = $principal / $emiCount;
                 $lastEmiDate  = $firstEmiDate;
 
@@ -114,7 +118,7 @@ class GoldLoanAccountController extends Controller
 
                 $emi = round($emi, 2);
 
-                $payableAmount= $monthlyPrincipal+ $emi ;
+                $payableAmount = $monthlyPrincipal + $emi;
 
 
 
@@ -205,7 +209,8 @@ class GoldLoanAccountController extends Controller
             'goldLoan',
             'principal',
             'firstEmiDate',
-            'emiSchedule'
+            'emiSchedule',
+            'lastCurrentDebt'
         ));
     }
 
@@ -215,47 +220,93 @@ class GoldLoanAccountController extends Controller
 
         return view('gold-loan.account.view-buttons.view-transactions.view_transactions');
     }
+
+    // Gold loan Pay EMI
     public function goldLoanPayEmi($id)
     {
-        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])
-            ->whereHas('scheme', function ($query) {
-                $query->where('gold_loan_setting', 'flat_advanced_interest');
-            })
-            ->find($id);
+        $goldLoan = LoanApplication::with([
+            'member.branch',
+            'branch',
+            'scheme',
+            'coApplicant1',
+            'guarantor1'
+        ])->findOrFail($id);
 
+        $emiType = $goldLoan->scheme->gold_loan_setting;
         $totalLoan = $goldLoan->loan_amount;
+        $interestRate = $goldLoan->scheme->interest_rate ?? 0;
+        $emiCount = $goldLoan->scheme->emi_count ?? 12;
 
         $totalPaid = \App\Models\GoldLoanTransaction::where('loan_id', $goldLoan->id)
             ->sum('amount_collected');
 
-        $currentDebt = $totalLoan - $totalPaid;
+        $remainingAmount = 0;
+        $emiAmount = 0;
+        $netDisbursed = 0;
 
-        $goldLoan->current_debt = $currentDebt;
+        switch ($emiType) {
+            case 'flat_advanced_interest':
 
+                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
+                $netDisbursed = $totalLoan - $totalInterest;
+
+                $emiAmount =  round($totalLoan / $emiCount, 2);
+
+                $remainingAmount = ($totalLoan) - $totalPaid;
+
+                break;
+
+            case 'flat_interest':
+
+                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
+                $totalPayable = $totalLoan + $totalInterest;
+                $emiAmount = $totalPayable / $emiCount;
+
+                $remainingAmount = $totalPayable - $totalPaid;
+                break;
+
+            case 'reducing_interest':
+
+                $monthlyRate = $interestRate / (12 * 100);
+                $emiAmount = $totalLoan * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
+                $totalPayable = $emiAmount * $emiCount;
+
+                $remainingAmount = $totalPayable - $totalPaid;
+                break;
+
+            default:
+
+                $emiAmount = $totalLoan / $emiCount;
+                $remainingAmount = $totalLoan - $totalPaid;
+                break;
+        }
 
         $overdueInterest = 0;
         $otherCharges = 0;
-        $gstRate = 18; // Example
+        $gstRate = 18;
 
         $gstAmount = ($overdueInterest * $gstRate) / 100;
-
         $totalOverdueWithGst = $overdueInterest + $gstAmount;
-
-        $totalAmount = $currentDebt + $overdueInterest + $otherCharges;
+        $totalAmount = $remainingAmount + $overdueInterest + $otherCharges;
 
         $rounding = round($totalAmount) - $totalAmount;
         $netAmount = $totalAmount + $rounding;
 
+        $goldLoan->current_debt = $remainingAmount;
+
         return view('gold-loan.account.view-buttons.pay-emi.pay_emi', compact(
             'goldLoan',
-            'currentDebt',
+            'emiAmount',
+            'remainingAmount',
+            'netDisbursed',
             'overdueInterest',
             'otherCharges',
             'gstRate',
             'totalOverdueWithGst',
             'totalAmount',
             'rounding',
-            'netAmount'
+            'netAmount',
+            'lastCurrentDebt'
         ));
     }
 
@@ -311,12 +362,11 @@ class GoldLoanAccountController extends Controller
             ->with('success', 'EMI Payment recorded successfully!');
     }
 
-
+    // Gold loan pay button
     public function goldLoanPay($id)
     {
         $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
 
-        // dd($goldLoan);
         $banks = Bank::all();
 
         $P = (float)$goldLoan->loan_amount;
@@ -333,14 +383,12 @@ class GoldLoanAccountController extends Controller
         }
 
         $currentDebt = round($currentDebt, 2);
-        // dd($currentDebt);
-        // --- Find next due EMI ---
+
         $nextDue = $goldLoan->emiPayments()
             ->where('status', 'pending')
             ->orderBy('emi_no', 'asc')
             ->first();
 
-        // If no pending EMI, loan is fully paid
         if (!$nextDue) {
             return view('gold-loan.account.view-buttons.pay.pay', [
                 'goldLoan' => $goldLoan,
@@ -362,7 +410,6 @@ class GoldLoanAccountController extends Controller
 
         $emiAmount = (float) $nextDue->emi_amount;
         $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
-        dd($payableAmount);
 
         return view('gold-loan.account.view-buttons.pay.pay', compact(
             'goldLoan',
@@ -388,9 +435,12 @@ class GoldLoanAccountController extends Controller
 
         $loan = LoanApplication::find($request->loan_id);
 
-        // Store transaction
+        $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
+        $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+
         $transaction = GoldLoanTransaction::create([
             'loan_id' => $loan->id,
+            'emi_no' => $nextEmiNo,
             'transaction_date' => $request->transaction_date,
             'current_debt' => $request->current_debt,
             'other_charges' => $request->other_charges ?? 0,
@@ -400,14 +450,39 @@ class GoldLoanAccountController extends Controller
             'created_by' => Auth::id(),
         ]);
 
-        // Update remaining balance in loan table
         $loan->balance_amount = $loan->balance_amount - $request->amount_collected;
         if ($loan->balance_amount < 0) $loan->balance_amount = 0;
-
-
-        // dd($loan);
+        
         $loan->save();
 
         return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+    }
+
+    // Process button functionality
+    public function updateEmiStatus(Request $request)
+    {
+        $request->validate([
+            'loan_id' => 'required|integer',
+            'emi_no' => 'required|integer',
+            'status' => 'required|string',
+        ]);
+dd($request->all());
+        $emi = GoldLoanTransaction::where('loan_id', $request->loan_id)
+            ->where('emi_no', $request->emi_no)
+            ->first();
+dd( $emi );
+        if (!$emi) {
+            return response()->json(['success' => false, 'message' => 'EMI record not found'], 404);
+        }
+
+        $emi->status = $request->status;
+        $emi->paid_date = now();
+        $emi->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'EMI status updated successfully',
+            'emi' => $emi
+        ]);
     }
 }

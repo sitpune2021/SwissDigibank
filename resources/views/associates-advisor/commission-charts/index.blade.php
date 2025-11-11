@@ -95,47 +95,47 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tr class="border-b">
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1 uppercase">
-                                        <a href="" class="text-primary">
-                                            RAVI RANJAN
-                                        </a>
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1 Capitalize">
-                                        Recurring Deposit (RD) (Installment Based Incentive)
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                       12
-                                    </div>
-                                </td>
-                                
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        <div class="relative">
-                                            <i
-                                                class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                            <ul class="horiz-option popover-content">
-                                                <li><a href="" class="single-option uppercase">View</a></li>
-                                                <li><a href="" class="single-option uppercase">
-                                                        Edit
-                                                    </a></li>
-                                            </ul>
+                                @foreach($charts as $chart)
+                                <tr class="border-b">
 
-                                            {{-- @include('partials._vertical-options', [
-                                            /* 'id' =>base64_encode($director->id),
-                                            'viewRoute' => 'director.show',
-                                            'editRoute' => 'director.edit'*/
-                                            ]) --}}
+                                    {{-- NAME --}}
+                                    <td class="text-start !py-5 px-6 min-w-[100px]">
+                                        <div class="flex items-center gap-1 uppercase">
+                                            <a href="{{ route('associates-advisor.commission-charts.view', $chart->id) }}" class="text-primary">
+                                                {{ $chart->chart_name }}
+                                            </a>
                                         </div>
-                                    </div>
-                                </td>
+                                    </td>
+
+                                    {{-- TYPE --}}
+                                    <td class="text-start !py-5 px-6 min-w-[100px]">
+                                        <div class="flex items-center gap-1 Capitalize">
+                                            {{ $chart->chart_type }}
+                                        </div>
+                                    </td>
+
+                                    {{-- TENURE (MONTHS) --}}
+                                    <td class="text-start !py-5 px-6 min-w-[100px]">
+                                        <div class="flex items-center gap-1">
+                                            {{ $chart->tenure_months }}
+                                        </div>
+                                    </td>
+
+                                    {{-- ACTIONS --}}
+                                    <td class="text-start !py-5 px-6 min-w-[100px]">
+                                        <div class="flex items-center gap-1">
+                                            <div class="relative">
+                                                <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                                <ul class="horiz-option popover-content">
+                                                    <li><a href="" class="single-option uppercase">View</a></li>
+                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
 
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

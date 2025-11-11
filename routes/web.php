@@ -554,6 +554,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('goldloan-account/pay/{id}', [GoldLoanAccountController::class, 'goldLoanPay'])
         ->name('gold-loan.account.pay');
 
+    Route::post('/update-emi-status', [GoldLoanAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+
     Route::post('/goldloan/pay-emi', [GoldLoanController::class, 'payEmi'])->name('goldloan.payEmi');
 
     // other pages url
@@ -1260,6 +1262,8 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
     Route::get('commission/add-chart', [AdvisorController::class, 'add_chart'])
         ->name('associates-advisor.commission-charts.add-chart');
+    Route::post('commission/add-chart', [AdvisorController::class, 'chartstore'])
+    ->name('associates-advisor.commission-charts.store');
 
     Route::get('commission/view', [AdvisorController::class, 'comission_view'])
         ->name('associates-advisor.commission-charts.view');
