@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DdTransaction extends Model
 {
+        use SoftDeletes;
+
     protected $fillable = [
         'account_id',
         'pay_mode',
@@ -28,6 +31,7 @@ class DdTransaction extends Model
         'member_photo',
         'amount',
         'type',
+        
     ];
 
     public function ddsAccount()
