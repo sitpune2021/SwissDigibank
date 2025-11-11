@@ -37,6 +37,7 @@
                         <th class="px-4 py-2 text-lg text-start">Interest (A)</th>
                         <th class="px-4 py-2 text-lg text-start">TDS (B)</th>
                         <th class="px-4 py-2 text-lg text-start">Net Interest (A - B)</th>
+                        <th class="px-4 py-2 text-lg text-start">NET INTERESTon DUE DATE</th>
                         <th class="px-4 py-2 text-lg text-start">Due Date</th>
                         <th class="px-4 py-2 text-lg text-start">Payout Status</th>
                         <th class="px-4 py-2 text-lg text-start">Processed</th>
@@ -59,7 +60,8 @@
 
                     @foreach($groupedPayouts as $year => $yearPayouts)
                     @foreach($yearPayouts as $index => $payout)
-                    <tr id="payout-row-{{ $loop->parent->index ?? $index }}" class="border-b">
+                    <tr id="payout-row-{{ $loop->iteration }}" class="border-b">
+
                         {{-- Year column with rowspan --}}
                         @if($loop->first)
                         <td class="text-center py-2" rowspan="{{ count($yearPayouts) }}">
@@ -69,15 +71,29 @@
 
                         <td class="text-center py-5">{{ $payout['from'] ?? '-' }} - {{ $payout['to'] ?? '-' }}</td>
                         <td class="text-center py-5">{{ $payout['days'] }}</td>
-                        <td class="text-center py-5">{{ number_format((float) $payout['principal'], 2) }}</td>
-                        <td class="text-center py-5">{{ number_format((float) $payout['interest'], 2) }}</td>
-                        <td class="text-center py-5">{{ number_format((float) $payout['tds'], 2) }}</td>
-                        <td class="text-center py-5">{{ number_format((float) $payout['net_interest'], 2) }}</td>
-                        <td class="text-center py-5">{{ \Carbon\Carbon::parse($payout['due_date'])->format('d-m-Y') }}</td>
-
-                        <td class="text-center py-5" id="state-label-{{ $loop->parent->index ?? $index }}">
-                            @if(isset($payout['processed']) && $payout['processed'] == 1)
+                        <td class="text-center py-5 principal">{{ number_format((float) $payout['principal'], 2) }}</td>
+                        <td class="text-center py-5 interest">{{ number_format((float) $payout['interest'], 2) }}</td>
+                        <td class="text-center py-5 tds">{{ number_format((float) $payout['tds'], 2) }}</td>
+                        <td class="text-center py-5 net_interest">{{ number_format((float) $payout['net_interest'], 2) }}</td>
+                        <td class="text-center py-5">
+                            {{ isset($payout['net_interest_due_date'])
+                                ? number_format((float)$payout['net_interest_due_date'], 2)
+                                : ''
+                            }}
+                        </td>
+                        <td class="text-center py-5">
+                            {{ isset($payout['due_date'])
+                                ? \Carbon\Carbon::parse($payout['due_date'])->format('d-m-Y')
+                                : ''
+                        }}
+                        </td>
+                        <td class="text-center py-5" id="state-label-{{ $loop->iteration }}">
+                            @if(isset($payout['processed']) && $payout['processed'] == 2)
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-xs text-primary text-center">
+                                LAND
+                            </span>
+                            @elseif(isset($payout['processed']) && $payout['processed'] == 1)
+                            <span class="block w-28  uppercase rounded-[30px] border border-n30 bg-primary/20 py-2 text-xs text-primary text-center">
                                 Paid
                             </span>
                             @else
@@ -87,8 +103,11 @@
                             @endif
                         </td>
 
-                        <td class="text-center py-5" id="processed-label-{{ $loop->parent->index ?? $index }}">
+
+                        <td class="text-center py-5" id="processed-label-{{ $loop->iteration }}">
                             @if($payout['processed'] == 1)
+                            <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Yes</span>
+                            @elseif($payout['processed'] == 2)
                             <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Yes</span>
                             @else
                             <span class="block w-28 rounded-[30px] border bg-error/10 py-2 text-xs text-error">No</span>
@@ -109,14 +128,24 @@
                                 break;
                                 }
                                 }
-                                $showButton=($payout['processed']==0 && !$hasUnprocessedBefore && $today->greaterThanOrEqualTo($dueDate));
+                               $isLandRow = (($payout['status'] ?? '') === 'LAND' && ($payout['processed'] ?? 0) == 0);
+
+                                $showButton=(
+                                (!$hasUnprocessedBefore) &&
+                                (
+                                ($payout['processed']==0 && $today->greaterThanOrEqualTo($dueDate))
+                                || $isLandRow
+                                )
+                                );
                                 @endphp
 
                                 @if($showButton)
                                 <button class="btn btn-primary rounded-10 py-2 process-btn"
-                                    data-index="{{ $loop->parent->index ?? $index }}"
+                                    data-index="{{ $loop->iteration }}"
                                     data-id="{{ $misAccount->id }}"
-                                    data-due="{{ $payout['due_date'] }}">
+                                    data-from="{{ $payout['from'] ?? '' }}"
+                                    data-to="{{ $payout['to'] ?? '' }}"
+                                    data-due="{{ $payout['due_date'] ?? '' }}">
                                     Process
                                 </button>
                                 @endif
@@ -126,7 +155,7 @@
                     @endforeach
                     @else
                     <tr>
-                        <td colspan="11" class="text-center text-muted">No MIS payout records available</td>
+                        <td colspan=" 11" class="text-center text-muted">No MIS payout records available</td>
                     </tr>
                     @endif
                 </tbody>
@@ -142,16 +171,22 @@
 <script>
     $(document).ready(function() {
         $('.process-btn').click(function() {
-            var index = $(this).data('index');
+            var index = $(this).closest('tr').attr('id').replace('payout-row-', '');
+var row = $('#payout-row-' + index);
+
             var misId = $(this).data('id');
-            var dueDate = $(this).data('due'); // likely in DD-MM-YYYY format
+            var periodFrom = $(this).data('from');
+            var periodTo = $(this).data('to');
+            var dueDate = $(this).data('due');
+            var isLand = ((!dueDate || dueDate === " ") && periodTo.includes("31 Mar"));
 
+            
+           
+            var principal = row.find('.principal').text().replace(/,/g, '');
+var interest = row.find('.interest').text().replace(/,/g, '');
+var tds = row.find('.tds').text().replace(/,/g, '');
+var net_interest = row.find('.net_interest').text().replace(/,/g, '');
 
-            var row = $('#payout-row-' + index);
-            var principal = row.find('td:eq(3)').text().replace(/,/g, '');
-            var interest = row.find('td:eq(4)').text().replace(/,/g, '');
-            var tds = row.find('td:eq(5)').text().replace(/,/g, '');
-            var net_interest = row.find('td:eq(6)').text().replace(/,/g, '');
 
             $.ajax({
                 url: "{{ route('mis.processPayout', ['id' => $misAccount->id]) }}",
@@ -163,17 +198,31 @@
                     interest: interest,
                     tds: tds,
                     net_interest: net_interest,
-                    due_date: dueDate
+                    due_date: dueDate,
+                    period_from: periodFrom,
+                    period_to: periodTo,
+                    is_land: isLand ? 1 : 0
                 },
                 success: function(response) {
                     if (response.success) {
-                        // ✅ Update UI instantly
-                        row.find('#processed-label-' + index).html(
-                            '<span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Yes</span>'
-                        );
-                        row.find('#state-label-' + index).html(
-                            '<span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Paid</span>'
-                        );
+
+                       if (response.state === "LAND") {
+    row.find('#processed-label-' + index).html(
+        '<span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Yes</span>'
+    );
+    row.find('#state-label-' + index).html(
+        '<span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary text-center">LAND</span>'
+    );
+}
+else if (response.state === "Paid") {   // ✅ corrected
+    row.find('#processed-label-' + index).html(
+        '<span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Yes</span>'
+    );
+    row.find('#state-label-' + index).html(
+        '<span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary text-center">Paid</span>'
+    );
+}
+
                         row.find('.process-btn').remove();
 
                         setTimeout(function() {
@@ -183,6 +232,7 @@
                         alert(response.message || 'Failed to process payout.');
                     }
                 },
+
                 error: function(xhr) {
                     console.error(xhr.responseText);
                     alert('Something went wrong!');
