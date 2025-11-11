@@ -185,7 +185,7 @@ return [
             ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
         ],
     ],
-     [
+    [
         'title' => 'LOCKERS',
         'icon' => 'las la-lock',
         'position' => '9',
@@ -228,6 +228,15 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'EMPLOYEES', 'route' => 'employee.index'],
+        ],
+    ],
+    [
+        'title' => 'REPORTS',
+        'icon' => 'las la-user',
+        'position' => '10',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving.index'],
         ],
     ],
 
