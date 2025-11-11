@@ -135,11 +135,10 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
             ->name('dds-accounts.calculate-deposit');
         Route::get('/dds-accounts/{id}/transactions', [DdsAccountsController::class, 'transactions'])->name('dds-accounts.transactions');
-        Route::delete(
-            '/dds-accounts/transactions/{id}',
-            [DdsAccountsController::class, 'destroyTransaction']
-        )
+        // Route::delete('/dds-accounts/transactions/{id}', [DdsAccountsController::class, 'destroyTransaction'])->name('dds-accounts.transactions.destroy');
+        Route::delete('/dds-accounts/transactions/{ddsAccountId}/{tranxId}', [DdsAccountsController::class, 'destroyTransaction'])
             ->name('dds-accounts.transactions.destroy');
+
         Route::get('/dds-accounts/{account}/transactions/{transaction}', [DdsAccountsController::class, 'transactionShow'])
             ->name('dds-accounts.transactions.show');
         Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
@@ -170,8 +169,10 @@ Route::middleware('auth.user')->group(function () {
         // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
         Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
             ->name('dds-accounts.transactions.printReceipt');
-        // Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt1'])
-        //     ->name('dds-accounts.transactions.printReceipt1');
+        Route::get(
+            '/print-documents/transaction-receipt/{accountId}/{transactionId}',
+            [DdsAccountsController::class, 'printReceipt1']
+        )->name('dds.transaction.receipt');
     });
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
@@ -278,7 +279,7 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::get('/accounts/account-nominee/{id}', [AccountsController::class, 'accountNominee'])->name('saving.accounts.nominee');
     Route::post('/accounts/{id}/nominees', [AccountsController::class, 'saveNominees'])->name('accounts.nominees.save');
 
-     Route::get('/accounts/close-account/{id}', [AccountsController::class, 'closeAccount'])->name('saving.accounts.close.account');
+    Route::get('/accounts/close-account/{id}', [AccountsController::class, 'closeAccount'])->name('saving.accounts.close.account');
     Route::get('/accounts/account-form/{id}', [AccountsController::class, 'accountOpenForm'])->name('saving.accounts.open.form');
 });
 
@@ -1145,16 +1146,16 @@ Route::group(['prefix' => 'locker'], function () {
     Route::get('locker-list/index', [LockerController::class, 'locker_list_index'])
         ->name('lockers.locker-list.index');
 
-     // Create Form
+    // Create Form
     Route::get('locker-list/add', [LockerController::class, 'locker_list_add'])
         ->name('lockers.locker-list.add');
     // Store Form
     Route::post('locker-list/store', [LockerController::class, 'locker_list_store'])
-    ->name('lockers.locker-list.store');
+        ->name('lockers.locker-list.store');
 
     // View Form details
     Route::get('locker-list/view/{id}', [LockerController::class, 'locker_list_view'])
-    ->name('lockers.locker-list.view');
+        ->name('lockers.locker-list.view');
 
     // Edit Form
     Route::get('locker-list/edit/{id}', [LockerController::class, 'locker_list_edit'])
@@ -1176,13 +1177,12 @@ Route::group(['prefix' => 'locker'], function () {
     Route::get('locker-list/release-locker/{id}', [LockerController::class, 'release_locker'])
         ->name('lockers.locker-list.release-locker');
     Route::post('locker-list/release/{id}', [LockerController::class, 'release_locker_store'])
-    ->name('lockers.locker-list.release.store');
+        ->name('lockers.locker-list.release.store');
 
     Route::get('member-locker/index', [LockerController::class, 'member_locker_index'])
         ->name('lockers.member-locker.index');
     Route::get('member-locker/view', [LockerController::class, 'member_locker_view'])
         ->name('lockers.member-locker.view');
-
 });
 
 
@@ -1193,7 +1193,7 @@ Route::group(['prefix' => 'locker'], function () {
 
 
 Route::group(['prefix' => 'associate-advisor'], function () {
-    
+
     // Rank Strucutre index
     Route::get('associates/index', [AdvisorController::class, 'index'])
         ->name('associates-advisor.rank-structure.index');
@@ -1202,11 +1202,11 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::get('associates/add-new-rank', [AdvisorController::class, 'add_new_rank'])
         ->name('associates-advisor.rank-structure.add-new-rank');
     Route::post('associates/add-new-rank', [AdvisorController::class, 'store_new_rank'])
-    ->name('associates-advisor.rank-structure.store');
+        ->name('associates-advisor.rank-structure.store');
 
     // Rank Strucutre view
     Route::get('associates/view/{id}', [AdvisorController::class, 'view_rank'])
-    ->name('associates-advisor.rank-structure.view');
+        ->name('associates-advisor.rank-structure.view');
 
     // Rank Strucutre Edit & Update
     // EDIT RANK
@@ -1214,8 +1214,8 @@ Route::group(['prefix' => 'associate-advisor'], function () {
         ->name('associates-advisor.rank-structure.edit');
     // UPDATE RANK
     Route::post('associates/update/{id}', [AdvisorController::class, 'update_rank'])
-    ->name('associates-advisor.rank-structure.update');
-    
+        ->name('associates-advisor.rank-structure.update');
+
 
     Route::get('associates/add', [AdvisorController::class, 'add_adc_asc'])
         ->name('associates-advisor.associates-advisors.add');
@@ -1253,7 +1253,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
     Route::get('commission/remove-payout-com', [AdvisorController::class, 'remove_payout_com'])
         ->name('associates-advisor.commission-payout.remove-payout-com');
-    
+
     // Comission Chart
     Route::get('commission/commission-charts-index', [AdvisorController::class, 'commission_charts_index'])
         ->name('associates-advisor.commission-charts.index');
