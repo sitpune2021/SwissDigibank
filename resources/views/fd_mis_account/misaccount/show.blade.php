@@ -753,7 +753,7 @@
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                 <td class="px-4 py-2 text-right md:text-left">
-                  {{ $misaccount->total_interest ?? '' }}
+                  {{ $misaccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}
                 </td>
               </tr>
 

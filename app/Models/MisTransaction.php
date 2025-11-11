@@ -12,7 +12,7 @@ class MisTransaction extends Model
     protected $fillable = [
         'misaccount_id',
         'amount',
-        'interst',
+        'interest',
         'tds',
         'net_interest',
         'pay_mode',
@@ -37,6 +37,8 @@ class MisTransaction extends Model
         'processed',
         'paid_on',
         'print_flag',
+        'period_from',
+        'period_to',
     ];
  
     public function misaccount()

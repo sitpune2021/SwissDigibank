@@ -8,6 +8,7 @@ class GoldLoanTransaction extends Model
 {
     protected $fillable = [
         'loan_id',
+        'emi_no',
         'transaction_date',
         'current_debt',
         'other_charges',
@@ -15,6 +16,8 @@ class GoldLoanTransaction extends Model
         'amount_collected',
         'remarks',
         'created_by',
+        'status',
+        'paid_date'
     ];
 
     public function goldApplication()

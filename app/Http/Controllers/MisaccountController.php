@@ -401,17 +401,19 @@ class MisaccountController extends Controller
         $totalInterest,
         $payoutType,
         $transactions = null,
-        $forDisplay = false
+        $forDisplay = false,
+        $misAccount = null
     ) {
-       
+
 
         // normalize inputs
         $periodStart = $periodStart instanceof Carbon ? $periodStart->copy()->startOfDay() : Carbon::parse($periodStart)->startOfDay();
         $periodEnd   = $periodEnd instanceof Carbon ? $periodEnd->copy()->startOfDay() : Carbon::parse($periodEnd)->startOfDay();
-        // dd($periodEnd);
+
         $anchorDay = (int) $periodStart->day;
 
         while ($periodStart->lessThanOrEqualTo($periodEnd)) {
+
             // If the next period would start on or after the maturity date, stop:
             if ($periodStart->greaterThanOrEqualTo($periodEnd)) {
                 break;
@@ -471,8 +473,6 @@ class MisaccountController extends Controller
                 }
             }
 
-
-            // Safety: if invalid range, break
             if ($proposedEnd->lessThan($periodStart)) break;
 
             // ----- Interest calculation -----
@@ -481,26 +481,79 @@ class MisaccountController extends Controller
             // compute raw interest then normalize/round to avoid binary-float artifacts
             $interest = ($principal * $annualRate * $days) / $daysInYr;
             $interest = (float) $interest;
-            $netInterest = round($interest, 2);
+
             // keep accumulated total with higher precision, then round on return/display
-            $totalInterest = round($totalInterest + $netInterest, 12);
+            $totalInterest = round($totalInterest + $interest, 12);
 
+            // -------------------- TDS LOGIC (APPLIES TO ALL ROWS) --------------------
+            $tdsEnabled = $misAccount && $misAccount->tds_deduction === 'yes';
 
-            // labels / due date
+            $tds = 0;
+            if ($tdsEnabled) {
+                $tdsThreshold = 40000;
+                $projectedTotal = $totalInterest + $interest;
+
+                // If total FY interest exceeds threshold → deduct 10%
+                if ($projectedTotal > $tdsThreshold) {
+                    $tds = round($interest * 0.10, 2);
+                }
+            }
+            // Net interest is ALWAYS interest - tds (even if tds = 0)
+            $netInterest = round($interest - $tds, 2);
+
+            // ✅ BROKEN MONTH LOGIC FOR 31 MARCH
+            $isMarchBroken = (
+                $proposedEnd->format('m') == "03" &&
+                $proposedEnd->format('d') == "31" &&
+                $days < 30
+            );
+
+            $displayInterest = $interest;
+            $displayNetInterest = $netInterest;
+
+            $carryFromPrev = $carryForward ?? 0;
+
+            if ($isMarchBroken) {
+
+                $dueDateDb = null;
+                $dueDateDisplay = null;
+
+                $rowStatus = "pending";
+
+                // Carry-forward interest to next period
+                $carryForward = $netInterest;
+
+                // Net interest on due date is blank
+                $netInterestDueDate = null;
+            } else {
+                // Normal due date
+                $dueDateDb = $proposedEnd->copy()->addDay()->format('Y-m-d');
+                $dueDateDisplay = $proposedEnd->copy()->addDay()->format('d-m-Y');
+
+                $rowStatus = "Pending";
+                // ✅ NET INTEREST on DUE DATE must include carryForward
+                $netInterestDueDate = $netInterest + $carryFromPrev;
+                $carryForward = 0;
+            }
+
             $fyLabel = $periodStart->month > 3
                 ? "{$periodStart->year}-" . ($periodStart->year + 1)
                 : ($periodStart->year - 1) . "-{$periodStart->year}";
 
-            $dueDateDb = $proposedEnd->copy()->addDay()->format('Y-m-d');
-            $dueDateDisplay = $proposedEnd->copy()->addDay()->format('d-m-Y');
+            //  Only assign due date if NOT LAND
+            if (!$isMarchBroken) {
+                $dueDateDb = $proposedEnd->copy()->addDay()->format('Y-m-d');
+                $dueDateDisplay = $proposedEnd->copy()->addDay()->format('d-m-Y');
+            }
 
             $data = [
                 'period'           => $periodStart->format('d M y') . ' - ' . $proposedEnd->format('d M y'),
                 'days'             => (int) $days,
                 'principal'        => round($principal, 2),
-                'interest'         => $netInterest,
-                'tds'              => 0.00,
-                'net_interest'     => $netInterest,
+                'interest'         => $displayInterest,
+                'tds'              => $tds,
+                'net_interest'     => $displayNetInterest,
+                'net_interest_due_date'     => $netInterestDueDate,
                 'maturity_partial' => round($principal + $totalInterest, 2),
                 'payout_type'      => $payoutType,
             ];
@@ -513,23 +566,35 @@ class MisaccountController extends Controller
                 $data['fy_label'] = 'FY ' . ($fyLabel);
                 $data['due_date'] = $dueDateDisplay;
                 $data['due_date_db'] = $dueDateDb;
-                $data['status'] = 'Pending';
+                $data['interest'] = $interest;
+                $data['tds'] = $tds;
+                $data['net_interest'] = $netInterest;
+                $data['net_interest_due_date'] = $netInterestDueDate;
+                $data['status'] = $rowStatus;
                 $data['processed'] = 0;
 
 
-                if ($transactions && isset($transactions[$dueDateDb])) {
+
+                if (!$isMarchBroken && $transactions && isset($transactions[$dueDateDb])) {
                     $tx = $transactions[$dueDateDb];
                     $data['status'] = $tx['status'] ?? 'Paid';
                     $data['processed'] = isset($tx['processed']) && $tx['processed'] ? 1 : 0;
                 }
-                // if ($transactions) {
-                //     $tx = $transactions[$dueDateDb] ?? null;
-                //     if ($tx) {
-                //         // transactions from keyBy()->toArray() are arrays, not objects
-                //         $data['status'] = $tx['status'] ?? $tx['status'] ?? 'Yes';
-                //         $data['processed'] = $tx['processed'] ?? $tx['processed'] ?? 'Yes';
-                //     }
-                // }
+
+                if ($isMarchBroken) {
+                    // LAND row but NOT processed yet
+                    $data['status'] = "LAND";
+                    $data['processed'] = 0;
+
+                    // If a LAND transaction exists in DB:
+                    if ($transactions) {
+                        foreach ($transactions as $tx) {
+                            if ($tx['status'] === "LAND") {
+                                $data['processed'] = 2;
+                            }
+                        }
+                    }
+                }
             }
 
 
@@ -547,7 +612,6 @@ class MisaccountController extends Controller
             }
         }
 
-        // dd($periodEnd);
 
         return [$results, round($totalInterest, 2)];
     }
@@ -589,12 +653,12 @@ class MisaccountController extends Controller
             $totalInterest,
             'MONTHLY',
             $transactions,
-            true
+            true,
+            $misAccount
         );
 
         return view('fd_mis_account.misaccount.mispayout', compact('misAccount', 'payouts'));
     }
-
 
 
     public function processPayout(Request $request)
@@ -604,56 +668,56 @@ class MisaccountController extends Controller
             'interest'      => 'required|numeric|min:0',
             'tds'           => 'required|numeric|min:0',
             'net_interest'  => 'required|numeric|min:0',
-            'due_date'      => 'required|date',
+            'due_date'      => 'nullable|date',
+            'period_from'   => 'required|string',
+            'period_to'     => 'required|string',
         ]);
 
         try {
             $response = DB::transaction(function () use ($validated) {
 
-                // Check if already processed
-                $existing = MisTransaction::where('misaccount_id', $validated['misaccount_id'])
-                    ->where('due_date', $validated['due_date'])
-                    ->first();
+                $dueDate = isset($validated['due_date'])
+                    ? Carbon::parse($validated['due_date'])->format('Y-m-d')
+                    : null;
 
-                if ($existing) {
-                    return [
-                        'success'         => false,
-                        'message'         => 'Payout already processed for this due date',
-                        'processed_label' => 'Yes',
-                        'state'           => 'Paid',
-                    ];
-                }
-                $validated['due_date'] = \Carbon\Carbon::parse($validated['due_date'])->format('Y-m-d');
+                $periodTo = Carbon::parse($validated['period_to']);
+                $isLand = $periodTo->format('d-m') === '31-03';
 
-                // Create the MIS payout transaction
+                $status = $isLand ? 'LAND' : 'Paid';
+                $processed = $isLand ? 2 : 1;
+
                 $transaction = MisTransaction::create([
                     'misaccount_id'    => $validated['misaccount_id'],
                     'transaction_date' => now(),
+                    'transaction_type' => 'credit',
+                    'approve_status'   => 'approved',
                     'amount'           => $validated['net_interest'],
                     'interest'         => $validated['interest'],
                     'tds'              => $validated['tds'],
                     'net_interest'     => $validated['net_interest'],
-                    'due_date'         => $validated['due_date'],
-                    'status'           => 'Paid',
-                    'processed'        => 1,
+                    'due_date'         => $dueDate,
+                    'status'           => $status,
+                    'remark'           => 'MIS Interest Payout from '
+                        . $validated['period_from']
+                        . ' to '
+                        . $validated['period_to'],
+                    'period_from'      => $validated['period_from'],
+                    'period_to'        => $validated['period_to'],
+                    'processed'        => $processed,
                 ]);
 
-                // // Update MIS account (optional)
-                $account = Misaccount::find($validated['misaccount_id']);
-                // $account->increment('interest_paid', $validated['net_interest']);
-
                 Log::info("MIS payout processed", [
-                    'misaccount_id'  => $account->id,
+                    'misaccount_id'  => $validated['misaccount_id'],
                     'transaction_id' => $transaction->id,
-                    'due_date'       => $validated['due_date'],
+                    'due_date'       => $dueDate,
                     'net_interest'   => $validated['net_interest'],
                 ]);
 
                 return [
                     'success'         => true,
                     'processed_label' => 'Yes',
-                    'state'           => 'Paid',
-                    'processed'       => 1,
+                    'state'           => $status,
+                    'processed'       => $processed,
                 ];
             });
 
@@ -666,336 +730,6 @@ class MisaccountController extends Controller
             ], 500);
         }
     }
-
-    // public function misPayout($id)
-    // {
-    //     $misAccount = Misaccount::with(['member.address', 'branch', 'fdScheme.fdslabs'])
-    //         ->findOrFail($id);
-
-    //     // Calculate total days based on tenure
-    //     $totalDays = ($misAccount->tenure_year * 365)
-    //         + ($misAccount->tenure_month * 30)
-    //         + $misAccount->tenure_day;
-
-    //     // Get matching slab based on total days
-    //     $slab = $misAccount->fdScheme->fdslabs
-    //         ->where('day_from', '<=', $totalDays)
-    //         ->where('day_to', '>=', $totalDays)
-    //         ->first();
-
-    //     $principal    = (float) $misAccount->mis_amount;
-    //     $rate         = (float) optional($slab)->interest_rate ?? 0;
-    //     $startDate    = $misAccount->open_date instanceof Carbon ? $misAccount->open_date->copy()->startOfDay() : Carbon::parse($misAccount->open_date)->startOfDay();
-    //     $maturityDate = $startDate->copy()->addDays($totalDays);
-    //     $payoutType   = $misAccount->payout_type;
-
-    //     // Initialize results and totalInterest
-    //     $results = [];
-    //     $totalInterest = 0;
-
-    //     //  Call your shared logic
-    //     [$payouts, $totalInterest] = $this->processMISPeriod(
-    //         $results,
-    //         $startDate,
-    //         $maturityDate,
-    //         $principal,
-    //         $rate / 100,     // convert % to decimal
-    //         $totalInterest,
-    //         $payoutType
-    //     );
-
-    //     // Fetch processed transactions
-    //     $transactions = MisTransaction::where('misaccount_id', $id)
-    //         ->get()
-    //         ->keyBy(function ($t) {
-    //             return Carbon::parse($t->due_date)->format('Y-m-d');
-    //         });
-
-    //     // Merge payout info with existing transactions
-    //     foreach ($payouts as &$payout) {
-    //         $dueDateDb = $payout['due_date_db'] ?? null;
-    //         if ($dueDateDb && isset($transactions[$dueDateDb])) {
-    //             $transaction = $transactions[$dueDateDb];
-    //             $payout['processed'] = $transaction->processed ?? 0;
-    //             $payout['status'] = $transaction->status ?? 'Yes';
-    //             // if you want to overwrite interest/tds/net_interest from transaction, do that here
-    //         }
-    //     }
-    //     unset($payout);
-
-    //     return view('fd_mis_account.misaccount.mispayout', compact('misAccount', 'payouts'));
-    // }
-
-
-    // public function processPayout(Request $request)
-    // {
-    //     $misAccountId = $request->misaccount_id;
-    //     $dueDate      = $request->due_date;
-
-    //     // Check if already processed
-    //     $existing = MisTransaction::where('misaccount_id', $misAccountId)
-    //         ->where('due_date', $dueDate)
-    //         ->first();
-
-    //     if ($existing) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Payout already processed for this due date',
-    //             'processed_label' => 'Yes',
-    //             'state' => 'Paid'
-    //         ]);
-    //     }
-
-    //     $payoutData = [
-    //         'misaccount_id'   => $misAccountId,
-    //         'transaction_date' => now(),
-    //         'amount'           => $request->interest,
-    //         'interest'         => $request->interest,
-    //         'tds'              => $request->tds,
-    //         'net_interest'     => $request->net_interest,
-    //         'due_date'         => $dueDate,
-    //         'status'           => 'Yes',
-    //         'processed'        => 1,
-    //     ];
-
-    //     $transaction = MisTransaction::create($payoutData);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'processed_label' => 'Yes',
-    //         'state' => 'Paid',
-    //         'processed' => $transaction->processed
-    //     ]);
-    // }
-
-    // function calculateInvestment(
-    //     $type = null,
-    //     $principal = null,
-    //     $rate = null,
-    //     $tenureMonths = null,
-    //     $startDate = null,
-    //     $payoutType = null
-    // ) {
-    //     $results = [];
-
-    //     $type         = $type ?? 'FD';
-    //     $principal    = (float) ($principal ?? 120000);
-    //     $rate         = (float) ($rate ?? 10);
-    //     $tenureMonths = (int) ($tenureMonths ?? 12);
-    //     $startDate    = $startDate ?? '2025-08-27';
-    //     $payoutType   = strtoupper($payoutType ?? 'CUMULATIVE_HALF_YEARLY');
-
-    //     $annualRate = $rate / 100;
-
-    //     $currentDate    = Carbon::parse($startDate)->startOfDay();
-    //     $maturityCarbon = Carbon::parse($startDate)->addMonths($tenureMonths)->startOfDay();
-
-    //     $maturityDateInternal  = $maturityCarbon->format('Y-m-d');
-    //     $maturityDate          = $maturityCarbon->format('d/m/Y');
-    //     $depositStartInternal  = Carbon::parse($startDate)->startOfDay()->format('Y-m-d');
-
-    //     $totalInterest = 0;
-    //     $totalTDS      = 0;
-    //     $maturityBonus = 0;
-
-    //     $isCumulative = str_starts_with($payoutType, 'CUMULATIVE_');
-
-    //     $cycleMonths = match ($payoutType) {
-    //         'MONTHLY', 'CUMULATIVE_MONTHLY'             => 1,
-    //         'QUARTERLY', 'CUMULATIVE_QUARTERLY'         => 3,
-    //         'HALF_YEARLY', 'CUMULATIVE_HALF_YEARLY'     => 6,
-    //         'YEARLY', 'CUMULATIVE_YEARLY'               => 12,
-    //         default                                     => 1,
-    //     };
-
-    //     $cycleMonths = (int) $cycleMonths;
-
-    //     while ($currentDate < $maturityCarbon) {
-    //         $periodStart = $currentDate->copy()->startOfDay();
-    //         $periodEnd   = $currentDate->copy()->addMonths($cycleMonths)->subDay()->startOfDay();
-
-    //         if ($periodEnd > $maturityCarbon) {
-    //             $periodEnd = $maturityCarbon->copy()->startOfDay();
-    //         }
-
-    //         // March 31 adjustment
-    //         $marchYear = ($periodStart->month > 3) ? $periodStart->year + 1 : $periodStart->year;
-    //         $marchEnd  = Carbon::createFromDate($marchYear, 3, 31)->startOfDay();
-
-    //         if ($marchEnd >= $periodStart && $marchEnd <= $periodEnd) {
-    //             [$results, $totalInterest, $principal] = $this->processPeriod(
-    //                 $results,
-    //                 $periodStart,
-    //                 $marchEnd,
-    //                 $principal,
-    //                 $annualRate,
-    //                 $maturityDateInternal,
-    //                 $depositStartInternal,
-    //                 $payoutType,
-    //                 $totalInterest
-    //             );
-
-    //             $periodStart = $marchEnd->copy()->addDay(1)->startOfDay();
-
-    //             [$results, $totalInterest, $principal] = $this->processPeriod(
-    //                 $results,
-    //                 $periodStart,
-    //                 $periodEnd,
-    //                 $principal,
-    //                 $annualRate,
-    //                 $maturityDateInternal,
-    //                 $depositStartInternal,
-    //                 $payoutType,
-    //                 $totalInterest
-    //             );
-    //         } else {
-    //             [$results, $totalInterest, $principal] = $this->processPeriod(
-    //                 $results,
-    //                 $periodStart,
-    //                 $periodEnd,
-    //                 $principal,
-    //                 $annualRate,
-    //                 $maturityDateInternal,
-    //                 $depositStartInternal,
-    //                 $payoutType,
-    //                 $totalInterest
-    //             );
-    //         }
-
-    //         $currentDate = $periodEnd->copy()->addDay(1)->startOfDay();
-    //     }
-
-    //     // ---- Final Summary ----
-    //     $netInterest = $totalInterest - $totalTDS;
-    //     $maturityAmt = $principal + $maturityBonus + $netInterest;
-
-    //     $summary['summary'] = [
-    //         'principal'       => number_format($principal, 2),
-    //         'interest_earned' => number_format($totalInterest, 2),
-    //         'tds_deducted'    => number_format($totalTDS, 2),
-    //         'net_interest'    => number_format($netInterest, 2),
-    //         'maturity_bonus'  => number_format($maturityBonus, 2),
-    //         'maturity_amount' => number_format($maturityAmt, 2),
-    //         'maturity_date'   => $maturityDate
-    //     ];
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'summary' => $summary,
-    //         'details' => $results
-    //     ]);
-    // }
-
-    // function processPeriod(
-    //     $results,
-    //     $periodStart,
-    //     $periodEnd,
-    //     $principal,
-    //     $annualRate,
-    //     $maturityDateInternal,
-    //     $depositStartInternal,
-    //     $payoutType,
-    //     $totalInterest
-    // ) {
-    //     $daysInYr = $periodStart->isLeapYear() ? 366 : 365;
-    //     $current  = $periodStart->copy();
-
-    //     $cumulativeTypes = ['CUMULATIVE', 'CUMULATIVE_MONTHLY', 'CUMULATIVE_HALF_YEARLY', 'YEARLY'];
-
-    //     if (in_array($payoutType, $cumulativeTypes)) {
-    //         while ($current < $periodEnd) {
-    //             // determine next compounding boundary
-    //             $next = match ($payoutType) {
-    //                 'CUMULATIVE_MONTHLY'     => $current->copy()->addMonth(1),
-    //                 'CUMULATIVE_HALF_YEARLY' => $current->copy()->addMonths(6),
-    //                 'YEARLY'                 => $current->copy()->addYear(1),
-    //                 default                  => $periodEnd->copy(),
-    //             };
-
-    //             if ($next > $periodEnd) $next = $periodEnd->copy();
-
-    //             $days = (int) $current->diffInDays($next) + 1;
-
-    //             $interest = ($principal * $annualRate * $days) / $daysInYr;
-    //             $netInt   = round($interest, 2);
-
-    //             $principal     += $netInt;
-    //             $totalInterest += $netInt;
-
-    //             $results[] = [
-    //                 'period'           => $current->format('d/m/Y') . ' - ' . $next->format('d/m/Y'),
-    //                 'days'             => $days,
-    //                 'principal'        => round($principal - $netInt, 2),
-    //                 'interest'         => $netInt,
-    //                 'tds'              => 0.0,
-    //                 'net_interest'     => $netInt,
-    //                 'net_interest_due' => $netInt,
-    //                 'principal_eoy'    => ($next->format('d/m') === '31/03') ? round($principal, 2) : '',
-    //                 'due_by'           => $next->copy()->addDay(1)->format('d/m/Y'),
-    //                 'maturity_amount'  => round($principal, 2),
-    //                 'maturity_date'    => Carbon::createFromFormat('Y-m-d', $maturityDateInternal)->format('d/m/Y'),
-    //             ];
-
-    //             $current = $next->copy()->addDay(1);
-    //         }
-    //     } else {
-    //         // For payout types (non-cumulative like MIS)
-    //         $next = match ($payoutType) {
-    //             'MONTHLY'    => $periodStart->copy()->addMonth(1),
-    //             'QUARTERLY'  => $periodStart->copy()->addMonths(3),
-    //             'HALF_YEARLY' => $periodStart->copy()->addMonths(6),
-    //             'YEARLY'     => $periodStart->copy()->addYear(1),
-    //             default      => $periodEnd->copy(),
-    //         };
-
-    //         while ($periodStart < $periodEnd) {
-    //             if ($next > $periodEnd) $next = $periodEnd->copy();
-
-    //             $days     = (int) $periodStart->diffInDays($next) + 1;
-    //             $interest = ($principal * $annualRate * $days) / $daysInYr;
-    //             $netInt   = round($interest, 2);
-    //             $totalInterest += $netInt;
-
-    //             $results[] = [
-    //                 'period'           => $periodStart->format('d/m/Y') . ' - ' . $next->format('d/m/Y'),
-    //                 'days'             => $days,
-    //                 'principal'        => $principal, // stays same in MIS
-    //                 'interest'         => $netInt,
-    //                 'tds'              => 0.0,
-    //                 'net_interest'     => $netInt,
-    //                 'net_interest_due' => $netInt,
-    //                 'principal_eoy'    => ($next->format('d/m') === '31/03') ? $principal : '',
-    //                 'due_by'           => $next->copy()->addDay(1)->format('d/m/Y'),
-    //                 'maturity_amount'  => $principal + $totalInterest, // principal + all payouts
-    //                 'maturity_date'    => Carbon::createFromFormat('Y-m-d', $maturityDateInternal)->format('d/m/Y'),
-    //             ];
-
-    //             // Move to next payout cycle
-    //             $periodStart = $next->copy()->addDay(1);
-    //             $next = match ($payoutType) {
-    //                 'MONTHLY'    => $periodStart->copy()->addMonth(1),
-    //                 'QUARTERLY'  => $periodStart->copy()->addMonths(3),
-    //                 'HALF_YEARLY' => $periodStart->copy()->addMonths(6),
-    //                 'YEARLY'     => $periodStart->copy()->addYear(1),
-    //                 default      => $periodEnd->copy(),
-    //             };
-    //         }
-    //     }
-
-    //     return [$results, $totalInterest, $principal];
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public function edit(Misaccount $misaccount)
@@ -1138,7 +872,7 @@ class MisaccountController extends Controller
 
     public function show($id)
     {
-        $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme'])->findOrFail($id);
+        $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])->where('id', $id)->first();
 
         $branches = Branch::all();
 
@@ -1154,10 +888,8 @@ class MisaccountController extends Controller
         $savingAccounts = Account::where('member_id', $misaccount->member_id)
             ->where('account_type', 'SAVING')
             ->get();
-        $account = $misaccount;
-        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches', 'balance'));
 
-        //return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches','account'));
+        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches', 'balance', 'transactions'));
     }
 
     //edit editBranch
@@ -1176,42 +908,6 @@ class MisaccountController extends Controller
 
         return redirect()->back()->with('success', 'Branch updated successfully.');
     }
-
-    // public function mispayoutplan()
-    // {
-    //     $misaccounts = Misaccount::with('fdScheme')->get();
-
-    //     // Fetch MIS accounts, optionally eager-load related models if needed
-    //     $misaccounts = Misaccount::with(['member', 'fdScheme', 'branch'])->get();
-
-    //     return view('misaccount.viewbuttons.mispayoutplan.mispayoutplan', compact('misaccounts'));
-    // }
-
-    // public function changeAccountInfo($id)
-    // {
-    //     // yaha aap db se account fetch kar sakte ho
-    //     $account = Misaccount::findOrFail($id);
-
-    //     return view('fd_mis_account.misaccount.change_account_info', compact('account'));
-    // }
-
-    // public function changeAccountInfo($id)
-    // {
-    //     $account = Misaccount::findOrFail($id);   // DB se account fetch
-    //     $members = Member::pluck('member_info_first_name', 'id'); // dropdown ke liye
-
-    //     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
-    // }
-
-    //   public function changeAccountInfo($id)
-    // {
-    //     $account = Misaccount::findOrFail($id);
-
-    //     // Members list fetch -> ['id' => 'member_name']
-    //     $members = Member::pluck('member_info_first_name', 'id');
-
-    //     return view('fd_mis_account.misaccount.change_account_info', compact('account', 'members'));
-    // }
 
     public function changeAccountInfo($id)
     {
