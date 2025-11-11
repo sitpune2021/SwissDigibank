@@ -739,11 +739,605 @@ class FDController extends Controller
         }
     }
 
+    // public function fdPayout($id)
+    // {
+    //     $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
+    //         ->findOrFail($id);
+
+    //     $totalDays = ($fdAccount->tenure_year * 365)
+    //         + ($fdAccount->tenure_month * 30)
+    //         + $fdAccount->tenure_days;
+
+    //     $slab = $fdAccount->fdscheme->fdslabs
+    //         ->where('day_from', '<=', $totalDays)
+    //         ->where('day_to', '>=', $totalDays)
+    //         ->first();
+
+    //     $principal = $fdAccount->fd_amount;
+    //     $rate      = $slab->interest_rate ?? 0;
+
+    //     $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
+    //     $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
+
+    //     $transactions = FdTransaction::where('fd_account_id', $id)->get()
+    //         ->keyBy(function ($item) {
+    //             return \Carbon\Carbon::parse($item->due_date)->format('Y-m-d');
+    //         });
+
+    //     $payouts     = [];
+    //     $period      = 1;
+    //     $currentFrom = $startDate->copy();
+    //     $dayOfMonth  = $startDate->day;
+
+    //     $accumulatedInterest = 0;
+
+    //     while ($currentFrom->lt($maturityDate)) {
+
+    //         // Default “to” date: one month ahead minus 1 day
+    //         $currentTo = $currentFrom->copy()->addMonth()->subDay();
+
+    //         // Special March period (last period of March)
+    //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 3, 31);
+    //         }
+    //         // Short April period (start of April)
+    //         elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             $currentTo = $currentFrom->copy()->addDays(5);
+    //         }
+
+    //         // Do not exceed maturity
+    //         if ($currentTo->gt($maturityDate)) {
+    //             $currentTo = $maturityDate->copy();
+    //         }
+
+    //         $days = $currentFrom->diffInDays($currentTo) + 1;
+
+    //         // Interest calculation
+    //         $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+    //         $tds      = 0;
+    //         $net      = $interest - $tds;
+
+    //         // Due date logic
+    //         $dueDate = $currentTo->copy()->addDay();
+    //         if ($currentTo->eq($maturityDate)) {
+    //             $dueDate = $currentTo->copy();
+    //         }
+
+    //         $transaction = $transactions->get($dueDate->format('Y-m-d'));
+
+    //         // Special periods adjustments with accumulated interest logic
+    //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    //             // Last March period: no due date and net interest on due date blank
+    //             $dueDateForDisplay = '';
+
+    //             // Accumulate interest but no net interest on due date
+    //             $accumulatedInterest += $net;
+
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+    //             $netInterestOnDueDate = '';
+    //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             // April short period: due date shown, net interest on due date shows current interest,
+    //             // net interest shows previous accumulated interest from March
+    //             $dueDateForDisplay = $dueDate->format('d-m-Y');
+
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+
+    //             // Reset accumulatedInterest after paying out
+    //             $accumulatedInterest = 0;
+    //         } else {
+    //             $dueDateForDisplay = $dueDate->format('Y-m-d');
+
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $netInterestDisplay = number_format($net, 2);
+
+    //             // Reset accumulatedInterest for normal periods
+    //             $accumulatedInterest = 0;
+    //         }
+
+    //         $payouts[] = [
+    //             'period'                => $period,
+    //             'from'                  => $currentFrom->format('d M y'),
+    //             'to'                    => $currentTo->format('d M y'),
+    //             'days'                  => $days,
+    //             'principal'             => number_format($principal, 2),
+    //             'interest'              => number_format($interest, 2),
+    //             'tds'                   => number_format($tds, 2),
+    //             'net_interest'          => $netInterestDisplay,
+    //             'net_interest_due_date' => $netInterestOnDueDate,
+    //             'due_date'              => $dueDateForDisplay,
+    //             'status'                => $transaction->status ?? 'No',
+    //             'processed'             => $transaction->processed ?? 0,
+    //         ];
+
+    //         $period++;
+    //         $currentFrom = $dueDate->copy();
+    //     }
+
+    //     return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
+    // }
+    // // public function fdPayout($id)
+    // // {
+    // //     $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
+    // //         ->findOrFail($id);
+
+    // //     $totalDays = ($fdAccount->tenure_year * 365)
+    // //         + ($fdAccount->tenure_month * 30)
+    // //         + $fdAccount->tenure_days;
+
+    // //     $slab = $fdAccount->fdscheme->fdslabs
+    // //         ->where('day_from', '<=', $totalDays)
+    // //         ->where('day_to', '>=', $totalDays)
+    // //         ->first();
+
+    // //     $principal = $fdAccount->fd_amount;
+    // //     $rate      = $slab->interest_rate ?? 0;
+
+    // //     $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
+    // //     $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
+
+    // //     $transactions = FdTransaction::where('fd_account_id', $id)->get()
+    // //         ->keyBy(function ($item) {
+    // //             return \Carbon\Carbon::parse($item->due_date)->format('Y-m-d');
+    // //         });
+
+    // //     $payouts     = [];
+    // //     $period      = 1;
+    // //     $currentFrom = $startDate->copy();
+    // //     $dayOfMonth  = $startDate->day;
+
+    // //     $accumulatedInterest = 0;
+
+    // //     while ($currentFrom->lt($maturityDate)) {
+
+    // //         // Default “to” date: one month ahead minus 1 day
+    // //         $currentTo = $currentFrom->copy()->addMonth()->subDay();
+
+    // //         // Special March period (last period of March)
+    // //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    // //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 3, 31);
+    // //         }
+    // //         // Short April period (start of April) - Dynamic based on open date day
+    // //         elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    // //             $daysToAdd = $dayOfMonth - 1; // For open date 3, adds 2 days (01 Apr to 02 Apr)
+    // //             $currentTo = $currentFrom->copy()->addDays($daysToAdd);
+    // //         }
+
+    // //         // Do not exceed maturity
+    // //         if ($currentTo->gt($maturityDate)) {
+    // //             $currentTo = $maturityDate->copy();
+    // //         }
+
+    // //         $days = $currentFrom->diffInDays($currentTo) + 1;
+
+    // //         // Interest calculation
+    // //         $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+    // //         $tds      = 0;
+    // //         $net      = $interest - $tds;
+
+    // //         // Due date logic
+    // //         $dueDate = $currentTo->copy()->addDay();
+    // //         if ($currentTo->eq($maturityDate)) {
+    // //             $dueDate = $currentTo->copy();
+    // //         }
+
+    // //         $transaction = $transactions->get($dueDate->format('Y-m-d'));
+
+    // //         // Special periods adjustments with accumulated interest logic
+    // //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    // //             // Last March period: no due date and net interest on due date blank
+    // //             $dueDateForDisplay = '';
+
+    // //             // Accumulate interest but no net interest on due date
+    // //             $accumulatedInterest += $net;
+
+    // //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+    // //             $netInterestOnDueDate = '';
+    // //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    // //             // April short period: due date shown, net interest on due date shows current interest,
+    // //             // net interest shows previous accumulated interest from March
+    // //             $dueDateForDisplay = $dueDate->format('d-m-Y');
+
+    // //             $netInterestOnDueDate = number_format($net, 2);
+    // //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+
+    // //             // Reset accumulatedInterest after paying out
+    // //             $accumulatedInterest = 0;
+    // //         } else {
+    // //             $dueDateForDisplay = $dueDate->format('Y-m-d');
+
+    // //             $netInterestOnDueDate = number_format($net, 2);
+    // //             $netInterestDisplay = number_format($net, 2);
+
+    // //             // Reset accumulatedInterest for normal periods
+    // //             $accumulatedInterest = 0;
+    // //         }
+
+    // //         $payouts[] = [
+    // //             'period'                => $period,
+    // //             'from'                  => $currentFrom->format('d M y'),
+    // //             'to'                    => $currentTo->format('d M y'),
+    // //             'days'                  => $days,
+    // //             'principal'             => number_format($principal, 2),
+    // //             'interest'              => number_format($interest, 2),
+    // //             'tds'                   => number_format($tds, 2),
+    // //             'net_interest'          => $netInterestDisplay,
+    // //             'net_interest_due_date' => $netInterestOnDueDate,
+    // //             'due_date'              => $dueDateForDisplay,
+    // //             'status'                => $transaction->status ?? 'No',
+    // //             'processed'             => $transaction->processed ?? 0,
+    // //         ];
+
+    // //         $period++;
+    // //         $currentFrom = $dueDate->copy();
+    // //     }
+
+    // //     return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
+    // // }
+    // public function fdPayout($id)
+    // {
+    //     $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
+    //         ->findOrFail($id);
+
+    //     $totalDays = ($fdAccount->tenure_year * 365)
+    //         + ($fdAccount->tenure_month * 30)
+    //         + $fdAccount->tenure_days;
+
+    //     $slab = $fdAccount->fdscheme->fdslabs
+    //         ->where('day_from', '<=', $totalDays)
+    //         ->where('day_to', '>=', $totalDays)
+    //         ->first();
+
+    //     $principal = $fdAccount->fd_amount;
+    //     $rate      = $slab->interest_rate ?? 0;
+
+    //     $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
+    //     $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
+
+    //     $transactions = FdTransaction::where('fd_account_id', $id)->get()
+    //         ->keyBy(function ($item) {
+    //             return \Carbon\Carbon::parse($item->due_date)->format('Y-m-d');
+    //         });
+
+    //     $payouts     = [];
+    //     $period      = 1;
+    //     $currentFrom = $startDate->copy();
+    //     $dayOfMonth  = $startDate->day;
+
+    //     $accumulatedInterest = 0;
+
+    //     while ($currentFrom->lt($maturityDate)) {
+
+    //         // Default “to” date logic
+    //         if (($currentFrom->month > 4 || ($currentFrom->month == 4 && $currentFrom->day > 1)) && $currentFrom->day == $dayOfMonth) {
+    //             $currentTo = $currentFrom->copy()->endOfMonth();
+    //         } else {
+    //             $currentTo = $currentFrom->copy()->addMonth()->subDay();
+    //         }
+
+    //         // Special March period (last period of March)
+    //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 3, 31);
+    //         }
+    //         // Short April period (start of April) - Dynamic based on open date day
+    //         elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             if ($dayOfMonth == 1) {
+    //                 $currentTo = $currentFrom->copy(); // 01 Apr to 01 Apr (1 day)
+    //             } else {
+    //                 $currentTo = \Carbon\Carbon::create($currentFrom->year, 4, $dayOfMonth - 1); // e.g., for day 5: 01 Apr to 04 Apr (4 days)
+    //             }
+    //         }
+
+    //         // Do not exceed maturity
+    //         if ($currentTo->gt($maturityDate)) {
+    //             $currentTo = $maturityDate->copy();
+    //         }
+
+    //         $days = $currentFrom->diffInDays($currentTo) + 1;
+
+    //         // Interest calculation
+    //         $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+    //         $tds      = 0;
+    //         $net      = $interest - $tds;
+
+    //         // Due date logic
+    //         $dueDate = $currentTo->copy()->addDay();
+    //         if ($currentTo->eq($maturityDate)) {
+    //             $dueDate = $currentTo->copy();
+    //         }
+
+    //         $transaction = $transactions->get($dueDate->format('Y-m-d'));
+
+    //         // Special periods adjustments with accumulated interest logic
+    //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    //             // Last March period: no due date and net interest on due date blank
+    //             $dueDateForDisplay = '';
+
+    //             // Accumulate interest but no net interest on due date
+    //             $accumulatedInterest += $net;
+
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+    //             $netInterestOnDueDate = '';
+    //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             // April short period: due date shown, net interest on due date shows current interest,
+    //             // net interest shows previous accumulated interest from March
+    //             $dueDateForDisplay = $dueDate->format('d-m-Y');
+
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+
+    //             // Reset accumulatedInterest after paying out
+    //             $accumulatedInterest = 0;
+    //         } else {
+    //             $dueDateForDisplay = $dueDate->format('Y-m-d');
+
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $netInterestDisplay = number_format($net, 2);
+
+    //             // Reset accumulatedInterest for normal periods
+    //             $accumulatedInterest = 0;
+    //         }
+
+    //         $payouts[] = [
+    //             'period'                => $period,
+    //             'from'                  => $currentFrom->format('d M y'),
+    //             'to'                    => $currentTo->format('d M y'),
+    //             'days'                  => $days,
+    //             'principal'             => number_format($principal, 2),
+    //             'interest'              => number_format($interest, 2),
+    //             'tds'                   => number_format($tds, 2),
+    //             'net_interest'          => $netInterestDisplay,
+    //             'net_interest_due_date' => $netInterestOnDueDate,
+    //             'due_date'              => $dueDateForDisplay,
+    //             'status'                => $transaction->status ?? 'No',
+    //             'processed'             => $transaction->processed ?? 0,
+    //         ];
+
+    //         $period++;
+
+    //         // Special handling after April: always jump to open date in May
+    //         if ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             $currentFrom = \Carbon\Carbon::create($currentFrom->year, 5, $dayOfMonth);
+    //         } else {
+    //             $currentFrom = $dueDate->copy();
+    //         }
+    //     }
+
+    //     return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
+    // }
+    // public function fdPayout($id)
+    // {
+    //     $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
+    //         ->findOrFail($id);
+
+    //     $totalDays = ($fdAccount->tenure_year * 365)
+    //         + ($fdAccount->tenure_month * 30)
+    //         + $fdAccount->tenure_days;
+
+    //     // Find interest slab based on tenure
+    //     $slab = $fdAccount->fdscheme->fdslabs
+    //         ->where('day_from', '<=', $totalDays)
+    //         ->where('day_to', '>=', $totalDays)
+    //         ->first();
+
+    //     $principal = $fdAccount->fd_amount;
+    //     $rate      = $slab->interest_rate ?? 0;
+
+    //     $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
+    //     $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
+
+    //     // Fetch existing FD transactions if any
+    //     $transactions = FdTransaction::where('fd_account_id', $id)->get()
+    //         ->keyBy(fn($item) => \Carbon\Carbon::parse($item->due_date)->format('Y-m-d'));
+
+    //     $payouts     = [];
+    //     $period      = 1;
+    //     $currentFrom = $startDate->copy();
+    //     $dayOfMonth  = $startDate->day;
+    //     $accumulatedInterest = 0;
+
+    //     // 🔁 Loop until maturity date
+    //     while ($currentFrom->lt($maturityDate)) {
+
+    //         // Default next period end date = 1 month later - 1 day
+    //         $currentTo = $currentFrom->copy()->addMonth()->subDay();
+
+    //         // 💡 Handle custom March-April broken period
+    //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    //             // March period ends on 31 Mar (to realign)
+    //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 3, 31);
+    //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             // Short April period to 18 Apr (as per your table)
+    //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 4, 18);
+    //         }
+
+    //         // Stop at maturity date if earlier
+    //         if ($currentTo->gt($maturityDate)) {
+    //             $currentTo = $maturityDate->copy();
+    //         }
+
+    //         $days = $currentFrom->diffInDays($currentTo) + 1;
+
+    //         // 💰 Interest calculation (actual days)
+    //         $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+    //         $tds      = 0;
+    //         $net      = $interest - $tds;
+
+    //         // 📅 Due date = next day after period end (unless maturity)
+    //         $dueDate = $currentTo->copy()->addDay();
+    //         if ($currentTo->eq($maturityDate)) {
+    //             $dueDate = $currentTo->copy();
+    //         }
+
+    //         $transaction = $transactions->get($dueDate->format('Y-m-d'));
+
+    //         // 🧾 Handle special short/combined periods
+    //         if ($currentFrom->month == 3 && $currentFrom->day == $dayOfMonth) {
+    //             // March partial: accumulate interest, blank due date
+    //             $dueDateForDisplay = '';
+    //             $accumulatedInterest += $net;
+
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+    //             $netInterestOnDueDate = '';
+    //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             // April short period: show due date, pay both March+April interest
+    //             $dueDateForDisplay = $dueDate->format('d-M-Y');
+
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+
+    //             // Reset accumulated interest
+    //             $accumulatedInterest = 0;
+    //         } else {
+    //             // Normal monthly period
+    //             $dueDateForDisplay = $dueDate->format('d-M-Y');
+    //             $netInterestDisplay = number_format($net, 2);
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $accumulatedInterest = 0;
+    //         }
+
+    //         // 🧮 Compounding logic: add interest to principal
+    //         $principal += $net;
+
+    //         // Save payout row
+    //         $payouts[] = [
+    //             'period'                => $period,
+    //             'from'                  => $currentFrom->format('d M y'),
+    //             'to'                    => $currentTo->format('d M y'),
+    //             'days'                  => $days,
+    //             'principal'             => number_format($principal, 2),
+    //             'interest'              => number_format($interest, 2),
+    //             'tds'                   => number_format($tds, 2),
+    //             'net_interest'          => $netInterestDisplay,
+    //             'net_interest_due_date' => $netInterestOnDueDate,
+    //             'due_date'              => $dueDateForDisplay,
+    //             'status'                => $transaction->status ?? 'No',
+    //             'processed'             => $transaction->processed ?? 0,
+    //         ];
+
+    //         // Prepare for next loop
+    //         $period++;
+    //         $currentFrom = $dueDate->copy();
+    //     }
+
+    //     return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
+    // }
+    // public function fdPayout($id)
+    // {
+    //     $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
+    //         ->findOrFail($id);
+
+    //     $totalDays = ($fdAccount->tenure_year * 365)
+    //         + ($fdAccount->tenure_month * 30)
+    //         + $fdAccount->tenure_days;
+
+    //     $slab = $fdAccount->fdscheme->fdslabs
+    //         ->where('day_from', '<=', $totalDays)
+    //         ->where('day_to', '>=', $totalDays)
+    //         ->first();
+
+    //     $principal = $fdAccount->fd_amount;
+    //     $rate      = $slab->interest_rate ?? 0;
+
+    //     $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
+    //     $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
+
+    //     $transactions = FdTransaction::where('fd_account_id', $id)->get()
+    //         ->keyBy(fn($item) => \Carbon\Carbon::parse($item->due_date)->format('Y-m-d'));
+
+    //     $payouts = [];
+    //     $period = 1;
+    //     $currentFrom = $startDate->copy();
+    //     $accumulatedInterest = 0;
+
+    //     while ($currentFrom->lt($maturityDate)) {
+
+    //         // Default “to” date: one month ahead minus 1 day (19 → 18)
+    //         $currentTo = $currentFrom->copy()->addMonth()->subDay();
+
+    //         // 🔹 Handle March–April special period
+    //         if ($currentFrom->month == 3 && $currentFrom->day == 19) {
+    //             // March period ends on 31 March
+    //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 3, 31);
+    //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             // Short April period 01–18 April
+    //             $currentTo = \Carbon\Carbon::create($currentFrom->year, 4, 18);
+    //         }
+
+    //         // Don’t go past maturity
+    //         if ($currentTo->gt($maturityDate)) {
+    //             $currentTo = $maturityDate->copy();
+    //         }
+
+    //         $days = $currentFrom->diffInDays($currentTo) + 1;
+
+    //         // 💰 Interest calculation
+    //         $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+    //         $tds = 0;
+    //         $net = $interest - $tds;
+
+    //         // 📅 Due date (next day after period end)
+    //         $dueDate = $currentTo->copy()->addDay();
+    //         if ($currentTo->eq($maturityDate)) {
+    //             $dueDate = $currentTo->copy();
+    //         }
+
+    //         $transaction = $transactions->get($dueDate->format('Y-m-d'));
+
+    //         // 🧾 March–April logic
+    //         if ($currentFrom->month == 3 && $currentFrom->day == 19) {
+    //             // 19 Mar – 31 Mar → hold interest
+    //             $dueDateForDisplay = '';
+    //             $accumulatedInterest += $net;
+    //             $netInterestDisplay = number_format($net, 2);
+    //             $netInterestOnDueDate = '';
+    //         } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+    //             // 01 Apr – 18 Apr → combine previous + current
+    //             $dueDateForDisplay = $dueDate->format('d M y');
+    //             $accumulatedInterest += $net;
+    //             $netInterestDisplay = number_format($accumulatedInterest, 2);
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $accumulatedInterest = 0; // reset
+    //         } else {
+    //             // Normal monthly period
+    //             $dueDateForDisplay = $dueDate->format('d M y');
+    //             $netInterestDisplay = number_format($net, 2);
+    //             $netInterestOnDueDate = number_format($net, 2);
+    //             $accumulatedInterest = 0;
+    //         }
+
+    //         // Update principal for next compounding cycle
+    //         $principal = round($principal + $net, 2);
+
+    //         // Store period data
+    //         $payouts[] = [
+    //             'period'                => $period,
+    //             'from'                  => $currentFrom->format('d M y'),
+    //             'to'                    => $currentTo->format('d M y'),
+    //             'days'                  => $days,
+    //             'principal'             => number_format($principal - $net, 2),
+    //             'interest'              => number_format($interest, 2),
+    //             'tds'                   => number_format($tds, 2),
+    //             'net_interest'          => $netInterestDisplay,
+    //             'net_interest_due_date' => $netInterestOnDueDate,
+    //             'closing_balance'       => number_format($principal, 2),
+    //             'due_date'              => $dueDateForDisplay,
+    //             'status'                => $transaction->status ?? 'No',
+    //             'processed'             => $transaction->processed ?? 0,
+    //         ];
+
+    //         // Advance to next period
+    //         $period++;
+    //         $currentFrom = $dueDate->copy();
+    //     }
+
+    //     return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
+    // }
+
     public function fdPayout($id)
     {
         $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
             ->findOrFail($id);
-
 
         $totalDays = ($fdAccount->tenure_year * 365)
             + ($fdAccount->tenure_month * 30)
@@ -754,48 +1348,102 @@ class FDController extends Controller
             ->where('day_to', '>=', $totalDays)
             ->first();
 
+        $principal = $fdAccount->fd_amount;
+        $rate      = $slab->interest_rate ?? 0;
 
-        $principal     = $fdAccount->fd_amount;
-        $rate          = $slab->interest_rate ?? 0;
-        $startDate     = \Carbon\Carbon::parse($fdAccount->start_date);
-        $maturityDate  = \Carbon\Carbon::parse($fdAccount->maturity_date);
+        $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
+        $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
 
-        $transactions = FdTransaction::where('fd_account_id', $id)->get()->keyBy('due_date');
+        $transactions = FdTransaction::where('fd_account_id', $id)->get()
+            ->keyBy(fn($item) => \Carbon\Carbon::parse($item->due_date)->format('Y-m-d'));
 
-        $payouts   = [];
-        $period    = 1;
-        $current   = $startDate;
+        $payouts = [];
+        $period = 1;
+        $currentFrom = $startDate->copy();
+        $accumulatedInterest = 0;
 
-        while ($current->lt($maturityDate)) {
-            $next = $current->copy()->addMonth();
-            if ($next->gt($maturityDate)) {
-                $next = $maturityDate;
+        // store the "anchor" day (7, 19, 22, etc.)
+        $openDay = $startDate->day;
+
+        while ($currentFrom->lt($maturityDate)) {
+
+            // Default: 1 month period
+            $currentTo = $currentFrom->copy()->addMonth()->subDay();
+
+            // 🔹 Handle March → April special period dynamically
+            if ($currentFrom->month == 2 && $currentFrom->day == $openDay) {
+                // Combine Feb + Mar: end 31 March
+                $currentTo = \Carbon\Carbon::create($currentFrom->year, 3, 31);
+            } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+                // Short April: start 01 Apr, end on (openDay - 1)
+                $endDay = $openDay - 1;
+                $currentTo = \Carbon\Carbon::create($currentFrom->year, 4, $endDay);
             }
 
-            $days = round($current->diffInDays($next));
-            $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+            // Do not exceed maturity date
+            if ($currentTo->gt($maturityDate)) {
+                $currentTo = $maturityDate->copy();
+            }
 
+            $days = $currentFrom->diffInDays($currentTo) + 1;
+
+            // 💰 Interest
+            $interest = round(($principal * $rate * $days) / (365 * 100), 2);
             $tds = 0;
             $net = $interest - $tds;
-            $dueDate = $next->format('Y-m-d');
 
-            $transaction = $transactions->get($dueDate);
+            // 📅 Due date (next day)
+            $dueDate = $currentTo->copy()->addDay();
+            if ($currentTo->eq($maturityDate)) {
+                $dueDate = $currentTo->copy();
+            }
+
+            $transaction = $transactions->get($dueDate->format('Y-m-d'));
+
+            // 🧾 Interest logic
+            if ($currentFrom->month == 2 && $currentFrom->day == $openDay) {
+                // Feb–Mar combined: hold interest, no due date
+                $dueDateForDisplay = '';
+                $accumulatedInterest += $net;
+                $netInterestDisplay = number_format($net, 2);
+                $netInterestOnDueDate = '';
+            } elseif ($currentFrom->month == 4 && $currentFrom->day == 1) {
+                // Short April: release accumulated + this
+                $dueDateForDisplay = $dueDate->format('d M y');
+                $accumulatedInterest += $net;
+                $netInterestDisplay = number_format($accumulatedInterest, 2);
+                $netInterestOnDueDate = number_format($net, 2);
+                $accumulatedInterest = 0;
+            } else {
+                $dueDateForDisplay = $dueDate->format('d M y');
+                $netInterestDisplay = number_format($net, 2);
+                $netInterestOnDueDate = number_format($net, 2);
+                $accumulatedInterest = 0;
+            }
+
+            // Update principal
+            $principal = round($principal + $net, 2);
+
+            // Add to list
             $payouts[] = [
-                'period'       => $period,
-                'from'         => $current->format('d M y'),
-                'to'           => $next->copy()->subDay()->format('d M y'),
-                'days'         => $days,
-                'principal'    => number_format($principal, 2),
-                'interest'     => number_format($interest, 2),
-                'tds'          => number_format($tds, 2),
-                'net_interest' => number_format($net, 2),
-                'due_date'     => $dueDate,
-                'processed'    => $transaction->processed ?? 0,
-                'status'       => $transaction->status ?? 'No',
+                'period'                => $period,
+                'from'                  => $currentFrom->format('d M y'),
+                'to'                    => $currentTo->format('d M y'),
+                'days'                  => $days,
+                'principal'             => number_format($principal - $net, 2),
+                'interest'              => number_format($interest, 2),
+                'tds'                   => number_format($tds, 2),
+                'net_interest'          => $netInterestDisplay,
+                'net_interest_due_date' => $netInterestOnDueDate,
+                'closing_balance'       => number_format($principal, 2),
+                'due_date'              =>  $dueDate->format('Y-m-d'),
+                'status'                => $transaction->status ?? 'No',
+                'processed'             => $transaction->processed ?? 0,
             ];
 
+            // Move forward
             $period++;
-            $current = $next->copy()->addDay();
+            $currentFrom = $dueDate->copy();
         }
 
         return view('fd_mis_account.fd-account.fdpayoutplan', compact('fdAccount', 'payouts'));
