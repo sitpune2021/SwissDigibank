@@ -174,23 +174,22 @@
                         <div class="flex items-center gap-2">
 
                             <!-- Left Select -->
-                            <select name="" id=""
+                            <select name="overdue_interest_type" id="overdue_interest_type"
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option value="TYPE_1">TYPE_1</option>
-                                <option value="TYPE_2">TYPE_2</option>
+                                <option value="TYPE_1" {{ old('overdue_interest_type', $scheme->overdue_interest_type ?? '') == 'TYPE_1' ? 'selected' : '' }}>TYPE_1</option>
+                                <option value="TYPE_2" {{ old('overdue_interest_type', $scheme->overdue_interest_type ?? '') == 'TYPE_2' ? 'selected' : '' }}>TYPE_2</option>
                             </select>
 
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 placeholder="Enter Overdue Interest Rate (%) ">
-                                 @error('overdue_interest_rate')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                                @error('overdue_interest_rate')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
-
                     </div>
-
+                    
                 </div>
 
                 <div class="col-span-2 md:col-span-1">

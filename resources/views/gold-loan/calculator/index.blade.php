@@ -306,10 +306,6 @@
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Active</td><td class="py-2" id="schemeActive">-</td></tr>
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
-                <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2 uppercase">Stamp Duty Fee</td>
-                  <td class="px-3 py-2"><span id="schemeStamp">-</span> %</td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -370,7 +366,7 @@
         schemeName.textContent = selectedOption.dataset.name || "-";
         schemeTenure.textContent = selectedOption.dataset.tenure || "-";
         schemeMax.textContent = selectedOption.dataset.max || "-";
-        schemeLimit.textContent = selectedOption.dataset.limit || "-";
+        schemeLimit.textContent = (selectedOption.dataset.limit ? selectedOption.dataset.limit + " %" : "-");
         schemeMin.textContent = selectedOption.dataset.min || "-";
         schemeInterest.textContent = selectedOption.dataset.interest || "-";
         schemeType.textContent = selectedOption.dataset.type || "-";

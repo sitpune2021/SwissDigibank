@@ -236,7 +236,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">GOld Loan Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">GOLD LOAN APPLICATION INFO</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -286,38 +286,42 @@
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2">
-                                    Tenure of Loan
-                                </td>
-                                <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $application->scheme->tenure_value }}
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
                                    Credit Period
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
                                     {{ $application->credit_period }} Days
                                 </td>
-                            </tr>
+                            </tr>                         
 
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
                                     Total Amount to Recover
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                   ₹ {{ $application->total_recovered_amount }}
+                                   ₹ {{ number_format($totalRecover, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2">
-                                    Processing Fee
+                                   EMI Payout
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    ₹ {{ $application->processing_fee }} (Incl. 18 % GST)
+                                    MONTHLY
                                 </td>
-                            </tr>                           
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">EMI Amount</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ number_format($emi, 2) }}
+                                </td>
+                            </tr>
+                             <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">No. of EMIs</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->tenure }}
+                                </td>
+                            </tr>
+                   
                         </tbody>
                     </table>
                 </div>

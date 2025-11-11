@@ -108,6 +108,15 @@
             target="_blank" class="btn-primary px-2 py-2 rounded-10">
             Show EMI Chart
         </a>
+        @if($application->status != 1 && $application->status != 2)
+        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
+            class="btn-warning uppercase px-2 py-2 rounded-10">
+            Collect Processing Fee
+        </a>       
+        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            SUBMIT FOR APPROVAL
+        </a>
+        @endif
 
         {{-- Status != DISBURSEMENT (2) --}}
         @if($application->status != 2)
@@ -121,7 +130,7 @@
             @endif 
 
             {{-- Status != CANCELED (3) --}}
-            @if($application->status != 3)
+            @if($application->status != 3 && $application->status != 0)
                 <a href="{{ route('gold-loan.applications.view-buttons.disburse-setting', $application->id) }}" 
                     target="_blank" class="btn-warning uppercase px-2 py-2 rounded-10">
                     DISBURSE SETTINGS
@@ -141,7 +150,7 @@
 
 
         {{-- If NOT CANCELED (3) then show print menu --}}
-        @if($application->status != 3)
+        @if($application->status != 3 && $application->status != 0)
             <div class="relative inline-block text-left">
 
                 <!-- Print Button -->
@@ -280,7 +289,7 @@
                             <td class="px-4 py-2">
                                 @if($application->status == 0)
                                     <span class="block w-32 rounded-[30px] border border-yellow-400 bg-yellow-100 py-2 text-center text-xs text-yellow-600">
-                                        PENDING
+                                        DRAFT
                                     </span>
                                 @elseif($application->status == 1)
                                     <span class="block w-32 rounded-[30px] border border-green-400 bg-green-100 py-2 text-center text-xs text-green-600">
@@ -488,7 +497,7 @@
 
                     </h3>
                     <div class="">
-                        <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
+                        <a href="#" class="btn-primary p-1 pointer">
                             <i class="las la-upload y"></i>
                         </a>
 
