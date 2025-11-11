@@ -196,7 +196,10 @@ class ShareHoldingController extends Controller
             $decryptedId = base64_decode($id);
             $shareholding = Shareholding::findOrFail($decryptedId);
             $show = true;
-            $formFields = config('share_form');
+            // $formFields = config('share_form');
+            $formFields = array_filter(config('share_form'), function ($item) {
+                return is_array($item) && isset($item['name']);
+            });
             $route = '';
             $method = '';
             $dynamicOptions = [
