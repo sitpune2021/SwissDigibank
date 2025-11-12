@@ -95,13 +95,18 @@
                             <td class="font-semibold p-3">Processing Fee</td>
                             <td class="p-3">{{ $scheme->processing_fee }} %</td>
                         </tr>
-                         <tr class="bg-gray-50 border-b ">
+                         <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Penalty Charge</td>
                             <td class="p-3">{{ $scheme->penalty_charge }} %</td>
                         </tr>
-                        <tr class="bg-gray-50 border-b ">
+                        <tr class="bg-gray-50 border-b">
                             <td class="font-semibold p-3">Overdue Interest Rate (%)</td>
-                            <td class="p-3">{{ $scheme->overdue_interest_rate }} %</td>
+                            <td class="p-3">
+                                {{ number_format($scheme->overdue_interest_rate, 2) }} %
+                                @if(!empty($scheme->overdue_interest_type))
+                                    of {{ $scheme->overdue_interest_type }}
+                                @endif
+                            </td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">SMS Charges per EMI</td>
