@@ -55,8 +55,9 @@ class BusinessLoan extends Controller
                     'charge_per_emi' => 'required|in:0,1',
                     'max_loan_amount' => 'required|numeric|min:1|max:200000',
                     'tenure' => 'required|integer|min:1',
-                    'annual_interest_rate' => 'required|numeric|min:0',
-                    'overdue_interest_rate' => 'required|numeric|min:0',
+                    'annual_interest_rate' => 'required|numeric|min:0',                   
+                    'overdue_type' => 'nullable|string|max:50',
+                    'overdue_interest_rate' => 'required_if:overdue_type,TYPE_1,TYPE_2|numeric|min:0',
                     'is_active' => 'required|in:0,1',
                 ], [
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
