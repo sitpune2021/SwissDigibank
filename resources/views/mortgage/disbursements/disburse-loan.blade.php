@@ -82,7 +82,7 @@
 
                             <input type="number" id="loan_amount" name="loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Loan Amount" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                                placeholder="Loan Amount" value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
                         </div>
 
                         <hr>
@@ -561,27 +561,7 @@
     });
     </script>
 
-<style>
-.form-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-.btn-outline {
-    border: 1px solid #2563eb;
-    color: #2563eb;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-</style>
+
 
                 </div>
             </div>
@@ -643,9 +623,7 @@
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interest Amount</td>
-                                <td class="px-3 py-2">
-                                ₹ 
-                                </td>
+                                <td class="px-3 py-2">₹ {{ number_format($totalInterest, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
@@ -662,7 +640,7 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
-                                   ₹ 
+                                    <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">

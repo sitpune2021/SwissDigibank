@@ -50,7 +50,7 @@
     </div>
 
     <div class="box">
-        <form method="POST" 
+        <form method="POST" id="loanForm"
                         action="{{ isset($application) ? route('mortgage.applications.update', $application->id) : route('mortgage.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if(isset($application))
@@ -243,6 +243,7 @@
                                 @enderror
                             </div>
                         </div>
+                        <input type="hidden" id="maxLoanAmount" value="">
 
                         <div class="col-span-2 md:col-span-1">
                             {{-- do not remove div --}}
@@ -583,7 +584,7 @@
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
                                             <input type="radio" name="transfer_mode" value="imps"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>>
+                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>
                                             <span>IMPS</span>
                                         </label>
                                         <label class="flex items-center gap-2">
@@ -668,7 +669,7 @@
 
                     <div id="schemeInfoBody" class="px-4 py-3">
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
+                            <table class="w-full text-sm text-left whitespace-nowrap">
                                 <tbody>
                                     <tr>
                                         <td class="font-semibold py-2 pr-4">Scheme Code</td>
@@ -977,6 +978,7 @@ document.addEventListener("DOMContentLoaded", function () {
             schemeName.textContent = selectedOption.getAttribute("data-name") || "-";
             schemeTenure.textContent = selectedOption.getAttribute("data-tenure") || "-";
             schemeMax.textContent = selectedOption.getAttribute("data-max") || "-";
+            document.getElementById("maxLoanAmount").value = selectedOption.getAttribute("data-max") || 0;
             schemeLimit.textContent = selectedOption.getAttribute("data-limit") || "-";
             schemeMin.textContent = selectedOption.getAttribute("data-min") || "-";
             schemeInterest.textContent = selectedOption.getAttribute("data-interest") || "-";
@@ -1115,8 +1117,83 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 </script>
 
-<!-- Calculation box -->
+<!-- loan amount & max amount valication -->
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let isCalculated = false;
+    const calcBtn = document.getElementById("calculateBtn");
+    const form = calcBtn.closest("form");
+
+    calcBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // Step 1: Calculate total security value
+        let totalSecurity = 0;
+        document.querySelectorAll(".expectedValue").forEach(input => {
+            totalSecurity += parseFloat(input.value) || 0;
+        });
+
+        let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        let insuranceAmount = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        let netLoan = loanAmount + insuranceAmount;
+
+        let scheme = document.getElementById("scheme_id");
+        let selected = scheme.options[scheme.selectedIndex];
+        let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+        let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+
+        // NEW VALIDATION (Loan + Insurance)
+        if (netLoan > maxLoan) {
+            alert("Net Loan Amount (" + netLoan + ") cannot exceed Max Loan Amount (" + maxLoan + ")");
+            return;  // DO NOT allow calculation or submission
+        }
+
+        // OLD VALIDATION (Loan amount alone)
+        if (loanAmount > maxLoan) {
+            alert("Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
+            document.getElementById("loanAmount").value = maxLoan.toFixed(2);
+            loanAmount = maxLoan;
+        }
+
+        let approvable = (totalSecurity * limit) / 100;
+        let approved = Math.min(loanAmount, approvable);
+
+        // Step 2: Display result in summary box
+        document.getElementById("request-amt").textContent = loanAmount.toFixed(2);
+        document.getElementById("security-amt").textContent = totalSecurity.toFixed(2);
+        document.getElementById("max-loan-amount").textContent = maxLoan.toFixed(2);
+        document.getElementById("max-loan-limit").textContent = limit + "%";
+        document.getElementById("m-approval-amt").textContent = approvable.toFixed(2);
+        document.getElementById("approval-amt").textContent = approved.toFixed(2);
+
+        // Step 3: Hidden Inputs Update
+        document.getElementById("inputSecurity").value = totalSecurity.toFixed(2);
+        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+        document.getElementById("inputLimit").value = limit;
+        document.getElementById("inputApprovable").value = approvable.toFixed(2);
+        document.getElementById("inputApproved").value = approved.toFixed(2);
+
+        document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
+
+        document.getElementById("calculationBox").classList.remove("hidden");
+
+        // Step 4: Convert CALCULATE → SUBMIT
+        if (!isCalculated) {
+            calcBtn.textContent = "Submit Application";
+
+            calcBtn.addEventListener("click", function () {
+                form.submit(); // REAL SUBMIT
+            });
+
+            isCalculated = true;
+        }
+    });
+});
+</script>
+
+
+<!-- Calculation box -->
+<!-- <script>
 document.addEventListener("DOMContentLoaded", function () {
     let isCalculated = false;
     const calcBtn = document.getElementById("calculateBtn");
@@ -1173,10 +1250,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-</script>
+</script> -->
 
 
-<!-- add item container -->
  <!-- Show Security Value in Calculation box -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {

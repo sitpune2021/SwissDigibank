@@ -200,9 +200,39 @@ class MortgageDisbursementController extends Controller
         $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
 
         // ===== Final amount to disburse =====
-        $loanAmount = $disbursement->net_loan_amount ?? 0;
+        $loanAmount = $disbursement->approved_loan_amount ?? 0;
         $finalAmountToDisburse = $loanAmount - $totalDeductions;
         if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
+
+        // Approved Loan Amount
+        $approvedLoan = (float) ($disbursement->approved_loan_amount ?? 0);
+
+        // Annual interest rate
+        $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
+
+        // Tenure months (default 12)
+        $tenureMonths = (int) ($disbursement->tenure_months ?? 12);
+
+        // Monthly Rate
+        $monthlyRate = $annualRate / 12 / 100;
+
+        // EMI Calculation (reducing)
+        if ($monthlyRate > 0) {
+            $emi = round(
+                ($approvedLoan * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths)) /
+                (pow(1 + $monthlyRate, $tenureMonths) - 1),
+                2
+            );
+        } else {
+            $emi = round($approvedLoan / $tenureMonths, 2);
+        }
+
+        // Total interest
+        $totalInterest = round(($emi * $tenureMonths) - $approvedLoan, 2);
+
+        // Total Recover Amount
+        $totalRecover = round($approvedLoan + $totalInterest, 2);
+
 
         return view(
             "mortgage.disbursements.disburse-loan",
@@ -217,7 +247,11 @@ class MortgageDisbursementController extends Controller
                 'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
                 'finalAmountToDisburse',
                 'loanAmount',
-                'totalDeductions'
+                'totalDeductions',
+                'totalInterest',      
+                'totalRecover',       
+                'emi'
+               
             )
         );
     }
