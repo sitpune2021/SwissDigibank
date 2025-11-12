@@ -57,6 +57,9 @@ class DailyWeeklyController extends Controller
                     'emi_amount' => 'required|integer|min:1',
                     'annual_interest_rate' => 'required|numeric|min:0',
                     'is_active' => 'required|in:0,1',
+                    'overdue_type' => 'nullable|string|max:50',
+                    'overdue_rate' => 'required_if:overdue_type,TYPE_1,TYPE_2|numeric|min:0',
+
                 ], [
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
                 ]);
@@ -75,6 +78,10 @@ class DailyWeeklyController extends Controller
                 'stationary_charge',
                 'maintenance_charge',
                 'collection',
+                'overdue_type',               
+                'overdue_rate', 
+                'fitness_fee',
+                'credit_period', 
             ]));
 
             } catch (ValidationException $e) {

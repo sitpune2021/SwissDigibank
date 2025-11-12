@@ -58,7 +58,7 @@
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Tenure</td>
-                            <td class="p-3">{{ $scheme->tenure }} Months</td>
+                            <td class="p-3">{{ $scheme->no_of_emi }} {{ ucfirst($scheme->gold_loan_setting) }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Maximum CC Limit</td>
@@ -69,8 +69,8 @@
                             <td class="p-3">{{ $scheme->annual_interest_rate }} %</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
-                            <td class="font-semibold p-3">Interest Payout Type</td>
-                            <td class="p-3">{{ $scheme->gold_loan_setting }}</td>
+                            <td class="font-semibold p-3">Overdue Interest Rate (%)</td>
+                            <td class="p-3">{{ $scheme->overdue_rate }} of {{ $scheme->overdue_type }}</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Fore Closure Charges</td>
@@ -91,6 +91,13 @@
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Penalty Charge</td>
                             <td class="p-3">{{ $scheme->penalty_charge }} %</td>
+                        </tr>
+                         <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Credit Period</td>
+                            <td class="p-3">
+                                {{ rtrim(rtrim(number_format($scheme->credit_period, 2), '0'), '.') }}
+                                {{ $scheme->credit_period == 1 ? 'Day' : 'Days' }}
+                            </td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Active</td>

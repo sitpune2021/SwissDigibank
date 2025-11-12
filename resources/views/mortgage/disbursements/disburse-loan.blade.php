@@ -84,7 +84,7 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Loan Amount" value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
                         </div>
-
+                        @if(!empty($processingFee) && $processingFee > 0)
                         <hr>
                         <h4>Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
@@ -155,7 +155,8 @@
                                 <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'" groupName="processing_fee2" />
                             </div>
                         </div>
-
+                        @endif
+                        @if(!empty($stampDutyFee) && $stampDutyFee > 0)
                         <hr>
                         <h4>Stamp Duty Fee</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
@@ -207,7 +208,8 @@
                                 </tbody>
                             </table>
                         </div>
-
+                        @endif
+                        @if(!empty($insuranceFee) && $insuranceFee > 0)
                         <hr>
                         <h4>Insurance Fee</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
@@ -259,9 +261,9 @@
                                 </tbody>
                             </table>
                         </div>
-
+                        @endif
  
-                         <hr>
+                        <hr>
                         <h4>Advance Interest</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
 

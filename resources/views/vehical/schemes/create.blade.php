@@ -154,11 +154,12 @@
                     <div class="col-sm-7">
                         <div class="flex items-center gap-2">
                             <!-- Left Select -->
-                            <select name="" id=""
-                                class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option value="TYPE_1">TYPE_1</option>
-                                <option value="TYPE_2">TYPE_2</option>
-                            </select>
+                             <select name="overdue_type" id="overdue_type"
+                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
+                            <option value="">Select Type</option>
+                            <option value="TYPE_1" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_1' ? 'selected' : '' }}>TYPE_1</option>
+                            <option value="TYPE_2" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_2' ? 'selected' : '' }}>TYPE_2</option>
+                        </select>
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
@@ -484,68 +485,6 @@
 
         </div>
 
-        {{-- No-EMI Inputs --}}
-        <div id="no-emi" hidden>
-            <div class="mt-4 ">
-                <label class="md:text-lg font-medium block mb-2 capitalize">
-                    Charge Floating Interest Rate Per Slab
-                    <span class="text-red-600">*</span>
-                </label>
-                <div class="mt-1 flex flex-wrap gap-3">
-                    <!-- Yes -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="charge_floting" value="{{ old('charge_floting', $scheme->charge_floting ?? '') }}" class="text-green-600 focus:ring-green-500" checked>
-                        <span class="text-gray-70 uppercase">yes</span>
-                    </label>
-                    <!-- NO -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio" name="charge_floting" value="{{ old('charge_floting', $scheme->charge_floting ?? '') }}" class="text-green-600 focus:ring-green-500 "
-                            checked>
-                        <span class="text-gray-700 uppercase">no</span>
-                    </label>
-                </div>
-            </div>
-            <div class=" tableWidth mt-2 px-4">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-secondary/5  text-black">
-                            <tr class="">
-                                <th colspan="2" class="text-center py-3 ">DAYS</th>
-                                <th rowspan="2" class="text-center">PENAL INTEREST
-                                    <br> RATE (%) (MONTHLY)
-                                </th>
-                                <th rowspan="2" class="text-center py-3 ">
-                                    ANNUAL INTEREST
-                                    RATE (%)
-
-                                </th>
-
-                            </tr>
-                            <tr class="">
-                                <th class="text-center ">FROM (Start From Day 1)</th>
-                                <th class="text-center  ">TO</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="border border-gray-300 p-1">
-                                    <input type="number" name="from_date" value="{{ old('from_date', $scheme->from_date ?? '') }}" placeholder="From"
-                                        class="w-full  border border-gray-300 rounded p-1">
-                                </td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="to_date" value="{{ old('to_date', $scheme->to_date ?? '') }}" placeholder="To"
-                                        class="w-full border  border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="penal_rate_interest" value="{{ old('penal_rate_interest', $scheme->penal_rate_interest ?? '') }}"
-                                        placeholder="Penal Interest(%)"
-                                        class="w-full  border border-gray-300 rounded p-1"></td>
-                                <td class="border border-gray-300 p-1"><input type="number" name="annual_rate_interest" value="{{ old('annual_rate_interest', $scheme->annual_rate_interest ?? '') }}"
-                                        placeholder="Annual Interest Rate(%) "
-                                        class="w-full border border-gray-300 rounded p-1"></td>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
 
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -555,7 +494,7 @@
         </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{ route('mortgage.schemes.index') }}"> BAck</a>
+                <a href="{{ route('vehical.schemes.index') }}"> BAck</a>
             </button>
         </div>
     </div>
