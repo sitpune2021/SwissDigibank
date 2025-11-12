@@ -20,7 +20,8 @@ use App\Models\CcOdLoanApplication;
 use App\Models\DailyWeeklyApplication;
 use App\Models\DdsAccount;
 use App\Models\VehicalApplication;
-
+use App\Models\MembershipChargeTransaction;
+// use Illuminate\Http\Request;
 use App\Models\PersonalLoanApplication;
 
 
@@ -28,46 +29,234 @@ class ApproveController extends Controller
 {
 
     // Pending transaction 
-    public function index(Request $request)
-    {
-        try {
-            $search = $request->input('search');
-            $perPage = $request->input('perPage', 10); // default 10 if not passed
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $search = $request->input('search');
+    //         $perPage = $request->input('perPage', 10); // default 10 if not passed
 
-            $query = Transaction::with('accounts.members', 'accounts.branch')
-                ->where('approve_status', '!=', 'approved');
+    //         $query = Transaction::with('accounts.members', 'accounts.branch')
+    //             ->where('approve_status', '!=', 'approved');
 
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('payment_mode', 'like', "%{$search}%")
-                        ->orWhere('transaction_type', 'like', "%{$search}%")
-                        ->orWhere('bank_name', 'like', "%{$search}%")
-                        ->orWhere('amount', 'like', "%{$search}%")
-                        ->orWhereHas('accounts', function ($q2) use ($search) {
-                            $q2->where('account_no', 'like', "%{$search}%")
-                                ->orWhere('account_type', 'like', "%{$search}%")
-                                ->orWhereHas('branch', function ($q3) use ($search) {
-                                    $q3->where('branch_name', 'like', "%{$search}%");
-                                })
-                                ->orWhereHas('members', function ($q4) use ($search) {
-                                    $q4->where('member_info_first_name', 'like', "%{$search}%")
-                                        ->orWhere('member_info_last_name', 'like', "%{$search}%");
-                                });
-                        });
-                });
-            }
+    //         if ($search) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->where('payment_mode', 'like', "%{$search}%")
+    //                     ->orWhere('transaction_type', 'like', "%{$search}%")
+    //                     ->orWhere('bank_name', 'like', "%{$search}%")
+    //                     ->orWhere('amount', 'like', "%{$search}%")
+    //                     ->orWhereHas('accounts', function ($q2) use ($search) {
+    //                         $q2->where('account_no', 'like', "%{$search}%")
+    //                             ->orWhere('account_type', 'like', "%{$search}%")
+    //                             ->orWhereHas('branch', function ($q3) use ($search) {
+    //                                 $q3->where('branch_name', 'like', "%{$search}%");
+    //                             })
+    //                             ->orWhereHas('members', function ($q4) use ($search) {
+    //                                 $q4->where('member_info_first_name', 'like', "%{$search}%")
+    //                                     ->orWhere('member_info_last_name', 'like', "%{$search}%");
+    //                             });
+    //                     });
+    //             });
+    //         }
 
-            $pending_transactions = $query
-                ->orderBy('created_at', 'desc')
-                ->paginate($perPage)
-                ->appends($request->all()); // preserve search & perPage on pagination links
+    //         $pending_transactions = $query
+    //             ->orderBy('created_at', 'desc')
+    //             ->paginate($perPage)
+    //             ->appends($request->all()); // preserve search & perPage on pagination links
 
-            return view('approvals.pending_transactions', compact('pending_transactions'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+    //         return view('approvals.pending_transactions', compact('pending_transactions'));
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
+
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $search = $request->input('search');
+    //         $perPage = $request->input('perPage', 10);
+    //         $page = $request->input('page', 1);
+
+    //         // === First Table: Transactions ===
+    //         $transactionQuery = Transaction::select(
+    //             'transactions.id',
+    //             DB::raw("'transaction' as source_table"),
+    //             'transactions.payment_mode',
+    //             'transactions.amount',
+    //             'transactions.transaction_type',
+    //             'transactions.bank_name',
+    //             'transactions.approve_status',
+    //             'transactions.created_at',
+    //             'branches.branch_name',
+    //             'accounts.account_no',
+    //             'accounts.account_type',
+    //             'accounts.account_holder_type',
+    //             'accounts.firm_name',
+    //             'accounts.branch_id'  // Ensure this column is selected for matching union
+    //         )
+    //             ->join('accounts', 'accounts.id', '=', 'transactions.account_id')
+    //             ->join('branches', 'branches.id', '=', 'accounts.branch_id')
+    //             ->where('transactions.approve_status', '!=', 'approved');
+
+    //         // Optional: Add search functionality
+    //         if ($search) {
+    //             $transactionQuery->where(function ($q) use ($search) {
+    //                 $q->where('transactions.payment_mode', 'like', "%{$search}%")
+    //                     ->orWhere('transactions.transaction_type', 'like', "%{$search}%")
+    //                     ->orWhere('transactions.bank_name', 'like', "%{$search}%")
+    //                     ->orWhere('transactions.amount', 'like', "%{$search}%")
+    //                     ->orWhere('branches.branch_name', 'like', "%{$search}%")
+    //                     ->orWhere('accounts.account_no', 'like', "%{$search}%")
+    //                     ->orWhere('accounts.account_holder_type', 'like', "%{$search}%");
+    //             });
+    //         }
+
+    //         // === Second Table: Membership Charges Transaction ===
+    //         $membershipQuery = MembershipChargeTransaction::select(
+    //             'membership_charges_transaction.id',
+    //             DB::raw("'membership' as source_table"),
+    //             'membership_charges_transaction.charges_pay_mode as payment_mode',
+    //             'membership_charges_transaction.membership_fee as amount',
+    //             DB::raw("'Share amount' as transaction_type"),
+    //             'membership_charges_transaction.cheque_bank_name as bank_name',
+    //             'membership_charges_transaction.approve_status',
+    //             'membership_charges_transaction.created_at',
+    //             'membership_charges_transaction.transaction_date as date',
+    //             'accounts.account_no',
+    //             'accounts.account_type',
+    //             'accounts.account_holder_type',
+    //             'branches.branch_name',
+    //             DB::raw("NULL as branch_id")  // Adding missing column to match the first query
+    //         )
+    //             ->leftJoin('accounts', 'accounts.id', '=', 'membership_charges_transaction.saving_account_id')
+    //             ->leftJoin('branches', 'branches.id', '=', 'accounts.branch_id')
+    //             ->where('membership_charges_transaction.type', 'Share amount');
+
+    //         // Combine both queries using UNION and ensure they are sorted by created_at
+    //         $combinedQuery = $transactionQuery->union($membershipQuery)
+    //             ->orderByDesc('created_at');  // Sorting at the database level
+
+    //         // Paginate the results
+    //         $total = $combinedQuery->count();  // Get the total count of the results
+    //         $results = $combinedQuery->forPage($page, $perPage)->get();  // Paginate the results
+
+    //         // Sort by 'created_at' in descending order again, just in case the SQL order isn't respected
+    //         $results = $results->sortByDesc('created_at')->values();  // Sort again in case of issues
+
+    //         // Use LengthAwarePaginator to handle pagination
+    //         $allData = new \Illuminate\Pagination\LengthAwarePaginator(
+    //             $results,
+    //             $total,
+    //             $perPage,
+    //             $page,
+    //             ['path' => $request->url(), 'query' => $request->query()]
+    //         );
+
+
+    //         // Return the view with the data
+    //         return view('approvals.pending_transactions', [
+    //             'pending_transactions' => $allData
+    //         ]);
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         // Handle case where model is not found (404 error)
+    //         abort(404);  // Return a 404 page if no model found
+    //     }
+    // }
+
+public function index(Request $request)
+{
+    try {
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 10);
+        $page = $request->input('page', 1);
+
+        // === First Table: Transactions ===
+        $transactionQuery = Transaction::select(
+            'transactions.id',
+            DB::raw("'transaction' as source_table"),
+            'transactions.payment_mode',
+            'transactions.amount',
+            'transactions.transaction_type',
+            'transactions.bank_name',
+            'transactions.approve_status',
+            'transactions.created_at',
+            'branches.branch_name',
+            'accounts.account_no',
+            'accounts.account_type',
+            'accounts.account_holder_type',
+            'accounts.firm_name',
+            'accounts.branch_id',  // Ensure this column is selected for matching union
+            'accounts.member_id',  // Include member_id for more info
+            'accounts.account_status'  // Include account status
+        )
+            ->join('accounts', 'accounts.id', '=', 'transactions.account_id')
+            ->join('branches', 'branches.id', '=', 'accounts.branch_id')
+            ->where('transactions.approve_status', '!=', 'approved');
+
+        // Optional: Add search functionality
+        if ($search) {
+            $transactionQuery->where(function ($q) use ($search) {
+                $q->where('transactions.payment_mode', 'like', "%{$search}%")
+                    ->orWhere('transactions.transaction_type', 'like', "%{$search}%")
+                    ->orWhere('transactions.bank_name', 'like', "%{$search}%")
+                    ->orWhere('transactions.amount', 'like', "%{$search}%")
+                    ->orWhere('branches.branch_name', 'like', "%{$search}%")
+                    ->orWhere('accounts.account_no', 'like', "%{$search}%")
+                    ->orWhere('accounts.account_holder_type', 'like', "%{$search}%");
+            });
         }
-    }
 
+        // === Second Table: Membership Charges Transaction ===
+        $membershipQuery = MembershipChargeTransaction::select(
+            'membership_charges_transaction.id',
+            DB::raw("'membership' as source_table"),
+            'membership_charges_transaction.charges_pay_mode as payment_mode',
+            'membership_charges_transaction.membership_fee as amount',
+            DB::raw("'Share amount' as transaction_type"),
+            'membership_charges_transaction.cheque_bank_name as bank_name',
+            'membership_charges_transaction.approve_status',
+            'membership_charges_transaction.created_at',
+            'membership_charges_transaction.transaction_date as date',
+            'accounts.account_no',
+            'accounts.account_type',
+            'accounts.account_holder_type',
+            'branches.branch_name',
+            DB::raw("NULL as branch_id"),  
+            'accounts.member_id',  
+            'accounts.account_status'  
+        )
+            ->leftJoin('accounts', 'accounts.id', '=', 'membership_charges_transaction.saving_account_id')
+            ->leftJoin('branches', 'branches.id', '=', 'accounts.branch_id')
+            ->where('membership_charges_transaction.type', 'Share amount');
+
+        // Combine both queries using UNION and ensure they are sorted by created_at
+        $combinedQuery = $transactionQuery->union($membershipQuery)
+            ->orderByDesc('created_at');  // Sorting at the database level
+
+        // Paginate the results
+        $total = $combinedQuery->count();  // Get the total count of the results
+        $results = $combinedQuery->forPage($page, $perPage)->get();  // Paginate the results
+
+        // Sort by 'created_at' in descending order again, just in case the SQL order isn't respected
+        $results = $results->sortByDesc('created_at')->values();  // Sort again in case of issues
+
+        // Use LengthAwarePaginator to handle pagination
+        $allData = new \Illuminate\Pagination\LengthAwarePaginator(
+            $results,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // Return the view with the data
+        return view('approvals.pending_transactions', [
+            'pending_transactions' => $allData
+        ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        // Handle case where model is not found (404 error)
+        abort(404);  // Return a 404 page if no model found
+    }
+}
 
     public function update(Request $request, $id)
     {
@@ -87,7 +276,7 @@ class ApproveController extends Controller
 
                 // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
 
-                $mobile = $transaction->accounts->members->member_info_mobile_no;
+                $mobile = $transaction->accounts->members->member_info_mobile_no ?? '';
 
                 $AccountNo = $transaction->accounts->account_no;
 
@@ -323,7 +512,7 @@ class ApproveController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong while updating account status.']);
         }
     }
-   
+
     public function approveAccounts(Request $request)
     {
         try {
@@ -736,7 +925,7 @@ class ApproveController extends Controller
                 return $item;
             });
 
-         // Personal Loan Applications
+        // Personal Loan Applications
         $vehical = VehicalApplication::with(['branch', 'member'])
             ->whereNotIn('status', [1, 2, 3])
             ->latest()

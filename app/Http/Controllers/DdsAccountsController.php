@@ -95,65 +95,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData', 'banks'));
     }
-    // public function store(Request $request)
-    // {
-    //     Log::info('🔹 DdsAccountsController@store called', $request->all());
-
-    //     // Handle empty branch
-    //     if (empty($request->branch_id)) {
-    //         $request->merge(['branch_id' => null]);
-    //     }
-
-    //     $validated = $request->validate([
-    //         'member_id' => 'required|integer|exists:members,id',
-    //         'branch_id' => 'nullable|integer|exists:branches,id',
-    //         'scheme_id' => 'required|integer|exists:rdschemes,id',
-    //         'open_date' => 'required|date',
-    //         'dd_amount' => 'required|numeric',
-    //         'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
-    //         'nominee' => 'required|in:yes,no',
-    //         'member_name' => 'required|string',
-    //         'member_mobile' => 'required|string',
-    //         'member_address' => 'nullable|string',
-    //         'remarks' => 'nullable|string',
-    //     ]);
-
-    //     try {
-    //         $scheme = Rdscheme::findOrFail($validated['scheme_id']);
-
-    //         // Generate DD number
-    //         $lastAccount = DdsAccount::orderBy('id', 'desc')->first();
-    //         $lastDdNo = $lastAccount ? (int) substr($lastAccount->dd_no, 2) : 0;
-    //         $newDdNo = 'DD' . str_pad($lastDdNo + 1, 3, '0', STR_PAD_LEFT);
-
-    //         // Save record
-    //         $ddsAccount = new DdsAccount();
-    //         $ddsAccount->fill([
-    //             'dd_no' => $newDdNo,
-    //             'member_id' => $validated['member_id'],
-    //             'branch_id' => $validated['branch_id'],
-    //             'scheme_id' => $validated['scheme_id'],
-    //             'dd_amount' => $validated['dd_amount'],
-    //             'open_date' => $validated['open_date'],
-    //             'pay_mode' => $validated['pay_mode'],
-    //             'nominee' => $validated['nominee'] === 'yes' ? 1 : 0,
-    //             'member_name' => $validated['member_name'],
-    //             'member_mobile' => $validated['member_mobile'],
-    //             'member_address' => $validated['member_address'],
-    //             'remarks' => $validated['remarks'] ?? null,
-    //         ]);
-    //         $ddsAccount->save();
-
-    //         Log::info('✅ DDS Account created', ['id' => $ddsAccount->id]);
-
-    //         return redirect()->route('dds-accounts.index')
-    //             ->with('success', 'DDS Account created successfully!');
-    //     } catch (\Exception $e) {
-    //         Log::error('❌ DDS Store Error: ' . $e->getMessage());
-    //         return back()->withInput()->withErrors(['error' => 'Something went wrong.']);
-    //     }
-    // }
-
+  
     public function store(Request $request)
     {
         // dd($request->all());

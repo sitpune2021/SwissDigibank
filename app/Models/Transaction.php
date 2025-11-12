@@ -11,6 +11,7 @@ class Transaction extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        // 'member_id',
         'account_id',
         'payment_mode',
         'amount',
@@ -37,4 +38,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+    public function account()
+{
+    return $this->belongsTo(Account::class);
+}
+
 }
