@@ -36,7 +36,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->branch->branch_name }}</span>
+                                    <span>{{ $promoter->branch->branch_name ?? ''}}</span>
                                 </div>
                             </td>
                         </tr>
@@ -129,7 +129,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->father_name }}</span>
+                                    <span>{{ $promoter->father_name ??''}}</span>
                                 </div>
                             </td>
                         </tr>
@@ -139,7 +139,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->mother_name }}</span>
+                                    <span>{{ $promoter->mother_name ?? ''}}</span>
                                 </div>
                             </td>
                         </tr>
