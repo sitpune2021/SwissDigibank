@@ -24,4 +24,9 @@ class GoldLoanTransaction extends Model
     {
         return $this->belongsTo(LoanApplication::class, 'loan_id');
     }
+
+    public function loan()
+    {
+        return $this->belongsTo(\App\Models\LoanApplication::class, 'loan_id', 'id');
+    }
 }

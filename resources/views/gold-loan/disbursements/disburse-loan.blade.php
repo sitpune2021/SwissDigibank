@@ -79,7 +79,7 @@
 
                             <input type="number" id="loan_amount" name="loan_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Loan Amount" value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
+                                placeholder="Loan Amount" value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
                         </div>
 
                         <hr>
@@ -258,7 +258,7 @@
                         </div>
 
  
-                         <hr>
+                        <hr>
                         <h4>Advance Interest</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
 
@@ -388,12 +388,16 @@
 
                             <!-- Fields for Saving Account -->
                             <div id="saving_fields" style="display:none; margin-top:10px;">
-                            <label>Saving Account:</label>
-                            <select id="saving" name="saving"
+                                <label>Saving Account:</label>
+                                <select id="saving" name="saving"
                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                <option value="">-- Select Saving Acc. --</option>                                              
-                                <option value="abcd">abcd</option>                                             
-                            </select>
+
+                                    <option value="">-- Select Saving Acc. --</option>
+
+                                    @foreach ($savingAccounts as $acc)
+                                        <option value="{{ $acc }}">{{ $acc }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
 
@@ -490,15 +494,19 @@
                                             </div>
                                         </div>
 
-                                        <!-- Fields for Saving Account -->
+                                        <!-- Fields for Saving Account -->                                       
                                         <div id="saving_fields2" style="display:none; margin-top:10px;">
                                             <label>Saving Account:</label>
                                             <select id="saving2" name="saving2"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                <option value="">-- Select Saving Acc. --</option>                                              
-                                                <option value="abcd">abcd</option>                                             
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                <option value="">-- Select Saving Acc. --</option>
+
+                                                @foreach ($savingAccounts as $acc)
+                                                    <option value="{{ $acc }}">{{ $acc }}</option>
+                                                @endforeach
                                             </select>
-                                        </div>                
+                                        </div>               
                                 
                                     </div>
 
@@ -573,57 +581,53 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Approvable</td>
                                 <td class="px-3 py-2">
-                                 ₹ 100,000.00
+                                 ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
-                                    ₹ 200,000.00
+                                    ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
-                                 FLAT ADVANCED
+                                 {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interest Amount</td>
-                                <td class="px-3 py-2">
-                                ₹ 10,500.00
-                                </td>
+                                <td class="px-3 py-2">₹ {{ number_format($totalInterest, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
-                                    15.0 %
+                                    {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
-                                   1 Days
+                                   {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                           <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
-                                <td class="px-3 py-2">
-                                   ₹ 80,501.00
-                                </td>
+                                <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
-                                   12 MONTHS
+                                   {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
-                               <span                                         class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                          Yes
-                                        </span>
+                                <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                    No
+                                </span>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
@@ -635,7 +639,7 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
-                                   ₹ 1.00  (Incl. 18.0 % GST)
+                                   ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
@@ -647,7 +651,6 @@
                           
                         </tbody>
                     </table>
-
                 </div>
             </div>
 

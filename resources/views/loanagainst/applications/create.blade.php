@@ -310,7 +310,7 @@
                             </div>
                         </div>
 
-                        <div class="col-span-2 md:col-span-1">
+                        <!-- <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
                                 Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
                                 <span class="text-error">*</span>
@@ -321,6 +321,23 @@
                                 @error('tenure_value')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
+                        </div> -->
+                        <!--  Tenure ( MONTHS ) -->
+                        <div class="w-full mt-4 ">
+                            <div class="mb-2">
+                                <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
+                                    Tenure ( MONTHS )                           
+                                </label>
+                                <span class="text-error">*</span>
+                            </div>
+                            <div class="flex flex-wrap gap-4">
+                                <input type="number" id="tenure_value" name="tenure_value"
+                                    value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    @error('tenure_value')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror                                           
+                            </div>
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -813,7 +830,7 @@
 </div>
 
 
-
+<!-- member Details -->
 <script>
 document.getElementById('member_id').addEventListener('change', function () {
     let selected = this.options[this.selectedIndex];
@@ -827,7 +844,7 @@ document.getElementById('member_id').addEventListener('change', function () {
 });
 </script>
 
-
+<!-- member info -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const memberSelect = document.getElementById("member_id");
@@ -854,7 +871,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
+<!-- scheme info -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const schemeSelect = document.getElementById("scheme_id");
@@ -899,7 +916,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
+<!-- pay mode script -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -942,7 +959,94 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </script>
 
+ <!-- loan amount & max amount valication and submit-->
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    let isCalculated = false;
+    const calcBtn = document.getElementById("calculateBtn");
+    const form = calcBtn.closest("form");
+
+    // Auto-update Net Loan
+    function updateNetLoanAmount() {
+        const loan = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        document.getElementById("netLoanAmount").value = (loan + insurance).toFixed(2);
+    }
+
+    document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
+    document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
+
+    // MAIN calculate / submit handler
+    calcBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // --- INPUTS ---
+        let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        let insuranceAmount = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        let securityValue = parseFloat(document.getElementById("security_amount")?.value) || 0;
+        let netLoan = loanAmount + insuranceAmount;
+
+        // --- SCHEME DATA ---
+        let scheme = document.getElementById("scheme_id");
+        let selected = scheme.options[scheme.selectedIndex];
+        let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+        let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+
+        // VALIDATION 1: Loan + Insurance must be ≤ Max Loan
+        if (netLoan > maxLoan) {
+            alert("Net Loan Amount (" + netLoan + ") cannot exceed Maximum Loan (" + maxLoan + ")");
+            return; // STOP calculation
+        }
+
+        // VALIDATION 2: Loan alone can't exceed maxLoan
+        if (loanAmount > maxLoan) {
+            alert("Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
+            document.getElementById("loanAmount").value = maxLoan.toFixed(2);
+            loanAmount = maxLoan;
+            netLoan = loanAmount + insuranceAmount;
+        }
+
+        // CALCULATIONS
+        let approvable = (securityValue * limit) / 100;
+        let approved = Math.min(approvable, maxLoan);
+
+        // DISPLAY RESULT
+        document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
+        document.getElementById("resSecurity").textContent = securityValue.toFixed(2);
+        document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
+        document.getElementById("resLimit").textContent = limit + "%";
+        document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+        document.getElementById("resApproved").textContent = approved.toFixed(2);
+
+        // HIDDEN INPUTS (Backend values)
+        document.getElementById("inputSecurity").value = securityValue.toFixed(2);
+        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+        document.getElementById("inputLimit").value = limit;
+        document.getElementById("inputApprovable").value = approvable.toFixed(2);
+        document.getElementById("inputApproved").value = approved.toFixed(2);
+        document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
+
+        // Show Calculation Box
+        document.getElementById("calculationBox").classList.remove("hidden");
+
+        // FIRST CLICK → Show Calculation
+        // SECOND CLICK → Submit the form
+        if (!isCalculated) {
+            calcBtn.textContent = "Submit Application";
+            isCalculated = true;
+            return; // Do NOT submit now
+        }
+
+        // SECOND CLICK → REAL SUBMIT
+        form.submit();
+    });
+});
+</script>
+
+
+<!-- submit data -->
+<!-- <script>
 let isCalculated = false;
 
 // Update Net Loan automatically
@@ -1004,7 +1108,7 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
         isCalculated = true;
     }
 });
-</script>
+</script>  -->
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -1180,6 +1284,15 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
     });
     </script>
 
+<!-- tynure tye change -->
+<script>
+    document.querySelectorAll('input[name="tenure_type"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const label = document.getElementById('tenureLabel');
+        label.textContent = `Tenure ( ${this.value} )`;
+      });
+    }); 
+</script>
 
 @endsection
 

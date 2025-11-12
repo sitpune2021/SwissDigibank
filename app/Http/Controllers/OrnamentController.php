@@ -105,9 +105,30 @@ class OrnamentController extends Controller
             $file = fopen('php://output', 'w');
             fputcsv($file, $headers); // headings
 
+            // foreach ($ornaments as $row) {
+            //     fputcsv($file, $row->toArray());
+            // }
             foreach ($ornaments as $row) {
-                fputcsv($file, $row->toArray());
+                $statusText = $row->STATUS == 1 ? 'Mortgage' : 'Release';
+
+                fputcsv($file, [
+                    $row->BRANCH_NAME,
+                    $row->MEMBER_NO,
+                    $row->MEMBER_NAME,
+                    $row->APPLICATION_NO,
+                    $row->ITEM_TYPE,
+                    $row->ITEM_NAME,
+                    $row->TOTAL_ITEMS,
+                    $row->VALUE_PER_GRAM,
+                    $row->NET_WEIGHT,
+                    $row->TUNCH,
+                    $row->FINE_WEIGHT,
+                    $row->TOTAL_VALUE,
+                    $statusText,      // Converted Status
+                    $row->REMARK,
+                ]);
             }
+
 
             fclose($file);
         };
