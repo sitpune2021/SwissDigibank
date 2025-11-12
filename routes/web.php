@@ -60,6 +60,7 @@ use App\Http\Controllers\CcOdLoanControllerDisburments;
 use App\Http\Controllers\CcOdLoanControllerAccount;
 use App\Http\Controllers\BusinessLoanDisburments;
 use App\Http\Controllers\BusinessLoanAccount;
+use App\Http\Controllers\CutReportController;
 use App\Http\Controllers\DailyWeeklyController;
 use App\Http\Controllers\DailyWeeklyDisburments;
 use App\Http\Controllers\DailyWeeklyAccount;
@@ -555,7 +556,22 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::post('/update-emi-status', [GoldLoanAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
 
-    Route::post('/goldloan/pay-emi', [GoldLoanController::class, 'payEmi'])->name('goldloan.payEmi');
+    Route::post('/goldloan/pay-emi', [GoldLoanAccountController::class, 'payEmi'])->name('goldloan.payEmi');
+
+
+    // DEBIT OTHER CHARGES in gold loan
+    Route::get('/gold-loan/{id}/debit-charges-list', [GoldLoanAccountController::class, 'showDebitChargesList'])
+        ->name('gold-loan.debitChargesList.form');
+
+    Route::get('/gold-loan/{id}/debit-other-charges', [GoldLoanAccountController::class, 'DebitOtherCharges'])
+        ->name('gold-loan.debitOtherCharges.form');
+
+    // Store/Process Debit Other Charges
+    Route::post('/gold-loan/{id}/debit-other-charges', [GoldLoanAccountController::class, 'storeDebitOtherCharges'])
+        ->name('gold-loan.debitOtherCharges.store');
+
+    Route::get('/gold-loan/{id}/clear-due', [GoldLoanAccountController::class, 'goldLoanClearDues'])
+        ->name('gold-loan.clear-due.form');
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -1262,7 +1278,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::get('commission/add-chart', [AdvisorController::class, 'add_chart'])
         ->name('associates-advisor.commission-charts.add-chart');
     Route::post('commission/add-chart', [AdvisorController::class, 'chartstore'])
-    ->name('associates-advisor.commission-charts.store');
+        ->name('associates-advisor.commission-charts.store');
 
     Route::get('commission/view', [AdvisorController::class, 'comission_view'])
         ->name('associates-advisor.commission-charts.view');
@@ -1315,6 +1331,10 @@ Route::group(['prefix' => 'hr-managment'], function () {
         ->name('hr-management.employee.view-trans');
 });
 
+
+Route::group(['prefix' => 'cut-report'], function () {
+    Route::get('report/saving', [CutReportController::class, 'index'])->name('report.saving.index');
+});
 // ledger 
 Route::group(['prefix' => 'ledger-group'], function () {
     Route::get('ledger-group/index', [LedgergroupController::class, 'index'])
