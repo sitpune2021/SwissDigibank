@@ -560,7 +560,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::post('/goldloan/pay-emi', [GoldLoanAccountController::class, 'payEmi'])->name('goldloan.payEmi');
 
 
-    // DEBIT OTHER CHARGES in gold loan
+    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
     Route::get('/gold-loan/{id}/debit-charges-list', [GoldLoanAccountController::class, 'showDebitChargesList'])
         ->name('gold-loan.debitChargesList.form');
 
@@ -573,6 +573,9 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('/gold-loan/{id}/clear-due', [GoldLoanAccountController::class, 'goldLoanClearDues'])
         ->name('gold-loan.clear-due.form');
+
+    Route::post('/gold-loan/{loan_id}/other-charge', [GoldLoanAccountController::class, 'clearDue'])->name('gold-loan.clear-due');
+
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])

@@ -17,7 +17,7 @@ class GoldLoanAccountController extends Controller
 {
     public function index(Request $request)
     {
-        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme'])->where('status', 1)
+        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme','goldLoanTransactions'])->where('status', 1)
             ->orderBy('id', 'desc')->get();
         return view('gold-loan.account.index', compact('goldLoan'));
     }
@@ -124,23 +124,6 @@ class GoldLoanAccountController extends Controller
                 $payableAmount = $monthlyPrincipal + $emi;
 
 
-
-                // Row 2: Single EMI (principal only)
-                // $emiSchedule[] = [
-                //     'emi_no' => 1,
-                //     'emi_date' => $firstEmiDate->format('d/m/Y'),
-                //     'emi_due_date' => $firstEmiDate->copy()->addDay()->format('d/m/Y'),
-                //     'principal' => number_format($principal, 2),
-                //     'interest' => '0.00',
-                //     'other_charges' => '0.00',
-                //     'emi_amount' => number_format($principal, 2),
-                //     'balance_principal' => '0.00',
-                //     'remaining_amount' => number_format($principal, 2),
-                //     'paid_date' => '',
-                //     'status' => 'DUE',
-                //     'processed' => 'No',
-                // ];
-
                 for ($i = 0; $i < $emiCount; $i++) {
                     $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
                     $balancePrincipal = max($principal - ($monthlyPrincipal * ($i + 1)), 0);
@@ -213,7 +196,7 @@ class GoldLoanAccountController extends Controller
             'principal',
             'firstEmiDate',
             'emiSchedule',
-            'lastCurrentDebt'
+
         ));
     }
 
@@ -223,95 +206,6 @@ class GoldLoanAccountController extends Controller
 
         return view('gold-loan.account.view-buttons.view-transactions.view_transactions');
     }
-
-    // Gold loan Pay EMI
-    // public function goldLoanPayEmi($id)
-    // {
-    //     $goldLoan = LoanApplication::with([
-    //         'member.branch',
-    //         'branch',
-    //         'scheme',
-    //         'coApplicant1',
-    //         'guarantor1'
-    //     ])->findOrFail($id);
-
-    //     $emiType = $goldLoan->scheme->gold_loan_setting;
-    //     $totalLoan = $goldLoan->loan_amount;
-    //     $interestRate = $goldLoan->scheme->interest_rate ?? 0;
-    //     $emiCount = $goldLoan->scheme->emi_count ?? 12;
-
-    //     $totalPaid = \App\Models\GoldLoanTransaction::where('loan_id', $goldLoan->id)
-    //         ->sum('amount_collected');
-
-    //     $remainingAmount = 0;
-    //     $emiAmount = 0;
-    //     $netDisbursed = 0;
-
-    //     switch ($emiType) {
-    //         case 'flat_advanced_interest':
-
-    //             $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
-    //             $netDisbursed = $totalLoan - $totalInterest;
-
-    //             $emiAmount =  round($totalLoan / $emiCount, 2);
-
-    //             $remainingAmount = ($totalLoan) - $totalPaid;
-
-    //             break;
-
-    //         case 'flat_interest':
-
-    //             $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
-    //             $totalPayable = $totalLoan + $totalInterest;
-    //             $emiAmount = $totalPayable / $emiCount;
-
-    //             $remainingAmount = $totalPayable - $totalPaid;
-    //             break;
-
-    //         case 'reducing_interest':
-
-    //             $monthlyRate = $interestRate / (12 * 100);
-    //             $emiAmount = $totalLoan * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
-    //             $totalPayable = $emiAmount * $emiCount;
-
-    //             $remainingAmount = $totalPayable - $totalPaid;
-    //             break;
-
-    //         default:
-
-    //             $emiAmount = $totalLoan / $emiCount;
-    //             $remainingAmount = $totalLoan - $totalPaid;
-    //             break;
-    //     }
-
-    //     $overdueInterest = 0;
-    //     $otherCharges = 0;
-    //     $gstRate = 18;
-
-    //     $gstAmount = ($overdueInterest * $gstRate) / 100;
-    //     $totalOverdueWithGst = $overdueInterest + $gstAmount;
-    //     $totalAmount = $remainingAmount + $overdueInterest + $otherCharges;
-
-    //     $rounding = round($totalAmount) - $totalAmount;
-    //     $netAmount = $totalAmount + $rounding;
-
-    //     $goldLoan->current_debt = $remainingAmount;
-
-    //     return view('gold-loan.account.view-buttons.pay-emi.pay_emi', compact(
-    //         'goldLoan',
-    //         'emiAmount',
-    //         'remainingAmount',
-    //         'netDisbursed',
-    //         'overdueInterest',
-    //         'otherCharges',
-    //         'gstRate',
-    //         'totalOverdueWithGst',
-    //         'totalAmount',
-    //         'rounding',
-    //         'netAmount',
-    //         'lastCurrentDebt'
-    //     ));
-    // }
 
     public function goldLoanPayEmi($id)
     {
@@ -682,6 +576,112 @@ class GoldLoanAccountController extends Controller
     public function goldLoanClearDues($id)
     {
         $goldLoan = LoanApplication::with(['member', 'scheme', 'goldLoanTransactions'])->findOrFail($id);
-        return view('gold-loan.account.view-buttons.debit-other-charges.debit-other-charges', compact('goldLoan'));
+        $totalDue = GoldLoanOtherCharge::where('loan_id', $id)
+            ->where('status', 'unpaid')
+            ->sum('amount');
+        $banks = Bank::all();
+        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue','banks'));
+    }
+
+    public function clearDue(Request $request, $id)
+    {
+        $request->validate([
+            'waived_amount' => 'required|numeric|min:0.01',
+            'remarks'       => 'nullable|string|max:255',
+            'payment_mode'          => 'required|in:cash,online,cheque',
+        ]);
+
+        Log::info('🟢 Starting gold loan due clearance process', [
+            'loan_id'       => $id,
+            'waived_amount' => $request->waived_amount,
+            'user_id'       => Auth::id(),
+            'timestamp'     => now()->toDateTimeString(),
+        ]);
+
+        if ($request->payment_mode === 'online') {
+            $rules['pay1_transfer_utr'] = 'required|string|max:50';
+            $rules['transfer_mode'] = 'nullable|string|max:50';
+            $rules['credited'] = 'nullable|numeric|max:100';
+        }
+
+        if ($request->payment_mode === 'cheque') {
+            $rules['pay1_bank'] = 'required|string|max:50';
+            $rules['pay1_cheque_no'] = 'required|numeric';
+            $rules['pay1_cheque_date'] = 'nullable|date';
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $loan = LoanApplication::with('goldLoanTransactions')->findOrFail($id);
+
+            $goldTxn = $loan->goldLoanTransactions;
+
+            if (!$goldTxn) {
+                Log::warning('⚠️ Gold Loan transaction record missing', [
+                    'loan_id' => $id,
+                    'user_id' => Auth::id(),
+                ]);
+                return back()->with('error', 'Gold Loan transaction not found.');
+            }
+
+            // Step 1: Create a record in gold_loan_other_charges
+            $clearDue = GoldLoanOtherCharge::create([
+                'loan_id'          => $id,
+                'transaction_type' => 'credit',
+                'charge_type'      => 'Clear Due',
+                'amount'           => $request->waived_amount,
+                'charge_date'      => now(),
+                'remarks'          => $request->remarks,
+                'status'           => 'paid',
+                'created_by'       => Auth::id(),
+            ]);
+
+            Log::info('🧾 Gold Loan Clear Due entry created successfully', [
+                'loan_id'        => $id,
+                'charge_id'      => $clearDue->id,
+                'charge_type'    => 'Clear Due',
+                'amount'         => $request->waived_amount,
+                'created_by'     => Auth::id(),
+            ]);
+
+            // Step 2: Update the current_debt
+            $oldDebt = $goldTxn->current_debt ?? 0;
+            $goldTxn->current_debt = max(0, $oldDebt - $request->waived_amount);
+            $goldTxn->save();
+
+            Log::info('💰 Gold Loan current debt updated', [
+                'loan_id'        => $id,
+                'previous_debt'  => $oldDebt,
+                'cleared_amount' => $request->waived_amount,
+                'remaining_debt' => $goldTxn->current_debt,
+                'updated_by'     => Auth::id(),
+            ]);
+
+            DB::commit();
+
+            Log::info('✅ Gold Loan due cleared successfully', [
+                'loan_id'         => $id,
+                'transaction_id'  => $clearDue->id,
+                'cleared_amount'  => $request->waived_amount,
+                'remaining_debt'  => $goldTxn->current_debt,
+                'user_id'         => Auth::id(),
+                'timestamp'       => now()->toDateTimeString(),
+            ]);
+
+            return redirect()->route('gold-loan.debitChargesList.form', $id)->with('success', 'Due cleared successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('❌ Error while clearing gold loan due', [
+                'loan_id' => $id,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
+                'timestamp' => now()->toDateTimeString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while clearing the due.');
+        }
     }
 }

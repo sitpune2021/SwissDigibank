@@ -13,10 +13,14 @@ class GoldLoanOtherCharge extends Model
 
     protected $fillable = [
         'loan_id',
+        'transaction_type',
         'charge_type',
         'amount',
+        'charge_date',
         'remarks',
+        'status',
         'created_by',
+        'updated_by',
     ];
 
     public function loan()
