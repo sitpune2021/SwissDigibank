@@ -21,39 +21,35 @@
         </tr>
 
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
-          <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>
+          
           <td class="font-semibold py-2 px-3 border border-gray-300">Insurance Charges</td>
           <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($insurance_amount,2) }} (Incl. 0% GST)</td>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
+          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_incl_gst,2) }} (Incl. 18% GST)</td>
+        
         </tr>
 
         <tr>
+          <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
+          <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>
           <td class="font-semibold py-2 px-3 border border-gray-300">EMI Count</td>
           <td class="py-2 px-3 border border-gray-300">{{ $installments }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_incl_gst,2) }} (Incl. 18% GST)</td>
-        </tr>
+          </tr>
 
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Tenure</td>
           <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }} MONTHS</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Interest</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_interest,2) }}</td>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
+          <td class="py-2 px-3 border border-gray-300">{{ $annual_rate  }} %</td>
         </tr>
-
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate (Annually)</td>
-          <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
-          <td class="py-2 px-3 text-gray-800 border border-gray-300">CHARGES PER EMI</td>
-          <td class="py-2 px-3 text-green-700 font-bold border border-gray-300">₹ {{ number_format($total_charges,2) }}</td>
+          
+          <td class="font-semibold py-2 px-3 border border-gray-300">Charge Per EMI Type</td>
+          <td class="py-2 px-3 border border-gray-300">{{ $charge_per_emi }}</td>
+          <td class="font-semibold py-2 px-3 border border-gray-300"></td>
+          <td class="py-2 px-3 border border-gray-300"></td>
         </tr>
-
-        <tr class="bg-gray-50 font-semibold">
-          <td class="py-2 px-3 border border-gray-300">Charge Per EMI Type </td>
-          <td>{{ $charge_per_emi }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Payable (EMIs)</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_emi_paid,2) }}</td>       
-        </tr>
+       
       </tbody>
     </table>
   </div>

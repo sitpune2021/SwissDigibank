@@ -54,8 +54,6 @@
                   data-name="{{ $item->scheme_name }}"
                   data-tenure="{{ $item->tenure }}"
                   data-max="{{ $item->max_loan_amount }}"
-                  data-limit="{{ $item->max_loan_limit }}"
-                  data-min="{{ $item->min_loan_amount }}"
                   data-interest="{{ $item->annual_interest_rate }}"
                   data-type="{{ $item->gold_loan_setting }}"
                   data-active="{{ $item->is_active ? 'Yes' : 'No' }}"
@@ -64,6 +62,7 @@
                   data-processing="{{ $item->processing_fee }}"
                   data-stamp="{{ $item->stamp_duty_charge }}"
                   data-insurance="{{ $item->insurance_fee }}"
+                  data-charge_per_emi="{{ $item->charge_per_emi }}"
                 >
                   {{ $item->scheme_name }}
                 </option>
@@ -308,8 +307,6 @@
                 <tr><td class="font-semibold py-2 pr-4">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
                 <tr><td class="font-semibold py-2 pr-4">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
                 <tr><td class="font-semibold py-2 pr-4">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td><td class="py-2" id="schemeLimit">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Minimum Loan Amount</td><td class="py-2" id="schemeMin">-</td></tr>
                 <tr><td class="font-semibold py-2 pr-4">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
                 <tr><td class="font-semibold py-2 pr-4">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
                 <tr><td class="font-semibold py-2 pr-4">Active</td><td class="py-2" id="schemeActive">-</td></tr>
@@ -324,8 +321,17 @@
                 </tr>
                 <tr class="border-b border-gray-200">
                   <td class="font-semibold px-3 py-2">Processing Fee</td>
-                  <td class="px-3 py-2"><span id="schemeProcessing">-</span> ₹</td>
+                  <td class="px-3 py-2"><span id="schemeProcessing">-</span> %</td>
                 </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="font-semibold px-3 py-2">Charges Per EMI Type</td>
+                  <td class="px-3 py-2"><span id="schemeChargePerEmi">-</span></td>
+                </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="font-semibold px-3 py-2">Collection Charges per EMI</td>
+                  <td class="px-3 py-2"><span id="schemeChargePerEmiType">-</span></td>
+                </tr>
+
               </tbody>
             </table>
           </div>
@@ -335,22 +341,23 @@
   </div>
 </div>
 
+
 <script>
   // this script for get scheme details 
-document.getElementById('scheme_id').addEventListener('change', function () {
-    const selected = this.options[this.selectedIndex];
-    document.getElementById('annual_interest_rate').value = selected.dataset.interest || 0;
-});
+  document.getElementById('scheme_id').addEventListener('change', function () {
+      const selected = this.options[this.selectedIndex];
+      document.getElementById('annual_interest_rate').value = selected.dataset.interest || 0;
+  });
 </script>
 
 <script>
   // this script use for manually entry
-document.getElementById('manualEntry').addEventListener('change', function () {
-  const isManual = this.checked;
-  document.getElementById('manualFields').classList.toggle('hidden', !isManual);
-  document.getElementById('schemeSection').classList.toggle('hidden', isManual);
-  document.getElementById('scheme_id').value = isManual ? '' : document.getElementById('scheme_id').value;
-});
+  document.getElementById('manualEntry').addEventListener('change', function () {
+    const isManual = this.checked;
+    document.getElementById('manualFields').classList.toggle('hidden', !isManual);
+    document.getElementById('schemeSection').classList.toggle('hidden', isManual);
+    document.getElementById('scheme_id').value = isManual ? '' : document.getElementById('scheme_id').value;
+  });
 </script>
 
 <script>
@@ -363,8 +370,6 @@ document.getElementById('manualEntry').addEventListener('change', function () {
     const schemeName = document.getElementById("schemeName");
     const schemeTenure = document.getElementById("schemeTenure");
     const schemeMax = document.getElementById("schemeMax");
-    const schemeLimit = document.getElementById("schemeLimit");
-    const schemeMin = document.getElementById("schemeMin");
     const schemeInterest = document.getElementById("schemeInterest");
     const schemeType = document.getElementById("schemeType");
     const schemeActive = document.getElementById("schemeActive");
@@ -373,6 +378,9 @@ document.getElementById('manualEntry').addEventListener('change', function () {
     const schemeStamp = document.getElementById("schemeStamp");
     const schemeInsurance = document.getElementById("schemeInsurance");
     const schemeProcessing = document.getElementById("schemeProcessing");
+    const schemeChargePerEmi = document.getElementById("schemeChargePerEmi");
+    const schemeChargePerEmiType = document.getElementById("schemeChargePerEmiType");
+
 
     schemeSelect.addEventListener("change", function () {
       const selectedOption = this.options[this.selectedIndex];
@@ -382,8 +390,6 @@ document.getElementById('manualEntry').addEventListener('change', function () {
         schemeName.textContent = selectedOption.dataset.name || "-";
         schemeTenure.textContent = selectedOption.dataset.tenure || "-";
         schemeMax.textContent = selectedOption.dataset.max || "-";
-        schemeLimit.textContent = selectedOption.dataset.limit || "-";
-        schemeMin.textContent = selectedOption.dataset.min || "-";
         schemeInterest.textContent = selectedOption.dataset.interest || "-";
         schemeType.textContent = selectedOption.dataset.type || "-";
         schemeActive.textContent = selectedOption.dataset.active || "-";
@@ -393,6 +399,21 @@ document.getElementById('manualEntry').addEventListener('change', function () {
         schemeStamp.textContent = selectedOption.dataset.stamp || "-";
         schemeInsurance.textContent = selectedOption.dataset.insurance || "-";
         schemeProcessing.textContent = selectedOption.dataset.processing || "-";
+
+        const chargePerEmiVal = selectedOption.dataset.charge_per_emi;
+
+        // Mapping logic: 1 = ON EMI, 0 = ON PRINCIPLE
+        if (chargePerEmiVal === "1") {
+          schemeChargePerEmi.textContent = "ON EMI";
+          schemeChargePerEmiType.textContent = "EMI Based";
+        } else if (chargePerEmiVal === "0") {
+          schemeChargePerEmi.textContent = "ON PRINCIPLE";
+          schemeChargePerEmiType.textContent = "Principle Based";
+        } else {
+          schemeChargePerEmi.textContent = "-";
+          schemeChargePerEmiType.textContent = "-";
+        }
+
 
         schemeBox.classList.remove("hidden");
       } else {

@@ -149,272 +149,242 @@ class BusinessLoan extends Controller
         return view("bussiness.calculator.index", compact('scheme'));
     }
 
-    public function calculateResult(Request $request)
-    {
-        $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
+   public function calculateResult(Request $request)
+{
+    $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
-        // ---------------------------------------------
-        // STEP 1: BASIC VALIDATION & SETUP
-        // ---------------------------------------------
-        if ($isManual) {
-            $request->validate([
-                'loan_amount' => 'required|numeric|min:1',
-                'max_tenure' => 'required|integer|min:1',
-                'manual_interest_rate' => 'required|numeric|min:0',
-                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
-            ]);
+    // ---------------------------------------------
+    // STEP 1: BASIC VALIDATION & SETUP
+    // ---------------------------------------------
+    if ($isManual) {
+        $request->validate([
+            'loan_amount' => 'required|numeric|min:1',
+            'max_tenure' => 'required|integer|min:1',
+            'manual_interest_rate' => 'required|numeric|min:0',
+            'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
+        ]);
 
-            $loan = (float) $request->loan_amount;
-            $tenureMonths = (int) $request->max_tenure;
-            $annualRate = (float) $request->manual_interest_rate;
-            $payout = $request->payout;
-            $interestType = strtolower($request->interest_type ?? 'flat_interest');
+        $loan = (float) $request->loan_amount;
+        $tenureMonths = (int) $request->max_tenure;
+        $annualRate = (float) $request->manual_interest_rate;
+        $payout = $request->payout;
+        $interestType = strtolower($request->interest_type ?? 'flat_interest');
 
-            $processingFee = (float) ($request->manual_processing_fee ?? 0);
-            $stampAmount = round($loan * ((float) ($request->manual_stamp ?? 0)) / 100, 2);
-            $insuranceAmount = round($loan * ((float) ($request->manual_insurance ?? 0)) / 100, 2);
-            $processing_incl_gst = round($processingFee + ($processingFee * 0.18), 2);
-            $stamp_incl_gst = round($stampAmount + ($stampAmount * 0.18), 2);
-            $total_emi_paid = 0;
+        $processingFee = (float) ($request->manual_processing_fee ?? 0);
+        $stampAmount = round($loan * ((float) ($request->manual_stamp ?? 0)) / 100, 2);
+        $insuranceAmount = round($loan * ((float) ($request->manual_insurance ?? 0)) / 100, 2);
+        $processing_incl_gst = round($processingFee + ($processingFee * 0.18), 2);
+        $stamp_incl_gst = round($stampAmount + ($stampAmount * 0.18), 2);
+        $total_emi_paid = 0;
 
-            // Pick user-selected charge type
-            $charge_per_emi_type = strtoupper($request->input('manual_charge_per_emi_type', 'ON PRINCIPAL'));
+        // Pick user-selected charge type
+        $charge_per_emi_type = strtoupper($request->input('manual_charge_per_emi_type', 'ON PRINCIPAL'));
 
-            // Optional safety check (if blank or invalid)
-            if (!in_array($charge_per_emi_type, ['ON EMI', 'ON PRINCIPAL'])) {
-                $charge_per_emi_type = 'ON PRINCIPAL';
-            }
-
-            $scheme = null;
-
-        } 
-        else 
-        {
-            $request->validate([
-                'scheme_id' => 'required|exists:business_loan_schemes,id',
-                'loan_amount' => 'required|numeric|min:1',
-                'tenure_months' => 'required|integer|min:1',
-                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
-            ]);
-
-            $scheme = BusinessLoanScheme::findOrFail($request->scheme_id);
-            $loan = (float) $request->loan_amount;
-            $tenureMonths = (int) $request->tenure_months;
-            $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
-            $payout = $request->payout;
-
-            //$charge_per_emi_type = strtoupper(trim($scheme->charge_per_emi_type ?? 'ON PRINCIPAL'));
-            // Determine charge_per_emi_type
-            $charge_per_emi_type = is_numeric($scheme->charge_per_emi_type)
-                ? ((int)$scheme->charge_per_emi_type === 1 ? 'ON EMI' : 'ON PRINCIPAL')
-                : strtoupper(trim($scheme->charge_per_emi_type ?? 'ON PRINCIPAL'));
-
-            // Override logic based on gold_loan_setting
-            $setting = strtolower(trim($scheme->gold_loan_setting));
-
-            switch ($setting) 
-            {
-                case 'flat_advanced_interest':
-                case 'flat advance interest':
-                    $interestType = 'flat_advanced_interest';
-                    $charge_per_emi_type = 'ON PRINCIPAL'; // force override for flat_advanced_interest
-                    break;
-
-                case 'flat_interest':
-                case 'flat interest':
-                    $interestType = 'flat_interest';
-                    $charge_per_emi_type = 'ON EMI'; // force override for flat_interest
-                    break;
-
-                case 'reducing_balance':
-                case 'reducing emi':
-                case 'reducing_emi':
-                    $interestType = 'reducing_balance';
-                    $charge_per_emi_type = 'ON EMI'; // force override for reducing_balance
-                    break;
-
-                default:
-                    $interestType = 'flat_interest';
-            }
-
-
-            $processingFee = (float) ($scheme->processing_fee ?? 0);
-            $processing_incl_gst = round($processingFee + ($processingFee * 0.18), 2); // 18% GST include
-            
-            $stampAmount = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
-            $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
-            $stamp_incl_gst = round($stampAmount + ($stampAmount * 0.18), 2);
-            $total_emi_paid = 0;
-
+        if (!in_array($charge_per_emi_type, ['ON EMI', 'ON PRINCIPAL'])) {
+            $charge_per_emi_type = 'ON PRINCIPAL';
         }
 
-        // ---------------------------------------------
-        // STEP 2: DETERMINE EMI GAP (MONTHLY, QUARTERLY, ETC.)
-        // ---------------------------------------------
-        $monthsPerInstallment = match ($payout) {
-            'quarterly' => 3,
-            'half-yearly' => 6,
-            'yearly' => 12,
-            default => 1,
-        };
-        $installments = (int) ceil($tenureMonths / $monthsPerInstallment);
+        $scheme = null;
 
-        // ---------------------------------------------
-        // STEP 3: PREPARE TOTAL INTEREST & EMI FORMULA
-        // ---------------------------------------------
-        $monthlyRate = ($annualRate / 100) / 12;
-        $totalInterest = 0;
-        $emi = 0;
-        $schedule = [];
-        $totalCharges = 0;
+    } else {
+        $request->validate([
+            'scheme_id' => 'required|exists:business_loan_schemes,id',
+            'loan_amount' => 'required|numeric|min:1',
+            'tenure_months' => 'required|integer|min:1',
+            'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
+        ]);
 
-        // ---------------------------------------------
-        // STEP 4: EMI CALCULATION LOGIC
-        // ---------------------------------------------
-        if ($interestType === 'reducing_balance') {
-            // Reducing balance EMI formula
-            $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
-            $outstanding = $loan;
+        $scheme = BusinessLoanScheme::findOrFail($request->scheme_id);
 
-            for ($i = 1; $i <= $installments; $i++) 
-            {
-                $emiDate = now()->copy()->addMonths($i);
-                $dueDate = $emiDate->copy()->addDay();
+        $loan = (float) $request->loan_amount;
+        $tenureMonths = (int) $request->tenure_months;
+        $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
+        $payout = $request->payout;
 
-                $interest = round($outstanding * $monthlyRate, 2);
-                $principal = round($emi - $interest, 2);
-                $outstanding -= $principal;
-                $balance = max(round($outstanding, 2), 0);
+        // Correct charge type reading (DB → ON EMI / ON PRINCIPAL)
+        // $charge_per_emi_type = is_numeric($scheme->charge_per_emi_type)
+        //     ? ((int)$scheme->charge_per_emi_type === 1 ? 'ON EMI' : 'ON PRINCIPAL')
+        //     : strtoupper(trim($scheme->charge_per_emi_type ?? 'ON PRINCIPAL'));
 
-                $charges = ($charge_per_emi_type === 'ON EMI')
-                    ? 207
-                    : round(($loan * (2.549 / 100)) / $installments, 2);
+        // Determine interest type (do NOT override charge type)
+        $setting = strtolower(trim($scheme->gold_loan_setting));
+        switch ($setting) {
+            case 'flat_advanced_interest':
+            case 'flat advance interest':
+                $interestType = 'flat_advanced_interest';
+                break;
 
-                $emiTotal = round($principal + $interest + $charges, 2);
-                $totalInterest += $interest;
-                $totalCharges += $charges;
+            case 'flat_interest':
+            case 'flat interest':
+                $interestType = 'flat_interest';
+                break;
 
-                $schedule[] = [
-                    'no' => $i,
-                    'emi_date' => $emiDate->format('d/m/Y'),
-                    'due_date' => $dueDate->format('d/m/Y'),
-                    'principal' => $principal,
-                    'interest' => $interest,
-                    'charges' => $charges,
-                    'emi' => $emiTotal,
-                    'balance' => $balance,
-                ];
-            }
-            // Precision Fix for Last EMI
-            if (!empty($schedule)) 
-            {
-                $lastIndex = count($schedule) - 1;
-                $schedule[$lastIndex]['balance'] = 0.00;
-                $totalPrincipalNow = array_sum(array_column($schedule, 'principal'));
-                $diff = round($loan - $totalPrincipalNow, 2);
-                $schedule[$lastIndex]['principal'] += $diff;
-            }
-        } 
-        elseif ($interestType === 'flat_advanced_interest') 
-        {
-            // Flat Advanced Interest (Single EMI)
-            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-            $principal = $loan;
-            $charges = ($charge_per_emi_type === 'ON EMI')
-                ? 207
-                : round(($loan * (2.549 / 100)), 2);
+            case 'reducing_balance':
+            case 'reducing emi':
+            case 'reducing_emi':
+                $interestType = 'reducing_balance';
+                break;
 
-            $emiTotal = round($principal + $charges, 2);
+            default:
+                $interestType = 'flat_interest';
+        }
 
-            $emiDate = now()->copy()->addMonths($tenureMonths);
+        $processingFee = (float) ($scheme->processing_fee ?? 0);
+        $processing_incl_gst = round($processingFee + ($processingFee * 0.18), 2);
+
+        $stampAmount = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
+        $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
+        $stamp_incl_gst = round($stampAmount + ($stampAmount * 0.18), 2);
+        $total_emi_paid = 0;
+    }
+
+    // ---------------------------------------------
+    // STEP 2: EMI GAP SETUP
+    // ---------------------------------------------
+    $monthsPerInstallment = match ($payout) {
+        'quarterly' => 3,
+        'half-yearly' => 6,
+        'yearly' => 12,
+        default => 1,
+    };
+    $installments = (int) ceil($tenureMonths / $monthsPerInstallment);
+
+    // ---------------------------------------------
+    // STEP 3: EMI CALCULATION
+    // ---------------------------------------------
+    $monthlyRate = ($annualRate / 100) / 12;
+    $schedule = [];
+    $totalInterest = $totalCharges = 0;
+
+    if ($interestType === 'reducing_balance') {
+        // ✅ Reducing Balance
+        $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
+        $outstanding = $loan;
+
+        for ($i = 1; $i <= $installments; $i++) {
+            $emiDate = now()->copy()->addMonths($i);
             $dueDate = $emiDate->copy()->addDay();
 
-            $schedule = [[
-                'no' => 1,
+            $interest = round($outstanding * $monthlyRate, 2);
+            $principal = round($emi - $interest, 2);
+            $outstanding -= $principal;
+            $balance = max(round($outstanding, 2), 0);
+
+            $charges = ($charge_per_emi_type === 'ON EMI')
+                ? 207
+                : round(($loan * (2.549 / 100)) / $installments, 2);
+
+            $emiTotal = round($principal + $interest + $charges, 2);
+            $totalInterest += $interest;
+            $totalCharges += $charges;
+
+            $schedule[] = [
+                'no' => $i,
                 'emi_date' => $emiDate->format('d/m/Y'),
                 'due_date' => $dueDate->format('d/m/Y'),
                 'principal' => $principal,
-                'interest' => 0.00, // already deducted in disbursal
+                'interest' => $interest,
                 'charges' => $charges,
                 'emi' => $emiTotal,
-                'balance' => 0.00,
-            ]];
-
-            // Totals
-            $totalPrincipal = $principal;
-            $totalInterest = 0.00;
-            $totalCharges = $charges;
-            $totalEmiSum = $emiTotal;
-        }
-        else 
-        {
-            // Flat Interest
-            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-            $principalPerMonth = round($loan / $installments, 2);
-            $interestPerMonth = round($totalInterest / $installments, 2);
-            $outstanding = $loan;
-
-            for ($i = 1; $i <= $installments; $i++) 
-            {
-                $emiDate = now()->copy()->addMonths($i);
-                $dueDate = $emiDate->copy()->addDay();
-
-                $principal = $principalPerMonth;
-                $interest = $interestPerMonth;
-                $outstanding -= $principal;
-                $balance = max(round($outstanding, 2), 0);
-
-                $charges = ($charge_per_emi_type === 'ON EMI')
-                    ? 207
-                    : round(($loan * (2.549 / 100)) / $installments, 2);
-
-                $emiTotal = round($principal + $interest + $charges, 2);
-                $totalCharges += $charges;
-
-                $schedule[] = [
-                    'no' => $i,
-                    'emi_date' => $emiDate->format('d/m/Y'),
-                    'due_date' => $dueDate->format('d/m/Y'),
-                    'principal' => $principal,
-                    'interest' => $interest,
-                    'charges' => $charges,
-                    'emi' => $emiTotal,
-                    'balance' => $balance,
-                ];
-            }
-            // Precision Fix for Last EMI
-            if (!empty($schedule)) 
-            {
-                $lastIndex = count($schedule) - 1;
-                $schedule[$lastIndex]['balance'] = 0.00;
-                $totalPrincipalNow = array_sum(array_column($schedule, 'principal'));
-                $diff = round($loan - $totalPrincipalNow, 2);
-                $schedule[$lastIndex]['principal'] += $diff;
-            }
+                'balance' => $balance,
+            ];
         }
 
-        // ---------------------------------------------
-        // STEP 5: TOTALS
-        // ---------------------------------------------
-        //$totalEmiSum = array_sum(array_column($schedule, 'emi'));
-        $totalPrincipal = array_sum(array_column($schedule, 'principal'));
-        $totalInterest = array_sum(array_column($schedule, 'interest'));
-        $totalCharges = array_sum(array_column($schedule, 'charges'));
+        if (!empty($schedule)) {
+            $lastIndex = count($schedule) - 1;
+            $schedule[$lastIndex]['balance'] = 0.00;
+            $totalPrincipalNow = array_sum(array_column($schedule, 'principal'));
+            $diff = round($loan - $totalPrincipalNow, 2);
+            $schedule[$lastIndex]['principal'] += $diff;
+        }
 
-        $totalEmiSum = round($totalPrincipal + $totalInterest + $totalCharges, 2);
+    } elseif ($interestType === 'flat_advanced_interest') {
+        // ✅ Flat Advanced Interest
+        $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
+        $principal = $loan;
+        $charges = ($charge_per_emi_type === 'ON EMI')
+            ? 207
+            : round(($loan * (2.549 / 100)), 2);
 
-        $total_emi_paid = round($totalEmiSum, 2);
+        $emiTotal = round($principal + $charges, 2);
+        $emiDate = now()->copy()->addMonths($tenureMonths);
+        $dueDate = $emiDate->copy()->addDay();
 
-        $grandTotalPayable = round($loan + $totalInterest + $totalCharges + $processingFee + $stampAmount + $insuranceAmount, 2);
+        $schedule = [[
+            'no' => 1,
+            'emi_date' => $emiDate->format('d/m/Y'),
+            'due_date' => $dueDate->format('d/m/Y'),
+            'principal' => $principal,
+            'interest' => 0.00,
+            'charges' => $charges,
+            'emi' => $emiTotal,
+            'balance' => 0.00,
+        ]];
 
-        $disbursedAmount = ($interestType === 'flat_advanced_interest')
-            ? $loan - $totalInterest
-            : $loan;
+        $totalCharges = $charges;
+    } else {
+        // ✅ Flat Interest
+        $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
+        $principalPerMonth = round($loan / $installments, 2);
+        $interestPerMonth = round($totalInterest / $installments, 2);
+        $outstanding = $loan;
 
-        // ---------------------------------------------
-        // STEP 6: RETURN VIEW
-        // ---------------------------------------------
-        return view('bussiness.calculator.result', [
+        for ($i = 1; $i <= $installments; $i++) {
+            $emiDate = now()->copy()->addMonths($i);
+            $dueDate = $emiDate->copy()->addDay();
+
+            $principal = $principalPerMonth;
+            $interest = $interestPerMonth;
+            $outstanding -= $principal;
+            $balance = max(round($outstanding, 2), 0);
+
+            $charges = ($charge_per_emi_type === 'ON EMI')
+                ? 207
+                : round(($loan * (2.549 / 100)) / $installments, 2);
+
+            $emiTotal = round($principal + $interest + $charges, 2);
+            $totalCharges += $charges;
+
+            $schedule[] = [
+                'no' => $i,
+                'emi_date' => $emiDate->format('d/m/Y'),
+                'due_date' => $dueDate->format('d/m/Y'),
+                'principal' => $principal,
+                'interest' => $interest,
+                'charges' => $charges,
+                'emi' => $emiTotal,
+                'balance' => $balance,
+            ];
+        }
+
+        if (!empty($schedule)) {
+            $lastIndex = count($schedule) - 1;
+            $schedule[$lastIndex]['balance'] = 0.00;
+            $totalPrincipalNow = array_sum(array_column($schedule, 'principal'));
+            $diff = round($loan - $totalPrincipalNow, 2);
+            $schedule[$lastIndex]['principal'] += $diff;
+        }
+    }
+
+    // ---------------------------------------------
+    // STEP 4: TOTALS
+    // ---------------------------------------------
+    $totalPrincipal = array_sum(array_column($schedule, 'principal'));
+    $totalInterest = array_sum(array_column($schedule, 'interest'));
+    $totalCharges = array_sum(array_column($schedule, 'charges'));
+    $totalEmiSum = round($totalPrincipal + $totalInterest + $totalCharges, 2);
+    $total_emi_paid = round($totalEmiSum, 2);
+
+    $grandTotalPayable = round($loan + $totalInterest + $totalCharges + $processingFee + $stampAmount + $insuranceAmount, 2);
+
+    $disbursedAmount = ($interestType === 'flat_advanced_interest')
+        ? $loan - $totalInterest
+        : $loan;
+
+    // ---------------------------------------------
+    // STEP 5: RETURN VIEW
+    // ---------------------------------------------
+    return view('bussiness.calculator.result', [
         'scheme' => $scheme,
         'is_manual' => $isManual,
         'loan' => $loan,
@@ -439,8 +409,7 @@ class BusinessLoan extends Controller
         'grand_total_payable' => $grandTotalPayable,
         'disbursed_amount' => $disbursedAmount,
     ]);
-
-    }
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
