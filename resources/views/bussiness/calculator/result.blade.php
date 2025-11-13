@@ -82,61 +82,66 @@
         </tr>
 
         <tbody>
-    @if(strtolower($interest_type) === 'flat advanced interest')
-        @foreach($schedule as $row)
-            <tr class="border border-gray-300">
-                <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
-                <td class="p-2 text-center border border-gray-300">
-                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
-                </td>
-                <td class="p-2 text-center border border-gray-300">
-                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
-                </td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'], 2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['charges'], 2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['emi'], 2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
-            </tr>
-        @endforeach
-    @else
-        @foreach($schedule as $row)
-            <tr class="border border-gray-300">
-                <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
-                <td class="p-2 text-center border border-gray-300">
-                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
-                </td>
-                <td class="p-2 text-center border border-gray-300">
-                    {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
-                </td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'],2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['interest'],2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['charges'],2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['emi'],2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['balance'],2) }}</td>
-            </tr>
-        @endforeach
-    @endif
-</tbody>
+            @if(strtolower($interest_type) === 'flat advanced interest')
+                @foreach($schedule as $row)
+                    <tr class="border border-gray-300">
+                        <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
+                        <td class="p-2 text-center border border-gray-300">
+                            {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
+                        </td>
+                        <td class="p-2 text-center border border-gray-300">
+                            {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
+                        </td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'], 2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['charges'], 2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['emi'], 2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+                    </tr>
+                @endforeach
+            @else
+                @foreach($schedule as $row)
+                    <tr class="border border-gray-300">
+                        <td class="p-2 text-center border border-gray-300">{{ $row['no'] }}</td>
+                        <td class="p-2 text-center border border-gray-300">
+                            {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['emi_date'])->format('d-m-Y') }}
+                        </td>
+                        <td class="p-2 text-center border border-gray-300">
+                            {{ \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') }}
+                        </td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'],2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['interest'],2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['charges'],2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['emi'],2) }}</td>
+                        <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['balance'],2) }}</td>
+                    </tr>
+                @endforeach
+            @endif
+        </tbody>
 
-
-       <tr class="bg-blue-600 text-white font-bold border border-gray-300">
-    <td colspan="4" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
-    <td class="p-2 text-right border border-gray-300">
-        ₹ {{ number_format($total_interest ?? 0, 2) }}
-    </td>
-    <td class="p-2 text-right border border-gray-300">
-        ₹ {{ number_format($total_charges ?? 0, 2) }}
-    </td>
-    <td class="p-2 text-right border border-gray-300">
-        ₹ {{ number_format($total_emi_sum ?? 0, 2) }}
-    </td>
-    <td class="p-2 text-center border border-gray-300">-</td>
-</tr>
-
+        <tr class="bg-blue-600 text-white font-bold border border-gray-300">
+            <td colspan="4" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
+            {{-- Interest (B) column --}}
+            <td class="p-2 text-right border border-gray-300">
+                @if(strtolower($interest_type ?? '') === 'flat advanced interest')
+                    ₹ {{ number_format($loan * ($annual_rate / 100) * ($tenure_months / 12), 2) }}
+                @else
+                    ₹ {{ number_format($total_interest ?? 0, 2) }}
+                @endif
+            </td>
+            <td class="p-2 text-right border border-gray-300">
+                ₹ {{ number_format($total_charges ?? 0, 2) }}
+            </td>
+            <td class="p-2 text-right border border-gray-300">
+                ₹ {{ number_format($total_emi_sum ?? 0, 2) }}
+            </td>
+            <td class="p-2 text-center border border-gray-300">-</td>
+        </tr>
 
     </table>
 
   </div>
+
 </div>
+
 @endsection

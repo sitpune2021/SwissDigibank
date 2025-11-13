@@ -229,14 +229,16 @@
                                         {{ old('scheme_id', $application->scheme_id ?? '') == $sc->id ? 'selected' : '' }}
                                         data-code="{{ $sc->scheme_code }}"
                                         data-name="{{ $sc->scheme_name }}"
-                                        data-tenure="{{ $sc->tenure ?? 0 }}"
+                                        data-tenure="{{ $sc->tenure ?? 0 }}"                                       
                                         data-max="{{ $sc->max_loan_amount ?? 0 }}"
-                                        data-limit="{{ $sc->max_loan_limit ?? 0 }}"
-                                        data-min="{{ $sc->min_loan_amount ?? 0 }}"
                                         data-interest="{{ $sc->annual_interest_rate ?? 0 }}"
                                         data-type="{{ $sc->gold_loan_setting ?? '' }}"
                                         data-active="{{ $sc->is_active ? 'Yes' : 'No' }}"
-                                        data-charge="{{ $sc->charge_floting ?? '' }}">
+                                        data-charge="{{ $sc->fore_closer_charge ?? '' }}"
+                                        data-processing_fee="{{ $sc->processing_fee ?? 0 }}"
+                                        data-stamp_duty_charge="{{ $sc->stamp_duty_charge ?? 0 }}"
+                                        data-insurance_fee="{{ $sc->insurance_fee ?? 0 }}"
+                                        data-charge_per_emi="{{ $sc->charge_per_emi }}">
                                         {{ $sc->scheme_name }}
                                     </option>
                                 @endforeach
@@ -276,17 +278,22 @@
                             </div>
                         </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
+                        <!--  Tenure ( MONTHS ) -->
+                        <div class="w-full mt-4 ">
+                            <div class="mb-2">
+                                <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
+                                    Tenure ( MONTHS )                           
+                                </label>
                                 <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="tenure_value" name="tenure_value"
-                                value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                @error('tenure_value')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                            </div>
+                            <div class="flex flex-wrap gap-4">
+                                <input type="number" id="tenure_value" name="tenure_value"
+                                    value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                    @error('tenure_value')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror                                           
+                            </div>
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -374,13 +381,13 @@
                             </label>
                             <div class="flex gap-6">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="charge_per_emi" value="0"
-                                        {{ old('charge_per_emi', $application->charge_per_emi ?? '0') == '0' ? 'checked' : '' }}>
+                                    <input type="radio" name="charge_per_emi" value="1"
+                                        {{ old('charge_per_emi', $application->charge_per_emi ?? '1') == '1' ? 'checked' : '' }}>
                                     ON EMI
                                 </label>
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="charge_per_emi" value="1"
-                                        {{ old('charge_per_emi', $application->charge_per_emi ?? '') == '1' ? 'checked' : '' }}>
+                                    <input type="radio" name="charge_per_emi" value="0"
+                                        {{ old('charge_per_emi', $application->charge_per_emi ?? '') == '0' ? 'checked' : '' }}>
                                     ON PRINCIPAL
                                 </label>
                             </div>
@@ -710,14 +717,6 @@
                                         <td class="py-2" id="schemeMax">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
-                                        <td class="py-2" id="schemeLimit">- %</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
-                                        <td class="py-2" id="schemeMin">-</td>
-                                    </tr>
-                                    <tr>
                                         <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
                                         <td class="py-2" id="schemeInterest">-</td>
                                     </tr>
@@ -733,6 +732,22 @@
                                     <tr>
                                         <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
                                         <td class="py-2" id="schemeCharge">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Processing Fee</td>
+                                        <td class="py-2" id="schemeProcessing">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Stamp Duty Fee</td>
+                                        <td class="py-2" id="schemeStampDuty">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold py-2 pr-4">Insurance Charges</td>
+                                        <td class="py-2" id="schemeInsurance">-</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-200">
+                                        <td class="font-semibold px-3 py-2">Charges Per EMI Type</td>
+                                        <td class="px-3 py-2"><span id="schemeChargePerEmi">-</span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -829,51 +844,62 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
+<!-- scheme info -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const schemeSelect = document.getElementById("scheme_id");
     const schemeBox = document.getElementById("schemeBox");
 
+    // mapping DOM elements
     const schemeCode = document.getElementById("schemeCode");
     const schemeName = document.getElementById("schemeName");
     const schemeTenure = document.getElementById("schemeTenure");
-    const schemeMax = document.getElementById("schemeMax");
-    const schemeLimit = document.getElementById("schemeLimit");
-    const schemeMin = document.getElementById("schemeMin");
+    const schemeMax = document.getElementById("schemeMax"); // ✅ exists in table
     const schemeInterest = document.getElementById("schemeInterest");
     const schemeType = document.getElementById("schemeType");
-   
     const schemeActive = document.getElementById("schemeActive");
     const schemeCharge = document.getElementById("schemeCharge");
+    const schemeProcessing = document.getElementById("schemeProcessing");
+    const schemeStampDuty = document.getElementById("schemeStampDuty");
+    const schemeInsurance = document.getElementById("schemeInsurance");
+    const schemeChargePerEmi = document.getElementById("schemeChargePerEmi");
 
     schemeSelect.addEventListener("change", function () {
         const selectedOption = this.options[this.selectedIndex];
 
         if (this.value) {
-            // values set karna
-            schemeCode.textContent = selectedOption.getAttribute("data-code") || "-";
-            schemeName.textContent = selectedOption.getAttribute("data-name") || "-";
-            schemeTenure.textContent = selectedOption.getAttribute("data-tenure") || "-";
-            schemeMax.textContent = selectedOption.getAttribute("data-max") || "-";
-            schemeLimit.textContent = selectedOption.getAttribute("data-limit") || "-";
-            schemeMin.textContent = selectedOption.getAttribute("data-min") || "-";
-            schemeInterest.textContent = selectedOption.getAttribute("data-interest") || "-";
-            schemeType.textContent = selectedOption.getAttribute("data-type") || "-";
-            
-            schemeActive.textContent = selectedOption.getAttribute("data-active") || "-";
-            schemeCharge.textContent = selectedOption.getAttribute("data-charge") || "-";
+            // ✅ fill values from data- attributes
+            schemeCode.textContent = selectedOption.dataset.code || "-";
+            schemeName.textContent = selectedOption.dataset.name || "-";
+            schemeTenure.textContent = selectedOption.dataset.tenure || "-";
+            schemeMax.textContent = selectedOption.dataset.max || "-";
+            schemeInterest.textContent = selectedOption.dataset.interest || "-";
+            schemeType.textContent = selectedOption.dataset.type || "-";
+            schemeActive.textContent = selectedOption.dataset.active || "-";
+            schemeCharge.textContent = (selectedOption.dataset.charge || 0) + " %";
+            schemeProcessing.textContent = (selectedOption.dataset.processing_fee || 0) + " %";
+            schemeStampDuty.textContent = (selectedOption.dataset.stamp_duty_charge || 0) + " %";
+            schemeInsurance.textContent = (selectedOption.dataset.insurance_fee || 0) + " %";
 
-            // box visible
+            // ✅ charge_per_emi mapping
+            const chargePerEmiVal = selectedOption.dataset.charge_per_emi;
+            if (chargePerEmiVal === "1") {
+                schemeChargePerEmi.textContent = "ON EMI";
+            } else if (chargePerEmiVal === "0") {
+                schemeChargePerEmi.textContent = "ON PRINCIPAL";
+            } else {
+                schemeChargePerEmi.textContent = "-";
+            }
+
+            // ✅ show box
             schemeBox.classList.remove("hidden");
         } else {
-            // agar select empty ho jaye to hide
+            // hide box if none selected
             schemeBox.classList.add("hidden");
         }
     });
 });
 </script>
-
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -1147,6 +1173,15 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
     });
     </script>
 
+<!-- tynure tye change -->
+<script>
+    document.querySelectorAll('input[name="tenure_type"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const label = document.getElementById('tenureLabel');
+        label.textContent = `Tenure ( ${this.value} )`;
+      });
+    }); 
+</script>
 
 @endsection
 

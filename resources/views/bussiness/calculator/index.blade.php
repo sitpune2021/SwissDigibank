@@ -28,7 +28,7 @@
       <div class="flex items-start flex-col  gap-2">
         <div class="flex items-center gap-3">
           <h1 class="text-xl font-semibold capitalize">
-            LOAN AGAINST DEPOSITE CALCULATOR
+            BUSINESS LOAN CALCULATOR
           </h1>
         </div>
       </div>
@@ -256,10 +256,17 @@
         </div>
 
         <!-- Tenure (MONTHS) -->
-        <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Tenure (MONTHS) <span class="text-red-500">*</span></label>
-          <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter tenure in months">
-        </div>
+         <div class="w-full mt-4 ">
+            <div class="mb-2">
+              <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
+                Tenure ( MONTHS )              
+              </label>
+              <span class="text-error">*</span>
+            </div>
+            <div class="flex flex-wrap gap-4">
+              <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5            dark:bg-bg3 " placeholder="Please Enter Tenure">
+            </div>
+          </div>
 
         <!-- EMI Payout -->
         <div class="mt-4">
@@ -326,12 +333,7 @@
                 <tr class="border-b border-gray-200">
                   <td class="font-semibold px-3 py-2">Charges Per EMI Type</td>
                   <td class="px-3 py-2"><span id="schemeChargePerEmi">-</span></td>
-                </tr>
-                <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Collection Charges per EMI</td>
-                  <td class="px-3 py-2"><span id="schemeChargePerEmiType">-</span></td>
-                </tr>
-
+                </tr>             
               </tbody>
             </table>
           </div>
@@ -379,8 +381,7 @@
     const schemeInsurance = document.getElementById("schemeInsurance");
     const schemeProcessing = document.getElementById("schemeProcessing");
     const schemeChargePerEmi = document.getElementById("schemeChargePerEmi");
-    const schemeChargePerEmiType = document.getElementById("schemeChargePerEmiType");
-
+    
 
     schemeSelect.addEventListener("change", function () {
       const selectedOption = this.options[this.selectedIndex];
@@ -577,6 +578,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+</script>
+
+<script>document.querySelectorAll('input[name="tenure_type"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const label = document.getElementById('tenureLabel');
+        label.textContent = `Tenure ( ${this.value} )`;
+      });
+    }); 
 </script>
 
 @endsection
