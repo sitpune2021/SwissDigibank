@@ -19,7 +19,7 @@ Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp']);
 Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin']);
 Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus']);
 Route::get('/tabs', [TabController::class, 'getTabs']);
-Route::get('/tabs/see-more', [TabController::class, 'getSeeMoreTabs']);
+
 
 Route::post('/sim/request', [SimVerificationController::class, 'requestOtp']);
 Route::post('/sim/verify', [SimVerificationController::class, 'verifyOtp']);
