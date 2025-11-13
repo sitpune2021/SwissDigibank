@@ -121,4 +121,9 @@ class LoanApplication extends Model
     {
         return $this->hasMany(GoldLoanTransaction::class, 'loan_id');
     }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(\App\Models\GoldLoanTransaction::class, 'loan_id', 'id');
+    }
 }

@@ -77,8 +77,11 @@
                             </div>
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <x-approve-all id="approveAllStatus" class="select-transaction-status"
-                                approvedValue="approved" pendingValue="pending" />
+                            <x-approve-all
+                                id="approveAllStatus"
+                                class="select-transaction-status"
+                                approvedValue="approved"
+                                pendingValue="pending" />
 
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -94,59 +97,39 @@
                     <form action="{{ route('pending-transaction.update', $pending_transaction->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" name="source_table"
-                            value="{{ $pending_transaction->source_table ?? 'transaction' }}">
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-
-                            {{-- ✅ Branch Name --}}
-                            <td class="py-5 px-6">{{ $pending_transaction->branch_name ?? '' }}</td>
-
-                            {{-- Empty Column (if you had one previously) --}}
+                            <td class="py-5 px-6">{{ $pending_transaction->accounts?->branch?->branch_name ?? '' }}</td>
                             <td class="py-5 px-6"></td>
-
-                            {{-- ✅ Member Info --}}
                             <td class="py-5 px-6">
-                                <a href="{{ $pending_transaction->member_id ? route('member.show', $pending_transaction->member_id) : '#' }}"
-                                    class="text-primary underline hover:text-primary/80">
-                                    {{ str_pad($pending_transaction->member_id ?? 0, 6, '0', STR_PAD_LEFT) }}
+                                <a href="{{ $pending_transaction->accounts?->members?->id 
+                 ? route('member.show', $pending_transaction->accounts->members->id) 
+                 : '#' }}"
+                                    class="text-primary underline hover:text-primary/80">{{
+    ($pending_transaction->accounts?->members?->member_no 
+        ?? ($pending_transaction->accounts?->members?->id ? str_pad($pending_transaction->accounts->members->id, 6, '0', STR_PAD_LEFT) : '-'))
+    . ' - ' . 
+    ($pending_transaction->accounts?->members?->member_info_first_name ?? 'N/A')
+}}</a>
+                            </td>
+                            <td class="py-5 px-6">{{ $pending_transaction?->accounts?->account_type?? '' }}</td>
+                            <td class="py-5 px-6">
+                                <a href="{{ $pending_transaction?->accounts ? route('accounts.show', base64_encode($pending_transaction->accounts->id)) : '#' }}" class="text-primary underline hover:text-primary/80">
+                                    {{ $pending_transaction?->accounts?->account_no?? ''  }}
                                 </a>
                             </td>
-
-                            {{-- ✅ Account Type --}}
-                            <td class="py-5 px-6">{{ $pending_transaction->account_type ?? '' }}</td>
-
-                            {{-- ✅ Account Number --}}
                             <td class="py-5 px-6">
-                                <a href="{{ $pending_transaction->account_no ? route('accounts.show', base64_encode($pending_transaction->account_no)) : '#' }}"
-                                    class="text-primary underline hover:text-primary/80">
-                                    {{ $pending_transaction->account_no ?? '' }}
-                                </a>
+                                <a href="{{ $pending_transaction ? route('transaction.show', base64_encode($pending_transaction->id)) : '#' }}" class="text-primary underline hover:text-primary/80">View</a>
                             </td>
-
-                            {{-- ✅ View Transaction --}}
                             <td class="py-5 px-6">
-                                <a href="{{ route('transaction.show', base64_encode($pending_transaction->id)) }}"
-                                    class="text-primary underline hover:text-primary/80">View</a>
+                                {{ $pending_transaction->transaction_date ? \Carbon\Carbon::parse($pending_transaction->transaction_date)->format('d-m-Y') : '' }}
                             </td>
-
-                            {{-- ✅ Transaction Date --}}
-                            <td class="py-5 px-6">
-                                {{ $pending_transaction->created_at ? \Carbon\Carbon::parse($pending_transaction->created_at)->format('d-m-Y') : '' }}
-                            </td>
-
-                            {{-- ✅ Amount --}}
                             <td class="py-5 px-6">{{ $pending_transaction->amount ?? '' }}</td>
-
-                            {{-- ✅ Payment Mode --}}
-                            <td class="py-5 px-6">{{ $pending_transaction->payment_mode ?? '' }}</td>
-
-                            {{-- ✅ Bank Name (for online mode) --}}
+                            <td class="py-5 px-6">{{ $pending_transaction?->payment_mode ?? ''}}</td>
                             <td class="py-5 px-6">
-                                @if (strtolower($pending_transaction->payment_mode ?? '') == 'online')
-                                <select name="bank_account_id" id="bank_account_id"
-                                    class="form-control select-bank-account" required>
+                                @if(strtolower($pending_transaction->payment_mode) == 'online')
+                                <select name="bank_account_id" id="bank_account_id" class="form-control select-bank-account" required>
                                     <option value="">Select Bank</option>
-                                    <option value="State Bank of India">State Bank of India</option>
+                                    <option value="State Bank of India">State Bank of India </option>
                                     <option value="Vijaya Bank">Vijaya Bank</option>
                                     <option value="Kotak Bank">Kotak Bank</option>
                                     <option value="Punjab National Bank">Punjab National Bank</option>
@@ -159,57 +142,56 @@
                                 <span class="text-gray-400 italic"></span>
                                 @endif
                             </td>
-
-                            {{-- ✅ Cheque Date (for cheque mode) --}}
                             <td class="py-2 px-6">
-                                @if (strtolower($pending_transaction->payment_mode ?? '') == 'cheque')
-                                <input type="text" name="cheque_clearing_date"
-                                    value="{{ $pending_transaction->cheque_date ?? '' }}"
-                                    class="form-control bg-white width-100" readonly="readonly" required="required">
+                                @if(strtolower($pending_transaction->payment_mode) == 'cheque')
+                                <input type="text" name="cheque_clearing_date" value="{{ $pending_transaction?->cheque_date ?? ''}}" class="form-control bg-white width-100" required="required" readonly="readonly">
                                 @else
                                 <span class="text-gray-400 italic"></span>
                                 @endif
                             </td>
-
-                            {{-- ✅ Payment Status --}}
                             <td class="py-2 px-6">
-                                <select name="payment_status" id="payment_status-{{ $pending_transaction->id }}"
-                                    class="form-control width-60 select-payment-status">
+                                <select name="payment_status" id="payment_status-3" class="form-control width-60 select-payment-status">
                                     <option value="yes">Yes</option>
                                     <option value="no">No</option>
                                     <option value="cheque_bounce">Cheque Bounce</option>
                                 </select>
                             </td>
-
-                            {{-- ✅ Transaction Status --}}
                             <td class="py-5 px-6">
-                                <select name="transaction_status"
-                                    id="transaction_status-{{ $pending_transaction->id }}"
+                                <!-- <select name="transaction_status" id="transaction_status-1" class="form-control width-100 select-transaction-status">
+                                    <option value="approved">Approve</option>
+                                    <option value="disapproved">Not Approve</option>
+                                    <option selected="selected" value="pending">Pending</option>
+                                </select> -->
+
+                                <select name="transaction_status" id="transaction_status-{{ $pending_transaction->id }}"
                                     class="form-control width-100 select-transaction-status">
+
                                     <option value="approved"
-                                        {{ old('transaction_status', $pending_transaction->approve_status) === 'approved' ? 'selected' : '' }}>
+                                        {{ old('transaction_status', $pending_transaction->transaction_status) === 'approved' ? 'selected' : '' }}>
                                         Approve
                                     </option>
+
                                     <option value="disapproved"
-                                        {{ old('transaction_status', $pending_transaction->approve_status) === 'disapproved' ? 'selected' : '' }}>
+                                        {{ old('transaction_status', $pending_transaction->transaction_status) === 'disapproved' ? 'selected' : '' }}>
                                         Not Approve
                                     </option>
+
                                     <option value="pending"
-                                        {{ old('transaction_status', $pending_transaction->approve_status) === 'pending' || empty($pending_transaction->approve_status) ? 'selected' : '' }}>
+                                        {{ old('transaction_status', $pending_transaction->transaction_status) === 'pending' || empty($pending_transaction->transaction_status) ? 'selected' : '' }}>
                                         Pending
                                     </option>
                                 </select>
                             </td>
-
-                            {{-- ✅ Remarks --}}
                             <td class="py-2 px-6">
-                                <textarea name="remarks" id="remarks-{{ $pending_transaction->id }}" placeholder="Enter Remarks"></textarea>
+                                <textarea name="remarks" id="remarks-1" placeholder="Enter Remarks"></textarea>
                             </td>
 
-                            {{-- ✅ Submit --}}
                             <td class="py-2 px-6">
-                                <input type="submit" name="commit" value="Done"
-                                    onclick="return confirm('Are you sure?')"
+                                <input
+                                    type="submit"
+                                    name="commit"
+                                    value="Done"
+                                    onclick="return confirm('Are you sure')"
                                     class="text-white font-semibold py-2 px-4 rounded shadow-sm transition duration-200 cursor-pointer"
                                     style="background-color:green;">
                             </td>
@@ -221,7 +203,6 @@
                     </tr>
                     @endforelse
                 </tbody>
-
             </table>
         </div>
     </div>

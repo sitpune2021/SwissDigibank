@@ -18,44 +18,29 @@
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Type</td>
           <td class="py-2 px-3 border border-gray-300">{{ ucfirst($interest_type) }}</td>
           <td class="font-semibold py-2 px-3 border border-gray-300">Processing Charges</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($processing_incl_gst,2) }} (Incl. 18% GST)</td>
+          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($processing_fee,2) }} (Incl. 18% GST)</td>
         </tr>
 
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
-          <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>
           <td class="font-semibold py-2 px-3 border border-gray-300">Insurance Charges</td>
           <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($insurance_amount,2) }} (Incl. 0% GST)</td>
+           <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
+          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_amount,2) }} (Incl. 18% GST)</td> 
         </tr>
 
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">EMI Count</td>
           <td class="py-2 px-3 border border-gray-300">{{ $installments }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_incl_gst,2) }} (Incl. 18% GST)</td>
-        </tr>
+          <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
+          <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>         
+         </tr>
 
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Tenure</td>
           <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }} MONTHS</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Interest</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_interest,2) }}</td>
-        </tr>
-        @if(strtolower($interest_type) !== 'no emi')
-        <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate (Annually)</td>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Payable (EMIs)</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_emi_paid,2) }}</td>
         </tr>
-
-        <tr class="bg-gray-50 font-semibold">
-          <td class="py-2 px-3 border border-gray-300"> </td>
-          <td class="py-2 px-3 border border-gray-300"> </td>
-          <td class="py-2 px-3 text-gray-800 border border-gray-300">Grand Total Payable</td>
-          <td class="py-2 px-3 text-green-700 font-bold border border-gray-300">₹ {{ number_format($grand_total_payable,2) }}</td>
-        </tr>
-        @endif
       </tbody>
     </table>
   </div>
@@ -98,10 +83,41 @@
                     {{ !empty($row['due_date']) ? \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') : '-' }}
                 </td>
                 <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'],2) }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['interest'] !== null ? '₹ '.number_format($row['interest'],2) : '' }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['charges'] !== null ? '₹ '.number_format($row['charges'],2) : '' }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['emi'] !== null ? '₹ '.number_format($row['emi'],2) : '' }}</td>
-                <td class="p-2 text-right border border-gray-300">{{ $row['balance'] !== null ? '₹ '.number_format($row['balance'],2) : '' }}</td>
+                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['interest'] !== null ? '₹ '.number_format($row['interest'],2) : '' }}</td> -->
+                <td class="p-2 text-right border border-gray-300">
+                    @if(strtolower($interest_type) === 'no emi')
+                        {{-- EMPTY --}}
+                    @else
+                        ₹ {{ number_format($row['interest'],2) }}
+                    @endif
+                </td>
+
+                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['charges'] !== null ? '₹ '.number_format($row['charges'],2) : '' }}</td> -->
+                <td class="p-2 text-right border border-gray-300">
+                    @if(strtolower($interest_type) === 'no emi')
+                        {{-- EMPTY --}}
+                    @else
+                        ₹ {{ number_format($row['charges'],2) }}
+                    @endif
+                </td>
+
+                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['emi'] !== null ? '₹ '.number_format($row['emi'],2) : '' }}</td> -->
+                <td class="p-2 text-right border border-gray-300">
+                    @if(strtolower($interest_type) === 'no emi')
+                        {{-- EMPTY --}}
+                    @else
+                        ₹ {{ number_format($row['emi'],2) }}
+                    @endif
+                </td>
+
+                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['balance'] !== null ? '₹ '.number_format($row['balance'],2) : '' }}</td> -->
+                <td class="p-2 text-right border border-gray-300">
+                    @if(strtolower($interest_type) === 'no emi')
+                        {{-- EMPTY --}}
+                    @else
+                        ₹ {{ number_format($row['balance'],2) }}
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>

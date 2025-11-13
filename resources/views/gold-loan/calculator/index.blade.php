@@ -247,9 +247,25 @@
           </div>
 
           <!-- Tenure (MONTHS) -->
-          <div class="w-full mt-4">
-            <label class="block font-medium mb-2">Tenure (MONTHS) <span class="text-red-500">*</span></label>
+          <!-- <div class="w-full mt-4">
+            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
+                <span class="text-error">*</span>
+            </label>
             <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter tenure in months">
+          </div> -->
+           <!--  Tenure ( MONTHS ) -->
+          <div class="w-full mt-4 ">
+            <div class="mb-2">
+              <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
+                Tenure ( MONTHS )
+               
+              </label>
+              <span class="text-error">*</span>
+            </div>
+            <div class="flex flex-wrap gap-4">
+              <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5            dark:bg-bg3 " placeholder="Please Enter Tenure">
+            </div>
           </div>
 
           <!-- EMI Payout -->
@@ -306,10 +322,6 @@
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Active</td><td class="py-2" id="schemeActive">-</td></tr>
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
-                <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2 uppercase">Stamp Duty Fee</td>
-                  <td class="px-3 py-2"><span id="schemeStamp">-</span> %</td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -370,7 +382,7 @@
         schemeName.textContent = selectedOption.dataset.name || "-";
         schemeTenure.textContent = selectedOption.dataset.tenure || "-";
         schemeMax.textContent = selectedOption.dataset.max || "-";
-        schemeLimit.textContent = selectedOption.dataset.limit || "-";
+        schemeLimit.textContent = (selectedOption.dataset.limit ? selectedOption.dataset.limit + " %" : "-");
         schemeMin.textContent = selectedOption.dataset.min || "-";
         schemeInterest.textContent = selectedOption.dataset.interest || "-";
         schemeType.textContent = selectedOption.dataset.type || "-";
@@ -528,5 +540,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<script>
+  document.querySelectorAll('input[name="tenure_type"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const label = document.getElementById('tenureLabel');
+        label.textContent = `Tenure ( ${this.value} )`;
+      });
+    }); 
+</script>
 
 @endsection
