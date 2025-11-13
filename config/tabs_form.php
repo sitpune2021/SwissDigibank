@@ -1,42 +1,43 @@
-<?php 
+<?php  
 
 return [
     'main_tabs' => [
         [
-            'group' => 'main',
+            'group' => 'A',
+            'label' => 'Main',
             'tabs' => [
                 [
-                    'key' => 'scan_qr',
+                    'id' => '1',
                     'label' => 'Scan QR',
                     'icon' => 'fa-qrcode',
                 ],
                 [
-                    'key' => 'add_money',
+                    'id' => '2',
                     'label' => 'Add Money',
                     'icon' => 'fa-money-bill-wave',
                 ],
                 [
-                    'key' => 'branch',
+                    'id' => '3',
                     'label' => 'Branch',
                     'icon' => 'fa-building',
                 ],
                 [
-                    'key' => 'account_overview',
+                    'id' => '4',
                     'label' => 'Account Overview',
                     'icon' => 'fa-user-circle',
                 ],
                 [
-                    'key' => 'bank',
+                    'id' => '5',
                     'label' => 'Bank',
                     'icon' => 'fa-university',
                 ],
                 [
-                    'key' => 'fixed_deposits',
+                    'id' => '6',
                     'label' => 'Fixed Deposits',
                     'icon' => 'fa-piggy-bank',
                 ],
                 [
-                    'key' => 'digital_rupee',
+                    'id' => '7',
                     'label' => 'Digital Rupee',
                     'icon' => 'fa-coins',
                 ],
@@ -44,21 +45,21 @@ return [
         ],
 
         [
-            'group' => 'muffinpay_wallet',
+            'group' => 'B',
             'label' => 'Muffinpay Wallet',
             'tabs' => [
                 [
-                    'key' => 'prepaid_card',
+                    'id' => '1',
                     'label' => 'Prepaid Card',
                     'icon' => 'fa-credit-card',
                 ],
                 [
-                    'key' => 'p2p_transfer',
+                    'id' => '2',
                     'label' => 'P2P Transfer',
                     'icon' => 'fa-exchange-alt',
                 ],
                 [
-                    'key' => 'ncmc',
+                    'id' => '3',
                     'label' => 'NCMC',
                     'icon' => 'fa-credit-card',
                 ],
@@ -66,46 +67,46 @@ return [
         ],
 
         [
-            'group' => 'bill_payment',
+            'group' => 'C',
             'label' => 'Bill Payment',
             'tabs' => [
                 [
-                    'key' => 'postpaid_mobile_bill',
+                    'id' => '1',
                     'label' => 'Postpaid Mobile Bill',
                     'icon' => 'fa-phone',
                 ],
                 [
-                    'key' => 'electricity',
+                    'id' => '2',
                     'label' => 'Electricity',
                     'icon' => 'fa-bolt',
                 ],
                 [
-                    'key' => 'water',
+                    'id' => '3',
                     'label' => 'Water',
                     'icon' => 'fa-tint',
                 ],
                 [
-                    'key' => 'broadband',
+                    'id' => '4',
                     'label' => 'Broadband',
                     'icon' => 'fa-wifi',
                 ],
                 [
-                    'key' => 'lpg',
+                    'id' => '5',
                     'label' => 'LPG',
                     'icon' => 'fa-gas-pump',
                 ],
                 [
-                    'key' => 'lic',
+                    'id' => '6',
                     'label' => 'LIC',
                     'icon' => 'fa-building',
                 ],
                 [
-                    'key' => 'loan_payment',
+                    'id' => '7',
                     'label' => 'Loan Payment',
                     'icon' => 'fa-credit-card',
                 ],
                 [
-                    'key' => 'credit_card_payment',
+                    'id' => '8',
                     'label' => 'Credit Card Payment',
                     'icon' => 'fa-credit-card',
                 ],
@@ -113,26 +114,26 @@ return [
         ],
 
         [
-            'group' => 'travel_booking',
+            'group' => 'D',
             'label' => 'Travel Booking',
             'tabs' => [
                 [
-                    'key' => 'flight',
+                    'id' => '1',
                     'label' => 'Flight',
                     'icon' => 'fa-plane',
                 ],
                 [
-                    'key' => 'train',
+                    'id' => '2',
                     'label' => 'Train',
                     'icon' => 'fa-train',
                 ],
                 [
-                    'key' => 'bus_booking',
+                    'id' => '3',
                     'label' => 'Bus Booking',
                     'icon' => 'fa-bus',
                 ],
                 [
-                    'key' => 'hotel',
+                    'id' => '4',
                     'label' => 'Hotel',
                     'icon' => 'fa-bed',
                 ],
@@ -140,16 +141,16 @@ return [
         ],
 
         [
-            'group' => 'finance',
+            'group' => 'E',
             'label' => 'Finance',
             'tabs' => [
                 [
-                    'key' => 'free_credit_score',
+                    'id' => '1',
                     'label' => 'Free Credit Score',
                     'icon' => 'fa-bar-chart',
                 ],
                 [
-                    'key' => 'insurance_premium',
+                    'id' => '2',
                     'label' => 'Insurance Premium',
                     'icon' => 'fa-shield-alt',
                 ],
