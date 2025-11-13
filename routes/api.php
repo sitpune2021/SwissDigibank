@@ -35,3 +35,6 @@ Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
 
 Route::middleware('auth:sanctum')->get('members/details', [MemberController::class, 'fetchMemberDetails']);
 Route::middleware('auth:sanctum')->get('account/details', [AccountController::class, 'fetchAccountInfo']);
+Route::get('/banks', [AccountController::class, 'getBanks']);
+Route::middleware('auth:sanctum')->get('/fd-accounts', [AccountController::class, 'getFDAccountDetails']);
+
