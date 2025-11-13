@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\ApiTransactionController;
 use App\Http\Controllers\Api\SimVerificationController;
 use App\Http\Controllers\Api\ForgotLoginPasswordController;
+use App\Http\Controllers\Api\TabController;
 
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
@@ -17,6 +18,7 @@ Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp']);
 Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp']);
 Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin']);
 Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus']);
+Route::get('/tabs', [TabController::class, 'getTabs']);
 
 Route::post('/sim/request', [SimVerificationController::class, 'requestOtp']);
 Route::post('/sim/verify', [SimVerificationController::class, 'verifyOtp']);
