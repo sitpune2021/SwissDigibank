@@ -2,7 +2,6 @@
 layout: default
 title: Security
 description: How to configure league/commonmark against possible security issues when handling untrusted user input
-redirect_from: /security/
 ---
 
 # Security
@@ -11,7 +10,7 @@ In order to be fully compliant with the CommonMark spec, certain security settin
 
 - `html_input`: How to handle raw HTML
 - `allow_unsafe_links`: Whether unsafe links are permitted
-- `max_nesting_level`: Protected against long render times or segfaults
+- `max_nesting_level`: Protect against long render times or segfaults
 
 Further information about each option can be found below.
 

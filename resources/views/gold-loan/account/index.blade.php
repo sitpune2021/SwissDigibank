@@ -149,9 +149,7 @@
                                 {{ \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y') ?? '-' }}
                             </div>
                         </td>
-
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer"> {{ $loan->goldLoanTransactions->last()->current_debt ?? '' }}</td>
-
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 @if($loan->status==1)

@@ -237,6 +237,10 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving.index'],
+            ['title' => 'FD ACCOUNTS', 'route' => 'report.fd.index'],
+            ['title' => 'MIS ACCOUNTS', 'route' => 'report.mis.index'],
+            ['title' => 'DD ACCOUNTS', 'route' => 'report.dd.index'],
+            ['title' => 'RD ACCOUNTS', 'route' => 'report.rd.index'],
         ],
     ],
 

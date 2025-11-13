@@ -48,4 +48,8 @@ class MembershipChargeTransaction extends Model
     public function members() {
         return $this->belongsTo(Member::class, 'member_id');
     }
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'member_id'); // Ensure 'member_id' is the correct foreign key
+    }
 }

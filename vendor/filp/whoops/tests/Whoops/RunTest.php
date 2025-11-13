@@ -12,7 +12,10 @@ use InvalidArgumentException;
 use Mockery as m;
 use RuntimeException;
 use Whoops\Handler\Handler;
+use Whoops\Handler\HandlerInterface;
+use Whoops\Handler\PrettyPageHandler;
 use Whoops\Exception\Frame;
+use Whoops\Util\SystemFacade;
 
 class RunTest extends TestCase
 {
@@ -548,7 +551,7 @@ class RunTest extends TestCase
         $run
             ->addFrameFilter($filterCallbackOne)
             ->addFrameFilter($filterCallbackTwo);
-        
+
         $frameFilters = $run->getFrameFilters();
 
         $this->assertCount(2, $frameFilters);
@@ -565,10 +568,42 @@ class RunTest extends TestCase
     {
         $run = $this->getRunInstance();
         $run->addFrameFilter(function(Frame $frame) {});
-        
+
         $run = $run->clearFrameFilters();
 
         $this->assertEmpty($run->getFrameFilters());
         $this->assertInstanceOf("Whoops\\RunInterface", $run);
+    }
+
+    public function testShutdownHandlerDoesNotRunIfUnregistered()
+    {
+        $system = m::mock('Whoops\Util\SystemFacade');
+
+        $run = new Run($system);
+        $run->writeToOutput(false);
+        $run->allowQuit(false);
+
+        $fatalError = [
+            'type'    => E_ERROR,
+            'message' => 'Simulated fatal error for shutdown',
+            'file'    => 'somefile.php',
+            'line'    => 10,
+        ];
+        $system->shouldReceive('getLastError')->andReturn($fatalError)->byDefault();
+
+        $mockHandler = m::mock('Whoops\Handler\HandlerInterface');
+        $mockHandler->shouldNotReceive('handle');
+        $mockHandler->shouldNotReceive('setRun');
+        $mockHandler->shouldNotReceive('setInspector');
+        $mockHandler->shouldNotReceive('setException');
+        $run->pushHandler($mockHandler);
+
+        $run->unregister();
+
+        ob_start();
+        $run->handleShutdown();
+        $output = ob_get_clean();
+
+        $this->assertEquals('', $output, "Output buffer should be empty.");
     }
 }
