@@ -1337,7 +1337,11 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
 
 Route::group(['prefix' => 'cut-report'], function () {
-    Route::get('report/saving', [CutReportController::class, 'index'])->name('report.saving.index');
+    Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
+    Route::get('report/fd', [CutReportController::class, 'fdIndex'])->name('report.fd.index');
+    Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+    Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
+    Route::get('report/rd', [CutReportController::class, 'rdIndex'])->name('report.rd.index');
 });
 // ledger 
 Route::group(['prefix' => 'ledger-group'], function () {

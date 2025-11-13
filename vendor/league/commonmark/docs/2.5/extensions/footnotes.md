@@ -2,7 +2,6 @@
 layout: default
 title: Footnote Extension
 description: The FootnoteExtension adds the ability to create footnotes in Markdown documents.
-redirect_from: /extensions/footnotes/
 ---
 
 # Footnotes
@@ -85,7 +84,7 @@ $environment->addExtension(new FootnoteExtension());
 
 // Instantiate the converter engine and start converting some Markdown!
 $converter = new MarkdownConverter($environment);
-echo $converter->convert('# Hello World!');
+echo $converter->convert("This is a footnote[^test] test.\n\n[^test]: Doesn't it look good!");
 ```
 
 ## Configuration
