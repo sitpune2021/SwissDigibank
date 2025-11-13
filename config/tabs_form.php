@@ -4,7 +4,7 @@ return [
     'tabs' => [
         'scan_oq' => [
             'label' => 'Scan QR',
-            'icon' => 'fa-qrcode', 
+            'icon' => 'fa-qrcode',
         ],
         'add_money' => [
             'label' => 'Add Money',
@@ -35,6 +35,7 @@ return [
             'icon' => 'fa-ellipsis-h',
             'sub_tabs' => [
                 'muffinpay_wallet' => [
+                    'label' => 'Muffinpay Wallet',
                     'sub_tabs' => [
                         'prepaid_card' => [
                             'label' => 'Prepaid Card',
@@ -51,6 +52,7 @@ return [
                     ],
                 ],
                 'bill_payment' => [
+                    'label' => 'Bill Payment',
                     'sub_tabs' => [
                         'postpaid_mobile_bill' => [
                             'label' => 'Postpaid Mobile Bill',
@@ -87,6 +89,7 @@ return [
                     ],
                 ],
                 'travel_booking' => [
+                    'label' => 'Travel Booking',
                     'sub_tabs' => [
                         'flight' => [
                             'label' => 'Flight',
@@ -107,6 +110,7 @@ return [
                     ],
                 ],
                 'finance' => [
+                    'label' => 'Finance',
                     'sub_tabs' => [
                         'free_credit_score' => [
                             'label' => 'Free Credit Score',
