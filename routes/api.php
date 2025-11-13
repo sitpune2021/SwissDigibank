@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\ApiTransactionController;
 use App\Http\Controllers\Api\SimVerificationController;
 use App\Http\Controllers\Api\ForgotLoginPasswordController;
+use App\Http\Controllers\Api\TabController;
 
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
@@ -17,6 +18,8 @@ Route::post('/request-mpin-otp', [AuthController::class, 'requestMpinOtp']);
 Route::post('/verify-mpin-otp', [AuthController::class, 'verifympinOtp']);
 Route::post('/set-mpin', [AuthController::class, 'setOrResetMpin']);
 Route::post('/check-mpin-status', [AuthController::class, 'checkMpinStatus']);
+Route::get('/tabs', [TabController::class, 'getTabs']);
+
 
 Route::post('/sim/request', [SimVerificationController::class, 'requestOtp']);
 Route::post('/sim/verify', [SimVerificationController::class, 'verifyOtp']);
@@ -32,3 +35,6 @@ Route::middleware('auth:sanctum')->prefix('accounts')->group(function () {
 
 Route::middleware('auth:sanctum')->get('members/details', [MemberController::class, 'fetchMemberDetails']);
 Route::middleware('auth:sanctum')->get('account/details', [AccountController::class, 'fetchAccountInfo']);
+Route::get('/banks', [AccountController::class, 'getBanks']);
+Route::middleware('auth:sanctum')->get('/fd-accounts', [AccountController::class, 'getFDAccountDetails']);
+
