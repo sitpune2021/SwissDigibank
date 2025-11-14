@@ -102,7 +102,7 @@
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Overdue Interest Rate (%)</td>
-                            <td class="p-3">{{ $scheme->overdue_interest_rate }} %</td>
+                            <td class="p-3">{{ $scheme->overdue_interest_rate }} of {{ $scheme->overdue_type }}</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">SMS Charges per EMI</td>

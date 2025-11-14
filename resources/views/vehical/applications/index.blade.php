@@ -135,7 +135,7 @@
                                         @elseif($application->status == 2)
                                         DISBURSED
                                     @else
-                                        DISAPPROVED
+                                        CANCELLED
                                     @endif
                                 </td>
 

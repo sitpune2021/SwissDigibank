@@ -134,10 +134,11 @@
                     <div class="col-sm-7">
                         <div class="flex items-center gap-2">
                             <!-- Left Select -->
-                            <select name="" id=""
+                            <select name="overdue_type" id="overdue_type"
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option value="TYPE_1">TYPE_1</option>
-                                <option value="TYPE_2">TYPE_2</option>
+                                <option value="">Select Type</option>
+                                <option value="TYPE_1" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_1' ? 'selected' : '' }}>TYPE_1</option>
+                                <option value="TYPE_2" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_2' ? 'selected' : '' }}>TYPE_2</option>
                             </select>
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"

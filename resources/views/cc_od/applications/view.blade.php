@@ -195,6 +195,10 @@
                             </td>
                         </tr>
                         <tr class="border-b">
+                            <td class="font-semibold px-4 py-2">CC Limit Requested</td>
+                            <td class="px-4 py-2">₹ {{ $application->net_loan_amount }}</td>
+                        </tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2">CC Limit Approved</td>
                             <td class="px-4 py-2">₹ {{ $application->approved_loan_amount }}</td>
                         </tr>
