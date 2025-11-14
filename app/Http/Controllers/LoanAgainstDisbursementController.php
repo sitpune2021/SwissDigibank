@@ -21,13 +21,7 @@ class LoanAgainstDisbursementController extends Controller
         $disbursements = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
             // ->whereNotIn('id', $disbursedIds)
-            ->get();
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
-
+            ->paginate(10);
 
         return view('loanagainst.disbursements.index', compact('disbursements'));
     }

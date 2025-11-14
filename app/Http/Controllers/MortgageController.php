@@ -448,7 +448,7 @@ class MortgageController extends Controller
     public function appindex()
     {
         //  loan applications fetch 
-        $applications = MortgageLoanApplication::with(['creditScores'])->latest()->get();
+        $applications = MortgageLoanApplication::with(['creditScores'])->latest()->paginate(10);
 
         return view("mortgage.applications.index", compact('applications'));
     }
@@ -1118,12 +1118,12 @@ class MortgageController extends Controller
         return redirect()->route('mortgage.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
     
-   public function linepropertyindex()
+    public function linepropertyindex()
     {
         $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member', 'properties'])
             ->whereNotIn('status', [4])
             ->latest()
-            ->get(['id', 'status']);
+            ->paginate(10, ['id', 'status']);
 
         return view("mortgage.lineproperty.index", compact('applications'));
     }
