@@ -460,7 +460,7 @@ class VehicalController extends Controller
     public function appindex()
     {
         //  loan applications fetch 
-        $applications = VehicalApplication::with(['creditScores'])->latest()->get();
+        $applications = VehicalApplication::with(['creditScores'])->latest()->paginate(10);
 
         return view("vehical.applications.index", compact('applications'));
     }

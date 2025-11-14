@@ -488,7 +488,7 @@
     </div>
 </div> -->
 
-<script>
+<!-- <script>
     // 🔹 Debit Other Charges Dropdown
     const dropdownButton = document.getElementById('dropdownButton');
     const dropdownMenu = document.getElementById('dropdownMenu');
@@ -520,54 +520,60 @@
     const dropdownPrintMenuBtn = document.getElementById('dropdownPrintMenuBtn');
     const printDropdownMenu = document.getElementById('printDropdownMenu');
 
-    dropdownPrintMenuBtn.addEventListener('click', () => {
+    dropdownPrintMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent window click from immediately closing it
         printDropdownMenu.classList.toggle('hidden');
     });
 
     window.addEventListener('click', (e) => {
-        if (!dropdownPrintMenuBtn.contains(e.target) && !dropdownPrintMenuBtn.contains(e.target)) {
+        // Check button AND menu
+        if (!dropdownPrintMenuBtn.contains(e.target) && !printDropdownMenu.contains(e.target)) {
             printDropdownMenu.classList.add('hidden');
         }
     });
-</script>
-<!-- <script>
-    const modal = document.getElementById('printing_modal');
-    const openBtn = document.getElementById('openModalBtn');
-    const closeBtn = document.getElementById('closeModalBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const form = modal.querySelector('form'); 
-
-    openBtn.addEventListener('click', (e) => {
-        e.preventDefault(); 
-        modal.classList.add('show');
-    });
-
-    const closeModal = () => {
-        modal.classList.remove('show');
-    };
-
-    closeBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
-
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-
-    form.addEventListener('submit', function(e) {
-        const introducer = document.getElementById('introducer_details').value;
-        console.log('Introducer details:', introducer);
-
-        fetch('{{ route('saving.accounts.open.form', base64_encode($account->id)) }}', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ introducer_details: introducer })
-        }).then(response => response.json())
-          .then(data => console.log('Success:', data));
-
-        closeModal();
-    });
-    
 </script> -->
+
+<script>
+    // Dropdowns mapping
+    const dropdowns = [{
+            button: document.getElementById("dropdownPrintMenuBtn"),
+            menu: document.getElementById("printDropdownMenu")
+        },
+        {
+            button: document.getElementById("dropdownButton"),
+            menu: document.getElementById("dropdownMenu")
+        },
+        {
+            button: document.getElementById("accountDropdownButton"),
+            menu: document.getElementById("accountDropdownMenu")
+        }
+    ];
+
+    // Toggle function for each dropdown
+    dropdowns.forEach(({
+        button,
+        menu
+    }) => {
+        button.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            // Close other dropdowns
+            dropdowns.forEach(d => {
+                if (d.menu !== menu) d.menu.classList.add("hidden");
+            });
+
+            // Toggle the clicked dropdown
+            menu.classList.toggle("hidden");
+        });
+    });
+
+    // Global click to close all dropdowns
+    window.addEventListener("click", () => {
+        dropdowns.forEach(({
+            menu
+        }) => menu.classList.add("hidden"));
+    });
+</script>
 
 
 @endsection

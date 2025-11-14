@@ -37,7 +37,6 @@ return new class extends Migration
         Schema::table('account_nominees', function (Blueprint $table) {
             if (Schema::hasColumn('account_nominees', 'mis_account_id')) {
 
-                // Drop the foreign key only if it exists
                 $foreignKeys = DB::select("
                 SELECT CONSTRAINT_NAME 
                 FROM information_schema.KEY_COLUMN_USAGE

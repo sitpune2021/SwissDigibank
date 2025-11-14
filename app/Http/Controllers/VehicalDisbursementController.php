@@ -21,12 +21,7 @@ class VehicalDisbursementController extends Controller
             $disbursements = VehicalApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
             // ->whereNotIn('id', $disbursedIds)
-            ->get();
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
+            ->paginate(10);
 
         return view('vehical.disbursements.index', compact('disbursements'));
     }

@@ -700,7 +700,7 @@ class LoanAgainstController extends Controller
             }
 
             return redirect()->route('loanagainst.applications.index')
-                ->with('success', 'Loan Against Deposit + Credit Scores saved successfully!');
+                ->with('success', 'Loan Against Deposit Create successfully!');
 
         } catch (Exception $e) {
             Log::error('Error while storing Loan Against Deposit', [
@@ -900,7 +900,7 @@ class LoanAgainstController extends Controller
         $applications = LoanAgainstApplication::with(['creditScores', 'branch', 'member'])
             ->whereNotIn('status', [1, 0])
             ->latest()
-            ->get(['id', 'status']);
+            ->paginate(15, ['id', 'status']);
 
         return view("loanagainst.lineproperty.index", compact('applications'));
     }
