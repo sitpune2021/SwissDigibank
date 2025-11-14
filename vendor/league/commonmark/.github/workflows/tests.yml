@@ -33,7 +33,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+                php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
                 stable: [true]
                 coverage: [true]
                 composer-flags: ['']
@@ -42,7 +42,7 @@ jobs:
                       stable: true
                       coverage: false
                       composer-flags: '--prefer-lowest'
-                    - php: '8.4'
+                    - php: '8.5'
                       stable: false
                       coverage: false
                       composer-flags: '--ignore-platform-req=php'
@@ -108,6 +108,24 @@ jobs:
             - run: composer update --no-progress
 
             - run: vendor/bin/psalm --no-progress --stats --threads=$(nproc) --output-format=github --shepherd
+
+    pathological:
+        name: Pathological Tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.4
+                  extensions: curl, mbstring, yaml
+                  coverage: none
+                  tools: composer:v2
+
+            - run: composer update --no-progress
+
+            - run: php tests/pathological/test.php
 
     docs-lint:
         permissions:

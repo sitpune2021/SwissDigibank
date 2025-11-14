@@ -22,6 +22,7 @@ class VehicalScheme extends Model
         'gold_loan_setting',
         'max_loan_limit',
         'overdue_interest_rate',
+        'overdue_type',
         'penalty_charge',
         'fore_closer_charge',
         'credit_period',

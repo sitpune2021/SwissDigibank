@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
+use App\Models\Transaction;
 
 class MemberController extends Controller
 {
@@ -646,7 +647,6 @@ class MemberController extends Controller
         }
     }
 
-
     public function createMinor(Request $request)
     {
         try {
@@ -1075,8 +1075,6 @@ class MemberController extends Controller
         return view('members.member.transactionshow', compact('member', 'transaction', 'branch', 'Accounts', 'amountFormatted'));
     }
 
-
-
     public function softDeleteTransaction($transactionId)
     {
         $transaction = MembershipChargeTransaction::findOrFail($transactionId);
@@ -1119,102 +1117,122 @@ class MemberController extends Controller
 
         return view('members.member.shareAmount', compact('members', 'banks', 'selectedBankId', 'savingAccounts'));
     }
-
+   
     public function storeShareAmount(Request $request, $id)
     {
-        $member = Member::findOrFail($id);
+        try {
+            Log::info('--- storeShareAmount called ---', [
+                'member_id' => $id,
+                'input_data' => $request->all(),
+            ]);
 
-        $validated = $request->validate([
-            'transaction_date'     => 'required|date',
-            'membership_fee'       => 'required|numeric|min:0',
-            'remarks'              => 'nullable|string|max:1000',
-            'charges_pay_mode'     => 'required|in:cash,online,cheque,saving',
-            'approve_status'       => 'nullable|boolean',
-            'is_accounted'         => 'nullable|boolean',
+            $member = Member::findOrFail($id);
 
-            'online_utr_no'        => 'nullable',
-            'transfer_date'        => 'nullable|date',
-            'transfer_mode'        => 'nullable|in:IMPS,VPA,NEFT/RTGS',
-            'bank_id'              => 'nullable|integer|exists:banks,id',
-            'cheque_no'            => 'nullable',
-            'cheque_date'          => 'nullable|date',
-            'saving_account_id'    => 'nullable|integer',
-        ]);
+            $validated = $request->validate([
+                'transaction_date'     => 'required|date',
+                'membership_fee'       => 'required|numeric|min:0',
+                'remarks'              => 'nullable|string|max:1000',
+                'charges_pay_mode'     => 'required|in:cash,online,cheque,saving',
+                'approve_status'       => 'nullable|boolean',
+                'is_accounted'         => 'nullable|boolean',
+                'online_utr_no'        => 'nullable',
+                'transfer_date'        => 'nullable|date',
+                'transfer_mode'        => 'nullable|in:IMPS,VPA,NEFT/RTGS',
+                'bank_id'              => 'nullable|integer|exists:banks,id',
+                'cheque_no'            => 'nullable',
+                'cheque_date'          => 'nullable|date',
+                'saving_account_id'    => 'nullable|integer',
+            ]);
 
-        $paymentMode = $validated['charges_pay_mode'];
-        $type = 'Share amount';
-        $remarks = $validated['remarks'] ?? '';
+            Log::info('Validated data:', $validated);
 
-        $account = null;
+            $paymentMode = $validated['charges_pay_mode'];
+            $type = 'Share amount';
+            $remarks = $validated['remarks'] ?? '';
 
-        if ($paymentMode === 'saving' && !empty($validated['saving_account_id'])) {
-            $account = Account::find($validated['saving_account_id']);
+            $account = null;
 
-            if (!$account) {
-                return back()->withErrors(['saving_account_id' => 'Selected saving account does not exist.']);
+            // Saving account validation
+            if ($paymentMode === 'saving' && !empty($validated['saving_account_id'])) {
+                $account = Account::find($validated['saving_account_id']);
+
+                if (!$account) {
+                    Log::warning('Invalid saving account', ['saving_account_id' => $validated['saving_account_id']]);
+                    return back()->withErrors(['saving_account_id' => 'Selected saving account does not exist.']);
+                }
+
+                if ($account->member_id !== $member->id) {
+                    Log::warning('Saving account mismatch', ['member_id' => $member->id, 'account_member_id' => $account->member_id]);
+                    return back()->withErrors(['saving_account_id' => 'Selected saving account does not belong to the member.']);
+                }
+
+                if ($account->amount_deposit < $validated['membership_fee']) {
+                    Log::warning('Insufficient balance in saving account', ['balance' => $account->amount_deposit]);
+                    return back()->withErrors(['saving_account_id' => 'Insufficient balance in the selected saving account.']);
+                }
+
+                // Deduct balance
+                $account->amount_deposit -= $validated['membership_fee'];
+                $account->save();
+
+                $type = 'Saving to Share Amount';
+                $remarks = 'Credited from Saving A/c - ' . $account->account_no;
             }
 
-            if ($account->member_id !== $member->id) {
-                return back()->withErrors(['saving_account_id' => 'Selected saving account does not belong to the member.']);
+            // Prepare data for insert
+            $data = [
+                'transaction_date'     => \Carbon\Carbon::parse($validated['transaction_date'])->format('Y-m-d'),
+                'membership_fee'       => $validated['membership_fee'],
+                'net_fee_to_collect'   => $validated['membership_fee'],
+                'remarks'              => $remarks,
+                'charges_pay_mode'     => $paymentMode,
+                'type'                 => $type,
+                'approve_status'       => $validated['approve_status'] ?? 0,
+                'is_accounted'         => $validated['is_accounted'] ?? 0,
+                'member_id'            => $member->id,
+            ];
+
+            if ($paymentMode === 'online') {
+                $data['online_utr_no'] = $validated['online_utr_no'] ?? null;
+                $data['transfer_mode'] = $validated['transfer_mode'] ?? null;
             }
 
-            if ($account->amount_deposit < $validated['membership_fee']) {
-                return back()->withErrors(['saving_account_id' => 'Insufficient balance in the selected saving account.']);
+            if ($paymentMode === 'cheque') {
+                $data['cheque_no'] = $validated['cheque_no'] ?? null;
+                $data['cheque_date'] = $validated['cheque_date']
+                    ? \Carbon\Carbon::createFromFormat('d-m-Y', $validated['cheque_date'])->format('Y-m-d')
+                    : null;
+                $data['bank_id'] = $validated['bank_id'] ?? null;
             }
 
-            // Deduct balance only for saving account
-            $account->amount_deposit -= $validated['membership_fee'];
-            $account->save();
+            if ($paymentMode === 'System' && $account) {
+                $data['saving_account_id'] = $account->id;
+            }
 
-            $type = 'Saving to Share Amount';
-            $remarks = 'Credited from Saving A/c - ' . $account->account_no;
+            Log::info('Prepared data for DB insert:', $data);
+
+            // Try to insert transaction
+            $transaction = MembershipChargeTransaction::create($data);
+
+            if (!$transaction) {
+                Log::error('DB insert failed', ['data' => $data]);
+            } else {
+                Log::info('Transaction successfully created', [
+                    'transaction_id' => $transaction->id,
+                    'member_id' => $member->id,
+                ]);
+            }
+
+            return redirect()->route('members.transactions', $id);
+        } catch (\Exception $e) {
+            Log::error('Error in storeShareAmount', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+            return back()->with('error', 'Something went wrong. Please check logs.');
         }
-
-        $data = [
-            'transaction_date'     => \Carbon\Carbon::parse($validated['transaction_date'])->format('Y-m-d'),
-            'membership_fee'       => $validated['membership_fee'],
-            'net_fee_to_collect'   => $validated['membership_fee'],
-            'remarks'              => $remarks,
-            'charges_pay_mode'     => $paymentMode,
-            'type'                 => $type,
-            'approve_status'       => $validated['approve_status'] ?? 0,
-            'is_accounted'         => $validated['is_accounted'] ?? 0,
-            'member_id'            => $member->id,
-        ];
-
-        // Add mode-specific fields
-        if ($paymentMode === 'online') {
-            $data['online_utr_no'] = $validated['online_utr_no'] ?? null;
-            $data['transfer_mode'] = $validated['transfer_mode'] ?? null;
-        }
-
-        if ($paymentMode === 'cheque') {
-            $data['cheque_no'] = $validated['cheque_no'] ?? null;
-            $data['cheque_date'] = $validated['cheque_date']
-                ? \Carbon\Carbon::createFromFormat('d-m-Y', $validated['cheque_date'])->format('Y-m-d')
-                : null;
-            $data['bank_id'] = $validated['bank_id'] ?? null;
-        }
-
-        if ($paymentMode === 'System' && $account) {
-            $data['saving_account_id'] = $account->id;
-        }
-
-        $transaction = MembershipChargeTransaction::create($data);
-
-        Log::info('Share Amount Transaction Created', [
-            'member_id'        => $member->id,
-            'member_name'      => $member->member_info_first_name ?? null,
-            'payment_mode'     => $paymentMode,
-            'membership_fee'   => $validated['membership_fee'],
-            'transaction_id'   => $transaction->id,
-            'remarks'              => $remarks,
-
-        ]);
-
-        return redirect()->route('members.transactions', $id);
     }
-
     public function otherChargesList($id)
     {
         try {
@@ -1601,7 +1619,6 @@ class MemberController extends Controller
 
     public function storeComment(Request $request)
     {
-        // dd($request->all());
         Log::debug('Store Comment Request Data: ', $request->all());
 
         // Validate the incoming request
@@ -1640,5 +1657,4 @@ class MemberController extends Controller
             return back()->withErrors('There was an error storing your comment.');
         }
     }
-    
 }

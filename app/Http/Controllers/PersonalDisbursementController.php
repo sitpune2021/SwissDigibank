@@ -142,37 +142,97 @@ class PersonalDisbursementController extends Controller
     
     public function show($id)
     {
+        // Load loan + scheme + member + branch
         $disbursement = PersonalLoanApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
         $banks = Bank::pluck('name', 'id');
 
-        $processingFee = optional($disbursement->scheme)->processing_fee ?? 0;
-        $gstPercent = 18;
-        $gstAmount = ($processingFee * $gstPercent) / 100;
+        // Base scheme values
+        $scheme = optional($disbursement->scheme);
+        $processingFee = $scheme->processing_fee ?? 0;
+        $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
+        $insuranceFee = $scheme->insurance_fee ?? 0;
 
+        // Common GST percent
+        $gstPercent = 18;
+
+        // ===== Processing Fee Logic =====
+        $processingGst = ($processingFee * $gstPercent) / 100;
+        $processingTotal = $processingFee + $processingGst;
+
+        // ===== Stamp Duty Logic =====
+        $stampGst = ($stampDutyFee * $gstPercent) / 100;
+        $stampTotal = $stampDutyFee + $stampGst;
+
+        // ===== Insurance Fee Logic =====
+        $insuranceGst = ($insuranceFee * $gstPercent) / 100;
+        $insuranceTotal = $insuranceFee + $insuranceGst;
+
+        // ===== SGST / CGST / IGST fix 0 =====
         $sgst = 0;
         $cgst = 0;
         $igst = 0;
 
-        $total = $processingFee + $gstAmount;
+        // ===== Interest calculation =====
+        $maxLoanAmount = $scheme->max_loan_amount ?? 0;
+        $annualInterestRate = $scheme->annual_interest_rate ?? 0;
+        $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
 
-        $loanAmount = $disbursement->loan_amount ?? 0;
+        // ===== Total deductions =====
+        $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
 
-        // Final Amount
-        $finalAmount = $loanAmount - $total;
+        // ===== Final amount to disburse =====
+        $loanAmount = $disbursement->approved_loan_amount ?? 0;
+        $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
+
+        // Approved Loan Amount
+        $approvedLoan = (float) ($disbursement->approved_loan_amount ?? 0);
+
+        // Annual interest rate
+        $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
+
+        // Tenure months (default 12)
+        $tenureMonths = (int) ($disbursement->tenure_months ?? 12);
+
+        // Monthly Rate
+        $monthlyRate = $annualRate / 12 / 100;
+
+        // EMI Calculation (reducing)
+        if ($monthlyRate > 0) {
+            $emi = round(
+                ($approvedLoan * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths)) /
+                (pow(1 + $monthlyRate, $tenureMonths) - 1),
+                2
+            );
+        } else {
+            $emi = round($approvedLoan / $tenureMonths, 2);
+        }
+
+        // Total interest
+        $totalInterest = round(($emi * $tenureMonths) - $approvedLoan, 2);
+
+        // Total Recover Amount
+        $totalRecover = round($approvedLoan + $totalInterest, 2);
+
 
         return view(
             "personal.disbursements.disburse-loan",
             compact(
                 'disbursement',
                 'banks',
-                'processingFee',
+                'processingFee', 'processingGst', 'processingTotal',
+                'stampDutyFee', 'stampGst', 'stampTotal',
+                'insuranceFee', 'insuranceGst', 'insuranceTotal',
                 'gstPercent',
-                'gstAmount',
-                'sgst',
-                'cgst',
-                'igst',
-                'total',
-                'finalAmount'
+                'sgst', 'cgst', 'igst',
+                'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
+                'finalAmountToDisburse',
+                'loanAmount',
+                'totalDeductions',
+                'totalInterest',      
+                'totalRecover',       
+                'emi'
+               
             )
         );
     }

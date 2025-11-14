@@ -20,98 +20,167 @@ use App\Models\CcOdLoanApplication;
 use App\Models\DailyWeeklyApplication;
 use App\Models\DdsAccount;
 use App\Models\VehicalApplication;
-
+use App\Models\MembershipChargeTransaction;
+// use Illuminate\Http\Request;
 use App\Models\PersonalLoanApplication;
-
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ApproveController extends Controller
 {
 
-    // Pending transaction 
     public function index(Request $request)
     {
         try {
-            $search = $request->input('search');
-            $perPage = $request->input('perPage', 10); // default 10 if not passed
+            $perPage = $request->input('perPage', 10);
+            Log::info('🟢 Starting Pending Transaction Fetch', ['perPage' => $perPage]);
 
-            $query = Transaction::with('accounts.members', 'accounts.branch')
-                ->where('approve_status', '!=', 'approved');
+            Log::info('Fetching transaction data...');
+            $transactionQuery = DB::table('transactions')
+                ->select(
+                    'transactions.id',
+                    DB::raw("'transaction' AS source_table"),
+                    'transactions.payment_mode',
+                    'transactions.amount',
+                    'transactions.bank_name',
+                    'transactions.approve_status',
+                    'transactions.created_at',
+                    'branches.branch_name',
+                    'accounts.account_no',
+                    'accounts.account_type',
+                    'accounts.account_holder_type',
+                    'accounts.firm_name',
+                    'accounts.branch_id',
+                    'accounts.member_id',
+                    'accounts.account_status',
+                    DB::raw("'Saving' AS transaction_type")
+                )
+                ->join('accounts', 'accounts.id', '=', 'transactions.account_id')
+                ->join('branches', 'branches.id', '=', 'accounts.branch_id')
+                ->where('transactions.approve_status', '!=', 'approved')
+                ->whereNull('transactions.deleted_at');
 
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('payment_mode', 'like', "%{$search}%")
-                        ->orWhere('transaction_type', 'like', "%{$search}%")
-                        ->orWhere('bank_name', 'like', "%{$search}%")
-                        ->orWhere('amount', 'like', "%{$search}%")
-                        ->orWhereHas('accounts', function ($q2) use ($search) {
-                            $q2->where('account_no', 'like', "%{$search}%")
-                                ->orWhere('account_type', 'like', "%{$search}%")
-                                ->orWhereHas('branch', function ($q3) use ($search) {
-                                    $q3->where('branch_name', 'like', "%{$search}%");
-                                })
-                                ->orWhereHas('members', function ($q4) use ($search) {
-                                    $q4->where('member_info_first_name', 'like', "%{$search}%")
-                                        ->orWhere('member_info_last_name', 'like', "%{$search}%");
-                                });
-                        });
-                });
-            }
+            Log::info('Transaction query built successfully.');
 
-            $pending_transactions = $query
-                ->orderBy('created_at', 'desc')
-                ->paginate($perPage)
-                ->appends($request->all()); // preserve search & perPage on pagination links
+            Log::info('Fetching membership charges data...');
+            $membershipQuery = DB::table('membership_charges_transaction')
+                ->select(
+                    'membership_charges_transaction.id',
+                    DB::raw("'membership_charges_transaction' AS source_table"),
+                    'membership_charges_transaction.charges_pay_mode AS payment_mode',
+                    'membership_charges_transaction.membership_fee AS amount',
+                    'membership_charges_transaction.cheque_bank_name AS bank_name',
+                    'membership_charges_transaction.approve_status',
+                    'membership_charges_transaction.created_at',
+                    'branches.branch_name',
+                    'accounts.account_no',
+                    DB::raw("'Share amount' AS account_type"),
+                    'accounts.account_holder_type',
+                    DB::raw('NULL AS firm_name'),
+                    'accounts.branch_id',
+                    'accounts.member_id',
+                    'accounts.account_status',
+                    DB::raw("'Share amount' AS transaction_type")
+                )
+                ->leftJoin('accounts', 'accounts.id', '=', 'membership_charges_transaction.member_id')
+                ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
+                ->leftJoin('branches', 'branches.id', '=', 'members.general_branch')
+                ->where('membership_charges_transaction.type', '=', 'Share amount')
+                ->where('membership_charges_transaction.approve_status', '!=', 1)
+                ->whereNull('membership_charges_transaction.deleted_at');
 
-            return view('approvals.pending_transactions', compact('pending_transactions'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+            Log::info('Membership charges query built successfully.');
+
+            Log::info('Combining transaction and membership queries...');
+            $unionQuery = $transactionQuery->unionAll($membershipQuery);
+
+            Log::info('Creating final combined query...');
+            $finalQuery = DB::query()
+                ->fromSub($unionQuery, 'combined')
+                ->orderByDesc('created_at');
+
+            Log::info('Paginating results...');
+            $results = $finalQuery->paginate($perPage);
+
+            Log::info('✅ Pending transactions fetched successfully.', [
+                'total' => $results->total(),
+                'perPage' => $results->perPage(),
+                'currentPage' => $results->currentPage()
+            ]);
+
+            return view('approvals.pending_transactions', [
+                'pending_transactions' => $results
+            ]);
+        } catch (\Exception $e) {
+            Log::error('❌ Error fetching pending transactions', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            dd('Error fetching pending transactions: ' . $e->getMessage());
         }
     }
-
 
     public function update(Request $request, $id)
     {
+
         try {
-            $transaction = Transaction::with('accounts.members')->findOrFail($id);
+            $sourceTable = $request->input('source_table');
 
-            $transaction->approve_status = $request->input('transaction_status');
-            $transaction->remarks = $request->input('remarks');
-            $transaction->payment_rev_rel = $request->input('payment_status');
-            $amount = $transaction->amount;
+            $status = $request->input('transaction_status');
+            $remarks = $request->input('remarks');
+            $paymentStatus = $request->input('payment_status');
 
-            if (strtolower($transaction->payment_mode) === 'online') {
-                $transaction->bank_name = $request->input('bank_account_id');
+            if ($sourceTable === 'transaction') {
+
+                $transaction = Transaction::with('accounts.members')->findOrFail($id);
+
+                $transaction->approve_status = $status;
+                $transaction->remarks = $remarks;
+                $transaction->payment_rev_rel = $paymentStatus;
+
+                if (strtolower($transaction->payment_mode) === 'online') {
+                    $transaction->bank_name = $request->input('bank_account_id');
+                }
+
+                if ($transaction->save()) {
+                    $mobile = $transaction->accounts->members->member_info_mobile_no ?? '';
+                    $AccountNo = $transaction->accounts->account_no;
+                    $type = $transaction->transaction_type;
+                    $amount = $transaction->amount;
+                    $account_id = $transaction->accounts->id;
+                    $updated_balances = \App\Helpers\AccountsTransactionsHelper::getAccountBalacec([$account_id]);
+                    $available_balance = $updated_balances['total_balance'];
+                    $date = $transaction->transaction_date;
+
+                    $dlttemplateid = '1707172234108850512';
+                    $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
+                    \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
+                    return redirect()->back()->with('success', 'Saving transaction approved successfully.');
+                }
             }
+             elseif ($sourceTable === 'membership_charges_transaction') {
 
-            if ($transaction->save()) {
+                $updated = DB::table('membership_charges_transaction')
+                    ->where('id', $id)
+                    ->update([
+                        'approve_status' => 1,
+                        'updated_at' => now(),
+                    ]);
 
-                // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
-
-                $mobile = $transaction->accounts->members->member_info_mobile_no;
-
-                $AccountNo = $transaction->accounts->account_no;
-
-                $type = $transaction->transaction_type;
-
-                $account_id = $transaction->accounts->id;
-                $updated_balances = AccountsTransactionsHelper::getAccountBalacec([$account_id]);
-                $available_balance = $updated_balances['total_balance'];
-
-                $date = $transaction->transaction_date;
-
-                $dlttemplateid = 1707172234108850512;
-                $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
-
-                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-
-                return redirect()->back()->with('success', 'Transaction updated successfully.');
-            } else {
-                return redirect()->back()->with('error', 'Failed to update transaction.');
+                if ($updated) {
+                    return redirect()->back()->with('success', 'Membership Share Amount approved successfully.');
+                } else {
+                    return redirect()->back()->with('error', 'Failed to update Membership Share Amount.');
+                }
+            } 
+            else {
+                return redirect()->back()->with('error', 'Invalid source table specified.');
             }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        } catch (\Exception $e) {
+            dd('Error updating status: ' . $e->getMessage());
         }
     }
+
     // pending transaction ends
 
     // Approve account status
@@ -323,7 +392,7 @@ class ApproveController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong while updating account status.']);
         }
     }
-   
+
     public function approveAccounts(Request $request)
     {
         try {
@@ -736,7 +805,7 @@ class ApproveController extends Controller
                 return $item;
             });
 
-         // Personal Loan Applications
+        // Personal Loan Applications
         $vehical = VehicalApplication::with(['branch', 'member'])
             ->whereNotIn('status', [1, 2, 3])
             ->latest()

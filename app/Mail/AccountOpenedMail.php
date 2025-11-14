@@ -16,11 +16,16 @@ class AccountOpenedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public $accountData;
+    // public $accountData;
+    public $member;
+    public $account;
+    public $pdfPath;
 
-    public function __construct($accountData)
+    public function __construct($member, $account, $pdfPath)
     {
-         $this->accountData = $accountData;
+        $this->member = $member;
+        $this->account = $account;
+        $this->pdfPath = $pdfPath;
     }
 
     /**
@@ -40,6 +45,12 @@ class AccountOpenedMail extends Mailable
     {
         return new Content(
             view: 'emails.account_opened',
+
+            with: [
+                'member' => $this->member,
+                'account' => $this->account,
+                'pdfPath' => $this->pdfPath,
+            ],
         );
     }
 
@@ -50,6 +61,8 @@ class AccountOpenedMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [
+            \Illuminate\Mail\Mailables\Attachment::fromPath($this->pdfPath)
+        ];
     }
 }

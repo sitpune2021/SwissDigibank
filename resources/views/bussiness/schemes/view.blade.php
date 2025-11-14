@@ -82,15 +82,15 @@
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Fore Closure Charges</td>
-                            <td class="p-3">₹ {{ number_format($scheme->fore_closer_charge, 2) }}</td>
+                            <td class="p-3">{{ number_format($scheme->fore_closer_charge, 2) }} %</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Stamp Duty Fee</td>
-                            <td class="p-3">₹ {{ number_format($scheme->stamp_duty_charge, 2) }}</td>
+                            <td class="p-3">{{ number_format($scheme->stamp_duty_charge, 2) }} %</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Insurance Charges</td>
-                            <td class="p-3">₹ {{ number_format($scheme->insurance_fee, 2) }}</td>
+                            <td class="p-3">{{ number_format($scheme->insurance_fee, 2) }} %</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Processing Fee</td>
@@ -102,7 +102,7 @@
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Overdue Interest Rate (%)</td>
-                            <td class="p-3">{{ $scheme->overdue_interest_rate }} %</td>
+                            <td class="p-3">{{ $scheme->overdue_interest_rate }} % of {{ $scheme->overdue_type }}</td>
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">SMS Charges per EMI</td>
@@ -127,6 +127,10 @@
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Credit Period</td>
                             <td class="p-3">{{ number_format($scheme->credit_period) }} Days</td>
+                        </tr>
+                        <tr class="bg-gray-50 border-b ">
+                            <td class="font-semibold p-3">Charges Per EMI Type</td>
+                            <td class="p-3">{{ $scheme->charge_per_emi == 1 ? 'ON EMI' : 'ON PRINCIPLE' }}</td>
                         </tr>
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Active</td>

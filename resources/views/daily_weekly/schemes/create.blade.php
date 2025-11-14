@@ -81,6 +81,41 @@
                         @enderror
                 </div>
 
+                 <div class="col-span-2 md:col-span-1">
+                    <label for="gold_loan_setting" class="md:text-lg font-medium block mb-4">
+                        EMI Collection <span class="text-red-500">*</span>
+                    </label>
+
+                    <select id="gold_loan_setting" name="gold_loan_setting"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
+
+                        @php
+                            $selectedValue = old('gold_loan_setting', $scheme->gold_loan_setting ?? '');
+                        @endphp
+
+                        <option value="">Select EMI Collection</option>
+                        <option value="daily"      {{ $selectedValue == 'daily' ? 'selected' : '' }}>DAILY</option>
+                        <option value="weekly"     {{ $selectedValue == 'weekly' ? 'selected' : '' }}>WEEKLY</option>
+                        <option value="bi_weekly"  {{ $selectedValue == 'bi_weekly' ? 'selected' : '' }}>BI WEEKLY</option>
+                        <option value="4_weekly"   {{ $selectedValue == '4_weekly' ? 'selected' : '' }}>4 WEEKLY</option>
+                        <option value="Monthaly"   {{ $selectedValue == 'Monthly' ? 'selected' : '' }}>MONTHALY</option>
+                    </select>
+
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4">
+                        No of EMIs
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="no_of_emi" name="no_of_emi" value="{{ old('no_of_emi', $scheme->no_of_emi ?? '') }}"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        placeholder="Enter No of EMIs" >
+                    @error('no_of_emi')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror                      
+                </div>
+
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         EMI Amount 
@@ -106,7 +141,28 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror                      
                 </div>
-
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4">
+                        Overdue Interest Rate (%) 
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <!-- Left Select -->
+                        <select name="overdue_type" id="overdue_type"
+                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
+                            <option value="">Select Type</option>
+                            <option value="TYPE_1" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_1' ? 'selected' : '' }}>TYPE_1</option>
+                            <option value="TYPE_2" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_2' ? 'selected' : '' }}>TYPE_2</option>
+                        </select>
+                        <!-- Main Input -->
+                        <input type="number" id="overdue_rate" name="overdue_rate" value="{{ old('overdue_rate', $scheme->overdue_rate ?? '') }}"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                            placeholder="Enter Penalty Charges ">
+                        @error('overdue_rate')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror 
+                    </div>
+                </div>
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Penalty Charges
@@ -179,80 +235,74 @@
                                 placeholder="Enter Fore Closure Charges">
                         </div>
                     </div>
-                </div>
-
+                </div> 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="gold_loan_setting" class="md:text-lg font-medium block mb-4">
-                        EMI Collection <span class="text-red-500">*</span>
-                    </label>
-
-                    <select id="gold_loan_setting" name="gold_loan_setting"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
-
-                        @php
-                            $selectedValue = old('gold_loan_setting', $scheme->gold_loan_setting ?? '');
-                        @endphp
-
-                        <option value="">Select EMI Collection</option>
-                        <option value="daily"      {{ $selectedValue == 'daily' ? 'selected' : '' }}>DAILY</option>
-                        <option value="weekly"     {{ $selectedValue == 'weekly' ? 'selected' : '' }}>WEEKLY</option>
-                        <option value="bi_weekly"  {{ $selectedValue == 'bi_weekly' ? 'selected' : '' }}>BI WEEKLY</option>
-                        <option value="4_weekly"   {{ $selectedValue == '4_weekly' ? 'selected' : '' }}>4 WEEKLY</option>
-                        <option value="Monthaly"   {{ $selectedValue == 'Monthly' ? 'selected' : '' }}>MONTHALY</option>
-                    </select>
-
-                </div>
-
+                    <div class="col-sm-7">
+                        <label for="" class="md:text-lg font-medium block mb-4">
+                            Fitness Fee
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <!-- Left Select -->     
+                            <!-- Main Input -->
+                            <input type="number" id="fitness_fee" name="fitness_fee" value="{{ old('fitness_fee', $scheme->fitness_fee ?? '') }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                                placeholder="Enter Fore Closure Charges">
+                        </div>
+                    </div>
+                </div>     
                 <div class="col-span-2 md:col-span-1">
-                    <label for="" class="md:text-lg font-medium block mb-4">
-                        No of EMIs
-                        <span class="text-red-500">*</span>
+                    <div class="col-sm-7">
+                        <label for="" class="md:text-lg font-medium block mb-4">
+                            Credit Period
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <!-- Left Select -->        
+                            <!-- Main Input -->
+                            <input type="number" id="credit_period" name="credit_period" value="{{ old('credit_period', $scheme->credit_period ?? '1') }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
+                                placeholder="Enter Fore Closure Charges">
+                        </div>
+                    </div>
+                </div>                  
+
+                {{-- Active field Yes/No --}}
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-2">
+                        Active <span class="text-red-600">*</span>
                     </label>
-                    <input type="number" id="no_of_emi" name="no_of_emi" value="{{ old('no_of_emi', $scheme->no_of_emi ?? '') }}"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter No of EMIs" >
-                    @error('no_of_emi')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror                      
+                    <div class="mt-1 flex flex-wrap gap-3">
+                        <!-- Yes -->
+                        <label class="flex items-center gap-2 space-x-2 p-2">
+                            <input 
+                        type="radio" 
+                        name="is_active" 
+                        value="1"
+                        class="text-green-600 focus:ring-green-500"
+                        {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>Yes
+                        </label>
+
+                        <!-- No -->
+                        <label class="flex items-center gap-2 space-x-2 p-2">
+                            <input 
+                        type="radio" 
+                        name="is_active" 
+                        value="0"
+                        class="text-green-600 focus:ring-green-500"
+                        {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}>
+                            <span class="text-gray-700 capitalize">No</span>
+                        </label>
+                        @error('is_active')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                 </div>
+       
 
         </div>
 
            
-         {{-- Active field Yes/No --}}
-        <div class="w-full">
-            <div class="mb-4">
-                <label class="md:text-lg font-medium block mb-2">
-                    Active <span class="text-red-600">*</span>
-                </label>
-                <div class="mt-1 flex flex-wrap gap-3">
-                    <!-- Yes -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                         <input 
-                    type="radio" 
-                    name="is_active" 
-                    value="1"
-                    class="text-green-600 focus:ring-green-500"
-                    {{ old('is_active', $scheme->is_active ?? '') == 1 ? 'checked' : '' }}>Yes
-                    </label>
-
-                    <!-- No -->
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input 
-                    type="radio" 
-                    name="is_active" 
-                    value="0"
-                    class="text-green-600 focus:ring-green-500"
-                    {{ old('is_active', $scheme->is_active ?? '') == 0 ? 'checked' : '' }}>
-                        <span class="text-gray-700 capitalize">No</span>
-                    </label>
-                     @error('is_active')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                </div>
-
-            </div>
-        </div>
+        
 
         {{-- Charges Per EMI Inputs --}}
         <div id="" >

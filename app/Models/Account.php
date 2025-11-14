@@ -79,4 +79,5 @@ class Account extends Model
     {
         return $this->hasMany(SavingOtherCharge::class, 'account_id', 'id');
     }
+    
 }

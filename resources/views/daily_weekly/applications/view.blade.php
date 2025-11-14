@@ -148,6 +148,12 @@
         <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
             REGISTER eNACH ( Fidypay )
         </a>
+        <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( RocketPay )
+        </a>
+         <a href="#" class="btn-primary   px-2 py-2 rounded-10 ">
+            REGISTER eNACH ( RocketPay UPI )
+        </a>
         @endif
 
         @if($application->status != 0 || $application->status == 1 )
