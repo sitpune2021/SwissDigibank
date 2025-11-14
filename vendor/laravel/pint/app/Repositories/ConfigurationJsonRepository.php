@@ -77,7 +77,17 @@ class ConfigurationJsonRepository
     protected function get()
     {
         if (! is_null($this->path) && $this->fileExists((string) $this->path)) {
-            return tap(json_decode(file_get_contents($this->path), true), function ($configuration) {
+            $baseConfig = json_decode(file_get_contents($this->path), true);
+
+            if (isset($baseConfig['extend'])) {
+                $baseConfig = $this->resolveExtend($baseConfig);
+            }
+
+            if (isset($baseConfig['rules'])) {
+                $baseConfig['rules'] = $this->normalizeRuleValues($baseConfig['rules']);
+            }
+
+            return tap($baseConfig, function ($configuration) {
                 if (! is_array($configuration)) {
                     abort(1, sprintf('The configuration file [%s] is not valid JSON.', $this->path));
                 }
@@ -85,6 +95,25 @@ class ConfigurationJsonRepository
         }
 
         return [];
+    }
+
+    /**
+     * Normalize shorthand rule values into explicit configuration arrays as expected by PHP-CS-Fixer.
+     *
+     * @param  array<string, mixed>  $rules
+     * @return array<string, mixed>
+     */
+    protected function normalizeRuleValues(array $rules): array
+    {
+        if (array_key_exists('cast_spaces', $rules)) {
+            $rules['cast_spaces'] = match ($rules['cast_spaces']) {
+                false => ['space' => 'none'],
+                true => ['space' => 'single'],
+                default => $rules['cast_spaces'],
+            };
+        }
+
+        return $rules;
     }
 
     /**
@@ -98,5 +127,24 @@ class ConfigurationJsonRepository
             str_starts_with($path, 'http://') || str_starts_with($path, 'https://') => str_contains(get_headers($path)[0], '200 OK'),
             default => file_exists($path)
         };
+    }
+
+    /**
+     * Resolve the file to extend.
+     *
+     * @param  array<string, array<int, string>|string>  $configuration
+     * @return array<string, array<int, string>|string>
+     */
+    private function resolveExtend(array $configuration)
+    {
+        $path = realpath(dirname($this->path).DIRECTORY_SEPARATOR.$configuration['extend']);
+
+        $extended = json_decode(file_get_contents($path), true);
+
+        if (isset($extended['extend'])) {
+            throw new \LogicException('Pint configuration cannot extend from more than 1 file.');
+        }
+
+        return array_replace_recursive($extended, $configuration);
     }
 }

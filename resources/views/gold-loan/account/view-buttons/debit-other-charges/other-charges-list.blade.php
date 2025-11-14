@@ -34,7 +34,7 @@
                 <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
                 <a href="#" class="text-gray-500 text-sm">00460 </a>>
                 <a href="#" class="text-gray-500 text-sm">
-                   Other Charges
+                    Other Charges
                 </a>
             </p>
         </div>
@@ -42,21 +42,22 @@
 
 
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
-            <div class="col-span-2 md:col-span-1 mt-2 mb-2">
-                     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                        <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
-                          Debit other charges
-                        </button>
+        <div class="col-span-2 md:col-span-1 mt-2 mb-2">
+            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+                <button class="btn-primary uppercase justify-center"
+                    onclick="window.location.href='{{ route('gold-loan.debitOtherCharges.form', $goldLoan->id) }}'">
+                    Debit other charges
+                </button>
 
-                        <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> clear dues</a>
-                        </button>
-                    </div>
-                 </div>
+                <button class="btn-outline uppercase justify-center" type="reset">
+                    <a href="{{route('gold-loan.clear-due.form',$goldLoan->id)}}"> clear dues</a>
+                </button>
+            </div>
+        </div>
 
     </div>
-     <div class="flex flex-col box dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
-      
+    <div class="flex flex-col box dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
+
         <h5 class="capitalize">No Charges Found</h5>
 
     </div>

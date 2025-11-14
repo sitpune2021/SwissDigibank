@@ -183,6 +183,28 @@ test('readonly properties from parent scope variable', function () {
     );
 })->with('serializers');
 
+test('readonly properties declared in parent', function () {
+    $childWithDefaultValue = new SerializerPhp81Child();
+
+    $f = static function () use ($childWithDefaultValue) {
+        return $childWithDefaultValue;
+    };
+
+    $f = s($f);
+
+    expect($f()->property)->toBe(1);
+
+    $child = new SerializerPhp81Child(100);
+
+    $f = static function () use ($child) {
+        return $child;
+    };
+
+    $f = s($f);
+
+    expect($f()->property)->toBe(100);
+})->with('serializers');
+
 test('first-class callable with closures', function () {
     $f = function ($value) {
         return $value;
@@ -364,7 +386,30 @@ test('function attributes with arguments', function () {
         fn ($attribute) => $attribute
             ->getName()->toBe(MyAttribute::class)
             ->getArguments()->toBe([
-                'My " \' Argument 1', Model::class,
+                'My " \' Argument 1', 'Tests\Fixtures\Model',
+            ])
+    );
+
+    expect($f())->toBeFalse();
+})->with('serializers');
+
+test('function attributes with array arguments', function () {
+    $model = new Model();
+
+    $f = #[MyAttribute("My Argument", ["one", "two"])] function () {
+        return false;
+    };
+
+    $f = s($f);
+
+    $reflector = new ReflectionFunction($f);
+
+    expect($reflector->getAttributes())->sequence(
+        fn ($attribute) => $attribute
+            ->getName()->toBe(MyAttribute::class)
+            ->getArguments()->toBe([
+                "My Argument",
+                ["one", "two"],
             ])
     );
 
@@ -549,12 +594,12 @@ test('function attributes with named arguments', function () {
             ->getName()->toBe(MyAttribute::class)
             ->getArguments()->toBe([
                 'string' => 'My " \' Argument 1',
-                'model' => Model::class,
+                'model' => 'Tests\\Fixtures\\Model',
             ]);
 
         expect($attribute->value->newInstance())
             ->string->toBe('My " \' Argument 1')
-            ->model->toBe(Model::class);
+            ->model->toBe('Tests\\Fixtures\\Model');
     });
 
     expect($f())->toBeFalse();
@@ -574,7 +619,7 @@ test('function attributes with first-class callable with methods', function () {
         fn ($attribute) => $attribute
             ->getName()->toBe(MyAttribute::class)
             ->getArguments()->toBe([
-                'My " \' Argument 1', Model::class,
+                'My " \' Argument 1', 'Tests\\Fixtures\\Model',
             ])
     );
 
@@ -583,6 +628,15 @@ test('function attributes with first-class callable with methods', function () {
 
 interface SerializerPhp81HasId {}
 interface SerializerPhp81HasName {}
+
+class SerializerPhp81Child extends SerializerPhp81Parent {}
+
+class SerializerPhp81Parent
+{
+    public function __construct(
+        public readonly int $property = 1,
+    ) {}
+}
 
 class SerializerPhp81Service implements SerializerPhp81HasId, SerializerPhp81HasName
 {

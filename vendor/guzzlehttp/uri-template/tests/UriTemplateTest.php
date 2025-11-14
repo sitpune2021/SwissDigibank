@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class UriTemplateTest extends TestCase
 {
-    public function templateProvider(): array
+    public static function templateProvider(): array
     {
         $variables = [
             'var' => 'value',
@@ -37,85 +37,85 @@ final class UriTemplateTest extends TestCase
 
             return $t;
         }, [
-               ['foo',                 'foo'],
-               ['{var}',               'value'],
-               ['{hello}',             'Hello%20World%21'],
-               ['{+var}',              'value'],
-               ['{+hello}',            'Hello%20World!'],
-               ['{+path}/here',        '/foo/bar/here'],
-               ['here?ref={+path}',    'here?ref=/foo/bar'],
-               ['X{#var}',             'X#value'],
-               ['X{#hello}',           'X#Hello%20World!'],
-               ['map?{x,y}',           'map?1024,768'],
-               ['{x,hello,y}',         '1024,Hello%20World%21,768'],
-               ['{+x,hello,y}',        '1024,Hello%20World!,768'],
-               ['{+path,x}/here',      '/foo/bar,1024/here'],
-               ['{#x,hello,y}',        '#1024,Hello%20World!,768'],
-               ['{#path,x}/here',      '#/foo/bar,1024/here'],
-               ['X{.var}',             'X.value'],
-               ['X{.x,y}',             'X.1024.768'],
-               ['{/var}',              '/value'],
-               ['{/var,x}/here',       '/value/1024/here'],
-               ['{;x,y}',              ';x=1024;y=768'],
-               ['{;zero}',             ';zero=0'],
-               ['{;x,y,empty}',        ';x=1024;y=768;empty'],
-               ['{?x,y}',              '?x=1024&y=768'],
-               ['{?x,y,empty}',        '?x=1024&y=768&empty='],
-               ['?fixed=yes{&x}',      '?fixed=yes&x=1024'],
-               ['{&x,y,empty}',        '&x=1024&y=768&empty='],
-               ['{var:3}',             'val'],
-               ['{var:30}',            'value'],
-               ['{list}',              'red,green,blue'],
-               ['{list*}',             'red,green,blue'],
-               ['{keys}',              'semi,%3B,dot,.,comma,%2C'],
-               ['{keys*}',             'semi=%3B,dot=.,comma=%2C'],
-               ['{+path:6}/here',      '/foo/b/here'],
-               ['{+list}',             'red,green,blue'],
-               ['{+list*}',            'red,green,blue'],
-               ['{+keys}',             'semi,;,dot,.,comma,,'],
-               ['{+keys*}',            'semi=;,dot=.,comma=,'],
-               ['{#path:6}/here',      '#/foo/b/here'],
-               ['{#list}',             '#red,green,blue'],
-               ['{#list*}',            '#red,green,blue'],
-               ['{#keys}',             '#semi,;,dot,.,comma,,'],
-               ['{#keys*}',            '#semi=;,dot=.,comma=,'],
-               ['X{.var:3}',           'X.val'],
-               ['X{.list}',            'X.red,green,blue'],
-               ['X{.list*}',           'X.red.green.blue'],
-               ['X{.keys}',            'X.semi,%3B,dot,.,comma,%2C'],
-               ['X{.keys*}',           'X.semi=%3B.dot=..comma=%2C'],
-               ['{/var:1,var}',        '/v/value'],
-               ['{/list}',             '/red,green,blue'],
-               ['{/list*}',            '/red/green/blue'],
-               ['{/list*,path:4}',     '/red/green/blue/%2Ffoo'],
-               ['{/keys}',             '/semi,%3B,dot,.,comma,%2C'],
-               ['{/keys*}',            '/semi=%3B/dot=./comma=%2C'],
-               ['{;hello:5}',          ';hello=Hello'],
-               ['{;list}',             ';list=red,green,blue'],
-               ['{;list*}',            ';list=red;list=green;list=blue'],
-               ['{;keys}',             ';keys=semi,%3B,dot,.,comma,%2C'],
-               ['{;keys*}',            ';semi=%3B;dot=.;comma=%2C'],
-               ['{?var:3}',            '?var=val'],
-               ['{?list}',             '?list=red,green,blue'],
-               ['{?list*}',            '?list=red&list=green&list=blue'],
-               ['{?keys}',             '?keys=semi,%3B,dot,.,comma,%2C'],
-               ['{?keys*}',            '?semi=%3B&dot=.&comma=%2C'],
-               ['{&var:3}',            '&var=val'],
-               ['{&list}',             '&list=red,green,blue'],
-               ['{&list*}',            '&list=red&list=green&list=blue'],
-               ['{&keys}',             '&keys=semi,%3B,dot,.,comma,%2C'],
-               ['{&keys*}',            '&semi=%3B&dot=.&comma=%2C'],
-               ['{.null}',            ''],
-               ['{.null,var}',        '.value'],
-               ['X{.empty_keys*}',     'X'],
-               ['X{.empty_keys}',      'X'],
-               // Test that missing expansions are skipped
-               ['test{&missing*}',     'test'],
-               // Test that multiple expansions can be set
-               ['http://{var}/{var:2}{?keys*}', 'http://value/va?semi=%3B&dot=.&comma=%2C'],
-               // Test more complex query string stuff
-               ['http://www.test.com{+path}{?var,keys*}', 'http://www.test.com/foo/bar?var=value&semi=%3B&dot=.&comma=%2C'],
-           ]);
+            ['foo',                 'foo'],
+            ['{var}',               'value'],
+            ['{hello}',             'Hello%20World%21'],
+            ['{+var}',              'value'],
+            ['{+hello}',            'Hello%20World!'],
+            ['{+path}/here',        '/foo/bar/here'],
+            ['here?ref={+path}',    'here?ref=/foo/bar'],
+            ['X{#var}',             'X#value'],
+            ['X{#hello}',           'X#Hello%20World!'],
+            ['map?{x,y}',           'map?1024,768'],
+            ['{x,hello,y}',         '1024,Hello%20World%21,768'],
+            ['{+x,hello,y}',        '1024,Hello%20World!,768'],
+            ['{+path,x}/here',      '/foo/bar,1024/here'],
+            ['{#x,hello,y}',        '#1024,Hello%20World!,768'],
+            ['{#path,x}/here',      '#/foo/bar,1024/here'],
+            ['X{.var}',             'X.value'],
+            ['X{.x,y}',             'X.1024.768'],
+            ['{/var}',              '/value'],
+            ['{/var,x}/here',       '/value/1024/here'],
+            ['{;x,y}',              ';x=1024;y=768'],
+            ['{;zero}',             ';zero=0'],
+            ['{;x,y,empty}',        ';x=1024;y=768;empty'],
+            ['{?x,y}',              '?x=1024&y=768'],
+            ['{?x,y,empty}',        '?x=1024&y=768&empty='],
+            ['?fixed=yes{&x}',      '?fixed=yes&x=1024'],
+            ['{&x,y,empty}',        '&x=1024&y=768&empty='],
+            ['{var:3}',             'val'],
+            ['{var:30}',            'value'],
+            ['{list}',              'red,green,blue'],
+            ['{list*}',             'red,green,blue'],
+            ['{keys}',              'semi,%3B,dot,.,comma,%2C'],
+            ['{keys*}',             'semi=%3B,dot=.,comma=%2C'],
+            ['{+path:6}/here',      '/foo/b/here'],
+            ['{+list}',             'red,green,blue'],
+            ['{+list*}',            'red,green,blue'],
+            ['{+keys}',             'semi,;,dot,.,comma,,'],
+            ['{+keys*}',            'semi=;,dot=.,comma=,'],
+            ['{#path:6}/here',      '#/foo/b/here'],
+            ['{#list}',             '#red,green,blue'],
+            ['{#list*}',            '#red,green,blue'],
+            ['{#keys}',             '#semi,;,dot,.,comma,,'],
+            ['{#keys*}',            '#semi=;,dot=.,comma=,'],
+            ['X{.var:3}',           'X.val'],
+            ['X{.list}',            'X.red,green,blue'],
+            ['X{.list*}',           'X.red.green.blue'],
+            ['X{.keys}',            'X.semi,%3B,dot,.,comma,%2C'],
+            ['X{.keys*}',           'X.semi=%3B.dot=..comma=%2C'],
+            ['{/var:1,var}',        '/v/value'],
+            ['{/list}',             '/red,green,blue'],
+            ['{/list*}',            '/red/green/blue'],
+            ['{/list*,path:4}',     '/red/green/blue/%2Ffoo'],
+            ['{/keys}',             '/semi,%3B,dot,.,comma,%2C'],
+            ['{/keys*}',            '/semi=%3B/dot=./comma=%2C'],
+            ['{;hello:5}',          ';hello=Hello'],
+            ['{;list}',             ';list=red,green,blue'],
+            ['{;list*}',            ';list=red;list=green;list=blue'],
+            ['{;keys}',             ';keys=semi,%3B,dot,.,comma,%2C'],
+            ['{;keys*}',            ';semi=%3B;dot=.;comma=%2C'],
+            ['{?var:3}',            '?var=val'],
+            ['{?list}',             '?list=red,green,blue'],
+            ['{?list*}',            '?list=red&list=green&list=blue'],
+            ['{?keys}',             '?keys=semi,%3B,dot,.,comma,%2C'],
+            ['{?keys*}',            '?semi=%3B&dot=.&comma=%2C'],
+            ['{&var:3}',            '&var=val'],
+            ['{&list}',             '&list=red,green,blue'],
+            ['{&list*}',            '&list=red&list=green&list=blue'],
+            ['{&keys}',             '&keys=semi,%3B,dot,.,comma,%2C'],
+            ['{&keys*}',            '&semi=%3B&dot=.&comma=%2C'],
+            ['{.null}',            ''],
+            ['{.null,var}',        '.value'],
+            ['X{.empty_keys*}',     'X'],
+            ['X{.empty_keys}',      'X'],
+            // Test that missing expansions are skipped
+            ['test{&missing*}',     'test'],
+            // Test that multiple expansions can be set
+            ['http://{var}/{var:2}{?keys*}', 'http://value/va?semi=%3B&dot=.&comma=%2C'],
+            // Test more complex query string stuff
+            ['http://www.test.com{+path}{?var,keys*}', 'http://www.test.com/foo/bar?var=value&semi=%3B&dot=.&comma=%2C'],
+        ]);
     }
 
     /**
@@ -126,36 +126,36 @@ final class UriTemplateTest extends TestCase
         self::assertSame($expansion, UriTemplate::expand($template, $variables));
     }
 
-    public function expressionProvider(): array
+    public static function expressionProvider(): array
     {
         return [
             [
                 '{+var*}', [
-                'operator' => '+',
-                'values' => [
-                    ['modifier' => '*', 'value' => 'var'],
+                    'operator' => '+',
+                    'values' => [
+                        ['modifier' => '*', 'value' => 'var'],
+                    ],
                 ],
-            ],
             ],
             [
                 '{?keys,var,val}', [
-                'operator' => '?',
-                'values' => [
-                    ['value' => 'keys', 'modifier' => ''],
-                    ['value' => 'var', 'modifier' => ''],
-                    ['value' => 'val', 'modifier' => ''],
+                    'operator' => '?',
+                    'values' => [
+                        ['value' => 'keys', 'modifier' => ''],
+                        ['value' => 'var', 'modifier' => ''],
+                        ['value' => 'val', 'modifier' => ''],
+                    ],
                 ],
-            ],
             ],
             [
                 '{+x,hello,y}', [
-                'operator' => '+',
-                'values' => [
-                    ['value' => 'x', 'modifier' => ''],
-                    ['value' => 'hello', 'modifier' => ''],
-                    ['value' => 'y', 'modifier' => ''],
+                    'operator' => '+',
+                    'values' => [
+                        ['value' => 'x', 'modifier' => ''],
+                        ['value' => 'hello', 'modifier' => ''],
+                        ['value' => 'y', 'modifier' => ''],
+                    ],
                 ],
-            ],
             ],
         ];
     }
@@ -167,12 +167,16 @@ final class UriTemplateTest extends TestCase
     {
         $template = new UriTemplate();
 
-        // Access the config object
         $class = new \ReflectionClass($template);
+
         $method = $class->getMethod('parseExpression');
-        $method->setAccessible(true);
+
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
 
         $exp = \substr($exp, 1, -1);
+
         self::assertSame($data, $method->invokeArgs($template, [$exp]));
     }
 
@@ -200,7 +204,7 @@ final class UriTemplateTest extends TestCase
         self::assertSame('http://example.com/foo/bar/one,two?query=test&more%5B0%5D=fun&more%5B1%5D=ice%20cream&baz%5Bbar%5D=fizz&baz%5Btest%5D=buzz&bam=boo', $result);
     }
 
-    public function specComplianceProvider(): \Generator
+    public static function specComplianceProvider(): \Generator
     {
         foreach (['spec-examples.json', 'spec-examples-by-section.json', 'extended-tests.json'] as $filename) {
             foreach (self::parseSpecExamples($filename) as $example) {

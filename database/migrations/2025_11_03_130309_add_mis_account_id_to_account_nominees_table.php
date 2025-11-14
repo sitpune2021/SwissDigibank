@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,15 +13,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('account_nominees', function (Blueprint $table) {
-             $table->unsignedBigInteger('mis_account_id')->after('id')->nullable();
+            if (!Schema::hasColumn('account_nominees', 'mis_account_id')) {
 
-            // Add foreign key constraint
-            $table->foreign('mis_account_id')
-                  ->references('id')
-                  ->on('misaccounts')
-                  ->onDelete('cascade');
+                // Add the column
+                $table->unsignedBigInteger('mis_account_id')
+                    ->after('id')
+                    ->nullable();
+
+                // Add foreign key
+                $table->foreign('mis_account_id')
+                    ->references('id')
+                    ->on('misaccounts')
+                    ->onDelete('cascade');
+            }
         });
-       
     }
 
     /**
@@ -29,9 +35,23 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('account_nominees', function (Blueprint $table) {
-            // Drop foreign key first, then the column
-            $table->dropForeign(['mis_account_id']);
-            $table->dropColumn('mis_account_id');
+            if (Schema::hasColumn('account_nominees', 'mis_account_id')) {
+
+                // Drop the foreign key only if it exists
+                $foreignKeys = DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE
+                WHERE TABLE_NAME = 'account_nominees'
+                  AND COLUMN_NAME = 'mis_account_id'
+                  AND CONSTRAINT_NAME != 'PRIMARY';
+            ");
+
+                if (!empty($foreignKeys)) {
+                    $table->dropForeign($foreignKeys[0]->CONSTRAINT_NAME);
+                }
+
+                $table->dropColumn('mis_account_id');
+            }
         });
     }
 };

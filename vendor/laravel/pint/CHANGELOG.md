@@ -1,6 +1,84 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/pint/compare/v1.18.0...main)
+## [Unreleased](https://github.com/laravel/pint/compare/v1.25.0...main)
+
+## [v1.25.0](https://github.com/laravel/pint/compare/v1.24.0...v1.25.0) - 2025-09-17
+
+* feat: add support for formatting code from stdin by [@calebdw](https://github.com/calebdw) in https://github.com/laravel/pint/pull/390
+* Allow setting the number of max processes for parallel mode by [@cosmastech](https://github.com/cosmastech) in https://github.com/laravel/pint/pull/392
+* Update dependencies by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/394
+* feat: support boolean shorthand for 'cast_spaces' and add tests by [@artengin](https://github.com/artengin) in https://github.com/laravel/pint/pull/398
+* Fixes compatibility with php-cs-fixer v3.87.0 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/400
+
+## [v1.24.0](https://github.com/laravel/pint/compare/v1.23.0...v1.24.0) - 2025-07-10
+
+- PHP 8.4 support
+- Adds `-p` as shortcut of `--parallel`
+- Fixes parallel on Windows
+
+## [v1.23.0](https://github.com/laravel/pint/compare/v1.22.1...v1.23.0) - 2025-07-03
+
+- Adds `--parallel` option.
+- Allows extending from a base configuration file.
+
+## [v1.22.1](https://github.com/laravel/pint/compare/v1.22.0...v1.22.1) - 2025-05-08
+
+- Fixes ` Argument #1 ($node) must be of type DOMNode` issue.
+
+## [v1.22.0](https://github.com/laravel/pint/compare/v1.21.2...v1.22.0) - 2025-04-08
+
+### What's Changed
+
+* Writing summaries to file via option by [@Onekone](https://github.com/Onekone) in https://github.com/laravel/pint/pull/344
+* Update logo by [@iamdavidhill](https://github.com/iamdavidhill) in https://github.com/laravel/pint/pull/362
+* Update dependencies by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/364
+
+### New Contributors
+
+* [@Onekone](https://github.com/Onekone) made their first contribution in https://github.com/laravel/pint/pull/344
+* [@iamdavidhill](https://github.com/iamdavidhill) made their first contribution in https://github.com/laravel/pint/pull/362
+
+**Full Changelog**: https://github.com/laravel/pint/compare/v1.21.2...v1.22.0
+
+## [v1.21.2](https://github.com/laravel/pint/compare/v1.21.1...v1.21.2) - 2025-03-14
+
+- Bumps dependencies
+
+## [v1.21.1](https://github.com/laravel/pint/compare/v1.21.0...v1.21.1) - 2025-03-11
+
+* Fix GitHub Action failing 'Publish the released PHAR' due to deprecated action 'actions/upload-artifact' by [@matthewnessworthy](https://github.com/matthewnessworthy) in https://github.com/laravel/pint/pull/347
+* Bump dependencies by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/350
+
+## [v1.21.0](https://github.com/laravel/pint/compare/v1.20.0...v1.21.0) - 2025-02-18
+
+* Add `no_unneeded_import_alias` rule by [@claudiodekker](https://github.com/claudiodekker) in https://github.com/laravel/pint/pull/334
+* PHP 8.4 support by [@markwalet](https://github.com/markwalet) in https://github.com/laravel/pint/pull/330
+* Bump dependencies by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/pint/pull/337
+* Bump dependencies (php-cs-fixer fixes) by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/pint/pull/338
+* Split files based on `/\R+/` regex for `--diff`, same as `--dirty` by [@erikn69](https://github.com/erikn69) in https://github.com/laravel/pint/pull/339
+* Bump dependencies by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/pint/pull/343
+
+## [v1.20.0](https://github.com/laravel/pint/compare/v1.19.0...v1.20.0) - 2025-01-14
+
+* Adds `--diff` option. https://github.com/laravel/pint/pull/327
+
+## [v1.19.0](https://github.com/laravel/pint/compare/v1.18.3...v1.19.0) - 2024-12-30
+
+* Adds `single_line_comment_spacing` rule. https://github.com/laravel/pint/pull/315
+* Ignores PHP 8.4 deprecations. https://github.com/laravel/pint/pull/319
+
+## [v1.18.3](https://github.com/laravel/pint/compare/v1.18.2...v1.18.3) - 2024-11-26
+
+* PHP-CS-Fixer v3.56.0. https://github.com/laravel/pint/pull/308
+
+## [v1.18.2](https://github.com/laravel/pint/compare/v1.18.1...v1.18.2) - 2024-11-20
+
+* Enforces `snake_case` in PHPUnit test methods. https://github.com/laravel/pint/pull/300
+* Enforces visibility for PHPUnit `setUp` and `tearDown` methods. https://github.com/laravel/pint/pull/301
+
+## [v1.18.1](https://github.com/laravel/pint/compare/v1.18.0...v1.18.1) - 2024-09-24
+
+* [1.x] Fixed corrupted binary
 
 ## [v1.18.0](https://github.com/laravel/pint/compare/v1.17.3...v1.18.0) - 2024-09-24
 

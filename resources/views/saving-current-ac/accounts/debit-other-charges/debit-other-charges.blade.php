@@ -1,7 +1,6 @@
 @extends('layout.main')
 @section('content')
 <div class="main-inner">
-
     <head>
         <style>
             input[type="radio"] {
@@ -34,7 +33,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class=" w-full  box overflow-hidden">
@@ -236,15 +234,12 @@
     document.getElementById('charge_type').addEventListener('change', function() {
         const selected = this.options[this.selectedIndex];
 
-        // Fetch data attributes safely
         const amount = parseFloat(selected.dataset.amount) || '';
         const gst = parseFloat(selected.dataset.gst) || '';
 
-        // Set values only for amount and gst_rate
         document.getElementById('amount').value = amount !== '' ? parseFloat(amount).toFixed(2) : '';
         document.getElementById('gst_rate').value = gst !== '' ? parseFloat(gst).toFixed(2) : '';
 
-        // Leave total_amount empty (don’t touch it)
         document.getElementById('total_amount').value = '';
     });
 
@@ -252,10 +247,8 @@
         const totalAmount = parseFloat(this.value) || 0;
         const gstRate = parseFloat(document.getElementById('gst_rate').value) || 0;
 
-        // Calculate base amount excluding GST
         const baseAmount = totalAmount / (1 + gstRate / 100);
 
-        // Show base amount only if total > 0
         document.getElementById('amount').value = totalAmount > 0 ? baseAmount.toFixed(2) : '';
     });
 </script>

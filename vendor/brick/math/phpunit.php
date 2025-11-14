@@ -3,13 +3,11 @@
 declare(strict_types=1);
 
 use Brick\Math\Internal\Calculator;
+use Brick\Math\Internal\CalculatorRegistry;
 
 require __DIR__ . '/vendor/autoload.php';
 
-/**
- * @return Calculator
- */
-function getCalculatorImplementation()
+function getCalculatorImplementation(): Calculator
 {
     switch ($calculator = \getenv('CALCULATOR')) {
         case 'GMP':
@@ -41,7 +39,7 @@ function getCalculatorImplementation()
     return $calculator;
 }
 
-Calculator::set(getCalculatorImplementation());
+CalculatorRegistry::set(getCalculatorImplementation());
 
 $scale = \getenv('BCMATH_DEFAULT_SCALE');
 

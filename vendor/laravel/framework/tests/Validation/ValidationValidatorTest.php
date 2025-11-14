@@ -18,7 +18,6 @@ use Illuminate\Contracts\Validation\ValidatorAwareRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Exceptions\MathException;
 use Illuminate\Support\Stringable;
 use Illuminate\Translation\ArrayLoader;
 use Illuminate\Translation\Translator;
@@ -1861,6 +1860,74 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['first' => 'jess', 'last' => 'archer'], ['last' => 'prohibited_if:first,taylor,jess']);
         $this->assertFalse($v->passes());
         $this->assertSame('The last field is prohibited when first is jess.', $v->messages()->first('last'));
+    }
+
+    public function testValidateProhibitedAcceptedIf()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'yes', 'bar' => 'baz'], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'on', 'bar' => ''], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => '1', 'bar' => false], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 1, 'bar' => null], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'true', 'bar' => ['baz']], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => true], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertTrue($v->passes());
+
+        // error message
+        $trans = $this->getIlluminateArrayTranslator();
+        $trans->addLines(['validation.prohibited_if_accepted' => 'The :attribute field is prohibited when :other is accepted.'], 'en');
+        $v = new Validator($trans, ['foo' => 'true', 'bar' => 'baz'], ['bar' => 'prohibited_if_accepted:foo']);
+        $this->assertFalse($v->passes());
+        $this->assertSame('The bar field is prohibited when foo is accepted.', $v->messages()->first('bar'));
+    }
+
+    public function testValidateProhibitedDeclinedIf()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'no', 'bar' => 'baz'], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'off', 'bar' => ''], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => '0', 'bar' => false], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 0, 'bar' => null], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'false', 'bar' => ['baz']], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => false], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertTrue($v->passes());
+
+        // error message
+        $trans = $this->getIlluminateArrayTranslator();
+        $trans->addLines(['validation.prohibited_if_declined' => 'The :attribute field is prohibited when :other is declined.'], 'en');
+        $v = new Validator($trans, ['foo' => 'false', 'bar' => 'baz'], ['bar' => 'prohibited_if_declined:foo']);
+        $this->assertFalse($v->passes());
+        $this->assertSame('The bar field is prohibited when foo is declined.', $v->messages()->first('bar'));
     }
 
     public function testProhibitedUnless()
@@ -6316,6 +6383,12 @@ class ValidationValidatorTest extends TestCase
 
         $v = new Validator($trans, ['x' => '1970-01-02', '2018-05-12' => '1970-01-01'], ['x' => 'date_format:Y-m-d|after:2018-05-12']);
         $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['from' => '2020-08-05', 'to' => '2020-06-08'], ['from' => 'date_format:Y-m-d|before:to', 'to' => 'date_format:Y-d-m']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['from' => '2020-05-08', 'to' => '2020-08-06'], ['from' => 'date_format:Y-m-d', 'to' => 'date_format:Y-d-m|after:from']);
+        $this->assertTrue($v->passes());
     }
 
     public function testWeakBeforeAndAfter()
@@ -6417,6 +6490,12 @@ class ValidationValidatorTest extends TestCase
 
         $v = new Validator($trans, ['foo' => '2012-01-15 11:00', 'bar' => null], ['foo' => 'before_or_equal:bar', 'bar' => 'nullable']);
         $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['from' => '2020-08-05', 'to' => '2020-05-08'], ['from' => 'date_format:Y-m-d|before_or_equal:to', 'to' => 'date_format:Y-d-m']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['from' => '2020-05-08', 'to' => '2020-08-05'], ['from' => 'date_format:Y-m-d', 'to' => 'date_format:Y-d-m|after_or_equal:from']);
+        $this->assertTrue($v->passes());
     }
 
     public function testSometimesAddingRules()
@@ -7072,6 +7151,26 @@ class ValidationValidatorTest extends TestCase
         ]);
         $this->assertTrue($v->passes());
         $this->assertArrayHasKey('foo.bar', $v->validated());
+    }
+
+    public function testDotPlaceholdersInParametersAreReplacedIn()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $trans->addLines(['validation.required_without' => 'The :attribute field is required when :values is not present.'], 'en');
+
+        // Single parameter
+        $v = new Validator($trans, [], [
+            'name' => 'required_without:user\.name',
+        ]);
+        $this->assertTrue($v->fails());
+        $this->assertSame('The name field is required when user.name is not present.', $v->messages()->first());
+
+        // Multiple parameters
+        $v = new Validator($trans, [], [
+            'name' => 'required_without:user\.name,admin\.name',
+        ]);
+        $this->assertTrue($v->fails());
+        $this->assertSame('The name field is required when user.name / admin.name is not present.', $v->messages()->first());
     }
 
     public function testCoveringEmptyKeys()
@@ -9434,10 +9533,7 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $validator = new Validator($trans, ['foo' => $value], ['foo' => 'numeric|min:3']);
 
-        $this->expectException(MathException::class);
-        $this->expectExceptionMessage('Scientific notation exponent outside of allowed range.');
-
-        $validator->passes();
+        $this->assertFalse($validator->passes());
     }
 
     public static function outsideRangeExponents()
@@ -9492,10 +9588,8 @@ class ValidationValidatorTest extends TestCase
         $this->assertSame('1.0e-1000', $value);
 
         $withinRange = false;
-        $this->expectException(MathException::class);
-        $this->expectExceptionMessage('Scientific notation exponent outside of allowed range.');
 
-        $validator->passes();
+        $this->assertFalse($validator->passes());
     }
 
     protected function getTranslator()

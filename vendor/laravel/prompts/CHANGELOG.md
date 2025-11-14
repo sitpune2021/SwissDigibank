@@ -1,6 +1,32 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/prompts/compare/v0.3.0...main)
+## [Unreleased](https://github.com/laravel/prompts/compare/v0.3.6...main)
+
+## [v0.3.6](https://github.com/laravel/prompts/compare/v0.3.5...v0.3.6) - 2025-07-07
+
+* use multiline signatures by [@browner12](https://github.com/browner12) in https://github.com/laravel/prompts/pull/190
+* Fix: Select Default Falsy by [@liamduckett](https://github.com/liamduckett) in https://github.com/laravel/prompts/pull/194
+* Fix: Exclude Progress from phpstan as causes infinite loop by [@BinaryKitten](https://github.com/BinaryKitten) in https://github.com/laravel/prompts/pull/197
+
+## [v0.3.5](https://github.com/laravel/prompts/compare/v0.3.4...v0.3.5) - 2025-02-11
+
+* Pass name to the FormStep. by [@AlexSkrypnyk](https://github.com/AlexSkrypnyk) in https://github.com/laravel/prompts/pull/183
+
+## [v0.3.4](https://github.com/laravel/prompts/compare/v0.3.3...v0.3.4) - 2025-01-24
+
+* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/prompts/pull/182
+
+## [v0.3.3](https://github.com/laravel/prompts/compare/v0.3.2...v0.3.3) - 2024-12-30
+
+* Add page up & down key inputs by [@CamKem](https://github.com/CamKem) in https://github.com/laravel/prompts/pull/179
+
+## [v0.3.2](https://github.com/laravel/prompts/compare/v0.3.1...v0.3.2) - 2024-11-12
+
+* [0.3.x] Supports PHP 8.4 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/prompts/pull/167
+
+## [v0.3.1](https://github.com/laravel/prompts/compare/v0.3.0...v0.3.1) - 2024-10-09
+
+* Adds support for conditional steps by [@jochem-blok](https://github.com/jochem-blok) in https://github.com/laravel/prompts/pull/171
 
 ## [v0.3.0](https://github.com/laravel/prompts/compare/v0.2.1...v0.3.0) - 2024-09-30
 

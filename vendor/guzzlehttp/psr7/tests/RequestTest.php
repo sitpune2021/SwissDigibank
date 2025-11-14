@@ -114,7 +114,7 @@ class RequestTest extends TestCase
         $r->withMethod($method);
     }
 
-    public function invalidMethodsProvider(): iterable
+    public static function invalidMethodsProvider(): iterable
     {
         return [
             [null],
@@ -188,6 +188,14 @@ class RequestTest extends TestCase
         ], $r->getHeaders());
     }
 
+    public function testEmptyListHeaderValue(): void
+    {
+        $r = new Request('GET', 'https://example.com/', ['Foo' => []]);
+        self::assertSame('', $r->getHeaderLine('Foo'));
+        self::assertSame([], $r->getHeader('Foo'));
+        self::assertSame(['Host' => ['example.com'], 'Foo' => []], $r->getHeaders());
+    }
+
     public function testCanGetHeaderAsCsv(): void
     {
         $r = new Request('GET', 'http://foo.com/baz?bar=bam', [
@@ -217,7 +225,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function provideHeadersContainingNotAllowedChars(): iterable
+    public static function provideHeadersContainingNotAllowedChars(): iterable
     {
         return [[' key '], ['key '], [' key'], ['key/'], ['key('], ['key\\'], [' ']];
     }
@@ -237,7 +245,7 @@ class RequestTest extends TestCase
         self::assertArrayHasKey($header, $r->getHeaders());
     }
 
-    public function provideHeadersContainsAllowedChar(): iterable
+    public static function provideHeadersContainsAllowedChar(): iterable
     {
         return [
             ['key'],
@@ -323,7 +331,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function provideHeaderValuesContainingNotAllowedChars(): iterable
+    public static function provideHeaderValuesContainingNotAllowedChars(): iterable
     {
         // Explicit tests for newlines as the most common exploit vector.
         $tests = [
