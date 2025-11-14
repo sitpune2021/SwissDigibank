@@ -147,6 +147,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
+        Route::get('/dds-accounts/{id}/installment-receipt', [DdsAccountsController::class, 'installmentReceipt'])
+            ->name('dds.installment.receipt');
+
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
 
@@ -163,13 +166,20 @@ Route::middleware('auth.user')->group(function () {
 
         Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
             ->name('ddsaccounts.withdraw');
+        Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
+            ->name('ddsaccounts.createLinkSavingAcc');
 
+            Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
+            ->name('ddsaccounts.createCreditInterest');
+            
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
         // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
         Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
             ->name('dds-accounts.transactions.printReceipt');
+        
+
         Route::get(
             '/print-documents/transaction-receipt/{accountId}/{transactionId}',
             [DdsAccountsController::class, 'printReceipt1']
@@ -1284,8 +1294,17 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::post('commission/add-chart', [AdvisorController::class, 'chartstore'])
         ->name('associates-advisor.commission-charts.store');
 
-    Route::get('commission/view', [AdvisorController::class, 'comission_view'])
-        ->name('associates-advisor.commission-charts.view');
+    Route::get('commission/view/{id}', [AdvisorController::class, 'comission_view'])
+    ->name('associates-advisor.commission-charts.view');
+
+    // edit (reuse create view)
+    Route::get('commission/{id}/edit', [AdvisorController::class, 'edit_chart'])
+        ->name('associates-advisor.commission-charts.edit');
+
+    // update
+    Route::put('commission/{id}', [AdvisorController::class, 'update_chart'])
+    ->name('associates-advisor.commission-charts.update');
+
 });
 
 

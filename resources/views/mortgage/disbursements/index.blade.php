@@ -190,6 +190,10 @@
 </tbody>
 
                 </table>
+                 <!-- Pagination Links -->
+                <div class="mt-4">
+                    {{ $disbursements->links() }}
+                </div>
             </div>
         </div>
 @endsection 

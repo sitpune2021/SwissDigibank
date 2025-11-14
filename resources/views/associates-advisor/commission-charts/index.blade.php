@@ -49,6 +49,26 @@
 @section('content')
     <div class="main-inner">
 
+        @if(session('success'))
+            <div 
+                id="successMessage" 
+                class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+            >
+                {{ session('success') }}
+            </div>
+
+            <script>
+                // Auto hide after 30 seconds (30000 ms)
+                setTimeout(() => {
+                    const msg = document.getElementById('successMessage');
+                    if (msg) {
+                        msg.style.opacity = '0';
+                        setTimeout(() => msg.remove(), 500); // smooth fade-out
+                    }
+                }, 30000);
+            </script>
+        @endif
+
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-xl block  uppercase  font-bold">
                 Commission Charts
@@ -127,8 +147,8 @@
                                             <div class="relative">
                                                 <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                                 <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
+                                                    <li><a href="{{ route('associates-advisor.commission-charts.view', $chart->id) }}" class="single-option uppercase">View</a></li>
+                                                    <li><a href="{{ route('associates-advisor.commission-charts.edit', $chart->id) }}" class="single-option uppercase">Edit</a></li>
                                                 </ul>
                                             </div>
                                         </div>

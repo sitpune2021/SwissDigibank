@@ -121,7 +121,8 @@
       <div class="letterhead">
         <!-- Logo -->
         <div class="logo">
-          <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo">
+          <!-- <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo"> -->
+          <img src="{{ public_path('images/Loan_Management_logo.png') }}">
         </div>
         <!-- Bank Details -->
         <div class="bank-details">

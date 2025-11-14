@@ -169,6 +169,11 @@
 
                 </table>
 
+                 <!-- Pagination Links -->
+                <div class="mt-4">
+                    {{ $distributors->links() }}
+                </div>
+
             </div>
 
         </div>

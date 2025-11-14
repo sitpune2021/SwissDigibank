@@ -409,7 +409,7 @@ class PersonalController extends Controller
     public function appindex()
     {
         //  loan applications fetch 
-        $applications = PersonalLoanApplication::with(['creditScores'])->latest()->get();
+        $applications = PersonalLoanApplication::with(['creditScores'])->latest()->paginate(10);
 
         return view("personal.applications.index", compact('applications'));
     }
