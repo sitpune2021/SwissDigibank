@@ -192,6 +192,10 @@
                 </tbody>
 
                 </table>
+                 <!-- Pagination Links -->
+                <div class="mt-4">
+                    {{ $applications->links() }}
+                </div>
             </div>
         </div>
 @endsection 

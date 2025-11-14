@@ -28,7 +28,7 @@ class GoldLoanController extends Controller
     {       
         //$schemes = GoldLoanScheme::all();
         // paginate(10) => 10 records per page
-        $schemes = GoldLoanScheme::orderBy('id', 'desc')->paginate(20);
+        $schemes = GoldLoanScheme::orderBy('id', 'desc')->paginate(10);
         return view("gold-loan.schemes.index", compact('schemes'));
     }
 
@@ -434,7 +434,7 @@ class GoldLoanController extends Controller
     public function appindex()
     {
         //  loan applications fetch 
-        $applications = LoanApplication::with(['creditScores'])->latest()->paginate(20);
+        $applications = LoanApplication::with(['creditScores'])->latest()->paginate(10);
 
         return view("gold-loan.applications.index", compact('applications'));
     }

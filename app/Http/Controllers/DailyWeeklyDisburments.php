@@ -23,12 +23,7 @@ class DailyWeeklyDisburments extends Controller
         $disbursements = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
             // ->whereNotIn('id', $disbursedIds)
-            ->get();
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
+            ->paginate(10);
 
         return view('daily_weekly.disbursements.index', compact('disbursements'));
     }
@@ -141,7 +136,6 @@ class DailyWeeklyDisburments extends Controller
                 ->with('error', 'Something went wrong while saving the disbursement.');
         }
     }
-
 
     public function show($id)
     {

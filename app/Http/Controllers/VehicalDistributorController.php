@@ -25,7 +25,7 @@ class VehicalDistributorController extends Controller
 
     public function index()
     {
-        $distributors = VehicleDistributor::orderBy('id', 'desc')->get();
+        $distributors = VehicleDistributor::orderBy('id', 'desc')->paginate(10);
 
         return view('vehical.distributors.index', compact('distributors'));
     }

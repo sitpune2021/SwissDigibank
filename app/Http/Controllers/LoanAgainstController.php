@@ -900,7 +900,7 @@ class LoanAgainstController extends Controller
         $applications = LoanAgainstApplication::with(['creditScores', 'branch', 'member'])
             ->whereNotIn('status', [1, 0])
             ->latest()
-            ->get(['id', 'status']);
+            ->paginate(15, ['id', 'status']);
 
         return view("loanagainst.lineproperty.index", compact('applications'));
     }

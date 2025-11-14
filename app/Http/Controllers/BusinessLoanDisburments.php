@@ -18,18 +18,11 @@ class BusinessLoanDisburments extends Controller
 {
     
     public function index()
-    {
-        // $disbursedIds = BusinessLoanDisbursment::pluck('loan_application_id');
-
+    {       
         $disbursements = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
             // ->whereNotIn('id', $disbursedIds)
-            ->get();
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
+            ->paginate(10);
 
         return view('bussiness.disbursements.index', compact('disbursements'));
     }
