@@ -129,7 +129,7 @@
                 <!-- Dear Valued Customer, -->
                 Dear {{ $member->member_info_first_name ?? 'Valued Customer' }},
             </p>
-            <p>Your Saving Account has been successfully opened. Below are your account details:</p>
+            <p>Your Saving Account has been debited. Below are the withdrawal details:</p>
 
             <table class="details-table">
                 <tr>
@@ -141,16 +141,20 @@
                     <td style="padding:6px 0;">{{ $member->member_info_first_name ?? 'NA' }}</td>
                 </tr>
                 <tr>
-                    <td style="padding:6px 0;">Account Type:</td>
-                    <td style="padding:6px 0;">Saving Account</td>
+                    <td style="padding:6px 0;">Transaction Type:</td>
+                    <td style="padding:6px 0;">Withdrawal</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Currency:</td>
                     <td style="padding:6px 0;">INR</td>
                 </tr>
                 <tr>
-                    <td style="padding:6px 0;">Opening Balance:</td>
-                    <td style="padding:6px 0;">{{ $Account->amount_deposit ?? '0.00' }}</td>
+                    <td style="padding:6px 0;">Withdrawal Amount:</td>
+                    <td style="padding:6px 0;">{{ $withdraw_amount ?? '0.00' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:6px 0;">Available Balance:</td>
+                    <td style="padding:6px 0;">₹ {{ $Account->balance ?? '0.00' }}</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Mobile Number:</td>
@@ -165,12 +169,12 @@
                     <td style="padding:6px 0;">{{ $Account->branch->ifsc_code ?? 'NA' }}</td>
                 </tr>
                 <tr>
-                    <td style="padding:6px 0;">Account Opening Date:</td>
+                    <td style="padding:6px 0;">Transaction Date:</td>
                     <td style="padding:6px 0;">{{ now()->setTimezone('Asia/Kolkata')->format('d/m/Y H:i:s') }}</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Status:</td>
-                    <td style="padding:6px 0; color:green;">ACTIVE</td>
+                    <td style="padding:6px 0; color:green;">DEBITED</td>
                 </tr>
             </table>
 

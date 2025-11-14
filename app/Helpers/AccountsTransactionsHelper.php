@@ -2,13 +2,16 @@
 
 namespace App\Helpers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 
 class AccountsTransactionsHelper
 {
     public static function getAccountBalacec($account_nos, $payment_details = null)
     {
-    
+
         // Convert single ID to array
         if (!is_array($account_nos)) {
             $account_nos = [$account_nos];
@@ -32,7 +35,7 @@ class AccountsTransactionsHelper
     //deposit function
     public static function deposit($account_id, $amount, $details = [])
     {
-        // Step 1: Insert credit transaction
+   
         $tdata = \App\Models\Transaction::create([
             'account_id'       => $account_id,
             'amount'           => $amount,
@@ -63,7 +66,19 @@ class AccountsTransactionsHelper
         $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. Payment is subject to approval. SBC GLOBAL";
 
         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-        // Step 2: Return balance
+
+        $Account = $transaction->accounts;
+        $member = $transaction->accounts->members;
+
+        $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
+        $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+        $pdf->save($pdfPath);
+
+        if (!empty($member->member_info_email)) {
+            Mail::to($member->member_info_email)->send(new \App\Mail\AccountOpenedMail($member, $Account, $pdfPath));
+        } else {
+            Log::warning('No email found for member', ['member_id' => $member->id]);
+        }
         return self::getAccountBalacec($account_id);
     }
 

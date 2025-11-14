@@ -23,7 +23,9 @@ use App\Models\VehicalApplication;
 use App\Models\MembershipChargeTransaction;
 // use Illuminate\Http\Request;
 use App\Models\PersonalLoanApplication;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Mail;
 
 class ApproveController extends Controller
 {
@@ -121,7 +123,6 @@ class ApproveController extends Controller
 
     public function update(Request $request, $id)
     {
-
         try {
             $sourceTable = $request->input('source_table');
 
@@ -157,8 +158,7 @@ class ApproveController extends Controller
 
                     return redirect()->back()->with('success', 'Saving transaction approved successfully.');
                 }
-            }
-             elseif ($sourceTable === 'membership_charges_transaction') {
+            } elseif ($sourceTable === 'membership_charges_transaction') {
 
                 $updated = DB::table('membership_charges_transaction')
                     ->where('id', $id)
@@ -172,8 +172,7 @@ class ApproveController extends Controller
                 } else {
                     return redirect()->back()->with('error', 'Failed to update Membership Share Amount.');
                 }
-            } 
-            else {
+            } else {
                 return redirect()->back()->with('error', 'Invalid source table specified.');
             }
         } catch (\Exception $e) {
@@ -201,14 +200,28 @@ class ApproveController extends Controller
                 $account->save();
 
                 try {
-                    $Account = Account::with('members')->find($account->id);
+                    $Account = Account::with('members','branch')->find($account->id);
                     $mobile = $Account->members->member_info_mobile_no;
                     $accountNo = $Account->account_no;
 
+                    $member= $Account->members;
+
                     if ($account->approve_status == "1") {
                         $dlttemplateid = 1707172181386332784;
-                        $message = "Dear Customer, congratulations! your saving a/c  $accountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+                        $message = "Dear Customer, congratulations! your saving a/c $accountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
+                        $pdf = Pdf::loadView('emails.saving_account_open', compact('member', 'Account'));
+                        $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+                        $pdf->save($pdfPath);
+
+                        // ✅ 3. Send Email with PDF
+                        if (!empty($member->member_info_email)) {
+                            Mail::to($member->member_info_email)->send(new \App\Mail\AccountOpenedMail($member, $Account, $pdfPath));
+                        } else {
+                            Log::warning('No email found for member', ['member_id' => $member->id]);
+                        }
+
                         return redirect()->back()->with('success', 'Account approved successfully.');
                     } else {
                         $dlttemplateid = 1707172181389479065;
