@@ -80,7 +80,6 @@
             width: 170px;
             font-weight: bold;
         }
-
         .banner {
             margin-top: 15px;
              /* background-color: #eaf8ef; */
@@ -92,7 +91,6 @@
             border-radius: 3px;
 
         }
-
         .footer {
             font-size: 11px;
             color: #555;
@@ -101,7 +99,6 @@
             background-color: #f9f9f9;
             line-height: 1.4;
         }
-
         .bottom-note {
             font-size: 11px;
             color: #555;
@@ -119,12 +116,12 @@
                 <h3>Alerts</h3>
                 <small>July 26, 2022, 08:22 PM</small>
             </div>
-            <img src="{{ asset('assets/images/sbc-image.jpg') }}" alt="" class="logo">
+            <img src="{{ asset('images/Loan_Management_logo.jpg') }}" alt="" class="logo">
         </div>
 
         <div class="email-body" style="border-bottom: 1px solid #ddd;">
             <p
-                style="color:rgb(9, 163, 9); font-size:16px; font-weight: 600; margin-bottom: 25px; margin-top: 20px !important; ">
+                style="color:rgb(9, 163, 9); font-size:16px; font-weight: 600; margin-bottom: 20px; margin-top: 15px !important; ">
                 Dear Valued Customer,</p>
             <p>Your UPI payment has been successfully credited to the beneficiary bank account.</p>
 

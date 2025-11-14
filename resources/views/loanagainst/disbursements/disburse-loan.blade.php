@@ -25,6 +25,7 @@
             }
         </style>
     </head>
+
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
@@ -37,264 +38,161 @@
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                   <form id="disbursementForm" action="{{ route('disbursements.store') }}" method="POST">
-    @csrf
+                    @csrf
 
-    <!-- Header -->
-    <div class="px-4 py-3">
-        <h3 class="text-lg border-b mb-4 font-semibold text-black">
-            Application No - {{ $disbursement->id }}
-        </h3>
-        <input type="hidden" name="loan_application_id" 
-               value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
-    </div>
-
-    <!-- Loan Disbursement Date -->
-    <div class="mb-4">
-        <label class="md:text-lg font-medium block mb-2">
-            Loan Disbursement Date <span class="text-red-500">*</span>
-        </label>
-        <input type="text" name="disbursal_date" class="form-input"
-               value="{{ date('d-m-Y') }}" required>
-    </div>
-
-    <!-- First EMI Date -->
-    <div class="mb-4">
-        <label class="md:text-lg font-medium block mb-2">
-            First EMI Date <span class="text-red-500">*</span>
-        </label>
-        <input type="text" name="emi_date" class="form-input"
-               value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
-    </div>
-
-                    <!-- Loan Amount -->
-                    <div class="mb-4">
-                        <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-                        <input type="number" name="loan_amount" class="form-input"
-                            value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-                    </div>
-
-                    <h4>Processing Fee</h4>                     
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                                <tbody>
-                                    <tr>
-                                        <th class="text-center px-3 py-2 ">Value</th>
-                                        <th class="text-center px-3 py-2 ">GST (%)</th>
-                                        <th class="text-center px-3 py-2 ">SGST</th>
-                                        <th class="text-center px-3 py-2 ">CGST</th>
-                                        <th class="text-center px-3 py-2 ">IGST</th>
-                                        <th class="text-center px-3 py-2 ">Total</th>
-                                    </tr>
-
-                                    <tr>
-                                        <!-- Value -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="processing_fee" id="processing_fee"
-                                                value="{{ number_format($processingFee, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- GST (%) -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="gst_percent" id="gst_percent"
-                                                value="{{ $gstPercent }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- SGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="sgst" id="sgst"
-                                                value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- CGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="cgst" id="cgst"
-                                                value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- IGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="igst" id="igst"
-                                                value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
-
-                                        <!-- Total -->
-                                        <td class="px-2 py-2">
-                                            <input type="number" name="processing_fee_total" id="processing_fee_total"
-                                                value="{{ number_format($total, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        
-                            <div id="paymodeWrapper" class="mt-3 hidden">
-                                <!-- pass processing fee to your paymode component -->
-                                <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'" groupName="processing_fee2" />
-                            </div>
+                        <!-- Header -->
+                        <div class="px-4 py-3">
+                            <h3 class="text-lg border-b mb-4 font-semibold text-black">
+                                Application No - {{ $disbursement->id }}
+                            </h3>
+                            <input type="hidden" name="loan_application_id" 
+                                value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
                         </div>
 
-                    <!-- Final Amount -->
-                    <div class="mb-4">
-                        <label class="md:text-lg font-medium block mb-2">
-                            Final Amount To Disburse <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="final_amount" id="finalAmount" class="form-input"
-                                value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
-                    </div>
+                        <!-- Loan Disbursement Date -->
+                        <div class="mb-4">
+                            <label class="md:text-lg font-medium block mb-2">
+                                Loan Disbursement Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="disbursal_date" class="form-input"
+                                value="{{ date('d-m-Y') }}" required>
+                        </div>
 
-                    <h3>Disbursement Amount :</h3>
-                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
-                                <div class="col-span-1 md:col-span-1 mb-4">
-                                    <label for="" class="md:text-lg font-medium block mb-4 mt-4">
-                                        Disburse Mode 1
-                                        <span class="text-red-500">*</span>
-                                    </label>
+                        <!-- First EMI Date -->
+                        <div class="mb-4">
+                            <label class="md:text-lg font-medium block mb-2">
+                                First EMI Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="emi_date" class="form-input"
+                                value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
+                        </div>
 
-                                    <input type="text" id="D_mode_1" name="D_mode_1"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        value="{{ $disbursement->net_loan_amount ?? '' }}" >
-                                    <x-number-to-word for="D_mode_1" />
-                                    <div class="mt-3">
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
-                                        </label>
+                        <!-- Loan Amount -->
+                        <div class="mb-4">
+                            <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
+                            <input type="number" name="loan_amount" class="form-input"
+                                value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
+                        </div>
+                        @if(!empty($processingFee) && $processingFee > 0)
+                        <h4>Processing Fee</h4>                     
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                                <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center px-3 py-2 ">Value</th>
+                                            <th class="text-center px-3 py-2 ">GST (%)</th>
+                                            <th class="text-center px-3 py-2 ">SGST</th>
+                                            <th class="text-center px-3 py-2 ">CGST</th>
+                                            <th class="text-center px-3 py-2 ">IGST</th>
+                                            <th class="text-center px-3 py-2 ">Total</th>
+                                        </tr>
 
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="cheque"> Cheque
-                                        </label>
+                                        <tr>
+                                            <!-- Value -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="processing_fee" id="processing_fee"
+                                                    value="{{ number_format($processingFee, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="online"> Online Transfer
-                                        </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="saving"> Saving Account
-                                        </label>
+                                            <!-- GST (%) -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="gst_percent" id="gst_percent"
+                                                    value="{{ $gstPercent }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- Fields for Cheque -->
-                                        <div id="cheque_fields" style="display:none; margin-top:10px;">
-                                        <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
-                                            <select id="bank_id" name="bank_id"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    <option value="">-- Select Bank --</option>
-                                                    @foreach($banks as $id => $name)
-                                                        <option value="{{ $id }}">
-                                                            {{ $name }}
-                                                        </option>
-                                                    @endforeach
-                                            </select>
-                                       <!-- Cheque No -->
-                                        <div class="mt-3">
-                                            <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
-                                            <input type="text" name="cheque_no"
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-                                                placeholder="Enter Cheque No">
-                                        </div>
+                                            <!-- SGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="sgst" id="sgst"
+                                                    value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- Cheque Date -->
-                                        <div class="mt-3">
-                                            <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                            <input type="date" id="cheque_date" name="cheque_date"
-                                            value="{{ old('cheque_date', date('Y-m-d')) }}"
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                        </div>
-                                    </div>
+                                            <!-- CGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="cgst" id="cgst"
+                                                    value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                            <!-- Fields for Online -->
-                            <div id="online_fields" style="display:none; margin-top:10px;">
-                                <div class="mt-3">
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Transfer Date <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="date" id="transfer_date" name="transfer_date"
-                                    value="{{ old('transfer_date', date('Y-m-d')) }}" 
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        UTR / Transaction No. <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Transfer Mode <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="flex gap-4 mt-2">
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="imps">
-                                            <span>IMPS</span>
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="vpa">
-                                            <span>VPA</span>
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="neft_rtgs">
-                                            <span>NEFT/RTGS</span>
-                                        </label>
-                                    </div>
+                                            <!-- IGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="igst" id="igst"
+                                                    value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- Total -->
+                                            <td class="px-2 py-2">
+                                                <input type="number" name="processing_fee_total" id="processing_fee_total"
+                                                    value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            
+                                <div id="paymodeWrapper" class="mt-3 hidden">
+                                    <!-- pass processing fee to your paymode component -->
+                                    <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'" groupName="processing_fee2" />
                                 </div>
                             </div>
+                        @endif
 
-                            <!-- Fields for Saving Account -->
-                            <div id="saving_fields" style="display:none; margin-top:10px;">
-                            <label>Saving Account:</label>
-                            <select id="saving" name="saving"
-                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                <option value="">-- Select Saving Acc. --</option>                                              
-                                <option value="abcd">abcd</option>                                             
-                            </select>
-                            </div>
+                        <!-- Final Amount -->
+                        <div class="mb-4">
+                            <label class="md:text-lg font-medium block mb-2">
+                                Final Amount To Disburse <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" name="final_amount" id="finalAmount" class="form-input"
+                                    value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
+                        </div>
 
-
-
-
-                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
-                                <div class="col-span-1 md:col-span-1 mb-4">
-                                    <label for="" class="md:text-lg font-medium block mb-4 mt-4">
-                                        Disburse Mode 2
-                                        <span class="text-red-500">*</span>
-                                    </label>
-
-                                    <input type="text" id="D_mode_2" name="D_mode_2"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        value="0" readonly>
-                                    
-                                    <div class="mt-3">
-                                       <label>
-                                        <input type="radio" name="payment_mode2" value="cash" checked> Cash
+                        <h3>Disbursement Amount :</h3>
+                                <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
+                                    <div class="col-span-1 md:col-span-1 mb-4">
+                                        <label for="" class="md:text-lg font-medium block mb-4 mt-4">
+                                            Disburse Mode 1
+                                            <span class="text-red-500">*</span>
                                         </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode2" value="cheque"> Cheque
-                                        </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode2" value="online"> Online Transfer
-                                        </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode2" value="saving"> Saving Account
-                                        </label>
-                                        <!-- Fields for Disburse Mode 2 -->
-                                        <div id="cheque_fields2" style="display:none; margin-top:10px;">
-                                            <select id="bank_id2" name="bank_id2"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    <option value="">-- Select Bank --</option>
-                                                    @foreach($banks as $id => $name)
-                                                        <option value="{{ $id }}">
-                                                            {{ $name }}
-                                                        </option>
-                                                    @endforeach
-                                            </select>
-                                            <!-- Cheque No -->
+
+                                        <input type="text" id="D_mode_1" name="D_mode_1"
+                                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                            value="{{ $disbursement->approved_loan_amount ?? '' }}" >
+                                        <x-number-to-word for="D_mode_1" />
+                                        <div class="mt-3">
+                                            <label>
+                                            <input type="radio" name="payment_mode" value="cash" checked> Cash
+                                            </label>
+
+                                            <label>
+                                            <input type="radio" name="payment_mode" value="cheque"> Cheque
+                                            </label>
+
+                                            <label>
+                                            <input type="radio" name="payment_mode" value="online"> Online Transfer
+                                            </label>
+                                            <label>
+                                            <input type="radio" name="payment_mode" value="saving"> Saving Account
+                                            </label>
+
+                                            <!-- Fields for Cheque -->
+                                            <div id="cheque_fields" style="display:none; margin-top:10px;">
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                                                <select id="bank_id" name="bank_id"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        <option value="">-- Select Bank --</option>
+                                                        @foreach($banks as $id => $name)
+                                                            <option value="{{ $id }}">
+                                                                {{ $name }}
+                                                            </option>
+                                                        @endforeach
+                                                </select>
+                                        <!-- Cheque No -->
                                             <div class="mt-3">
                                                 <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
-                                                <input type="text" name="cheque_no2"
+                                                <input type="text" name="cheque_no"
                                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                     placeholder="Enter Cheque No">
                                             </div>
@@ -302,79 +200,180 @@
                                             <!-- Cheque Date -->
                                             <div class="mt-3">
                                                 <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                                <input type="date" id="cheque_date2" name="cheque_date2"
-                                                value="{{ old('cheque_date2', date('Y-m-d')) }}" 
+                                                <input type="date" id="cheque_date" name="cheque_date"
+                                                value="{{ old('cheque_date', date('Y-m-d')) }}"
                                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                            </div>
-                                        </div>
-                                         <!-- Fields for Online -->
-                                        <div id="online_fields2" style="display:none; margin-top:10px;">
-                                            <div class="mt-3">
-                                                <label class="block text-sm font-medium text-gray-700">
-                                                    Transfer Date <span class="text-red-500">*</span>
-                                                </label>
-                                                <input type="date" id="transfer_date2" name="transfer_date2" 
-                                                value="{{ old('transfer_date2', date('Y-m-d')) }}" 
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700">
-                                                    UTR / Transaction No. <span class="text-red-500">*</span>
-                                                </label>
-                                                <input type="text" id="utr_no2" name="utr_no2" placeholder="Enter Transaction No."
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700">
-                                                    Transfer Mode <span class="text-red-500">*</span>
-                                                </label>
-                                                <div class="flex gap-4 mt-2">
-                                                    <label class="flex items-center gap-2">
-                                                        <input type="radio" name="transfer_mode2" value="imps">
-                                                        <span>IMPS</span>
-                                                    </label>
-                                                <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode2" value="vpa">
-                                                    <span>VPA</span>
-                                                </label>
-                                                <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode2" value="neft_rtgs">
-                                                    <span>NEFT/RTGS</span>
-                                                </label>
                                             </div>
                                         </div>
 
-                                        <!-- Fields for Saving Account -->
-                                        <div id="saving_fields2" style="display:none; margin-top:10px;">
-                                            <label>Saving Account:</label>
-                                            <select id="saving2" name="saving2"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                <option value="">-- Select Saving Acc. --</option>                                              
-                                                <option value="abcd">abcd</option>                                             
-                                            </select>
-                                        </div>                
-                                
+                                <!-- Fields for Online -->
+                                <div id="online_fields" style="display:none; margin-top:10px;">
+                                    <div class="mt-3">
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Transfer Date <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="date" id="transfer_date" name="transfer_date"
+                                        value="{{ old('transfer_date', date('Y-m-d')) }}" 
+                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
-
-                                </div>   
-
-
-                                 </div> </div>
-                                 
-
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            UTR / Transaction No. <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
+                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Transfer Mode <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="flex gap-4 mt-2">
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="transfer_mode" value="imps">
+                                                <span>IMPS</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="transfer_mode" value="vpa">
+                                                <span>VPA</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="radio" name="transfer_mode" value="neft_rtgs">
+                                                <span>NEFT/RTGS</span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-    <!-- Dynamic Fields -->
-    <div id="extraFields" class="mb-4"></div>
 
-    <!-- Submit Buttons -->
-    <div class="flex flex-col sm:flex-row justify-center gap-3 mt-5">
-        <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
-            DISBURSE LOAN
-        </button>
-        <a href="{{ route('loanagainst.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
-    </div>
-</form>
+                                <!-- Fields for Saving Account -->
+                                <div id="saving_fields" style="display:none; margin-top:10px;">
+                                <label>Saving Account:</label>
+                                <select id="saving" name="saving"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <option value="">-- Select Saving Acc. --</option>                                              
+                                    <option value="abcd">abcd</option>                                             
+                                </select>
+                                </div>
+
+
+                                <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
+                                    <div class="col-span-1 md:col-span-1 mb-4">
+                                        <label for="" class="md:text-lg font-medium block mb-4 mt-4">
+                                            Disburse Mode 2
+                                            <span class="text-red-500">*</span>
+                                        </label>
+
+                                        <input type="text" id="D_mode_2" name="D_mode_2"
+                                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                            value="0" readonly>
+                                        
+                                        <div class="mt-3">
+                                        <label>
+                                            <input type="radio" name="payment_mode2" value="cash" checked> Cash
+                                            </label>
+                                            <label>
+                                            <input type="radio" name="payment_mode2" value="cheque"> Cheque
+                                            </label>
+                                            <label>
+                                            <input type="radio" name="payment_mode2" value="online"> Online Transfer
+                                            </label>
+                                            <label>
+                                            <input type="radio" name="payment_mode2" value="saving"> Saving Account
+                                            </label>
+                                            <!-- Fields for Disburse Mode 2 -->
+                                            <div id="cheque_fields2" style="display:none; margin-top:10px;">
+                                                <select id="bank_id2" name="bank_id2"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        <option value="">-- Select Bank --</option>
+                                                        @foreach($banks as $id => $name)
+                                                            <option value="{{ $id }}">
+                                                                {{ $name }}
+                                                            </option>
+                                                        @endforeach
+                                                </select>
+                                                <!-- Cheque No -->
+                                                <div class="mt-3">
+                                                    <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                                    <input type="text" name="cheque_no2"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                        placeholder="Enter Cheque No">
+                                                </div>
+
+                                                <!-- Cheque Date -->
+                                                <div class="mt-3">
+                                                    <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                                    <input type="date" id="cheque_date2" name="cheque_date2"
+                                                    value="{{ old('cheque_date2', date('Y-m-d')) }}" 
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                </div>
+                                            </div>
+                                            <!-- Fields for Online -->
+                                            <div id="online_fields2" style="display:none; margin-top:10px;">
+                                                <div class="mt-3">
+                                                    <label class="block text-sm font-medium text-gray-700">
+                                                        Transfer Date <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input type="date" id="transfer_date2" name="transfer_date2" 
+                                                    value="{{ old('transfer_date2', date('Y-m-d')) }}" 
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700">
+                                                        UTR / Transaction No. <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input type="text" id="utr_no2" name="utr_no2" placeholder="Enter Transaction No."
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700">
+                                                        Transfer Mode <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="flex gap-4 mt-2">
+                                                        <label class="flex items-center gap-2">
+                                                            <input type="radio" name="transfer_mode2" value="imps">
+                                                            <span>IMPS</span>
+                                                        </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode2" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode2" value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Fields for Saving Account -->
+                                            <div id="saving_fields2" style="display:none; margin-top:10px;">
+                                                <label>Saving Account:</label>
+                                                <select id="saving2" name="saving2"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                    <option value="">-- Select Saving Acc. --</option>                                              
+                                                    <option value="abcd">abcd</option>                                             
+                                                </select>
+                                            </div>                
+                                    
+                                        </div>
+
+                                    </div>   
+
+
+                                    </div> </div>
+                                    
+
+                                    </div>
+                                </div>
+                        <!-- Dynamic Fields -->
+                        <div id="extraFields" class="mb-4"></div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-center gap-3 mt-5">
+                            <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
+                                DISBURSE LOAN
+                            </button>
+                            <a href="{{ route('loanagainst.disbursements.index') }}" class="btn-outline uppercase justify-center">BACK</a>
+                        </div>
+                    </form>
 
 <!-- Script -->
 <script>
@@ -463,80 +462,80 @@ document.addEventListener('DOMContentLoaded', function () {
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Requested</td>
-                                <td class="px-3 py-2">{{ $disbursement->net_loan_amount ?? '' }}</td>
+                                <td class="px-3 py-2">₹ {{ $disbursement->net_loan_amount ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Approvable</td>
                                 <td class="px-3 py-2">
-                                 ₹ 100,000.00
+                                 ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
-                                    ₹ 200,000.00
+                                    ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
-                                 FLAT ADVANCED
+                                 {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Interest Amount</td>
                                 <td class="px-3 py-2">
-                                ₹ 10,500.00
+                                ₹ {{ number_format($totalInterest, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
-                                    15.0 %
+                                    {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
-                                   1 Days
+                                   {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
-                                   ₹ 80,501.00
+                                   ₹ {{ number_format($totalRecover, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
-                                   12 MONTHS
+                                   {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
-                               <span                                         class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                          Yes
-                                        </span>
+                               <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                    Yes
+                                </span>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
-                                    {{ number_format($total, 2, '.', '') }}  (Incl. 18.0 % GST)
+                                    {{ number_format($processingTotal, 2, '.', '') }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
-                                   ₹ 1.00  (Incl. 18.0 % GST)
+                                   ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
-                                   {{ $disbursement->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
+                                   {{ $disbursement->scheme->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                           

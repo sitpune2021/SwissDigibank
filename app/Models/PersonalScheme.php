@@ -23,6 +23,7 @@ class PersonalScheme extends Model
     'gold_loan_setting',
     'max_loan_limit',
     'overdue_interest_rate',
+    'overdue_type',
     'penalty_charge',
     'fore_closer_charge',
     'credit_period',
@@ -35,7 +36,7 @@ class PersonalScheme extends Model
     'to_date',
     'penal_rate_interest',
     'annual_rate_interest',  
-    'charges_per_emi_type',
+    'charge_per_emi',
 ];
 
     public function applications()
