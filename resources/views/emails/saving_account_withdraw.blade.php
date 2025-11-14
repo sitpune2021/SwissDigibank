@@ -154,7 +154,7 @@
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Available Balance:</td>
-                    <td style="padding:6px 0;">₹ {{ $Account->balance ?? '0.00' }}</td>
+                    <td style="padding:6px 0;">{{ $Account->balance ?? '0.00' }}</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Mobile Number:</td>
@@ -187,8 +187,6 @@
                 Log on to <a href="" style="color: #2e84fc; text-decoration: none;">www.sc.com/in</a> to find out more!
 
             </p>
-
-
         </div>
         <div class="banner" style="margin: 20px; text-align: center ;  ">
             <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Standard Chartered" style="height: 60px; width: 250px; object-fit: cover;">

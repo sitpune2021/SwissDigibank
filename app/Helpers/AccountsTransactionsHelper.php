@@ -6,6 +6,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
+use App\Mail\AccountDepositMail;
 
 class AccountsTransactionsHelper
 {
@@ -35,7 +36,7 @@ class AccountsTransactionsHelper
     //deposit function
     public static function deposit($account_id, $amount, $details = [])
     {
-   
+
         $tdata = \App\Models\Transaction::create([
             'account_id'       => $account_id,
             'amount'           => $amount,
@@ -67,18 +68,6 @@ class AccountsTransactionsHelper
 
         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
 
-        $Account = $transaction->accounts;
-        $member = $transaction->accounts->members;
-
-        $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
-        $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
-        $pdf->save($pdfPath);
-
-        if (!empty($member->member_info_email)) {
-            Mail::to($member->member_info_email)->send(new \App\Mail\AccountOpenedMail($member, $Account, $pdfPath));
-        } else {
-            Log::warning('No email found for member', ['member_id' => $member->id]);
-        }
         return self::getAccountBalacec($account_id);
     }
 
@@ -130,6 +119,7 @@ class AccountsTransactionsHelper
         $tdata = \App\Models\Transaction::create($transactionData);
         //     // Step 4: Return updated balance
         $updated_balances = self::getAccountBalacec([$account_id]);
+
         return $updated_balances[array_key_first($updated_balances)] ?? 0;
     }
 

@@ -156,6 +156,29 @@ class ApproveController extends Controller
                     $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
                     \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
 
+                    $Account = $transaction->accounts;
+                    $member = $transaction->accounts->members;
+
+                    $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
+                    $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+                    $pdf->save($pdfPath);
+                    if (!empty($member->member_info_email)) {
+
+                        if ($transaction->transaction_type === 'credit') {
+                            // CREDIT = MONEY WITHDRAWN
+                            Mail::to($member->member_info_email)->send(
+                                new \App\Mail\AccountWithdrawMail($member, $Account, $pdfPath)
+                                
+                            );
+                        } elseif ($transaction->transaction_type === 'debit') {
+                            // DEBIT = MONEY DEPOSITED
+                            Mail::to($member->member_info_email)->send(
+                                new \App\Mail\AccountDepositMail($member, $Account, $pdfPath)
+                            );
+                        }
+                    } else {
+                        Log::warning('No email found for member', ['member_id' => $member->id]);
+                    }
                     return redirect()->back()->with('success', 'Saving transaction approved successfully.');
                 }
             } elseif ($sourceTable === 'membership_charges_transaction') {
@@ -200,11 +223,11 @@ class ApproveController extends Controller
                 $account->save();
 
                 try {
-                    $Account = Account::with('members','branch')->find($account->id);
+                    $Account = Account::with('members', 'branch')->find($account->id);
                     $mobile = $Account->members->member_info_mobile_no;
                     $accountNo = $Account->account_no;
 
-                    $member= $Account->members;
+                    $member = $Account->members;
 
                     if ($account->approve_status == "1") {
                         $dlttemplateid = 1707172181386332784;
