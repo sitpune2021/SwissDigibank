@@ -137,6 +137,15 @@
                 PRINT DOCUMENTS
             </button>
 
+            <a href="{{ route('ddsaccounts.createLinkSavingAcc', $ddaccount->id) }}"
+                class="btn-primary px-4 py-2 rounded-3xl">
+                LINK SAVING ACCOUNT (AUTO DEBIT)
+            </a>
+            <a href="{{ route('ddsaccounts.createCreditInterest',$ddaccount->id) }}"
+                class="btn-primary px-4 py-2 rounded-3xl">
+                CREDIT / REVERSE INTEREST
+            </a>
+
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 SHOW AUDIT TRAIL
             </button>
@@ -400,7 +409,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                </labels> -->
+                                                                </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->

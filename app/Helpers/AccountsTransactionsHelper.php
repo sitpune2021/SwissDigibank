@@ -2,13 +2,17 @@
 
 namespace App\Helpers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
+use App\Mail\AccountDepositMail;
 
 class AccountsTransactionsHelper
 {
     public static function getAccountBalacec($account_nos, $payment_details = null)
     {
-    
+
         // Convert single ID to array
         if (!is_array($account_nos)) {
             $account_nos = [$account_nos];
@@ -32,7 +36,7 @@ class AccountsTransactionsHelper
     //deposit function
     public static function deposit($account_id, $amount, $details = [])
     {
-        // Step 1: Insert credit transaction
+
         $tdata = \App\Models\Transaction::create([
             'account_id'       => $account_id,
             'amount'           => $amount,
@@ -63,7 +67,7 @@ class AccountsTransactionsHelper
         $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. Payment is subject to approval. SBC GLOBAL";
 
         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-        // Step 2: Return balance
+
         return self::getAccountBalacec($account_id);
     }
 
@@ -115,6 +119,7 @@ class AccountsTransactionsHelper
         $tdata = \App\Models\Transaction::create($transactionData);
         //     // Step 4: Return updated balance
         $updated_balances = self::getAccountBalacec([$account_id]);
+
         return $updated_balances[array_key_first($updated_balances)] ?? 0;
     }
 
