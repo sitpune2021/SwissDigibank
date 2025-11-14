@@ -1265,8 +1265,17 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::post('commission/add-chart', [AdvisorController::class, 'chartstore'])
     ->name('associates-advisor.commission-charts.store');
 
-    Route::get('commission/view', [AdvisorController::class, 'comission_view'])
-        ->name('associates-advisor.commission-charts.view');
+    Route::get('commission/view/{id}', [AdvisorController::class, 'comission_view'])
+    ->name('associates-advisor.commission-charts.view');
+
+    // edit (reuse create view)
+    Route::get('commission/{id}/edit', [AdvisorController::class, 'edit_chart'])
+        ->name('associates-advisor.commission-charts.edit');
+
+    // update
+    Route::put('commission/{id}', [AdvisorController::class, 'update_chart'])
+    ->name('associates-advisor.commission-charts.update');
+
 });
 
 
