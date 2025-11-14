@@ -16,8 +16,9 @@ class LockerController extends Controller
 {
     public function locker_list_index()
     {
-        $lockers = LockerList::all();
-
+        // $lockers = LockerList::all();
+        $lockers = LockerList::orderByDesc('id')->get();
+        
         return view('lockers.locker-list.index', compact('lockers'));
     }
 

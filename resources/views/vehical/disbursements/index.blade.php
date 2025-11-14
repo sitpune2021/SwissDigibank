@@ -49,7 +49,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h1 class=" flex text-xl block  uppercase font-semibold">
-                Vehical Loan Disbursements
+                Vehicale Loan Disbursements
             </h1>
         </div>
 
@@ -192,7 +192,7 @@
                 </table>
                  <!-- Pagination Links -->
                 <div class="mt-4">
-                    {{ $applications->links() }}
+                    {{ $disbursements->links() }}
                 </div>
             </div>
         </div>

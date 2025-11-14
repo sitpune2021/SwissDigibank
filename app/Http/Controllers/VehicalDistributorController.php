@@ -30,7 +30,6 @@ class VehicalDistributorController extends Controller
         return view('vehical.distributors.index', compact('distributors'));
     }
 
-
     public function create() 
     {
         $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();

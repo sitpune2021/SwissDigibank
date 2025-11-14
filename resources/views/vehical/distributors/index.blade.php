@@ -171,7 +171,7 @@
 
                  <!-- Pagination Links -->
                 <div class="mt-4">
-                    {{ $applications->links() }}
+                    {{ $distributors->links() }}
                 </div>
 
             </div>

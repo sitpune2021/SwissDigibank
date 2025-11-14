@@ -194,7 +194,7 @@
                 </table>
                  <!-- Pagination Links -->
                 <div class="mt-4">
-                    {{ $applications->links() }}
+                    {{ $disbursements->links() }}
                 </div>
             </div>
         </div>
