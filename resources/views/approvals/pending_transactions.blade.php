@@ -111,9 +111,8 @@
                                     {{ str_pad($pending_transaction->member_id ?? 0, 6, '0', STR_PAD_LEFT) }}
                                 </a>
                             </td>
-
                             {{-- ✅ Account Type --}}
-                            <td class="py-5 px-6">{{ $pending_transaction->account_type ?? '' }}</td>
+                            <td class="py-5 px-6">{{ $pending_transaction->transaction_type ?? '' }}</td>
 
                             {{-- ✅ Account Number --}}
                             <td class="py-5 px-6">

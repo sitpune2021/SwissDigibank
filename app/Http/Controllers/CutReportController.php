@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class CutReportController extends Controller
 {
-    
+
     public function generateIdCardPdf()
     {
         $data = [
@@ -46,7 +46,7 @@ class CutReportController extends Controller
         // Forces download
         return $pdf->download('id-card.pdf');
     }
-    public function cut_report_fd()
+    public function fdIndex()
     {
         // Data for the PDF
         $data = [
@@ -100,7 +100,7 @@ class CutReportController extends Controller
         return response($mpdf->Output('cut-report-fd.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
-  public function cut_report_rd()
+    public function rdIndex()
     {
         // Data for the PDF
         $data = [
@@ -155,8 +155,8 @@ class CutReportController extends Controller
             ->header('Content-Type', 'application/pdf');
     }
 
-    
-  public function cut_report_mis()
+
+    public function misIndex()
     {
         // Data for the PDF
         $data = [
@@ -211,7 +211,7 @@ class CutReportController extends Controller
             ->header('Content-Type', 'application/pdf');
     }
 
-     public function cut_report_saving()
+    public function savingIndex()
     {
         // Data for the PDF
         $data = [
@@ -265,7 +265,7 @@ class CutReportController extends Controller
         return response($mpdf->Output('cut-report-saving.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
-    public function cut_report_dd()
+    public function ddIndex()
     {
         // Data for the PDF
         $data = [
@@ -318,5 +318,5 @@ class CutReportController extends Controller
         // Stream PDF to browser
         return response($mpdf->Output('cut-report-dd.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
-    } 
+    }
 }

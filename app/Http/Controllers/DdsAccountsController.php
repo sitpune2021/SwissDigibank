@@ -22,6 +22,10 @@ use App\Helpers\TransactionHelper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use NumberFormatter;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class DdsAccountsController extends Controller
 {
@@ -95,7 +99,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData', 'banks'));
     }
-  
+
     public function store(Request $request)
     {
         // dd($request->all());
@@ -569,6 +573,7 @@ class DdsAccountsController extends Controller
         ];
     }
 
+
     public function installments($id)
     {
         $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
@@ -588,23 +593,165 @@ class DdsAccountsController extends Controller
                 default => $openDate->copy()->addDays($i),
             };
 
-            $transaction = $ddaccount->transactions->firstWhere(function ($tranx) use ($dueDate) {
+            $transaction = $ddaccount->transactions->first(function ($tranx) use ($dueDate) {
                 return Carbon::parse($tranx->transaction_date)->isSameDay($dueDate);
             });
 
             $installments[] = [
                 'number'   => $i + 1,
                 'amount'   => number_format($installmentAmount, 2),
-                'due_date' => $dueDate->format('d/m/Y'),
-                'state'    => $transaction ? 'PAID' : '',
-                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d/m/Y') : '',
+                'due_date' => $dueDate->format('d-m-Y'),
+                'state'    => $transaction ? 'PAID' : 'PENDING',
+                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d-m-Y') : '',
+                'created_at' => Carbon::parse($ddaccount->created_at)->format('d-m-Y h:i A'),
+                'updated_at' => Carbon::parse($ddaccount->updated_at)->format('d-m-Y h:i A'),
             ];
         }
 
+        // Convert to collection
+        $collection = collect($installments);
+
+        // Pagination setup
+        $perPage = 50;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $pagedItems = $collection->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $paginatedInstallments = new LengthAwarePaginator(
+            $pagedItems,
+            $collection->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
         return view('fd_account.ddsaccounts.installments', [
             'ddaccount' => $ddaccount,
-            'installments' => $installments,
+            'installments' => $paginatedInstallments,
         ]);
+    }
+
+    public function installmentReceipt($id)
+    {
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions')->findOrFail($id);
+
+        function numberToWords($number)
+        {
+            $hyphen      = '-';
+            $dictionary  = [
+                0 => 'zero',
+                1 => 'one',
+                2 => 'two',
+                3 => 'three',
+                4 => 'four',
+                5 => 'five',
+                6 => 'six',
+                7 => 'seven',
+                8 => 'eight',
+                9 => 'nine',
+                10 => 'ten',
+                11 => 'eleven',
+                12 => 'twelve',
+                13 => 'thirteen',
+                14 => 'fourteen',
+                15 => 'fifteen',
+                16 => 'sixteen',
+                17 => 'seventeen',
+                18 => 'eighteen',
+                19 => 'nineteen',
+                20 => 'twenty',
+                30 => 'thirty',
+                40 => 'forty',
+                50 => 'fifty',
+                60 => 'sixty',
+                70 => 'seventy',
+                80 => 'eighty',
+                90 => 'ninety',
+                100 => 'hundred',
+                1000 => 'thousand'
+            ];
+
+            if ($number < 21) return $dictionary[$number];
+            elseif ($number < 100) {
+                $tens = ((int)($number / 10)) * 10;
+                $units = $number % 10;
+                return $dictionary[$tens] . ($units ? $hyphen . $dictionary[$units] : '');
+            } elseif ($number < 1000) {
+                $hundreds = (int)($number / 100);
+                $remainder = $number % 100;
+                return $dictionary[$hundreds] . ' hundred' . ($remainder ? ' and ' . numberToWords($remainder) : '');
+            }
+            return $number;
+        }
+
+        $wordAmt = ucfirst(numberToWords((int)$ddaccount->dd_amount)) . ' Only';
+
+        $txn = $ddaccount->transactions->sortByDesc('id')->first();
+        $pay_mode = $txn->pay_mode ?? 'Cash';
+
+        $dueDate = Carbon::parse($ddaccount->open_date)->format('d-m-Y');
+
+        if ($txn) {
+            $nextinsdue = Carbon::parse($txn->transaction_date)->addDay()->format('d-m-Y');
+        } else {
+            $nextinsdue = Carbon::parse($ddaccount->open_date)->addDay()->format('d-m-Y');
+        }
+
+        $depositAmountPerModeValue = $txn->amount
+            ?? $txn->deposit_amount
+            ?? $txn->installment_amount
+            ?? $ddaccount->dd_amount
+            ?? 0;
+
+        $DepositAmountperMode = number_format($depositAmountPerModeValue, 2);
+
+        $installmentNo = $ddaccount->transactions->count() + 1;
+        $otherCharges = 0;
+        $previousBalance = $txn->balance_available
+            ?? $ddaccount->balance
+            ?? 0;
+
+        $previousBalanceFormatted = number_format($previousBalance, 2);
+        $previousBalance = $txn->balance_available ?? $ddaccount->balance ?? 0;
+
+        $currentInstallment = $depositAmountPerModeValue;
+
+        $total = $previousBalance + $currentInstallment;
+
+        $totalFormatted = number_format($total, 2);
+        $data = [
+            'name'               => trim(
+                ($ddaccount->member->member_info_title ?? '') . ' ' .
+                    ($ddaccount->member->member_info_first_name ?? '') . ' ' .
+                    ($ddaccount->member->member_info_middle_name ?? '') . ' ' .
+                    ($ddaccount->member->member_info_last_name ?? '')
+            ),
+            'state'              => $ddaccount->member->member_address_state ?? '',
+            'branch'             => $ddaccount->branch->name ?? 'Main Branch',
+            'receipt_no'         => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
+            'receiptno'          => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
+            'dated'              => Carbon::now()->format('d-m-Y'),
+            'member_no'          => $ddaccount->member_id,
+            'dd_no'              => $ddaccount->dd_no,
+            'installment_amount' => number_format($ddaccount->dd_amount, 2),
+            'total_installments' => $ddaccount->total_installments,
+            'installmentNo'      => $installmentNo,      // 👈 ADDED HERE
+            'open_date'          => Carbon::parse($ddaccount->open_date)->format('d-m-Y'),
+            'maturity_date'      => Carbon::parse($ddaccount->maturity_date)->format('d-m-Y'),
+            'maturity_amount'    => number_format($ddaccount->maturity_amount, 2),
+            'status'             => $ddaccount->status ? 'Active' : 'Pending',
+            'wordAmt'            => $wordAmt,
+            'pay_mode'           => $pay_mode,
+            'DepositAmountperMode' => $DepositAmountperMode,
+            'dueDate'            => $dueDate,
+            'depositAmount'         => $DepositAmountperMode,   // ✅ final variable for BOTH tables
+            'otherCharges'          => $otherCharges,   // ✅ added
+            'previousBalance' => $previousBalanceFormatted,
+            'total' => $totalFormatted,
+            'nextinsdue'         => $nextinsdue,
+        ];
+
+        $pdf = Pdf::loadView('fd_account.ddsaccounts.installmentReceipt', $data);
+        return $pdf->stream('installment-receipt.pdf');
     }
     public function transactions(Request $request, $id)
     {
@@ -1056,5 +1203,25 @@ class DdsAccountsController extends Controller
         $printedBy = optional(Auth::user())->name ?? 'System';
 
         return view('fd_account.ddsaccounts.transactionPrintReceipt2', compact('transaction', 'printedOn', 'printedBy'));
+    }
+    public function createLinkSavingAcc($id)
+    {
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
+        $savingAccounts = Account::where('member_id', $ddaccount->member_id)
+            ->where('account_type', 'Saving')
+            ->where('account_status', 1) // only active
+            ->get();
+
+        return view('fd_account.ddsaccounts.link-account', compact('ddaccount', 'savingAccounts'));
+    }
+    public function createCreditInterest($id)
+    {
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
+        $savingAccounts = Account::where('member_id', $ddaccount->member_id)
+            ->where('account_type', 'Saving')
+            ->where('account_status', 1)
+            ->get();
+
+        return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
 }

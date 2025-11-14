@@ -28,58 +28,19 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class ApproveController extends Controller
 {
 
-    // Pending transaction 
-    // public function index(Request $request)
-    // {
-    //     try {
-    //         $search = $request->input('search');
-    //         $perPage = $request->input('perPage', 10); 
-
-    //         $query = Transaction::with('accounts.members', 'accounts.branch')
-    //             ->where('approve_status', '!=', 'approved');
-
-    //         if ($search) {
-    //             $query->where(function ($q) use ($search) {
-    //                 $q->where('payment_mode', 'like', "%{$search}%")
-    //                     ->orWhere('transaction_type', 'like', "%{$search}%")
-    //                     ->orWhere('bank_name', 'like', "%{$search}%")
-    //                     ->orWhere('amount', 'like', "%{$search}%")
-    //                     ->orWhereHas('accounts', function ($q2) use ($search) {
-    //                         $q2->where('account_no', 'like', "%{$search}%")
-    //                             ->orWhere('account_type', 'like', "%{$search}%")
-    //                             ->orWhereHas('branch', function ($q3) use ($search) {
-    //                                 $q3->where('branch_name', 'like', "%{$search}%");
-    //                             })
-    //                             ->orWhereHas('members', function ($q4) use ($search) {
-    //                                 $q4->where('member_info_first_name', 'like', "%{$search}%")
-    //                                     ->orWhere('member_info_last_name', 'like', "%{$search}%");
-    //                             });
-    //                     });
-    //             });
-    //         }
-
-    //         $pending_transactions = $query
-    //             ->orderBy('created_at', 'desc')
-    //             ->paginate($perPage)
-    //             ->appends($request->all()); 
-
-    //         return view('approvals.pending_transactions', compact('pending_transactions'));
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
-
     public function index(Request $request)
     {
         try {
             $perPage = $request->input('perPage', 10);
+            Log::info('🟢 Starting Pending Transaction Fetch', ['perPage' => $perPage]);
+
+            Log::info('Fetching transaction data...');
             $transactionQuery = DB::table('transactions')
                 ->select(
                     'transactions.id',
                     DB::raw("'transaction' AS source_table"),
                     'transactions.payment_mode',
                     'transactions.amount',
-                    'transactions.transaction_type',
                     'transactions.bank_name',
                     'transactions.approve_status',
                     'transactions.created_at',
@@ -90,52 +51,70 @@ class ApproveController extends Controller
                     'accounts.firm_name',
                     'accounts.branch_id',
                     'accounts.member_id',
-                    'accounts.account_status'
+                    'accounts.account_status',
+                    DB::raw("'Saving' AS transaction_type")
                 )
                 ->join('accounts', 'accounts.id', '=', 'transactions.account_id')
                 ->join('branches', 'branches.id', '=', 'accounts.branch_id')
                 ->where('transactions.approve_status', '!=', 'approved')
                 ->whereNull('transactions.deleted_at');
 
+            Log::info('Transaction query built successfully.');
+
+            Log::info('Fetching membership charges data...');
             $membershipQuery = DB::table('membership_charges_transaction')
                 ->select(
                     'membership_charges_transaction.id',
-                    DB::raw("'membership' AS source_table"),
+                    DB::raw("'membership_charges_transaction' AS source_table"),
                     'membership_charges_transaction.charges_pay_mode AS payment_mode',
                     'membership_charges_transaction.membership_fee AS amount',
-                    DB::raw("'Share amount' AS transaction_type"),
                     'membership_charges_transaction.cheque_bank_name AS bank_name',
                     'membership_charges_transaction.approve_status',
                     'membership_charges_transaction.created_at',
                     'branches.branch_name',
                     'accounts.account_no',
-                    'accounts.account_type',
+                    DB::raw("'Share amount' AS account_type"),
                     'accounts.account_holder_type',
                     DB::raw('NULL AS firm_name'),
                     'accounts.branch_id',
                     'accounts.member_id',
-                    'accounts.account_status'
+                    'accounts.account_status',
+                    DB::raw("'Share amount' AS transaction_type")
                 )
                 ->leftJoin('accounts', 'accounts.id', '=', 'membership_charges_transaction.member_id')
                 ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
-
                 ->leftJoin('branches', 'branches.id', '=', 'members.general_branch')
                 ->where('membership_charges_transaction.type', '=', 'Share amount')
                 ->where('membership_charges_transaction.approve_status', '!=', 1)
                 ->whereNull('membership_charges_transaction.deleted_at');
 
+            Log::info('Membership charges query built successfully.');
+
+            Log::info('Combining transaction and membership queries...');
             $unionQuery = $transactionQuery->unionAll($membershipQuery);
 
-            $finalQuery = DB::table(DB::raw("({$unionQuery->toSql()}) as combined"))
-                ->mergeBindings($unionQuery)
+            Log::info('Creating final combined query...');
+            $finalQuery = DB::query()
+                ->fromSub($unionQuery, 'combined')
                 ->orderByDesc('created_at');
 
+            Log::info('Paginating results...');
             $results = $finalQuery->paginate($perPage);
+
+            Log::info('✅ Pending transactions fetched successfully.', [
+                'total' => $results->total(),
+                'perPage' => $results->perPage(),
+                'currentPage' => $results->currentPage()
+            ]);
 
             return view('approvals.pending_transactions', [
                 'pending_transactions' => $results
             ]);
         } catch (\Exception $e) {
+            Log::error('❌ Error fetching pending transactions', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             dd('Error fetching pending transactions: ' . $e->getMessage());
         }
     }
@@ -188,10 +167,11 @@ class ApproveController extends Controller
 
         try {
             $sourceTable = $request->input('source_table');
+
             $status = $request->input('transaction_status');
             $remarks = $request->input('remarks');
             $paymentStatus = $request->input('payment_status');
-         
+
             if ($sourceTable === 'transaction') {
 
                 $transaction = Transaction::with('accounts.members')->findOrFail($id);
@@ -220,9 +200,9 @@ class ApproveController extends Controller
 
                     return redirect()->back()->with('success', 'Saving transaction approved successfully.');
                 }
-            } 
-            elseif ($sourceTable === 'membership') {
-         
+            }
+             elseif ($sourceTable === 'membership_charges_transaction') {
+
                 $updated = DB::table('membership_charges_transaction')
                     ->where('id', $id)
                     ->update([
