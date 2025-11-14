@@ -21,6 +21,7 @@ use App\Models\Bank;
 use App\Models\MembershipChargeTransaction;
 use App\Helpers\AccountHelper;
 use App\Models\SavingOtherCharge;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -249,6 +250,17 @@ class AccountsController extends Controller
                 \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+            }
+
+            $pdf = Pdf::loadView('emails.saving_account_open', compact('member', 'account'));
+            $pdfPath = storage_path('app/public/account_details_' . $account->id . '.pdf');
+            $pdf->save($pdfPath);
+
+            // ✅ 3. Send Email with PDF
+            if (!empty($member->member_info_email)) {
+                Mail::to($member->member_info_email)->send(new \App\Mail\AccountOpenedMail($member, $account, $pdfPath));
+            } else {
+                Log::warning('No email found for member', ['member_id' => $member->id]);
             }
 
             return redirect()->route('accounts.show', base64_encode($account->id))
@@ -684,7 +696,7 @@ class AccountsController extends Controller
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             }
 
-            return redirect()->route('accounts.show', base64_encode($account->id))->with('success',  $successMessage );
+            return redirect()->route('accounts.show', base64_encode($account->id))->with('success',  $successMessage);
         } catch (\Throwable $th) {
             DB::rollBack();
 

@@ -118,49 +118,6 @@ class ApproveController extends Controller
             dd('Error fetching pending transactions: ' . $e->getMessage());
         }
     }
-    // public function update(Request $request, $id)
-    // {
-    //     try {
-    //         $transaction = Transaction::with('accounts.members')->findOrFail($id);
-
-    //         $transaction->approve_status = $request->input('transaction_status');
-    //         $transaction->remarks = $request->input('remarks');
-    //         $transaction->payment_rev_rel = $request->input('payment_status');
-    //         $amount = $transaction->amount;
-
-    //         if (strtolower($transaction->payment_mode) === 'online') {
-    //             $transaction->bank_name = $request->input('bank_account_id');
-    //         }
-
-    //         if ($transaction->save()) {
-
-    //             // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
-
-    //             $mobile = $transaction->accounts->members->member_info_mobile_no ?? '';
-
-    //             $AccountNo = $transaction->accounts->account_no;
-
-    //             $type = $transaction->transaction_type;
-
-    //             $account_id = $transaction->accounts->id;
-    //             $updated_balances = AccountsTransactionsHelper::getAccountBalacec([$account_id]);
-    //             $available_balance = $updated_balances['total_balance'];
-
-    //             $date = $transaction->transaction_date;
-
-    //             $dlttemplateid = 1707172234108850512;
-    //             $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
-
-    //             \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-
-    //             return redirect()->back()->with('success', 'Transaction updated successfully.');
-    //         } else {
-    //             return redirect()->back()->with('error', 'Failed to update transaction.');
-    //         }
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
 
     public function update(Request $request, $id)
     {
