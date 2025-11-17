@@ -44,21 +44,13 @@
                 @csrf
 
                 <x-add-nominee
-                    :Account="$account"
-                    submitText="{{ $account->nominees->isNotEmpty() ? 'Update' : 'Add' }}"
-                    backText="Back" />
+                :misAccount="$account"
+                :member="$member"
+                type="saving-account"
+                :isUpdate="true"
+                submitText="Change account info"
+                backText="Back" />
 
-                <!-- Buttons -->
-                <div class="flex flex-col mt-6 sm:flex-row gap-3 justify-center">
-                    <button type="submit"
-                        class="sm:w-auto btn-primary uppercase justify-center">
-                        {{ $account->nominees->isNotEmpty() ? 'Update' : 'Add' }}
-                    </button>
-                    <a href="{{ $backUrl ?? 'javascript:history.back()' }}"
-                        class="sm:w-auto btn-outline uppercase justify-center">
-                        {{ $backText ?? 'Back' }}
-                    </a>
-                </div>
             </form>
         </div>
     </div>

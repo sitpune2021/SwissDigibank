@@ -17,7 +17,7 @@ class GoldLoanAccountController extends Controller
 {
     public function index(Request $request)
     {
-        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme','goldLoanTransactions'])->where('status', 1)
+        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])->where('status', 1)
             ->orderBy('id', 'desc')->get();
         return view('gold-loan.account.index', compact('goldLoan'));
     }
@@ -303,6 +303,7 @@ class GoldLoanAccountController extends Controller
 
     public function payEmiLoan(Request $request, $id)
     {
+
         $request->validate([
             'transaction_date' => 'required|date',
             'amount_collected' => 'required|numeric|min:1',
@@ -387,37 +388,101 @@ class GoldLoanAccountController extends Controller
     }
 
     // Gold loan pay button
+    // public function goldLoanPay($id)
+    // {
+    //     $goldLoan = LoanApplication::with(['member.branch', 'goldLoanTransactions', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
+
+    //     $banks = Bank::all();
+
+    //     $P = (float)$goldLoan->loan_amount;
+    //     $annualRate = (float)$goldLoan->interest_rate;
+    //     $N = (int)$goldLoan->tenure_value;
+    //     $R = $annualRate / 12 / 100;
+
+    //     $paidCount = LoanApplication::where('status', 'PAID')->count();
+
+    //     if ($paidCount == 0) {
+    //         $currentDebt = $P;
+    //     } else {
+    //         $denominator = pow(1 + $R, $N) - 1;
+
+    //         if ($denominator != 0) {
+    //             $currentDebt = $P * ((pow(1 + $R, $N) - pow(1 + $R, $paidCount)) / $denominator);
+    //         } else {
+    //             // Prevent divide by zero — fall back to simple remaining principal
+    //             $currentDebt = $P;
+    //         }
+    //     }
+
+    //     $currentDebt = round($currentDebt, 2);
+
+    //     $nextDue = $goldLoan->emiPayments()
+    //         ->where('status', 'pending')
+    //         ->orderBy('emi_no', 'asc')
+    //         ->first();
+
+    //     // dd(  $nextDue);
+
+    //     if (!$nextDue) {
+    //         return view('gold-loan.account.view-buttons.pay.pay', [
+    //             'goldLoan' => $goldLoan,
+    //             'banks' => $banks,
+    //             'currentDebt' => 0,
+    //             'payableAmount' => 0,
+    //             'message' => 'All EMIs are paid.'
+    //         ]);
+    //     }
+
+    //     $today = \Carbon\Carbon::today();
+    //     $dueDate = \Carbon\Carbon::parse($nextDue->emi_date);
+    //     $daysLate = $dueDate->diffInDays($today, false);
+    //     $daysLate = $daysLate > 0 ? $daysLate : 0;
+
+    //     $interestTillToday = round(($currentDebt * $annualRate * $daysLate) / 36500, 2);
+
+    //     $lateFee = $daysLate * 10;
+
+    //     $emiAmount = (float) $nextDue->emi_amount;
+    //     $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
+
+    //     return view('gold-loan.account.view-buttons.pay.pay', compact(
+    //         'goldLoan',
+    //         'banks',
+    //         'currentDebt',
+    //         'payableAmount',
+    //         'interestTillToday',
+    //         'lateFee',
+    //         'daysLate',
+    //         'nextDue'
+    //     ));
+    // }
+
     public function goldLoanPay($id)
     {
-        $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
+        $goldLoan = LoanApplication::with([
+            'member.branch',
+            'goldLoanTransactions',
+            'branch',
+            'scheme',
+            'coApplicant1',
+            'guarantor1'
+        ])->findOrFail($id);
 
         $banks = Bank::all();
 
-        $P = (float)$goldLoan->loan_amount;
-        $annualRate = (float)$goldLoan->interest_rate;
-        $N = (int)$goldLoan->tenure_value;
-        $R = $annualRate / 12 / 100;
+        $lastTransaction = $goldLoan->goldLoanTransactions->last();
+        $payableAmount = $lastTransaction->total_payable ?? 0;
 
-        $paidCount = LoanApplication::where('status', 'PAID')->count();
-
-        if ($paidCount == 0) {
-            $currentDebt = $P;
+        if ($lastTransaction) {
+            $currentDebt = (float) $lastTransaction->current_debt;
         } else {
-            $denominator = pow(1 + $R, $N) - 1;
-
-            if ($denominator != 0) {
-                $currentDebt = $P * ((pow(1 + $R, $N) - pow(1 + $R, $paidCount)) / $denominator);
-            } else {
-                // Prevent divide by zero — fall back to simple remaining principal
-                $currentDebt = $P;
-            }
+            $currentDebt = (float) $goldLoan->loan_amount;
         }
 
         $currentDebt = round($currentDebt, 2);
 
         $nextDue = $goldLoan->emiPayments()
             ->where('status', 'pending')
-            ->orderBy('emi_no', 'asc')
             ->first();
 
         if (!$nextDue) {
@@ -426,12 +491,15 @@ class GoldLoanAccountController extends Controller
                 'banks' => $banks,
                 'currentDebt' => 0,
                 'payableAmount' => 0,
-                'message' => 'All EMIs are paid.'
+                'message' => 'All EMIs are fully paid.'
             ]);
         }
 
+        $annualRate = (float) $goldLoan->interest_rate;
+
         $today = \Carbon\Carbon::today();
         $dueDate = \Carbon\Carbon::parse($nextDue->emi_date);
+
         $daysLate = $dueDate->diffInDays($today, false);
         $daysLate = $daysLate > 0 ? $daysLate : 0;
 
@@ -440,7 +508,8 @@ class GoldLoanAccountController extends Controller
         $lateFee = $daysLate * 10;
 
         $emiAmount = (float) $nextDue->emi_amount;
-        $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
+
+        // $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
 
         return view('gold-loan.account.view-buttons.pay.pay', compact(
             'goldLoan',
@@ -454,42 +523,119 @@ class GoldLoanAccountController extends Controller
         ));
     }
 
+    // public function payEmi(Request $request)
+    // {
+
+    //     $request->validate([
+    //         'loan_id' => 'required|exists:loan_applications,id',
+    //         'transaction_date' => 'required|date',
+    //         'current_debt' => 'required|numeric',
+    //         'total_payable' => 'required|numeric',
+    //         'amount_collected' => 'required|numeric|min:1',
+    //     ]);
+
+    //     $loan = LoanApplication::find($request->id);
+
+    //     $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
+
+
+    //     $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+
+    //     $transaction = GoldLoanTransaction::create([
+    //         'loan_id' => $loan->id,
+    //         'emi_no' => $nextEmiNo,
+    //         'transaction_date' =>  \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d'),
+    //         'current_debt' => $request->current_debt,
+    //         'other_charges' => $request->other_charges ?? 0,
+    //         'total_payable' => $request->total_payable,
+    //         'amount_collected' => $request->amount_collected,
+    //         'remarks' => $request->remarks ?? null,
+    //         'created_by' => Auth::id(),
+    //     ]);
+
+    //     // $loan->balance_amount = $loan->balance_amount - $request->amount_collected;
+    //     // if ($loan->balance_amount < 0) $loan->balance_amount = 0;
+
+    //     // $loan->save();
+
+    //     return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+    // }
 
     public function payEmi(Request $request)
     {
-        $request->validate([
-            'loan_id' => 'required|exists:loan_applications,id',
-            'transaction_date' => 'required|date',
-            'current_debt' => 'required|numeric',
-            'total_payable' => 'required|numeric',
-            'amount_collected' => 'required|numeric|min:1',
+        Log::info('payEmi() called', [
+            'request_data' => $request->all()
         ]);
 
-        $loan = LoanApplication::find($request->loan_id);
+        try {
 
-        $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
-        $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+            // Validation Log
+            Log::info('payEmi(): Starting validation');
 
-        $transaction = GoldLoanTransaction::create([
-            'loan_id' => $loan->id,
-            'emi_no' => $nextEmiNo,
-            'transaction_date' => $request->transaction_date,
-            'current_debt' => $request->current_debt,
-            'other_charges' => $request->other_charges ?? 0,
-            'total_payable' => $request->total_payable,
-            'amount_collected' => $request->amount_collected,
-            'remarks' => $request->remarks ?? null,
-            'created_by' => Auth::id(),
-        ]);
+            $request->validate([
+                'loan_id'           => 'required|exists:loan_applications,id',
+                'transaction_date'  => 'required|date',
+                'current_debt'      => 'required|numeric',
+                'total_payable'     => 'required|numeric',
+                'amount_collected'  => 'required|numeric|min:1',
+            ]);
 
-        $loan->balance_amount = $loan->balance_amount - $request->amount_collected;
-        if ($loan->balance_amount < 0) $loan->balance_amount = 0;
+            Log::info('payEmi(): Validation passed');
 
-        $loan->save();
+            // Loan Fetch
+            Log::info('payEmi(): Fetching loan', ['loan_id' => $request->loan_id]);
 
-        return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+            $loan = LoanApplication::find($request->loan_id);
+
+            if (!$loan) {
+                Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
+                return back()->withErrors(['loan_id' => 'Loan not found.']);
+            }
+
+            // Last EMI No
+            $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
+
+            Log::info('payEmi(): Last EMI No fetched', [
+                'loan_id' => $loan->id,
+                'last_emi_no' => $lastEmiNo
+            ]);
+
+            $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+
+            Log::info('payEmi(): Next EMI No calculated', [
+                'next_emi_no' => $nextEmiNo
+            ]);
+
+            // Creating EMI Transaction
+            $transaction = GoldLoanTransaction::create([
+                'loan_id'          => $loan->id,
+                'emi_no'           => $nextEmiNo,
+                'transaction_date' => \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d'),
+                'current_debt'     => $request->current_debt,
+                'other_charges'    => $request->other_charges ?? 0,
+                'total_payable'    => $request->total_payable,
+                'amount_collected' => $request->amount_collected,
+                'remarks'          => $request->remarks ?? null,
+                'created_by'       => Auth::id(),
+            ]);
+
+            Log::info('payEmi(): EMI Transaction Created Successfully', [
+                'transaction_id' => $transaction->id,
+                'data' => $transaction->toArray()
+            ]);
+
+            return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+        } catch (\Exception $e) {
+
+            Log::error('payEmi(): Exception Occurred', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
+        }
     }
-
 
     // Gold loan debit other charges functionality
     public function showDebitChargesList($id)
@@ -580,7 +726,7 @@ class GoldLoanAccountController extends Controller
             ->where('status', 'unpaid')
             ->sum('amount');
         $banks = Bank::all();
-        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue','banks'));
+        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks'));
     }
 
     public function clearDue(Request $request, $id)
