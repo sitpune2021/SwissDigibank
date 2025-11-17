@@ -83,7 +83,7 @@
 
         .banner {
             margin-top: 15px;
-             /* background-color: #eaf8ef; */
+            /* background-color: #eaf8ef; */
             padding: 12px 15px;
             font-size: 12px;
             text-align: start;
@@ -117,61 +117,64 @@
         <div class="email-header">
             <div style="margin: 20px 0px">
                 <h3>Alerts</h3>
-                <small>July 26, 2022, 08:22 PM</small>
+                <!-- <small>July 26, 2022, 08:22 PM</small> -->
+                <small>{{ now()->format('F d, Y, h:i A') }}</small>
             </div>
-            <img src="{{ asset('assets/images/sbc-image.jpg') }}" alt="" class="logo">
+            <img src="url('assets/images/Loan_Management_logo.png')" alt="" class="logo">
         </div>
 
         <div class="email-body" style="border-bottom: 1px solid #ddd;">
             <p
-                style="color:rgb(9, 163, 9); font-size:16px; font-weight: 600; margin-bottom: 25px; margin-top: 20px !important; ">
-                Dear Valued Customer,</p>
-            <p>Your UPI payment has been successfully credited to the beneficiary bank account.</p>
+                style="color:rgb(9, 163, 9); font-size:16px; font-weight: 600; margin-bottom: 20px; margin-top: 15px !important; ">
+                <!-- Dear Valued Customer, -->
+                Dear {{ $member->member_info_first_name ?? 'Valued Customer' }},
+            </p>
+            <p>Your Saving Account has been debited. Below are the withdrawal details:</p>
 
             <table class="details-table">
                 <tr>
-                    <td>UPI Ref. No.:</td>
-                    <td>220775850486</td>
+                    <td style="padding:6px 0;">Account Number:</td>
+                    <td style="padding:6px 0;">{{ $Account->account_no ?? 'XXXXXXXXXX' }}</td>
                 </tr>
                 <tr>
-                    <td>From VPA:</td>
-                    <td>swapnilthakaresc@ybl</td>
+                    <td style="padding:6px 0;">Customer Name:</td>
+                    <td style="padding:6px 0;">{{ $member->member_info_first_name ?? 'NA' }}</td>
                 </tr>
                 <tr>
-                    <td>To VPA:</td>
-                    <td>0181974292@ybl</td>
+                    <td style="padding:6px 0;">Transaction Type:</td>
+                    <td style="padding:6px 0;">Withdrawal</td>
                 </tr>
                 <tr>
-                    <td>Payee Name:</td>
-                    <td>ANUSHKA PETROLEUM</td>
+                    <td style="padding:6px 0;">Currency:</td>
+                    <td style="padding:6px 0;">INR</td>
                 </tr>
                 <tr>
-                    <td>Currency:</td>
-                    <td>INR</td>
+                    <td style="padding:6px 0;">Withdrawal Amount:</td>
+                    <td style="padding:6px 0;">{{ $withdraw_amount ?? '0.00' }}</td>
                 </tr>
                 <tr>
-                    <td>Amount:</td>
-                    <td>500.00</td>
+                    <td style="padding:6px 0;">Available Balance:</td>
+                    <td style="padding:6px 0;">{{ $Account->balance ?? '0.00' }}</td>
                 </tr>
                 <tr>
-                    <td>Remarks:</td>
-                    <td>Petrol</td>
+                    <td style="padding:6px 0;">Mobile Number:</td>
+                    <td style="padding:6px 0;">{{ $member->member_info_mobile_no ?? 'NA' }}</td>
                 </tr>
                 <tr>
-                    <td>Transaction Date:</td>
-                    <td>26/07/2022 20:22:10</td>
+                    <td style="padding:6px 0;">Branch Name:</td>
+                    <td style="padding:6px 0;">{{ $Account->branch->branch_name ?? 'Main Branch' }}</td>
                 </tr>
                 <tr>
-                    <td>Transaction Status:</td>
-                    <td>COMPLETED</td>
+                    <td style="padding:6px 0;">IFSC Code:</td>
+                    <td style="padding:6px 0;">{{ $Account->branch->ifsc_code ?? 'NA' }}</td>
                 </tr>
                 <tr>
-                    <td>Transaction Type:</td>
-                    <td>DR</td>
+                    <td style="padding:6px 0;">Transaction Date:</td>
+                    <td style="padding:6px 0;">{{ now()->setTimezone('Asia/Kolkata')->format('d/m/Y H:i:s') }}</td>
                 </tr>
                 <tr>
-                    <td>Reason for Failure:</td>
-                    <td>NA</td>
+                    <td style="padding:6px 0;">Status:</td>
+                    <td style="padding:6px 0; color:green;">DEBITED</td>
                 </tr>
             </table>
 
@@ -184,12 +187,10 @@
                 Log on to <a href="" style="color: #2e84fc; text-decoration: none;">www.sc.com/in</a> to find out more!
 
             </p>
-
-
         </div>
         <div class="banner" style="margin: 20px; text-align: center ;  ">
-         <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Standard Chartered" style="height: 60px; width: 250px; object-fit: cover;">
-         </div>
+            <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Standard Chartered" style="height: 60px; width: 250px; object-fit: cover;">
+        </div>
         <div class="footer">
             <p>To unsubscribe or modify these alerts, please login to your Online Banking account and Select Alerts and
                 SMS Banking. This is a system-generated e-mail and does not require an authorised signature.

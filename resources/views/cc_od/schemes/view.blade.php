@@ -74,24 +74,32 @@
                         </tr>
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Fore Closure Charges</td>
-                            <td class="p-3">₹ {{ number_format($scheme->fore_closer_charge, 2) }}</td>
+                            <td class="p-3">{{ number_format($scheme->fore_closer_charge) }} %</td>
                         </tr>
+                        @if(!empty($scheme->stamp_duty_charge) && $scheme->stamp_duty_charge > 0)
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Stamp Duty Fee</td>
                             <td class="p-3">₹ {{ number_format($scheme->stamp_duty_charge, 2) }}</td>
                         </tr>
+                        @endif
+                        @if(!empty($scheme->insurance_fee) && $scheme->insurance_fee > 0)
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Insurance Charges</td>
                             <td class="p-3">₹ {{ number_format($scheme->insurance_fee, 2) }}</td>
                         </tr>
+                        @endif
+                        @if(!empty($scheme->processing_fee) && $scheme->processing_fee > 0)
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Processing Fee</td>
                             <td class="p-3">{{ $scheme->processing_fee }} %</td>
                         </tr>
+                        @endif
+                        @if(!empty($scheme->penalty_charge) && $scheme->penalty_charge > 0)
                          <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Penalty Charge</td>
                             <td class="p-3">{{ $scheme->penalty_charge }} %</td>
                         </tr>
+                        @endif
                         <tr class="bg-gray-50 border-b ">
                             <td class="font-semibold p-3">Active</td>
                             <td class="p-3">

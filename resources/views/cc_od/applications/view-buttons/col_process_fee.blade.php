@@ -15,7 +15,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg font-semibold capitalize">Cc Application</h1>
+            <h1 class="text-lg font-semibold capitalize">CC APPLICATION</h1>
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -225,7 +225,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Cc Application Info</h3>
+                    <h3 class="text-black font-semibold text-lg">CC / OD APPLICATION INFO</h3>
 
                     <!-- Toggle Button -->
                     <button

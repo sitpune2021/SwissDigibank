@@ -22,7 +22,7 @@ class DisbursementController extends Controller
     {
         $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            ->paginate(20);
+            ->paginate(10);
 
         return view('gold-loan.disbursements.index', compact('disbursements'));
     }

@@ -22,7 +22,7 @@
         <div class="overflow-x-auto border rounded-lg dark:bg-bg3 bg-white shadow-md p-4">
               <div class="flex justify-end gap-2">
                  <div class="flex justify-end mb-4">
-                    <a href="#" class="btn-primary px-2 py-2 ">
+                    <a href="{{ route('mis.print.receipt',$transaction->id) }}" class="btn-primary px-2 py-2 ">
                         <i class="las la-print"></i>
                     </a>
                 </div>

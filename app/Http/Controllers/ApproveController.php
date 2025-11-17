@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Account;
-use App\Models\FDAccount;
+use App\Models\FdAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\LoanApplication;
@@ -23,7 +23,9 @@ use App\Models\VehicalApplication;
 use App\Models\MembershipChargeTransaction;
 // use Illuminate\Http\Request;
 use App\Models\PersonalLoanApplication;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Mail;
 
 class ApproveController extends Controller
 {
@@ -118,53 +120,9 @@ class ApproveController extends Controller
             dd('Error fetching pending transactions: ' . $e->getMessage());
         }
     }
-    // public function update(Request $request, $id)
-    // {
-    //     try {
-    //         $transaction = Transaction::with('accounts.members')->findOrFail($id);
-
-    //         $transaction->approve_status = $request->input('transaction_status');
-    //         $transaction->remarks = $request->input('remarks');
-    //         $transaction->payment_rev_rel = $request->input('payment_status');
-    //         $amount = $transaction->amount;
-
-    //         if (strtolower($transaction->payment_mode) === 'online') {
-    //             $transaction->bank_name = $request->input('bank_account_id');
-    //         }
-
-    //         if ($transaction->save()) {
-
-    //             // $transaction = \App\Models\Transaction::with('accounts.members')->where('id', $tdata->id)->first();
-
-    //             $mobile = $transaction->accounts->members->member_info_mobile_no ?? '';
-
-    //             $AccountNo = $transaction->accounts->account_no;
-
-    //             $type = $transaction->transaction_type;
-
-    //             $account_id = $transaction->accounts->id;
-    //             $updated_balances = AccountsTransactionsHelper::getAccountBalacec([$account_id]);
-    //             $available_balance = $updated_balances['total_balance'];
-
-    //             $date = $transaction->transaction_date;
-
-    //             $dlttemplateid = 1707172234108850512;
-    //             $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
-
-    //             \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-
-    //             return redirect()->back()->with('success', 'Transaction updated successfully.');
-    //         } else {
-    //             return redirect()->back()->with('error', 'Failed to update transaction.');
-    //         }
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
 
     public function update(Request $request, $id)
     {
-
         try {
             $sourceTable = $request->input('source_table');
 
@@ -198,10 +156,33 @@ class ApproveController extends Controller
                     $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
                     \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
 
+                    $Account = $transaction->accounts;
+                    $member = $transaction->accounts->members;
+
+                    $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
+                    $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+                    $pdf->save($pdfPath);
+                    if (!empty($member->member_info_email)) {
+
+                        if ($transaction->transaction_type === 'debit') {
+                            // MONEY WITHDRAWN
+                            Mail::to($member->member_info_email)->send(
+                                new \App\Mail\AccountWithdrawMail($member, $Account, $pdfPath)
+
+                            );
+                        } elseif ($transaction->transaction_type === 'credit') {
+
+                            // MONEY DEPOSITED
+                            Mail::to($member->member_info_email)->send(
+                                new \App\Mail\AccountDepositMail($member, $Account, $pdfPath)
+                            );
+                        }
+                    } else {
+                        Log::warning('No email found for member', ['member_id' => $member->id]);
+                    }
                     return redirect()->back()->with('success', 'Saving transaction approved successfully.');
                 }
-            }
-             elseif ($sourceTable === 'membership_charges_transaction') {
+            } elseif ($sourceTable === 'membership_charges_transaction') {
 
                 $updated = DB::table('membership_charges_transaction')
                     ->where('id', $id)
@@ -215,8 +196,7 @@ class ApproveController extends Controller
                 } else {
                     return redirect()->back()->with('error', 'Failed to update Membership Share Amount.');
                 }
-            } 
-            else {
+            } else {
                 return redirect()->back()->with('error', 'Invalid source table specified.');
             }
         } catch (\Exception $e) {
@@ -244,14 +224,28 @@ class ApproveController extends Controller
                 $account->save();
 
                 try {
-                    $Account = Account::with('members')->find($account->id);
+                    $Account = Account::with('members', 'branch')->find($account->id);
                     $mobile = $Account->members->member_info_mobile_no;
                     $accountNo = $Account->account_no;
 
+                    $member = $Account->members;
+
                     if ($account->approve_status == "1") {
                         $dlttemplateid = 1707172181386332784;
-                        $message = "Dear Customer, congratulations! your saving a/c  $accountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+                        $message = "Dear Customer, congratulations! your saving a/c $accountNo is approved. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
                         \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+
+                        $pdf = Pdf::loadView('emails.saving_account_open', compact('member', 'Account'));
+                        $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+                        $pdf->save($pdfPath);
+
+                        // ✅ 3. Send Email with PDF
+                        if (!empty($member->member_info_email)) {
+                            Mail::to($member->member_info_email)->send(new \App\Mail\AccountOpenedMail($member, $Account, $pdfPath));
+                        } else {
+                            Log::warning('No email found for member', ['member_id' => $member->id]);
+                        }
+
                         return redirect()->back()->with('success', 'Account approved successfully.');
                     } else {
                         $dlttemplateid = 1707172181389479065;
@@ -857,8 +851,20 @@ class ApproveController extends Controller
                 $item->model_type = 'vehical';
                 return $item;
             });
+            
 
         // Merge all 4 collections
+        // $applications = $loanApplications
+        //     ->concat($mortgageLoans)
+        //     ->concat($loanAgainst)
+        //     ->concat($businessLoans)
+        //     ->concat($cc_od)
+        //     ->concat($daily_weekly)
+        //     ->concat($personal)
+        //     ->concat($vehical)
+        //     ->sortByDesc('created_at');
+        // ... after concatenating collections into $applications
+        
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
@@ -867,7 +873,10 @@ class ApproveController extends Controller
             ->concat($daily_weekly)
             ->concat($personal)
             ->concat($vehical)
-            ->sortByDesc('created_at');
+            ->sortByDesc(function ($item) {
+                return $item->updated_at ?? $item->created_at;
+            });
+
 
         // Account types array
         $types = [

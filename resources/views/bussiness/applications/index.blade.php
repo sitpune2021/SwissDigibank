@@ -102,7 +102,7 @@
 
             <!-- Application Date -->
             <td class="text-start !py-5 px-6">
-                {{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}
+                {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
             </td>
 
             <!-- Member No -->

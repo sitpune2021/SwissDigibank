@@ -448,7 +448,7 @@ class MortgageController extends Controller
     public function appindex()
     {
         //  loan applications fetch 
-        $applications = MortgageLoanApplication::with(['creditScores'])->latest()->get();
+        $applications = MortgageLoanApplication::with(['creditScores'])->latest()->paginate(10);
 
         return view("mortgage.applications.index", compact('applications'));
     }
@@ -538,6 +538,48 @@ class MortgageController extends Controller
 
             Log::info('Validation Passed');
 
+            // Step 3.5: Check if any property already exists before creating loan
+            if ($request->has('properties') && is_array($request->properties)) {
+                foreach ($request->properties as $i => $prop) {
+                    if (empty($prop['property_type'])) continue;
+
+                    $docNumber = trim($prop['doc_number'] ?? '');
+                    $ownerName = trim($prop['owner_name'] ?? '');
+                    $plotNo = trim($prop['plot_no'] ?? '');
+                    $tehsil = trim($prop['tehsil'] ?? '');
+                    $district = trim($prop['district'] ?? '');
+                    $areaSqft = trim($prop['area_sqft'] ?? '');
+
+                    $alreadyExists = MortgageProperty::where(function ($q) use (
+                        $docNumber,
+                        $ownerName,
+                        $plotNo,
+                        $tehsil,
+                        $district,
+                        $areaSqft
+                    ) {
+                        if ($docNumber) $q->where('doc_number', $docNumber);
+                        if ($ownerName) $q->where('owner_name', $ownerName);
+                        if ($plotNo) $q->where('plot_no', $plotNo);
+                        if ($tehsil) $q->where('tehsil', $tehsil);
+                        if ($district) $q->where('district', $district);
+                        if ($areaSqft) $q->where('area_sqft', $areaSqft);
+                    })->exists();
+
+                    if ($alreadyExists) {
+                        Log::warning("Duplicate property found, stopping process", [
+                            'row' => $i + 1,
+                            'doc_number' => $docNumber,
+                            'owner_name' => $ownerName,
+                        ]);
+
+                        return back()
+                            ->withInput()
+                            ->with('error', 'Property details already exist! Please check and try again.');
+                    }
+                }
+            }
+
             // Step 4: Create main loan application
             $loanApplication = MortgageLoanApplication::create([
                 'application_date' => $request->application_date,
@@ -608,58 +650,86 @@ class MortgageController extends Controller
                     }
                 }
             }
-
+     
             // Step 6: Insert property details
-        
             if ($request->has('properties') && is_array($request->properties)) {
                 foreach ($request->properties as $i => $prop) {
                     if (empty($prop['property_type'])) continue;
 
-                        try {
-                        MortgageProperty::create([
-                        'loan_application_id' => $loanApplication->id,
-                        'property_type' => $prop['property_type'] ?? null,
-                        'doc_number' => $prop['doc_number'] ?? null,
-                        'registrar_name' => $prop['registrar_name'] ?? null,
-                        'owner_name' => $prop['owner_name'] ?? null,
-                        'parent_name' => $prop['parent_name'] ?? null,
-                        'plot_no' => $prop['plot_no'] ?? null,
-                        'tehsil' => $prop['tehsil'] ?? null,
-                        'district' => $prop['district'] ?? null,
-                        //'area_sqft' => $prop['area'] ?? null,
-                        'area_sqft' => $prop['area_sqft'] ?? null,
-                        //'expected_value' => $prop['property_value'] ?? null,
-                        'expected_value' => $prop['expected_value'] ?? null,
-                        'total_security_amount' => $request->total_security_amount ?? null, 
-                        'registered' => $prop['registered'] ?? 'no',
-                        // Boundaries as per Sale Deed
-                        'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
-                        'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
-                        'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
-                        'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
-                        // Boundaries as per Technical
-                        'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
-                        'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
-                        'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
-                        'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
-                    ]);
+                    // Clean all fields
+                    $docNumber = trim($prop['doc_number'] ?? '');
+                    $ownerName = trim($prop['owner_name'] ?? '');
+                    $plotNo = trim($prop['plot_no'] ?? '');
+                    $tehsil = trim($prop['tehsil'] ?? '');
+                    $district = trim($prop['district'] ?? '');
+                    $areaSqft = trim($prop['area_sqft'] ?? '');
 
+                    // --- 🔍 Check if this property already exists globally ---
+                    $alreadyExists = MortgageProperty::where(function ($q) use (
+                        $docNumber,
+                        $ownerName,
+                        $plotNo,
+                        $tehsil,
+                        $district,
+                        $areaSqft
+                    ) {
+                        if ($docNumber) $q->where('doc_number', $docNumber);
+                        if ($ownerName) $q->where('owner_name', $ownerName);
+                        if ($plotNo) $q->where('plot_no', $plotNo);
+                        if ($tehsil) $q->where('tehsil', $tehsil);
+                        if ($district) $q->where('district', $district);
+                        if ($areaSqft) $q->where('area_sqft', $areaSqft);
+                    })->exists();
 
-                            Log::info('Property Record Inserted', [
-                                'property_type' => $prop['property_type'],
-                                'expected_value' => $prop['property_value'] ?? null,
-                            ]);
-                        } catch (Exception $e) {
-                            Log::warning('Failed to insert one property record', [
-                                'index' => $i,
-                                'error' => $e->getMessage(),
-                            ]);
-                        }
+                    if ($alreadyExists) {
+                        Log::warning("Skipping duplicate property (already exists)", [
+                            'row' => $i + 1,
+                            'doc_number' => $docNumber,
+                            'owner_name' => $ownerName,
+                        ]);
+                        continue; // ✅ Skip insert
                     }
-                } else {
-                    Log::info('No property details found in request');
-                }
 
+                    // --- ✅ Insert New Property ---
+                    try {
+                        MortgageProperty::create([
+                            'loan_application_id' => $loanApplication->id,
+                            'property_type' => $prop['property_type'] ?? null,
+                            'doc_number' => $docNumber ?: null,
+                            'registrar_name' => $prop['registrar_name'] ?? null,
+                            'owner_name' => $ownerName ?: null,
+                            'parent_name' => $prop['parent_name'] ?? null,
+                            'plot_no' => $plotNo ?: null,
+                            'tehsil' => $tehsil ?: null,
+                            'district' => $district ?: null,
+                            'area_sqft' => $areaSqft ?: null,
+                            'expected_value' => $prop['expected_value'] ?? null,
+                            'total_security_amount' => $request->total_security_amount ?? null,
+                            'registered' => $prop['registered'] ?? 'no',
+                            'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
+                            'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
+                            'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
+                            'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
+                            'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
+                            'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
+                            'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
+                            'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
+                        ]);
+
+                        Log::info('Property Record Inserted', [
+                            'property_type' => $prop['property_type'],
+                            'doc_number' => $docNumber,
+                        ]);
+                    } catch (Exception $e) {
+                        Log::warning('Failed to insert property record', [
+                            'index' => $i,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            } else {
+                Log::info('No property details found in request');
+            }
 
             // Step 7: Final success response
             Log::info('All Data Saved Successfully', [
@@ -670,14 +740,6 @@ class MortgageController extends Controller
                 ->with('success', 'Mortgage Loan, Credit Score details saved successfully.');
 
         } 
-        // catch (Exception $e) {
-        //     Log::error('Error while storing Loan Application', [
-        //         'error_message' => $e->getMessage(),
-        //         'trace' => $e->getTraceAsString(),
-        //     ]);
-
-        //     return back()->with('error', 'Something went wrong while saving the loan application.');
-        // }
         catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
@@ -1056,12 +1118,12 @@ class MortgageController extends Controller
         return redirect()->route('mortgage.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
     
-   public function linepropertyindex()
+    public function linepropertyindex()
     {
         $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member', 'properties'])
             ->whereNotIn('status', [4])
             ->latest()
-            ->get(['id', 'status']);
+            ->paginate(10, ['id', 'status']);
 
         return view("mortgage.lineproperty.index", compact('applications'));
     }
@@ -1134,6 +1196,19 @@ class MortgageController extends Controller
             ->header('Expires', '0');
     }
 
+    public function submitForApproval($id)
+    {
+        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
+        $application = MortgageLoanApplication::findOrFail($id);
 
-    
+        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
+        // Option A: touch() updates updated_at automatically
+        $application->touch();
+        
+        return redirect()->route('loans')
+        ->with('success', 'Submitted for approval!');      
+        
+    }
+
+
 }

@@ -57,6 +57,9 @@ class DailyWeeklyController extends Controller
                     'emi_amount' => 'required|integer|min:1',
                     'annual_interest_rate' => 'required|numeric|min:0',
                     'is_active' => 'required|in:0,1',
+                    'overdue_type' => 'nullable|string|max:50',
+                    'overdue_rate' => 'required_if:overdue_type,TYPE_1,TYPE_2|numeric|min:0',
+
                 ], [
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
                 ]);
@@ -75,6 +78,10 @@ class DailyWeeklyController extends Controller
                 'stationary_charge',
                 'maintenance_charge',
                 'collection',
+                'overdue_type',               
+                'overdue_rate', 
+                'fitness_fee',
+                'credit_period', 
             ]));
 
             } catch (ValidationException $e) {
@@ -689,6 +696,19 @@ class DailyWeeklyController extends Controller
         return view("daily_weekly.applications.view-buttons.disburse-setting", compact('application'));
     }
 
+    public function submitForApproval($id)
+    {
+        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
+        $application = DailyWeeklyApplication::findOrFail($id);
+
+        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
+        // Option A: touch() updates updated_at automatically
+        $application->touch();
+        
+        return redirect()->route('loans')
+        ->with('success', 'Submitted for approval!');      
+        
+    }
 
     
 }

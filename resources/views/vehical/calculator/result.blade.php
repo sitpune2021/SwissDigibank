@@ -37,23 +37,10 @@
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Tenure</td>
           <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }} MONTHS</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Interest</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_interest,2) }}</td>
-        </tr>
-
-        <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate (Annually)</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Total Payable (EMIs)</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($total_emi_paid,2) }}</td>
         </tr>
 
-        <!-- <tr class="bg-gray-50 font-semibold">
-          <td class="py-2 px-3 border border-gray-300"> </td>
-          <td class="py-2 px-3 border border-gray-300"> </td>
-          <td class="py-2 px-3 text-gray-800 border border-gray-300">Grand Total Payable</td>
-          <td class="py-2 px-3 text-green-700 font-bold border border-gray-300">₹ {{ number_format($grand_total_payable,2) }}</td>
-        </tr> -->
       </tbody>
     </table>
   </div>
@@ -105,13 +92,12 @@
         </tbody>
 
         <tr class="bg-blue-600 text-white font-bold border border-gray-300">
-            <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
-            <!-- <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td> -->
-             <td></td>
-            <td class="p-2 text-right border border-gray-300">{{ $total_interest > 0 ? '₹ '.number_format($total_interest,2) : '' }}</td>
-            <td class="p-2 text-center border border-gray-300">-</td>
-            <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
-            <td class="p-2 text-center border border-gray-300">-</td>
+          <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
+          <td class="p-2 text-right border border-gray-300">-</td>
+          <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_interest, 2) }}</td>
+          <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_charges, 2) }}</td>
+          <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_emi_paid, 2) }}</td>
+          <td class="p-2 text-center border border-gray-300">-</td>
         </tr>
 
     </table>

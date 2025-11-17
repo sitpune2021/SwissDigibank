@@ -128,19 +128,24 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4">
                         Overdue Interest Rate (%)
+                        <span class="text-red-500">*</span>
                     </label>
                     <div class="col-sm-7">
                         <div class="flex items-center gap-2">
                             <!-- Left Select -->
-                            <select name="" id=""
+                            <select name="overdue_type" id="overdue_type"
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option value="TYPE_1">TYPE_1</option>
-                                <option value="TYPE_2">TYPE_2</option>
+                                <option value="">Select Type</option>
+                                <option value="TYPE_1" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_1' ? 'selected' : '' }}>TYPE_1</option>
+                                <option value="TYPE_2" {{ old('overdue_type', $scheme->overdue_type ?? '') == 'TYPE_2' ? 'selected' : '' }}>TYPE_2</option>
                             </select>
                             <!-- Main Input -->
                             <input type="number" id="overdue_interest_rate" name="overdue_interest_rate" value="{{ old('overdue_interest_rate', $scheme->overdue_interest_rate ?? '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3"
                                 placeholder="Enter Overdue Interest Rate (%)">
+                                 @error('overdue_interest_rate')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
                     </div>
                 </div>
@@ -455,38 +460,38 @@
 
                 <!-- Blank  Block (do not remove ) -->
                 <div class="col-span-2 md:col-span-1">
-
-                    {{-- Charges Per EMI Type field  --}}
-        
-                    <label class="md:text-lg font-medium block mb-2">
-                        Charges Per EMI Type <span class="text-red-600">*</span>
+                    
+                <label class="md:text-lg font-medium block mb-2">
+                    Charges Per EMI Type <span class="text-red-600">*</span>
+                </label>
+                <div class="mt-1 flex flex-wrap gap-3">
+                    <!-- Yes -->
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input 
+                            type="radio" 
+                            name="charge_per_emi" 
+                            value="1" 
+                            class="text-green-600 focus:ring-green-500"
+                            {{ old('charge_per_emi', $scheme->charge_per_emi ?? '') == 1 ? 'checked' : '' }} checked>
+                        <span class="text-gray-700 capitalize">ON EMI</span>
                     </label>
 
-                    <div class="mt-1 flex flex-wrap gap-3">
-                        <!-- Yes -->
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input 
-                                type="radio" 
-                                name="charges_per_emi_type" 
-                                value="ON EMI" 
-                                class="text-green-600 focus:ring-green-500"
-                                {{ old('charges_per_emi_type', $scheme->charges_per_emi_type ?? '') == 'ON EMI' ? 'checked' : '' }}
-                                checked>
-                            <span class="text-gray-700 capitalize">ON EMI</span>
-                        </label>
+                    <!-- No -->
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input 
+                            type="radio" 
+                            name="charge_per_emi" 
+                            value="0" 
+                            class="text-green-600 focus:ring-green-500"
+                            {{ old('charge_per_emi', $scheme->charge_per_emi ?? '') == 0 ? 'checked' : '' }}>
+                        <span class="text-gray-700 capitalize">ON PRINCIPAL</span>
+                    </label>
+                     @error('charge_per_emi')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                     @enderror
+                </div>
 
-                        <!-- No -->
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input 
-                                type="radio" 
-                                name="charges_per_emi_type" 
-                                value="ON PRINCIPAL" 
-                                class="text-green-600 focus:ring-green-500"
-                                {{ old('charges_per_emi_type', $scheme->charges_per_emi_type ?? '') == 'ON PRINCIPAL' ? 'checked' : '' }}>
-                            <span class="text-gray-700 capitalize">ON PRINCIPAL</span>
-                        </label>
-                    </div>        
-
+            
                 </div>
 
             </div>

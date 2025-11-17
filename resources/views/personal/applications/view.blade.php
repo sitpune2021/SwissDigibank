@@ -112,9 +112,13 @@
             </a>
         @endif
         @if($application->status != 3 && $application->status != 2) 
-        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            SUBMIT FOR APPROVAL
-        </a>
+        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
+                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                SUBMIT FOR APPROVAL
+            </button>
+        </form>
         @endif
 
         @if($application->status != 0 && $application->status != 3 && $application->status != 2)
@@ -220,7 +224,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Loan Scheme</td>
@@ -357,10 +361,10 @@
                     </thead>
                     <tbody>
                         <tr class="border-t border-b">
-                            <td class="px-2 py-2 text-gray-800 capitalize"> approved</td>
-                            <td class="px-2 py-2 text-gray-800 capitalize">—</td>
-                            <td class="px-2 py-2 text-gray-800">21/08/2025 </td>
-                            <td class="px-2 py-2 text-gray-800 capitalize">Test Test</td>
+                            <td class="px-2 py-2 text-gray-800 capitalize">-</td>
+                            <td class="px-2 py-2 text-gray-800 capitalize">-</td>
+                            <td class="px-2 py-2 text-gray-800">-</td>
+                            <td class="px-2 py-2 text-gray-800 capitalize">-</td>
                         </tr>
                     </tbody>
                 </table>

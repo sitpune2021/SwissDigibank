@@ -135,7 +135,7 @@
                                         @elseif($application->status == 2)
                                         DISBURSED
                                     @else
-                                        DISAPPROVED
+                                        CANCELLED
                                     @endif
                                 </td>
 
@@ -158,6 +158,10 @@
                     </tbody>
 
                 </table>
+                 <!-- Pagination Links -->
+                <div class="mt-4">
+                    {{ $applications->links() }}
+                </div>
             </div>
         </div>
         

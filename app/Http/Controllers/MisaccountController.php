@@ -12,6 +12,7 @@ use App\Models\Member;
 use App\Models\Minor;
 use App\Models\Misaccount;
 use App\Models\MisTransaction;
+use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -870,6 +871,43 @@ class MisaccountController extends Controller
         return view('fd_mis_account.misaccount.view-transaction.transaction', compact('misaccount', 'transaction'));
     }
 
+    public function printReceipt($id)
+    {
+
+        $transaction = MisTransaction::with([
+            'misaccount.member'
+        ])->findOrFail($id);
+
+        $accountId = $transaction->misaccount_id;
+
+        $balances = self::getAccountBalance($accountId);
+        $balance  = $balances[$accountId] ?? 0;
+
+
+
+        $printedOn = now()->format('d-m-Y h:i A');
+        $printedBy = Auth::user()->name ?? 'System';
+
+        $data = [
+            'transaction' => $transaction,
+            'balance'     => $balance,
+            'printedOn'   => $printedOn,
+            'printedBy'   => $printedBy,
+        ];
+
+        // Load PDF
+        $pdf = app('dompdf.wrapper')
+            ->loadView('fd_mis_account.misaccount.view-transaction.printtransaction', $data)
+            ->setPaper([0, 0, 226.77, 800], 'portrait');
+        /**
+         * 80mm thermal width = 226.77 points
+         * height flexible (800 points)
+         */
+
+        return $pdf->stream('payment-receipt-' . $id . '.pdf');
+    }
+
+
     public function show($id)
     {
         $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])->where('id', $id)->first();
@@ -911,23 +949,26 @@ class MisaccountController extends Controller
 
     public function changeAccountInfo($id)
     {
-        $account = Misaccount::findOrFail($id);
+        $account = Misaccount::with('member.kyc')->findOrFail($id);
 
         // Members list fetch -> ['id' => 'member_name']
-        $members = Member::pluck('member_info_first_name', 'id');
+        $members = Member::select('id', 'member_info_first_name', 'member_info_middle_name', 'member_info_last_name')
+            ->get()
+            ->mapWithKeys(function ($m) {
+                return [
+                    $m->id => trim($m->member_info_first_name . ' ' . ($m->member_info_middle_name ?? '') . ' ' . $m->member_info_last_name)
+                ];
+            });
 
         $schemes = FdScheme::pluck('scheme_name', 'id');
 
         $balances = self::getAccountBalance($id);
-        if (is_array($balances)) {
-            $balances = $balances['available_balance'] ?? 0;
-        } elseif ($balances instanceof \Illuminate\Support\Collection) {
-            $balances = $balances->value('available_balance') ?? 0;
-        }
+        $balance  = $balances[$id] ?? 0;
+
         // Joint members ke dropdown me se selected member_id hata do
         $jointMembers = $members->except($account->member_id);
 
-        return view('fd_mis_account.misaccount.account-details.change_account_info', compact('account', 'members', 'jointMembers', 'schemes', 'balances'));
+        return view('fd_mis_account.misaccount.account-details.change_account_info', compact('account', 'members', 'jointMembers', 'schemes', 'balance'));
     }
 
     public function updateAccountInfo(Request $request, $id)
@@ -956,8 +997,9 @@ class MisaccountController extends Controller
 
     public function addNominee($id)
     {
-        $account = Misaccount::with('nominees')->findOrFail($id);
-        return view('fd_mis_account.misaccount.account-details.add_nominee', compact('account'));
+        $account = Misaccount::with('member', 'nominees')->findOrFail($id);
+        $member = $account->member;
+        return view('fd_mis_account.misaccount.account-details.add_nominee', compact('account', 'member'));
     }
 
     public function updateNominee(Request $request, $id)
@@ -1030,6 +1072,12 @@ class MisaccountController extends Controller
         return redirect()->route('misaccount.index')
             ->with('Success', 'MIS Account Deleted Successfully');
     }
+    public function linkSavingsAccount($id)
+    {
+        $misaccount = MisAccount::with('member.accounts')->findOrFail($id);
+
+        return view('fd_mis_account.misaccount.linksavingaccount', compact('misaccount'));
+    }
 
     public function makeLien($id)
     {
@@ -1097,5 +1145,144 @@ class MisaccountController extends Controller
         $balance    = $balances[$id] ?? 0;
 
         return view('fd_mis_account.misaccount.interest-tds.deduct_reverse_tds', compact('misaccount', 'balance'));
+    }
+
+    public function misBondForm($id)
+    {
+        $misaccount = Misaccount::with(['member', 'fdScheme.fdslabs'])->findOrFail($id);
+        // Calculate amount in words
+        $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
+
+        $data = [
+            'misaccount' => $misaccount,
+            'amount_words' => $amountWords,
+            'company_address' => 'HEAD OFFICE',
+            'date' => now()->format('d-m-Y'),
+            'company_reg_no' => 'Reg. No. 969/03-04',
+        ];
+
+        $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.misbond', $data)
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('mis-bond-' . $misaccount->id . '.pdf');
+
+        // $pdf = PDF::loadView('misaccount.print-documents.misbond', $data)
+        //           ->setPaper('a4', 'portrait');
+
+        // return $pdf->stream('mis-bond-' . $deposit->id . '.pdf');
+    }
+
+    protected function numToWords($number)
+    {
+        $words = [
+            0 => 'Zero',
+            1 => 'One',
+            2 => 'Two',
+            3 => 'Three',
+            4 => 'Four',
+            5 => 'Five',
+            6 => 'Six',
+            7 => 'Seven',
+            8 => 'Eight',
+            9 => 'Nine',
+            10 => 'Ten',
+            11 => 'Eleven',
+            12 => 'Twelve',
+            13 => 'Thirteen',
+            14 => 'Fourteen',
+            15 => 'Fifteen',
+            16 => 'Sixteen',
+            17 => 'Seventeen',
+            18 => 'Eighteen',
+            19 => 'Nineteen',
+            20 => 'Twenty',
+            30 => 'Thirty',
+            40 => 'Forty',
+            50 => 'Fifty',
+            60 => 'Sixty',
+            70 => 'Seventy',
+            80 => 'Eighty',
+            90 => 'Ninety'
+        ];
+
+        if ($number == 0) return 'Zero';
+
+        $crores = floor($number / 10000000);
+        $number -= $crores * 10000000;
+        $lakhs = floor($number / 100000);
+        $number -= $lakhs * 100000;
+        $thousands = floor($number / 1000);
+        $number -= $thousands * 1000;
+        $hundreds = floor($number / 100);
+        $number -= $hundreds * 100;
+        $tens = floor($number / 10) * 10;
+        $units = $number % 10;
+
+        $result = '';
+
+        if ($crores) $result .= $this->numToWords($crores) . ' Crore ';
+        if ($lakhs) $result .= $this->numToWords($lakhs) . ' Lakh ';
+        if ($thousands) $result .= $this->numToWords($thousands) . ' Thousand ';
+        if ($hundreds) $result .= $this->numToWords($hundreds) . ' Hundred ';
+
+        if ($tens || $units) {
+            if ($result != '') $result .= 'and ';
+            if ($tens < 20) {
+                $result .= $words[$tens + $units];
+            } else {
+                $result .= $words[$tens];
+                if ($units) $result .= '-' . $words[$units];
+            }
+        }
+
+        return trim($result);
+    }
+
+    public function misOpeningForm($id)
+    {
+
+        // Load MIS account with all required relations
+        $account = Misaccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'fdScheme.fdslabs'
+        ])->findOrFail($id);
+
+        $slab = $account->fdscheme->fdslabs
+            ->where('from_month', '<=', $account->tenure)
+            ->where('to_month', '>=', $account->tenure)
+            ->first();
+
+        $interestRate = $slab->interest_rate ?? $account->rate_of_interest;
+
+
+        $member = $account->member;
+
+        
+        return view('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'));
+    }
+
+
+    public function misClosingForm($id)
+    {
+        $misaccount = Misaccount::with(['member.branch'])->findOrFail($id);
+
+        $data = [
+            'name'            => $misaccount->member->member_info_first_name . ' ' . $misaccount->member->member_info_last_name,
+            'date'            => now()->format('d-m-Y'),
+            'agreement_no'    => $mis->mis_no ?? 'MIS' . str_pad($misaccount->id, 5, '0', STR_PAD_LEFT),
+            'holder_name'     => strtoupper($misaccount->member->member_info_first_name . ' ' . $misaccount->member->member_info_last_name),
+            'expiry_date'     => \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y'),
+            'branch_name'     => $misaccount->member->branch->branch_name ?? ' ',
+            'branch_address'  => $misaccount->member->branch->branch_address ?? ' ',
+        ];
+
+        $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.closingform', $data)
+            ->setPaper('A4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true);
+
+        return $pdf->stream('mis-closing-form-' . $misaccount->id . '.pdf');
     }
 }

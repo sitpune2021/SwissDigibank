@@ -21,12 +21,7 @@ class VehicalDisbursementController extends Controller
             $disbursements = VehicalApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
             // ->whereNotIn('id', $disbursedIds)
-            ->get();
-
-        Log::info('Loan Query Result', [
-            'count' => $disbursements->count(),
-            'ids' => $disbursements->pluck('id')
-        ]);
+            ->paginate(10);
 
         return view('vehical.disbursements.index', compact('disbursements'));
     }
@@ -129,7 +124,7 @@ class VehicalDisbursementController extends Controller
             ]);
 
             return redirect()
-                ->route('vehical.disbursements.index')
+                ->route('vehical.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 
@@ -204,6 +199,35 @@ class VehicalDisbursementController extends Controller
         $finalAmountToDisburse = $loanAmount - $totalDeductions;
         if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
+         // Approved Loan Amount
+        $approvedLoan = (float) ($disbursement->approved_loan_amount ?? 0);
+
+        // Annual interest rate
+        $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
+
+        // Tenure months (default 12)
+        $tenureMonths = (int) ($disbursement->tenure_months ?? 12);
+
+        // Monthly Rate
+        $monthlyRate = $annualRate / 12 / 100;
+
+        // EMI Calculation (reducing)
+        if ($monthlyRate > 0) {
+            $emi = round(
+                ($approvedLoan * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths)) /
+                (pow(1 + $monthlyRate, $tenureMonths) - 1),
+                2
+            );
+        } else {
+            $emi = round($approvedLoan / $tenureMonths, 2);
+        }
+
+        // Total interest
+        $totalInterest = round(($emi * $tenureMonths) - $approvedLoan, 2);
+
+        // Total Recover Amount
+        $totalRecover = round($approvedLoan + $totalInterest, 2);
+
         return view(
             "vehical.disbursements.disburse-loan",
             compact(
@@ -217,7 +241,10 @@ class VehicalDisbursementController extends Controller
                 'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
                 'finalAmountToDisburse',
                 'loanAmount',
-                'totalDeductions'
+                'totalDeductions',
+                 'totalInterest',      
+                'totalRecover',       
+                'emi'
             )
         );
     }

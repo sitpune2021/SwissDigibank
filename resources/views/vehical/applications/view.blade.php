@@ -96,7 +96,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Mortgage Loan Application </h1>
+            <h1 class="text-2xl uppercase font-semibold">VEHICAL LOAN APPLICATION</h1>
         </div>
     </div>
 
@@ -112,9 +112,13 @@
             </a>
         @endif
         @if($application->status != 3 && $application->status != 2 && ($application->status != 1)) 
-        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            SUBMIT FOR APPROVAL
-        </a>
+        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
+                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                SUBMIT FOR APPROVAL
+            </button>
+        </form>
         @endif
 
         @if($application->status != 0 && $application->status != 3 && $application->status != 2)
@@ -472,7 +476,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Mortgage Loan Scheme Info
+                        VEHICAL LOAN SCHEME INFO
                     </h3>
                     <div class="">
 
@@ -549,7 +553,7 @@
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  capitalize">
-                        Mortgage Application Info
+                        VEHICAL LOAN APPLICATION INFO
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"

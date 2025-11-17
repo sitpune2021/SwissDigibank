@@ -114,13 +114,13 @@
                     <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
                         Customer <span class="text-red-500">*</span>
                     </label>
-                    <select name="member_id"
+                    <select name="member_id" disabled
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         <option value="">-- Select Customer --</option>
-                        @foreach($members as $id => $name)
-                        <option value="{{ $id }}" {{ $account->member_id == $id ? 'selected' : '' }}>
-                            {{ $name }}
-                        </option>
+                         @foreach($members as $id => $name)
+                            <option value="{{ $id }}" {{ $account->member_id == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -151,11 +151,13 @@
                     <select name="joint_member_id"
                         class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
                         <option value="">-- Select Joint Customer --</option>
+                        @if($account->account_type == 'joint')
                         @foreach($jointMembers as $id => $name)
                         <option value="{{ $id }}" {{ $account->joint_member_id == $id ? 'selected' : '' }}>
                             {{ $name }}
                         </option>
                         @endforeach
+                        @endif
                     </select>
                 </div>
 
@@ -179,7 +181,7 @@
                     <input type="text" name="open_date" id="date"
                         value="{{ old('open_date', $account->open_date ? \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') : '') }}"
                         placeholder="DD/MM/YYYY"
-                        class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" />
+                        class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border" disabled />
                 </div>
 
 
@@ -206,29 +208,30 @@
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Customer</td>
                             <td class="py-2">
                                 <a href="#" class="text-green-600 hover:underline">
-                                    DEMO-01231 - PRATIK
+                                    {{ $account->member->member_info_first_name ?? '' }} {{ $account->member->member_info_last_name ?? '' }}
                                 </a>
                             </td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">PAN No</td>
-                            <td class="py-2"></td>
+                            <td class="py-2">{{ $account->member->kyc->member_kyc_pan_no ?? 'N/A' }}</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Account No</td>
-                            <td class="py-2">03754</td>
+                            <td class="py-2">{{ $account->id ?? '' }}</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Open Date</td>
-                            <td class="py-2">13/08/2025</td>
+                            <td class="py-2">{{  \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr class="border-b dark:border-gray-700">
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Status</td>
-                            <td class="py-2">Active</td>
+                            <td class="py-2">@if($account->status == 1 ) Active @endif
+                            </td>
                         </tr>
                         <tr>
                             <td class="py-2 font-semibold dark:text-gray-300 uppercase">Available Balance</td>
-                            <td class="py-2">₹{{ number_format($balances, 2) }}</td>
+                            <td class="py-2">₹{{ number_format($balance, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>

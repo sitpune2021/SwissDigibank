@@ -117,7 +117,7 @@
                                 </td>
                                 <td class="text-start !py-5 px-6">
                                     <div class="flex items-center gap-1">
-                                        {{ \Carbon\Carbon::parse($disbursement->application_date)->format('d/m/Y') }}
+                                        {{ \Carbon\Carbon::parse($disbursement->application_date)->format('d-m-Y') }}
                                     </div>
                                 </td>
                                 <td class="text-start !py-5 px-6">
