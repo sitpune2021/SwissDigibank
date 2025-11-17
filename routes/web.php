@@ -169,16 +169,19 @@ Route::middleware('auth.user')->group(function () {
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
 
-            Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
+        Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
-            
+
+        Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
+            ->name('ddsaccounts.MarkLienAccount');
+
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
         // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
         Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
             ->name('dds-accounts.transactions.printReceipt');
-        
+
 
         Route::get(
             '/print-documents/transaction-receipt/{accountId}/{transactionId}',

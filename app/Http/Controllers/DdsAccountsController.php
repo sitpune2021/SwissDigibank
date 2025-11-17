@@ -29,6 +29,7 @@ use Illuminate\Support\Collection;
 
 class DdsAccountsController extends Controller
 {
+
     public function index()
     {
         Log::info('DdsAccountsController@index called');
@@ -38,6 +39,7 @@ class DdsAccountsController extends Controller
             ->get();
 
         foreach ($ddaccounts as $account) {
+
             $installments = $account->total_installments ?? 0;
             $openDate     = $account->open_date ? Carbon::parse($account->open_date) : null;
             $today        = Carbon::today();
@@ -60,7 +62,12 @@ class DdsAccountsController extends Controller
             }
 
             $shouldHavePaid = min($diff, $installments);
-            $paid = $account->transactions->count();
+
+            $totalPrincipalPaid   = $account->transactions->sum('amount');
+            $installmentCleared   = floor($totalPrincipalPaid / $account->dd_amount);
+
+            $paid = $installmentCleared;
+
             $due = max($shouldHavePaid - $paid, 0);
 
             $overdue = 0;
@@ -82,6 +89,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.index', compact('ddaccounts'));
     }
+
 
     public function create()
     {
@@ -328,8 +336,15 @@ class DdsAccountsController extends Controller
         }
 
         $notDue = $totalInstallments - $paid - $due;
+        $expectedPrincipal = $installmentAmount * $shouldHavePaid;
 
-        $principalDue = max($installmentAmount * $due, 0);
+        $principalDue = max($expectedPrincipal - $installmentReceived, 0);
+
+        $penaltyDue = ($principalDue > 0 && !empty($ddaccount->scheme->penalty_charges_value))
+            ? $due * $ddaccount->scheme->penalty_charges_value
+            : 0;
+
+        $totalAmountDue = $principalDue + $penaltyDue;
         $penaltyDue   = ($principalDue > 0 && !empty($ddaccount->scheme->penalty_charges_value))
             ? $due * $ddaccount->scheme->penalty_charges_value
             : 0;
@@ -572,46 +587,61 @@ class DdsAccountsController extends Controller
             'maturity_date'   => $maturityDate,
         ];
     }
-
-
+    
     public function installments($id)
     {
         $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
 
-        $installmentAmount = $ddaccount->dd_amount;
+        $emiAmount = $ddaccount->dd_amount;
         $openDate = Carbon::parse($ddaccount->open_date);
         $totalInstallments = $ddaccount->total_installments;
         $frequency = strtolower($ddaccount->rd_dd_frequency);
 
+        // TOTAL AMOUNT PAID
+        $totalPaid = $ddaccount->transactions->sum('amount');
+
+        // FULL INSTALLMENTS PAID
+        $fullyPaidCount = floor($totalPaid / $emiAmount);
+
+        // Remaining balance (not used for any installment)
+        $remaining = $totalPaid - ($fullyPaidCount * $emiAmount);
+
         $installments = [];
 
         for ($i = 0; $i < $totalInstallments; $i++) {
+
+            // Calculate installment due date
             $dueDate = match ($frequency) {
-                'daily' => $openDate->copy()->addDays($i),
+                'daily'   => $openDate->copy()->addDays($i),
                 'monthly' => $openDate->copy()->addMonths($i),
-                'yearly' => $openDate->copy()->addYears($i),
-                default => $openDate->copy()->addDays($i),
+                'yearly'  => $openDate->copy()->addYears($i),
+                default   => $openDate->copy()->addDays($i),
             };
 
-            $transaction = $ddaccount->transactions->first(function ($tranx) use ($dueDate) {
-                return Carbon::parse($tranx->transaction_date)->isSameDay($dueDate);
-            });
+            // Status Logic
+            if ($i < $fullyPaidCount) {
+                $state = 'PAID';
+                $paidOn = $ddaccount->transactions->last()->transaction_date;
+            } elseif ($i == $fullyPaidCount && $remaining > 0) {
+                $state = 'PARTIAL';  // Optional display
+                $paidOn = '';
+            } else {
+                $state = 'PENDING';
+                $paidOn = '';
+            }
 
             $installments[] = [
-                'number'   => $i + 1,
-                'amount'   => number_format($installmentAmount, 2),
-                'due_date' => $dueDate->format('d-m-Y'),
-                'state'    => $transaction ? 'PAID' : 'PENDING',
-                'paid_on'  => $transaction ? Carbon::parse($transaction->transaction_date)->format('d-m-Y') : '',
-                'created_at' => Carbon::parse($ddaccount->created_at)->format('d-m-Y h:i A'),
-                'updated_at' => Carbon::parse($ddaccount->updated_at)->format('d-m-Y h:i A'),
+                'number'     => $i + 1,
+                'amount'     => number_format($emiAmount, 2),
+                'due_date'   => $dueDate->format('d-m-Y'),
+                'state'      => $state,
+                'paid_on'    => $paidOn ? Carbon::parse($paidOn)->format('d-m-Y') : '',
+                'created_at' => $ddaccount->created_at->format('d-m-Y h:i A'),
+                'updated_at' => $ddaccount->updated_at->format('d-m-Y h:i A'),
             ];
         }
 
-        // Convert to collection
         $collection = collect($installments);
-
-        // Pagination setup
         $perPage = 50;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $pagedItems = $collection->slice(($currentPage - 1) * $perPage, $perPage)->values();
@@ -779,16 +809,13 @@ class DdsAccountsController extends Controller
             $query->whereBetween('balance_available', [$request->from_amount, $request->to_amount]);
         }
 
-        // Get transactions
         $transactions = $query
             ->orderBy('transaction_date', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
-        // Calculate running balance
         $transactions = TransactionHelper::calculateRunningBalance($transactions);
 
-        // Sort transactions (most recent first)
         $transactions = $transactions->sortByDesc('transaction_date')->sortByDesc('id')->values();
 
         return view('fd_account.ddsaccounts.transactions', compact('ddsAccount', 'transactions'));
@@ -1217,11 +1244,22 @@ class DdsAccountsController extends Controller
     public function createCreditInterest($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
+        // dd($ddaccount);
         $savingAccounts = Account::where('member_id', $ddaccount->member_id)
             ->where('account_type', 'Saving')
             ->where('account_status', 1)
             ->get();
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
+    }
+    public function createMarkLienAccount($id)
+    {
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
+        $savingAccounts = Account::where('member_id', $ddaccount->member_id)
+            ->where('account_type', 'Saving')
+            ->where('account_status', 1)
+            ->get();
+
+        return view('fd_account.ddsaccounts.markLienAccount', compact('ddaccount', 'savingAccounts'));
     }
 }

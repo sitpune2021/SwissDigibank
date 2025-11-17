@@ -9,7 +9,6 @@ class AccountsTransactionsHelper
     public static function getAccountBalacec($account_nos, $payment_details = null)
     {
     
-        // Convert single ID to array
         if (!is_array($account_nos)) {
             $account_nos = [$account_nos];
         }
@@ -29,10 +28,8 @@ class AccountsTransactionsHelper
 
         return $balances;
     }
-    //deposit function
     public static function deposit($account_id, $amount, $details = [])
     {
-        // Step 1: Insert credit transaction
         $tdata = \App\Models\Transaction::create([
             'account_id'       => $account_id,
             'amount'           => $amount,

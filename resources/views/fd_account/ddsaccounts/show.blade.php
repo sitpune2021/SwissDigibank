@@ -133,17 +133,23 @@
                 ACCOUNT DETAILS
             </button>
 
-            <button class="btn-primary px-4 py-2 rounded-3xl ">
+            <button class="btn-secondary px-4 py-2 rounded-3xl ">
                 PRINT DOCUMENTS
             </button>
-
+            <a href="{{ route('ddsaccounts.createCreditInterest', $ddaccount->id) }}"
+                class="btn-primary px-4 py-2 rounded-3xl">
+                CREDIT / REVERSE INTEREST
+            </a>
+            <button class="btn-primary px-4 py-2 rounded-3xl ">
+                DEBIT OTHER CHARGES
+            </button>
             <a href="{{ route('ddsaccounts.createLinkSavingAcc', $ddaccount->id) }}"
                 class="btn-primary px-4 py-2 rounded-3xl">
                 LINK SAVING ACCOUNT (AUTO DEBIT)
             </a>
-            <a href="{{ route('ddsaccounts.createCreditInterest',$ddaccount->id) }}"
-                class="btn-primary px-4 py-2 rounded-3xl">
-                CREDIT / REVERSE INTEREST
+
+            <a href="{{ route('ddsaccounts.MarkLienAccount', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+                MARK LIEN AGAINST LOAN
             </a>
 
             <button class="btn-primary px-4 py-2 rounded-3xl ">
@@ -166,7 +172,7 @@
                                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Status</td>
                                 <td class="px-4 py-2">
                                     <a href="" class="label label-default">
-                                        FORE CLOSE APPROVED
+                                        dummy FORE CLOSE APPROVED
                                     </a>
                                 </td>
                             </tr>
@@ -409,7 +415,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                </labels> -->
+                                                                        </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->
