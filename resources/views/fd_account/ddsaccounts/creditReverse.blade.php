@@ -175,7 +175,8 @@
                             Interest Amount
                             <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" id="" name="" value="" placeholder="Enter Interest Amount "
+                        <input type="number" id="" name="" value=""
+                            placeholder="Enter Interest Amount "
                             class=" w-full px-3 py-2.5 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10" />
 
                     </div>
@@ -206,12 +207,13 @@
             <!-- Right: Settings -->
             <div class=" w-full overflow-hidden">
                 <div id="" class="box toggle-box  ">
-                    <div class=" bg-secondary/5 rounded-t-lg px-4 py-3 flex items-center justify-between cursor-pointer toggle-header">
+                    <div
+                        class=" bg-secondary/5 rounded-t-lg px-4 py-3 flex items-center justify-between cursor-pointer toggle-header">
                         <h3 class="text-lg uppercase font-semibold">DD Info</h3>
                         <i class="las la-minus text-xl toggle-icon"></i>
                     </div>
 
-                   <div class=" rounded-b-lg overflow-hidden  toggle-content">
+                    <div class=" rounded-b-lg overflow-hidden  toggle-content">
                         <div class="p-4">
                             <table class="w-full whitespace-nowrap text-sm">
                                 <tbody class="divide-y divide-gray-200">
@@ -249,17 +251,19 @@
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Principal Amt.</td>
-                                        <td class="py-2">not prpoer{{ $ddaccount->balance_available ?? 'N/A' }}</td>
+                                        <td class="py-2">{{ $ddaccount->dd_amount ?? 'N/A' }}</td>
                                     </tr>
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Amount Received</td>
-                                        <td class="py-2">not proper{{ $ddaccount->balance_available ?? 'N/A' }}</td>
+                                        <td class="py-2">{{ $ddaccount->balance ?? 'N/A' }}</td>
                                     </tr>
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Balance Available</td>
-                                        <td class="py-2">{{ $ddaccount->balance_available ?? 'N/A' }}</td>
+                                        <td class="py-2">
+                                            {{ optional($ddaccount->transactions->last())->balance_available }}
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -268,7 +272,7 @@
 
 
                 </div>
-                
+
             </div>
 
         </div>
@@ -301,8 +305,8 @@
     <!-- Datepicker JS -->
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll('.datepicker-field').forEach(function (dateInput) {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.datepicker-field').forEach(function(dateInput) {
                 const picker = new Datepicker(dateInput, {
                     autohide: true,
                     format: 'dd-mm-yyyy',
@@ -322,5 +326,4 @@
             });
         });
     </script>
-
 @endsection
