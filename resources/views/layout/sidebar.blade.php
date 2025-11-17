@@ -2,7 +2,7 @@
     use App\Models\Menu;
     $menuItems = Menu::with('submenus')->orderBy('id')->get();
 @endphp
-  
+
 <aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
     <div class="sidebar-inner relative">
         <div class="logo-column">
@@ -21,6 +21,7 @@
                     </button>
                 </div>
             </div>
+
             <div class="menu-container pb-28">
                 <div class="menu-wrapper">
                     <ul class="menu-ul">
@@ -31,6 +32,11 @@
                                     return request()->routeIs($sub->route);
                                 });
                             @endphp
+
+                            {{-- ✅ Future-ready: Add tab/section separator logic --}}
+                            @if (!empty($item->is_tab_start))
+                                <hr style="margin: 10px 0; border-color: #ccc;">
+                            @endif
 
                             <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}">
                                 @if ($item->submenus->isNotEmpty())
@@ -51,6 +57,7 @@
                                             <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"></i>
                                         </span>
                                     </button>
+
                                     <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
                                         @foreach ($item->submenus as $sub)
                                             <li>
@@ -74,6 +81,11 @@
                                     </a>
                                 @endif
                             </li>
+
+                            {{-- ✅ Always add <hr> AFTER HR MANAGEMENT --}}
+                            @if ($item->title === 'HR MANAGEMENT')
+                                <hr style="margin: 10px 0; border-color: #ccc;">
+                            @endif
                         @endforeach
                     </ul>
                 </div>
@@ -81,3 +93,23 @@
         </div>
     </div>
 </aside>
+
+{{-- ✅ Optional JS: Only one submenu open at a time --}}
+<script>
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.submenu-show').forEach(sub => {
+                if (sub !== this.nextElementSibling) {
+                    sub.classList.remove('submenu-show');
+                }
+            });
+            document.querySelectorAll('.menu-btn.active').forEach(activeBtn => {
+                if (activeBtn !== this) {
+                    activeBtn.classList.remove('active');
+                    activeBtn.querySelector('.la-plus')?.classList.add('show');
+                    activeBtn.querySelector('.la-minus')?.classList.remove('show');
+                }
+            });
+        });
+    });
+</script>

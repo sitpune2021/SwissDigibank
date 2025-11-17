@@ -48,6 +48,7 @@ $settingLabel = '';
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                 <form action="{{ route('goldloan.payEmi') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="loan_id" value="{{$goldLoan->id}}">
                     <div class="col-span-2 md:col-span-1">
                         <label for="" class="md:text-lg font-medium uppercase block mb-4">
                             Transaction Date
@@ -64,8 +65,7 @@ $settingLabel = '';
                             Current Debt (A)
                             <span class="text-error">*</span>
                         </label>
-
-                        <input type="text" id="current_debt" name="current_debt" readonly  value="{{ $currentDebt ?? 0 }}"
+                        <input type="text" id="current_debt" name="current_debt" readonly value="{{ $currentDebt ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.00">
                         <x-number-to-word for="" />
@@ -76,7 +76,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="text" id="total_payable" name="total_payable" readonly
+                        <input type="text" id="total_payable" name="total_payable" readonly value="{{$payableAmount}}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.00">
                         <x-number-to-word for="" />
@@ -393,18 +393,18 @@ $settingLabel = '';
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-    const debt = document.getElementById('current_debt');
-    const other = document.getElementById('other_charges');
-    const total = document.getElementById('total_payable');
+        const debt = document.getElementById('current_debt');
+        const other = document.getElementById('other_charges');
+        const total = document.getElementById('total_payable');
 
-    function calcTotal() {
-        const a = parseFloat(debt.value) || 0;
-        const b = parseFloat(other.value) || 0;
-        total.value = (a + b).toFixed(2);
-    }
+        function calcTotal() {
+            const a = parseFloat(debt.value) || 0;
+            const b = parseFloat(other.value) || 0;
+            total.value = (a + b).toFixed(2);
+        }
 
-    other.addEventListener('input', calcTotal);
-    calcTotal(); // initial calculation
-});
+        other.addEventListener('input', calcTotal);
+        calcTotal(); // initial calculation
+    });
 </script>
 @endsection

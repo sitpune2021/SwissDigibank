@@ -7,54 +7,53 @@ use Illuminate\Http\Request;
 
 class LedgergroupController extends Controller
 {
-     public function index()
+    public function index()
     {
-        return view('ledger-group.index');
+        return view('menu-accounts.ledger-group.index');
     }
-     public function add_ledger_group()
+    public function add_ledger_group()
     {
-        return view('ledger-group.add-ledger-group');
+        return view('menu-accounts.ledger-group.add-ledger-group');
     }
-     public function view()
+    public function view()
     {
-        return view('ledger-group.view');
+        return view('menu-accounts.ledger-group.view');
     }
-     public function asset_ledger()
+    public function asset_ledger()
     {
-        return view('ledger-group.asset-ledger');
+        return view('menu-accounts.ledger-group.asset-ledger');
     }
-  
+
     public function edit_ledger()
     {
-        return view('ledger-group.edit-ledger');
+        return view('menu-accounts.ledger-group.edit-ledger');
     }
-     public function journal_entry()
+    public function journal_entry()
     {
-        return view('ledger-group.journal-entry');
+        return view('menu-accounts.ledger-group.journal-entry');
     }
     public function led_index()
     {
-        return view('ledger.index');
+        return view('menu-accounts.ledger.index');
     }
     public function add_leg()
     {
-        return view('ledger.add-ledger');
+        return view('menu-accounts.ledger.add-ledger');
     }
     public function update_bulkrisk()
     {
-        return view('ledger.update-bulkrisk');
+        return view('menu-accounts.ledger.update-bulkrisk');
     }
-     public function revenue_ledger()
+    public function revenue_ledger()
     {
-        return view('ledger.view');
+        return view('menu-accounts.ledger.view');
     }
-      public function edit_ledgers()
+    public function edit_ledgers()
     {
-        return view('ledger.edit-ledger');
+        return view('menu-accounts.ledger.edit-ledger');
     }
-       public function journal_entry_ledger()
+    public function journal_entry_ledger()
     {
-        return view('ledger.journal-entry');
+        return view('menu-accounts.ledger.journal-entry');
     }
-    
 }

@@ -169,16 +169,16 @@ Route::middleware('auth.user')->group(function () {
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
 
-            Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
+        Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
-            
+
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
         // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
         Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
             ->name('dds-accounts.transactions.printReceipt');
-        
+
 
         Route::get(
             '/print-documents/transaction-receipt/{accountId}/{transactionId}',
@@ -317,34 +317,48 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/fd-add-nominee/{id}', [FdController::class, 'addNominee'])->name('fd.add.nominee');
 
     // Route::resource('misaccount', MisaccountController::class);
-    // Route::get('misaccount/create', [MisaccountController::class, 'create']);
-    // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
+    // Route::get('/misaccount/payout/{id}', [MisaccountController::class, 'misPayout'])->name('misaccount.mispayout');
+    // Route::Post('/misaccount/process/payout/{id}', [MisaccountController::class, 'processPayout'])->name('mis.processPayout');
 
-
-    //Transactions Info
+    // //Transactions Info
     // Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
+    // Route::get('/mistransaction/{id}', [MisaccountController::class, 'viewTransaction'])->name('mis.transaction');
+    // Route::get('/mistransaction/view/{id}', [MisaccountController::class, 'transaction'])->name('mis.transaction.view');
 
-
-    //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
-    // Show change account info form
+    // //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
+    // // Show change account info form
     // Route::get('misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])
     //     ->name('misaccount.changeAccountInfo');
 
-    // Update account info (form submit)
+    // // Update account info (form submit)
     // Route::post('misaccount/{id}/change-account-info', [MisaccountController::class, 'updateAccountInfo'])
     //     ->name('misaccount.updateAccountInfo');
 
-    // Add Nominee
+    // // Add Nominee
     // Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
     //     ->name('misaccount.addNominee');
 
     // Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
     //     ->name('misaccount.updateNominee');
 
-    //edit and update branches
+    // //edit and update branches
 
     // Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
     //     ->name('misaccount.update-branch');
+
+    // Route::get('/misaccount/foreclose/{id}', [MisaccountController::class, 'foreclose'])->name('misaccount.foreclose');
+    // Route::get('/misaccount/{id}/remove-account', [MisaccountController::class, 'removeAccount'])->name('misaccount.removeAccount');
+
+    // Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');
+
+    // Route::get('/misaccount/credit-debit-interest/{id}', [MisaccountController::class, 'creditDebitInterest'])->name('misaccount.creditDebitInterest');
+    // Route::post('/misaccount/{id}/credit-debit-interest', [MisAccountController::class, 'storeCreditDebitInterestAndTDS'])
+    //     ->name('mis.creditdebit.store');
+
+
+    // Route::get('/misaccount/deduct-reverse-tds/{id}', [MisaccountController::class, 'deductReverseTds'])->name('misaccount.deductReverseTds');
+    // Route::post('/misaccount/{id}/deduct-reverse-tds', [MisAccountController::class, 'storeCreditDebitInterestAndTDS'])
+    //     ->name('mis.creditdebit.store');
 
     Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
@@ -352,10 +366,15 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/misaccount/payout/{id}', [MisaccountController::class, 'misPayout'])->name('misaccount.mispayout');
     Route::Post('/misaccount/process/payout/{id}', [MisaccountController::class, 'processPayout'])->name('mis.processPayout');
 
+    Route::get('misaccount/link-savings-account/{id}', [MisaccountController::class, 'linkSavingsAccount'])->name('misaccount.linkSavingsAccount');
+    Route::post('misaccount/store-linked-savings-account/{id}', [MisaccountController::class, 'storeLinkedSavingsAccount'])->name('misaccount.storeLinkedSavingsAccount');
+
     //Transactions Info
     Route::get('/misaccount/member/{memberId}/accounts', [MisaccountController::class, 'getByMember']);
     Route::get('/mistransaction/{id}', [MisaccountController::class, 'viewTransaction'])->name('mis.transaction');
     Route::get('/mistransaction/view/{id}', [MisaccountController::class, 'transaction'])->name('mis.transaction.view');
+    Route::get('mis/receipt/{id}', [MisaccountController::class, 'printReceipt'])
+        ->name('mis.print.receipt');
 
     //Route::get('fd-mis-schemes/misaccount/{id}/change-account-info', [MisaccountController::class, 'changeAccountInfo'])->name('misaccount.changeAccountInfo');
     // Show change account info form
@@ -384,13 +403,18 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');
 
     Route::get('/misaccount/credit-debit-interest/{id}', [MisaccountController::class, 'creditDebitInterest'])->name('misaccount.creditDebitInterest');
-    Route::post('/misaccount/{id}/credit-debit-interest', [MisAccountController::class, 'storeCreditDebitInterestAndTDS'])
+    Route::post('/misaccount/{id}/credit-debit-interest', [MisaccountController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('mis.creditdebit.store');
 
 
     Route::get('/misaccount/deduct-reverse-tds/{id}', [MisaccountController::class, 'deductReverseTds'])->name('misaccount.deductReverseTds');
-    Route::post('/misaccount/{id}/deduct-reverse-tds', [MisAccountController::class, 'storeCreditDebitInterestAndTDS'])
+    Route::post('/misaccount/{id}/deduct-reverse-tds', [MisaccountController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('mis.creditdebit.store');
+
+    Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
+    Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
+    Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
+        ->name('misaccount.closingform');
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -1295,7 +1319,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
         ->name('associates-advisor.commission-charts.store');
 
     Route::get('commission/view/{id}', [AdvisorController::class, 'comission_view'])
-    ->name('associates-advisor.commission-charts.view');
+        ->name('associates-advisor.commission-charts.view');
 
     // edit (reuse create view)
     Route::get('commission/{id}/edit', [AdvisorController::class, 'edit_chart'])
@@ -1303,8 +1327,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
     // update
     Route::put('commission/{id}', [AdvisorController::class, 'update_chart'])
-    ->name('associates-advisor.commission-charts.update');
-
+        ->name('associates-advisor.commission-charts.update');
 });
 
 
