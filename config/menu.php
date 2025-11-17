@@ -243,6 +243,73 @@ return [
             ['title' => 'RD ACCOUNTS', 'route' => 'report.rd.index'],
         ],
     ],
+    [
+        'title' => 'ACCOUNTS',
+        'icon' => 'las la-user',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            // ['title' => 'TREE', 'route' => 'tree.index'],
+            ['title' => 'VENDORS', 'route' => 'vendors.index'],
+            ['title' => 'LEDGER GROUPS', 'route' => 'ledger-group.index'],
+            ['title' => 'LEDGERS', 'route' => 'ledger.index'],
+            // ['title' => 'ENTRIES', 'route' => 'entries.index'],
+            // ['title' => 'TRIAL BALANCE', 'route' => 'trial-balance.index'],
+            // ['title' => 'PROFIT AND LOSS(P & L)', 'route' => 'profit-loss.index'],
+            // ['title' => 'INCOME STATEMENT', 'route' => 'income-statement.index'],
+            // ['title' => 'BALANCE SHEET', 'route' => 'balance-sheet.index'],
+            // ['title' => 'FY REPORT', 'route' => 'fy-report.index'],
+        ],
+    ],
+    // [
+    //     'title' => 'NEW JOURNAL ENTRY',
+    //     'icon' => 'las la-user',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'route' => 'journal-entry.index'
 
+    // ],
+    // [
+    //     'title' => 'DAY BOOK',
+    //     'icon' => 'las la-user',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'route' => 'day-book.index'
+
+    // ],
+    // [
+    //     'title' => 'SCHEDULE SMS',
+    //     'icon' => 'las la-user',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'route' => 'schedule-sms.index'
+
+    // ],
+    // [
+    //     'title' => 'REPORTS',
+    //     'icon' => 'las la-user',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'submenu' => [
+    //         ['title' => 'ASSOCIATE REPORT', 'route' => 'associate-report.index'],
+    //         ['title' => 'BRANCH REPORT', 'route' => 'branch-report.index'],
+    //         ['title' => 'MATURITY REPORT', 'route' => 'maturity-report.index'],
+    //         ['title' => 'LOAN REPORT', 'route' => 'loan-report.index'],
+    //     ],
+    // ],
+    // [
+    //     'title' => 'DAILY COLLECTION',
+    //     'icon' => 'las la-user',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'submenu' => [
+    //         ['title' => 'DASHBOARD', 'route' => 'dashboard.index'],
+    //         ['title' => 'ASSOCIATE COLLECTION APPROVAL', 'route' => 'associate-approvals.index'],
+    //         ['title' => 'ASSOCIATE COLLECTION REPORT', 'route' => 'associate-report.index'],
+    //         ['title' => 'COLLECTION REPORT', 'route' => 'collection-report.index'],
+    //         ['title' => 'ACTIVE ASSOCIATE', 'route' => 'active-associate.index'],
+    //         ['title' => ' ASSOCIATE COLLECTION LIMIT', 'route' => 'associate-limit.index'],
+    //     ],
+    // ],
 
 ];

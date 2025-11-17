@@ -55,8 +55,9 @@
                          {{-- Actions go here --}}
                         @include('partials._vertical-options', [
                         'id' => $txn->id,
-                        'viewRoute' => 'mis.transaction.view',
-                        'deleteRoute' => null,
+                        'viewRoute'     => 'mis.transaction.view',
+                        'printRoute'    => 'mis.print.receipt',
+                        'deleteRoute'   => null,
                         ])
 
                     </td>

@@ -88,7 +88,7 @@
 <div class="main-inner">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
-      <h1 class="text-2xl font-semibold">MIS ACCOUNT - {{'' . $misaccount->member_id}} </h1>
+      <h1 class="text-2xl font-semibold">MIS ACCOUNT - {{'' . $misaccount->id}} </h1>
       <!-- <p class="text-gray-500">
         <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS ACCOUNT</a> >
         <a href="#" class="text-gray-500"> {{'' . $misaccount->member_id}} </a>
@@ -148,7 +148,7 @@
       RELEASE INTEREST
     </a>
     <!--   RELEASE INTEREStT-->
-    <a class="btn-warning text-sm px-2 py-2  rounded-10 ">
+    <a href="{{route('misaccount.linkSavingsAccount',$misaccount->id)}}" class="btn-warning text-sm px-2 py-2  rounded-10 ">
       LINK SAVING ACCOUNT(AUTO CREDIT)
     </a>
 
@@ -182,9 +182,9 @@
 
       <!-- Dropdown menu -->
       <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
-        <a href="#" class="block px-4 py-2   hover:bg-secondary ">Print PDF</a>
-        <a href="#" class="block px-4 py-2 hover:bg-secondary">Print Excel</a>
-        <a href="#" class="block px-4 py-2 hover:bg-secondary">Print All</a>
+        <a href="{{ route('misaccount.printbond',$misaccount->id) }}" class="block px-4 py-2">MIS BOND</a>
+        <a href="{{ route('misaccount.openingform',$misaccount->id) }}" class="block px-4 py-2">ACCOUNT OPENING FORM</a>
+        <a href="{{ route('misaccount.closingform',$misaccount->id) }}" class="block px-4 py-2">CLOSING FORM</a>
       </div>
     </div>
 
@@ -267,16 +267,22 @@
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
               <td class="px-4 py-2">
-                <span class="px-2 py-1 text-xs font-medium rounded
-            {{ $misaccount->tds_deduction === 'yes' ? 'bg-primary text-white rounded-10' : 'bg-red-100 text-red-600' }}">
-                  {{ ucfirst($misaccount->tds_deduction) }}
+                @if($misaccount->tds_deduction === 'yes')
+                <span class="block w-20 rounded-[30px] border bg-primary/20 text-xs text-primary">
+                  Yes
                 </span>
+                @else
+                <span class="block w-20 rounded-[30px] border bg-error/20  text-center text-error">
+                  No
+                </span>
+                @endif
               </td>
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Special Account</td>
               <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded ">-</span></td>
             </tr>
+
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">IS Lien</td>
               <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded ">-</span></td>
@@ -308,7 +314,7 @@
                 <td class="px-4 py-2">
                   {{ ($misaccount->member->member_no ?? ($misaccount->member->id ? str_pad($misaccount->member->id, 6, '0', STR_PAD_LEFT) : '-'))
                       . ' - ' .
-                      (($misaccount->member->member_info_first_name || $misaccount->member->member_info_last_name)
+                      (($misaccount->member->member_info_first_name && $misaccount->member->member_info_last_name)
                       ? ucfirst($misaccount->member->member_info_first_name) . ' ' . ucfirst($misaccount->member->member_info_last_name)
                       : 'N/A') }}
                 </td>
@@ -335,7 +341,7 @@
           <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
           <button class="btn-primary px-3 py-2 rounded-3xl text-white">
             <i class="las la-plus"></i>
-            passbok
+            passbook
           </button>
         </div>
       </div>
@@ -570,7 +576,7 @@
           <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
             <input type="text" name="" id="" class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white"
               placeholder="Enter Old MIS Number">
-            <input type="button" value="update" class="block  btn-primary">
+            <input type="button" value="UPDATE" class="block  btn-primary">
           </div>
         </form>
 
@@ -591,7 +597,7 @@
               @endforeach
             </select>
 
-            <button type="submit" class="block btn-primary uppercase">Update</button>
+            <button type="submit" class="block btn-primary uppercase">UPDATE</button>
           </div>
         </form>
 
@@ -606,7 +612,7 @@
               <option>Option 2</option>
             </select>
 
-            <input type="button" value="update" class="block  btn-primary">
+            <input type="button" value="UPDATE" class="block  btn-primary">
 
           </div>
         </form>
@@ -627,7 +633,7 @@
               <option>Option 2</option>
             </select>
 
-            <input type="button" value="update" class="block  btn-primary">
+            <input type="button" value="UPDATE" class="block  btn-primary">
 
           </div>
         </form>
@@ -854,7 +860,7 @@
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted</td>
-                <td class="px-4 py-2 text-right md:text-left"> N/A Months</td>
+                <td class="px-4 py-2 text-right md:text-left">₹ N/A</td>
               </tr>
             </tbody>
           </table>
@@ -899,10 +905,20 @@
 
               <tr>
                 <td class="font-semibold px-4 py-2 uppercase">Joint Account</td>
-                <td
-                  class="px-4 py-2 text-right md:text-left">
-                  <span class=" {{ $misaccount->joint_member_id ? ' rounded-10 bg-primary  text-white px-2 text-sm py-1' : 'bg-error rounded-10  text-white px-2 text-sm py-1' }}"> {{ $misaccount->joint_member_id ? 'Yes' : 'No' }}</span>
+                <td class="px-4 py-2 text-right md:text-left">
+
+                  @if($misaccount->joint_member_id)
+                  <span class="block w-20 rounded-[30px] border bg-primary/20 py-1 text-primary text-center">
+                    Yes
+                  </span>
+                  @else
+                  <span class="block w-20 rounded-[30px] border bg-error/20 py-1 text-error text-center">
+                    No
+                  </span>
+                  @endif
+
                 </td>
+
               </tr>
 
 
@@ -1007,7 +1023,7 @@
 
 <script>
   //Settings toggle
-  // Label update on toggle
+  // Label UPDATE on toggle
   document.querySelectorAll('.slider-toggle').forEach(toggle => {
     toggle.addEventListener('change', function() {
       const label = document.getElementById(this.dataset.labelId);
