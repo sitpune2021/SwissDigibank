@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FDAccount extends Model
+class FdAccount extends Model
 {
     protected $table = 'fd_accounts';
 

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Account;
-use App\Models\FDAccount;
+use App\Models\FdAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\LoanApplication;
@@ -851,8 +851,20 @@ class ApproveController extends Controller
                 $item->model_type = 'vehical';
                 return $item;
             });
+            
 
         // Merge all 4 collections
+        // $applications = $loanApplications
+        //     ->concat($mortgageLoans)
+        //     ->concat($loanAgainst)
+        //     ->concat($businessLoans)
+        //     ->concat($cc_od)
+        //     ->concat($daily_weekly)
+        //     ->concat($personal)
+        //     ->concat($vehical)
+        //     ->sortByDesc('created_at');
+        // ... after concatenating collections into $applications
+        
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
@@ -861,7 +873,10 @@ class ApproveController extends Controller
             ->concat($daily_weekly)
             ->concat($personal)
             ->concat($vehical)
-            ->sortByDesc('created_at');
+            ->sortByDesc(function ($item) {
+                return $item->updated_at ?? $item->created_at;
+            });
+
 
         // Account types array
         $types = [
