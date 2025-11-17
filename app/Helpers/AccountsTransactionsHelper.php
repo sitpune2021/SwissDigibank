@@ -33,10 +33,8 @@ class AccountsTransactionsHelper
 
         return $balances;
     }
-    //deposit function
     public static function deposit($account_id, $amount, $details = [])
     {
-
         $tdata = \App\Models\Transaction::create([
             'account_id'       => $account_id,
             'amount'           => $amount,

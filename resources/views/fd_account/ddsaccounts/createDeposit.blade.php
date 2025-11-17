@@ -283,7 +283,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Amount Received</td>
-                                    {{-- <td>{{ number_format($installmentReceived, 2) }}</td> --}}
+                                    <td>{{ number_format($ddAccount->balance, 2) }}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Balance Available</td>

@@ -131,7 +131,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
                 <h3 class="text-xl uppercase font-semibold">
-                    DD Account - 1706 - Link Saving Account (Auto credit MIS interest to saving account)
+                    MIS Account - 1706 - Link Saving Account (Auto credit MIS interest to saving account)
                 </h3>
             </div>
         </div>
@@ -143,14 +143,15 @@
                     <!-- Header -->
                     <div class=" py-3">
                         <h3 class="text-lg border-b font-semibold text-black uppercase">
-                            Link member saving account to RD for auto debit installment on due date.
+                            Mark Lien against member's deposit loan account for security.
+
                         </h3>
                     </div>
                     <div class=" overflow-x-auto">
 
                         <div class="col-span-2 md:col-span-1 mt-3">
                             <label for="" class="md:text-lg font-medium block mb-3 uppercase">
-                                Select Saving Account
+                                Select Deposit Loan Account
                                 <span class="text-red-500">*</span>
                             </label>
                             <div class="flex gap-3 items-center">
@@ -161,16 +162,8 @@
 
                                     @foreach ($savingAccounts as $acc)
                                         <option value="{{ $acc->id }}">
-                                            {{ $acc->account_no }}
-                                            ({{ $acc->firm_name ??
-                                                trim(
-                                                    ($acc->members?->member_info_first_name ?? '') .
-                                                        ' ' .
-                                                        ($acc->members?->member_info_middle_name ?? '') .
-                                                        ' ' .
-                                                        ($acc->members?->member_info_last_name ?? ''),
-                                                ) }})
-                                            (Bal. {{ number_format($acc->amount_deposit ?? 0, 2) }})
+                                            {{ $acc->account_no }} -
+                                            {{ $acc->firm_name ?? ($acc->member?->full_name ?? '') }}
                                         </option>
                                     @endforeach
 
@@ -249,8 +242,7 @@
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Balance Available</td>
-                                        <td class="py-2">
-                                            {{ optional($ddaccount->transactions->last())->balance_available }}</td>
+                                        <td class="py-2">{{ optional($ddaccount->transactions->last())->balance_available }}</td>
                                     </tr>
                                 </tbody>
                             </table>
