@@ -112,9 +112,13 @@
             </a>
         @endif
         @if($application->status != 3 && $application->status != 2 && ($application->status != 1)) 
-        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            SUBMIT FOR APPROVAL
-        </a>
+        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
+                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                SUBMIT FOR APPROVAL
+            </button>
+        </form>
         @endif
 
         @if($application->status != 0 && $application->status != 3 && $application->status != 2)

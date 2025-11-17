@@ -113,9 +113,17 @@
             class="btn-warning uppercase px-2 py-2 rounded-10">
             Collect Processing Fee
         </a>       
-        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+        <!-- <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             SUBMIT FOR APPROVAL
-        </a>
+        </a> -->
+        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
+                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                SUBMIT FOR APPROVAL
+            </button>
+        </form>
+
         @endif
 
         {{-- Status != DISBURSEMENT (2) --}}

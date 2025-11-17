@@ -91,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <!-- BRANCHES -->
+        <!-- SAVING ACCOUNTS -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium"> SAVING ACCOUNTS</span><span aria-expanded="false"><svg
@@ -106,14 +106,15 @@
             <div class="flex items-center gap-4 xl:gap-6">
                 <div
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
+                    <i class="text-3xl las xl:text-5xl la-piggy-bank"></i>
+                </div>
                 <div>
                     <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['savingAccounts'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
         </div>
-
+        <!-- CURRENT ACCOUNTS -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium"> CURRENT ACCOUNTS</span><span aria-expanded="false"><svg
@@ -128,14 +129,15 @@
             <div class="flex items-center gap-4 xl:gap-6">
                 <div
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
+                    <i class="text-3xl las xl:text-5xl la-credit-card"></i>
+                </div>
                 <div>
                     <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['currentAccounts'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
         </div>
-
+        <!-- FD ACCOUNTS -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium"> FD ACCOUNTS </span><span aria-expanded="false"><svg
@@ -150,14 +152,15 @@
             <div class="flex items-center gap-4 xl:gap-6">
                 <div
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
+                    <i class="text-3xl las xl:text-5xl la-piggy-bank"></i>
+                </div>
                 <div>
                     <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['fdCount'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
                 </div>
             </div>
         </div>
-
+        <!-- MIS ACCOUNTS -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium"> MIS ACCOUNTS </span><span aria-expanded="false"><svg
@@ -172,7 +175,8 @@
             <div class="flex items-center gap-4 xl:gap-6">
                 <div
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-chart-bar"></i></div>
+                    <i class="text-3xl las xl:text-5xl la-coins"></i>
+                </div>
                 <div>
                     <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['misCount'] }}</h4><span
                         class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
@@ -180,6 +184,181 @@
             </div>
         </div>
 
+        <!-- Gold Loan  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">GOLD LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-coins"></i>
+                </div>
+
+                <div>
+                    <!-- <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['branchesCount'] }}</h4> -->
+                     <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- MORTGAGE LOAN  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">MORTGAGE LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-file-invoice-dollar"></i>
+                </div>
+
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+        <!-- LOAN AGAINST DEPOSITE  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">LOAN AGAINST DEPOSITE</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-file-invoice-dollar"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+        <!-- BUSINESS LOAN  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">BUSINESS LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-briefcase"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+         <!-- CC / OD LIMIT LOAN  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">CC / OD LIMIT LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-sync"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+        <!-- DAILY WEEKLY LOAN  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">DAILY WEEKLY LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-calendar"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+        <!-- PERSONAL LOAN  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">PERSONAL LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-user"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+        <!-- VEHICAL LOAN  -->
+        <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium">VEHICAL LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-car"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                </div>
+            </div>
+        </div>
+
+        
         <!-- Statistics -->
         <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
             <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
