@@ -164,14 +164,15 @@ class ApproveController extends Controller
                     $pdf->save($pdfPath);
                     if (!empty($member->member_info_email)) {
 
-                        if ($transaction->transaction_type === 'credit') {
-                            // CREDIT = MONEY WITHDRAWN
+                        if ($transaction->transaction_type === 'debit') {
+                            // MONEY WITHDRAWN
                             Mail::to($member->member_info_email)->send(
                                 new \App\Mail\AccountWithdrawMail($member, $Account, $pdfPath)
-                                
+
                             );
-                        } elseif ($transaction->transaction_type === 'debit') {
-                            // DEBIT = MONEY DEPOSITED
+                        } elseif ($transaction->transaction_type === 'credit') {
+
+                            // MONEY DEPOSITED
                             Mail::to($member->member_info_email)->send(
                                 new \App\Mail\AccountDepositMail($member, $Account, $pdfPath)
                             );
