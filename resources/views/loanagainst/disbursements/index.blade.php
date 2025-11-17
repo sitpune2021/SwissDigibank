@@ -130,7 +130,7 @@
                 <div class="flex items-center gap-1 text-secondary">
                     <a href="{{ url('members/member/' . $disbursement->member_id) }}" 
                 class="text-blue-600 hover:underline">
-                    {{ $disbursement->member_id }}
+                    {{ str_pad($disbursement->member_id, 6, '0', STR_PAD_LEFT) }}
                 </a>
                 </div>
             </td>
