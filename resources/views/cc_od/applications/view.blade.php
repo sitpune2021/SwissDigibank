@@ -102,9 +102,13 @@
 
     <div class="flex flex-wrap gap-3">
         @if($application->status == 0 )
-        <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            SUBMIT FOR APPROVAL
-        </a>
+        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
+                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                SUBMIT FOR APPROVAL
+            </button>
+        </form>
         @endif
         @if($application->status == 1 )
          <a href="{{ route('cc_od.applications.view-buttons.col_process_fee', $application->id) }}" class="btn-warning  uppercase px-2 py-2 rounded-10 ">

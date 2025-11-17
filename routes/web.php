@@ -631,6 +631,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
         ->name('gold-loan.col_process_fee.store');
 
+    Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
 
     // Show EMI chart in a new tab
     Route::get('applications/{id}/emi-chart', [GoldLoanController::class, 'emiChart'])
@@ -698,6 +700,8 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('mortgage.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [MortgageController::class, 'mortgagestoreProcessFee'])
         ->name('mortgage.col_process_fee.store');
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
 });
 
 
@@ -801,6 +805,10 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [LoanAgainstController::class, 'loanagainststoreProcessFee'])
         ->name('loanagainst.col_process_fee.store');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
+
 });
 
 
@@ -898,6 +906,10 @@ Route::group(['prefix' => 'bussiness'], function () {
         ->name('bussiness.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
+
 });
 
 
@@ -984,6 +996,10 @@ Route::group(['prefix' => 'cc_od'], function () {
 
     Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
         ->name('ccod.col_process_fee.store');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
+
 });
 
 
@@ -1079,6 +1095,10 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     // Disbusrment setting
     Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
+
 });
 
 
@@ -1125,6 +1145,10 @@ Route::group(['prefix' => 'personal'], function () {
         ->name('personal.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
+
 });
 
 
@@ -1187,6 +1211,10 @@ Route::group(['prefix' => 'vehical'], function () {
         ->name('vehical.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    ->name('applications.submitForApproval');
+
 });
 
 
