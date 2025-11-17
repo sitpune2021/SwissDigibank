@@ -1044,4 +1044,19 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application'));
     }
 
+    public function submitForApproval($id)
+    {
+        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
+        $application = LoanApplication::findOrFail($id);
+
+        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
+        // Option A: touch() updates updated_at automatically
+        $application->touch();
+        
+        return redirect()->route('loans')
+        ->with('success', 'Submitted for approval!');      
+        
+    }
+
+
 }
