@@ -41,6 +41,42 @@
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
         </tr>
 
+        <tr>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
+          <td class="py-2 px-3 border border-gray-300">
+            {{ $interest_as_first }}
+          </td>
+
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
+          <td class="py-2 px-3 border border-gray-300">
+            {{ $interest_as_emi }}
+          </td>
+        </tr>
+
+        @if ($interest_type == 'Reducing_emi' && $ratio_enabled == 'Yes')
+          <tr>
+            <td colspan="4" class="py-3 px-4 border border-gray-300 bg-gray-50">
+                <p class="font-semibold text-gray-800">Loan In Ratio: Yes</p>
+            </td>
+          </tr>
+          <tr>
+              <td>
+                <p class="mt-1 text-gray-700">
+                    First <strong>{{ $ratio_first_emi }}</strong> EMIs will Recover 
+                    <strong>{{ $ratio_first_percentage }} %</strong> of loan amount.
+                </p>
+              </td>
+              <td></td>
+              <td>
+                <p class="mt-1 text-gray-700">
+                    Remaining <strong>{{ $installments - $ratio_first_emi }}</strong> EMIs will Recover 
+                    <strong>{{ 100 - $ratio_first_percentage }} %</strong> of loan amount.
+                </p>
+              </td>
+              <td></td>
+          </tr>
+        @endif
+
       </tbody>
     </table>
   </div>
@@ -92,12 +128,12 @@
         </tbody>
 
         <tr class="bg-blue-600 text-white font-bold border border-gray-300">
-          <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
-          <td class="p-2 text-right border border-gray-300">-</td>
-          <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_interest, 2) }}</td>
-          <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_charges, 2) }}</td>
-          <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_emi_paid, 2) }}</td>
-          <td class="p-2 text-center border border-gray-300">-</td>
+            <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
+            <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td>
+            <td class="p-2 text-right border border-gray-300">{{ $total_interest > 0 ? '₹ '.number_format($total_interest,2) : '' }}</td>
+            <td class="p-2 text-center border border-gray-300">-</td>
+            <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
+            <td class="p-2 text-center border border-gray-300">-</td>
         </tr>
 
     </table>
