@@ -40,6 +40,40 @@
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate (Annually)</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>        
         </tr>
+        <tr>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
+          <td class="py-2 px-3 border border-gray-300">
+            {{ $interest_as_first }}
+          </td>
+
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
+          <td class="py-2 px-3 border border-gray-300">
+            {{ $interest_as_emi }}
+          </td>
+        </tr>
+         @if ($interest_type == 'Reducing_emi' && $ratio_enabled == 'Yes')
+          <tr>
+            <td colspan="4" class="py-3 px-4 border border-gray-300 bg-gray-50">
+                <p class="font-semibold text-gray-800">Loan In Ratio: Yes</p>
+            </td>
+          </tr>
+          <tr>
+              <td>
+                <p class="mt-1 text-gray-700">
+                    First <strong>{{ $ratio_first_emi }}</strong> EMIs will Recover 
+                    <strong>{{ $ratio_first_percentage }} %</strong> of loan amount.
+                </p>
+              </td>
+              <td></td>
+              <td>
+                <p class="mt-1 text-gray-700">
+                    Remaining <strong>{{ $installments - $ratio_first_emi }}</strong> EMIs will Recover 
+                    <strong>{{ 100 - $ratio_first_percentage }} %</strong> of loan amount.
+                </p>
+              </td>
+              <td></td>
+          </tr>
+        @endif
       </tbody>
     </table>
   </div>

@@ -3,8 +3,7 @@
 <div class="p-6 bg-white shadow rounded-lg">
   <h2 class="text-xl font-bold mb-4 text-gray-700"><center>Calculator Result</center></h2>
 
-  <div class="overflow-x-auto">
-    
+  <div class="overflow-x-auto">  
     <table class="w-full text-sm border border-gray-400 rounded-lg">
       <tbody>
         <tr>
@@ -41,6 +40,40 @@
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
         </tr>
+        <tr>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
+          <td class="py-2 px-3 border border-gray-300">
+            {{ $interest_as_first }}
+          </td>
+
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
+          <td class="py-2 px-3 border border-gray-300">
+            {{ $interest_as_emi }}
+          </td>
+        </tr>
+        @if ($interest_type == 'Reducing' && $ratio_enabled == 'Yes')
+          <tr>
+            <td colspan="4" class="py-3 px-4 border border-gray-300 bg-gray-50">
+                <p class="font-semibold text-gray-800">Loan In Ratio: Yes</p>
+            </td>
+          </tr>
+          <tr>
+              <td>
+                <p class="mt-1 text-gray-700">
+                    First <strong>{{ $ratio_first_emi }}</strong> EMIs will Recover 
+                    <strong>{{ $ratio_first_percentage }} %</strong> of loan amount.
+                </p>
+              </td>
+              <td></td>
+              <td>
+                <p class="mt-1 text-gray-700">
+                    Remaining <strong>{{ $installments - $ratio_first_emi }}</strong> EMIs will Recover 
+                    <strong>{{ 100 - $ratio_first_percentage }} %</strong> of loan amount.
+                </p>
+              </td>
+              <td></td>
+          </tr>
+        @endif
       </tbody>
     </table>
   </div>
