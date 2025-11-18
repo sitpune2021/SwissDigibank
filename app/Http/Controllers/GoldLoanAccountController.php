@@ -525,65 +525,115 @@ class GoldLoanAccountController extends Controller
 
     // public function payEmi(Request $request)
     // {
-
-    //     $request->validate([
-    //         'loan_id' => 'required|exists:loan_applications,id',
-    //         'transaction_date' => 'required|date',
-    //         'current_debt' => 'required|numeric',
-    //         'total_payable' => 'required|numeric',
-    //         'amount_collected' => 'required|numeric|min:1',
+    //     Log::info('payEmi() called', [
+    //         'request_data' => $request->all()
     //     ]);
 
-    //     $loan = LoanApplication::find($request->id);
+    //     try {
 
-    //     $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
+    //         // Validation Log
+    //         Log::info('payEmi(): Starting validation');
 
+    //         $request->validate([
+    //             'loan_id'           => 'required|exists:loan_applications,id',
+    //             'transaction_date'  => 'required|date',
+    //             'current_debt'      => 'required|numeric',
+    //             'total_payable'     => 'required|numeric',
+    //             'amount_collected'  => 'required|numeric|min:1',
+    //             'fee_mode'         => 'required|in:cash,cheque,online',
+    //         ]);
 
-    //     $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+    //         Log::info('payEmi(): Validation passed');
 
-    //     $transaction = GoldLoanTransaction::create([
-    //         'loan_id' => $loan->id,
-    //         'emi_no' => $nextEmiNo,
-    //         'transaction_date' =>  \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d'),
-    //         'current_debt' => $request->current_debt,
-    //         'other_charges' => $request->other_charges ?? 0,
-    //         'total_payable' => $request->total_payable,
-    //         'amount_collected' => $request->amount_collected,
-    //         'remarks' => $request->remarks ?? null,
-    //         'created_by' => Auth::id(),
-    //     ]);
+    //         // Loan Fetch
+    //         Log::info('payEmi(): Fetching loan', ['loan_id' => $request->loan_id]);
 
-    //     // $loan->balance_amount = $loan->balance_amount - $request->amount_collected;
-    //     // if ($loan->balance_amount < 0) $loan->balance_amount = 0;
+    //         $loan = LoanApplication::find($request->loan_id);
 
-    //     // $loan->save();
+    //         if (!$loan) {
+    //             Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
+    //             return back()->withErrors(['loan_id' => 'Loan not found.']);
+    //         }
 
-    //     return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+    //         // Last EMI No
+    //         $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
+
+    //         Log::info('payEmi(): Last EMI No fetched', [
+    //             'loan_id' => $loan->id,
+    //             'last_emi_no' => $lastEmiNo
+    //         ]);
+
+    //         $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+
+    //         Log::info('payEmi(): Next EMI No calculated', [
+    //             'next_emi_no' => $nextEmiNo
+    //         ]);
+
+    //         // Creating EMI Transaction
+    //         $transaction = GoldLoanTransaction::create([
+    //             'loan_id'          => $loan->id,
+    //             'emi_no'           => $nextEmiNo,
+    //             'transaction_date' => \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d'),
+    //             'current_debt'     => $request->current_debt,
+    //             'other_charges'    => $request->other_charges ?? 0,
+    //             'total_payable'    => $request->total_payable,
+    //             'amount_collected' => $request->amount_collected,
+    //             'remarks'          => $request->remarks ?? null,
+    //             'created_by'       => Auth::id(),
+    //         ]);
+
+    //         Log::info('payEmi(): EMI Transaction Created Successfully', [
+    //             'transaction_id' => $transaction->id,
+    //             'data' => $transaction->toArray()
+    //         ]);
+
+    //         return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+    //     } catch (\Exception $e) {
+
+    //         Log::error('payEmi(): Exception Occurred', [
+    //             'message' => $e->getMessage(),
+    //             'line' => $e->getLine(),
+    //             'file' => $e->getFile(),
+    //         ]);
+
+    //         return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
+    //     }
     // }
 
     public function payEmi(Request $request)
     {
-        Log::info('payEmi() called', [
-            'request_data' => $request->all()
-        ]);
+        Log::info('payEmi() called', ['request_data' => $request->all()]);
 
         try {
 
-            // Validation Log
             Log::info('payEmi(): Starting validation');
 
-            $request->validate([
+            $rules = [
                 'loan_id'           => 'required|exists:loan_applications,id',
                 'transaction_date'  => 'required|date',
                 'current_debt'      => 'required|numeric',
                 'total_payable'     => 'required|numeric',
                 'amount_collected'  => 'required|numeric|min:1',
-            ]);
+                'fee_mode'          => 'required|in:cash,cheque,online',
+            ];
+
+            if ($request->fee_mode === 'cheque') {
+
+                $rules['bank_id']     = 'required';
+                $rules['cheque_no']   = 'required';
+                $rules['cheque_date'] = 'required|date';
+            }
+
+            if ($request->fee_mode === 'online') {
+                $rules['transfer_date'] = 'required|date';
+                $rules['utr_no']        = 'required';
+                $rules['transfer_mode'] = 'required|in:imps,vpa,neft_rtgs';
+                $rules['credited']      = 'required|in:yes,no';
+            }
+
+            $request->validate($rules);
 
             Log::info('payEmi(): Validation passed');
-
-            // Loan Fetch
-            Log::info('payEmi(): Fetching loan', ['loan_id' => $request->loan_id]);
 
             $loan = LoanApplication::find($request->loan_id);
 
@@ -592,39 +642,68 @@ class GoldLoanAccountController extends Controller
                 return back()->withErrors(['loan_id' => 'Loan not found.']);
             }
 
-            // Last EMI No
             $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
-
-            Log::info('payEmi(): Last EMI No fetched', [
-                'loan_id' => $loan->id,
-                'last_emi_no' => $lastEmiNo
-            ]);
-
             $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
 
-            Log::info('payEmi(): Next EMI No calculated', [
-                'next_emi_no' => $nextEmiNo
+            Log::info('payEmi(): Next EMI Number', [
+                'emi_no' => $nextEmiNo,
             ]);
 
-            // Creating EMI Transaction
+            $paymentDetails = ['mode' => $request->fee_mode];
+
+            if ($request->fee_mode === 'cash') {
+                $paymentDetails['fee_mode']  = $request->fee_mode;
+                $paymentDetails['description'] = 'Cash payment received';
+            }
+
+            if ($request->fee_mode === 'cheque') {
+                $paymentDetails['fee_mode']  = $request->fee_mode;
+                $paymentDetails['bank_id']     = $request->bank_id;
+                $paymentDetails['cheque_no']   = $request->cheque_no;
+                $paymentDetails['cheque_date'] = $request->cheque_date;
+            }
+
+            if ($request->fee_mode === 'online') {
+                $paymentDetails['fee_mode']  = $request->fee_mode;
+                $paymentDetails['transfer_date'] = $request->transfer_date;
+                $paymentDetails['utr_no']        = $request->utr_no;
+                $paymentDetails['transfer_mode'] = $request->transfer_mode;
+                $paymentDetails['credited']      = $request->credited;
+            }
+
+
             $transaction = GoldLoanTransaction::create([
                 'loan_id'          => $loan->id,
                 'emi_no'           => $nextEmiNo,
-                'transaction_date' => \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d'),
+                'transaction_date' => Carbon::parse($request->transaction_date)->format('Y-m-d'),
+
                 'current_debt'     => $request->current_debt,
                 'other_charges'    => $request->other_charges ?? 0,
                 'total_payable'    => $request->total_payable,
                 'amount_collected' => $request->amount_collected,
+
                 'remarks'          => $request->remarks ?? null,
+                'payment_mode'     => $request->fee_mode,
+                'payment_details'  => json_encode($paymentDetails),
+
+                'bank_id'          => $request->bank_id ?? null,
+                'cheque_no'        => $request->cheque_no ?? null,
+                'cheque_date'      => $request->cheque_date ?? null,
+
+                'transfer_date'    => $request->transfer_date ?? null,
+                'utr_no'           => $request->utr_no ?? null,
+                'transfer_mode'    => $request->transfer_mode ?? null,
+                'credited'         => $request->credited ?? null,
+
                 'created_by'       => Auth::id(),
             ]);
 
-            Log::info('payEmi(): EMI Transaction Created Successfully', [
+            Log::info('payEmi(): Transaction Created', [
                 'transaction_id' => $transaction->id,
                 'data' => $transaction->toArray()
             ]);
 
-            return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+            return redirect()->route('gold-loan.account.show', $loan->id)->with('success', 'EMI Payment Recorded Successfully.');
         } catch (\Exception $e) {
 
             Log::error('payEmi(): Exception Occurred', [
