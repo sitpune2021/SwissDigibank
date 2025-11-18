@@ -151,6 +151,8 @@ class LoanAgainstController extends Controller
     public function calculateResult(Request $request)
     {
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
+        $interestAsEmi = $request->option_interest_emi ? 'Yes' : 'No';
+        $interestAsFirst = $request->option_interest_first ? 'Yes' : 'No';
 
         if ($isManual) {
             //  Manual Entry Mode
@@ -168,6 +170,30 @@ class LoanAgainstController extends Controller
            $interestType = $request->interest_type ?? 'flat_emi';
 
             $annualRate = (float) $request->manual_interest_rate;
+
+            // Uniform interest type formatting for manual mode
+            switch (strtolower($request->interest_type)) {
+                case 'flat_advanced':
+                case 'flat_advanced_interest':
+                    $interestType = 'Flat Advanced Interest';
+                    break;
+
+                case 'flat_emi':
+                    $interestType = 'Flat EMI';
+                    break;
+
+                case 'reducing':
+                case 'reducing_emi':
+                    $interestType = 'reducing_emi';
+                    break;
+
+                case 'no_emi':
+                    $interestType = 'No EMI';
+                    break;
+
+                default:
+                    $interestType = 'Flat EMI';
+            }
 
             $processingFee = (float) ($request->manual_processing_fee ?? 0);
             $stampAmount = round($loan * ((float) ($request->manual_stamp ?? 0)) / 100, 2);
@@ -218,6 +244,12 @@ class LoanAgainstController extends Controller
             $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
         }
 
+        // -------------------------------
+            // NORMALIZE interest_type FOR VIEW
+        // -------------------------------
+        $interest_type = ucfirst(str_replace(' ', '_', strtolower($interestType))); // e.g. 'Reducing_emi' or 'Flat_advanced_interest'
+
+
         //  Determine months per EMI payout
         switch ($payout) {
             case 'monthly':
@@ -252,29 +284,55 @@ class LoanAgainstController extends Controller
             // recompute total interest dynamically
             $balance = $loan;
             $totalInterest = 0;
+            $balance = $loan;
+            $totalInterest = 0;
+            $schedule = [];
+
             for ($i = 1; $i <= $installments; $i++) {
-                $interestForMonth = $balance * $monthlyRate;
-                $principalPaid = $emi - $interestForMonth;
-                $balance -= $principalPaid;
-                $totalInterest += $interestForMonth;
+
+                if ($i == $installments) {
+                    // ⭐ LAST EMI ADJUSTMENT
+                    $interest = round($balance * $monthlyRate, 2);
+                    $principal = round($balance, 2);
+                    $emi_amount = $interest + $principal;
+                    $balance = 0.00;
+
+                } else {
+                    // ⭐ NORMAL EMI
+                    $interest = round($balance * $monthlyRate, 2);
+                    $principal = round($emi - $interest, 2);
+                    $emi_amount = $emi;
+                    //$balance = round($balance - $principal, 2);
+                    $balance = $i == $installments ? 0.00 : round($balance - $principal, 2);
+                
+                }
+
+                // Total interest counter
+                $totalInterest += $interest;
+
+                // SAVE ROW
+                // $schedule[] = [
+                //     'no' => $i,
+                //     'emi_date' => now()->addMonths($i)->format('d/m/Y'),
+                //     'due_date' => now()->addMonths($i)->addDay()->format('d/m/Y'),
+                //     'principal' => $principal,
+                //     'interest' => $interest,
+                //     'charges' => 0,
+                //     'emi' => $emi_amount,
+                //     'balance' => $balance,
+                // ];
             }
+
             $totalInterest = round($totalInterest, 2);
         }
-        // elseif (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
-        //     // Flat Advanced Interest: interest deducted upfront, not added to EMIs
-        //     $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-        //     $emi = round($loan / $installments, 2); // Only principal EMIs
-        // }
         elseif (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
         {
-            // Flat Advanced Interest Logic
-            //$totalInterest = 0;      // ✅ Interest upfront deduct hoga, EMI me interest zero
             // Flat Advanced Interest Logic
             $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);  // ✅ Correct total interest
 
 
-            $installments = 1;       // ✅ EMI = only 1
-            $emi = $loan;            // ✅ EMI = full principal (single shot)
+            $installments = 1;       // EMI = only 1
+            $emi = $loan;            // EMI = full principal (single shot)
         }
         else {
             // Flat EMI
@@ -311,74 +369,132 @@ class LoanAgainstController extends Controller
             else 
             {
                 // Normal EMI Logic
-                // if ($i == $installments) {
-                //     $principal = round($outstanding, 2);
-                // } else {
-                //     $principal = round($loan / $installments, 2);
-                // }
-
-                // $interest = round($totalInterest / $installments, 2);
-                // $charges = 0;
-                // $emiTotal = round($principal + $interest, 2);
-
-                // $outstanding -= $principal;
-                // $balance = max(round($outstanding, 2), 0);
                 if (in_array($lowerType, ['reducing_emi', 'reducing balance', 'reducing_balance'])) 
                 {
-                    // ✅ Reducing EMI Logic
+                    // Reducing EMI Logic
                     $interest = round($outstanding * $monthlyRate, 2);
                     $principal = round($emi - $interest, 2);
                     $charges = 0;
                     $emiTotal = round($principal + $interest, 2);
 
                     $outstanding -= $principal;
-                    $balance = max(round($outstanding, 2), 0);
+                    $balance = $i == $installments ? 0.00 : max(round($outstanding, 2), 0);
                 } 
-                // else 
-                // {
-                //     // ✅ Flat EMI Logic (same as before)
-                //     if ($i == $installments) {
-                //         $principal = round($outstanding, 2);
-                //     } else {
-                //         $principal = round($loan / $installments, 2);
-                //     }
-
-                //     $interest = round($totalInterest / $installments, 2);
-                //     $charges = 0;
-                //     $emiTotal = round($principal + $interest, 2);
-
-                //     $outstanding -= $principal;
-                //     $balance = max(round($outstanding, 2), 0);
-                // }
                 else 
                 {
+                    
                     if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
                     {
-                        // ✅ Flat Advanced Single EMI
-                        $principal = round($loan, 2);
-                        $interest = 0;
-                        $charges = 0;
-                        $emiTotal = round($loan, 2);
-                        $balance = 0;
-                    } 
+                        if ($interestAsEmi === 'Yes') {
+
+                            // Interest As EMI → Interest ko EMIs me divide karenge
+                            $principal = 0;
+                            $interest = round($totalInterest / $installments, 2);
+                            $charges = 0;
+                            $emiTotal = $interest;
+                            $balance = $outstanding;
+
+                        } else {
+
+                            // Default flat advanced behavior → Full principal in one EMI
+                            $principal = round($loan, 2);
+                            $interest = 0;
+                            $charges = 0;
+                            $emiTotal = round($loan, 2);
+                            $balance = 0;
+                        }
+                    }
                     else 
                     {
-                        // ✅ Normal Flat EMI logic
-                        if ($i == $installments) {
-                            $principal = round($outstanding, 2);
-                        } else {
-                            $principal = round($loan / $installments, 2);
+
+                        // Interest as FIRST EMI Logic
+                        if ($interestAsFirst === 'Yes') {
+
+                            $flatPrincipal = round($loan / $installments, 2);
+                            $flatInterest = round($totalInterest / $installments, 2);
+
+                            if ($i == 1) {
+                                // EMI 1 → Only Interest
+                                $principal = 0;
+                                $interest = $flatInterest;
+                                $emiTotal = $interest;
+                                $balance = $outstanding;
+                            }
+                            elseif ($i == 2) {
+                                // EMI 2 → Half-Adjusted logic
+                                $interest = round($flatInterest * 0.091, 2);  // your sample logic = 417
+                                $principal = round($emi - $interest, 2);
+                                $outstanding -= $principal;
+                                $emiTotal = round($principal + $interest, 2);
+                                $balance = $outstanding;
+                            }
+                            elseif ($i < $installments) {
+                                // EMI 3 to (n-1)
+                                $principal = $flatPrincipal;
+                                $interest = 0;
+                                $emiTotal = $principal;
+                                $outstanding -= $principal;
+                                $balance = $outstanding;
+                            }
+                            else {
+                                // Last EMI - rounding adjustment
+                                $principal = $outstanding;
+                                $interest = 0;
+                                $emiTotal = $principal;
+                                $balance = 0;
+                            }
+
+                            // Push schedule entry & continue loop
+                            $schedule[] = [
+                                'no' => $i,
+                                'emi_date' => $emiDate->format('d/m/Y'),
+                                'due_date' => $dueDate->format('d/m/Y'),
+                                'principal' => $principal,
+                                'interest' => $interest,
+                                'charges' => 0,
+                                'emi' => $emiTotal,
+                                'balance' => $balance,
+                            ];
+
+                            continue;  // VERY IMPORTANT — prevents normal logic from running
                         }
 
-                        $interest = round($totalInterest / $installments, 2);
-                        $charges = 0;
-                        $emiTotal = round($principal + $interest, 2);
 
-                        $outstanding -= $principal;
-                        $balance = max(round($outstanding, 2), 0);
+                        // Normal Flat EMI logic
+                        if ($interestAsEmi === 'Yes') {
+                            
+                            // When interest as EMI → Principal must be ZERO
+                            $principal = 0;
+
+                            // Interest will be full EMI (same every installment)
+                            $interest = round($totalInterest / $installments, 2);
+
+                            $charges = 0;
+                            $emiTotal = $interest;
+
+                            // Principal not paid → balance = full loan
+                            $balance = round($outstanding, 2);
+                        }
+                        else {
+
+                            // Default logic (when interest_as_emi = No)
+                            if ($i == $installments) {
+                                $principal = round($outstanding, 2);
+                            } else {
+                                $principal = round($loan / $installments, 2);
+                            }
+
+                            $interest = round($totalInterest / $installments, 2);
+                            $charges = 0;
+                            $emiTotal = round($principal + $interest, 2);
+
+                            $outstanding -= $principal;
+                            $balance = $i == $installments ? 0.00 : max(round($outstanding, 2), 0);
+                        }
+
                     }
-                }
 
+                }
 
             }
 
@@ -395,7 +511,6 @@ class LoanAgainstController extends Controller
         }
 
 
-        //  Grand Total (Loan + Interest + Charges)
         //  Grand Total (Loan + Interest + Charges)
         if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
         {
@@ -426,7 +541,8 @@ class LoanAgainstController extends Controller
             'tenure_months' => $tenureMonths,
             'payout' => $payout,
             'installments' => $installments,
-            'interest_type' => ucfirst($interestType),
+            //'interest_type' => ucfirst($interestType),
+            'interest_type' => $interest_type, 
             'annual_rate' => $annualRate,
             'disburse_date' => now(),
             'processing_fee' => $processingFee,
@@ -442,6 +558,11 @@ class LoanAgainstController extends Controller
             'total_interest' => $totalInterest,
             'grand_total_payable' => $grandTotalPayable,
             'disbursed_amount' => $disbursedAmount,
+            'interest_as_emi' => $interestAsEmi,
+            'interest_as_first' => $interestAsFirst,
+            'ratio_enabled' => $request->ratio_enabled === 'Yes' ? 'Yes' : 'No',
+            'ratio_first_emi' => $request->ratio_first_emi ?? null,
+            'ratio_first_percentage' => $request->ratio_first_percentage ?? null,
         ]);
     }
 

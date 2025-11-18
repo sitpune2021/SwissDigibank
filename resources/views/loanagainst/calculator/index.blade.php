@@ -38,7 +38,7 @@
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
       <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
-        <form action="{{ route('loanagainst.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
+        <form id="loanForm" action="{{ route('loanagainst.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
           @csrf
 
           <!-- Scheme -->
@@ -119,14 +119,22 @@
             </div>
 
             <!-- Interest Type -->
-            <div class="col-span-2">
-              <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
-              <div class="flex gap-4">
-                <label><input type="radio" name="interest_type" value="reducing_emi"> Reducing EMI</label>
-                <label><input type="radio" name="interest_type" value="flat_emi"> Flat EMI</label>
-                <label><input type="radio" name="interest_type" value="flat_advanced"> Flat Advanced</label>
+              <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
+                  <div class="flex gap-4">
+                    <label>
+                        <input type="radio" name="interest_type" value="flat_emi"> Flat EMI
+                    </label>
+
+                    <label>
+                        <input type="radio" name="interest_type" value="reducing"> Reducing EMI
+                    </label>
+
+                    <label>
+                        <input type="radio" name="interest_type" value="flat_advanced"> Flat Advanced
+                    </label>
+                  </div>  
               </div>
-            </div>
 
             <!-- Annual Interest Rate -->
             <div class="col-span-2">
@@ -247,11 +255,6 @@
 
         </div>
 
-        <!-- Tenure (MONTHS) -->
-        <!-- <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Tenure (MONTHS) <span class="text-red-500">*</span></label>
-          <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter tenure in months">
-        </div> -->
          <!--  Tenure ( MONTHS ) -->
           <div class="w-full mt-4 ">
             <div class="mb-2">
@@ -283,6 +286,55 @@
           <input type="number" name="loan_amount" id="request_loan_amount" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter loan amount">
           <x-number-to-word for="request_loan_amount" />
         </div>
+
+        <input type="hidden" name="ratio_enabled" id="ratio_enabled" value="No">
+        <input type="hidden" name="ratio_first_emi" id="ratio_first_emi" value="">
+        <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage" value="">
+
+
+          <div id="interestOptions" style="display:none; margin-top:10px;">
+
+              <!-- Checkbox 1 -->
+              <label class="flex gap-2" id="chk_emi_box">
+                  <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="1">
+                  <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
+              </label>
+
+              <!-- Checkbox 2 -->
+              <label class="flex gap-2 mt-2" id="chk_first_box">
+                  <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1">
+                  Collect Interest as EMIs First & then after Principal as EMIs
+              </label>
+
+          </div>
+
+          <!-- REDUCING EMI SPECIAL CHECKBOX -->
+          <label class="flex gap-2 mt-3" id="reduce_ratio_box" style="display:none;">
+              <input type="checkbox" id="divide_emi_ratio" value="1">
+              Check this if you want to divide loan EMIs in ratio.
+          </label>
+
+          <!-- RATIO FIELDS -->
+          <div id="ratioFields" style="display:none; margin-top:10px;">
+
+              <!-- EMI Ratio -->
+              <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
+
+              <div class="flex gap-3">
+                  <input type="number" id="emi_ratio_1" class="w-1/3 border p-2" min="1">
+                  <input type="number" id="emi_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+              </div>
+
+              <!-- Loan Amount Ratio -->
+              <label class="block mt-4 mb-2 font-semibold">Loan Amount % Ratio</label>
+
+              <div class="flex gap-3">
+                  <input type="number" id="amt_ratio_1" class="w-1/3 border p-2" min="1" max="100">
+                  <input type="number" id="amt_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+              </div>
+
+          </div>
+
          
         <!-- Buttons -->
         <div class="flex justify-center gap-4 pt-6">
@@ -334,9 +386,243 @@
           </div>
         </div>
       </div>
+
+
     </div>
   </div>
 </div>
+
+
+
+<!-- checkbox show when scheme select -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const schemeSelect = document.getElementById("scheme_id");
+
+    const interestOptions = document.getElementById("interestOptions");
+    const chkEmiBox = document.getElementById("chk_emi_box");
+    const chkFirstBox = document.getElementById("chk_first_box");
+    const chkEmiText = document.getElementById("chk_emi_text");
+
+    const reduceBox = document.getElementById("reduce_ratio_box");
+    const ratioFields = document.getElementById("ratioFields");
+
+    const emi1 = document.getElementById("emi_ratio_1");
+    const emi2 = document.getElementById("emi_ratio_2");
+
+    const amt1 = document.getElementById("amt_ratio_1");
+    const amt2 = document.getElementById("amt_ratio_2");
+
+    const chkDivide = document.getElementById("divide_emi_ratio");
+    const emiTotalText = document.getElementById("emi_total_text");
+    const tenureInput = document.getElementById("tenure_months");  // <-- ADD THIS LINE
+
+
+    let totalEmi = 0;
+
+    // ------------------------------------------------
+    // 1) MANUAL RADIO INTEREST TYPE LOGIC
+    // ------------------------------------------------
+    function manualInterestTypeCheck() {
+        let selected = document.querySelector('input[name="interest_type"]:checked');
+        if (!selected) return;
+
+        // no_emi → hide everything
+        if (selected.value === "no_emi") {
+            interestOptions.style.display = "none";
+        }
+    }
+
+    document.querySelectorAll('input[name="interest_type"]').forEach(radio => {
+        radio.addEventListener("change", manualInterestTypeCheck);
+    });
+
+    manualInterestTypeCheck();
+
+    // ------------------------------------------------
+      // MANUAL ENTRY → Interest Type Radio Logic (FINAL FIXED)
+    // ------------------------------------------------
+    document.querySelectorAll('input[name="interest_type"]').forEach(radio => {
+        radio.addEventListener("change", function () {
+
+            let v = this.value.toLowerCase();
+
+            // RESET first
+            reduceBox.style.display = "none";
+
+            // 1️⃣ Flat EMI → show both checkbox
+            if (v === "flat_emi") {
+                interestOptions.style.display = "block";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "flex";
+                chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+            }
+
+            // 2️⃣ Flat Advanced Interest → only ONE checkbox
+            else if (v === "flat_advanced" || v === "flat_advanced_interest") {
+                interestOptions.style.display = "block";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "none";
+
+                chkEmiText.innerText = "Collect Principal Amount as EMI";
+            }
+
+            // 3️⃣ Reducing EMI
+            else if (v === "reducing" || v === "reducing_emi") {
+                interestOptions.style.display = "none";
+                chkEmiBox.style.display = "none";
+                chkFirstBox.style.display = "none";
+                reduceBox.style.display = "flex";
+            }
+
+            // 4️⃣ No EMI → hide all
+            else {
+                interestOptions.style.display = "none";
+                chkEmiBox.style.display = "none";
+                chkFirstBox.style.display = "none";
+            }
+        });
+    });
+
+    // ------------------------------------------------
+      // 2) SCHEME SELECT → checkbox logic
+    // ------------------------------------------------
+    schemeSelect.addEventListener("change", function () {
+
+        let selected = this.options[this.selectedIndex];
+        let type = (selected.dataset.type || "").toLowerCase();
+
+        // Total EMI
+        totalEmi = parseInt(selected.dataset.tenure || 0);
+        emiTotalText.innerText = `(Total EMI : ${totalEmi})`;
+
+        // CASE: flat_emd / reducing_emi / flat_advanced_interest
+        if (type === "flat_emi" || type === "flat_advanced_interest") {
+            interestOptions.style.display = "block";
+
+            if (type === "flat_advanced_interest") {
+                chkEmiText.innerText = "Collect Principal Amount as EMI";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "none";
+            } else {
+                chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "flex";
+            }
+        }
+
+        // CASE: no EMI
+        else {
+            interestOptions.style.display = "none";
+            document.getElementById("option_interest_emi").checked = false;
+            document.getElementById("option_interest_first").checked = false;
+        }
+
+        // ------------------------------------------------
+        // 3) Reducing EMI → Ratio options
+        // ------------------------------------------------
+        if (type === "reducing_emi") {
+            reduceBox.style.display = "flex";
+        } else {
+            reduceBox.style.display = "none";
+            ratioFields.style.display = "none";
+            chkDivide.checked = false;
+        }
+    });
+
+    // ------------------------------------------------
+      // MANUAL TENURE → UPDATE TOTAL EMI FOR RATIO CALC
+    // ------------------------------------------------
+    tenureInput.addEventListener("input", function () {
+
+        if (!this.value || this.value <= 0) {
+            totalEmi = 0;
+            emiTotalText.innerText = "";
+            return;
+        }
+
+        // Set new total EMI according to manual tenure input
+        totalEmi = parseInt(this.value);
+        emiTotalText.innerText = `(Total EMI : ${totalEmi})`;
+
+        // Auto-update EMI Ratio 2
+        let v = parseInt(emi1.value || 0);
+
+        if (v > totalEmi) {
+            emi1.value = totalEmi;
+            v = totalEmi;
+        }
+
+        emi2.value = totalEmi - v;
+    });
+
+
+    // ------------------------------------------------
+    // RATIO CHECKBOX → OPEN FIELDS
+    // ------------------------------------------------
+    chkDivide.addEventListener("change", function () {
+        ratioFields.style.display = this.checked ? "block" : "none";
+    });
+
+
+    // ------------------------------------------------
+    // EMI Ratio Auto
+    // ------------------------------------------------
+    emi1.addEventListener("input", function () {
+        let v = parseInt(this.value || 0);
+
+        if (v > totalEmi) {
+            this.value = totalEmi;
+            v = totalEmi;
+        }
+        emi2.value = totalEmi - v;
+    });
+
+
+    // ------------------------------------------------
+    // Amount Ratio Auto
+    // ------------------------------------------------
+    amt1.addEventListener("input", function () {
+        let v = parseInt(this.value || 0);
+
+        if (v > 100) {
+            this.value = 100;
+            v = 100;
+        }
+        amt2.value = 100 - v;
+    });
+
+});
+</script>
+
+<!-- reducig emi check box result show o result page -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("loanForm");   // ← YAHA PAKKA Sahi ID
+
+    const chkDivide = document.getElementById("divide_emi_ratio");
+    const emi1 = document.getElementById("emi_ratio_1");
+    const amt1 = document.getElementById("amt_ratio_1");
+
+    form.addEventListener("submit", function () {
+
+        // Ratio Enabled
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
+
+        // First EMI
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        // Percentage
+        document.getElementById("ratio_first_percentage").value =
+            amt1.value || "";
+    });
+
+});
+</script>
 
 <script>
   // this script for get scheme details 
