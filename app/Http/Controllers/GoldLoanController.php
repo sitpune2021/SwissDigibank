@@ -186,6 +186,7 @@ class GoldLoanController extends Controller
             $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
             $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
         //  END
+        
 
         if ($isManual) {
 

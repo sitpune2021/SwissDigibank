@@ -412,7 +412,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <!-- checkbox show when scheme select -->
 <script>
+
   document.addEventListener("DOMContentLoaded", function () {
+
+  // -----------------------------------------------
+    //  MANUAL ENTRY → INTEREST TYPE CHECKBOX LOGIC
+  // -----------------------------------------------
+    function applyManualCheckboxLogic() {
+
+        let selected = document.querySelector('input[name="interest_type"]:checked');
+        if (!selected) return;
+
+        let type = selected.value.toLowerCase();
+
+        // RESET
+        interestOptions.style.display = "none";
+        chkEmiBox.style.display = "none";
+        chkFirstBox.style.display = "none";
+        reduceBox.style.display = "none";
+        ratioFields.style.display = "none";
+        chkDivide.checked = false;
+
+        // FLAT EMI
+        if (type === "flat_emi") {
+            interestOptions.style.display = "block";
+            chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+            chkEmiBox.style.display = "flex";
+            chkFirstBox.style.display = "flex";
+        }
+
+        // FLAT ADVANCED
+        if (type === "flat_advanced" || type === "flat_advanced_interest") {
+            interestOptions.style.display = "block";
+            chkEmiText.innerText = "Collect Principal Amount as EMI";
+            chkEmiBox.style.display = "flex";
+            chkFirstBox.style.display = "none";
+        }
+
+        // REDUCING EMI
+        if (type === "reducing" || type === "reducing_emi") {
+            reduceBox.style.display = "flex";
+        }
+
+        // NO EMI
+        if (type === "no_emi") {
+            interestOptions.style.display = "none";
+            chkEmiBox.style.display = "none";
+            chkFirstBox.style.display = "none";
+            reduceBox.style.display = "none";
+        }
+    }
+
+    // Attach listener
+    document.querySelectorAll('input[name="interest_type"]').forEach(r => {
+        r.addEventListener("change", applyManualCheckboxLogic);
+    });
 
     const schemeSelect = document.getElementById("scheme_id");
 
@@ -435,39 +489,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let totalEmi = 0;
 
-    // ------------------------------------------------
-    // 1) MANUAL RADIO INTEREST TYPE LOGIC
-    // ------------------------------------------------
     function manualInterestTypeCheck() {
         let selected = document.querySelector('input[name="interest_type"]:checked');
         if (!selected) return;
 
-        // no_emi → hide everything
         if (selected.value === "no_emi") {
             interestOptions.style.display = "none";
         }
     }
 
-    document.querySelectorAll('input[name="interest_type"]').forEach(radio => {
-        radio.addEventListener("change", manualInterestTypeCheck);
-    });
+    document.querySelectorAll('input[name="interest_type"]')
+        .forEach(r => r.addEventListener("change", manualInterestTypeCheck));
 
     manualInterestTypeCheck();
 
-
-    // ------------------------------------------------
-    // 2) SCHEME SELECT → checkbox logic
-    // ------------------------------------------------
     schemeSelect.addEventListener("change", function () {
-
         let selected = this.options[this.selectedIndex];
         let type = (selected.dataset.type || "").toLowerCase();
 
-        // Total EMI
         totalEmi = parseInt(selected.dataset.tenure || 0);
         emiTotalText.innerText = `(Total EMI : ${totalEmi})`;
 
-        // CASE: flat_emd / reducing_emi / flat_advanced_interest
         if (type === "flat_emi" || type === "flat_advanced_interest") {
             interestOptions.style.display = "block";
 
@@ -480,18 +522,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 chkEmiBox.style.display = "flex";
                 chkFirstBox.style.display = "flex";
             }
-        }
-
-        // CASE: no EMI
-        else {
+        } else {
             interestOptions.style.display = "none";
             document.getElementById("option_interest_emi").checked = false;
             document.getElementById("option_interest_first").checked = false;
         }
 
-        // ------------------------------------------------
-        // 3) Reducing EMI → Ratio options
-        // ------------------------------------------------
         if (type === "reducing_emi") {
             reduceBox.style.display = "flex";
         } else {
@@ -501,18 +537,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
-    // ------------------------------------------------
-    // RATIO CHECKBOX → OPEN FIELDS
-    // ------------------------------------------------
     chkDivide.addEventListener("change", function () {
         ratioFields.style.display = this.checked ? "block" : "none";
     });
 
-
-    // ------------------------------------------------
-    // EMI Ratio Auto
-    // ------------------------------------------------
     emi1.addEventListener("input", function () {
         let v = parseInt(this.value || 0);
 
@@ -523,31 +551,22 @@ document.addEventListener("DOMContentLoaded", function () {
         emi2.value = totalEmi - v;
     });
 
-
-    // ------------------------------------------------
-    // Amount Ratio Auto
-    // ------------------------------------------------
     amt1.addEventListener("input", function () {
         let v = parseInt(this.value || 0);
-
         if (v > 100) {
             this.value = 100;
             v = 100;
         }
         amt2.value = 100 - v;
     });
-
 });
-
-
-
 </script>
 
 <!-- reducig emi check box result show o result page -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
+ <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("loanForm");   // ← YAHA PAKKA Sahi ID
+    const form = document.getElementById("loanForm");
 
     const chkDivide = document.getElementById("divide_emi_ratio");
     const emi1 = document.getElementById("emi_ratio_1");
@@ -555,23 +574,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     form.addEventListener("submit", function () {
 
-        // Ratio Enabled
         document.getElementById("ratio_enabled").value =
             chkDivide.checked ? "Yes" : "No";
 
-        // First EMI
         document.getElementById("ratio_first_emi").value =
             emi1.value || "";
 
-        // Percentage
         document.getElementById("ratio_first_percentage").value =
             amt1.value || "";
     });
 
 });
 </script>
-
-
 
 <script>
   // this script for get scheme details 
