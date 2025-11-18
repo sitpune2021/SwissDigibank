@@ -153,6 +153,9 @@ class BusinessLoan extends Controller
     {
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
+        $interestAsEmi = $request->option_interest_emi ? 'Yes' : 'No';
+        $interestAsFirst = $request->option_interest_first ? 'Yes' : 'No';
+
         // ---------------------------------------------
         // STEP 1: BASIC VALIDATION & SETUP
         // ---------------------------------------------
@@ -274,6 +277,10 @@ class BusinessLoan extends Controller
                     : round(($loan * (2.549 / 100)) / $installments, 2);
 
                 $emiTotal = round($principal + $interest + $charges, 2);
+                if ($interestAsEmi === 'Yes') {
+                    $principal = 0; // force principal zero
+                }
+
                 $totalInterest += $interest;
                 $totalCharges += $charges;
 
@@ -328,12 +335,42 @@ class BusinessLoan extends Controller
             $interestPerMonth = round($totalInterest / $installments, 2);
             $outstanding = $loan;
 
-            for ($i = 1; $i <= $installments; $i++) {
+            for ($i = 1; $i <= $installments; $i++) 
+            {
                 $emiDate = now()->copy()->addMonths($i);
                 $dueDate = $emiDate->copy()->addDay();
 
-                $principal = $principalPerMonth;
-                $interest = $interestPerMonth;
+                // --- PHASE-BASED LOGIC FOR FLAT INTEREST ---
+                if ($interestAsFirst === 'Yes') {
+
+                    // Phase 1: Interest-only EMI
+                    if ($i === 1) {
+                        // Full interest in first EMI
+                        $interest = $interestPerMonth * 1;
+                        $principal = 0;
+                    }
+                    elseif ($i === 2) {
+                        // Remaining interest goes in 2nd EMI
+                        $interest = $totalInterest - $interestPerMonth;
+                        // Remaining interest will be (totalInterest - ₹4917 = 4083)
+                        $principal = 0;
+                    }
+                    else {
+                        // Phase 2: Principal-only EMI
+                        $principal = $principalPerMonth;
+                        $interest = 0;
+                    }
+
+                } else {
+                    // DEFAULT OLD LOGIC
+                    $principal = ($interestAsEmi === 'Yes') ? 0 : $principalPerMonth;
+
+                    $interest = ($interestAsEmi === 'Yes')
+                        ? round($totalInterest / $installments, 2)
+                        : $interestPerMonth;
+                }
+
+
                 $outstanding -= $principal;
                 $balance = max(round($outstanding, 2), 0);
 
@@ -342,6 +379,10 @@ class BusinessLoan extends Controller
                     : round(($loan * (2.549 / 100)) / $installments, 2);
 
                 $emiTotal = round($principal + $interest + $charges, 2);
+                if ($interestAsEmi === 'Yes') {
+                    $principal = 0; // force principal zero
+                }
+
                 $totalCharges += $charges;
 
                 $schedule[] = [
@@ -407,6 +448,12 @@ class BusinessLoan extends Controller
             'total_emi_paid' => $total_emi_paid,
             'grand_total_payable' => $grandTotalPayable,
             'disbursed_amount' => $disbursedAmount,
+            'interest_as_emi' => $interestAsEmi,
+            'interest_as_first' => $interestAsFirst,
+            'ratio_enabled' => $request->ratio_enabled ?? 'No',
+            'ratio_first_emi' => $request->ratio_first_emi ?? 0,
+            'ratio_first_percentage' => $request->ratio_first_percentage ?? 0,
+
         ]);
     }
 

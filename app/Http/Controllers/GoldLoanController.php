@@ -182,6 +182,12 @@ class GoldLoanController extends Controller
         ---------------------------------------------------------*/
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
+        //  ADD HERE (Correct Location)
+            $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
+            $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
+        //  END
+        
+
         if ($isManual) {
 
             $request->validate([
@@ -395,6 +401,75 @@ class GoldLoanController extends Controller
         }
 
         /* -------------------------------------------------------
+            4(E). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
+        ---------------------------------------------------------*/
+        if ($interestAsEmi === 'Yes') {
+
+            foreach ($schedule as $k => $row) {
+
+                // LAST EMI - full principal
+                if ($row['no'] == $installments) {
+                    $schedule[$k]['principal'] = $loan;
+                    $schedule[$k]['balance'] = 0;
+                } 
+                // All other EMI - principal ZERO
+                else {
+                    $schedule[$k]['principal'] = 0;
+                    $schedule[$k]['balance'] = $loan;
+                }
+
+                // EMI = interest only
+                $schedule[$k]['emi'] = $schedule[$k]['principal'] + $schedule[$k]['interest'];
+            }
+        }
+
+        /* -------------------------------------------------------
+            4(F). INTEREST AS FIRST EMI LOGIC
+        ---------------------------------------------------------*/
+        if ($interestAsFirst === 'Yes') {
+
+            // Total interest divided: first EMI full interest, remaining interest spread?
+            $firstEmiInterest = round($totalInterest - ($interestPerEmi ?? 0), 2); 
+            // But flat EMI case me interestPerEmi available hota hai
+
+            foreach ($schedule as $k => $row) {
+
+                // EMI 1 → ONLY INTEREST
+                if ($row['no'] == 1) {
+                    $schedule[$k]['principal'] = 0;
+                    $schedule[$k]['interest'] = $firstEmiInterest;
+                    $schedule[$k]['emi'] = $firstEmiInterest;
+                    $schedule[$k]['balance'] = $loan;
+                }
+
+                // EMI 2 → Original interestPerEmi (ex: 417), principal portion normal
+                elseif ($row['no'] == 2) {
+                    // interest remains normal
+                    // principal is original
+                    $schedule[$k]['emi'] = $schedule[$k]['principal'] + $schedule[$k]['interest'];
+                }
+
+                // EMI ≥ 3 → Interest = 0 (Full principal)
+                elseif ($row['no'] >= 3 && $row['no'] < $installments) {
+                    $schedule[$k]['interest'] = 0;
+
+                    // normal principal
+                    $schedule[$k]['emi'] = $schedule[$k]['principal'];
+                    $schedule[$k]['balance'] = $schedule[$k]['balance'];
+                }
+
+                // LAST EMI → Whatever principal remains
+                if ($row['no'] == $installments) {
+                    $schedule[$k]['interest'] = 0;
+                    $schedule[$k]['principal'] = $schedule[$k]['balance'];
+                    $schedule[$k]['emi'] = $schedule[$k]['principal'];
+                    $schedule[$k]['balance'] = 0;
+                }
+            }
+        }
+        
+
+        /* -------------------------------------------------------
              5. TOTAL PAYABLE
         ---------------------------------------------------------*/
         $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
@@ -419,6 +494,15 @@ class GoldLoanController extends Controller
             'insurance_amount' => $insuranceAmount,
 
             'schedule' => $schedule,
+
+            'interest_as_emi' => $interestAsEmi,
+            'interest_as_first' => $interestAsFirst,
+
+            //'ratio_enabled' => $request->has('ratio_enabled') ? 'Yes' : 'No',
+            'ratio_enabled' => $request->ratio_enabled === 'Yes' ? 'Yes' : 'No',
+            'ratio_first_emi' => $request->ratio_first_emi ?? null,
+            'ratio_first_percentage' => $request->ratio_first_percentage ?? null,
+
 
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
