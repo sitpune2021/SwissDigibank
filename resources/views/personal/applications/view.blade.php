@@ -496,56 +496,105 @@
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->scheme_name ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">Scheme Name</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->scheme_name ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2">Scheme Code</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->scheme_code ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">Scheme Code</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->scheme_code ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2">Maximum Loan Amount</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">Maximum Loan Amount</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->scheme->max_loan_amount ?? 0 }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-semibold px-4 py-2">Maximum Loan Limit</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->max_loan_limit ?? 0 }} %
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2">Maximum Loan Limit</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->max_loan_limit ?? 0 }} %
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2">Interest Type</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->interest_type ?? '-' }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">Interest Type</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->gold_loan_setting ?? '-' }}
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2">Interest Rate</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            {{ $application->scheme->annual_interest_rate ?? 0 }} %
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">Interest Rate</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->annual_interest_rate ?? 0 }} %
+                                </td>
+                            </tr>
 
-    <tr class="border-b">
-        <td class="font-bold px-4 py-2">Processing Fee</td>
-        <td class="px-4 py-2 text-right md:text-left">
-            ₹ {{ $application->scheme->processing_fee ?? 0 }}
-        </td>
-    </tr>
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2">Processing Fee</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $application->scheme->processing_fee ?? 0 }}
+                                </td>
+                            </tr>
 
-</tbody>
+                            <tr class="border-b">
+                               <td class="font-bold px-4 py-2 uppercase" style="text-align: right;">Per EMI Charges</td>                    
+                            </tr>
+
+                            @if(!empty($application->scheme->sms_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">SMS Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->sms_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if(!empty($application->scheme->fuel_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Fuel Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->fuel_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if(!empty($application->scheme->stationary_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Stationary Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->stationary_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if(!empty($application->scheme->maintenance_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Maintenance Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->maintenance_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+                    
+                            @if(!empty($application->scheme->collection))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Collection Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->collection ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                        </tbody>
 
                     </table>
                 </div>
