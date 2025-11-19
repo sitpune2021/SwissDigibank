@@ -76,7 +76,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="text" id="total_payable" name="total_payable" readonly value="{{$payableAmount}}"
+                        <input type="text" id="total_payable" name="total_payable" readonly value="{{$currentDebt??0}}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.00">
                         <x-number-to-word for="" />
@@ -134,19 +134,37 @@ $settingLabel = '';
                                             $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
                         </label>
                     </div>
+
                     <!-- Bank + Cheque Fields -->
                     <div id="bankDropdownWrapper" class="mt-3 hidden">
+
                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                        <!-- <select id="bank_id" name="bank_id"
+                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                            <option value="">-- Select Bank --</option>
+                            @foreach($banks as $bank)
+                            <option value="{{ $bank->id }}"
+                                {{ old('bank_id', $application->bank_id ?? '') == $bank->id ? 'selected' : '' }}>
+                                {{ $bank->name }}
+                            </option>
+                            @endforeach
+
+                        </select> -->
+
                         <select id="bank_id" name="bank_id"
                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                             <option value="">-- Select Bank --</option>
-                            @foreach($banks as $id => $name)
-                            <option value="{{ $id }}" {{ old('bank_id', $application->bank_id ?? '') == $id ?
-                                            'selected' : '' }}>
-                                {{ $name }}
+
+                            @forelse($banks as $bank)
+                            <option value="{{ $bank->id }}"
+                                {{ old('bank_id', $application->bank_id ?? '') == $bank->id ? 'selected' : '' }}>
+                                {{ $bank->name ?? $bank->bank_name ?? 'Unnamed Bank' }}
                             </option>
-                            @endforeach
+                            @empty
+                            <option value="">No banks available</option>
+                            @endforelse
                         </select>
+
 
                         <!-- Cheque No -->
                         <div class="mt-3">
@@ -159,7 +177,7 @@ $settingLabel = '';
                         <!-- Cheque Date -->
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                            <input type="date" id="cheque_date" name="cheque_date" value="    {{ old('cheque_date', $application->cheque_date ?? '') }}"
+                            <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
                     </div>

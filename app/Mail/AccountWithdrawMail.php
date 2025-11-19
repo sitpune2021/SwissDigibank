@@ -34,7 +34,7 @@ class AccountWithdrawMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Amount Withdrawn From Your Savings Account',
+            subject: 'Amount Debited From Your Savings Account',
         );
     }
 

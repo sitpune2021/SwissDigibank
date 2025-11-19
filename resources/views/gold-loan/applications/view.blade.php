@@ -652,7 +652,7 @@
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $application->scheme->interest_type ?? '-' }}
+                                    {{ $application->scheme->gold_loan_setting ?? '-' }}
                                 </td>
                             </tr>
 
@@ -662,6 +662,62 @@
                                     {{ $application->scheme->annual_interest_rate ?? 0 }} %
                                 </td>
                             </tr>
+
+                            <tr class="border-b">
+                                <td class="font-bold px-4 py-2 uppercase">Processing Fee</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->processing_fee ?? 0 }} %
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                               <td class="font-bold px-4 py-2 uppercase" style="text-align: right;">Per EMI Charges</td>                    
+                            </tr>
+
+                            @if(!empty($application->scheme->sms_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">SMS Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->sms_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if(!empty($application->scheme->fuel_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Fuel Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->fuel_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if(!empty($application->scheme->stationary_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Stationary Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->stationary_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if(!empty($application->scheme->maintenance_charge))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Maintenance Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->maintenance_charge ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
+                    
+                            @if(!empty($application->scheme->collection))
+                                <tr class="border-b">
+                                    <td class="font-bold px-4 py-2 uppercase">Collection Charges</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $application->scheme->collection ?? 0 }} ₹ 
+                                    </td>
+                                </tr>
+                            @endif
 
                         </tbody>
                    </table>

@@ -39,8 +39,9 @@
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
       <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
-        <form action="{{ route('vehical.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
+        <form id="loanForm" action="{{ route('vehical.calculator.calculate') }}" method="POST" target="_blank" class="space-y-6">
           @csrf
+
           <!-- Scheme -->
           <div class="mb-4">
             <label for="" class="block font-medium mb-2">Scheme <span class="text-red-500">*</span></label>
@@ -73,188 +74,195 @@
 
         
           <!-- Auto-fill Annual Interest -->
-        <input type="hidden" id="annual_interest_rate" name="annual_interest_rate">
+          <input type="hidden" id="annual_interest_rate" name="annual_interest_rate">
 
 
-        <!-- CHECKBOX: MANUAL ENTRY -->
-        <div class="mt-4">
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" id="manualEntry"
-              class="rounded-10 border-gray-300 text-primary focus:ring-blue-500">
-            <span class="p-2">Enter Values Manually</span>
-          </label>
-        </div>
-
-         <!-- MANUAL ENTRY FIELDS -->
-    <!-- MANUAL ENTRY FIELDS -->
-  <div id="manualFields" class="hidden bg-secondary/5 rounded-10 p-3 mt-3 dark:bg-bg3">
-    <div class="grid grid-cols-2 gap-4">
-
-    
-      <!-- Max Tenure Dropdown -->
-        <div class="col-span-2">
-            <label class="md:text-lg font-medium block mb-2">Max. Tenure *</label>
-            <select name="max_tenure" id="max_tenure" 
-                class="w-full bg-white border rounded px-3 py-2">
-                <option value="">Select Tenure</option>
-                @for ($i = 1; $i <= 15; $i++)
-                    <option value="{{ $i * 12 }}">{{ $i }} Year</option>
-                    <option value="{{ ($i * 12) + 6 }}">{{ $i }}.5 Year</option>
-                @endfor
-            </select>
-        </div>
-
-        <!-- Maximum Loan Limit -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Maximum Loan Limit (%)</label>
-          <select name="manual_max_loan_limit" id="manual_max_loan_limit"
-            class="w-full bg-white border rounded px-3 py-2">
-            <option value="">Please Select</option>
-            <option value="50">50%</option>
-            <option value="60">60%</option>
-            <option value="70">70%</option>
-            <option value="80">80%</option>
-            <option value="90">90%</option>
-            <option value="95">95%</option>
-          </select>
-        </div>
-
-        <!-- Interest Type -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
-          <div class="flex gap-4">
-            <label><input type="radio" name="interest_type" value="reducing_emi"> Reducing EMI</label>
-            <label><input type="radio" name="interest_type" value="flat_emi"> Flat EMI</label>
-            <label><input type="radio" name="interest_type" value="flat_advanced"> Flat Advanced</label>
+          <!-- CHECKBOX: MANUAL ENTRY -->
+          <div class="mt-4">
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" id="manualEntry"
+                class="rounded-10 border-gray-300 text-primary focus:ring-blue-500">
+              <span class="p-2">Enter Values Manually</span>
+            </label>
           </div>
-        </div>
 
-        <!-- Annual Interest Rate -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Annual Interest Rate (%) *</label>
-          <input type="number" name="manual_interest_rate" id="manual_interest_rate"
-            class="w-full bg-white border rounded px-3 py-2"
-            placeholder="Interest Rate">
-        </div>
+          <!-- MANUAL ENTRY FIELDS -->
+          <div id="manualFields" class="hidden bg-secondary/5 rounded-10 p-3 mt-3 dark:bg-bg3">
+            <div class="grid grid-cols-2 gap-4">
 
-        <!-- Processing Fee -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Processing Fee</label>
-          <div class="flex">
-            <select name="manual_processing_fee_type" class="border rounded-l px-2">
-              <option value="percent">%</option>
-              <option value="fixed">Fixed</option>
-            </select>
-            <input type="number" name="manual_processing_fee"
-              class="w-full bg-white border rounded-r px-3 py-2"
-              placeholder="0.00">
+            
+              <!-- Max Tenure Dropdown -->
+                <div class="col-span-2">
+                    <label class="md:text-lg font-medium block mb-2">Max. Tenure *</label>
+                    <select name="max_tenure" id="max_tenure" 
+                        class="w-full bg-white border rounded px-3 py-2">
+                        <option value="">Select Tenure</option>
+                        @for ($i = 1; $i <= 15; $i++)
+                            <option value="{{ $i * 12 }}">{{ $i }} Year</option>
+                            <option value="{{ ($i * 12) + 6 }}">{{ $i }}.5 Year</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <!-- Maximum Loan Limit -->
+                <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Maximum Loan Limit (%)</label>
+                  <select name="manual_max_loan_limit" id="manual_max_loan_limit"
+                    class="w-full bg-white border rounded px-3 py-2">
+                    <option value="">Please Select</option>
+                    <option value="50">50%</option>
+                    <option value="60">60%</option>
+                    <option value="70">70%</option>
+                    <option value="80">80%</option>
+                    <option value="90">90%</option>
+                    <option value="95">95%</option>
+                  </select>
+                </div>
+
+                <!-- Interest Type -->
+                <div class="col-span-2">
+                    <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
+                    <div class="flex gap-4">
+                      <label>
+                          <input type="radio" name="interest_type" value="flat_emi"> Flat EMI
+                      </label>
+
+                      <label>
+                          <input type="radio" name="interest_type" value="reducing"> Reducing EMI
+                      </label>
+
+                      <label>
+                          <input type="radio" name="interest_type" value="flat_advanced"> Flat Advanced
+                      </label>
+                    </div>  
+                </div>
+
+                <!-- Annual Interest Rate -->
+                <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Annual Interest Rate (%) *</label>
+                  <input type="number" name="manual_interest_rate" id="manual_interest_rate"
+                    class="w-full bg-white border rounded px-3 py-2"
+                    placeholder="Interest Rate">
+                </div>
+
+                <!-- Processing Fee -->
+                <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Processing Fee</label>
+                  <div class="flex">
+                    <select name="manual_processing_fee_type" class="border rounded-l px-2">
+                      <option value="percent">%</option>
+                      <option value="fixed">Fixed</option>
+                    </select>
+                    <input type="number" name="manual_processing_fee"
+                      class="w-full bg-white border rounded-r px-3 py-2"
+                      placeholder="0.00">
+                  </div>
+                </div>
+
+                <!-- Stamp Duty -->
+                <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Stamp Duty</label>
+                  <input type="number" name="manual_stamp"
+                    class="w-full bg-white border rounded px-3 py-2"
+                    placeholder="In % of Loan">
+                </div>
+
+                <!-- Insurance -->
+                <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Insurance Charge</label>
+                  <input type="number" name="manual_insurance"
+                    class="w-full bg-white border rounded px-3 py-2"
+                    placeholder="In % of Loan">
+                </div>
+
+                <!-- Fore Closure -->
+                <div class="col-span-2">
+                  <label class="md:text-lg font-medium block mb-2">Fore Closure Charges</label>
+                  <input type="number" name="manual_preclosure"
+                    class="w-full bg-white border rounded px-3 py-2"
+                    placeholder="In %">
+                </div>
+
+                <!-- Per EMI Charges Section -->
+                <div class="col-span-2 bg-blue-50 p-3 rounded">
+
+                    <h3 class="font-semibold text-blue-700 mb-3">Per EMI Charges (Optional)</h3>
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <!-- SMS Charges -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">SMS Charges (%)</label>
+                            <input type="number" name="sms_charge" min="0" 
+                                class="w-full border rounded px-3 py-2"
+                                placeholder="Enter SMS Fee %">
+                        </div>
+
+                        <!-- Fuel Charges -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Fuel Charges (%)</label>
+                            <input type="number" name="fuel_charge" min="0" 
+                                class="w-full border rounded px-3 py-2"
+                                placeholder="Enter Fuel Charges %">
+                        </div>
+
+                        <!-- Stationary Charges -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Stationary (%)</label>
+                            <input type="number" name="stationary_charge" min="0" 
+                                class="w-full border rounded px-3 py-2"
+                                placeholder="Enter Stationary Charges %">
+                        </div>
+
+                        <!-- Maintenance Charges -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Maintenance (%)</label>
+                            <input type="number" name="maintenance_charge" min="0" 
+                                class="w-full border rounded px-3 py-2"
+                                placeholder="Enter Maintenance Charges %">
+                        </div>
+
+                        <!-- Collection Charges -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Collection (%)</label>
+                            <input type="number" name="collection_charge" min="0"
+                                class="w-full border rounded px-3 py-2"
+                                placeholder="Enter Collection Charges %">
+                        </div>
+
+                    </div>
+                </div>
+
           </div>
-        </div>
+          </div>
 
-        <!-- Stamp Duty -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Stamp Duty</label>
-          <input type="number" name="manual_stamp"
-            class="w-full bg-white border rounded px-3 py-2"
-            placeholder="In % of Loan">
-        </div>
-
-        <!-- Insurance -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Insurance Charge</label>
-          <input type="number" name="manual_insurance"
-            class="w-full bg-white border rounded px-3 py-2"
-            placeholder="In % of Loan">
-        </div>
-
-        <!-- Fore Closure -->
-        <div class="col-span-2">
-          <label class="md:text-lg font-medium block mb-2">Fore Closure Charges</label>
-          <input type="number" name="manual_preclosure"
-            class="w-full bg-white border rounded px-3 py-2"
-            placeholder="In %">
-        </div>
-
-        <!-- Per EMI Charges Section -->
-        <div class="col-span-2 bg-blue-50 p-3 rounded">
-
-            <h3 class="font-semibold text-blue-700 mb-3">Per EMI Charges (Optional)</h3>
-
-            <div class="grid grid-cols-2 gap-3">
-
-                <!-- SMS Charges -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">SMS Charges (%)</label>
-                    <input type="number" name="sms_charge" min="0" 
-                        class="w-full border rounded px-3 py-2"
-                        placeholder="Enter SMS Fee %">
-                </div>
-
-                <!-- Fuel Charges -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Fuel Charges (%)</label>
-                    <input type="number" name="fuel_charge" min="0" 
-                        class="w-full border rounded px-3 py-2"
-                        placeholder="Enter Fuel Charges %">
-                </div>
-
-                <!-- Stationary Charges -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Stationary (%)</label>
-                    <input type="number" name="stationary_charge" min="0" 
-                        class="w-full border rounded px-3 py-2"
-                        placeholder="Enter Stationary Charges %">
-                </div>
-
-                <!-- Maintenance Charges -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Maintenance (%)</label>
-                    <input type="number" name="maintenance_charge" min="0" 
-                        class="w-full border rounded px-3 py-2"
-                        placeholder="Enter Maintenance Charges %">
-                </div>
-
-                <!-- Collection Charges -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Collection (%)</label>
-                    <input type="number" name="collection_charge" min="0"
-                        class="w-full border rounded px-3 py-2"
-                        placeholder="Enter Collection Charges %">
-                </div>
-
+          <!-- Tenure Type -->
+          <div class="w-full mt-4">
+            <label class="block font-medium mb-2">Tenure Type <span class="text-red-500">*</span></label>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tenure_type" value="DAYS" class="text-blue-600"> <span>DAYS</span>
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tenure_type" value="WEEKS" class="text-blue-600"> <span>WEEKS</span>
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="tenure_type" value="MONTHS" class="text-blue-600" checked> <span>MONTHS</span>
+              </label>
             </div>
-        </div>
-
-  </div>
-</div>
-
-         <!-- Tenure Type -->
-        <div class="w-full mt-4">
-          <label class="block font-medium mb-2">Tenure Type <span class="text-red-500">*</span></label>
-          <div class="flex flex-wrap gap-4">
-            <label class="flex items-center gap-2">
-              <input type="radio" name="tenure_type" value="DAYS" class="text-blue-600"> <span>DAYS</span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="radio" name="tenure_type" value="WEEKS" class="text-blue-600"> <span>WEEKS</span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="radio" name="tenure_type" value="MONTHS" class="text-blue-600" checked> <span>MONTHS</span>
-            </label>
           </div>
-        </div>
 
           <!-- Tenure (MONTHS) -->
-           <div class="w-full mt-4 ">
-            <div class="mb-2">
-              <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
-                Tenure ( MONTHS )        
-              </label>
-              <span class="text-error">*</span>
-            </div>
-            <div class="flex flex-wrap gap-4">
-              <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5            dark:bg-bg3 " placeholder="Please Enter Tenure">
-            </div>
+          <div class="w-full mt-4 ">
+          <div class="mb-2">
+            <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
+              Tenure ( MONTHS )        
+            </label>
+            <span class="text-error">*</span>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5            dark:bg-bg3 " placeholder="Please Enter Tenure">
+          </div>
           </div>
 
 
@@ -276,6 +284,56 @@
             <input type="number" name="loan_amount" id="request_loan_amount" class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" placeholder="Enter loan amount">
             <x-number-to-word for="request_loan_amount" />
           </div>
+
+
+          <input type="hidden" name="ratio_enabled" id="ratio_enabled" value="No">
+          <input type="hidden" name="ratio_first_emi" id="ratio_first_emi" value="">
+          <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage" value="">
+
+
+          <div id="interestOptions" style="display:none; margin-top:10px;">
+
+              <!-- Checkbox 1 -->
+              <label class="flex gap-2" id="chk_emi_box">
+                  <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="1">
+                  <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
+              </label>
+
+              <!-- Checkbox 2 -->
+              <label class="flex gap-2 mt-2" id="chk_first_box">
+                  <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1">
+                  Collect Interest as EMIs First & then after Principal as EMIs
+              </label>
+
+          </div>
+
+          <!-- REDUCING EMI SPECIAL CHECKBOX -->
+          <label class="flex gap-2 mt-3" id="reduce_ratio_box" style="display:none;">
+              <input type="checkbox" id="divide_emi_ratio" value="1">
+              Check this if you want to divide loan EMIs in ratio.
+          </label>
+
+          <!-- RATIO FIELDS -->
+          <div id="ratioFields" style="display:none; margin-top:10px;">
+
+              <!-- EMI Ratio -->
+              <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
+
+              <div class="flex gap-3">
+                  <input type="number" id="emi_ratio_1" class="w-1/3 border p-2" min="1">
+                  <input type="number" id="emi_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+              </div>
+
+              <!-- Loan Amount Ratio -->
+              <label class="block mt-4 mb-2 font-semibold">Loan Amount % Ratio</label>
+
+              <div class="flex gap-3">
+                  <input type="number" id="amt_ratio_1" class="w-1/3 border p-2" min="1" max="100">
+                  <input type="number" id="amt_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+              </div>
+
+          </div>
+
          
            <!-- Buttons -->
           <div class="flex justify-center gap-4 pt-6">
@@ -325,9 +383,242 @@
           </div>
         </div>
       </div>
+
+
     </div>
   </div>
 </div>
+
+
+<!-- checkbox show when scheme select -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const schemeSelect = document.getElementById("scheme_id");
+
+    const interestOptions = document.getElementById("interestOptions");
+    const chkEmiBox = document.getElementById("chk_emi_box");
+    const chkFirstBox = document.getElementById("chk_first_box");
+    const chkEmiText = document.getElementById("chk_emi_text");
+
+    const reduceBox = document.getElementById("reduce_ratio_box");
+    const ratioFields = document.getElementById("ratioFields");
+
+    const emi1 = document.getElementById("emi_ratio_1");
+    const emi2 = document.getElementById("emi_ratio_2");
+
+    const amt1 = document.getElementById("amt_ratio_1");
+    const amt2 = document.getElementById("amt_ratio_2");
+
+    const chkDivide = document.getElementById("divide_emi_ratio");
+    const emiTotalText = document.getElementById("emi_total_text");
+    const tenureInput = document.getElementById("tenure_months");  // <-- ADD THIS LINE
+
+
+    let totalEmi = 0;
+
+    // ------------------------------------------------
+    // 1) MANUAL RADIO INTEREST TYPE LOGIC
+    // ------------------------------------------------
+    function manualInterestTypeCheck() {
+        let selected = document.querySelector('input[name="interest_type"]:checked');
+        if (!selected) return;
+
+        // no_emi → hide everything
+        if (selected.value === "no_emi") {
+            interestOptions.style.display = "none";
+        }
+    }
+
+    document.querySelectorAll('input[name="interest_type"]').forEach(radio => {
+        radio.addEventListener("change", manualInterestTypeCheck);
+    });
+
+    manualInterestTypeCheck();
+
+    // ------------------------------------------------
+      // MANUAL ENTRY → Interest Type Radio Logic (FINAL FIXED)
+    // ------------------------------------------------
+    document.querySelectorAll('input[name="interest_type"]').forEach(radio => {
+        radio.addEventListener("change", function () {
+
+            let v = this.value.toLowerCase();
+
+            // RESET first
+            reduceBox.style.display = "none";
+
+            // 1️⃣ Flat EMI → show both checkbox
+            if (v === "flat_emi") {
+                interestOptions.style.display = "block";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "flex";
+                chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+            }
+
+            // 2️⃣ Flat Advanced Interest → only ONE checkbox
+            else if (v === "flat_advanced" || v === "flat_advanced_interest") {
+                interestOptions.style.display = "block";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "none";
+
+                chkEmiText.innerText = "Collect Principal Amount as EMI";
+            }
+
+            // 3️⃣ Reducing EMI
+            else if (v === "reducing" || v === "reducing_emi") {
+                interestOptions.style.display = "none";
+                chkEmiBox.style.display = "none";
+                chkFirstBox.style.display = "none";
+                reduceBox.style.display = "flex";
+            }
+
+            // 4️⃣ No EMI → hide all
+            else {
+                interestOptions.style.display = "none";
+                chkEmiBox.style.display = "none";
+                chkFirstBox.style.display = "none";
+            }
+        });
+    });
+
+    // ------------------------------------------------
+      // 2) SCHEME SELECT → checkbox logic
+    // ------------------------------------------------
+    schemeSelect.addEventListener("change", function () {
+
+        let selected = this.options[this.selectedIndex];
+        let type = (selected.dataset.type || "").toLowerCase();
+
+        // Total EMI
+        totalEmi = parseInt(selected.dataset.tenure || 0);
+        emiTotalText.innerText = `(Total EMI : ${totalEmi})`;
+
+        // CASE: flat_emd / reducing_emi / flat_advanced_interest
+        if (type === "flat_emi" || type === "flat_advanced_interest") {
+            interestOptions.style.display = "block";
+
+            if (type === "flat_advanced_interest") {
+                chkEmiText.innerText = "Collect Principal Amount as EMI";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "none";
+            } else {
+                chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+                chkEmiBox.style.display = "flex";
+                chkFirstBox.style.display = "flex";
+            }
+        }
+
+        // CASE: no EMI
+        else {
+            interestOptions.style.display = "none";
+            document.getElementById("option_interest_emi").checked = false;
+            document.getElementById("option_interest_first").checked = false;
+        }
+
+        // ------------------------------------------------
+        // 3) Reducing EMI → Ratio options
+        // ------------------------------------------------
+        if (type === "reducing_emi") {
+            reduceBox.style.display = "flex";
+        } else {
+            reduceBox.style.display = "none";
+            ratioFields.style.display = "none";
+            chkDivide.checked = false;
+        }
+    });
+
+    // ------------------------------------------------
+      // MANUAL TENURE → UPDATE TOTAL EMI FOR RATIO CALC
+    // ------------------------------------------------
+    tenureInput.addEventListener("input", function () {
+
+        if (!this.value || this.value <= 0) {
+            totalEmi = 0;
+            emiTotalText.innerText = "";
+            return;
+        }
+
+        // Set new total EMI according to manual tenure input
+        totalEmi = parseInt(this.value);
+        emiTotalText.innerText = `(Total EMI : ${totalEmi})`;
+
+        // Auto-update EMI Ratio 2
+        let v = parseInt(emi1.value || 0);
+
+        if (v > totalEmi) {
+            emi1.value = totalEmi;
+            v = totalEmi;
+        }
+
+        emi2.value = totalEmi - v;
+    });
+
+
+    // ------------------------------------------------
+    // RATIO CHECKBOX → OPEN FIELDS
+    // ------------------------------------------------
+    chkDivide.addEventListener("change", function () {
+        ratioFields.style.display = this.checked ? "block" : "none";
+    });
+
+
+    // ------------------------------------------------
+    // EMI Ratio Auto
+    // ------------------------------------------------
+    emi1.addEventListener("input", function () {
+        let v = parseInt(this.value || 0);
+
+        if (v > totalEmi) {
+            this.value = totalEmi;
+            v = totalEmi;
+        }
+        emi2.value = totalEmi - v;
+    });
+
+
+    // ------------------------------------------------
+    // Amount Ratio Auto
+    // ------------------------------------------------
+    amt1.addEventListener("input", function () {
+        let v = parseInt(this.value || 0);
+
+        if (v > 100) {
+            this.value = 100;
+            v = 100;
+        }
+        amt2.value = 100 - v;
+    });
+
+});
+</script>
+
+<!-- reducig emi check box result show o result page -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("loanForm");   // ← YAHA PAKKA Sahi ID
+
+    const chkDivide = document.getElementById("divide_emi_ratio");
+    const emi1 = document.getElementById("emi_ratio_1");
+    const amt1 = document.getElementById("amt_ratio_1");
+
+    form.addEventListener("submit", function () {
+
+        // Ratio Enabled
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
+
+        // First EMI
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        // Percentage
+        document.getElementById("ratio_first_percentage").value =
+            amt1.value || "";
+    });
+
+});
+</script>
 
 <script>
   // this script for get scheme details 
