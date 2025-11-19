@@ -143,10 +143,14 @@
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 DEBIT OTHER CHARGES
             </button>
-            <a href="{{ route('ddsaccounts.createLinkSavingAcc', $ddaccount->id) }}"
-                class="btn-primary px-4 py-2 rounded-3xl">
-                LINK SAVING ACCOUNT (AUTO DEBIT)
-            </a>
+
+            @if ($isLinked != 1)
+                <a href="{{ route('ddsaccounts.createLinkSavingAcc', $ddaccount->id) }}"
+                    class="btn-primary px-4 py-2 rounded-3xl">
+                    LINK SAVING ACCOUNT (AUTO DEBIT)
+                </a>
+            @endif
+
 
             <a href="{{ route('ddsaccounts.MarkLienAccount', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
                 MARK LIEN AGAINST LOAN
@@ -415,7 +419,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                        </labels> -->
+                                                                                                                                    </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->
@@ -588,6 +592,61 @@
                                 </div>
                             </form>
                         </div>
+                        {{-- AUTO DEBIT SAVING ACCOUNT INFO --}}
+                        @if ($isLinked == 1)
+                            <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
+
+                                <!-- Header -->
+                                <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                                    onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <h3 class="text-lg font-semibold uppercase">AUTO DEBIT SAVING ACCOUNT INFO</h3>
+                                </div>
+
+                                <!-- Body -->
+                                <div class="overflow-x-auto mt-5">
+                                    <table
+                                        class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                                            <tr>
+                                                <td class="font-semibold px-4 py-2 uppercase w-1/2 md:w-1/3">Account No.
+                                                </td>
+                                                <td class="px-4 py-2 text-right md:text-left">
+                                                    {{ $linkedSavingAcc->account_no ?? '' }}
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="font-semibold px-4 py-2 uppercase">Scheme Name</td>
+                                                <td class="px-4 py-2 text-right md:text-left">
+                                                    {{ $ddaccount->scheme->scheme_name ?? '-' }}
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="font-semibold px-4 py-2 uppercase">Available Balance</td>
+                                                <td class="px-4 py-2 text-right md:text-left">
+                                                    {{ number_format($availableBalance, 2) }}
+                                                </td>
+                                            </tr>
+
+                                            @if ($isLinked !== 0)
+                                                <tr>
+                                                    <td class="font-semibold px-4 py-2 uppercase">Un-link Saving Account
+                                                    </td>
+                                                    <td class="px-4 py-2 text-right md:text-left">
+                                                        <a href="{{ route('ddsaccounts.confirmUnlink', $ddaccount->id) }}"
+                                                            class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                                            UNLINK ACCOUNT
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
 
                         <!--Scheme Info-->
                         <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">

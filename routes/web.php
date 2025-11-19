@@ -160,7 +160,6 @@ Route::middleware('auth.user')->group(function () {
         Route::post('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'deposit'])
             ->name('ddsaccounts.deposit');
 
-        // Withdraw Routes
         Route::get('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'createWithdraw'])
             ->name('ddsaccounts.withdraw-create');
 
@@ -168,6 +167,17 @@ Route::middleware('auth.user')->group(function () {
             ->name('ddsaccounts.withdraw');
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
+        Route::post(
+            'dds-accounts/{id}/link-saving',
+            [DdsAccountsController::class, 'storeLinkSavingAcc']
+        )->name('ddsaccounts.storeLinkSavingAcc');
+
+        Route::get('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'confirmUnlink'])
+            ->name('ddsaccounts.confirmUnlink');
+
+        Route::post('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'storeLinkSavingAcc'])
+            ->name('ddsaccounts.storeLinkSavingAcc');
+
 
         Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
@@ -635,7 +645,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
+        ->name('applications.submitForApproval');
 
     // Show EMI chart in a new tab
     Route::get('applications/{id}/emi-chart', [GoldLoanController::class, 'emiChart'])
@@ -704,7 +714,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::post('col-process-fee/store/{id}', [MortgageController::class, 'mortgagestoreProcessFee'])
         ->name('mortgage.col_process_fee.store');
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
+        ->name('applications.submitForApproval');
 });
 
 
@@ -810,8 +820,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -911,8 +920,7 @@ Route::group(['prefix' => 'bussiness'], function () {
         ->name('bussiness.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1001,8 +1009,7 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('ccod.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1100,8 +1107,7 @@ Route::group(['prefix' => 'daily_weekly'], function () {
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1150,8 +1156,7 @@ Route::group(['prefix' => 'personal'], function () {
         ->name('personal.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1216,8 +1221,7 @@ Route::group(['prefix' => 'vehical'], function () {
         ->name('vehical.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 

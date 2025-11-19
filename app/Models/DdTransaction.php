@@ -31,6 +31,7 @@ class DdTransaction extends Model
         'member_photo',
         'amount',
         'type',
+        'is_linked',
         
     ];
 
