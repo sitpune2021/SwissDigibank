@@ -644,6 +644,9 @@ Route::group(['prefix' => 'gold-loan'], function () {
     // Disbusrment setting
     Route::get('applications/{id}/disbursment', [GoldLoanController::class, 'disbursment'])
         ->name('gold-loan.applications.view-buttons.disburse-setting');
+
+    Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
+
 });
 
 

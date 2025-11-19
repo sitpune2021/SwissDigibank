@@ -734,7 +734,10 @@ class GoldLoanController extends Controller
             'loanOrnaments'
         ])->findOrFail($id);
 
-        return view("gold-loan.applications.view", compact('application'));
+         // Generate EMI Chart
+    $emiChart = $this->generateEmiChart($application);
+
+        return view("gold-loan.applications.view", compact('application', 'emiChart'));
     }
 
     public function appedit($id)
@@ -844,11 +847,65 @@ class GoldLoanController extends Controller
 ////////////////////////////////////////////////////////////////////////////////
 
 
-    public function showdisbursesetting()
+    public function showdisbursesetting($id)
     {
+        $application = LoanApplication::with(['member','scheme','branch'])->findOrFail($id);
 
-        return view("gold-loan.applications.view-buttons.disburse-setting");
+        $emiChart = $this->generateEmiChart($application);
+
+        return view("gold-loan.applications.view-buttons.disburse-setting", compact('application', 'emiChart'));
     }
+
+
+    public function generateEmiChart($application)
+    {
+        $principalAmount = $application->approved_loan_amount;
+        $months = $application->tenure;
+        $annualInterest = $application->scheme->annual_interest_rate;
+
+        $monthlyInterestRate = ($annualInterest / 12) / 100;
+
+        // Other Charges Per EMI (set your correct field)
+        $otherPerEmi = $application->scheme->other_charge_per_emi ?? 0;
+
+        // EMI Formula
+        $emi = ($principalAmount * $monthlyInterestRate * pow(1 + $monthlyInterestRate, $months))
+            / (pow(1 + $monthlyInterestRate, $months) - 1);
+
+        $balance = $principalAmount;
+        $schedule = [];
+
+        $totalInterest = 0;
+
+        for ($i = 1; $i <= $months; $i++) {
+
+            $interest = $balance * $monthlyInterestRate;
+            $principal = $emi - $interest;
+
+            $balance -= $principal;
+
+            $totalInterest += $interest;
+
+            $schedule[] = [
+                'no'         => $i,
+                'principal'  => round($principal, 2),
+                'interest'   => round($interest, 2),
+                'other_charges' => round($otherPerEmi, 2),
+                'emi'        => round($emi + $otherPerEmi, 2),
+                'start_date' => now()->format('d/m/Y'),
+                'date'       => now()->addMonths($i)->format('d/m/Y'),
+                'due_date'   => now()->addMonths($i)->addDay()->format('d/m/Y'),
+                'due_principal' => round(max($balance, 0), 2),
+            ];
+        }
+
+        return [
+            "rows" => $schedule,
+            "total_interest" => round($totalInterest, 2),
+            "total_other" => round($months * $otherPerEmi, 2),
+        ];
+    }
+
 
     public function upload_cibil_score()
     {
