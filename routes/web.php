@@ -581,6 +581,11 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
         ->name('gold-loan.account.show');
 
+   Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
+    ->name('emi.saveEmiStatus');
+
+
+
     Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
         ->name('gold-loan.account.transaction');
 

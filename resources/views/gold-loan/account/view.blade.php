@@ -1006,6 +1006,7 @@ $settingLabel = '';
                     <input type="hidden" id="loan_id" value="{{ $goldLoan->id }}">
 
                     <table class="w-full border-collapse whitespace-nowrap  text-sm" id="emiTable">
+                        
                         <thead class="bg-secondary/5">
                             <tr>
                                 <th class="p-2">EMI No.</th>
@@ -1023,8 +1024,24 @@ $settingLabel = '';
                                 <th class="p-2">ACTIONS</th>
                             </tr>
                         </thead>
+                        
                         <tbody>
-                            @foreach ($emiSchedule as $emi)
+                          @foreach ($emiSchedule as $emi)
+
+                            @php
+                                static $processShown = false;
+                                $rowStatus = $emi['status'];
+
+                                // Show PROCESS button ONLY on first UNPAID EMI
+                                $showProcessButton = ($rowStatus === 'UNPAID' && !$processShown && ($emi['status'] !== 'DUE'));
+
+
+                                if ($showProcessButton) {
+                                    $processShown = true;
+                                }
+                            @endphp
+
+
                             <tr class="border-b {{ $emi['status'] == 'PAID' ? 'bg-green-50' : '' }}">
                                 <td class="p-2">{{ $emi['emi_no'] }}</td>
                                 <td class="p-2 emi-date">{{ $emi['emi_date'] }}</td>
@@ -1039,11 +1056,11 @@ $settingLabel = '';
 
                                 <!-- STATUS -->
                                 <td class="p-2 status">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                    <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
                                         {{ $emi['status'] }}
                                     </span>
                                 </td>
+
 
                                 <!-- PROCESSED -->
                                 <td class="p-2 processed">
@@ -1055,15 +1072,20 @@ $settingLabel = '';
 
                                 <!-- ACTION BUTTON -->
                                 <td class="p-2">
-                                    <button class="process-btn btn-primary px-3 py-1 rounded"
-                                        data-emi="{{ $emi['emi_no'] }}" {{ $emi['status'] === 'PAID' ? 'disabled' : '' }}>
-                                        PROCESS
-                                    </button>
+                                    @if ($showProcessButton)
+                                        <button class="process-btn btn-primary px-3 py-1 rounded"
+                                            data-emi="{{ $emi['emi_no'] }}">
+                                            PROCESS
+                                        </button>
+                                    @endif
                                 </td>
+
                             </tr>
                             @endforeach
                         </tbody>
+
                     </table>
+
                 </div>
             </div>
 
@@ -1131,6 +1153,8 @@ $settingLabel = '';
         </div>
     </div>
 </div>
+
+
 <script>
     function toggleDropdown(id) {
         document.getElementById(id).classList.toggle("hidden");
@@ -1169,177 +1193,107 @@ $settingLabel = '';
     }
 </script>
 
+
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const rows = Array.from(document.querySelectorAll("#emiTable tbody tr"));
-        if (!rows.length) return;
+document.addEventListener("DOMContentLoaded", () => {
 
-        const toDateOnly = d => d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : null;
+    const processButtons = document.querySelectorAll(".process-btn");
 
-        function parseAny(dateStr) {
-            if (!dateStr) return null;
-            const s = dateStr.trim();
-            let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
-            if (m) return toDateOnly(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
-            m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
-            if (m) return toDateOnly(new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])));
-            const p = new Date(s);
-            return isNaN(p) ? null : toDateOnly(p);
-        }
+    // ⭐ STEP 1 — Disable buttons where previous EMI is NOT PAID
+    processButtons.forEach(btn => {
+        let row = btn.closest("tr");
+        let prevRow = row.previousElementSibling;
 
-        const today = toDateOnly(new Date());
-        console.log("today:", today);
+        if (prevRow) {
+            let prevStatus = prevRow.querySelector(".status span").textContent.trim();
 
-        document.querySelectorAll(".process-btn").forEach(b => {
-            b.style.display = "none";
-        });
-
-        const emiRows = rows.map((row, idx) => {
-            const emiDateText = row.querySelector(".emi-date")?.textContent?.trim() || "";
-            const emiDueText = row.querySelector(".emi-due-date")?.textContent?.trim() || "";
-            const statusText = row.querySelector(".status span")?.textContent?.trim() || "";
-            const emiDate = parseAny(emiDateText);
-            const emiDueDate = parseAny(emiDueText);
-            return {
-                row,
-                idx,
-                emiDate,
-                emiDueDate,
-                statusText,
-                emiDateText,
-                emiDueText
-            };
-        }).filter(r => r.emiDate && r.statusText !== "PAID");
-
-        if (!emiRows.length) {
-            console.log("No unpaid EMI rows found.");
-            return;
-        }
-
-        let pos = emiRows.findIndex(r => r.emiDate && r.emiDueDate && (today >= r.emiDate && today <= r.emiDueDate));
-        if (pos === -1) {
-            pos = 0;
-        }
-        const active = emiRows[pos];
-        console.log("Selected row for button:", pos, active.emiDateText, active.emiDueText, "parsed:", active.emiDate, active.emiDueDate);
-
-        const btn = active.row.querySelector(".process-btn");
-        if (!btn) {
-            console.warn("No .process-btn found in selected row");
-            return;
-        }
-        btn.style.display = "inline-block";
-
-        function applyBtnStateForRow(r, button) {
-            const emiDate = r.emiDate;
-            const emiDue = r.emiDueDate;
-
-            let enabled = false;
-            if (emiDate && emiDue) {
-                enabled = (today >= emiDate && today <= emiDue);
-            } else if (emiDate) {
-                enabled = (today.getTime() === emiDate.getTime());
+            if (prevStatus !== "PAID") {
+                btn.disabled = true;
+                btn.classList.add("opacity-50", "cursor-not-allowed");
             }
-            button.disabled = !enabled;
-            button.classList.remove("btn-primary", "btn-warning");
-            if (enabled) {
-                button.classList.add("btn-primary");
-                button.style.cursor = "pointer";
-            } else {
-                button.classList.add("btn-warning");
-                button.style.cursor = "not-allowed";
-            }
-            console.log("Button state for row", r.idx, "enabled?", enabled, "emiDate:", r.emiDate, "emiDue:", r.emiDueDate);
         }
-
-        applyBtnStateForRow(active, btn);
-
-        btn.addEventListener("click", function() {
-            if (btn.disabled) return;
-
-            // ---- Get today's date (format DD-MM-YYYY) ----
-            const todayDate = new Date();
-            const day = String(todayDate.getDate()).padStart(2, '0');
-            const month = String(todayDate.getMonth() + 1).padStart(2, '0');
-            const year = todayDate.getFullYear();
-            const formattedDate = `${day}-${month}-${year}`; // ✅ DD-MM-YYYY
-
-            // ---- Update current row UI ----
-            const curStatusSpan = active.row.querySelector(".status span");
-            const curProcessedSpan = active.row.querySelector(".processed span");
-            const curPaidDateCell = active.row.querySelector("td:nth-child(10)"); // 10th column = PAID DATE
-
-            if (curStatusSpan) {
-                curStatusSpan.textContent = "DUE";
-                curStatusSpan.classList.remove("text-primary");
-                curStatusSpan.classList.add("text-yellow-600");
-            }
-
-            if (curProcessedSpan) curProcessedSpan.textContent = "No";
-
-            // ✅ Set current date in the PAID DATE column
-            if (curPaidDateCell) curPaidDateCell.textContent = formattedDate;
-
-
-            const emiNo = btn.getAttribute("data-emi");
-            const loanId = document.getElementById("loan_id")?.value; // or pass via hidden input
-
-            fetch("{{ route('emi.updateStatus') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        loan_id: loanId,
-                        emi_no: emiNo,
-                        status: "DUE"
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                
-                    if (data.success) {
-                        console.log("✅ EMI status updated in DB:", data);
-                    } else {
-                        console.error("⚠️ Failed to update EMI:", data.message);
-                    }
-                })
-                .catch(err => console.error("❌ AJAX Error:", err));
-
-            const curActionCell = active.row.querySelector("td:last-child");
-            if (curActionCell) curActionCell.innerHTML = "";
-
-            const currentIndexInEmiRows = pos;
-            let nextIndex = currentIndexInEmiRows + 1;
-            if (nextIndex >= emiRows.length) {
-
-                btn.remove();
-                console.log("No more unpaid EMI rows; button removed.");
-                return;
-            }
-
-            const next = emiRows[nextIndex];
-            const nextActionCell = next.row.querySelector("td:last-child");
-            if (!nextActionCell) {
-                console.warn("No action cell for next row");
-                btn.remove();
-                return;
-            }
-            nextActionCell.innerHTML = "";
-            nextActionCell.appendChild(btn);
-
-            pos = nextIndex;
-            applyBtnStateForRow(next, btn);
-        });
-        console.table(emiRows.map(r => ({
-            idx: r.idx,
-            emiDate: r.emiDate,
-            emiDueDate: r.emiDueDate,
-            status: r.statusText
-        })));
     });
+
+
+    // ⭐ STEP 2 — On Click Handler
+    processButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+
+            let row = btn.closest("tr");
+            let nextRow = row.nextElementSibling;
+
+            // ⭐ BLOCK IF PREVIOUS EMI NOT PAID
+            let prevRow = row.previousElementSibling;
+            if (prevRow) {
+                let prevStatus = prevRow.querySelector(".status span").textContent.trim();
+                let prevRemaining = parseFloat(
+                    prevRow.querySelector("td:nth-child(9)").textContent.replace(/,/g, '')
+                );
+
+                if (prevStatus !== "PAID" || prevRemaining > 0) {
+                    alert("Please clear previous EMI first.");
+                    return;
+                }
+            }
+
+            // ⭐ UPDATE CURRENT ROW STATUS
+            row.querySelector(".status span").textContent = "DUE";
+            row.querySelector(".processed span").textContent = "No";
+
+            const today = new Date();
+            row.querySelector("td:nth-child(10)").textContent =
+                `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+
+            let emiNo = btn.getAttribute("data-emi");
+            let loanId = document.getElementById("loan_id").value;
+
+            // ⭐ MOVE BUTTON TO NEXT ROW
+            btn.remove();
+
+            if (nextRow) {
+                let nextActionCell = nextRow.querySelector("td:last-child");
+                nextActionCell.appendChild(btn);
+
+                let newEmi = nextRow.querySelector("td:first-child").textContent.trim();
+                btn.setAttribute("data-emi", newEmi);
+
+                // Enable next button now
+                btn.disabled = false;
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+
+            // ⭐ AJAX CALL
+            fetch("{{ route('emi.saveEmiStatus') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    loan_id: loanId,
+                    emi_no: emiNo,
+                    status: "DUE"
+                })
+            })
+            .then(async res => {
+                let text = await res.text();
+                console.log("RAW:", text);
+
+                try { console.log("JSON:", JSON.parse(text)); }
+                catch (e) { console.error("JSON PARSE ERROR:", e); }
+            })
+            .catch(err => console.error("AJAX ERROR:", err));
+
+        });
+    });
+
+});
 </script>
+
+
+
+
 
 
 @endsection
