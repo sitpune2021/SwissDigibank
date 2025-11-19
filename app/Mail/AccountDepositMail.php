@@ -34,7 +34,7 @@ class AccountDepositMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Amount Deposited to Your Savings Account',
+            subject: 'Amount Credited to Your Savings Account',
         );
     }
 

@@ -159,18 +159,23 @@ class ApproveController extends Controller
                     $Account = $transaction->accounts;
                     $member = $transaction->accounts->members;
 
-                    $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
-                    $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
-                    $pdf->save($pdfPath);
+
                     if (!empty($member->member_info_email)) {
 
                         if ($transaction->transaction_type === 'debit') {
+                            $pdf = Pdf::loadView('emails.saving_account_withdraw', compact('member', 'Account'));
+                            $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+                            $pdf->save($pdfPath);
                             // MONEY WITHDRAWN
                             Mail::to($member->member_info_email)->send(
                                 new \App\Mail\AccountWithdrawMail($member, $Account, $pdfPath)
 
                             );
                         } elseif ($transaction->transaction_type === 'credit') {
+
+                            $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
+                            $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
+                            $pdf->save($pdfPath);
 
                             // MONEY DEPOSITED
                             Mail::to($member->member_info_email)->send(
@@ -851,7 +856,7 @@ class ApproveController extends Controller
                 $item->model_type = 'vehical';
                 return $item;
             });
-            
+
 
         // Merge all 4 collections
         // $applications = $loanApplications
@@ -864,7 +869,7 @@ class ApproveController extends Controller
         //     ->concat($vehical)
         //     ->sortByDesc('created_at');
         // ... after concatenating collections into $applications
-        
+
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
