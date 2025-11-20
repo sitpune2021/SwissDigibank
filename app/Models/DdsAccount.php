@@ -60,5 +60,8 @@ class DdsAccount extends Model
     {
         return $this->belongsTo(Account::class);
     }
-    
+    public function nominee()
+    {
+        return $this->hasMany(AccountNominee::class, 'dds_account_id', 'id');
+    }
 }

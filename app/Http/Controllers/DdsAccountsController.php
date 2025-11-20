@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Branch;
+use App\Helpers\SmsHelper;
 use App\Models\DdsAccount;
 use App\Models\Minor;
 use App\Models\Bank;
@@ -1395,5 +1396,344 @@ class DdsAccountsController extends Controller
             ->get();
 
         return view('fd_account.ddsaccounts.markLienAccount', compact('ddaccount', 'savingAccounts'));
+    }
+    public function accountNominee(string $id)
+    {
+        $ddaccount = DdsAccount::with(['member', 'nominee'])
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $member = $ddaccount->member;
+
+        return view('fd_account.ddsaccounts.account-nominee', compact('ddaccount', 'member'));
+    }
+
+
+    // public function saveNominees(Request $request, $id)
+    // {
+    //     $ddaccount = DdsAccount::findOrFail($id);
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         Log::info('DDS Nominee update process started', [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'request_data' => $request->all(),
+    //         ]);
+
+    //         // --------------------------
+    //         // Remove all nominees if "no"
+    //         // --------------------------
+    //         if ($request->nominee === 'no') {
+    //             $deletedCount = $ddaccount->nominee()->count();
+    //             $ddaccount->nominee()->delete();
+
+    //             Log::info('All DDS nominees removed', [
+    //                 'dds_account_id' => $ddaccount->id,
+    //                 'deleted_count' => $deletedCount,
+    //             ]);
+
+    //             DB::commit();
+
+    //             // Send SMS after removal
+    //             try {
+    //                 $member = $ddaccount->member;
+    //                 $mobile = $member->member_info_mobile_no;
+    //                 $ddNo = $ddaccount->dd_no;
+
+    //                 $templateId = 1707172234305975444; // Removed SMS template
+    //                 $message = "Dear Customer, nominee has been successfully removed from your DD no. {$ddNo}. SBC GLOBAL";
+
+    //                 SmsHelper::sendSms($mobile, $message, $templateId);
+    //             } catch (\Exception $e) {
+    //                 Log::error('DDS nominee remove SMS error', ['error' => $e->getMessage()]);
+    //             }
+
+    //             return back()->with('success', 'Nominee information removed successfully.');
+    //         }
+
+    //         // --------------------------
+    //         // Validate nominee data
+    //         // --------------------------
+    //         $validated = $request->validate([
+    //             'nominees' => 'required|array|min:1',
+    //             'nominees.*.id' => 'nullable|integer',
+    //             'nominees.*.name' => 'required|string|max:255',
+    //             'nominees.*.address' => 'required|string|max:255',
+    //             'nominees.*.relation' => 'required|string|max:100',
+    //             'nominees.*.share' => 'nullable|numeric|min:1|max:100',
+    //         ]);
+
+    //         $submittedNominees = collect($validated['nominees']);
+    //         $existingNominees = $ddaccount->nominee()->pluck('id')->toArray();
+
+    //         $updatedNominees = [];
+    //         $addedNominees = [];
+
+    //         // --------------------------
+    //         // Add or update nominees
+    //         // --------------------------
+    //         foreach ($submittedNominees as $nomineeData) {
+    //             if (!empty($nomineeData['id']) && in_array($nomineeData['id'], $existingNominees)) {
+    //                 // Update existing nominee
+    //                 $nominee = AccountNominee::find($nomineeData['id']);
+    //                 $nominee->update([
+    //                     'nominee_name'     => $nomineeData['name'],
+    //                     'nominee_address'  => $nomineeData['address'],
+    //                     'nominee_relation' => strtolower($nomineeData['relation']),
+    //                     'share_percentage' => $nomineeData['share'] ?? 100,
+    //                 ]);
+
+    //                 $updatedNominees[] = $nominee->id;
+
+    //                 Log::info('DDS nominee updated', [
+    //                     'dds_account_id' => $ddaccount->id,
+    //                     'nominee_id' => $nominee->id,
+    //                 ]);
+    //             } else {
+    //                 // Add new nominee and set dds_account_id correctly
+    //                 $newNominee = $ddaccount->nominee()->create([
+    //                     'nominee_name'     => $nomineeData['name'],
+    //                     'nominee_address'  => $nomineeData['address'],
+    //                     'nominee_relation' => strtolower($nomineeData['relation']),
+    //                     'share_percentage' => $nomineeData['share'] ?? 100,
+    //                     'dds_account_id'   => $ddaccount->id, // Important fix
+    //                 ]);
+
+    //                 $addedNominees[] = $newNominee->id;
+
+    //                 Log::info('DDS new nominee added', [
+    //                     'dds_account_id' => $ddaccount->id,
+    //                     'nominee_id' => $newNominee->id,
+    //                 ]);
+    //             }
+    //         }
+
+    //         // --------------------------
+    //         // Delete removed nominees
+    //         // --------------------------
+    //         $nomineesToDelete = array_diff($existingNominees, $updatedNominees);
+    //         if (!empty($nomineesToDelete)) {
+    //             AccountNominee::whereIn('id', $nomineesToDelete)->delete();
+
+    //             Log::info('DDS nominees deleted', [
+    //                 'dds_account_id' => $ddaccount->id,
+    //                 'deleted_nominee_ids' => $nomineesToDelete,
+    //             ]);
+    //         }
+
+    //         DB::commit();
+
+    //         // --------------------------
+    //         // SMS sequence like Saving Account
+    //         // --------------------------
+    //         try {
+    //             $member = $ddaccount->member;
+    //             $mobile = $member->member_info_mobile_no;
+    //             $ddNo = $ddaccount->dd_no;
+    //             dd($addedNominees, $updatedNominees);
+
+    //             if (!empty($addedNominees) && empty($updatedNominees)) {
+    //                 $templateId = 1707172234309014589; // Added SMS
+    //                 $message = "Dear Customer, nominee has been successfully added to your DD no. {$ddNo}. SBC GLOBAL";
+    //                 $successMessage = "Nominee details added successfully.";
+    //             } elseif (empty($addedNominees) && !empty($updatedNominees)) {
+    //                 $templateId = 1707172234307304278; // Updated SMS
+    //                 $message = "Dear Customer, nominee has been successfully updated in your DD no. {$ddNo}. SBC GLOBAL";
+    //                 $successMessage = "Nominee details updated successfully.";
+    //             } elseif (!empty($addedNominees) && !empty($updatedNominees)) {
+    //                 $templateId = 1707172234307304278; // Updated SMS
+    //                 $message = "Dear Customer, nominee details have been successfully updated for your DD no. {$ddNo}. SBC GLOBAL";
+    //                 $successMessage = "Nominee details updated successfully.";
+    //             }
+
+    //             SmsHelper::sendSms($mobile, $message, $templateId);
+    //         } catch (\Exception $e) {
+    //             Log::error('DDS nominee SMS error', ['error' => $e->getMessage()]);
+    //         }
+
+    //         return redirect()->route('ddsaccounts.show', $ddaccount->id)->with('success', $successMessage);
+    //     } catch (\Throwable $th) {
+
+    //         DB::rollBack();
+
+    //         Log::error('DDS Nominee update failed', [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'error' => $th->getMessage(),
+    //             'trace' => $th->getTraceAsString(),
+    //         ]);
+
+    //         return redirect()
+    //             ->route('ddsaccounts.show', $ddaccount->id)
+    //             ->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+    //     }
+    // }
+    public function saveNominees(Request $request, $id)
+    {
+        $ddaccount = DdsAccount::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+            Log::info('DDS Nominee update process started', [
+                'dds_account_id' => $ddaccount->id,
+                'request_data' => $request->all(),
+            ]);
+
+            // --------------------------
+            // Remove all nominees if "no"
+            // --------------------------
+            if ($request->nominee === 'no') {
+                $deletedCount = $ddaccount->nominee()->count();
+                $ddaccount->nominee()->delete();
+
+                Log::info('All DDS nominees removed', [
+                    'dds_account_id' => $ddaccount->id,
+                    'deleted_count' => $deletedCount,
+                ]);
+
+                DB::commit();
+
+                // Send removal SMS
+                try {
+                    $member = $ddaccount->member;
+                    $mobile = $member->member_info_mobile_no;
+                    $ddNo = $ddaccount->dd_no;
+
+                    $templateId = 1707172234305975444;
+                    $message = "Dear Customer, nominee has been successfully removed from your DD no. {$ddNo}. SBC GLOBAL";
+
+                    SmsHelper::sendSms($mobile, $message, $templateId);
+                } catch (\Exception $e) {
+                    Log::error('DDS nominee remove SMS error', ['error' => $e->getMessage()]);
+                }
+
+                return back()->with('success', 'Nominee information removed successfully.');
+            }
+
+            // --------------------------
+            // Validate nominee data
+            // --------------------------
+            $validated = $request->validate([
+                'nominees' => 'required|array|min:1',
+                'nominees.*.id' => 'nullable|integer',
+                'nominees.*.name' => 'required|string|max:255',
+                'nominees.*.address' => 'required|string|max:255',
+                'nominees.*.relation' => 'required|string|max:100',
+                'nominees.*.share' => 'nullable|numeric|min:1|max:100',
+            ]);
+
+            $submittedNominees = collect($validated['nominees']);
+            $existingNominees = $ddaccount->nominee()->pluck('id')->toArray();
+
+            $updatedNominees = [];
+            $addedNominees = [];
+
+            // --------------------------
+            // Add or update nominees
+            // --------------------------
+            foreach ($submittedNominees as $nomineeData) {
+                $nominee = null;
+
+                // 1️⃣ Try to find by ID if provided
+                if (!empty($nomineeData['id'])) {
+                    $nominee = $ddaccount->nominee()->where('id', $nomineeData['id'])->first();
+                }
+
+                // 2️⃣ Fallback: match by name + relation
+                if (!$nominee) {
+                    $nominee = $ddaccount->nominee()
+                        ->where('nominee_name', $nomineeData['name'])
+                        ->where('nominee_relation', strtolower($nomineeData['relation']))
+                        ->first();
+                }
+
+                if ($nominee) {
+                    // Update existing nominee
+                    $nominee->update([
+                        'nominee_name'     => $nomineeData['name'],
+                        'nominee_address'  => $nomineeData['address'],
+                        'nominee_relation' => strtolower($nomineeData['relation']),
+                        'share_percentage' => $nomineeData['share'] ?? 100,
+                    ]);
+                    $updatedNominees[] = $nominee->id;
+
+                    Log::info('DDS nominee updated', [
+                        'dds_account_id' => $ddaccount->id,
+                        'nominee_id' => $nominee->id,
+                    ]);
+                } else {
+                    // Add new nominee
+                    $newNominee = $ddaccount->nominee()->create([
+                        'nominee_name'     => $nomineeData['name'],
+                        'nominee_address'  => $nomineeData['address'],
+                        'nominee_relation' => strtolower($nomineeData['relation']),
+                        'share_percentage' => $nomineeData['share'] ?? 100,
+                    ]);
+                    $addedNominees[] = $newNominee->id;
+
+                    Log::info('DDS new nominee added', [
+                        'dds_account_id' => $ddaccount->id,
+                        'nominee_id' => $newNominee->id,
+                    ]);
+                }
+            }
+
+            // --------------------------
+            // Delete removed nominees
+            // --------------------------
+            $nomineesToDelete = array_diff($existingNominees, $updatedNominees);
+            if (!empty($nomineesToDelete)) {
+                AccountNominee::whereIn('id', $nomineesToDelete)->delete();
+
+                Log::info('DDS nominees deleted', [
+                    'dds_account_id' => $ddaccount->id,
+                    'deleted_nominee_ids' => $nomineesToDelete,
+                ]);
+            }
+
+            DB::commit();
+
+            // --------------------------
+            // SMS sequence
+            // --------------------------
+            try {
+                $member = $ddaccount->member;
+                $mobile = $member->member_info_mobile_no;
+                $ddNo = $ddaccount->dd_no;
+
+                // Added nominees SMS
+                if (!empty($addedNominees)) {
+                    $dlttemplateid = 1707172234309014589;
+                    $message = "Dear Customer, nominee has been successfully added to your DD no. $ddNo. SBC GLOBAL";
+                    SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                }
+
+                // Updated nominees SMS
+                if (!empty($updatedNominees)) {
+                    $dlttemplateid = 1707172234307304278;
+                    $message = "Dear Customer, nominee has been successfully updated in your DD no. $ddNo. SBC GLOBAL";
+                    SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                }
+
+                $successMessage = 'Nominee details updated successfully.';
+                return redirect()->route('ddsaccounts.show', $ddaccount->id)->with('success', $successMessage);
+            } catch (\Exception $e) {
+                Log::error('DDS nominee SMS error', ['error' => $e->getMessage()]);
+            }
+        } catch (\Throwable $th) {
+
+            DB::rollBack();
+
+            Log::error('DDS Nominee update failed', [
+                'dds_account_id' => $ddaccount->id,
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+
+            return redirect()
+                ->route('ddsaccounts.show', $ddaccount->id)
+                ->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+        }
     }
 }
