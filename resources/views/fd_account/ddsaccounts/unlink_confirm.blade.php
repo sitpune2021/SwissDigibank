@@ -131,59 +131,44 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
                 <h3 class="text-xl uppercase font-semibold">
-                    DD Account - DDA{{ $ddaccount->id }} - Link Saving Account for Auto Debit DD Installment
+                    DD Account - DDA{{ $ddaccount->id }} - Unlink Saving Account
                 </h3>
             </div>
         </div>
-        <form action="{{ route('ddsaccounts.storeLinkSavingAcc', $ddaccount->id) }}" method="POST">
+        <form action="" method="POST">
             @csrf
             <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
                 <div class=" w-full  overflow-hidden ">
                     <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
                         <div class=" py-3">
                             <h3 class="text-lg border-b font-semibold text-black uppercase">
-                                Link member saving account to DD for auto debit installment on due date.
+                                Saving Account - <a href="" class="text-primary text-lg">{{ $ddaccount->id }}</a> is
+                                linked for Auto Debit DD Installment.
                             </h3>
                         </div>
                         <div class=" overflow-x-auto">
 
                             <div class="col-span-2 md:col-span-1 mt-3">
-                                <label for="" class="md:text-lg font-medium block mb-3 uppercase">
-                                    Select Saving Account
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex gap-3 items-center">
-                                    <select name="saving_account_id"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-
-                                        <option value="">Select Saving Account</option>
-
-                                        @foreach ($savingAccounts as $acc)
-                                            <option value="{{ $acc->id }}" @selected($ddaccount->saving_account_id == $acc->id)>
-                                                {{ $acc->account_no }}
-                                                ({{ $acc->firm_name ??
-                                                    trim(
-                                                        ($acc->members?->member_info_first_name ?? '') .
-                                                            ' ' .
-                                                            ($acc->members?->member_info_middle_name ?? '') .
-                                                            ' ' .
-                                                            ($acc->members?->member_info_last_name ?? ''),
-                                                    ) }})
-                                                (Bal. {{ number_format($balances[$acc->id] ?? 0, 2) }})
-                                            </option>
-                                        @endforeach
-
-                                    </select>
+                                <div for="" class="md:text-lg text-xl  font-bold block mb-3 uppercase">
+                                    Confirm to unlink saving account.
                                 </div>
+
                             </div>
 
                             <div class="flex justify-center gap-3 mt-7">
-                                <button class="btn-primary  uppercase">
-                                    Link Account
-                                </button>
-                                <button class="btn-outline  uppercase">
-                                    back
-                                </button>
+                                <form action="{{ route('ddsaccounts.storeLinkSavingAcc', $ddaccount->id) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="saving_account_id" value="">
+                                    <button type="submit" class="btn-primary uppercase">
+                                        Unlink Saving Account
+                                    </button>
+                                </form>
+
+                                <a href="{{ route('ddsaccounts.show', $ddaccount->id) }}" class="btn-outline uppercase">
+                                    Back
+                                </a>
+
+
                             </div>
                         </div>
 
@@ -249,61 +234,6 @@
                                             <td class="py-2">
                                                 {{ optional($ddaccount->transactions->last())->balance_available }}</td>
                                         </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="toggle-box box mt-6">
-                        <div
-                            class=" bg-secondary/5 rounded-t-lg px-4 py-3 flex items-center justify-between cursor-pointer toggle-header">
-                            <h3 class="text-lg uppercase font-semibold">customer Info</h3>
-                            <i class="las la-minus text-xl toggle-icon"></i>
-                        </div>
-
-                        <div class=" rounded-b-lg overflow-hidden  toggle-content">
-                            <div class="p-4">
-                                <table class="w-full whitespace-nowrap text-sm">
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr class="py-2 border-b">
-                                            <td class="font-semibold uppercase py-2 w-40">customer</td>
-                                            <td class="py-2">
-                                                {{ ($ddaccount->member?->member_no ??
-                                                    ($ddaccount->member?->id ? str_pad($ddaccount->member->id, 6, '0', STR_PAD_LEFT) : '')) .
-                                                    ' - ' .
-                                                    ($ddaccount->member?->member_info_first_name ?? 'N/A') .
-                                                    ' - ' .
-                                                    ($ddaccount->member?->member_info_last_name ?? '') }}
-                                            </td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Branch</td>
-                                            <td class="py-2">{{ $ddaccount->branch->branch_name ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">DOB</td>
-                                            <td class="py-2">{{ $ddaccount->member->member_info_dob ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Gender</td>
-                                            <td class="py-2">{{ $ddaccount->member->member_info_gender ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Father Name</td>
-                                            <td class="py-2">{{ $ddaccount->member->member_info_father_name ?? 'N/A' }}
-                                            </td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Occupation</td>
-                                            <td class="py-2">{{ $ddaccount->member->member_info_occupation ?? 'N/A' }}
-                                            </td>
-                                        </tr>
-
                                     </tbody>
                                 </table>
                             </div>
