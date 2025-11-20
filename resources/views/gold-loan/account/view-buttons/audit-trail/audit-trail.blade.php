@@ -74,19 +74,13 @@
 
 @section('content')
     <div class="main-inner">
+      
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
                 <h1 class="text-xl font-semibold uppercase">
-                Gold Loan - 00461 - Auddit Trail
+                Gold Loan - Audit Trail
                 </h1>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500 text-sm">Gold Loan </a> >
-                    <a href="#" class="text-gray-500 text-sm">00461 </a> >
-                    <a href="#" class="text-gray-500  text-sm">Auddit Trail</a>
-                </p>
-
             </div>
-
         </div>
 
 

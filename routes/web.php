@@ -575,82 +575,88 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
 
     // GOld Loan Account Page
-    Route::get('account/index', [GoldLoanAccountController::class, 'index'])
-        ->name('gold-loan.account.index');
+        Route::get('account/index', [GoldLoanAccountController::class, 'index'])
+            ->name('gold-loan.account.index');
 
-    Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
-        ->name('gold-loan.account.show');
+        Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
+            ->name('gold-loan.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
 
-   Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
-    ->name('emi.saveEmiStatus');
+        // transiction page tab
+        Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
+            ->name('gold-loan.account.transaction');
 
+        // pay emi tab
+        Route::get('goldloan-account/payemi/{id}', [GoldLoanAccountController::class, 'goldLoanPayEmi'])
+            ->name('gold-loan.account.pay-emi');
+        Route::post('goldloan-account/payemi/{id}/pay', [GoldLoanAccountController::class, 'payEmiLoan'])->name('goldloan.payEmiLoan');
 
+        // only pay tab
+        Route::get('goldloan-account/pay/{id}', [GoldLoanAccountController::class, 'goldLoanPay'])
+            ->name('gold-loan.account.pay');
+        Route::post('/update-emi-status', [GoldLoanAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
 
-    Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
-        ->name('gold-loan.account.transaction');
+        Route::post('/goldloan/pay-emi', [GoldLoanAccountController::class, 'payEmi'])->name('goldloan.payEmi');
 
-    Route::get('goldloan-account/payemi/{id}', [GoldLoanAccountController::class, 'goldLoanPayEmi'])
-        ->name('gold-loan.account.pay-emi');
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/gold-loan/{id}/remove', [GoldLoanAccountController::class, 'removeAccount'])
+            ->name('goldloan.remove');
 
-    Route::post('goldloan-account/payemi/{id}/pay', [GoldLoanAccountController::class, 'payEmiLoan'])->name('goldloan.payEmiLoan');
+        // show audit trial
+        Route::get('account/audit', [GoldLoanAccountController::class, 'audit'])
+            ->name('gold-loan.account.audit-trail');
 
-    Route::get('goldloan-account/pay/{id}', [GoldLoanAccountController::class, 'goldLoanPay'])
-        ->name('gold-loan.account.pay');
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/gold-loan/{id}/debit-charges-list', [GoldLoanAccountController::class, 'showDebitChargesList'])
+            ->name('gold-loan.debitChargesList.form');
 
-    Route::post('/update-emi-status', [GoldLoanAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::get('/gold-loan/{id}/debit-other-charges', [GoldLoanAccountController::class, 'DebitOtherCharges'])
+            ->name('gold-loan.debitOtherCharges.form');
 
-    Route::post('/goldloan/pay-emi', [GoldLoanAccountController::class, 'payEmi'])->name('goldloan.payEmi');
+        // Store/Process Debit Other Charges
+        Route::post('/gold-loan/{id}/debit-other-charges', [GoldLoanAccountController::class, 'storeDebitOtherCharges'])
+            ->name('gold-loan.debitOtherCharges.store');
 
+        Route::get('/gold-loan/{id}/clear-due', [GoldLoanAccountController::class, 'goldLoanClearDues'])
+            ->name('gold-loan.clear-due.form');
 
-    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-    Route::get('/gold-loan/{id}/debit-charges-list', [GoldLoanAccountController::class, 'showDebitChargesList'])
-        ->name('gold-loan.debitChargesList.form');
-
-    Route::get('/gold-loan/{id}/debit-other-charges', [GoldLoanAccountController::class, 'DebitOtherCharges'])
-        ->name('gold-loan.debitOtherCharges.form');
-
-    // Store/Process Debit Other Charges
-    Route::post('/gold-loan/{id}/debit-other-charges', [GoldLoanAccountController::class, 'storeDebitOtherCharges'])
-        ->name('gold-loan.debitOtherCharges.store');
-
-    Route::get('/gold-loan/{id}/clear-due', [GoldLoanAccountController::class, 'goldLoanClearDues'])
-        ->name('gold-loan.clear-due.form');
-
-    Route::post('/gold-loan/{loan_id}/other-charge', [GoldLoanAccountController::class, 'clearDue'])->name('gold-loan.clear-due');
+        Route::post('/gold-loan/{loan_id}/other-charge', [GoldLoanAccountController::class, 'clearDue'])->name('gold-loan.clear-due');
 
 
     // other pages url
-    Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
-        ->name('gold-loan.applications.view-buttons.disburse-setting');
+        Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
+            ->name('gold-loan.applications.view-buttons.disburse-setting');
 
-    Route::get('applications/col_process_fee', [GoldLoanController::class, 'col_process_fee'])
-        ->name('gold-loan.applications.view-buttons.col_process_fee');
+        Route::get('applications/col_process_fee', [GoldLoanController::class, 'col_process_fee'])
+            ->name('gold-loan.applications.view-buttons.col_process_fee');
 
-    Route::get('applications/upload_documents', [GoldLoanController::class, 'upload_documents'])
-        ->name('gold-loan.applications.upload_documents');
+        Route::get('applications/upload_documents', [GoldLoanController::class, 'upload_documents'])
+            ->name('gold-loan.applications.upload_documents');
 
-    Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
-        ->name('gold-loan.applications.upload-cibil-score');
+        Route::get('applications/upload-cibil-score', [GoldLoanController::class, 'upload_cibil_score'])
+            ->name('gold-loan.applications.upload-cibil-score');
 
 
     // Collect Processing fee page in application view page
-    Route::get('applications/col-process-fee/{id}', [GoldLoanController::class, 'col_process_fee'])
-        ->name('gold-loan.applications.view-buttons.col_process_fee');
-    Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
-        ->name('gold-loan.col_process_fee.store');
+        Route::get('applications/col-process-fee/{id}', [GoldLoanController::class, 'col_process_fee'])
+            ->name('gold-loan.applications.view-buttons.col_process_fee');
+        Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
+            ->name('gold-loan.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
+        Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
+        ->name('applications.submitForApproval');
 
     // Show EMI chart in a new tab
-    Route::get('applications/{id}/emi-chart', [GoldLoanController::class, 'emiChart'])
-        ->name('gold-loan.applications.view-buttons.show-emi-chart');
+        Route::get('applications/{id}/emi-chart', [GoldLoanController::class, 'emiChart'])
+            ->name('gold-loan.applications.view-buttons.show-emi-chart');
 
     // Disbusrment setting
-    Route::get('applications/{id}/disbursment', [GoldLoanController::class, 'disbursment'])
-        ->name('gold-loan.applications.view-buttons.disburse-setting');
+        Route::get('applications/{id}/disbursment', [GoldLoanController::class, 'disbursment'])
+            ->name('gold-loan.applications.view-buttons.disburse-setting');
 
-    Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
+        Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
 
 });
 
