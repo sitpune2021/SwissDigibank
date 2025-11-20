@@ -909,4 +909,76 @@ class GoldLoanAccountController extends Controller
             return back()->with('error', 'Something went wrong while clearing the due.');
         }
     }
+
+    // Fore close functionality
+    public function foreclose(Request $request, $loan_id)
+    {
+        try {
+            // Validate input
+            $request->validate([
+                'foreclosure_date' => 'required|date',
+                'penalty_amount'   => 'nullable|numeric|min:0',
+                'discount'         => 'nullable|numeric|min:0',
+                'closing_remarks'  => 'nullable|string|max:255',
+            ]);
+
+            $loan = LoanApplication::find($loan_id);
+
+            if (!$loan) {
+                return back()->withErrors(['loan' => 'Loan not found']);
+            }
+
+            // Check if already foreclosed
+            if ($loan->status == 'closed') {
+                return back()->withErrors(['loan' => 'Loan already foreclosed']);
+            }
+
+            // Latest outstanding
+            $lastTransaction = GoldLoanTransaction::where('loan_id', $loan_id)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if (!$lastTransaction) {
+                return back()->withErrors(['loan' => 'No transaction found']);
+            }
+
+            $currentDebt  = $lastTransaction->current_debt ?? 0;
+            $penalty      = $request->penalty_amount ?? 0;
+            $discount     = $request->discount ?? 0;
+
+            // Foreclosure calculation
+            $foreclosureAmount = ($currentDebt + $penalty) - $discount;
+
+            // Foreclosure Entry
+            $transaction = GoldLoanTransaction::create([
+                'loan_id'             => $loan_id,
+                'emi_no'              => null,
+                'transaction_date'    => now()->format('Y-m-d'),
+                'foreclosure_amount'  => $foreclosureAmount,
+                'foreclosure_date'    => $request->foreclosure_date,
+                'penalty_amount'      => $penalty,
+                'discount'            => $discount,
+                'remarks'             => $request->closing_remarks,
+                'status'              => 'foreclosed',
+                'created_by'          => Auth::id(),
+            ]);
+
+            // Update Loan Table Status
+            $loan->update([
+                'status'         => 'closed',
+                'closing_date'   => $request->foreclosure_date,
+                'closing_amount' => $foreclosureAmount,
+            ]);
+
+            return redirect()->back()->with('success', 'Loan foreclosed successfully.');
+        } catch (\Exception $ex) {
+
+            Log::error('Foreclosure Error', [
+                'message' => $ex->getMessage(),
+                'line'    => $ex->getLine(),
+            ]);
+
+            return back()->withErrors(['error' => 'Something went wrong.']);
+        }
+    }
 }
