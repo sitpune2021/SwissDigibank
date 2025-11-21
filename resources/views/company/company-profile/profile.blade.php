@@ -17,7 +17,7 @@
                 <div class="col-span-6 ">
                     <div class="mb-6 box xxl:p-8 xxxl:p-10" style="height: 100%;">
                         <div class="pb-4 mb-4  bb-dashed md:mb-6 md:pb-6 flex justify-between">
-                            <h4 class="h4">{{ $section['heading'] }}</h4>
+                            <h4 class="h4 text-secondry">{{ $section['heading'] }}</h4>
                             @if ($key == 'company' && Route::currentRouteName() === 'company.index')
                                 <a href="{{ route('company.edit', $company->id) }}"
                                     class="inline-flex items-center justify-center w-8 h-8 text-white rounded-full bg-primary hover:bg-green-700">
@@ -27,11 +27,10 @@
                         </div>
                         @php
                             $isForm = !isset($show) || !$show;
-                          
+
                         @endphp
 
                         @if ($isForm)
-                       
                             <section class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
                                 @include('company.company-profile.partial.sectionLoop', [
                                     'section' => $section,
@@ -47,7 +46,6 @@
                                     'section' => $section,
                                     'model' => $company,
                                     'show' => true,
-                                    
                                 ])
                             </section>
                         @endif

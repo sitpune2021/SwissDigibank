@@ -24,7 +24,7 @@ return [
 
     // Step 2: Promotor Info
     'PROMOTER_INFO' => [
-        ['label' => 'TITLE', 'name' => 'title', 'id' => 'title', 'type' => 'select', 'required' => true, 'options' => ['MD' => 'MD', 'Mr' => 'Mr', 'Ms' => 'Ms', 'Mrs' => 'Mrs']],
+        ['label' => 'TITLE', 'name' => 'title', 'id' => 'title', 'type' => 'radio', 'required' => true, 'options' => ['MD' => 'MD', 'Mr' => 'Mr', 'Ms' => 'Ms', 'Mrs' => 'Mrs']],
         ['label' => 'GENDER', 'name' => 'gender', 'id' => 'gender', 'type' => 'radio', 'required' => true, 'options' => ['Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other']],
         ['label' => 'FIRST NAME', 'name' => 'first_name', 'id' => 'first_name', 'type' => 'text', 'required' => true],
         ['label' => 'MIDDLE NAME', 'name' => 'middle_name', 'id' => 'middle_name', 'type' => 'text', 'required' => false],
