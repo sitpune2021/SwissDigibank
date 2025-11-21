@@ -85,6 +85,7 @@
 
             <!-- Left: Details -->
             <div class=" w-full  overflow-hidden">
+
                 <!--  Application Info -->
                 <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                     <!-- Header -->
@@ -198,7 +199,7 @@
                                     Credit Period
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ {{ $application->credit_period }}
+                                    {{ $application->credit_period }} Days
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -206,7 +207,7 @@
                                     Tenure of Loan	
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    ₹ {{ $application->tenure_value }}
+                                    {{ $application->tenure_value }} Months
                                 </td>
                             </tr>
                             
@@ -290,8 +291,13 @@
 
                     <!-- Body -->
                     <div class="p-4" id="SecurityDeposits">
-                        <p class="text-sm text-center font-semibold">TOTAL INTEREST RECOVERABLE - 5,525.00</p>
-                        <p class="text-sm text-center font-semibold">TOTAL OTHER CHARGES RECOVERABLE - 0.00</p>
+                        <p class="text-sm text-center font-semibold">
+                            TOTAL INTEREST RECOVERABLE - {{ number_format($emiChart['total_interest'] ?? 0, 2) }}
+                        </p>
+
+                        <p class="text-sm text-center font-semibold">
+                            TOTAL OTHER CHARGES RECOVERABLE - {{ number_format($emiChart['total_other'] ?? 0, 2) }}
+                        </p>
                         <div class="overflow-x-auto text-center mt-5">
                             <div class="w-full overflow-x-auto">
                                 <table class="w-full  rounded-lg text-sm">
@@ -311,29 +317,52 @@
                                     </thead>
 
                                     <tbody class="divide-y divide-gray-200">
-                                        <tr class="bg-secondary/10 ">
-                                            <td class="px-3 py-2 "></td>
-                                            <td class="px-3 py-2 text-center"></td>
-                                            <td class="px-3 py-2 text-center">5,525.00</td>
-                                            <td class="px-3 py-2 text-center"></td>
-                                            <td class="px-3 py-2 text-center"></td>
-                                            <td class="px-3 py-2 text-center"></td>
-                                            <td class="px-3 py-2 text-center"></td>
-                                            <td class="px-3 py-2 text-center"></td>
-                                            <td class="text-right">34,000.00</td>
+
+                                        {{-- TOTAL ROW --}}
+                                       <tr class="bg-secondary/10">
+                                            <td></td>
+                                            <td></td>
+
+                                            {{-- TOTAL INTEREST --}}
+                                            <td class="text-center">
+                                                {{ number_format($emiChart['total_interest'] ?? 0, 2) }}
+                                            </td>
+
+                                            {{-- TOTAL OTHER CHARGES --}}
+                                            <td class="text-center">
+                                                {{ number_format($emiChart['total_other'] ?? 0, 2) }}
+                                            </td>
+
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+
+                                            {{-- OPENING LOAN PRINCIPAL --}}
+                                            <td class="text-right">
+                                                {{ number_format($application->approved_loan_amount ?? 0, 2) }}
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td class="px-3 py-2 ">1</td>
-                                            <td class="px-3 py-2 text-center">34,000.00</td>
-                                            <td class="px-3 py-2 text-center">0.00</td>
-                                            <td class="px-3 py-2 text-center">0.00</td>
-                                            <td class="px-3 py-2 text-center">34,000.00</td>
-                                            <td class="px-3 py-2 text-center">24/09/2025</td>
-                                            <td class="px-3 py-2 text-center"> 24/07/2026</td>
-                                            <td class="px-3 py-2 text-center">25/07/2026</td>
-                                            <td class="text-right">0.00</td>
-                                        </tr>
+
+
+                                        {{-- EMI ROWS --}}
+                                        @foreach (($emiChart['rows'] ?? []) as $row)
+                                            <tr>
+                                                <td class="px-3 py-2">{{ $row['no'] }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($row['principal'] ?? 0, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($row['interest'] ?? 0, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ number_format($row['other_charges'] ?? 0, 2) }}</td>
+
+                                                <td class="px-3 py-2 text-center">{{ number_format($row['emi'] ?? 0, 2) }}</td>
+                                                <td class="px-3 py-2 text-center">{{ $row['start_date'] ?? '' }}</td>
+                                                <td class="px-3 py-2 text-center">{{ $row['date'] ?? '' }}</td>
+                                                <td class="px-3 py-2 text-center">{{ $row['due_date'] ?? '' }}</td>
+                                                <td class="text-right">{{ number_format($row['due_principal'] ?? 0, 2) }}</td>
+                                            </tr>
+                                        @endforeach
+
                                     </tbody>
+
                                 </table>
                             </div>
 
@@ -341,6 +370,7 @@
                     </div>
 
                 </div>
+
             </div>
 
         </div>

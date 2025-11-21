@@ -120,7 +120,7 @@
                 <!-- <small>July 26, 2022, 08:22 PM</small> -->
                 <small>{{ now()->format('F d, Y, h:i A') }}</small>
             </div>
-            <img src="url('assets/images/Loan_Management_logo.png')" alt="" class="logo">
+            <img src="{{ public_path('images/Loan_Management_logo.png') }}" alt="" class="logo">
         </div>
 
         <div class="email-body" style="border-bottom: 1px solid #ddd;">
@@ -150,11 +150,12 @@
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Withdrawal Amount:</td>
-                    <td style="padding:6px 0;">{{ $withdraw_amount ?? '0.00' }}</td>
+                    <td style="padding:6px 0;">{{ number_format(round($Account->amount ?? 0, 2), 2) }}</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Available Balance:</td>
-                    <td style="padding:6px 0;">{{ $Account->balance ?? '0.00' }}</td>
+                    <td style="padding:6px 0;">{{ number_format(round($available_balance ?? 0, 2), 2) }}
+</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Mobile Number:</td>

@@ -22,9 +22,19 @@ class GoldLoanAccountController extends Controller
         return view('gold-loan.account.index', compact('goldLoan'));
     }
 
-
     public function show(Request $request, $id)
     {
+
+        $savedStatuses = DB::table('gold_loan_emi_status')
+    ->where('loan_id', $id)
+    ->pluck('status', 'emi_no')
+    ->toArray();
+
+$savedPaidDates = DB::table('gold_loan_emi_status')
+    ->where('loan_id', $id)
+    ->pluck('paid_date', 'emi_no')
+    ->toArray();
+
         $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'goldLoanTransactions'])->find($id);
 
         if (!$goldLoan) {
@@ -107,7 +117,7 @@ class GoldLoanAccountController extends Controller
                 $firstEmiDate = $applicationDate->copy()->addMonth();
                 $lastEmiDate  = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
 
-                $lastCurrentDebt = \App\Models\GoldLoanTransaction::where('loan_id', $goldLoan->id)
+                $lastCurrentDebt = GoldLoanTransaction::where('loan_id', $goldLoan->id)
                     ->orderByDesc('id')
                     ->value('current_debt');
 
@@ -191,6 +201,48 @@ class GoldLoanAccountController extends Controller
                 break;
         }
 
+       
+        // Apply payments & auto status logic
+        // ⭐ Apply payments on EMI schedule (front-end calculation only)
+$totalPaid = GoldLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+
+foreach ($emiSchedule as &$emi) {
+
+    $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
+
+    // Already paid nothing?
+    if ($totalPaid <= 0) {
+    $emi['remaining_amount'] = number_format($emiAmount, 2);
+
+    // ⭐ ALWAYS load saved statuses from DB
+    if (isset($savedStatuses[$emi['emi_no']])) {
+        $emi['status'] = $savedStatuses[$emi['emi_no']];
+        $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
+    } else {
+        // Default if no data saved
+        $emi['status'] = "UNPAID";
+    }
+
+    continue;
+}
+
+
+    // Full payment
+    if ($totalPaid >= $emiAmount) {
+        $emi['remaining_amount'] = "0.00";
+        $emi['status'] = "PAID";
+        $totalPaid -= $emiAmount;
+    }
+    // Partial payment
+    else {
+        $emi['remaining_amount'] = number_format($emiAmount - $totalPaid, 2);
+        $emi['status'] = "PARTIAL";
+        $totalPaid = 0;
+    }
+}
+
+
+
         return view('gold-loan.account.view', compact(
             'goldLoan',
             'principal',
@@ -198,8 +250,30 @@ class GoldLoanAccountController extends Controller
             'emiSchedule',
 
         ));
+        
     }
 
+    public function saveEmiStatus(Request $request)
+    {
+        $request->validate([
+            'loan_id' => 'required|integer',
+            'emi_no'  => 'required|integer',
+            'status'  => 'required|string',
+        ]);
+
+        DB::table('gold_loan_emi_status')->updateOrInsert(
+            [
+                'loan_id' => $request->loan_id,
+                'emi_no'  => $request->emi_no
+            ],
+            [
+                'status'    => $request->status,
+                'paid_date' => now()->format('d-m-Y')
+            ]
+        );
+
+        return response()->json(['success' => true]);
+    }
 
     public function goldLoanTransaction(Request $request, $id)
     {
@@ -343,6 +417,7 @@ class GoldLoanAccountController extends Controller
         }
 
         $transaction->save();
+
 
         if ($newRemainingDue <= 0) {
             $loan->status = 'closed';
@@ -907,6 +982,78 @@ class GoldLoanAccountController extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+
+    // Fore close functionality
+    public function foreclose(Request $request, $loan_id)
+    {
+        try {
+            // Validate input
+            $request->validate([
+                'foreclosure_date' => 'required|date',
+                'penalty_amount'   => 'nullable|numeric|min:0',
+                'discount'         => 'nullable|numeric|min:0',
+                'closing_remarks'  => 'nullable|string|max:255',
+            ]);
+
+            $loan = LoanApplication::find($loan_id);
+
+            if (!$loan) {
+                return back()->withErrors(['loan' => 'Loan not found']);
+            }
+
+            // Check if already foreclosed
+            if ($loan->status == 'closed') {
+                return back()->withErrors(['loan' => 'Loan already foreclosed']);
+            }
+
+            // Latest outstanding
+            $lastTransaction = GoldLoanTransaction::where('loan_id', $loan_id)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if (!$lastTransaction) {
+                return back()->withErrors(['loan' => 'No transaction found']);
+            }
+
+            $currentDebt  = $lastTransaction->current_debt ?? 0;
+            $penalty      = $request->penalty_amount ?? 0;
+            $discount     = $request->discount ?? 0;
+
+            // Foreclosure calculation
+            $foreclosureAmount = ($currentDebt + $penalty) - $discount;
+
+            // Foreclosure Entry
+            $transaction = GoldLoanTransaction::create([
+                'loan_id'             => $loan_id,
+                'emi_no'              => null,
+                'transaction_date'    => now()->format('Y-m-d'),
+                'foreclosure_amount'  => $foreclosureAmount,
+                'foreclosure_date'    => $request->foreclosure_date,
+                'penalty_amount'      => $penalty,
+                'discount'            => $discount,
+                'remarks'             => $request->closing_remarks,
+                'status'              => 'foreclosed',
+                'created_by'          => Auth::id(),
+            ]);
+
+            // Update Loan Table Status
+            $loan->update([
+                'status'         => 'closed',
+                'closing_date'   => $request->foreclosure_date,
+                'closing_amount' => $foreclosureAmount,
+            ]);
+
+            return redirect()->back()->with('success', 'Loan foreclosed successfully.');
+        } catch (\Exception $ex) {
+
+            Log::error('Foreclosure Error', [
+                'message' => $ex->getMessage(),
+                'line'    => $ex->getLine(),
+            ]);
+
+            return back()->withErrors(['error' => 'Something went wrong.']);
         }
     }
 }

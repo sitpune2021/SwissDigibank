@@ -8,6 +8,27 @@ use Illuminate\Http\Request;
 class CutReportController extends Controller
 {
 
+    public function savingacc_index()
+    {
+        return view('cut-reports.report.saving-account');
+    }
+    public function fdaccount_index()
+    {
+        return view('cut-reports.report.fd-account');
+    }
+    public function misaccount_index()
+    {
+        return view('cut-reports.report.mis-account');
+    }
+    public function ddaccount_index()
+    {
+        return view('cut-reports.report.dd-accounts');
+    }
+    public function rd_account_index()
+    {
+        return view('cut-reports.report.rd-account');
+    }
+
     public function generateIdCardPdf()
     {
         $data = [

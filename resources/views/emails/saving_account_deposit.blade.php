@@ -150,11 +150,12 @@
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Credited Amount:</td>
-                    <td style="padding:6px 0;">{{ $deposit_amount ?? '0.00' }}</td>
+                    <td style="padding:6px 0;">{{ number_format(round($Account->amount ?? 0, 2), 2) }}</td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Available Balance:</td>
-                    <td style="padding:6px 0;">₹ {{ $Account->balance ?? '0.00' }}</td>
+                    <td style="padding:6px 0;">{{ number_format(round($available_balance ?? 0, 2), 2) }}
+                    </td>
                 </tr>
                 <tr>
                     <td style="padding:6px 0;">Mobile Number:</td>

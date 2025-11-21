@@ -68,6 +68,7 @@ use App\Http\Controllers\DaybookController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LedgergroupController;
 use App\Http\Controllers\LockerController;
+use App\Http\Controllers\PaymentsToCollectController;
 use App\Http\Controllers\VehicalDisbursementController;
 use App\Http\Controllers\VehicalController;
 use App\Http\Controllers\VehicalAccountController;
@@ -180,16 +181,10 @@ Route::middleware('auth.user')->group(function () {
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
         Route::get(
-            '/dds-accounts/dds-nominee/{id}',
-            [DdsAccountsController::class, 'accountNominee']
-        )
+            '/dds-accounts/dds-nominee/{id}',[DdsAccountsController::class, 'accountNominee'])
             ->name('dds-accounts.nominee');
 
-        Route::post(
-            '/dds-accounts/{id}/nominees',
-            [DdsAccountsController::class, 'saveNominees']
-        )
-            ->name('dds-accounts.nominees.save');
+        Route::post('/dds-accounts/{id}/nominees',[DdsAccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
 
         Route::get('/change-account-info/{id}', [DdsAccountsController::class, 'changeAccountInfo'])->name('dd.change.account.info');
         Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
@@ -606,6 +601,11 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
         ->name('gold-loan.account.show');
 
+   Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
+    ->name('emi.saveEmiStatus');
+
+
+
     Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
         ->name('gold-loan.account.transaction');
 
@@ -638,6 +638,10 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::post('/gold-loan/{loan_id}/other-charge', [GoldLoanAccountController::class, 'clearDue'])->name('gold-loan.clear-due');
 
+    // Fore close functionality
+    Route::post('/gold-loan/foreclose/{loan_id}', [GoldLoanAccountController::class, 'foreClose'])
+        ->name('goldloan.foreclose');
+
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -669,6 +673,9 @@ Route::group(['prefix' => 'gold-loan'], function () {
     // Disbusrment setting
     Route::get('applications/{id}/disbursment', [GoldLoanController::class, 'disbursment'])
         ->name('gold-loan.applications.view-buttons.disburse-setting');
+
+    Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
+
 });
 
 
@@ -1429,6 +1436,18 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
 
 Route::group(['prefix' => 'cut-report'], function () {
+    //reports
+    Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
+        ->name('report.saving-account');
+    Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
+        ->name('report.fd-account');
+    Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
+        ->name('report.mis-account');
+    Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
+        ->name('report.dd-accounts');
+    Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
+        ->name('report.rd-account');
+
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
     Route::get('report/fd', [CutReportController::class, 'fdIndex'])->name('report.fd.index');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
@@ -1519,6 +1538,22 @@ Route::group(['prefix' => 'day-book'], function () {
         ->name('day-book.ledger-book');
 });
 
+// Payments & payment collections
+//payments to collect
+
+
+Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
+    ->name('payments-to-collect.index');
+Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
+    ->name('payments-to-collect.comments');
+
+//payments to release
+
+Route::get('payments-to-release/index', [PaymentsToCollectController::class, 'release_index'])
+    ->name('payments-to-release.index');
+
+Route::get('payments-to-release/payments-history', [PaymentsToCollectController::class, 'payments_history'])
+    ->name('payments-to-release.payments-history');
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
