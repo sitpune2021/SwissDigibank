@@ -26,6 +26,7 @@ use App\Models\PersonalLoanApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
+use App\Models\GoldLoanForeClosure;
 
 class ApproveController extends Controller
 {
@@ -92,8 +93,41 @@ class ApproveController extends Controller
 
             Log::info('Membership charges query built successfully.');
 
+            Log::info('Fetching foreclosure pending records...');
+
+            $foreclosureQuery = DB::table('gold_loan_fore_closures')
+                ->select(
+                    'gold_loan_fore_closures.id',
+                    DB::raw("'gold_loan_fore_closures' AS source_table"),
+                    'gold_loan_fore_closures.payment_mode AS payment_mode',
+                    'gold_loan_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'gold_loan_fore_closures.status AS approve_status',
+                    'gold_loan_fore_closures.created_at',
+
+                    'branches.branch_name',
+                    'loan_applications.id AS account_no',
+                    DB::raw("'Gold Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join('loan_applications', 'loan_applications.id', '=', 'gold_loan_fore_closures.loan_id')
+                ->join('branches', 'branches.id', '=', 'loan_applications.branch_id')
+                ->where('gold_loan_fore_closures.status', '=', 0); // 👈 status 0 means pending only
+
+            Log::info('Foreclosure query built successfully.');
+
+
             Log::info('Combining transaction and membership queries...');
-            $unionQuery = $transactionQuery->unionAll($membershipQuery);
+            //$unionQuery = $transactionQuery->unionAll($membershipQuery);
+            $unionQuery = $transactionQuery
+            ->unionAll($membershipQuery)
+            ->unionAll($foreclosureQuery);
+
 
             Log::info('Creating final combined query...');
             $finalQuery = DB::query()
@@ -129,6 +163,25 @@ class ApproveController extends Controller
             $status = $request->input('transaction_status');
             $remarks = $request->input('remarks');
             $paymentStatus = $request->input('payment_status');
+
+            // NEW Foreclosure Condition
+            if ($sourceTable === 'gold_loan_fore_closures') {
+
+                $updated = DB::table('gold_loan_fore_closures')
+                    ->where('id', $id)
+                    ->update([
+                        'status' => $status === 'approved' ? 1 : 0,
+                        'remarks' => $remarks,
+                        'updated_at' => now(),
+                    ]);
+
+                if ($updated) {
+                    return redirect()->back()->with('success', 'Foreclosure transaction approved successfully.');
+                } else {
+                    return redirect()->back()->with('error', 'Failed to update foreclosure transaction.');
+                }
+            }
+
 
             if ($sourceTable === 'transaction') {
 
