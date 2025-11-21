@@ -175,16 +175,10 @@ Route::middleware('auth.user')->group(function () {
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
         Route::get(
-            '/dds-accounts/dds-nominee/{id}',
-            [DdsAccountsController::class, 'accountNominee']
-        )
+            '/dds-accounts/dds-nominee/{id}',[DdsAccountsController::class, 'accountNominee'])
             ->name('dds-accounts.nominee');
 
-        Route::post(
-            '/dds-accounts/{id}/nominees',
-            [DdsAccountsController::class, 'saveNominees']
-        )
-            ->name('dds-accounts.nominees.save');
+        Route::post('/dds-accounts/{id}/nominees',[DdsAccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
 
         // Show DDS Account Details
         // Route::get('/dds-accounts/{id}', 
