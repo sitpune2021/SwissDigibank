@@ -145,51 +145,48 @@
                 <p class="text-xl border-b font-semibold">
                     CREDIT / REVERSE INTEREST
                 </p>
-                <form action="">
+                <form action="{{ route('ddsaccounts.storeCreditInterest', $ddaccount->id) }}" method="POST">
+                    @csrf
 
                     <div class="col-span-2 md:col-span-1 mt-3 mb-2">
-                        <label for="" class="md:text-lg font-medium block mb-2 uppercase">
+                        <label class="md:text-lg font-medium block mb-2 uppercase">
                             Transaction Date
                             <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="" name="" value=""
+                        <input type="text" name="transaction_date" value=""
                             class="datepicker-field w-full px-3 py-2.5 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10" />
-
                     </div>
 
                     <div class="col-span-2 md:col-span-1 mt-3 mb-3">
-                        <label for="" class="md:text-lg font-medium block mb-2 uppercase">
+                        <label class="md:text-lg font-medium block mb-2 uppercase">
                             Transaction Type
                             <span class="text-red-500">*</span>
                         </label>
-
-                        <select id="employeeSelect"
+                        <select name="transaction_type" id="employeeSelect"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Credit</option>
-                            <option value="">Reverse</option>
+                            <option value="credit">Credit</option>
+                            <option value="reverse">Reverse</option>
                         </select>
-
                     </div>
+
                     <div class="col-span-2 md:col-span-1 mt-3 mb-2">
-                        <label for="" class="md:text-lg font-medium block mb-2 uppercase">
+                        <label class="md:text-lg font-medium block mb-2 uppercase">
                             Interest Amount
                             <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" id="" name="" value=""
-                            placeholder="Enter Interest Amount "
-                            class=" w-full px-3 py-2.5 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10" />
-
+                        <input type="number" name="interest_amount" value="" placeholder="Enter Interest Amount"
+                            class="w-full px-3 py-2.5 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10" />
                     </div>
+
                     <div class="col-span-2 md:col-span-1 mb-2">
-                        <label for="" class="md:text-lg font-medium block mb-2 uppercase">
+                        <label class="md:text-lg font-medium block mb-2 uppercase">
                             Remarks (if any)
                         </label>
-
-                        <textarea type="number" id=""
+                        <textarea name="remarks"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Remarks (if any)"></textarea>
-
                     </div>
+
                     <!-- Buttons -->
                     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                         <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
@@ -199,8 +196,8 @@
                         <button class="btn-outline uppercase justify-center" type="reset">
                             <a href="#"> BACK</a>
                         </button>
-
                     </div>
+
                 </form>
             </div>
 

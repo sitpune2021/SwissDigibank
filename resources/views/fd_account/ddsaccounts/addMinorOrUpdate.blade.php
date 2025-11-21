@@ -131,45 +131,38 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
                 <h3 class="text-xl uppercase font-semibold">
-                    DD Account - DDA{{ $ddaccount->id }} - Link Saving Account for Auto Debit DD Installment
+                    DD Account - DDA{{ $ddaccount->id }} - Add/ Change Minor
                 </h3>
             </div>
         </div>
-        <form action="{{ route('ddsaccounts.storeLinkSavingAcc', $ddaccount->id) }}" method="POST">
+        <form action="{{ route('ddsaccounts.updateMinor', $ddaccount->id) }}" method="POST">
             @csrf
             <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
                 <div class=" w-full  overflow-hidden ">
                     <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
                         <div class=" py-3">
-                            <h3 class="text-lg border-b font-semibold text-black uppercase">
-                                Link member saving account to DD for auto debit installment on due date.
-                            </h3>
+                            <h1 class="text-lg border-b font-semibold text-black uppercase">
+                                Add Minor
+                            </h1>
                         </div>
                         <div class=" overflow-x-auto">
 
                             <div class="col-span-2 md:col-span-1 mt-3">
-                                <label for="" class="md:text-lg font-medium block mb-3 uppercase">
-                                    Select Saving Account
+                                <label class="md:text-lg font-medium block mb-3 uppercase">
+                                    Minor (if any)
                                     <span class="text-red-500">*</span>
                                 </label>
+
                                 <div class="flex gap-3 items-center">
-                                    <select name="saving_account_id"
+                                    <select name="minor_id"
                                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
 
-                                        <option value="">Select Saving Account</option>
+                                        <option value="">Select Minor</option>
 
-                                        @foreach ($savingAccounts as $acc)
-                                            <option value="{{ $acc->id }}" @selected($ddaccount->saving_account_id == $acc->id)>
-                                                {{ $acc->account_no }}
-                                                ({{ $acc->firm_name ??
-                                                    trim(
-                                                        ($acc->members?->member_info_first_name ?? '') .
-                                                            ' ' .
-                                                            ($acc->members?->member_info_middle_name ?? '') .
-                                                            ' ' .
-                                                            ($acc->members?->member_info_last_name ?? ''),
-                                                    ) }})
-                                                (Bal. {{ number_format($balances[$acc->id] ?? 0, 2) }})
+                                        @foreach ($minors as $m)
+                                            <option value="{{ $m->id }}" @selected($ddaccount->minor_id == $m->id)>
+
+                                                {{ ucfirst($m->title) }} {{ $m->first_name }} {{ $m->last_name }}
                                             </option>
                                         @endforeach
 
@@ -177,9 +170,10 @@
                                 </div>
                             </div>
 
+
                             <div class="flex justify-center gap-3 mt-7">
                                 <button class="btn-primary  uppercase">
-                                    Link Account
+                                    Add Minor
                                 </button>
                                 <button class="btn-outline  uppercase">
                                     back
