@@ -129,10 +129,53 @@
             <a href="{{ route('ddsaccounts.withdraw-create', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
                 WITHDRAW MONEY
             </a>
-            <button class="btn-primary px-4 py-2 rounded-3xl ">
-                ACCOUNT DETAILS
-            </button>
+            <div class="relative inline-block text-left">
 
+                <!-- Button -->
+                <button onclick="this.nextElementSibling.classList.toggle('hidden')"
+                    class="btn-primary px-4 py-2 rounded-3xl flex items-center gap-2">
+                    Account Details
+                    <svg class="w-4 h-2 ml-1 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <!-- Dropdown menu -->
+                <div class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg  z-50">
+                    <ul class="py-2 text-gray-700">
+                        <li>
+                            <a href="{{ route('dd.change.account.info', $ddaccount->id) }}"
+                                class="block px-4 py-2
+                                hover:bg-teal-50 hover:text-teal-700">
+                                CHANGE ACCOUNT INFO
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('dds-accounts.nominee', $ddaccount->id) }}"
+                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">ADD NOMINEE</a>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('ddChange.minor.info', $ddaccount->id) }}"
+                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
+                                ADD MINOR
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
+                                FORE CLOSE DD
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
+                                REMOVE ACCOUNT
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <button class="btn-secondary px-4 py-2 rounded-3xl ">
                 PRINT DOCUMENTS
             </button>
@@ -237,7 +280,9 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
-                                <td class="px-4 py-2">{{ number_format($interestCredited, 2) }}</td>
+                                <td class="px-4 py-2">
+                                    {{ optional($transactions->last())->interest_amount ?? '0.00' }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted (E) </td>
@@ -419,7 +464,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                                                                                    </labels> -->
+                                                                                                                                                            </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->

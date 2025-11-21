@@ -571,9 +571,6 @@ class AccountsController extends Controller
             ->route('accounts.show', base64_encode($account->id))
             ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
     }
-
-
-    // Account Nominee
     public function accountNominee(string $id)
     {
         $account_id = base64_decode($id);
@@ -584,6 +581,7 @@ class AccountsController extends Controller
 
     public function saveNominees(Request $request, $id)
     {
+
         $account = Account::findOrFail($id);
 
         DB::beginTransaction();
@@ -708,7 +706,6 @@ class AccountsController extends Controller
             return redirect()->route('accounts.show', base64_encode($account->id))->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
         }
     }
-
 
     public function closeAccount($id)
     {
