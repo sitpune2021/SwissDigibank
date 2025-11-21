@@ -124,7 +124,7 @@
                   @endif
                   @foreach ($fields as $field)
                       @php
-                          $name = $field['name'];
+                          $name = $field['name'] ?? null;
                           $type = $field['type'] ?? 'text';
                           $label = $field['label'];
                           $id = $field['id'] ?? $name;
@@ -221,29 +221,33 @@
       </div>
       <script>
           document.addEventListener('DOMContentLoaded', function() {
-              const titleSelect = document.querySelector('select[name="title"]');
+
+              const titleRadios = document.querySelectorAll('input[name="title"]');
               const genderRadios = document.querySelectorAll('input[name="gender"]');
 
-              if (titleSelect) {
-                  titleSelect.addEventListener('change', function() {
-                      const selectedTitle = this.value;
+              titleRadios.forEach(radio => {
+                  radio.addEventListener('change', function() {
+                      const title = this.value;
                       let genderToSelect = '';
 
-                      if (selectedTitle === 'MD' || selectedTitle === 'Mr') {
+                      // Matching your options: MD, Mr, Ms, Mrs
+                      if (title === 'MD' || title === 'Mr') {
                           genderToSelect = 'Male';
-                      } else if (selectedTitle === 'Ms' || selectedTitle === 'Mrs') {
+                      } else if (title === 'Ms' || title === 'Mrs') {
                           genderToSelect = 'Female';
                       } else {
                           genderToSelect = '';
                       }
 
-                      genderRadios.forEach(radio => {
-                          radio.checked = (radio.value === genderToSelect);
+                      genderRadios.forEach(genderRadio => {
+                          genderRadio.checked = (genderRadio.value === genderToSelect);
                       });
                   });
-              }
+              });
+
           });
       </script>
+
   @endsection
   @push('script')
       <script>

@@ -139,7 +139,6 @@ Route::middleware('auth.user')->group(function () {
         // Route::delete('/dds-accounts/transactions/{id}', [DdsAccountsController::class, 'destroyTransaction'])->name('dds-accounts.transactions.destroy');
         Route::delete('/dds-accounts/transactions/{ddsAccountId}/{tranxId}', [DdsAccountsController::class, 'destroyTransaction'])
             ->name('dds-accounts.transactions.destroy');
-
         Route::get('/dds-accounts/{account}/transactions/{transaction}', [DdsAccountsController::class, 'transactionShow'])
             ->name('dds-accounts.transactions.show');
         Route::put('/ddsaccounts/{ddaccount}/update-member', [DdsAccountsController::class, 'updateMember'])->name('ddsaccounts.updateMember');
@@ -149,31 +148,59 @@ Route::middleware('auth.user')->group(function () {
             ->name('ddsaccounts.installments');
         Route::get('/dds-accounts/{id}/installment-receipt', [DdsAccountsController::class, 'installmentReceipt'])
             ->name('dds.installment.receipt');
-
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
-
         // Deposit Routes
         Route::get('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'createDeposit'])
             ->name('ddsaccounts.createDeposit');
-
         Route::post('dds-accounts/{id}/deposit', [DdsAccountsController::class, 'deposit'])
             ->name('ddsaccounts.deposit');
-
-        // Withdraw Routes
         Route::get('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'createWithdraw'])
             ->name('ddsaccounts.withdraw-create');
-
         Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
             ->name('ddsaccounts.withdraw');
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
-
+        Route::post(
+            'dds-accounts/{id}/link-saving',
+            [DdsAccountsController::class, 'storeLinkSavingAcc']
+        )->name('ddsaccounts.storeLinkSavingAcc');
+        Route::get('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'confirmUnlink'])
+            ->name('ddsaccounts.confirmUnlink');
+        Route::post('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'storeLinkSavingAcc'])
+            ->name('ddsaccounts.storeLinkSavingAcc');
         Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
+        Route::post(
+            'dds-accounts/{id}/credit-interest/store',
+            [DdsAccountsController::class, 'storeCreditInterest']
+        )
+            ->name('ddsaccounts.storeCreditInterest');
 
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
+        Route::get(
+            '/dds-accounts/dds-nominee/{id}',
+            [DdsAccountsController::class, 'accountNominee']
+        )
+            ->name('dds-accounts.nominee');
+
+        Route::post(
+            '/dds-accounts/{id}/nominees',
+            [DdsAccountsController::class, 'saveNominees']
+        )
+            ->name('dds-accounts.nominees.save');
+
+        Route::get('/change-account-info/{id}', [DdsAccountsController::class, 'changeAccountInfo'])->name('dd.change.account.info');
+        Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
+            ->name('dd.update.account.info');
+
+        Route::get('/change-minor-info/{id}', [DdsAccountsController::class, 'changeMinorInfo'])->name('ddChange.minor.info');
+        Route::post(
+            '/ddsaccounts/{id}/update-minor',
+            [DdsAccountsController::class, 'updateMinor']
+        )->name('ddsaccounts.updateMinor');
+
 
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
@@ -181,8 +208,6 @@ Route::middleware('auth.user')->group(function () {
         // Route::get('ddsaccounts/transactions/printReceipt/{id}', [DdsAccountsController::class, 'printReceipt'])->name('dds-accounts.transactions.printReceipt');
         Route::get('ddsaccounts/transactions/printReceipt/{id}/{transactionId}', [DdsAccountsController::class, 'printReceipt'])
             ->name('dds-accounts.transactions.printReceipt');
-
-
         Route::get(
             '/print-documents/transaction-receipt/{accountId}/{transactionId}',
             [DdsAccountsController::class, 'printReceipt1']
@@ -655,7 +680,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
         Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
             ->name('gold-loan.col_process_fee.store');
 
-        Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 
     // Show EMI chart in a new tab
@@ -728,7 +753,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::post('col-process-fee/store/{id}', [MortgageController::class, 'mortgagestoreProcessFee'])
         ->name('mortgage.col_process_fee.store');
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
+        ->name('applications.submitForApproval');
 });
 
 
@@ -834,8 +859,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -935,8 +959,7 @@ Route::group(['prefix' => 'bussiness'], function () {
         ->name('bussiness.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1025,8 +1048,7 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('ccod.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1124,8 +1146,7 @@ Route::group(['prefix' => 'daily_weekly'], function () {
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1174,8 +1195,7 @@ Route::group(['prefix' => 'personal'], function () {
         ->name('personal.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
@@ -1240,8 +1260,7 @@ Route::group(['prefix' => 'vehical'], function () {
         ->name('vehical.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-    ->name('applications.submitForApproval');
-
+        ->name('applications.submitForApproval');
 });
 
 
