@@ -604,6 +604,16 @@ Route::group(['prefix' => 'gold-loan'], function () {
         Route::post('/gold-loan/{id}/remove', [GoldLoanAccountController::class, 'removeAccount'])
             ->name('goldloan.remove');
 
+        // foure close account
+        Route::get('account/fourcloser/{id}', [GoldLoanAccountController::class, 'fourcloser'])
+            ->name('gold-loan.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [GoldLoanAccountController::class, 'storeForeCloser'])
+            ->name('gold-loan.account.forecloser.store');
+
+        // loan extension
+        Route::get('account/extension/{id}', [GoldLoanAccountController::class, 'loanextension'])
+            ->name('gold-loan.account.extension');
+
         // show audit trial
         Route::get('account/audit', [GoldLoanAccountController::class, 'audit'])
             ->name('gold-loan.account.audit-trail');

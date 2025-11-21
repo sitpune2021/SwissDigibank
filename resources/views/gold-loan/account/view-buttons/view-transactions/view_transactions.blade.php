@@ -147,7 +147,7 @@
 
                             {{-- DEBIT (Other Charges only) --}}
                             <td>
-                                @if($row->type === 'other_charge')
+                                @if($row->type === 'other_charge' || $row->type === 'foreclosure')
                                     {{ number_format($row->amount, 2) }}
                                 @else
                                     -
