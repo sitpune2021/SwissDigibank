@@ -283,11 +283,17 @@ class DdsAccountsController extends Controller
 
         $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions', 'account'])->findOrFail($id);
 
+        // -----------------------------
+        // GET ALL SAVING ACCOUNTS OF MEMBER
+        // -----------------------------
         $savingAccounts = Account::where('member_id', $ddaccount->member_id)
             ->where('account_type', 'Saving')
             ->where('account_status', 1)
             ->get();
 
+        // -----------------------------
+        // GET LATEST TRANSACTION FOR LINK STATUS
+        // -----------------------------
         $latestTransaction = DdTransaction::where('dds_account_id', $id)
             ->latest('id')
             ->first();
@@ -297,7 +303,9 @@ class DdsAccountsController extends Controller
             ? Account::find($latestTransaction->saving_account_id)
             : null;
 
-
+        // -----------------------------
+        // FETCH ALL DD TRANSACTIONS
+        // -----------------------------
         $transactions = DdTransaction::where('dds_account_id', $id)
             ->orderBy('transaction_date', 'desc')
             ->get();
@@ -314,7 +322,9 @@ class DdsAccountsController extends Controller
 
         $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
 
-
+        // -----------------------------
+        // EXISTING CALCULATIONS (NO CHANGE)
+        // -----------------------------
         $shouldHavePaid = 0;
         if ($ddaccount->open_date) {
             $openDate = Carbon::parse($ddaccount->open_date);
@@ -425,9 +435,7 @@ class DdsAccountsController extends Controller
             'specialAccount'       => $specialAccount,
             'savingAccounts'       => $savingAccounts,
             'linkedSavingAcc'      => $linkedSavingAcc,
-            'isLinked'             => $isLinked,
-            'transactions' => $transactions,
-
+            'isLinked'             => $isLinked, // NEW
         ]);
     }
 
@@ -1263,6 +1271,55 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.link-account', compact('ddaccount', 'savingAccounts', 'balances'));
     }
+
+    // public function storeLinkSavingAcc(Request $request, $id)
+    // {
+
+    //     $request->validate([
+    //         'saving_account_id' => 'nullable|exists:accounts,id',
+    //     ]);
+
+    //     $ddaccount = DdsAccount::findOrFail($id);
+
+    //     $isLinked = $request->saving_account_id ? 1 : 0;
+    //     $savingAcc = $request->saving_account_id
+    //         ? Account::find($request->saving_account_id)
+    //         : null;
+
+    //     $savingAccNo = $savingAcc->account_no ?? 'N/A';
+    //     if ($isLinked) {
+    //         Log::info("Saving Account No {$savingAccNo} has been successfully linked to the DD Account {$ddaccount->id}.");
+    //     } else {
+    //         Log::info("Saving Account has been unlinked from the DD Account {$ddaccount->id}.");
+    //     }
+    //     $ddaccount->update([
+    //         'saving_account_id' => $request->saving_account_id ?? null,
+    //         'is_linked'         => $isLinked,
+    //     ]);
+
+    //     \App\Models\DdTransaction::create([
+    //         'dds_account_id'     => $ddaccount->id,
+    //         'branch_id'          => $ddaccount->branch_id,
+    //         'saving_account_id'  => $request->saving_account_id ?? null,
+    //         'pay_mode'           => 'saving',
+    //         'transaction_date'   => now(),
+    //         'balance_available'  => $ddaccount->balance ?? 0,
+    //         'amount'             => 0,
+    //         'is_linked' => $isLinked,
+    //         'remarks' => $isLinked
+    //             ? "Saving Account Linked for Auto Debit"
+    //             : "Saving Account Unlinked (Auto Debit Disabled)",
+    //     ]);
+
+    //     return redirect()
+    //         ->route('ddsaccounts.show', $id)
+    //         ->with(
+    //             'success',
+    //             $isLinked
+    //                 ? "Saving Account No {$savingAccNo} has been successfully linked to the DD Account."
+    //                 : "Saving Account has been successfully unlinked from the DD Account."
+    //         );
+    // }
     public function storeLinkSavingAcc(Request $request, $id)
     {
         $request->validate([
