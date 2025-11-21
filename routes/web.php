@@ -171,6 +171,12 @@ Route::middleware('auth.user')->group(function () {
             ->name('ddsaccounts.storeLinkSavingAcc');
         Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
+        Route::post(
+            'dds-accounts/{id}/credit-interest/store',
+            [DdsAccountsController::class, 'storeCreditInterest']
+        )
+            ->name('ddsaccounts.storeCreditInterest');
+
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
         Route::get(
@@ -185,10 +191,16 @@ Route::middleware('auth.user')->group(function () {
         )
             ->name('dds-accounts.nominees.save');
 
-        // Show DDS Account Details
-        // Route::get('/dds-accounts/{id}', 
-        //     [DdsAccountsController::class, 'show'])
-        //     ->name('ddsaccounts.show');
+        Route::get('/change-account-info/{id}', [DdsAccountsController::class, 'changeAccountInfo'])->name('dd.change.account.info');
+        Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
+            ->name('dd.update.account.info');
+
+        Route::get('/change-minor-info/{id}', [DdsAccountsController::class, 'changeMinorInfo'])->name('ddChange.minor.info');
+        Route::post(
+            '/ddsaccounts/{id}/update-minor',
+            [DdsAccountsController::class, 'updateMinor']
+        )->name('ddsaccounts.updateMinor');
+
 
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])

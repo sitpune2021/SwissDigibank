@@ -25,7 +25,8 @@ class DdsAccount extends Model
         'tds_deduction',
         'account_type',
         'nominee',
-        'status'
+        'status',
+        'account_id',
     ];
     protected $casts = [
         'open_date' => 'date',
@@ -58,8 +59,9 @@ class DdsAccount extends Model
     }
     public function account()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Account::class, 'account_id');
     }
+
     public function nominee()
     {
         return $this->hasMany(AccountNominee::class, 'dds_account_id', 'id');
