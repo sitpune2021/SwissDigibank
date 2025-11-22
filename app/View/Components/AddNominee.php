@@ -13,8 +13,9 @@ class AddNominee extends Component
     public $backText;
     public $type;
     public $isUpdate;
+    public $ddAccount;
 
-    public function __construct($rdAccount = null,  $type = 'rd',  $savingAccount = null, $member = null, $submitText = 'Save', $backText = 'Back', $isUpdate = false)
+    public function __construct($rdAccount = null,  $type = 'rd',  $savingAccount = null, $member = null, $submitText = 'Save', $backText = 'Back', $isUpdate = false,  $ddAccount = null)
     {
         $this->rdAccount = $rdAccount;
         $this->savingAccount = $savingAccount;
@@ -22,6 +23,7 @@ class AddNominee extends Component
         $this->member = $member;
         $this->submitText = $submitText;
         $this->backText = $backText;
+        $this->ddAccount = $ddAccount;
         $this->isUpdate = $isUpdate;
     }
 

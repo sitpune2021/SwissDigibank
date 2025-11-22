@@ -20,6 +20,7 @@ use App\Mail\AccountOpenedMail;
 use App\Models\Bank;
 use App\Models\MembershipChargeTransaction;
 use App\Helpers\AccountHelper;
+use App\Helpers\SmsHelper;
 use App\Models\SavingOtherCharge;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -250,18 +251,6 @@ class AccountsController extends Controller
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             }
-
-            // $pdf = Pdf::loadView('emails.saving_account_open', compact('member', 'account'));
-            // $pdfPath = storage_path('app/public/account_details_' . $account->id . '.pdf');
-            // $pdf->save($pdfPath);
-
-            // // ✅ 3. Send Email with PDF
-            // if (!empty($member->member_info_email)) {
-            //     Mail::to($member->member_info_email)->send(new \App\Mail\AccountOpenedMail($member, $account, $pdfPath));
-            // } else {
-            //     Log::warning('No email found for member', ['member_id' => $member->id]);
-            // }
-
             return redirect()->route('accounts.show', base64_encode($account->id))
                 ->with('success', 'Please approve status!.');
         } catch (ValidationException $e) {
@@ -579,67 +568,219 @@ class AccountsController extends Controller
         return view('saving-current-ac.accounts.account-details.account-nominee', compact('account', 'member'));
     }
 
+    // public function saveNominees(Request $request, $id)
+    // {
+
+    //     $account = Account::findOrFail($id);
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         Log::info('Nominee update process started', [
+    //             'account_id' => $account->id,
+    //             'request_data' => $request->all(),
+    //         ]);
+
+    //         if ($request->nominee === 'no') {
+    //             $deletedCount = $account->nominee()->count();
+    //             $account->nominee()->delete();
+
+    //             Log::info('All nominees removed for account', [
+    //                 'account_id' => $account->id,
+    //                 'deleted_count' => $deletedCount,
+    //             ]);
+
+    //             DB::commit();
+    //             return back()->with('success', 'Nominee information removed successfully.');
+    //         }
+
+    //         $validated = $request->validate([
+    //             'nominees' => 'required|array|min:1',
+    //             'nominees.*.id' => 'nullable|integer',
+    //             'nominees.*.name' => 'required|string|max:255',
+    //             'nominees.*.address' => 'required|string|max:255',
+    //             'nominees.*.relation' => 'required|string|max:100',
+    //         ]);
+
+    //         $submittedNominees = collect($validated['nominees']);
+    //         $existingNominees = $account->nominee()->pluck('id')->toArray();
+    //         $updatedNominees = [];
+    //         $addedNominees = [];
+
+    //         foreach ($submittedNominees as $nomineeData) {
+    //             if (isset($nomineeData['id']) && in_array($nomineeData['id'], $existingNominees)) {
+
+    //                 $nominee = AccountNominee::find($nomineeData['id']);
+    //                 $nominee->update([
+    //                     'nominee_name' => $nomineeData['name'],
+    //                     'nominee_address' => $nomineeData['address'],
+    //                     'nominee_relation' => strtolower($nomineeData['relation']),
+    //                 ]);
+    //                 $updatedNominees[] = $nominee->id;
+
+    //                 Log::info('Nominee updated', [
+    //                     'account_id' => $account->id,
+    //                     'nominee_id' => $nominee->id,
+    //                     'data' => $nomineeData,
+    //                 ]);
+    //             } else {
+
+    //                 $newNominee = $account->nominee()->create([
+    //                     'nominee_name' => $nomineeData['name'],
+    //                     'nominee_address' => $nomineeData['address'],
+    //                     'nominee_relation' => strtolower($nomineeData['relation']),
+    //                 ]);
+
+    //                 $addedNominees[] = $newNominee->id;
+
+    //                 Log::info('New nominee added', [
+    //                     'account_id' => $account->id,
+    //                     'nominee_id' => $newNominee->id,
+    //                     'data' => $nomineeData,
+    //                 ]);
+    //             }
+    //         }
+
+    //         $nomineesToDelete = array_diff($existingNominees, $updatedNominees);
+    //         if (!empty($nomineesToDelete)) {
+    //             AccountNominee::whereIn('id', $nomineesToDelete)->delete();
+
+    //             Log::info('Nominees deleted', [
+    //                 'account_id' => $account->id,
+    //                 'deleted_nominee_ids' => $nomineesToDelete,
+    //             ]);
+    //         }
+
+    //         DB::commit();
+
+    //         Log::info('Nominee update process completed successfully', [
+    //             'account_id' => $account->id,
+    //         ]);
+
+    //         try {
+    //             $member = \App\Models\Member::find($account->member_id);
+    //             $mobile = $member->member_info_mobile_no;
+    //             $accountNo = $account->account_no;
+
+    //             if (count($addedNominees) > 0 && count($updatedNominees) === 0) {
+
+    //                 $dlttemplateid = 1707172234105629218;
+    //                 $message = "Dear Customer, nominee has been successfully added to your saving a/c $accountNo. SBC GLOBAL";
+    //                 $successMessage = 'Nominee details added successfully.';
+    //             } elseif (count($updatedNominees) > 0 && count($addedNominees) === 0) {
+    //                 $dlttemplateid = 1707172234104394971;
+    //                 $message = "Dear Customer, nominee has been successfully updated in your saving a/c {$accountNo}. SBC GLOBAL";
+    //                 $successMessage = 'Nominee details updated successfully.';
+    //             } else {
+    //                 $dlttemplateid = 1707172234104394971;
+    //                 $message = "Dear Customer, nominee details have been successfully updated for your saving a/c {$accountNo}. SBC GLOBAL";
+    //                 $successMessage = 'Nominee details updated successfully.';
+    //             }
+
+    //             \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+    //         } catch (\Exception $e) {
+    //             Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+    //         }
+
+    //         return redirect()->route('accounts.show', base64_encode($account->id))->with('success',  $successMessage);
+    //     } catch (\Throwable $th) {
+    //         DB::rollBack();
+
+    //         Log::error('Error while updating nominees', [
+    //             'account_id' => $account->id,
+    //             'error' => $th->getMessage(),
+    //             'trace' => $th->getTraceAsString(),
+    //         ]);
+
+    //         return redirect()->route('accounts.show', base64_encode($account->id))->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+    //     }
+    // }
+
     public function saveNominees(Request $request, $id)
     {
-
         $account = Account::findOrFail($id);
 
         DB::beginTransaction();
 
         try {
             Log::info('Nominee update process started', [
-                'account_id' => $account->id,
+                'account_id'  => $account->id,
                 'request_data' => $request->all(),
             ]);
 
             if ($request->nominee === 'no') {
+
                 $deletedCount = $account->nominee()->count();
                 $account->nominee()->delete();
 
                 Log::info('All nominees removed for account', [
-                    'account_id' => $account->id,
+                    'account_id'   => $account->id,
                     'deleted_count' => $deletedCount,
                 ]);
 
                 DB::commit();
+
                 return back()->with('success', 'Nominee information removed successfully.');
             }
-
             $validated = $request->validate([
-                'nominees' => 'required|array|min:1',
-                'nominees.*.id' => 'nullable|integer',
-                'nominees.*.name' => 'required|string|max:255',
-                'nominees.*.address' => 'required|string|max:255',
-                'nominees.*.relation' => 'required|string|max:100',
+                'nominees'              => 'required|array|min:1',
+                'nominees.*.id'         => 'nullable|integer',
+                'nominees.*.name'       => 'required|string|max:255',
+                'nominees.*.address'    => 'required|string|max:255',
+                'nominees.*.relation'   => 'required|string|max:100',
+                'nominees.*.share'      => 'nullable|numeric|min:1|max:100',
             ]);
 
             $submittedNominees = collect($validated['nominees']);
-            $existingNominees = $account->nominee()->pluck('id')->toArray();
+            $existingNominees  = $account->nominee()->pluck('id')->toArray();
+
             $updatedNominees = [];
-            $addedNominees = [];
+            $addedNominees   = [];
 
+            // -------------------------------------------------
+            // Add or Update Nominees
+            // -------------------------------------------------
             foreach ($submittedNominees as $nomineeData) {
-                if (isset($nomineeData['id']) && in_array($nomineeData['id'], $existingNominees)) {
 
-                    $nominee = AccountNominee::find($nomineeData['id']);
+                $nominee = null;
+
+                // 1️⃣ Try update via ID
+                if (!empty($nomineeData['id'])) {
+                    $nominee = $account->nominee()
+                        ->where('id', $nomineeData['id'])
+                        ->first();
+                }
+
+                // 2️⃣ Fallback match: by name + relation
+                if (!$nominee) {
+                    $nominee = $account->nominee()
+                        ->where('nominee_name', $nomineeData['name'])
+                        ->where('nominee_relation', strtolower($nomineeData['relation']))
+                        ->first();
+                }
+
+                if ($nominee) {
+                    // UPDATE
                     $nominee->update([
-                        'nominee_name' => $nomineeData['name'],
-                        'nominee_address' => $nomineeData['address'],
-                        'nominee_relation' => strtolower($nomineeData['relation']),
+                        'nominee_name'      => $nomineeData['name'],
+                        'nominee_address'   => $nomineeData['address'],
+                        'nominee_relation'  => strtolower($nomineeData['relation']),
+                        'share_percentage'  => $nomineeData['share'] ?? 100,
                     ]);
+
                     $updatedNominees[] = $nominee->id;
 
                     Log::info('Nominee updated', [
                         'account_id' => $account->id,
                         'nominee_id' => $nominee->id,
-                        'data' => $nomineeData,
                     ]);
                 } else {
-
+                    // CREATE
                     $newNominee = $account->nominee()->create([
-                        'nominee_name' => $nomineeData['name'],
-                        'nominee_address' => $nomineeData['address'],
-                        'nominee_relation' => strtolower($nomineeData['relation']),
+                        'nominee_name'      => $nomineeData['name'],
+                        'nominee_address'   => $nomineeData['address'],
+                        'nominee_relation'  => strtolower($nomineeData['relation']),
+                        'share_percentage'  => $nomineeData['share'] ?? 100,
                     ]);
 
                     $addedNominees[] = $newNominee->id;
@@ -647,63 +788,72 @@ class AccountsController extends Controller
                     Log::info('New nominee added', [
                         'account_id' => $account->id,
                         'nominee_id' => $newNominee->id,
-                        'data' => $nomineeData,
                     ]);
                 }
             }
 
+            // -------------------------------------------------
+            // Delete old nominees removed from UI
+            // -------------------------------------------------
             $nomineesToDelete = array_diff($existingNominees, $updatedNominees);
+
             if (!empty($nomineesToDelete)) {
                 AccountNominee::whereIn('id', $nomineesToDelete)->delete();
 
                 Log::info('Nominees deleted', [
-                    'account_id' => $account->id,
-                    'deleted_nominee_ids' => $nomineesToDelete,
+                    'account_id'           => $account->id,
+                    'deleted_nominee_ids'  => $nomineesToDelete,
                 ]);
             }
 
             DB::commit();
 
-            Log::info('Nominee update process completed successfully', [
-                'account_id' => $account->id,
-            ]);
-
+            // -------------------------------------------------
+            // Send SMS (Based on add/update)
+            // -------------------------------------------------
             try {
-                $member = \App\Models\Member::find($account->member_id);
+                $member = Member::find($account->member_id);
                 $mobile = $member->member_info_mobile_no;
                 $accountNo = $account->account_no;
 
-                if (count($addedNominees) > 0 && count($updatedNominees) === 0) {
+                if (!empty($addedNominees) && empty($updatedNominees)) {
 
-                    $dlttemplateid = 1707172234105629218;
+                    $templateId = 1707172234105629218;
                     $message = "Dear Customer, nominee has been successfully added to your saving a/c $accountNo. SBC GLOBAL";
-                    $successMessage = 'Nominee details added successfully.';
-                } elseif (count($updatedNominees) > 0 && count($addedNominees) === 0) {
-                    $dlttemplateid = 1707172234104394971;
-                    $message = "Dear Customer, nominee has been successfully updated in your saving a/c {$accountNo}. SBC GLOBAL";
-                    $successMessage = 'Nominee details updated successfully.';
+                    $successMessage = "Nominee details added successfully.";
+                } elseif (!empty($updatedNominees) && empty($addedNominees)) {
+
+                    $templateId = 1707172234104394971;
+                    $message = "Dear Customer, nominee has been successfully updated in your saving a/c $accountNo. SBC GLOBAL";
+                    $successMessage = "Nominee details updated successfully.";
                 } else {
-                    $dlttemplateid = 1707172234104394971;
-                    $message = "Dear Customer, nominee details have been successfully updated for your saving a/c {$accountNo}. SBC GLOBAL";
-                    $successMessage = 'Nominee details updated successfully.';
+
+                    $templateId = 1707172234104394971;
+                    $message = "Dear Customer, nominee details have been successfully updated for your saving a/c $accountNo. SBC GLOBAL";
+                    $successMessage = "Nominee details updated successfully.";
                 }
 
-                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                SmsHelper::sendSms($mobile, $message, $templateId);
             } catch (\Exception $e) {
-                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
+                Log::error('Nominee SMS sending failed', ['error' => $e->getMessage()]);
             }
 
-            return redirect()->route('accounts.show', base64_encode($account->id))->with('success',  $successMessage);
+            return redirect()
+                ->route('accounts.show', base64_encode($account->id))
+                ->with('success', $successMessage);
         } catch (\Throwable $th) {
+
             DB::rollBack();
 
-            Log::error('Error while updating nominees', [
+            Log::error('Nominee update failed', [
                 'account_id' => $account->id,
-                'error' => $th->getMessage(),
-                'trace' => $th->getTraceAsString(),
+                'error'      => $th->getMessage(),
+                'trace'      => $th->getTraceAsString(),
             ]);
 
-            return redirect()->route('accounts.show', base64_encode($account->id))->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+            return redirect()
+                ->route('accounts.show', base64_encode($account->id))
+                ->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
         }
     }
 

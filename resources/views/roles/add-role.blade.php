@@ -133,9 +133,9 @@
                         </div>
                         <div class="col-span-12 md:col-span-7 xl:col-span-8 box xl:p-8">
                             <!-- <div class="flex justify-between items-center gap-2 bb-dashed pb-4 mb-4 lg:mb-6 lg:pb-6">
-                                               
-                                                @include('partials._horizontal-options')
-                                             </div> -->
+                                                       
+                                                        @include('partials._horizontal-options')
+                                                     </div> -->
                             <div class="bb-dashed border-secondary/20 mb-4 pb-4 lg:mb-6 lg:pb-6">
                                 <div>
                                     <!---------------------Dashboard------------------------>
@@ -297,7 +297,7 @@
                                 <div class="tab-panel hidden">
 
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Profile</h4>
+                                        <h4 class="h3">Profile</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -375,7 +375,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Branches</h4>
+                                        <h4 class="h3">Branches</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -443,7 +443,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Promoters</h4>
+                                        <h4 class="h3">Promoters</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -617,7 +617,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Minors</h4>
+                                        <h4 class="h3">Minors</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -653,7 +653,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Login Credentials</h4>
+                                        <h4 class="h3">Login Credentials</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -702,7 +702,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Promoters Share Holdings</h4>
+                                        <h4 class="h3">Promoters Share Holdings</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -763,7 +763,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Directors</h4>
+                                        <h4 class="h3">Directors</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -823,7 +823,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Encumbered Deposits</h4>
+                                        <h4 class="h3">Encumbered Deposits</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -883,7 +883,7 @@
 
                                     <br>
                                     <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                                        <h4 class="h4">Bank Accounts</h4>
+                                        <h4 class="h3">Bank Accounts</h4>
                                         <hr>
                                         <div class="col-span-2 md:col-span-1">
                                             <div class="flex items-center space-x-2">
@@ -1085,13 +1085,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                <button class="btn-primary" type="submit">
+            <div class="col-span-2 flex gap-4 uppercase md:gap-6 mt-2">
+                <button class="btn-primary uppercase" type="submit">
                     Add Role
                 </button>
-                <button class="btn-outline" type="reset">
+                <a href="{{ route('roles.index') }}" class="btn-outline uppercase">
                     Cancel
-                </button>
+                </a>
             </div>
         </form>
     </div>

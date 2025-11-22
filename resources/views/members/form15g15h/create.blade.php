@@ -72,26 +72,12 @@
         }
     </style>
     <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">Form 15G/15H</h3>
+        <div class="mb-6 flex flex-wrap items-center uppercase justify-between gap-4 lg:mb-8">
+            <h4 class="h2">Form 15G/15H</h4>
         </div>
-        @if (session('success'))
-            <div id="success-alert"
-                style="background-color: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-                <strong>Success:</strong> {{ session('success') }}
-                <span onclick="document.getElementById('success-alert').style.display='none';"
-                    style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #155724;">&times;</span>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div id="error-alert"
-                style="background-color: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
-                <strong>Error:</strong> {{ session('error') }}
-                <span onclick="document.getElementById('error-alert').style.display='none';"
-                    style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
-            </div>
-        @endif
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+            <x-alert />
+        </div>
 
         <div class="box mb-4 xxxl:mb-6">
             <form id="companyForm" action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST"
@@ -142,7 +128,7 @@
                             </label>
                             @if ($type === 'select')
                                 <select name="{{ $name }}" id="{{ $id }}"
-                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     {{ isset($show) ? 'disabled' : '' }}>
                                     <option value="">-- Select {{ $label }} --</option>
 
@@ -199,13 +185,13 @@
                     @if (!isset($show) || !$show)
                         <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                             <button class="btn-primary" type="submit">
-                                {{ $method === 'PUT' ? 'Update' : 'UPLOAD' }} FORM 15G/ 15H
+                                {{ $method === 'PUT' ? 'UPDATE' : 'UPLOAD' }} FORM 15G/ 15H
                             </button>
                             @if ($method !== 'PUT')
                                 <!-- Only show Reset button if not 'Update' -->
                                 <button class="btn-outline" type="reset"
                                     onclick="document.getElementById('companyForm').reset();">
-                                    Reset
+                                    RESET
                                 </button>
                             @endif
                         </div>
@@ -214,7 +200,7 @@
                     <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                         <a href="{{ route('form15g15h.index') }}"
                             class="btn-outline inline-flex items-center justify-center">
-                            Back
+                            BACK
                         </a>
                     </div>
                 </div>

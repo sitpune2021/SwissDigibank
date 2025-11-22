@@ -115,16 +115,16 @@
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (empty($show))
                     <button class="btn-primary" type="submit">
-                        {{ $method === 'PUT' ? 'Update Share' : 'Allocate Share' }}
+                        {{ $method === 'PUT' ? 'UPDATE SHARE' : 'ALLOCATE SHARE' }}
                     </button>
                 @endif
                 @if ($method === 'POST')
                     <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-                        Reset
+                        RESET
                     </button>
                 @endif
                 <button class="btn-outline" type="button"
-                    onclick="window.location.href='{{ route('shareholding.index') }}'">Back</button>
+                    onclick="window.location.href='{{ route('shareholding.index') }}'">BACK</button>
             </div>
         </form>
     </div>

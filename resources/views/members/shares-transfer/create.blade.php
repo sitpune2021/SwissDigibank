@@ -218,11 +218,11 @@
                     {{-- Show Submit button only if not view page --}}
 
                     <button class="btn-primary" type="submit">
-                        Transfer Share
+                        TRANSFER SHARE
                     </button>
                     <a href="{{ route('shares-transfer.index') }}"
                         class="btn-outline inline-flex items-center justify-center">
-                        Back
+                        BACK
                     </a>
                 </div>
             </form>

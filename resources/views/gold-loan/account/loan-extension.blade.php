@@ -40,8 +40,9 @@
             <!-- Left: Details -->
             <div class=" w-full  overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                    <form action="">
-
+                    <form action="{{ route('loan.extension.store', $goldLoan->id) }}" method="POST" novalidate>
+                        @csrf
+                        <input type="hidden" name="loan_id" value="{{ $goldLoan->id }}">
                         <!-- Header -->
                         <div class="px-4 py-3 ">
                             <h3 class="text-lg  border-b mb-4 font-semibold text-black">ACCOUNT DETAILS</h3>
@@ -97,16 +98,16 @@
                                     <!-- Input Row -->
                                     <tr class="">
                                         <td class="px-2 py-2 ">
-                                            <input type="number" name="" id="" placeholder="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" name="" id="" placeholder="0" readonly step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" name="" id="" placeholder="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" name="" id="" placeholder="0" readonly step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" name="overdue_total" id="totalD" placeholder="0"
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" name="overdue_total" id="totalD" placeholder="0" step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                     </tr>
                                 </tbody>
@@ -130,17 +131,17 @@
                                     <!-- Input Row -->
                                     <tr class="">
                                         <td class="px-2 py-2 ">
-                                            <input type="number" id="amountE" name="penalty_amount" placeholder="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" id="amountE" name="penalty_amount" placeholder="0" readonly step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" id="gstE" name="penalty_gst" placeholder="18" value="18" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" id="gstE" name="penalty_gst" placeholder="18" value="18" readonly step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" id="totalE" name="penalty_total"
+                                            <input type="number" id="totalE" name="penalty_total" step="any"
                                                 class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base"
-                                                readonly />
+                                                readonly>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -164,15 +165,15 @@
                                         <!-- Input Row -->
                                         <td class="px-2 py-2 ">
                                             <input type="number" id="amountF" name="notice_amount" placeholder="0"
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
                                             <input type="number" id="gstF" name="notice_gst" placeholder="0" value="18"
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
                                             <input type="number" id="totalF" name="notice_total" placeholder="0"
-                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base bg-white" />
+                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base bg-white">
                                         </td>
                                     </tr>
                                 </tbody>
@@ -195,16 +196,16 @@
                                     <!-- Input Row -->
                                     <tr>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" id="amountG" name="service_amount" placeholder="0"
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" id="amountG" name="service_amount" placeholder="0" step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" id="gstG" name="service_gst" placeholder="0" value="18"
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number" id="gstG" name="service_gst" placeholder="0" value="18" step="any"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base">
                                         </td>
                                         <td class="px-2 py-2 ">
-                                            <input type="number" id="totalG" name="service_total" placeholder="0"
-                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base bg-white" />
+                                            <input type="number" id="totalG" name="service_total" placeholder="0" step="any"
+                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base bg-white">
                                         </td>
                                     </tr>
                                 </tbody>
@@ -287,72 +288,135 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1 mb-2">    
-                            <label class="md:text-lg font-medium block mb-4 uppercase">Pay Mode :</label>
+                            
+                            <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
+                                Pay Mode :
+                            </label>
 
+                            <!-- Radio Buttons -->
                             <div class="mt-3 flex gap-3">
-                                <label class="flex items-center gap-3">
-                                    <input type="radio" name="payment_mode" value="cash" checked> Cash
+                                <label class="mr-4 flex items-center flex-row gap-3">
+                                    <input type="radio" name="payment_mode" value="cash"
+                                        {{ old('payment_mode', $application->payment_mode ?? 'cash') == 'cash' ? 'checked' : '' }}>
+                                    Cash
                                 </label>
 
-                                <label class="flex items-center gap-3">
-                                    <input type="radio" name="payment_mode" value="cheque"> Cheque
+                                <label class="mr-4 flex items-center flex-row gap-3">
+                                    <input type="radio" name="payment_mode" value="cheque"
+                                        {{ old('payment_mode', $application->payment_mode ?? '') == 'cheque' ? 'checked' : '' }}>
+                                    Cheque
                                 </label>
 
-                                <label class="flex items-center gap-3">
-                                    <input type="radio" name="payment_mode" value="online"> Online Tr.
+                                <label class="mr-4 flex items-center flex-row gap-3">
+                                    <input type="radio" name="payment_mode" value="online"
+                                        {{ old('payment_mode', $application->payment_mode ?? '') == 'online' ? 'checked' : '' }}>
+                                    Online Tr.
                                 </label>
                             </div>
 
-                            <!-- Bank + Cheque -->
+                            <!-- Bank + Cheque Fields -->
                             <div id="bankDropdownWrapper" class="mt-3 hidden">
-                                <label class="block mb-2 text-sm font-medium">Select Bank</label>
-                                <select name="bank_id" class="w-64 rounded-10 border px-3 py-2 text-sm">
-                                    <option>-- Select Bank --</option>
+                                <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                                <select id="bank_id" name="bank_id"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <option value="">-- Select Bank --</option>
+                                    @foreach($banks as $id => $name)
+                                    <option value="{{ $id }}" {{ old('bank_id', $application->bank_id ?? '') == $id ?
+                                        'selected' : '' }}>
+                                        {{ $name }}
+                                    </option>
+                                    @endforeach
                                 </select>
 
+                                <!-- Cheque No -->
                                 <div class="mt-3">
-                                    <label class="text-sm font-medium">Cheque No.</label>
-                                    <input type="text" name="cheque_no" class="w-64 rounded-10 border px-3 py-2 text-sm"
-                                        placeholder="Enter Cheque No">
+                                    <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                    <input type="text" name="cheque_no"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        placeholder="Enter Cheque No" value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
                                 </div>
 
+                                <!-- Cheque Date -->
                                 <div class="mt-3">
-                                    <label class="text-sm font-medium">Cheque Date</label>
-                                    <input type="date" name="cheque_date"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm">
+                                    <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                    <input 
+                                    type="date" 
+                                    id="cheque_date" 
+                                    name="cheque_date" 
+                                    value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                             </div>
 
-                            <!-- Online Payment -->
+                            <!-- Online Transaction Fields -->
                             <div id="onlineFields" class="space-y-4 hidden">
                                 <div class="mt-3">
-                                    <label class="text-sm font-medium uppercase">Transfer Date *</label>
-                                    <input type="date" name="transfer_date" class="w-64 rounded-10 border px-3 py-2 text-sm">
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
+                                        Transfer Date <span class="text-red-500">*</span>
+                                    </label>
+                                    <input 
+                                    type="date" 
+                                    id="transfer_date" 
+                                    name="transfer_date" 
+                                    value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
-                                    <label class="text-sm font-medium uppercase">UTR / Transaction No *</label>
-                                    <input type="text" name="utr_no"
-                                        placeholder="Enter Transaction No." class="w-64 rounded-10 border px-3 py-2 text-sm">
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
+                                        UTR / Transaction No. <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
+                                        value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
-                                    <label class="text-sm font-medium uppercase">Transfer Mode *</label>
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
+                                        Transfer Mode <span class="text-red-500">*</span>
+                                    </label>
                                     <div class="flex gap-4 mt-2">
-                                        <label><input type="radio" name="transfer_mode" value="imps"> IMPS</label>
-                                        <label><input type="radio" name="transfer_mode" value="vpa"> VPA</label>
-                                        <label><input type="radio" name="transfer_mode" value="neft_rtgs"> NEFT/RTGS</label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" 
+                                            value="imps"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ?
+                                            'checked' : '' }}>
+                                            <span>IMPS</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" 
+                                            value="vpa"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ?
+                                            'checked' : '' }}>
+                                            <span>VPA</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="transfer_mode" 
+                                            value="neft_rtgs"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ?
+                                            'checked' : '' }}>
+                                            <span>NEFT/RTGS</span>
+                                        </label>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="text-sm font-medium uppercase">Credited in Company Account *</label>
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
+                                        Credited in Company Account <span class="text-red-500">*</span>
+                                    </label>
                                     <div class="flex gap-4">
-                                        <label><input type="radio" name="credited" value="1" checked> Yes</label>
-                                        <label><input type="radio" name="credit0ed" value="0"> No</label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited" value="1"
+                                                {{ old('credited') == 1 ? 'checked' : '' }} checked>
+                                            <span>Yes</span>
+                                        </label>
+
+                                        <label class="flex items-center gap-2">
+                                            <input type="radio" name="credited" value="0"
+                                                {{ old('credited') == 0 ? 'checked' : '' }}>
+                                            <span>No</span>
+                                        </label>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
+
                         </div>
 
                         <hr class="mt-5 mb-4">
@@ -403,20 +467,35 @@
                         </div>
 
 
+                        <div id="emiCalculationBox" class="hidden mt-5">
+                            <h3 class="text-lg font-semibold border-b mb-4 text-black">EMI CALCULATION</h3>
+
+                            <div id="emiTableResult">
+                                <!-- JS EMI Chart Generate Karega -->
+                            </div>
+                        </div>    
+
+
                         <!-- Buttons -->
-                        <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                            <button class="btn-primary uppercase justify-center" type="submit" name="">
-                                  calculate
+                       <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+                            <button class="btn-primary uppercase justify-center" type="button" id="calculateBtn">
+                                CALCULATE
+                            </button>
+
+                            <button class="btn-success uppercase justify-center hidden" id="submitBtn" type="submit">
+                                SUBMIT
                             </button>
 
                             <button class="btn-outline uppercase justify-center" type="reset">
-                                <a href="#"> BACK</a>
+                                <a href="{{ route('gold-loan.account.show', $goldLoan->id) }}">BACK</a>
                             </button>
-                        </div>
+                        </div>                       
+
                     </form>
-                </div>
+                </div>                        
             </div>
 
+        
             <!-- right: Details -->
             <div class=" w-full  overflow-hidden">
                
@@ -813,6 +892,137 @@ document.querySelectorAll("input").forEach(input => {
 
 // Auto run on load
 window.onload = calculate;
+</script>
+
+<!-- calculation box -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const calculateBtn = document.getElementById("calculateBtn");
+    const emiBox = document.getElementById("emiCalculationBox");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultDiv = document.getElementById("emiTableResult");
+
+    calculateBtn.addEventListener("click", function() {
+
+        const principal = parseFloat(document.querySelector("input[name='new_principal']").value) || 0;
+        const interestRate = parseFloat(document.querySelector("input[name='interest_rate']").value) || 0;
+        const tenure = parseFloat(document.querySelector("input[name='tenure']").value) || 1;
+        const firstEmiDate = document.querySelector("input[name='first_emi_date']").value;
+
+        const chargeInput = document.querySelector("input[name='charge_per_emi']");
+        const chargesPerEmi = chargeInput ? parseFloat(chargeInput.value) || 0 : 0;
+
+        if (!principal || !interestRate || !tenure || !firstEmiDate) {
+            alert("Please fill all EMI required fields before calculation.");
+            return;
+        }
+
+        const interest = (principal * interestRate / 100) * (tenure / 12);
+        const emiAmount = principal + interest + (chargesPerEmi * tenure);
+
+        // ---------- TABLE FORMAT DETAILS ----------
+        let infoTable = `
+        <table class="min-w-full text-sm border mb-3 text-left">
+            <tr>
+                <th class="border p-2 bg-gray-100">Reschedule Date</th>
+                <td class="border p-2">${firstEmiDate}</td>
+                <th class="border p-2 bg-gray-100">New Principal</th>
+                <td class="border p-2">₹${principal.toFixed(2)}</td>
+            </tr>
+
+            <tr>
+                <th class="border p-2 bg-gray-100">📌 Interest Type</th>
+                <td class="border p-2">Flat Advanced</td>
+                <th class="border p-2 bg-gray-100">EMI Amount</th>
+                <td class="border p-2">₹${emiAmount.toFixed(2)}</td>
+            </tr>
+
+            <tr>
+                <th class="border p-2 bg-gray-100">EMI Payout</th>
+                <td class="border p-2">Monthly</td>
+                <th class="border p-2 bg-gray-100">EMI Count</th>
+                <td class="border p-2">1</td>
+            </tr>
+
+            <tr>
+                <th class="border p-2 bg-gray-100">Tenure</th>
+                <td class="border p-2">${tenure} Months</td>
+                <th class="border p-2 bg-gray-100">Interest Rate</th>
+                <td class="border p-2">${interestRate}% Annually</td>
+            </tr>
+
+            <tr>
+                <th class="border p-2 bg-gray-100">Principal as EMI</th>
+                <td colspan="3" class="border p-2">No</td>
+            </tr>
+        </table>
+        `;
+        // ------------------------------------------
+
+        let tableHtml = `
+            <table class="min-w-full text-sm border mt-3">
+                <thead class="bg-secondary/10">
+                    <tr>
+                        <th class="p-2">EMI NO</th>
+                        <th class="p-2">EMI DATE</th>
+                        <th class="p-2">DUE DATE</th>
+                        <th class="p-2">PRINCIPAL (A)</th>
+                        <th class="p-2">INTEREST (B)</th>
+                        <th class="p-2">CHARGES (C)</th>
+                        <th class="p-2">EMI (A+B+C)</th>
+                        <th class="p-2">BAL. PRINCIPAL</th>
+                    </tr>
+                </thead>
+
+                <tbody class="text-center">
+
+                    <tr class="font-semibold bg-gray-50">
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>${principal.toFixed(2)}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>${principal.toFixed(2)}</td>
+                    </tr>
+
+                    <tr>
+                        <td>1</td>
+                        <td>${firstEmiDate}</td>
+                        <td>${firstEmiDate}</td>
+                        <td>${principal.toFixed(2)}</td>
+                        <td>${interest.toFixed(2)}</td>
+                        <td>${chargesPerEmi.toFixed(2)}</td>
+                        <td>${emiAmount.toFixed(2)}</td>
+                        <td>0.00</td>
+                    </tr>
+                </tbody>
+
+                <tfoot class="bg-slate-100 font-semibold text-center">
+                    <tr>
+                        <td colspan="3">TOTAL</td>
+                        <td>${principal.toFixed(2)}</td>
+                        <td>${interest.toFixed(2)}</td>
+                        <td>${chargesPerEmi.toFixed(2)}</td>
+                        <td>${emiAmount.toFixed(2)}</td>
+                        <td>-</td>
+                    </tr>
+                </tfoot>
+            </table>
+        `;
+
+        resultDiv.innerHTML = infoTable + tableHtml;
+
+        emiBox.classList.remove("hidden");
+        submitBtn.classList.remove("hidden");
+        calculateBtn.classList.add("hidden");
+
+        calculateBtn.disabled = true;
+        calculateBtn.innerText = "Calculated ✔";
+    });
+});
 </script>
 
 

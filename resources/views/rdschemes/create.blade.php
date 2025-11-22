@@ -379,6 +379,7 @@
                 <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
                     Save Scheme
                 </button>
+                <button class="btn-outline" type="reset">RESET</button>
 
                 <button class="btn-outline uppercase justify-center" type="reset">
                     <a href="{{route('rdschemes.index')}}"> BAck</a>

@@ -3,7 +3,7 @@
 
 @section('action-button')
 <a class="btn-primary" href="{{ route('roles.create') }}">
-    Add
+    ADD
 </a>
 @endsection
 
