@@ -1,9 +1,9 @@
 @extends('layout.main')
 
-@section('page-title', 'DIRECTOR')
+@section('page-title', 'DIRECTORS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('director.create') }}">
-    Add
+    ADD
 </a>
 @endsection
 

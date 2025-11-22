@@ -199,17 +199,17 @@
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     @if (empty($show))
                         <button class="btn-primary" type="submit">
-                            {{ ($method ?? '') === 'PUT' ? 'Update' : 'Save' }} Minor
+                            {{ ($method ?? '') === 'PUT' ? 'UPDATE' : 'SAVE' }} MINOR
                         </button>
                         @if (($method ?? '') === 'POST')
                             <button class="btn-outline" type="reset"
                                 onclick="document.getElementById('companyForm').reset();">
-                                Reset
+                                RESET
                             </button>
                         @endif
                     @endif
                     <button class="btn-outline" type="button" onclick="window.location.href='{{ route('minor.index') }}'">
-                        Back
+                        BACK
                     </button>
                 </div>
 

@@ -1,7 +1,14 @@
 @extends('layout.main')
 
 @section('page-title',
-isset($director) ? (!empty($show) ? 'View ' . $director->director_name .' DIRECTOR' : 'EDIT ' . $director->director_name . ' DIRECTOR') : 'ADD DIRECTOR')
+    isset($director)
+        ? (!empty($show)
+            ? 'View DIRECTOR – ' . $director->director_name
+            : 'Edit DIRECTOR – ' . $director->director_name
+          )
+        : 'Add DIRECTORS'
+)
+
 
 @section('content')
 
@@ -68,17 +75,17 @@ isset($director) ? (!empty($show) ? 'View ' . $director->director_name .' DIRECT
         <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
             @if (empty($show))
             <button class="btn-primary" type="submit">
-                {{ $method === 'PUT' ? 'Update' : 'Save' }} director
+                {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} DIRECTOR
             </button>
             @if ($method === 'POST')
             <button class="btn-outline" type="reset"
                 onclick="document.getElementById('companyForm').reset();">
-                Reset
+                RESET
             </button>
             @endif
             @endif
             <button class="btn-outline" type="reset"
-                onclick="window.location.href='{{ route('director.index') }}'">Back</button>
+                onclick="window.location.href='{{ route('director.index') }}'">BACK</button>
         </div>
     </form>
 </div>

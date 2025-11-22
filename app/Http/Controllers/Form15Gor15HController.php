@@ -77,6 +77,48 @@ class Form15Gor15HController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         $type = $request->type;
+
+    //         $validator = Validator::make($request->all(), [
+    //             'financial_year' => 'required|string|max:20',
+    //             'form_15_upload' => 'required|file|mimes:pdf,jpg,png|max:2048',
+    //             'member_id' => $type === 'member' ? 'required|exists:members,id' : 'nullable',
+    //             'promotor_id' => $type === 'promoter' ? 'required|exists:promotors,id' : 'nullable',
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return back()->withErrors($validator)->withInput();
+    //         }
+
+    //         $validated = $validator->validated();
+
+    //         // Fixing data fields
+    //         $validated['member_id'] = $type === 'member' ? $request->member_id : null;
+    //         $validated['promotor_id'] = $type === 'promoter' ? $request->promotor_id : null;
+
+    //         // File upload
+    //         if ($request->hasFile('form_15_upload')) {
+    //             $path = $request->file('form_15_upload')->store('uploads', 'public');
+    //             $validated['form_15_upload'] = $path;
+    //         }
+
+    //         Form15G15H::create($validated);
+
+    //         // Conditional redirect
+    //         if ($type === 'member') {
+    //             return redirect()->route('member.show', $validated['member_id'])
+    //                 ->with('success', 'Form 15G/15H submitted successfully.');
+    //         } else {
+    //             return redirect()->route('promotor.show', base64_encode($validated['promotor_id']))
+    //                 ->with('success', 'Form 15G/15H submitted successfully.');
+    //         }
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
     public function store(Request $request)
     {
         try {
@@ -95,9 +137,31 @@ class Form15Gor15HController extends Controller
 
             $validated = $validator->validated();
 
-            // Fixing data fields
             $validated['member_id'] = $type === 'member' ? $request->member_id : null;
             $validated['promotor_id'] = $type === 'promoter' ? $request->promotor_id : null;
+
+            // ✅ DUPLICATE CHECK
+            if ($type === 'member') {
+                $exists = Form15G15H::where('member_id', $validated['member_id'])
+                    ->where('financial_year', $validated['financial_year'])
+                    ->exists();
+
+                if ($exists) {
+                    return back()->with('error', 'Form 15G/15H already uploaded for this member for the selected financial year.')
+                        ->withInput();
+                }
+            }
+
+            if ($type === 'promoter') {
+                $exists = Form15G15H::where('promotor_id', $validated['promotor_id'])
+                    ->where('financial_year', $validated['financial_year'])
+                    ->exists();
+
+                if ($exists) {
+                    return back()->with('error', 'Form 15G/15H already uploaded for this promoter for the selected financial year.')
+                        ->withInput();
+                }
+            }
 
             // File upload
             if ($request->hasFile('form_15_upload')) {
@@ -107,13 +171,12 @@ class Form15Gor15HController extends Controller
 
             Form15G15H::create($validated);
 
-            // Conditional redirect
             if ($type === 'member') {
                 return redirect()->route('member.show', $validated['member_id'])
-                    ->with('success', 'Form 15G/15H submitted successfully.');
+                    ->with('success', 'Form 15G/15H uploaded successfully.');
             } else {
                 return redirect()->route('promotor.show', base64_encode($validated['promotor_id']))
-                    ->with('success', 'Form 15G/15H submitted successfully.');
+                    ->with('success', 'Form 15G/15H uploaded successfully.');
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
