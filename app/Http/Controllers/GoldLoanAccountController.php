@@ -8,6 +8,7 @@ use App\Models\GoldLoanOtherCharge;
 use App\Models\GoldLoanTransaction;
 use App\Models\LoanApplication;
 use App\Models\GoldLoanForeClosure;
+use App\Models\GoldLoanExtension;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class GoldLoanAccountController extends Controller
     public function index(Request $request)
     {
         $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
-            ->where('status', 1)
+            ->where('status', [1,4])
             ->orderBy('id', 'desc')
             ->get();
 
@@ -886,7 +887,7 @@ class GoldLoanAccountController extends Controller
             ]);
 
             // UPDATE LOAN STATUS (Active → Inactive)
-            LoanApplication::where('id', $loanId)->update(['status' => 0]);
+            LoanApplication::where('id', $loanId)->update(['status' => 4]);
 
             return redirect()
                 ->route('gold-loan.account.show', $loanId)
@@ -949,7 +950,60 @@ class GoldLoanAccountController extends Controller
             $currentDebt = max($totalPayable - $totalDeposit, 0);
 
         return view('gold-loan.account.loan-extension', compact('goldLoan','currentDebt','banks'));
-        
+
+    }
+
+    public function storeLoanExtension(Request $request, $id)
+    {
+        Log::info('--- Loan Extension Request Received ---', [
+            'loan_id' => $id,
+            'input' => $request->all()
+        ]);
+
+        try 
+        {
+
+            $validated = $request->validate([
+                'remaining_amount' => 'required|numeric',
+                'interest_accrued' => 'nullable|numeric',
+                'total_amount_h' => 'required|numeric',
+                'rounding_off_i' => 'nullable|numeric',
+                'net_amount_k' => 'required|numeric',
+                'transaction_date' => 'required',
+                'reschedule_date' => 'required',
+                'first_emi_date' => 'required',
+                'interest_rate' => 'required|numeric',
+                'tenure' => 'required|numeric',
+                'reason' => 'required|string',
+            ]);
+
+            // Convert Dates AFTER validation
+            $validated['transaction_date'] = Carbon::parse($validated['transaction_date'])->format('Y-m-d');
+            $validated['reschedule_date'] = Carbon::parse($validated['reschedule_date'])->format('Y-m-d');
+            $validated['first_emi_date'] = Carbon::parse($validated['first_emi_date'])->format('Y-m-d');
+
+            $validated['loan_id'] = $id;
+
+            $extension = GoldLoanExtension::create($validated);
+
+            Log::info('✔ Loan Extension Saved Successfully!', [
+                'extension_id' => $extension->id,
+            ]);
+
+            return redirect()->route('gold-loan.account.show')->with('success', 'Loan Extension Successfully Added!');
+
+        } 
+        catch (\Throwable $e) 
+        {
+
+            Log::error('Loan Extension Save Failed', [
+                'loan_id' => $id,
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving!');
+        }
     }
 
     public function goldLoanPayEmi($id)
@@ -1203,6 +1257,7 @@ class GoldLoanAccountController extends Controller
     //     ));
     // }
 
+    
     public function goldLoanPay($id)
     {
         $goldLoan = LoanApplication::with([
@@ -1346,6 +1401,7 @@ class GoldLoanAccountController extends Controller
     //     }
     // }
 
+    
     public function payEmi(Request $request)
     {
         Log::info('payEmi() called', ['request_data' => $request->all()]);

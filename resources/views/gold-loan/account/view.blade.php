@@ -134,7 +134,7 @@ $settingLabel = '';
             <a href="{{route('gold-loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
                 Pay Emi
             </a>
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi')
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                 <a href="{{ route('gold-loan.account.extension',$goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
                     LOAN EXTENSION
                 </a>
