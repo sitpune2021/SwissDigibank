@@ -156,14 +156,13 @@ class ApproveController extends Controller
                     $message = "Dear Customer, your Account $AccountNo has been $type with INR $amount on $date. The Available Balance is INR $available_balance. SBC GLOBAL";
                     \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
 
-                    $Account = $transaction->accounts;
+                    $Account = $transaction;
                     $member = $transaction->accounts->members;
-
 
                     if (!empty($member->member_info_email)) {
 
                         if ($transaction->transaction_type === 'debit') {
-                            $pdf = Pdf::loadView('emails.saving_account_withdraw', compact('member', 'Account'));
+                            $pdf = Pdf::loadView('emails.saving_account_withdraw', compact('member', 'Account','available_balance'));
                             $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
                             $pdf->save($pdfPath);
                             // MONEY WITHDRAWN
@@ -173,7 +172,7 @@ class ApproveController extends Controller
                             );
                         } elseif ($transaction->transaction_type === 'credit') {
 
-                            $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account'));
+                            $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account','available_balance'));
                             $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
                             $pdf->save($pdfPath);
 

@@ -175,10 +175,12 @@ Route::middleware('auth.user')->group(function () {
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
         Route::get(
-            '/dds-accounts/dds-nominee/{id}',[DdsAccountsController::class, 'accountNominee'])
+            '/dds-accounts/dds-nominee/{id}',
+            [DdsAccountsController::class, 'accountNominee']
+        )
             ->name('dds-accounts.nominee');
 
-        Route::post('/dds-accounts/{id}/nominees',[DdsAccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
+        Route::post('/dds-accounts/{id}/nominees', [DdsAccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
 
         // Show DDS Account Details
         // Route::get('/dds-accounts/{id}', 
@@ -589,8 +591,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('account/show/{id}', [GoldLoanAccountController::class, 'show'])
         ->name('gold-loan.account.show');
 
-   Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
-    ->name('emi.saveEmiStatus');
+    Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
+        ->name('emi.saveEmiStatus');
 
 
 
@@ -663,7 +665,6 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.applications.view-buttons.disburse-setting');
 
     Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
-
 });
 
 
@@ -1427,18 +1428,27 @@ Route::group(['prefix' => 'cut-report'], function () {
     //reports
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
+    Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
+        ->name('accounts.export.csv');
+    Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
+
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
+    Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
+        ->name('fd-accounts.export.csv');
+    Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
+
     Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
         ->name('report.mis-account');
+    Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+
+
     Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
         ->name('report.dd-accounts');
     Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
         ->name('report.rd-account');
 
-    Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
-    Route::get('report/fd', [CutReportController::class, 'fdIndex'])->name('report.fd.index');
-    Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
     Route::get('report/rd', [CutReportController::class, 'rdIndex'])->name('report.rd.index');
 });

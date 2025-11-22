@@ -57,4 +57,24 @@ class FdAccount extends Model
     {
         return $this->belongsTo(FDScheme::class, 'scheme_id');
     }
+    public function getFinalStatusAttribute()
+    {
+        if ($this->status == 2) {
+            return 'Disapproved';
+        }
+
+        if ($this->status == 0) {
+            return 'Pending';
+        }
+
+        if ($this->status == 1 && $this->active == 0) {
+            return 'Closed';
+        }
+
+        if ($this->status == 1 && $this->active == 1) {
+            return 'Active';
+        }
+
+        return '--';
+    }
 }

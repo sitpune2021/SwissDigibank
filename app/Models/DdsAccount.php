@@ -64,4 +64,24 @@ class DdsAccount extends Model
     {
         return $this->hasMany(AccountNominee::class, 'dds_account_id', 'id');
     }
+    public function getFinalStatusAttribute()
+    {
+        if ($this->status == 2) {
+            return 'Disapproved';
+        }
+
+        if ($this->status == 0) {
+            return 'Pending';
+        }
+
+        if ($this->status == 1 && $this->account_status == 0) {
+            return 'Closed';
+        }
+
+        if ($this->status == 1 && $this->account_status == 1) {
+            return 'Active';
+        }
+
+        return '--';
+    }
 }
