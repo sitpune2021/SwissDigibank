@@ -157,689 +157,426 @@ class VehicalController extends Controller
         return view("vehical.calculator.index", compact('scheme'));
     }
 
-    // public function calculateResult(Request $request)
-    // {
-    //     $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
-
-    //     if ($isManual) {
-    //         //  Manual Entry Mode
-    //         $request->validate([
-    //             'loan_amount' => 'required|numeric|min:1',
-    //             'max_tenure' => 'required|integer|min:1',
-    //             'manual_interest_rate' => 'required|numeric|min:0',
-    //             'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
-    //         ]);
-
-    //         $loan = (float) $request->loan_amount;
-    //         $tenureMonths = (int) $request->max_tenure;
-    //         $payout = $request->payout;
-    //        // $interestType = 'flat';
-    //        $interestType = $request->interest_type ?? 'flat_emi';
-
-    //         $annualRate = (float) $request->manual_interest_rate;
-
-    //         $processingFee = (float) ($request->manual_processing_fee ?? 0);
-    //         $stampAmount = round($loan * ((float) ($request->manual_stamp ?? 0)) / 100, 2);
-    //         $insuranceAmount = round($loan * ((float) ($request->manual_insurance ?? 0)) / 100, 2);
-    //         $scheme = null;
-    //     } 
-    //     else 
-    //     {
-    //         //  Scheme Mode
-    //         $request->validate([
-    //             'scheme_id' => 'required|exists:vehical_schemes,id',
-    //             'loan_amount' => 'required|numeric|min:1',
-    //             'tenure_months' => 'required|integer|min:1',
-    //             'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
-    //         ]);
-
-    //         $scheme = VehicalScheme::findOrFail($request->scheme_id);
-
-    //         $loan = (float) $request->loan_amount;
-    //         $tenureMonths = (int) $request->tenure_months;
-    //         $payout = $request->payout;
-    //         //$interestType = 'flat';
-    //         //$interestType = strtolower($scheme->gold_loan_setting) === 'no_emi' ? 'no_emi' : 'flat';
-    //         $setting = strtolower($scheme->gold_loan_setting);
-
-    //         switch ($setting) {
-    //             case 'flat_advanced_interest':
-    //                 $interestType = 'Flat Advanced Interest';
-    //                 break;
-    //             case 'flat_advance_interest':
-    //                 $interestType = 'Flat Advance Interest';
-    //                 break;
-    //             case 'flat_interest':
-    //                 $interestType = 'Flat Interest';
-    //                 break;
-    //             case 'reducing_balance':
-    //                 $interestType = 'Reducing Balance';
-    //                 break;
-    //             case 'no_emi':
-    //                 $interestType = 'No EMI';
-    //                 break;
-    //             default:
-    //                 $interestType = ucfirst($setting); // fallback
-    //         }
-
-    //         $annualRate = (float) ($request->annual_interest_rate ?? $scheme->annual_interest_rate ?? 0);
-
-    //         $processingFee = (float) ($scheme->processing_fee ?? 0);
-    //         $stampAmount = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
-    //         $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
-    //     }
-
-    //     //  Determine months per EMI payout
-    //     switch ($payout) {
-    //         case 'monthly':
-    //             $monthsPerInstallment = 1;
-    //             break;
-    //         case 'quarterly':
-    //             $monthsPerInstallment = 3;
-    //             break;
-    //         case 'half-yearly':
-    //             $monthsPerInstallment = 6;
-    //             break;
-    //         case 'yearly':
-    //             $monthsPerInstallment = 12;
-    //             break;
-    //         default:
-    //             $monthsPerInstallment = 1;
-    //     }
-
-    //     //  Total Installments & Interest
-    //     $installments = (int) ceil($tenureMonths / $monthsPerInstallment);
-    //     $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-    //     $emi = round(($loan + $totalInterest) / $installments, 2);
-
-    //     // EMI Schedule Generation
-    //     $lowerType = strtolower($interestType);
-
-    //     if (in_array($lowerType, ['reducing_emi', 'reducing balance', 'reducing_balance'])) 
-    //     {
-    //         // Reducing Balance EMI (Declining interest each month)
-    //         $monthlyRate = ($annualRate / 100) / 12;
-    //         $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
-
-    //         // recompute total interest dynamically
-    //         $balance = $loan;
-    //         $totalInterest = 0;
-    //         for ($i = 1; $i <= $installments; $i++) {
-    //             $interestForMonth = $balance * $monthlyRate;
-    //             $principalPaid = $emi - $interestForMonth;
-    //             $balance -= $principalPaid;
-    //             $totalInterest += $interestForMonth;
-    //         }
-    //         $totalInterest = round($totalInterest, 2);
-    //     }
-    //     elseif (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
-    //     {
-    //         // Flat Advanced Interest: interest deducted upfront, not added to EMIs
-    //         $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-    //         $emi = round($loan / $installments, 2); // Only principal EMIs
-    //     }
-    //     else 
-    //     {
-    //         // Flat EMI
-    //         $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-    //         $emi = round(($loan + $totalInterest) / $installments, 2);
-    //     }
-
-    //     $outstanding = $loan;
-    //     $startDate = now();
-
-    //     for ($i = 1; $i <= $installments; $i++) 
-    //     {
-
-    //         $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-    //         //$dueDate = $emiDate->copy()->addDays(10);
-    //         $dueDate = $emiDate->copy()->addDay();
-
-    //         if ($interestType === 'No EMI') 
-    //         {
-    //             // No EMI Logic
-    //             if ($i == $installments) {
-    //                 $principal = round($loan, 2);
-    //             } else {
-    //                 $principal = 0;
-    //             }
-
-    //             $interest = null;
-    //             $charges = null;
-    //             $emiTotal = null;
-    //             $balance = null;
-
-    //         } 
-    //         else 
-    //         {
-    //                 // Normal EMI Logic
-    //             if (in_array($lowerType, ['reducing_emi', 'reducing balance', 'reducing_balance'])) 
-    //             {
-    //                 $monthlyRate = ($annualRate / 100) / 12;
-
-    //                 // Define fixed or percentage-based charge per EMI
-    //                 $chargePerEmi = 2.00; // You can later make this dynamic from scheme if needed
-
-    //                 if ($i < $installments) {
-    //                     // Normal months
-    //                     $interest = round($outstanding * $monthlyRate, 2);
-    //                     $principal = round($emi - $interest, 2);
-    //                     $charges = round($chargePerEmi, 2);
-    //                     $emiTotal = round($principal + $interest + $charges, 2);
-
-    //                     $outstanding -= $principal;
-    //                     $balance = max(round($outstanding, 2), 0);
-    //                 } 
-    //                 else 
-    //                 {
-    //                     // Last installment adjustment (remove rounding residue)
-    //                     $interest = round($outstanding * $monthlyRate, 2);
-    //                     $principal = round($outstanding, 2);
-    //                     $charges = round($chargePerEmi, 2);
-    //                     $emiTotal = round($principal + $interest + $charges, 2);
-
-    //                     $outstanding = 0;
-    //                     $balance = 0;
-    //                 }
-    //             }
-    //             else 
-    //             {
-    //                 // Flat / Fixed EMI logic
-    //                 if ($i == $installments) {
-    //                     $principal = round($outstanding, 2);
-    //                 } else {
-    //                     $principal = round($loan / $installments, 2);
-    //                 }
-
-    //                 $interest = round($totalInterest / $installments, 2);
-    //                 $charges = 0;
-    //                 $emiTotal = round($principal + $interest, 2);
-
-    //                 $outstanding -= $principal;
-    //                 $balance = max(round($outstanding, 2), 0);
-    //             }
-    //         }
-
-
-    //         $schedule[] = [
-    //             'no' => $i,
-    //             'emi_date' => $emiDate->format('d/m/Y'),
-    //             'due_date' => $dueDate->format('d/m/Y'),
-    //             'principal' => $principal,
-    //             'interest' => $interest,
-    //             'charges' => $charges,
-    //             'emi' => $emiTotal,
-    //             'balance' => $balance,
-    //         ];
-    //     }
-
-
-    //     //  Grand Total (Loan + Interest + Charges)
-    //     //  Grand Total (Loan + Interest + Charges)
-    //     if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
-    //     {
-    //         // Interest deducted upfront, EMIs = only principal, total payable = loan amount
-    //         $totalInterest = 0;
-    //         $totalEmiPaid = $loan;
-    //         $grandTotalPayable = round($loan + $processingFee + $stampAmount + $insuranceAmount, 2);
-    //     } else {
-    //         // Flat / Reducing EMI = normal interest added
-    //         $totalEmiPaid = $loan + $totalInterest;
-    //         $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
-    //     }
-
-
-    //     $disbursedAmount = $loan;
-    //     if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
-    //         $disbursedAmount = $loan - $totalInterest;
-    //     }
-
-    //     // Calculate totals for table footer
-    //     $total_principal = array_sum(array_column($schedule, 'principal'));
-    //     $total_interest  = array_sum(array_column($schedule, 'interest'));
-    //     $total_charges   = array_sum(array_column($schedule, 'charges'));
-    //     $total_emi_paid  = array_sum(array_column($schedule, 'emi'));
-
-
-    //     // If Flat Advanced Interest, show only one EMI row
-    //     if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
-    //         $schedule = [];
-
-    //         $emiDate = now()->addMonth(); // or your logic for date
-    //         $dueDate = $emiDate->copy()->addDay();
-
-    //         $schedule[] = [
-    //             'no' => 1,
-    //             'emi_date' => $emiDate->format('d/m/Y'),
-    //             'due_date' => $dueDate->format('d/m/Y'),
-    //             'principal' => round($loan, 2),
-    //             'interest' => 0.0,
-    //             'charges' => 0.0,
-    //             'emi' => round($loan, 2),
-    //             'balance' => 0.0,
-    //         ];
-
-    //         // Recalculate totals for single-row chart
-    //         $total_principal = $loan;
-    //         $total_interest = 0;
-    //         $total_charges = 0;
-    //         $total_emi_paid = $loan;
-    //     }
-
-    //     //  Return to view
-    //     return view('vehical.calculator.result', [
-    //         'scheme' => $scheme,
-    //         'is_manual' => $isManual,
-    //         'loan' => $loan,
-    //         'tenure_months' => $tenureMonths,
-    //         'payout' => $payout,
-    //         'installments' => $installments,
-    //         'interest_type' => ucfirst($interestType),
-    //         'annual_rate' => $annualRate,
-    //         'disburse_date' => now(),
-    //         'processing_fee' => $processingFee,
-    //         'processing_incl_gst' => $processingFee,
-    //         'stamp_amount' => $stampAmount,
-    //         'stamp_incl_gst' => $stampAmount,
-    //         'insurance_amount' => $insuranceAmount,
-    //         'schedule' => $schedule,
-    //         // Add these total values for footer
-    //         'total_principal' => $total_principal,
-    //         'total_interest' => $total_interest,
-    //         'total_charges' => $total_charges,
-    //         'total_emi_paid' => $total_emi_paid,
-    //         'grand_total_payable' => $grandTotalPayable,
-    //         'disbursed_amount' => $disbursedAmount,
-    //     ]);
-    // }
-
-    
     public function calculateResult(Request $request)
     {
-        $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
-        $interestAsEmi = $request->option_interest_emi ? 'Yes' : 'No';
-        $interestAsFirst = $request->option_interest_first ? 'Yes' : 'No';
 
-        if ($isManual) {
-            //  Manual Entry Mode
+        // Store raw user tenure selection for display (before conversion)
+        $rawTenureValue = $request->tenure_months;
+        $rawTenureType = $request->tenure_type;
+
+        /* -------------------------------------------------------
+            1. BASIC INPUT HANDLING
+        ---------------------------------------------------------*/
+        $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
+
+        //  ADD HERE (Correct Location)
+        $interestType = $request->interest_type;
+        $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
+        $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
+        //  END
+
+        //  EMI Ratio Handling
+        $ratioEnabled = $request->has('ratio_enabled') ? 'Yes' : 'No';
+        $ratioFirstEmi = $request->ratio_first_emi ?? null;
+        $ratioFirstPercentage = $request->ratio_first_percentage ?? null;
+
+        $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
+
+
+
+        if ($isManual) 
+        {
+
             $request->validate([
                 'loan_amount' => 'required|numeric|min:1',
-                'max_tenure' => 'required|integer|min:1',
+                'max_tenure' => 'required|numeric|min:1',
+                'tenure_type' => 'required|in:DAYS,WEEKS,MONTHS',
                 'manual_interest_rate' => 'required|numeric|min:0',
-                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
+                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly,WEEKLY,BI_WEEKLY,4_WEEKLY,DAILY'
             ]);
 
-            $loan = (float) $request->loan_amount;
+            $loan         = (float) $request->loan_amount;
             $tenureMonths = (int) $request->max_tenure;
-            $payout = $request->payout;
-           // $interestType = 'flat';
-           $interestType = $request->interest_type ?? 'flat_emi';
-
-            $annualRate = (float) $request->manual_interest_rate;
-
-            // Uniform interest type formatting for manual mode
-            switch (strtolower($request->interest_type)) {
-                case 'flat_advanced':
-                case 'flat_advanced_interest':
-                    $interestType = 'Flat Advanced Interest';
-                    break;
-
-                case 'flat_emi':
-                    $interestType = 'Flat EMI';
-                    break;
-
-                case 'reducing':
-                case 'reducing_emi':
-                    $interestType = 'reducing_emi';
-                    break;
-
-                case 'no_emi':
-                    $interestType = 'No EMI';
-                    break;
-
-                default:
-                    $interestType = 'Flat EMI';
+            // Convert Tenure (Days / Weeks / Months)
+            $tenureType = $request->tenure_type ?? 'MONTHS';
+            if ($tenureType === 'DAYS') {
+                $tenureMonths = round($tenureMonths / 30, 2);
+            } elseif ($tenureType === 'WEEKS') {
+                $tenureMonths = round(($tenureMonths * 7) / 30, 2);
             }
 
-            $processingFee = (float) ($request->manual_processing_fee ?? 0);
-            $stampAmount = round($loan * ((float) ($request->manual_stamp ?? 0)) / 100, 2);
-            $insuranceAmount = round($loan * ((float) ($request->manual_insurance ?? 0)) / 100, 2);
-            $scheme = null;
-        } else {
-            //  Scheme Mode
+            // Create Display Format (Human Friendly)
+            $tenureDisplay = match($rawTenureType) {
+                'DAYS' => $rawTenureValue . ' Days',
+                'WEEKS' => $rawTenureValue . ' Weeks',
+                'MONTHS' => $rawTenureValue . ' Months',
+                default => $rawTenureValue . ' Months'
+            };
+
+            $annualRate   = (float) $request->manual_interest_rate;
+            $payout       = $request->payout;
+
+            // FIX — interest type manual mode me same ka same
+            $interestTypeRaw = strtolower(trim($request->interest_type ?? 'flat_emi'));
+
+            $interestType = match ($interestTypeRaw) {
+                'reducing', 'reducing_emi' => 'reducing',
+                'flat_advanced', 'flat_advance_interest' => 'flat_advanced',
+                'flat_interest', 'flat_emi' => 'flat_emi',
+                default => 'flat_emi',
+            };
+
+
+            $processingFee  = (float) ($request->manual_processing_fee ?? 0);
+            $stampAmount    = round($loan * ($request->manual_stamp ?? 0) / 100, 2);
+            $insuranceAmount= round($loan * ($request->manual_insurance ?? 0) / 100, 2);
+
+            $scheme         = null;
+
+        } 
+        else 
+        {
+
             $request->validate([
-                'scheme_id' => 'required|exists:loan_against_schemes,id',
+                'scheme_id' => 'required|exists:gold_loan_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
-                'tenure_months' => 'required|integer|min:1',
-                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly',
+                'tenure_months' => 'required|numeric|min:1',
+                'tenure_type' => 'required|in:DAYS,WEEKS,MONTHS',
+                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly,WEEKLY,BI_WEEKLY,4_WEEKLY,DAILY'
             ]);
 
             $scheme = VehicalScheme::findOrFail($request->scheme_id);
 
-            $loan = (float) $request->loan_amount;
+            $loan         = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
-            $payout = $request->payout;
-            //$interestType = 'flat';
-            //$interestType = strtolower($scheme->gold_loan_setting) === 'no_emi' ? 'no_emi' : 'flat';
-            $setting = strtolower($scheme->gold_loan_setting);
+            // Convert Tenure (Days / Weeks / Months)
+            $tenureType = $request->tenure_type ?? 'MONTHS';
 
-            switch ($setting) {
-                case 'flat_advanced_interest':
-                    $interestType = 'Flat Advanced Interest';
-                    break;
-                case 'flat_advance_interest':
-                    $interestType = 'Flat Advance Interest';
-                    break;
-                case 'flat_interest':
-                    $interestType = 'Flat Interest';
-                    break;
-                case 'reducing_balance':
-                    $interestType = 'Reducing Balance';
-                    break;
-                case 'no_emi':
-                    $interestType = 'No EMI';
-                    break;
-                default:
-                    $interestType = ucfirst($setting); // fallback
+            if ($tenureType === 'DAYS') {
+                $tenureMonths = round($tenureMonths / 30, 2);
+            } elseif ($tenureType === 'WEEKS') {
+                $tenureMonths = round(($tenureMonths * 7) / 30, 2);
             }
 
-            $annualRate = (float) ($request->annual_interest_rate ?? $scheme->annual_interest_rate ?? 0);
+            // Create Display Format (Human Friendly)
+            $tenureDisplay = match($rawTenureType) {
+                'DAYS' => $rawTenureValue . ' Days',
+                'WEEKS' => $rawTenureValue . ' Weeks',
+                'MONTHS' => $rawTenureValue . ' Months',
+                default => $rawTenureValue . ' Months'
+            };
 
-            $processingFee = (float) ($scheme->processing_fee ?? 0);
-            $stampAmount = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
+            $annualRate   = (float) $scheme->annual_interest_rate;
+            $payout       = $request->payout;
+
+            // FIX — Mapping cleaned
+            $setting = strtolower($scheme->gold_loan_setting);
+
+            $interestType = match ($setting) {
+                'reducing_balance', 'reducing', 'reducing_emi' => 'reducing',
+                'flat_advance_interest', 'flat_advanced_interest' => 'flat_advanced',
+                'flat_interest' => 'flat_emi',
+                default => 'flat_emi',
+            };
+
+
+            $processingFee   = (float) ($scheme->processing_fee ?? 0);
+            $stampAmount     = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
             $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
         }
 
-        // -------------------------------
-            // NORMALIZE interest_type FOR VIEW
-        // -------------------------------
-        $interest_type = ucfirst(str_replace(' ', '_', strtolower($interestType))); // e.g. 'Reducing_emi' or 'Flat_advanced_interest'
+        /* -------------------------------------------------------
+            2. INSTALLMENT COUNT
+        ---------------------------------------------------------*/
 
+        $monthsPerInstallment = 1;
+        // Normalize payout so comparisons are consistent
+        $payout = strtolower($payout ?? 'monthly');
 
-        //  Determine months per EMI payout
-        switch ($payout) {
-            case 'monthly':
+        // Convert common alternate tokens to normalized keys
+        // (if your JS sends BI_WEEKLY or 4_WEEKLY in uppercase, they will be normalized here)
+        $payout = str_replace(['-', ' '], '_', $payout); // e.g. "half-yearly" -> "half_yearly"
+        $payout = str_replace('half_yearly', 'half-yearly', $payout); // keep original hyphen form for later match
+
+        // Ensure tenureMonths is numeric (months value). It may be fractional when converted from weeks/days.
+        $tenureMonths = (float) $tenureMonths;
+
+        // Calculate installments robustly for every payout type
+        if (in_array($payout, ['daily', 'daily'])) {
+            // approximate 30 days per month
+            $installments = max(1, (int) ceil($tenureMonths * 30));
+        } elseif (in_array($payout, ['weekly', 'weekly'])) {
+            // approx 4 weeks per month
+            $installments = max(1, (int) ceil($tenureMonths * 4));
+        } elseif (in_array($payout, ['bi_weekly', 'bi-weekly', 'bi_weekly'])) {
+            // 2 installments per month
+            $installments = max(1, (int) ceil($tenureMonths * 2));
+        } elseif (in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
+            // every 4 weeks -> approx 1 per month
+            $installments = max(1, (int) ceil($tenureMonths * 1));
+        } else {
+            // month-based schedules: monthly, quarterly, half-yearly, yearly
+            $monthsPerInstallment = match ($payout) {
+                'monthly', 'month' => 1,
+                'quarterly', 'quarter' => 3,
+                'half-yearly', 'half_yearly', 'half-year' => 6,
+                'yearly', 'year' => 12,
+                default => 1,
+            };
+
+            // Prevent division by zero and ensure at least 1 installment
+            if ($monthsPerInstallment <= 0) {
                 $monthsPerInstallment = 1;
-                break;
-            case 'quarterly':
-                $monthsPerInstallment = 3;
-                break;
-            case 'half-yearly':
-                $monthsPerInstallment = 6;
-                break;
-            case 'yearly':
-                $monthsPerInstallment = 12;
-                break;
-            default:
-                $monthsPerInstallment = 1;
-        }
-
-        //  Total Installments & Interest
-        $installments = (int) ceil($tenureMonths / $monthsPerInstallment);
-        $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-        $emi = round(($loan + $totalInterest) / $installments, 2);
-
-        // EMI Schedule Generation
-        $lowerType = strtolower($interestType);
-
-        if (in_array($lowerType, ['reducing_emi', 'reducing balance', 'reducing_balance'])) {
-            // Reducing Balance EMI (Declining interest each month)
-            $monthlyRate = ($annualRate / 100) / 12;
-            $emi = round(($loan * $monthlyRate * pow(1 + $monthlyRate, $installments)) / (pow(1 + $monthlyRate, $installments) - 1), 2);
-
-            // recompute total interest dynamically
-            $balance = $loan;
-            $totalInterest = 0;
-            $balance = $loan;
-            $totalInterest = 0;
-            $schedule = [];
-
-            for ($i = 1; $i <= $installments; $i++) {
-
-                if ($i == $installments) {
-                    // ⭐ LAST EMI ADJUSTMENT
-                    $interest = round($balance * $monthlyRate, 2);
-                    $principal = round($balance, 2);
-                    $emi_amount = $interest + $principal;
-                    $balance = 0.00;
-
-                } else {
-                    // ⭐ NORMAL EMI
-                    $interest = round($balance * $monthlyRate, 2);
-                    $principal = round($emi - $interest, 2);
-                    $emi_amount = $emi;
-                    //$balance = round($balance - $principal, 2);
-                    $balance = $i == $installments ? 0.00 : round($balance - $principal, 2);
-                
-                }
-
-                // Total interest counter
-                $totalInterest += $interest;
-
-                // SAVE ROW
-                // $schedule[] = [
-                //     'no' => $i,
-                //     'emi_date' => now()->addMonths($i)->format('d/m/Y'),
-                //     'due_date' => now()->addMonths($i)->addDay()->format('d/m/Y'),
-                //     'principal' => $principal,
-                //     'interest' => $interest,
-                //     'charges' => 0,
-                //     'emi' => $emi_amount,
-                //     'balance' => $balance,
-                // ];
             }
 
-            $totalInterest = round($totalInterest, 2);
-        }
-        elseif (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
-        {
-            // Flat Advanced Interest Logic
-            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);  // ✅ Correct total interest
-
-
-            $installments = 1;       // EMI = only 1
-            $emi = $loan;            // EMI = full principal (single shot)
-        }
-        else {
-            // Flat EMI
-            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
-            $emi = round(($loan + $totalInterest) / $installments, 2);
+            $installments = max(1, (int) ceil($tenureMonths / $monthsPerInstallment));
         }
 
+        // FLAT ADVANCED override → always 1 EMI
+        if ($interestType === 'flat_advanced') {
+            $installments = 1;
+        }
 
-        $outstanding = $loan;
+        $schedule = [];
         $startDate = now();
+        $outstanding = $loan;
 
-        for ($i = 1; $i <= $installments; $i++) 
-        {
 
-            $emiDate = $startDate->copy()->addMonths($monthsPerInstallment * $i);
-            //$dueDate = $emiDate->copy()->addDays(10);
+        /* -------------------------------------------------------
+            3. INTEREST CALCULATION
+            IMPORTANT FIX:
+            - Flat EMI, Flat Advanced, NO EMI → Pre-calculated Total Interest
+            - Reducing EMI → Total Interest = SUM(schedule interest)
+        ---------------------------------------------------------*/
+
+        if ($interestType !== 'reducing') {
+            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12), 2);
+        } else {
+            $totalInterest = 0; // Final total interest later calculated from schedule
+        }
+
+
+        /* -------------------------------------------------------
+            4(A). FLAT ADVANCED → ONLY ONE EMI
+        ---------------------------------------------------------*/
+        if ($interestType === 'flat_advanced') {
+
+            if ($payout === 'daily') {
+                $emiDate = $startDate->copy()->addDays($installments);
+            } elseif ($payout === 'weekly') {
+                $emiDate = $startDate->copy()->addDays($installments * 7);
+            } elseif ($payout === 'bi_weekly' || $payout === 'bi-weekly') {
+                $emiDate = $startDate->copy()->addDays($installments * 14);
+            } elseif ($payout === '4_weekly' || $payout === '4-weekly') {
+                $emiDate = $startDate->copy()->addDays($installments * 28);
+            } else {
+                $emiDate = $startDate->copy()->addMonths($monthsPerInstallment);
+            }
+
             $dueDate = $emiDate->copy()->addDay();
 
-            if ($interestType === 'No EMI') 
-            {
-                // No EMI Logic
-                if ($i == $installments) {
-                    $principal = round($loan, 2);
-                } else {
-                    $principal = 0;
-                }
-
-                $interest = null;
-                $charges = null;
-                $emiTotal = null;
-                $balance = null;
-
-            } 
-            else 
-            {
-                // Normal EMI Logic
-                if (in_array($lowerType, ['reducing_emi', 'reducing balance', 'reducing_balance'])) 
-                {
-                    // Reducing EMI Logic
-                    $interest = round($outstanding * $monthlyRate, 2);
-                    $principal = round($emi - $interest, 2);
-                    $charges = 0;
-                    $emiTotal = round($principal + $interest, 2);
-
-                    $outstanding -= $principal;
-                    $balance = $i == $installments ? 0.00 : max(round($outstanding, 2), 0);
-                } 
-                else 
-                {
-                    
-                    if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
-                    {
-                        if ($interestAsEmi === 'Yes') {
-
-                            // Interest As EMI → Interest ko EMIs me divide karenge
-                            $principal = 0;
-                            $interest = round($totalInterest / $installments, 2);
-                            $charges = 0;
-                            $emiTotal = $interest;
-                            $balance = $outstanding;
-
-                        } else {
-
-                            // Default flat advanced behavior → Full principal in one EMI
-                            $principal = round($loan, 2);
-                            $interest = 0;
-                            $charges = 0;
-                            $emiTotal = round($loan, 2);
-                            $balance = 0;
-                        }
-                    }
-                    else 
-                    {
-
-                        // Interest as FIRST EMI Logic
-                        if ($interestAsFirst === 'Yes') {
-
-                            $flatPrincipal = round($loan / $installments, 2);
-                            $flatInterest = round($totalInterest / $installments, 2);
-
-                            if ($i == 1) {
-                                // EMI 1 → Only Interest
-                                $principal = 0;
-                                $interest = $flatInterest;
-                                $emiTotal = $interest;
-                                $balance = $outstanding;
-                            }
-                            elseif ($i == 2) {
-                                // EMI 2 → Half-Adjusted logic
-                                $interest = round($flatInterest * 0.091, 2);  // your sample logic = 417
-                                $principal = round($emi - $interest, 2);
-                                $outstanding -= $principal;
-                                $emiTotal = round($principal + $interest, 2);
-                                $balance = $outstanding;
-                            }
-                            elseif ($i < $installments) {
-                                // EMI 3 to (n-1)
-                                $principal = $flatPrincipal;
-                                $interest = 0;
-                                $emiTotal = $principal;
-                                $outstanding -= $principal;
-                                $balance = $outstanding;
-                            }
-                            else {
-                                // Last EMI - rounding adjustment
-                                $principal = $outstanding;
-                                $interest = 0;
-                                $emiTotal = $principal;
-                                $balance = 0;
-                            }
-
-                            // Push schedule entry & continue loop
-                            $schedule[] = [
-                                'no' => $i,
-                                'emi_date' => $emiDate->format('d/m/Y'),
-                                'due_date' => $dueDate->format('d/m/Y'),
-                                'principal' => $principal,
-                                'interest' => $interest,
-                                'charges' => 0,
-                                'emi' => $emiTotal,
-                                'balance' => $balance,
-                            ];
-
-                            continue;  // VERY IMPORTANT — prevents normal logic from running
-                        }
-
-
-                        // Normal Flat EMI logic
-                        if ($interestAsEmi === 'Yes') {
-                            
-                            // When interest as EMI → Principal must be ZERO
-                            $principal = 0;
-
-                            // Interest will be full EMI (same every installment)
-                            $interest = round($totalInterest / $installments, 2);
-
-                            $charges = 0;
-                            $emiTotal = $interest;
-
-                            // Principal not paid → balance = full loan
-                            $balance = round($outstanding, 2);
-                        }
-                        else {
-
-                            // Default logic (when interest_as_emi = No)
-                            if ($i == $installments) {
-                                $principal = round($outstanding, 2);
-                            } else {
-                                $principal = round($loan / $installments, 2);
-                            }
-
-                            $interest = round($totalInterest / $installments, 2);
-                            $charges = 0;
-                            $emiTotal = round($principal + $interest, 2);
-
-                            $outstanding -= $principal;
-                            $balance = $i == $installments ? 0.00 : max(round($outstanding, 2), 0);
-                        }
-
-                    }
-
-                }
-
-            }
-
             $schedule[] = [
-                'no' => $i,
-                'emi_date' => $emiDate->format('d/m/Y'),
-                'due_date' => $dueDate->format('d/m/Y'),
-                'principal' => $principal,
-                'interest' => $interest,
-                'charges' => $charges,
-                'emi' => $emiTotal,
-                'balance' => $balance,
+                'no' => 1,
+                'emi_date'  => $emiDate->format('d/m/Y'),
+                'due_date'  => $dueDate->format('d/m/Y'),
+                'principal' => round($loan, 2),
+                'interest'  => 0,
+                'charges'   => 0,
+                'emi'       => round($loan, 2),
+                'balance'   => 0
             ];
         }
 
 
-        //  Grand Total (Loan + Interest + Charges)
-        if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) 
-        {
-            // Interest deducted upfront, EMIs = only principal, total payable = loan amount
-            //$totalInterest = 0;
-            $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12.0), 2);
+        /* -------------------------------------------------------
+             4(B). FLAT EMI
+        ---------------------------------------------------------*/
+        elseif ($interestType === 'flat_emi') {
 
-            $totalEmiPaid = $loan;
-            $grandTotalPayable = round($loan + $processingFee + $stampAmount + $insuranceAmount, 2);
+            $principalPerEmi = round($loan / $installments, 2);
+            $interestPerEmi  = round($totalInterest / $installments, 2);
+
+            for ($i = 1; $i <= $installments; $i++) {
+
+                if ($payout === 'DAILY') {
+                    $emiDate = $startDate->copy()->addDays($i);
+                }
+                elseif ($payout === 'WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 7);
+                }
+                elseif ($payout === 'BI_WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 14);
+                }
+                elseif ($payout === '4_WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 28);
+                }
+                else {
+                    $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                }
+
+                $dueDate = $emiDate->copy()->addDay();
+
+                $principal = ($i == $installments) ? $outstanding : $principalPerEmi;
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest' => $interestPerEmi,
+                    'charges' => 0,
+                    'emi' => $principal + $interestPerEmi,
+                    'balance' => max($outstanding - $principal, 0),
+                ];
+
+                $outstanding -= $principal;
+            }
+        }
+
+        /* -------------------------------------------------------
+             4(C). REDUCING EMI — FULLY FIXED 
+        ---------------------------------------------------------*/
+        elseif ($interestType === 'reducing') {
+
+            $monthlyRate = ($annualRate / 12) / 100;
+
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+            for ($i = 1; $i <= $tenureMonths; $i++) {
+
+                $emiDate = $startDate->copy()->addMonths($i);
+                $dueDate = $emiDate->copy()->addDay();
+
+                $interest  = round($outstanding * $monthlyRate, 2);
+                $principal = round($emi - $interest, 2);
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest'  => $interest,
+                    'charges'   => 0,
+                    'emi'       => $emi,
+                    'balance'   => max($outstanding - $principal, 0),
+                ];
+
+                $outstanding -= $principal;
+                $totalInterest += $interest;   //  FIX – total interest recalc
+            }
+
+            $installments = $tenureMonths; //  Reducing EMI always monthly
+        }
+
+        /* -------------------------------------------------------
+    APPLY RATIO LOGIC (Reducing EMI)
+---------------------------------------------------------*/
+if ($isReducingWithRatio) {
+
+    foreach ($schedule as $k => $row) {
+
+        if ($row['no'] <= $ratioFirstEmi) {
+            // First ratio principal calculation
+            $schedule[$k]['principal'] = round(($loan * ($ratioFirstPercentage / 100)) / $ratioFirstEmi, 2);
         } else {
-            // Flat / Reducing EMI = normal interest added
-            $totalEmiPaid = $loan + $totalInterest;
-            $grandTotalPayable = round($loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount, 2);
+            // Remaining principal calculation
+            $remainingMonths = $installments - $ratioFirstEmi;
+            $remainingPercent = 100 - $ratioFirstPercentage;
+            $schedule[$k]['principal'] = round(($loan * ($remainingPercent / 100)) / $remainingMonths, 2);
         }
 
+        // Update EMI and balance
+        $schedule[$k]['emi'] = round($schedule[$k]['principal'] + $schedule[$k]['interest'], 2);
 
-        $disbursedAmount = $loan;
-        if (in_array($lowerType, ['flat advanced interest', 'flat advance interest', 'flat_advanced_interest'])) {
-            $disbursedAmount = $loan - $totalInterest;
+        $loan -= $schedule[$k]['principal'];
+        
+        $schedule[$k]['balance'] = max($loan, 0);
+    }
+}
+
+
+        /* -------------------------------------------------------
+            4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
+        ---------------------------------------------------------*/
+        if ($interestAsEmi === 'Yes') {
+
+            foreach ($schedule as $k => $row) {
+
+                // LAST EMI - full principal
+                if ($row['no'] == $installments) {
+                    $schedule[$k]['principal'] = $loan;
+                    $schedule[$k]['balance'] = 0;
+                } 
+                // All other EMI - principal ZERO
+                else {
+                    $schedule[$k]['principal'] = 0;
+                    $schedule[$k]['balance'] = $loan;
+                }
+
+                // EMI = interest only
+                $schedule[$k]['emi'] = $schedule[$k]['principal'] + $schedule[$k]['interest'];
+            }
         }
 
+        /* -------------------------------------------------------
+            4(F). INTEREST AS FIRST EMI LOGIC
+        ---------------------------------------------------------*/
+        if ($interestAsFirst === 'Yes') {
 
-        //  Return to view
+            // Total interest divided: first EMI full interest, remaining interest spread?
+            $firstEmiInterest = round($totalInterest - ($interestPerEmi ?? 0), 2); 
+            // But flat EMI case me interestPerEmi available hota hai
+
+            foreach ($schedule as $k => $row) {
+
+                // EMI 1 → ONLY INTEREST
+                if ($row['no'] == 1) {
+                    $schedule[$k]['principal'] = 0;
+                    $schedule[$k]['interest'] = $firstEmiInterest;
+                    $schedule[$k]['emi'] = $firstEmiInterest;
+                    $schedule[$k]['balance'] = $loan;
+                }
+
+                // EMI 2 → Original interestPerEmi (ex: 417), principal portion normal
+                elseif ($row['no'] == 2) {
+                    // interest remains normal
+                    // principal is original
+                    $schedule[$k]['emi'] = $schedule[$k]['principal'] + $schedule[$k]['interest'];
+                }
+
+                // EMI ≥ 3 → Interest = 0 (Full principal)
+                elseif ($row['no'] >= 3 && $row['no'] < $installments) {
+                    $schedule[$k]['interest'] = 0;
+
+                    // normal principal
+                    $schedule[$k]['emi'] = $schedule[$k]['principal'];
+                    $schedule[$k]['balance'] = $schedule[$k]['balance'];
+                }
+
+                // LAST EMI → Whatever principal remains
+                if ($row['no'] == $installments) {
+                    $schedule[$k]['interest'] = 0;
+                    $schedule[$k]['principal'] = $schedule[$k]['balance'];
+                    $schedule[$k]['emi'] = $schedule[$k]['principal'];
+                    $schedule[$k]['balance'] = 0;
+                }
+            }
+        }
+        
+        /* -------------------------------------------------------
+             5. TOTAL PAYABLE
+        ---------------------------------------------------------*/
+        $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
+
+        /* --------------------------------------------
+        FINAL FIX — Ensure correct value after mapping
+        ---------------------------------------------*/
+        $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
+
+
+        /* -------------------------------------------------------
+             6. RETURN VIEW
+        ---------------------------------------------------------*/
         return view('vehical.calculator.result', [
             'scheme' => $scheme,
             'is_manual' => $isManual,
@@ -847,29 +584,37 @@ class VehicalController extends Controller
             'tenure_months' => $tenureMonths,
             'payout' => $payout,
             'installments' => $installments,
-            //'interest_type' => ucfirst($interestType),
-            'interest_type' => $interest_type, 
+            'interest_type' => ucfirst(str_replace('_', ' ', $interestType)),
             'annual_rate' => $annualRate,
+            'tenure_display' => $tenureDisplay,
             'disburse_date' => now(),
             'processing_fee' => $processingFee,
-            'processing_incl_gst' => $processingFee,
             'stamp_amount' => $stampAmount,
-            'stamp_incl_gst' => $stampAmount,
             'insurance_amount' => $insuranceAmount,
+
             'schedule' => $schedule,
-            //'total_interest' => $totalInterest,
-            'total_principal' => $loan,
-            //'total_emi_paid' => $loan + $totalInterest,
-            'total_emi_paid' => $totalEmiPaid,
-            'total_interest' => $totalInterest,
-            'grand_total_payable' => $grandTotalPayable,
-            'disbursed_amount' => $disbursedAmount,
+
             'interest_as_emi' => $interestAsEmi,
             'interest_as_first' => $interestAsFirst,
-            'ratio_enabled' => $request->ratio_enabled === 'Yes' ? 'Yes' : 'No',
-            'ratio_first_emi' => $request->ratio_first_emi ?? null,
-            'ratio_first_percentage' => $request->ratio_first_percentage ?? null,
+
+            
+            // 'ratio_enabled' => $request->ratio_enabled === 'Yes' ? 'Yes' : 'No',
+            // 'ratio_first_emi' => $request->ratio_first_emi ?? null,
+            // 'ratio_first_percentage' => $request->ratio_first_percentage ?? null,
+            'ratio_enabled' => $ratioEnabled,
+            'ratio_first_emi' => $ratioFirstEmi,
+            'ratio_first_percentage' => $ratioFirstPercentage,
+
+            'isReducingWithRatio' => $isReducingWithRatio,
+            'ratioFirstEmi' => $ratioFirstEmi,
+            'ratioFirstPercentage' => $ratioFirstPercentage,
+
+            'total_interest' => round($totalInterest, 2),
+            'total_principal' => $loan,
+            'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
+            'grand_total_payable' => round($grandTotalPayable, 2),
         ]);
+
     }
 
 
