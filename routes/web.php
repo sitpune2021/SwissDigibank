@@ -679,7 +679,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
         Route::post('applications/col-process-fee/store/{id}', [GoldLoanController::class, 'storeProcessFee'])
             ->name('gold-loan.col_process_fee.store');
 
-        Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [GoldLoanController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 
     // Show EMI chart in a new tab
