@@ -641,6 +641,12 @@ Route::group(['prefix' => 'gold-loan'], function () {
         // POST - FINAL SAVE
         Route::post('/loan-extension/store/{id}', [GoldLoanAccountController::class, 'storeLoanExtension'])->name('loan.extension.store');
 
+        // link saving account
+        Route::get('account/linksaving/{id}', [GoldLoanAccountController::class, 'linksaving'])
+            ->name('gold-loan.account.linksaving');
+        Route::post('account/linksaving/{id}', [GoldLoanAccountController::class, 'storeSavingAccount'])
+            ->name('gold-loan.account.storeSavingAccount');
+
 
         // show audit trial
         Route::get('account/audit', [GoldLoanAccountController::class, 'audit'])

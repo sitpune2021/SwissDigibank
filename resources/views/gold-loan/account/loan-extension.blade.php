@@ -487,7 +487,7 @@
                             </button>
 
                             <button class="btn-outline uppercase justify-center" type="reset">
-                                <a href="#">BACK</a>
+                                <a href="{{ route('gold-loan.account.show', $goldLoan->id) }}">BACK</a>
                             </button>
                         </div>                       
 
@@ -1024,92 +1024,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
-
-
-
-
-<!-- calculation 12 emi row-->
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-    const calculateBtn = document.getElementById("calculateBtn");
-    const emiBox = document.getElementById("emiCalculationBox");
-    const submitBtn = document.getElementById("submitBtn");
-    const resultDiv = document.getElementById("emiTableResult");
-
-    calculateBtn.addEventListener("click", function() {
-
-        const principal = parseFloat(document.querySelector("input[name='new_principal']").value) || 0;
-        const interestRate = parseFloat(document.querySelector("input[name='interest_rate']").value) || 0;
-        const tenure = parseFloat(document.querySelector("input[name='tenure']").value) || 1;
-        const firstEmiDate = document.querySelector("input[name='first_emi_date']").value;
-
-        if (!principal || !interestRate || !tenure || !firstEmiDate) {
-            alert("⚠️ Please fill all EMI required fields before calculation.");
-            return;
-        }
-
-        const monthlyRate = (interestRate / 100) / 12;
-        const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, tenure) / (Math.pow(1 + monthlyRate, tenure) - 1);
-
-        let balance = principal;
-        let rows = "";
-        let totalInterest = 0;
-
-        for (let i = 1; i <= tenure; i++) {
-            let interest = balance * monthlyRate;
-            let principalPortion = emi - interest;
-            balance -= principalPortion;
-            totalInterest += interest;
-
-            rows += `
-                <tr class="text-center">
-                    <td>${i}</td>
-                    <td>${firstEmiDate}</td>
-                    <td>${principalPortion.toFixed(2)}</td>
-                    <td>${interest.toFixed(2)}</td>
-                    <td>${emi.toFixed(2)}</td>
-                    <td>${balance.toFixed(2)}</td>
-                </tr>
-            `;
-        }
-
-        let html = `
-            <table class="min-w-full text-sm border mt-3">
-                <thead class="bg-secondary/10">
-                    <tr>
-                        <th class="p-2">EMI NO</th>
-                        <th class="p-2">EMI DATE</th>
-                        <th class="p-2">PRINCIPAL</th>
-                        <th class="p-2">INTEREST</th>
-                        <th class="p-2">TOTAL EMI</th>
-                        <th class="p-2">BALANCE</th>
-                    </tr>
-                </thead>
-                <tbody>${rows}</tbody>
-                <tfoot class="bg-slate-100 font-semibold text-center">
-                    <tr>
-                        <td colspan="2">TOTAL</td>
-                        <td>${principal.toFixed(2)}</td>
-                        <td>${totalInterest.toFixed(2)}</td>
-                        <td>${(emi * tenure).toFixed(2)}</td>
-                        <td>-</td>
-                    </tr>
-                </tfoot>
-            </table>
-        `;
-
-        resultDiv.innerHTML = html;
-        emiBox.classList.remove("hidden");
-        submitBtn.classList.remove("hidden");
-
-        calculateBtn.disabled = true;
-        calculateBtn.innerText = "Calculated ✔";
-    });
-});
-
-</script> -->
 
 
 @endsection

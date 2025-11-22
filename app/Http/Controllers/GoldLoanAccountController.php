@@ -1006,6 +1006,80 @@ class GoldLoanAccountController extends Controller
         }
     }
 
+    public function linksaving($id)
+    {
+        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
+            ->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        // Fetch all saving accounts for the same member
+        $savingAccounts = DB::table('accounts')
+            ->where('member_id', $goldLoan->member_id)
+            ->where('account_type', 'SAVING')
+            ->pluck('account_no', 'id'); // ['id' => 'account_no']
+
+
+        // Total Deposit
+            $totalDeposit = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+            
+            // // Total from Other Charges (only paid)
+            $otherChargesDeposit = DB::table('gold_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // // FINAL DEPOSIT = Transactions + Other Charges
+            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+
+            // Latest total_payable (from last transaction)
+            $totalPayable = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->orderByDesc('id')
+                ->value('total_payable') ?? $goldLoan->loan_amount;
+
+            // 1. Total Transaction Deposit
+            $transactionDeposit = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+
+            // 2. Total Paid Other Charges
+            $otherChargesDeposit = DB::table('gold_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // 3. FINAL Total Deposit
+            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+
+            // 4. FINAL Correct Current Debt
+            $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('gold-loan.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan','currentDebt', 'banks', 'savingAccounts'));
+    }
+
+    public function storeSavingAccount(Request $request, $loanId)
+    {
+        $request->validate([
+            'saving_account_id' => 'required|exists:accounts,id',
+        ]);
+
+        $loan = LoanApplication::findOrFail($loanId);
+
+        // Update selected saving account
+        DB::table('accounts')
+            ->where('id', $request->saving_account_id)
+            ->update([
+                'loan_type'   => 'gold loan', // this page का loan category
+                'loan_number' => $loan->id, // loan_applications का id
+            ]);
+
+        return redirect()->route('gold-loan.account.show', $loanId)
+        ->with('success', 'Saving Account Linked Successfully!');
+    }
+
     public function goldLoanPayEmi($id)
     {
         $goldLoan = LoanApplication::with([
