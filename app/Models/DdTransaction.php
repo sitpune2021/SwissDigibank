@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DdTransaction extends Model
 {
-        use SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'account_id',
@@ -31,7 +31,12 @@ class DdTransaction extends Model
         'member_photo',
         'amount',
         'type',
-        
+        'is_linked',
+        'transaction_type',
+        'interest_amount',
+        'dds_account_id',
+        'amount'
+
     ];
 
     public function ddsAccount()
