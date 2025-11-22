@@ -216,8 +216,9 @@ class ShareHoldingController extends Controller
             $decryptedId = base64_decode($id);
             $shareholding = Shareholding::findOrFail($decryptedId);
             $route = route('shareholding.update', $decryptedId);
-            $formFields = config('share_form');
-            $method = 'PUT';
+$formFields = array_filter(config('share_form'), function ($item) {
+                return is_array($item) && isset($item['name']);
+            });            $method = 'PUT';
             $dynamicOptions = [
                 'promoter' => Promotor::pluck('first_name', 'id')
             ];

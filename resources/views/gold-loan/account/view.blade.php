@@ -112,6 +112,26 @@ $settingLabel = '';
     }
 </style>
 
+    @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
+    @endif
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -127,18 +147,51 @@ $settingLabel = '';
         <a href="{{route('gold-loan.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase px-2 py-2 rounded-10 ">
             View Transaction
         </a>
-        <a href="{{route('gold-loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            Pay Emi
-        </a>
-        <a href="{{route('gold-loan.account.pay',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-            Pay
-        </a>
-        <a href="" class="btn-error uppercase px-2 py-2 rounded-10 ">
+        @if(
+                strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi'
+                
+            )
+            <a href="{{route('gold-loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+                Pay Emi
+            </a>
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
+                <a href="{{ route('gold-loan.account.extension',$goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
+                    LOAN EXTENSION
+                </a>
+            @endif
+           
+        @endif
+
+        @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
+            <a href="" class="btn-primary  uppercase px-2 py-2 rounded-10 ">
+                Re-Update Emi Chart
+            </a>
+        @endif
+
+        @if(in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
+            <a href="" class="btn-primary uppercase px-2 py-2 rounded-10">
+                RE-SCHEDULE EMIs
+            </a>
+        @endif
+
+        @if(
+                strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
+                strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi'
+            )
+            <a href="{{ route('gold-loan.account.pay', $goldLoan->id) }}"
+            class="btn-primary uppercase px-2 py-2 rounded-10">
+                Pay
+            </a>
+        @endif  
+
+        <a href="{{ route('gold-loan.account.fourcloser', $goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
             Fore CloseLoan
         </a>
-        <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+        
+        <a href="{{ route('gold-loan.account.linksaving', $goldLoan->id) }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             link saving account(Auto Debit)
         </a>
+
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary uppercase px-2 py-2 rounded-10 flex items-center gap-2"
@@ -166,12 +219,19 @@ $settingLabel = '';
                 </div>
             </div>
         </div>
-        <a href="" class="btn-primary  uppercase px-2 py-2 rounded-10 ">
-            Re-Update Emi Chart
-        </a>
-        <a href="" class="btn-error  uppercase px-2 py-2 rounded-10 ">
-            Remove Account
-        </a>
+        
+        <form id="remove-account-form-{{ $goldLoan->id }}" action="{{ route('goldloan.remove', $goldLoan->id) }}" method="POST" class="inline">
+            @csrf
+            {{-- Optional: add a hidden input to indicate reason or confirm flag --}}
+            <input type="hidden" name="confirm" value="1">
+            <button
+                type="button"
+                onclick="confirmRemove({{ $goldLoan->id }})"
+                class="btn-error uppercase px-2 py-2 rounded-10">
+                Remove Account
+            </button>
+        </form>
+
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
@@ -224,8 +284,10 @@ $settingLabel = '';
                     </a>
                 </div>
             </div>
+
         </div>
-        <a href="" class="btn-primary uppercase  px-2 py-2 rounded-10 ">
+
+        <a href="{{ route('gold-loan.account.audit-trail') }}" class="btn-primary uppercase  px-2 py-2 rounded-10 ">
             Show audit trail
         </a>
 
@@ -271,11 +333,11 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Account No.</td>
-                            <td class="px-4 py-2">{{$goldLoan->id ?? 'N/A'}}</td>
+                            <td class="px-4 py-2">{{ str_pad($goldLoan->id ?? 0, 6, '0', STR_PAD_LEFT) }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2 text-primary">00592</td>
+                            <td class="px-4 py-2 text-primary">{{$goldLoan->id ?? 'N/A'}}</td>
                         </tr>
                         @php
                         use Carbon\Carbon;
@@ -321,15 +383,15 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Total Deposit</td>
-                            <td class="px-4 py-2">₹ {{$goldLoan->goldLoanTransactions->sum('amount_collected') ?? 'N/A'}}</td>
+                            <td class="px-4 py-2">₹ {{ number_format($totalDeposit, 2) }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2"> Current Debt</td>
-                            <td class="px-4 py-2">{{$lastCurrentDebt ?? 'N/A'}}</td>
+                            <td class="font-semibold px-4 py-2">Current Debt</td>
+                            <td class="px-4 py-2">₹ {{ number_format($currentDebt, 2) }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Close Date</td>
-                            <td class="px-4 py-2"></td>
+                            <td class="px-4 py-2">{{ $closeDate ?? '---' }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Interest Rate</td>
@@ -436,13 +498,13 @@ $settingLabel = '';
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap  text-sm px-4 py-2">C. DEBT</td>
                                     <td class="px-4 py-2 ">
-                                        <span class="font-bold">0.00</span>
+                                        <span class="font-bold">{{ number_format($currentDebt, 2) }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap text-sm px-4 py-2">T. DEPOSIT</td>
                                     <td class="px-4 py-2 ">
-                                        <span class="font-bold">8,333.00</span>
+                                        <span class="font-bold">{{ number_format($totalDeposit, 2) }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -570,8 +632,6 @@ $settingLabel = '';
 
                 <!--Branch-->
                 <form action="" method="" class="mt-2 px-3">
-
-
                     <label for="branch" class="block mb-2 font-semibold">Overdue Interest (%) </label>
                     <div class="col-sm-7">
                         <div class="flex items-center gap-2">
@@ -593,7 +653,10 @@ $settingLabel = '';
 
                     </div>
                 </form>
+
             </div>
+
+
             <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
                 <div class="p-4" id="SecurityDeposits">
                     <div class="overflow-x-auto text-center">
@@ -615,25 +678,25 @@ $settingLabel = '';
                                 <tbody>
                                     <tr class="text-primary border-b">
                                         <th class="px-4 py-2 text-left">PAID</th>
-                                        <td class="px-4 py-2">8333.0</td>
-                                        <td class="px-4 py-2">8333.0</td>
-                                        <td class="px-4 py-2">20000.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['net_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['emi_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['emi_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['emi_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['overdue_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['other_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['advance'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['discount'] }}</td>
                                     </tr>
                                     <tr class="text-error">
                                         <th class="px-4 py-2 text-left">DUE</th>
-                                        <td class="px-4 py-2">91667.0</td>
-                                        <td class="px-4 py-2">8333.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">0.0</td>
-                                        <td class="px-4 py-2">-</td>
-                                        <td class="px-4 py-2">-</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['net_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['emi_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['emi_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['emi_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['overdue_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['other_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['advance'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['discount'] }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -641,6 +704,8 @@ $settingLabel = '';
                     </div>
                 </div>
             </div>
+
+
             <!-- Gold Loan Scheme Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
@@ -771,6 +836,7 @@ $settingLabel = '';
                         </button>
                     </div>
                 </div>
+
                 <!-- Body -->
                 <div class="overflow-x-auto mt-2 " id="Guarantor">
                     <form action="" class="mt-1    ">
@@ -979,11 +1045,13 @@ $settingLabel = '';
     <div class="w-full box mt-5">
         <!-- Tab Navigation -->
         <ul class="flex border-b overflow-x-auto text-sm font-medium text-gray-600">
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
             <li>
                 <button class="tab-btn px-4 py-2 border-b-2 uppercase text-primary" data-tab="tab1">
                     Repayment Schedule (Installments)
                 </button>
             </li>
+            @endif
             <li>
                 <button
                     class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
@@ -998,9 +1066,21 @@ $settingLabel = '';
                     Security Deposit
                 </button>
             </li>
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
+                strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest'
+            )
+            <li>
+                <button
+                    class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
+                    data-tab="tab4">
+                    EIR Payout Chart
+                </button>
+            </li>
+            @endif
         </ul>
 
         <div class="tab-content p-4">
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
             <div id="tab1" class="tab-pane block">
                 <div class="overflow-x-auto">
                     <input type="hidden" id="loan_id" value="{{ $goldLoan->id }}">
@@ -1088,6 +1168,7 @@ $settingLabel = '';
 
                 </div>
             </div>
+            @endif
 
             <div id="tab2" class="tab-pane hidden">
                 <div class="overflow-x-auto">
@@ -1102,13 +1183,25 @@ $settingLabel = '';
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="text-start p-2">26/09/2025 12:56</td>
-                                <td class="text-start p-2">Debit</td>
-                                <td class="text-start p-2">System</td>
-                                <td class="text-start p-2">0.00</td>
-                                <td class="text-start p-2">Approved</td>
-                            </tr>
+                            @forelse($currentStatement as $row)
+                                <tr class="border-b">
+                                    <td class="p-2">{{ Carbon::parse($row->date)->format('d/m/Y h:i A') }}</td>
+                                    <td class="p-2">{{ $row->type }}</td>
+                                    <td class="p-2">-</td>
+                                    <td class="p-2">₹ {{ number_format($row->amount, 2) }}</td>
+
+                                    {{-- Status Color --}}
+                                    <td class="p-2">
+                                        <span class="@if($row->status == 'PAID') text-green-600 font-semibold @else text-red-600 font-semibold @endif">
+                                            {{ ucfirst($row->status) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-gray-500 p-3">No Records Found</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -1133,23 +1226,94 @@ $settingLabel = '';
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-b">
-                                <td class=" p-2">Gold jewelry</td>
-                                <td class=" p-2">Gold</td>
-                                <td class=" p-2">5</td>
-                                <td class=" p-2">5,000.00</td>
-                                <td class=" p-2">50.0</td>
-                                <td class=" p-2">50.0</td>
-                                <td class=" p-2">100%</td>
-                                <td class=" p-2">50.0</td>
-                                <td class=" p-2">250,000.00</td>
-                                <td class=" p-2"></td>
-                                <td class=" p-2">Released</td>
-                            </tr>
+                            @forelse ($ornaments as $orn)
+                                <tr class="border-b">
+                                    <td class="p-2">{{ $orn->item_type }}</td>
+                                    <td class="p-2">{{ $orn->item_name }}</td>
+                                    <td class="p-2">{{ $orn->no_of_items }}</td>
+                                    <td class="p-2">{{ $orn->value_per_gram }}</td>
+                                    <td class="p-2">{{ $orn->gross_weight }}</td>
+                                    <td class="p-2">{{ $orn->net_weight }}</td>
+                                    <td class="p-2">{{ $orn->tunch }}%</td>
+                                    <td class="p-2">{{ $orn->fine_weight }}</td>
+                                    <td class="p-2">{{ $orn->total_value }}</td>
+
+                                    <td class="p-2">
+                                    -
+                                    </td>
+
+                                    <td class="p-2">{{ $orn->status == 1 ? 'Mortgage' : 'Release' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="11" class="text-center p-3 text-gray-500">
+                                        No ornaments added.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
+                strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest'
+            )
+            <div id="tab4" class="tab-pane hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse whitespace-nowrap text-sm">
+
+                        {{-- HEADER --}}
+                        <thead>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="p-2 border">EMI No.</th>
+                                <th class="p-2 border">EMI DATE</th>
+                                <th class="p-2 border">EMI DUE DATE</th>
+                                <th class="p-2 border">EIR PRINCIPAL</th>
+                                <th class="p-2 border">EIR INTEREST</th>
+                                <th class="p-2 border">EIR OTHER CHRG.</th>
+                                <th class="p-2 border">EIR EMI</th>
+                                <th class="p-2 border">EIR BAL. PRINCIPAL</th>
+                                <th class="p-2 border">REMAINING AMT</th>
+                            </tr>
+                        </thead>
+
+                        {{-- FIRST ROW — LOAN AMOUNT --}}
+                        <tr class="bg-yellow-100 font-semibold">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td colspan="9" class="p-2 border text-left">
+                                {{ number_format($goldLoan->loan_amount, 2) }}
+                            </td>
+                        </tr>
+
+                        {{-- EMI ROWS --}}
+                        <tbody>
+                            @foreach($eirSchedule as $row)
+                                <tr>
+                                    <td class="p-2 border">{{ $row['emi_no'] }}</td>
+                                    <td class="p-2 border">{{ $row['emi_date'] }}</td>
+                                    <td class="p-2 border">{{ $row['emi_due_date'] }}</td>
+                                    <td class="p-2 border">{{ $row['principal'] }}</td>
+                                    <td class="p-2 border">{{ $row['interest'] }}</td>
+                                    <td class="p-2 border">{{ $row['other_charges'] }}</td>
+                                    <td class="p-2 border">{{ $row['emi_amount'] }}</td>
+                                    <td class="p-2 border">{{ $row['balance_principal'] }}</td>
+                                    <td class="p-2 border">{{ $row['remaining_amount'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            @endif
+
         </div>
     </div>
 </div>
@@ -1168,6 +1332,7 @@ $settingLabel = '';
     });
 </script>
 
+<!-- box minimize Code -->
 <script>
     const tabBtns = document.querySelectorAll(".tab-btn");
     const tabPanes = document.querySelectorAll(".tab-pane");
@@ -1193,7 +1358,7 @@ $settingLabel = '';
     }
 </script>
 
-
+<!-- process button -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -1291,8 +1456,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
-
+<!-- remove account -->
+<script>
+function confirmRemove(id) {
+    if (!confirm('Are you sure you want to remove this account? This will update loan status to 0 and delete related transactions and other charges.')) {
+        return;
+    }
+    document.getElementById('remove-account-form-' + id).submit();
+}
+</script>
 
 
 

@@ -177,28 +177,60 @@ class GoldLoanController extends Controller
 
     public function calculateResult(Request $request)
     {
+
+         // Store raw user tenure selection for display (before conversion)
+        $rawTenureValue = $request->tenure_months;
+        $rawTenureType = $request->tenure_type;
+
+        
         /* -------------------------------------------------------
             1. BASIC INPUT HANDLING
         ---------------------------------------------------------*/
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
-        //  ADD HERE (Correct Location)
-            $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
-            $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
+       //  ADD HERE (Correct Location)
+        $interestType = $request->interest_type;
+        $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
+        $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
         //  END
+
+        //  EMI Ratio Handling
+        $ratioEnabled = $request->has('ratio_enabled') ? 'Yes' : 'No';
+        $ratioFirstEmi = $request->ratio_first_emi ?? null;
+        $ratioFirstPercentage = $request->ratio_first_percentage ?? null;
+
+        $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
+
         
 
         if ($isManual) {
 
             $request->validate([
                 'loan_amount' => 'required|numeric|min:1',
-                'max_tenure' => 'required|integer|min:1',
+                'max_tenure' => 'required|numeric|min:1',
+                'tenure_type' => 'required|in:DAYS,WEEKS,MONTHS',
                 'manual_interest_rate' => 'required|numeric|min:0',
-                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly'
+                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly,WEEKLY,BI_WEEKLY,4_WEEKLY,DAILY'
             ]);
 
             $loan         = (float) $request->loan_amount;
             $tenureMonths = (int) $request->max_tenure;
+            // Convert Tenure (Days / Weeks / Months)
+            $tenureType = $request->tenure_type ?? 'MONTHS';
+            if ($tenureType === 'DAYS') {
+                $tenureMonths = round($tenureMonths / 30, 2);
+            } elseif ($tenureType === 'WEEKS') {
+                $tenureMonths = round(($tenureMonths * 7) / 30, 2);
+            }
+
+            // Create Display Format (Human Friendly)
+            $tenureDisplay = match($rawTenureType) {
+                'DAYS' => $rawTenureValue . ' Days',
+                'WEEKS' => $rawTenureValue . ' Weeks',
+                'MONTHS' => $rawTenureValue . ' Months',
+                default => $rawTenureValue . ' Months'
+            };
+
             $annualRate   = (float) $request->manual_interest_rate;
             $payout       = $request->payout;
 
@@ -224,14 +256,32 @@ class GoldLoanController extends Controller
             $request->validate([
                 'scheme_id' => 'required|exists:gold_loan_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
-                'tenure_months' => 'required|integer|min:1',
-                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly'
+                'tenure_months' => 'required|numeric|min:1',
+                'tenure_type' => 'required|in:DAYS,WEEKS,MONTHS',
+                'payout' => 'required|in:monthly,quarterly,half-yearly,yearly,WEEKLY,BI_WEEKLY,4_WEEKLY,DAILY'
             ]);
 
             $scheme = GoldLoanScheme::findOrFail($request->scheme_id);
 
             $loan         = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
+            // Convert Tenure (Days / Weeks / Months)
+            $tenureType = $request->tenure_type ?? 'MONTHS';
+
+            if ($tenureType === 'DAYS') {
+                $tenureMonths = round($tenureMonths / 30, 2);
+            } elseif ($tenureType === 'WEEKS') {
+                $tenureMonths = round(($tenureMonths * 7) / 30, 2);
+            }
+
+            // Create Display Format (Human Friendly)
+            $tenureDisplay = match($rawTenureType) {
+                'DAYS' => $rawTenureValue . ' Days',
+                'WEEKS' => $rawTenureValue . ' Weeks',
+                'MONTHS' => $rawTenureValue . ' Months',
+                default => $rawTenureValue . ' Months'
+            };
+
             $annualRate   = (float) $scheme->annual_interest_rate;
             $payout       = $request->payout;
 
@@ -254,20 +304,53 @@ class GoldLoanController extends Controller
         /* -------------------------------------------------------
             2. INSTALLMENT COUNT
         ---------------------------------------------------------*/
-        $monthsPerInstallment = match ($payout) {
-            'monthly' => 1,
-            'quarterly' => 3,
-            'half-yearly' => 6,
-            'yearly' => 12,
-            default => 1,
-        };
 
-        //$installments = ceil($tenureMonths / $monthsPerInstallment);
-        // FLAT ADVANCED → Only 1 EMI
+        $monthsPerInstallment = 1;
+        // Normalize payout so comparisons are consistent
+        $payout = strtolower($payout ?? 'monthly');
+
+        // Convert common alternate tokens to normalized keys
+        // (if your JS sends BI_WEEKLY or 4_WEEKLY in uppercase, they will be normalized here)
+        $payout = str_replace(['-', ' '], '_', $payout); // e.g. "half-yearly" -> "half_yearly"
+        $payout = str_replace('half_yearly', 'half-yearly', $payout); // keep original hyphen form for later match
+
+        // Ensure tenureMonths is numeric (months value). It may be fractional when converted from weeks/days.
+        $tenureMonths = (float) $tenureMonths;
+
+        // Calculate installments robustly for every payout type
+        if (in_array($payout, ['daily', 'daily'])) {
+            // approximate 30 days per month
+            $installments = max(1, (int) ceil($tenureMonths * 30));
+        } elseif (in_array($payout, ['weekly', 'weekly'])) {
+            // approx 4 weeks per month
+            $installments = max(1, (int) ceil($tenureMonths * 4));
+        } elseif (in_array($payout, ['bi_weekly', 'bi-weekly', 'bi_weekly'])) {
+            // 2 installments per month
+            $installments = max(1, (int) ceil($tenureMonths * 2));
+        } elseif (in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
+            // every 4 weeks -> approx 1 per month
+            $installments = max(1, (int) ceil($tenureMonths * 1));
+        } else {
+            // month-based schedules: monthly, quarterly, half-yearly, yearly
+            $monthsPerInstallment = match ($payout) {
+                'monthly', 'month' => 1,
+                'quarterly', 'quarter' => 3,
+                'half-yearly', 'half_yearly', 'half-year' => 6,
+                'yearly', 'year' => 12,
+                default => 1,
+            };
+
+            // Prevent division by zero and ensure at least 1 installment
+            if ($monthsPerInstallment <= 0) {
+                $monthsPerInstallment = 1;
+            }
+
+            $installments = max(1, (int) ceil($tenureMonths / $monthsPerInstallment));
+        }
+
+        // FLAT ADVANCED override → always 1 EMI
         if ($interestType === 'flat_advanced') {
             $installments = 1;
-        } else {
-            $installments = ceil($tenureMonths / $monthsPerInstallment);
         }
 
         $schedule = [];
@@ -294,7 +377,18 @@ class GoldLoanController extends Controller
         ---------------------------------------------------------*/
         if ($interestType === 'flat_advanced') {
 
-            $emiDate = $startDate->copy()->addMonths($monthsPerInstallment);
+            if ($payout === 'daily') {
+                $emiDate = $startDate->copy()->addDays($installments);
+            } elseif ($payout === 'weekly') {
+                $emiDate = $startDate->copy()->addDays($installments * 7);
+            } elseif ($payout === 'bi_weekly' || $payout === 'bi-weekly') {
+                $emiDate = $startDate->copy()->addDays($installments * 14);
+            } elseif ($payout === '4_weekly' || $payout === '4-weekly') {
+                $emiDate = $startDate->copy()->addDays($installments * 28);
+            } else {
+                $emiDate = $startDate->copy()->addMonths($monthsPerInstallment);
+            }
+
             $dueDate = $emiDate->copy()->addDay();
 
             $schedule[] = [
@@ -320,7 +414,22 @@ class GoldLoanController extends Controller
 
             for ($i = 1; $i <= $installments; $i++) {
 
-                $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                if ($payout === 'DAILY') {
+                    $emiDate = $startDate->copy()->addDays($i);
+                }
+                elseif ($payout === 'WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 7);
+                }
+                elseif ($payout === 'BI_WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 14);
+                }
+                elseif ($payout === '4_WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 28);
+                }
+                else {
+                    $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                }
+
                 $dueDate = $emiDate->copy()->addDay();
 
                 $principal = ($i == $installments) ? $outstanding : $principalPerEmi;
@@ -384,7 +493,22 @@ class GoldLoanController extends Controller
 
             for ($i = 1; $i <= $installments; $i++) {
 
-                $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                if ($payout === 'DAILY') {
+                    $emiDate = $startDate->copy()->addDays($i);
+                }
+                elseif ($payout === 'WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 7);
+                }
+                elseif ($payout === 'BI_WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 14);
+                }
+                elseif ($payout === '4_WEEKLY') {
+                    $emiDate = $startDate->copy()->addDays($i * 28);
+                }
+                else {
+                    $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                }
+
                 $dueDate = $emiDate->copy()->addDay();
 
                 $schedule[] = [
@@ -487,7 +611,7 @@ class GoldLoanController extends Controller
             'installments' => $installments,
             'interest_type' => ucfirst(str_replace('_', ' ', $interestType)),
             'annual_rate' => $annualRate,
-
+            'tenure_display' => $tenureDisplay,
             'disburse_date' => now(),
             'processing_fee' => $processingFee,
             'stamp_amount' => $stampAmount,
@@ -498,10 +622,13 @@ class GoldLoanController extends Controller
             'interest_as_emi' => $interestAsEmi,
             'interest_as_first' => $interestAsFirst,
 
-            //'ratio_enabled' => $request->has('ratio_enabled') ? 'Yes' : 'No',
-            'ratio_enabled' => $request->ratio_enabled === 'Yes' ? 'Yes' : 'No',
-            'ratio_first_emi' => $request->ratio_first_emi ?? null,
-            'ratio_first_percentage' => $request->ratio_first_percentage ?? null,
+            'ratio_enabled' => $ratioEnabled,
+            'ratio_first_emi' => $ratioFirstEmi,
+            'ratio_first_percentage' => $ratioFirstPercentage,
+
+            'isReducingWithRatio' => $isReducingWithRatio,
+            'ratioFirstEmi' => $ratioFirstEmi,
+            'ratioFirstPercentage' => $ratioFirstPercentage,
 
 
             'total_interest' => round($totalInterest, 2),

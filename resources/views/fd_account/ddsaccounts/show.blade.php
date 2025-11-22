@@ -145,33 +145,32 @@
                 <div class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg  z-50">
                     <ul class="py-2 text-gray-700">
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
-                                Credit Interest
+                            <a href="{{ route('dd.change.account.info', $ddaccount->id) }}"
+                                class="block px-4 py-2
+                                hover:bg-teal-50 hover:text-teal-700">
+                                CHANGE ACCOUNT INFO
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('dds-accounts.nominee', $ddaccount->id) }}"
+                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">ADD NOMINEE</a>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('ddChange.minor.info', $ddaccount->id) }}"
+                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
+                                ADD MINOR
                             </a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
-                                Change Account Type
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('dds-accounts.nominee', ($ddaccount->id)) }}"
-                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Add Nominee</a>
+                                FORE CLOSE DD
                             </a>
                         </li>
                         <li>
                             <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
-                                Upgrade Account
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
-                                Close Account
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
-                                Remove Account
+                                REMOVE ACCOUNT
                             </a>
                         </li>
                     </ul>
@@ -281,7 +280,9 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
-                                <td class="px-4 py-2">{{ number_format($interestCredited, 2) }}</td>
+                                <td class="px-4 py-2">
+                                    {{ optional($transactions->last())->interest_amount ?? '0.00' }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted (E) </td>
@@ -463,7 +464,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                                                                                            </labels> -->
+                                                                                                                                                            </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->

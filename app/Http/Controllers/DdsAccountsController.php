@@ -1331,7 +1331,6 @@ class DdsAccountsController extends Controller
     public function createCreditInterest($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
-        // dd($ddaccount);
         $savingAccounts = Account::where('member_id', $ddaccount->member_id)
             ->where('account_type', 'Saving')
             ->where('account_status', 1)
@@ -1339,6 +1338,225 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
+    // public function storeCreditInterest(Request $request, $id)
+    // {
+    //     Log::info("DDS Interest Transaction Validation Started", [
+    //         'dds_account_id' => $id,
+    //         'request_data' => $request->all(),
+    //     ]);
+
+    //     $request->validate([
+    //         'transaction_date' => 'required|date',
+    //         'transaction_type' => 'required|in:credit,reverse',
+    //         'interest_amount'  => 'required|numeric|min:1',
+    //         'remarks'          => 'nullable|string|max:255',
+    //     ]);
+
+    //     $ddaccount = DdsAccount::findOrFail($id);
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         // Current balance
+    //         $oldBalance = $ddaccount->balance ?? 0;
+
+    //         // Determine addition or subtraction
+    //         $interestAmount = $request->transaction_type === 'credit'
+    //             ? $request->interest_amount
+    //             : -$request->interest_amount;
+
+    //         // New balance
+    //         $newBalance = $oldBalance + $interestAmount;
+
+    //         Log::info("DDS Interest Calculation", [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'transaction_type' => $request->transaction_type,
+    //             'old_balance' => $oldBalance,
+    //             'interest_amount' => $interestAmount,
+    //             'new_balance' => $newBalance,
+    //         ]);
+    //         $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
+
+    //         // Save transaction
+    //         $transaction = DdTransaction::create([
+    //             'dds_account_id'     => $ddaccount->id, // <-- correct column name
+    //             'transaction_date'  => $transactionDate,
+    //             'transaction_type'  => $request->transaction_type,
+    //             'interest_amount'   => $interestAmount,
+    //             'balance_available' => $newBalance,
+    //             'remarks'           => $request->remarks,
+    //             'amount'             => $request->interest_amount, // <-- Add this
+
+    //         ]);
+
+    //         Log::info("DDS Interest Transaction Saved", [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'transaction_id' => $transaction->id,
+    //             'transaction_data' => $transaction->toArray(),
+    //         ]);
+
+    //         // Update account balance
+    //         $ddaccount->update(['balance' => $newBalance]);
+
+    //         Log::info("DDS Account Balance Updated", [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'old_balance' => $oldBalance,
+    //             'new_balance' => $newBalance,
+    //         ]);
+
+    //         DB::commit();
+
+    //         Log::info("DDS Interest Transaction Completed", [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'transaction_id' => $transaction->id,
+    //         ]);
+
+    //         return redirect()->route('ddsaccounts.show', $ddaccount->id)
+    //             ->with('success', 'Interest transaction updated successfully.');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+
+    //         Log::error("DDS Interest Transaction FAILED", [
+    //             'dds_account_id' => $id,
+    //             'error_message' => $e->getMessage(),
+    //             'line' => $e->getLine(),
+    //             'file' => $e->getFile(),
+    //         ]);
+
+    //         return back()->with('error', 'Something went wrong. Try again.');
+    //     }
+    // }
+    // public function storeCreditInterest(Request $request, $id)
+    // {
+    //     Log::info("DDS Interest Transaction Validation Started", [
+    //         'dds_account_id' => $id,
+    //         'request_data' => $request->all(),
+    //     ]);
+
+    //     $request->validate([
+    //         'transaction_date' => 'required|date',
+    //         'transaction_type' => 'required|in:credit,reverse',
+    //         'interest_amount'  => 'required|numeric|min:1',
+    //         'remarks'          => 'nullable|string|max:255',
+    //     ]);
+
+    //     $ddaccount = DdsAccount::findOrFail($id);
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         $oldBalance = $ddaccount->balance ?? 0;
+    //         $interestAmount = $request->interest_amount;
+
+    //         // Credit or reverse logic
+    //         if ($request->transaction_type === 'credit') {
+    //             $balanceAvailable = $oldBalance - $interestAmount; // deduct from balance
+    //             $amountReceived = $oldBalance + $interestAmount;   // total received
+    //             $interestAmountToStore = -$interestAmount;         // store negative
+    //         } else { // reverse
+    //             $balanceAvailable = $oldBalance + $interestAmount; // add to balance
+    //             $amountReceived = $oldBalance + $interestAmount;   // total received
+    //             $interestAmountToStore = $interestAmount;          // store positive
+    //         }
+
+    //         $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+    //             ->format('Y-m-d');
+
+    //         $transaction = DdTransaction::create([
+    //             'dds_account_id'     => $ddaccount->id,
+    //             'transaction_date'   => $transactionDate,
+    //             'transaction_type'   => $request->transaction_type,
+    //             'amount'             => $amountReceived,        // Amount Received
+    //             'interest_amount'    => $interestAmountToStore, // stored interest
+    //             'balance_available'  => $balanceAvailable,     // balance after deduction/add
+    //             'remarks'            => $request->remarks,
+    //         ]);
+
+    //         // Update account balance
+    //         $ddaccount->update(['balance' => $balanceAvailable]);
+
+    //         DB::commit();
+
+    //         return redirect()->route('ddsaccounts.show', $ddaccount->id)
+    //             ->with('success', 'Interest transaction updated successfully.');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         Log::error("DDS Interest Transaction FAILED", [
+    //             'dds_account_id' => $id,
+    //             'error_message' => $e->getMessage(),
+    //             'line' => $e->getLine(),
+    //             'file' => $e->getFile(),
+    //         ]);
+
+    //         return back()->with('error', 'Something went wrong. Try again.');
+    //     }
+    // }
+    public function storeCreditInterest(Request $request, $id)
+    {
+        Log::info("DDS Interest Transaction Validation Started", [
+            'dds_account_id' => $id,
+            'request_data' => $request->all(),
+        ]);
+
+        $request->validate([
+            'transaction_date' => 'required|date',
+            'transaction_type' => 'required|in:credit,reverse',
+            'interest_amount'  => 'required|numeric|min:1',
+            'remarks'          => 'nullable|string|max:255',
+        ]);
+
+        $ddaccount = DdsAccount::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+            $oldBalance = $ddaccount->balance ?? 0;
+            $interestAmount = $request->interest_amount;
+
+            // Opposite logic
+            if ($request->transaction_type === 'credit') {
+                $balanceAvailable = $oldBalance + $interestAmount; // add to balance
+                $amountReceived = $oldBalance + $interestAmount;   // total received
+                $interestAmountToStore = $interestAmount;          // store positive
+            } else { // reverse
+                $balanceAvailable = $oldBalance - $interestAmount; // deduct from balance
+                $amountReceived = $oldBalance + $interestAmount;   // total received
+                $interestAmountToStore = -$interestAmount;         // store negative
+            }
+
+            $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+                ->format('Y-m-d');
+
+            $transaction = DdTransaction::create([
+                'dds_account_id'     => $ddaccount->id,
+                'transaction_date'   => $transactionDate,
+                'transaction_type'   => $request->transaction_type,
+                'amount'             => $amountReceived,        // Amount Received
+                'interest_amount'    => $interestAmountToStore, // stored interest
+                'balance_available'  => $balanceAvailable,     // updated balance
+                'remarks'            => $request->remarks,
+            ]);
+
+            // Update account balance
+            $ddaccount->update(['balance' => $balanceAvailable]);
+
+            DB::commit();
+
+            return redirect()->route('ddsaccounts.show', $ddaccount->id)
+                ->with('success', 'Interest transaction updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("DDS Interest Transaction FAILED", [
+                'dds_account_id' => $id,
+                'error_message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return back()->with('error', 'Something went wrong. Try again.');
+        }
+    }
+
     public function createMarkLienAccount($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
@@ -1684,6 +1902,151 @@ class DdsAccountsController extends Controller
             return redirect()
                 ->route('ddsaccounts.show', $account->id)
                 ->with('error', 'Something went wrong while updating nominees: ' . $th->getMessage());
+        }
+    }
+
+    public function changeAccountInfo($id)
+    {
+        $ddaccount = DdsAccount::with(
+            'member.kyc',
+            'branch',
+            'transactions',
+            'scheme',
+            'account'
+        )->findOrFail($id);
+
+        $schemes = RdScheme::all();
+
+        $selectedMember = Member::find($ddaccount->member_id);
+        $otherMembers = Member::where('id', '!=', $ddaccount->member_id)->get();
+        $members = collect([$selectedMember])->merge($otherMembers);
+
+        return view(
+            'fd_account.ddsaccounts.changeAccInfo',
+            compact('ddaccount', 'members', 'schemes')
+        );
+    }
+
+    public function updateAccountInfo(Request $request, $id)
+    {
+        $request->validate([
+            'scheme_id' => 'required|exists:rdschemes,id',
+            'account_holder_type' => 'required|in:single,joint',
+            'dd_amount'  => 'required|numeric|min:1',
+            'open_date' => 'required|date',
+        ]);
+
+        $ddaccount = DdsAccount::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+
+            Log::info('DDS Account Info Update Started', [
+                'dds_account_id' => $ddaccount->id,
+                'request_data'   => $request->all(),
+                'old_values'     => [
+                    'scheme_id' => $ddaccount->scheme_id,
+                    'dd_amount' => $ddaccount->dd_amount,
+                    'open_date' => $ddaccount->open_date,
+                    'account_holder_type' => optional($ddaccount->account)->account_holder_type
+                ]
+            ]);
+
+            $ddaccount->scheme_id = $request->scheme_id;
+            $ddaccount->dd_amount = $request->dd_amount;
+            $ddaccount->open_date = $request->open_date;
+            $ddaccount->save();
+
+            if ($ddaccount->account) {
+                $ddaccount->account->account_holder_type = $request->account_holder_type;
+                $ddaccount->account->save();
+            }
+
+            DB::commit();
+
+            Log::info('DDS Account Info Updated Successfully', [
+                'dds_account_id' => $ddaccount->id,
+                'new_values'     => [
+                    'scheme_id' => $ddaccount->scheme_id,
+                    'dd_amount' => $ddaccount->dd_amount,
+                    'open_date' => $ddaccount->open_date,
+                    'account_holder_type' => optional($ddaccount->account)->account_holder_type
+                ]
+            ]);
+
+            return redirect()
+                ->route('ddsaccounts.show', $ddaccount->id)
+                ->with('success', 'Account Information Updated Successfully');
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('DDS Account Info Update Failed', [
+                'dds_account_id' => $ddaccount->id,
+                'error_message'  => $e->getMessage(),
+                'line'           => $e->getLine(),
+                'file'           => $e->getFile(),
+            ]);
+
+            return back()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+    public function changeMinorInfo($id)
+    {
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')
+            ->findOrFail($id);
+
+        $minors = Minor::where('member_id', $ddaccount->member_id)
+            ->whereNull('deleted_at')
+            ->get();
+
+        return view('fd_account.ddsaccounts.addMinorOrUpdate', compact('ddaccount', 'minors'));
+    }
+    public function updateMinor(Request $request, $id)
+    {
+        $request->validate([
+            'minor_id' => 'nullable|exists:minors,id',
+        ]);
+
+        $ddaccount = DdsAccount::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+
+            Log::info('DDS Minor Update Started', [
+                'dds_account_id' => $ddaccount->id,
+                'request_data'   => $request->all(),
+                'old_minor_id'   => $ddaccount->minor_id,
+            ]);
+
+            $oldMinor = $ddaccount->minor_id;
+            $ddaccount->minor_id = $request->minor_id;
+            $ddaccount->save();
+
+            Log::info('DDS Minor Updated Successfully', [
+                'dds_account_id' => $ddaccount->id,
+                'old_minor_id'   => $oldMinor,
+                'new_minor_id'   => $ddaccount->minor_id,
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('ddsaccounts.show', $ddaccount->id)
+                ->with('success', 'Minor information updated successfully.');
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('DDS Minor Update Failed', [
+                'dds_account_id' => $ddaccount->id,
+                'error'          => $e->getMessage(),
+                'request_data'   => $request->all(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while updating minor.');
         }
     }
 }

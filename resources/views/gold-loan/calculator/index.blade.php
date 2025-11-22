@@ -384,31 +384,6 @@
   </div>
 </div>
 
-<!-- checkox show when manual select interest type -->
-<!-- <script>
-document.addEventListener("DOMContentLoaded", function () {
-    
-    function toggleInterestOptions() {
-        let selected = document.querySelector('input[name="interest_type"]:checked');
-
-        if (!selected) return;
-
-        if (selected.value === "no_emi") {
-            document.getElementById("interestOptions").style.display = "none";
-        } else {
-            document.getElementById("interestOptions").style.display = "block";
-        }
-    }
-
-    // Run when any interest type is clicked
-    document.querySelectorAll('input[name="interest_type"]').forEach(el => {
-        el.addEventListener('change', toggleInterestOptions);
-    });
-
-    // Run once on page load
-    toggleInterestOptions();
-});
-</script> -->
 
 <!-- checkbox show when scheme select -->
 <script>
@@ -699,6 +674,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<!-- box minimize -->
 <script>
   // <!-- collapsed logic + - button-->
         function toggleSection(button, sectionId) {
@@ -760,15 +736,25 @@ document.addEventListener("DOMContentLoaded", function () {
             loanError.textContent = "";
         }
 
-        // Tenure validation
-        if (maxTenure && tenureEntered > maxTenure) {
-            tenureError.textContent = `⚠️ Tenure cannot exceed ${maxTenure} months`;
+      
+        // Tenure validation based on Tenure Type
+        let tenureType = document.querySelector('input[name="tenure_type"]:checked')?.value || "MONTHS";
+        let allowedTenure = maxTenure;
+
+        if (tenureType === "WEEKS") {
+            allowedTenure = maxTenure * 4; // e.g. 12 months => 48 weeks
+        }
+        else if (tenureType === "DAYS") {
+            allowedTenure = maxTenure * 30; // e.g. 12 months => 360 days
+        }
+
+        if (maxTenure && tenureEntered > allowedTenure) {
+            tenureError.textContent = `⚠️ Tenure cannot exceed ${allowedTenure} ${tenureType.toLowerCase()}`;
             valid = false;
         } else {
-            if (!tenureError.textContent || tenureEntered <= maxTenure) {
-                tenureError.textContent = "";
-            }
+            tenureError.textContent = "";
         }
+
 
         // Toggle submit button
         if (!valid) {
@@ -793,6 +779,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<!-- change tuner type -->
 <script>
   document.querySelectorAll('input[name="tenure_type"]').forEach(radio => {
       radio.addEventListener('change', function () {
@@ -801,5 +788,54 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }); 
 </script>
+
+<!-- change emi payout as per tunertype -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    
+    const tenureRadios = document.querySelectorAll('input[name="tenure_type"]');
+    const payoutSelect = document.getElementById("payout");
+
+    function updatePayoutOptions(type) {
+
+        payoutSelect.innerHTML = ""; // remove old options
+
+        if (type === "MONTHS") {
+            payoutSelect.innerHTML = `
+                <option value="">Select EMI Payout</option>
+                <option value="monthly">Monthly</option>
+                <option value="half-yearly">Half-Yearly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="yearly">Yearly</option>
+            `;
+        }
+
+        if (type === "WEEKS") {
+            payoutSelect.innerHTML = `
+                <option value="">Please Select</option>
+                <option value="WEEKLY">WEEKLY</option>
+                <option value="BI_WEEKLY">BI_WEEKLY</option>
+                <option value="4_WEEKLY">4_WEEKLY</option>
+            `;
+        }
+
+        if (type === "DAYS") {
+            payoutSelect.innerHTML = `
+                <option value="">Please Select</option>
+                <option value="DAILY">DAILY</option>
+            `;
+        }
+    }
+
+    // --- Add change event listener for radio buttons ---
+    tenureRadios.forEach(r => {
+        r.addEventListener("change", function(){
+            updatePayoutOptions(this.value);
+        });
+    });
+
+});
+</script>
+
 
 @endsection
