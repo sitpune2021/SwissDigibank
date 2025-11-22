@@ -185,7 +185,7 @@
             </p>
             <p style="font-size:12px; margin-top:50px; color:#444;">
                 Dont miss out on the latest Sbc Global promotions & benefits,
-                Log on to <a href="" style="color: #2e84fc; text-decoration: none;">www.sbcgloabal.com/</a> to find out more!
+                Log on to <a href="" style="color: #2e84fc; text-decoration: none;">www.sbcgloabal.com</a> to find out more!
 
             </p>
 

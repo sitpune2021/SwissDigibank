@@ -65,7 +65,7 @@ return new class extends Migration
 
         $table->timestamps();
 
-        $table->foreign('loan_id')->references('id')->on('gold_loans')->onDelete('cascade');
+        $table->foreign('loan_id')->references('id')->on('loan_applications')->onDelete('cascade');
     });
 }
 
