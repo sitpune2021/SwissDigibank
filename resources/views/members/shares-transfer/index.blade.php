@@ -5,13 +5,15 @@
             <!-- <h2 class="h2">Manage share-holdings</h2> -->
             <h3 class="text-xl font-semibold">SHARE HOLDINGS</h3>
             <a class="btn-primary" href="{{ route('shareholding.transfer.form') }}">
-                Add
+                ADD
             </a>
         </div>
 
 
         <!-- Latest Transactions -->
 
+       <div class="box col-span-12 lg:col-span-6">
+        <x-searchbox />
         <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
             <x-alert />
         </div>
@@ -66,7 +68,8 @@
                                 {{ optional($shareholding->members)->member_info_first_name ?? '-' }}
                             </td>
 
-                            <td class="px-6 py-5">{{ $shareholding->from_share_no . '-' . $shareholding->to_share_no ?? '-' }}
+                            <td class="px-6 py-5">
+                                {{ $shareholding->from_share_no . '-' . $shareholding->to_share_no ?? '-' }}
                             </td>
                             <td class="px-6 py-5">{{ $shareholding->shares ?? '-' }}</td>
                             <td class="px-6 py-5">{{ $shareholding->face_value ?? '-' }}</td>

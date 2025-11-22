@@ -79,5 +79,25 @@ class Account extends Model
     {
         return $this->hasMany(SavingOtherCharge::class, 'account_id', 'id');
     }
-    
+
+    public function getFinalStatusAttribute()
+    {
+        if ($this->approve_status == 2) {
+            return 'Disapproved';
+        }
+
+        if ($this->approve_status == 0) {
+            return 'Pending';
+        }
+
+        if ($this->approve_status == 1 && $this->account_status == 0) {
+            return 'Closed';
+        }
+
+        if ($this->approve_status == 1 && $this->account_status == 1) {
+            return 'Active';
+        }
+
+        return '--';
+    }
 }

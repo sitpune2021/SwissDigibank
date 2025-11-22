@@ -573,14 +573,18 @@
                 {{-- Save button and other controls --}}
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                     @if (isset($method))
-                        <button class="btn-primary" type="submit"> {{ $method === 'PUT' ? 'Update' : 'Save' }} Customer
+                        <button class="btn-primary" type="submit"> {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} CUSTOMER
                         </button>
-                    @endif <a href="{{ route('member.index') }}"
-                        class="btn-outline inline-flex items-center justify-center"> Back </a>
-                    @if ($method !== 'PUT')
+                        @if ($method !== 'PUT')
                         <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
-                            onclick="document.getElementById('companyForm').reset();"> Reset </button>
+                            onclick="document.getElementById('companyForm').reset();"> RESET </button>
                     @endif
+                    @endif <a href="{{ route('member.index') }}"
+                        class="btn-outline inline-flex items-center justify-center"> BACK </a>
+                    {{-- @if ($method !== 'PUT')
+                        <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
+                            onclick="document.getElementById('companyForm').reset();"> RESET </button>
+                    @endif --}}
                 </div>
             </div>
         </form>

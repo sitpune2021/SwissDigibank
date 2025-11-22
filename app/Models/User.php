@@ -36,6 +36,7 @@ class User extends Authenticatable
         'login_on_holidays',
         'searchable_accounts',
         'user_active',
+        'back_edate_days',
         'emp_id',
         'otp',
         'otp_expires_at'

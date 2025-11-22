@@ -4,7 +4,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <h3 class="h3">SAVING / CURRENT ACCOUNTS</h3>
         <a class="btn-primary" href="{{ route('accounts.create') }}">
-            Add
+            ADD
         </a>
     </div>
 

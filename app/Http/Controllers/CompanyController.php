@@ -36,9 +36,9 @@ class CompanyController extends Controller
     {
         try {
             $company = Company::findOrFail($id);
-         
+
             $company->incorporation_date = \Carbon\Carbon::parse($company->incorporation_date)
-                                ->format('d-m-Y');
+                ->format('d-m-Y');
 
             $dynamicOptions = [
                 'state' => State::pluck('name', 'id')
@@ -74,7 +74,7 @@ class CompanyController extends Controller
                 'country' => 'required|string|max:255',
                 'mobile_no' => 'required|digits:10',
                 'landline_no' => 'nullable|digits_between:6,15',
-                'contact_email' => 'nullable|email|max:255',
+                'contact_email' => 'nullable|email|max:255|regex:/^[A-Za-z0-9._]+@[^@\s]+\.[A-Za-z]{2,}$/',
 
                 // LEGAL INFO
                 'cin_no' => 'nullable|regex:/^[LU]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/',

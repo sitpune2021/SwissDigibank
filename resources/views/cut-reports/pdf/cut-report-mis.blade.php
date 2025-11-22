@@ -1,13 +1,13 @@
-
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>Cut Report</title>
     <style>
         body {
-                
-    font-family: "mukta", Arial, sans-serif;
+
+            font-family: "mukta", Arial, sans-serif;
 
             font-size: 12px;
             margin: 0;
@@ -67,6 +67,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="sheet">
         <!-- Header -->
@@ -77,20 +78,19 @@
                 </td>
                 <td style="width: 90%; text-align:left;">
                     <div class="company-name" style="font-family: dejavusans; ">{{ $company['name'] }}</div>
-                     <div class="company-name" style="font-family: dejavusans;">
+                    <div class="company-name" style="font-family: dejavusans;">
                         &nbsp;
                     </div>
-                     <div class="company-name" style="font-family: dejavusans;">
+                    <div class="company-name" style="font-family: dejavusans;">
                         &nbsp;
                     </div>
-                    
+
                 </td>
             </tr>
         </table>
 
-        <!- - Report Title -->
-        <h3 style="font-family: dejavusans; font-size: 18x; margin:20px 20px; " > 
-         MIS ACCOUNTS CUT REPORT: {{ date('d-m-Y') }}
+        <h3 style="font-family: dejavusans; font-size: 18x; margin:20px 20px; ">
+            MIS ACCOUNTS CUT REPORT: {{ date('d-m-Y') }}
         </h3>
 
         <!-- Data Table -->
@@ -101,23 +101,23 @@
                 <th style="color: #c60707; font-size: 14px;"> नाव</th>
                 <th style="color: #c60707; font-size: 14px;"> िशल्लक</th>
             </tr>
-            @foreach($associates as $associate)
-                <tr>
-                    <td style="font-family: dejavusans; ">{{ $associate['sr_no'] }}</td>
-                    <td style="font-family: dejavusans; ">{{ $associate['account_no'] }}</td>
-                    <td style="font-family: dejavusans; ">{{ $associate['name'] }}</td>
-                    <td style="font-family: dejavusans; ">{{ $associate['amount'] }}</td>
-                    
-                </tr>
+            @foreach($associates as $key => $a)
+            <tr>
+                <td style="font-family: dejavusans; ">{{ $key + 1 }}</td>
+                <td style="font-family: dejavusans; ">{{ $a->mis_account_no }}</td>
+                <td style="font-family: dejavusans; ">{{ $a->title }} {{ $a->name }} {{ $a->last_name }}</td>
+                <td style="font-family: dejavusans; ">{{$a->amount}}</td>
+
+            </tr>
             @endforeach
             <tr>
-                    <td colspan="3" style="font-family: dejavusans;text-align: center; font-weight: bold; font-size: 12px; ">Total</td>
-                    
-                    <td style="font-family: dejavusans; ">{{ $totals['amount'] }}</td>
-                    
-                </tr>
+                <td colspan="3" style="font-family: dejavusans;text-align: center; font-weight: bold; font-size: 12px; ">Total</td>
+                <td style="font-family: dejavusans;">
+                    {{ number_format($totalAmount ?? 0, 2) }}
+                </td>
+            </tr>
         </table>
     </div>
 </body>
-</html>
 
+</html>

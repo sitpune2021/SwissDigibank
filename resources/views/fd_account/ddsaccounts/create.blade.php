@@ -493,13 +493,26 @@
                 </div>
                 <!-- Buttons -->
                 <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                    <button class="btn-primary" type="submit">{{ $isEdit ? 'Update DD' : 'Open DD' }}</button>
-                    <a href="{{ route('dds-accounts.index') }}" class="btn-outline">Back</a>
+
+                    <!-- OPEN / UPDATE -->
+                    <button class="btn-primary" type="submit">
+                        {{ $isEdit ? 'UPDATE DD' : 'OPEN DD' }}
+                    </button>
+
+                    <!-- RESET (only in Create mode) -->
                     @if (!$isEdit)
-                        <button class="btn-outline" type="reset"
-                            onclick="document.getElementById('DDForm').reset();">Reset</button>
+                        <button class="btn-outline" type="reset" onclick="document.getElementById('DDForm').reset();">
+                            RESET
+                        </button>
                     @endif
+
+                    <!-- BACK (always visible) -->
+                    <a href="{{ route('dds-accounts.index') }}" class="btn-outline">
+                        BACK
+                    </a>
+
                 </div>
+
             </form>
         </div>
     </div>
@@ -639,144 +652,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-    {{-- <script>
-        document.getElementById('memberDropdown').addEventListener('change', function() {
-            let memberId = this.value;
-            let url = this.getAttribute('data-url').replace(':id', memberId);
 
-            if (memberId) {
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        // ✅ Auto fill member fields
-                        document.getElementById('memberName').value =
-                            data.member_info_first_name + ' ' + (data.member_info_last_name ?? '');
-                        document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
-                        document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
-                        document.getElementById('date5').value = data.open_date ?? '';
-
-                        // ✅ Branch logic
-                        const branchSelect = document.getElementById('branch_id');
-                        const branchId = String(data.branch_id);
-                        let optionExists = Array.from(branchSelect.options).some(opt => opt.value === branchId);
-
-                        if (!optionExists && data.branch_name) {
-                            const newOption = document.createElement('option');
-                            newOption.value = branchId;
-                            newOption.textContent = data.branch_name;
-                            newOption.selected = true;
-                            branchSelect.appendChild(newOption);
-                        } else {
-                            branchSelect.value = branchId;
-                        }
-
-                        branchSelect.dispatchEvent(new Event('change'));
-
-                        // ✅ Minor (if any) dropdown logic
-                        const minorSelect = document.getElementById('minor_id');
-                        minorSelect.innerHTML = '<option value="">Select Minor</option>';
-
-                        if (data.minors && data.minors.length > 0) {
-                            data.minors.forEach(minor => {
-                                const option = document.createElement('option');
-                                option.value = minor.id;
-                                option.textContent = `${minor.first_name} ${minor.last_name}`;
-                                minorSelect.appendChild(option);
-                            });
-
-                            // ✅ Optionally auto-select first minor
-                            // minorSelect.value = data.minors[0].id;
-                        } else {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No minors found';
-                            minorSelect.appendChild(option);
-                        }
-
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert('Customer details could not be fetched.');
-                    });
-            } else {
-                // Reset all fields if no member is selected
-                document.getElementById('memberName').value = '';
-                document.getElementById('memberAddress').value = '';
-                document.getElementById('memberMobile').value = '';
-                document.getElementById('branch_id').selectedIndex = 0;
-                document.getElementById('minor_id').innerHTML = '<option value="">Select Minor</option>';
-                document.getElementById('date5').value = '';
-            }
-        });
-    </script> --}}
-    {{-- <script>
-        document.getElementById('memberDropdown').addEventListener('change', function() {
-            const memberId = this.value;
-            const url = this.getAttribute('data-url').replace(':id', memberId);
-
-            if (memberId) {
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById('memberName').value =
-                            (data.member_info_first_name ?? '') + ' ' + (data.member_info_last_name ?? '');
-                        document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
-                        document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
-                        document.getElementById('date5').value = data.open_date ?? '';
-
-                        const branchSelect = document.getElementById('branch_id');
-
-                        const branchId = data.branch_id ? String(data.branch_id) : '';
-
-                        if (branchId && data.branch_name) {
-                            let optionExists = Array.from(branchSelect.options)
-                                .some(opt => opt.value === branchId);
-
-                            if (!optionExists) {
-                                const newOption = document.createElement('option');
-                                newOption.value = branchId;
-                                newOption.textContent = data.branch_name;
-                                branchSelect.appendChild(newOption);
-                            }
-                            branchSelect.value = branchId;
-                        } else {
-                            branchSelect.value = ''; // Reset to default "Select Branch"
-                        }
-
-                        branchSelect.dispatchEvent(new Event('change'));
-
-                        const minorSelect = document.getElementById('minor_id');
-                        minorSelect.innerHTML = '<option value="">Select Minor</option>';
-
-                        if (data.minors && data.minors.length > 0) {
-                            data.minors.forEach(minor => {
-                                const option = document.createElement('option');
-                                option.value = minor.id;
-                                option.textContent = `${minor.first_name} ${minor.last_name}`;
-                                minorSelect.appendChild(option);
-                            });
-                        } else {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No minors found';
-                            minorSelect.appendChild(option);
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert('Customer details could not be fetched.');
-                    });
-            } else {
-                // Reset all fields if no member is selected
-                document.getElementById('memberName').value = '';
-                document.getElementById('memberAddress').value = '';
-                document.getElementById('memberMobile').value = '';
-                document.getElementById('branch_id').selectedIndex = 0;
-                document.getElementById('minor_id').innerHTML = '<option value="">Select Minor</option>';
-                document.getElementById('date5').value = '';
-            }
-        });
-    </script> --}}
     <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
             const memberId = this.value;

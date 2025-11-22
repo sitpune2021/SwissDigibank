@@ -7,7 +7,7 @@
 
         <a class="btn-primary" href="{{ route('shares-holdings.create') }}">
             <i class=" text-base md:text-lg"></i>
-            Add
+            ADD
         </a>
     </div>
     <!-- Latest Transactions -->

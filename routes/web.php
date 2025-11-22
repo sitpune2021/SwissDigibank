@@ -68,6 +68,7 @@ use App\Http\Controllers\DaybookController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LedgergroupController;
 use App\Http\Controllers\LockerController;
+use App\Http\Controllers\PaymentsToCollectController;
 use App\Http\Controllers\VehicalDisbursementController;
 use App\Http\Controllers\VehicalController;
 use App\Http\Controllers\VehicalAccountController;
@@ -185,11 +186,7 @@ Route::middleware('auth.user')->group(function () {
         )
             ->name('dds-accounts.nominee');
 
-        Route::post(
-            '/dds-accounts/{id}/nominees',
-            [DdsAccountsController::class, 'saveNominees']
-        )
-            ->name('dds-accounts.nominees.save');
+        Route::post('/dds-accounts/{id}/nominees', [DdsAccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
 
         Route::get('/change-account-info/{id}', [DdsAccountsController::class, 'changeAccountInfo'])->name('dd.change.account.info');
         Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
@@ -638,6 +635,15 @@ Route::group(['prefix' => 'gold-loan'], function () {
         // loan extension
         Route::get('account/extension/{id}', [GoldLoanAccountController::class, 'loanextension'])
             ->name('gold-loan.account.extension');
+        // POST - FINAL SAVE
+        Route::post('/loan-extension/store/{id}', [GoldLoanAccountController::class, 'storeLoanExtension'])->name('loan.extension.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [GoldLoanAccountController::class, 'linksaving'])
+            ->name('gold-loan.account.linksaving');
+        Route::post('account/linksaving/{id}', [GoldLoanAccountController::class, 'storeSavingAccount'])
+            ->name('gold-loan.account.storeSavingAccount');
+
 
         // show audit trial
         Route::get('account/audit', [GoldLoanAccountController::class, 'audit'])
@@ -658,6 +664,10 @@ Route::group(['prefix' => 'gold-loan'], function () {
             ->name('gold-loan.clear-due.form');
 
         Route::post('/gold-loan/{loan_id}/other-charge', [GoldLoanAccountController::class, 'clearDue'])->name('gold-loan.clear-due');
+
+    // Fore close functionality
+    Route::post('/gold-loan/foreclose/{loan_id}', [GoldLoanAccountController::class, 'foreClose'])
+        ->name('goldloan.foreclose');
 
 
     // other pages url
@@ -1453,9 +1463,30 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
 
 Route::group(['prefix' => 'cut-report'], function () {
+    //reports
+    Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
+        ->name('report.saving-account');
+    Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
+        ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
-    Route::get('report/fd', [CutReportController::class, 'fdIndex'])->name('report.fd.index');
+
+    Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
+        ->name('report.fd-account');
+    Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
+        ->name('fd-accounts.export.csv');
+    Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
+
+    Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
+        ->name('report.mis-account');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+
+
+    Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
+        ->name('report.dd-accounts');
+    Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
+        ->name('report.rd-account');
+
+
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
     Route::get('report/rd', [CutReportController::class, 'rdIndex'])->name('report.rd.index');
 });
@@ -1543,6 +1574,22 @@ Route::group(['prefix' => 'day-book'], function () {
         ->name('day-book.ledger-book');
 });
 
+// Payments & payment collections
+//payments to collect
+
+
+Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
+    ->name('payments-to-collect.index');
+Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
+    ->name('payments-to-collect.comments');
+
+//payments to release
+
+Route::get('payments-to-release/index', [PaymentsToCollectController::class, 'release_index'])
+    ->name('payments-to-release.index');
+
+Route::get('payments-to-release/payments-history', [PaymentsToCollectController::class, 'payments_history'])
+    ->name('payments-to-release.payments-history');
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');

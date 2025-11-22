@@ -196,6 +196,20 @@ return [
         ],
     ],
     [
+        'title' => 'PAYMENTs TO COLLECT',
+        'icon' => 'las la-user',
+        'position' => '9',
+        'active' => '1',
+        'route' => 'payments-to-collect.index'
+    ],
+    [
+        'title' => 'PAYMENTs TO RELEASE',
+        'icon' => 'las la-user',
+        'position' => '9',
+        'active' => '1',
+        'route' => 'payments-to-release.index'
+    ],
+    [
         'title' => 'APPROVALS',
         'icon' => 'las la-university',
         'position' => '5',
@@ -236,11 +250,11 @@ return [
         'position' => '10',
         'active' => '1',
         'submenu' => [
-            ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving.index'],
-            ['title' => 'FD ACCOUNTS', 'route' => 'report.fd.index'],
-            ['title' => 'MIS ACCOUNTS', 'route' => 'report.mis.index'],
-            ['title' => 'DD ACCOUNTS', 'route' => 'report.dd.index'],
-            ['title' => 'RD ACCOUNTS', 'route' => 'report.rd.index'],
+            ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving-account'],
+            ['title' => 'FD ACCOUNTS', 'route' => 'report.fd-account'],
+            ['title' => 'MIS ACCOUNTS', 'route' => 'report.mis-account'],
+            ['title' => 'DD ACCOUNTS', 'route' => 'report.dd-accounts'],
+            ['title' => 'RD ACCOUNTS', 'route' => 'report.rd-account'],
         ],
     ],
     [

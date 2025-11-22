@@ -112,6 +112,26 @@ $settingLabel = '';
     }
 </style>
 
+    @if(session('success'))
+        <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script>
+    @endif
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
@@ -134,7 +154,7 @@ $settingLabel = '';
             <a href="{{route('gold-loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
                 Pay Emi
             </a>
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi')
+            @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                 <a href="{{ route('gold-loan.account.extension',$goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
                     LOAN EXTENSION
                 </a>
@@ -168,7 +188,7 @@ $settingLabel = '';
             Fore CloseLoan
         </a>
         
-        <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+        <a href="{{ route('gold-loan.account.linksaving', $goldLoan->id) }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             link saving account(Auto Debit)
         </a>
 

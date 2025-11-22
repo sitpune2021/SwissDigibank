@@ -81,7 +81,7 @@ class DirectorController extends Controller
                 'designation' => 'nullable|string|max:255',
                 'member_id' => 'nullable|string|max:255',
                 'director_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
-                'din_no' => 'required|string|max:50',
+                'din_no' => 'required|string|max:50|regex:/^[A-Za-z0-9\- ]+$/',
                 'appointment_date' => 'required|date|before_or_equal:today',
                 'resignation_date' => 'nullable|after_or_equal:appointment_date',
                 'signature' => 'nullable',  // add file validation
@@ -153,8 +153,8 @@ class DirectorController extends Controller
             $data = $request->validate([
                 'designation' => 'nullable|string|max:255',
                 'member_id' => 'nullable|string|max:255',
-                'director_name' => 'required|string|max:255',
-                'din_no' => 'required|string|max:8',
+                'director_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
+                'din_no' => 'required|string|max:50|regex:/^[A-Za-z0-9\- ]+$/',
                 'appointment_date' => 'required',
                 'resignation_date' => 'nullable|after_or_equal:appointment_date',
                 'signature' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',  // file validation with allowed types and max size

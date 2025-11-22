@@ -133,17 +133,18 @@ class MemberController extends Controller
             // Member Info
             'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
             'member_info_gender' => 'required|in:male,female,other',
-            'member_info_first_name' => 'required|string|max:255',
-            'member_info_middle_name' => 'nullable|string|max:255',
-            'member_info_last_name' => 'required|string|max:255',
+            'member_info_first_name'  => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'member_info_last_name'   => 'required|string|max:255|regex:/^[A-Za-z]+$/',
             'member_info_dob' => 'required|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
             'member_info_qualification' => 'nullable|string',
             'member_info_occupation' => 'nullable|string',
             'member_info_monthly_income' => 'nullable|numeric',
             'member_info_old_member_no' => 'nullable|string',
-            'member_info_father_name' => 'nullable|string|max:255',
-            'member_info_mother_name' => 'nullable|string|max:255',
-            'member_info_spouse_name' => 'nullable|string|max:255',
+            'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
+            'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
+            'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
+
             'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
 
             'member_info_mobile_no' => 'required|digits:10',
@@ -168,7 +169,7 @@ class MemberController extends Controller
 
             // KYC Info
             'member_kyc_aadhaar_no'     => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
-            'member_kyc_voter_id_no'    => 'nullable|string|unique:kyc_and_nominees,member_kyc_voter_id_no',
+            'member_kyc_voter_id_no' => 'nullable|string|regex:/^[A-Za-z0-9]+$/|unique:kyc_and_nominees,member_kyc_voter_id_no',
             'member_kyc_pan_no'         => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
             'member_kyc_ration_card_no' => 'nullable|string|unique:kyc_and_nominees,member_kyc_ration_card_no',
             'member_kyc_meter_no'       => 'nullable|string|unique:kyc_and_nominees,member_kyc_meter_no',
@@ -192,7 +193,7 @@ class MemberController extends Controller
             'nominee_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
 
             'nominee_aadhaar_no' => 'nullable|string',
-            'nominee_voter_id_no' => 'nullable|string',
+            'nominee_voter_id_no'    => 'nullable|string|regex:/^[A-Za-z0-9]+$/',
             'nominee_pan_no' => 'nullable|string',
             'nominee_ration_card_no' => 'nullable|string',
             'nominee_address' => 'nullable|string',
@@ -502,23 +503,24 @@ class MemberController extends Controller
                 // Member Info
                 'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
                 'member_info_gender' => 'required|in:male,female,other',
-                'member_info_first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+                'member_info_first_name'  => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+                'member_info_last_name'   => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'member_info_dob' => 'required|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
                 'member_info_qualification' => 'nullable|string|regex:/^[A-Za-z]+$/',
                 'member_info_occupation' => 'nullable|string|regex:/^[A-Za-z]+$/',
                 'member_info_monthly_income' => 'nullable|numeric',
                 'member_info_old_member_no' => 'nullable|string',
-                'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+                'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
+                'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
+                'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
+
                 'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
                 'member_info_mobile_no' => 'required|string|max:10',
                 'member_info_collection_time' => 'nullable|string',
                 'member_info_marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
                 'member_info_religion' => 'nullable|string',
-                'member_info_email' => 'nullable|email',
+                'member_info_email' => 'nullable|email:rfc,dns|max:255',
 
                 // Member Address
                 'member_address_line_1' => 'nullable|string',
@@ -550,11 +552,8 @@ class MemberController extends Controller
                     'regex:/^[2-9]{1}[0-9]{11}$/',
                     Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')->ignore($kycId),
                 ],
-                'member_kyc_voter_id_no' => [
-                    'nullable',
-                    'string',
-                    Rule::unique('kyc_and_nominees', 'member_kyc_voter_id_no')->ignore($kycId),
-                ],
+                'member_kyc_voter_id_no' => 'nullable|string|regex:/^[A-Za-z0-9]+$/|unique:kyc_and_nominees,member_kyc_voter_id_no',
+
                 'member_kyc_pan_no' => [
                     'required',
                     'string',
@@ -584,7 +583,7 @@ class MemberController extends Controller
                 'nominee_gender' => 'nullable|in:Male,Female,Other',
                 'nominee_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
                 'nominee_aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
-                'nominee_voter_id_no' => 'nullable|string',
+                'nominee_voter_id_no'    => 'nullable|string|regex:/^[A-Za-z0-9]+$/',
                 'nominee_pan_no' => 'nullable|string',
                 'nominee_ration_card_no' => 'nullable|string',
                 'nominee_address' => 'nullable|string',
@@ -1117,7 +1116,7 @@ class MemberController extends Controller
 
         return view('members.member.shareAmount', compact('members', 'banks', 'selectedBankId', 'savingAccounts'));
     }
-   
+
     public function storeShareAmount(Request $request, $id)
     {
         try {

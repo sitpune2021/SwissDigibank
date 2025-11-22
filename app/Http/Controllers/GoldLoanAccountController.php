@@ -8,6 +8,7 @@ use App\Models\GoldLoanOtherCharge;
 use App\Models\GoldLoanTransaction;
 use App\Models\LoanApplication;
 use App\Models\GoldLoanForeClosure;
+use App\Models\GoldLoanExtension;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class GoldLoanAccountController extends Controller
     public function index(Request $request)
     {
         $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
-            ->where('status', 1)
+            ->where('status', [1,4])
             ->orderBy('id', 'desc')
             ->get();
 
@@ -886,7 +887,7 @@ class GoldLoanAccountController extends Controller
             ]);
 
             // UPDATE LOAN STATUS (Active → Inactive)
-            LoanApplication::where('id', $loanId)->update(['status' => 0]);
+            LoanApplication::where('id', $loanId)->update(['status' => 4]);
 
             return redirect()
                 ->route('gold-loan.account.show', $loanId)
@@ -949,7 +950,134 @@ class GoldLoanAccountController extends Controller
             $currentDebt = max($totalPayable - $totalDeposit, 0);
 
         return view('gold-loan.account.loan-extension', compact('goldLoan','currentDebt','banks'));
-        
+
+    }
+
+    public function storeLoanExtension(Request $request, $id)
+    {
+        Log::info('--- Loan Extension Request Received ---', [
+            'loan_id' => $id,
+            'input' => $request->all()
+        ]);
+
+        try 
+        {
+
+            $validated = $request->validate([
+                'remaining_amount' => 'required|numeric',
+                'interest_accrued' => 'nullable|numeric',
+                'total_amount_h' => 'required|numeric',
+                'rounding_off_i' => 'nullable|numeric',
+                'net_amount_k' => 'required|numeric',
+                'transaction_date' => 'required',
+                'reschedule_date' => 'required',
+                'first_emi_date' => 'required',
+                'interest_rate' => 'required|numeric',
+                'tenure' => 'required|numeric',
+                'reason' => 'required|string',
+            ]);
+
+            // Convert Dates AFTER validation
+            $validated['transaction_date'] = Carbon::parse($validated['transaction_date'])->format('Y-m-d');
+            $validated['reschedule_date'] = Carbon::parse($validated['reschedule_date'])->format('Y-m-d');
+            $validated['first_emi_date'] = Carbon::parse($validated['first_emi_date'])->format('Y-m-d');
+
+            $validated['loan_id'] = $id;
+
+            $extension = GoldLoanExtension::create($validated);
+
+            Log::info('✔ Loan Extension Saved Successfully!', [
+                'extension_id' => $extension->id,
+            ]);
+
+            return redirect()->route('gold-loan.account.show')->with('success', 'Loan Extension Successfully Added!');
+
+        } 
+        catch (\Throwable $e) 
+        {
+
+            Log::error('Loan Extension Save Failed', [
+                'loan_id' => $id,
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving!');
+        }
+    }
+
+    public function linksaving($id)
+    {
+        $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
+            ->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        // Fetch all saving accounts for the same member
+        $savingAccounts = DB::table('accounts')
+            ->where('member_id', $goldLoan->member_id)
+            ->where('account_type', 'SAVING')
+            ->pluck('account_no', 'id'); // ['id' => 'account_no']
+
+
+        // Total Deposit
+            $totalDeposit = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+            
+            // // Total from Other Charges (only paid)
+            $otherChargesDeposit = DB::table('gold_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // // FINAL DEPOSIT = Transactions + Other Charges
+            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+
+            // Latest total_payable (from last transaction)
+            $totalPayable = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->orderByDesc('id')
+                ->value('total_payable') ?? $goldLoan->loan_amount;
+
+            // 1. Total Transaction Deposit
+            $transactionDeposit = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+
+            // 2. Total Paid Other Charges
+            $otherChargesDeposit = DB::table('gold_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // 3. FINAL Total Deposit
+            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+
+            // 4. FINAL Correct Current Debt
+            $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('gold-loan.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan','currentDebt', 'banks', 'savingAccounts'));
+    }
+
+    public function storeSavingAccount(Request $request, $loanId)
+    {
+        $request->validate([
+            'saving_account_id' => 'required|exists:accounts,id',
+        ]);
+
+        $loan = LoanApplication::findOrFail($loanId);
+
+        // Update selected saving account
+        DB::table('accounts')
+            ->where('id', $request->saving_account_id)
+            ->update([
+                'loan_type'   => 'gold loan', // this page का loan category
+                'loan_number' => $loan->id, // loan_applications का id
+            ]);
+
+        return redirect()->route('gold-loan.account.show', $loanId)
+        ->with('success', 'Saving Account Linked Successfully!');
     }
 
     public function goldLoanPayEmi($id)
@@ -1203,6 +1331,7 @@ class GoldLoanAccountController extends Controller
     //     ));
     // }
 
+    
     public function goldLoanPay($id)
     {
         $goldLoan = LoanApplication::with([
@@ -1346,6 +1475,7 @@ class GoldLoanAccountController extends Controller
     //     }
     // }
 
+    
     public function payEmi(Request $request)
     {
         Log::info('payEmi() called', ['request_data' => $request->all()]);
@@ -1653,6 +1783,78 @@ class GoldLoanAccountController extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+
+    // Fore close functionality
+    public function foreclose(Request $request, $loan_id)
+    {
+        try {
+            // Validate input
+            $request->validate([
+                'foreclosure_date' => 'required|date',
+                'penalty_amount'   => 'nullable|numeric|min:0',
+                'discount'         => 'nullable|numeric|min:0',
+                'closing_remarks'  => 'nullable|string|max:255',
+            ]);
+
+            $loan = LoanApplication::find($loan_id);
+
+            if (!$loan) {
+                return back()->withErrors(['loan' => 'Loan not found']);
+            }
+
+            // Check if already foreclosed
+            if ($loan->status == 'closed') {
+                return back()->withErrors(['loan' => 'Loan already foreclosed']);
+            }
+
+            // Latest outstanding
+            $lastTransaction = GoldLoanTransaction::where('loan_id', $loan_id)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if (!$lastTransaction) {
+                return back()->withErrors(['loan' => 'No transaction found']);
+            }
+
+            $currentDebt  = $lastTransaction->current_debt ?? 0;
+            $penalty      = $request->penalty_amount ?? 0;
+            $discount     = $request->discount ?? 0;
+
+            // Foreclosure calculation
+            $foreclosureAmount = ($currentDebt + $penalty) - $discount;
+
+            // Foreclosure Entry
+            $transaction = GoldLoanTransaction::create([
+                'loan_id'             => $loan_id,
+                'emi_no'              => null,
+                'transaction_date'    => now()->format('Y-m-d'),
+                'foreclosure_amount'  => $foreclosureAmount,
+                'foreclosure_date'    => $request->foreclosure_date,
+                'penalty_amount'      => $penalty,
+                'discount'            => $discount,
+                'remarks'             => $request->closing_remarks,
+                'status'              => 'foreclosed',
+                'created_by'          => Auth::id(),
+            ]);
+
+            // Update Loan Table Status
+            $loan->update([
+                'status'         => 'closed',
+                'closing_date'   => $request->foreclosure_date,
+                'closing_amount' => $foreclosureAmount,
+            ]);
+
+            return redirect()->back()->with('success', 'Loan foreclosed successfully.');
+        } catch (\Exception $ex) {
+
+            Log::error('Foreclosure Error', [
+                'message' => $ex->getMessage(),
+                'line'    => $ex->getLine(),
+            ]);
+
+            return back()->withErrors(['error' => 'Something went wrong.']);
         }
     }
 }

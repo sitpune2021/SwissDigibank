@@ -2,9 +2,9 @@
 @section('content')
 
 <div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+    <div class="mb-6 flex flex-wrap items-center uppercase justify-between gap-4 lg:mb-8">
         <h3 class="h3">MIS ACCOUNTS</h3>
-        <a class="btn-primary flex items-center gap-2" href="{{route('misaccount.create')}}">
+        <a class="btn-primary flex items-center gap-2 uppercase" href="{{route('misaccount.create')}}">
             Add
         </a>
     </div>

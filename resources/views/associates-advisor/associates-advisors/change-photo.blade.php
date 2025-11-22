@@ -54,7 +54,7 @@
                         <!-- Buttons -->
                         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                             <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
-                                Upload
+                                UPLOAD
                             </button>
 
                             <button class="btn-outline uppercase justify-center" type="reset">
