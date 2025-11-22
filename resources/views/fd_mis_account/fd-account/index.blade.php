@@ -1,8 +1,8 @@
 @extends('layout.main')
 @section('page-title', 'FD ACCOUNT')
 @section('action-button')
-<a class="btn-primary" href="{{ route('fd-mis-schemes.fd_create') }}">
-    <i class=" md:text-lg"></i>
+<a class="btn-primary uppercase" href="{{ route('fd-mis-schemes.fd_create') }}">
+    <i class=" md:text-lg uppercase"></i>
     Add
 </a>
 @endsection
@@ -98,10 +98,10 @@
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
                         <td class="px-6 py-3">
-                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:blue;">{{ "FD-".$account->id }}</a>
+                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:green;">{{ "FD-".$account->id }}</a>
                         </td>
                         <td class="px-6 py-3">
-                            <a href="#" style="color:blue;">
+                            <a href="#" style="color:green;">
                                 {{ $account->member->member_no 
             ?? ($account->member->id ? str_pad($account->member->id, 6, '0', STR_PAD_LEFT) : '-') }}
                             </a>

@@ -17,7 +17,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <!-- <h3 class="h2">Add User</h3> -->
-            <h3 class="h2"> {!! isset($show) && $show ? $user->fname : (isset($user) ? 'EDIT USER' : 'NEW USER') !!}</h3>
+            <h4 class="h3"> {!! isset($show) && $show ? $user->fname : (isset($user) ? 'EDIT USER' : 'NEW USER') !!}</h4>
             <!-- Image + Button -->
             <!-- @if (isset($show))
     <div class="flex items-center gap-4">
@@ -333,24 +333,24 @@
                                 <button class="btn-primary" type="submit">Save</button>
                                 <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">Reset</button>
                             </div> -->
-                <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
+                <div class="col-span-2 flex gap-4  uppercase md:gap-6 mt-2">
                     {{-- Show Submit button only if not view page --}}
                     @if (empty($isView))
-                        <button class="btn-primary" type="submit">
+                        <button class="btn-primary uppercase" type="submit">
                             {{ isset($user) ? 'Update User' : 'Save User' }}
                         </button>
                     @endif
 
                     {{-- Reset button only on Add page --}}
                     @if (!isset($user) && empty($isView))
-                        <button class="btn-outline" type="reset">
+                        <button class="btn-outline uppercase" type="reset">
                             Reset
                         </button>
                     @endif
 
                     {{-- Back button on Add, Edit, and View pages --}}
                     @if (!empty($isAdd) || isset($user) || !empty($isView))
-                        <button class="btn-outline" type="button"
+                        <button class="btn-outline uppercase" type="button"
                             onclick="window.location.href='{{ route('users.index') }}'">
                             Back
                         </button>

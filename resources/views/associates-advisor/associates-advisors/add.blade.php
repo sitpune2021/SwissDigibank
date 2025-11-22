@@ -442,10 +442,10 @@
                     </button>
 
                     <button class="btn-outline uppercase justify-center" type="reset">
-                        <a href=""> BAck</a>
+                        <a href=""> BACK</a>
                     </button>
                      <button class="btn-warning uppercase justify-center" type="reset">
-                        <a href=""> Reset</a>
+                        <a href=""> RESET</a>
                     </button>
                 </div>
 

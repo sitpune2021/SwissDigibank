@@ -5,7 +5,7 @@
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
         <h3 class="h3">RD/ DD SCHEMES</h3>
-        <a class="btn-primary flex items-center gap-2" href="{{route('rdschemes.create')}}">
+        <a class="btn-primary flex items-center  uppercase gap-2" href="{{route('rdschemes.create')}}">
             Add
         </a>
     </div>

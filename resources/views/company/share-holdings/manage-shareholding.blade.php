@@ -3,7 +3,7 @@
 @section('page-title', 'PROMOTERS SHARE HOLDING DETAILS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('shareholding.create') }}">
-    Add
+    ADD
 </a>
 @endsection
 @section('content')

@@ -2,7 +2,7 @@
 @section('page-title', 'PROMOTERS')
 @section('action-button')
 <a class="btn-primary" href="{{ route('promotor.create') }}">
-    Add
+    ADD
 </a>
 @endsection
 

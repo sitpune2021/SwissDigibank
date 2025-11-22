@@ -2,7 +2,7 @@
 @section('page-title', 'BRANCHES')
 @section('action-button')
     <a class="btn-primary" href="{{ route('branch.create') }}">
-        Add
+        ADD
     </a>
 @endsection
 

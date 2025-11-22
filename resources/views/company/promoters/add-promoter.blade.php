@@ -204,19 +204,22 @@
               <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                   @if (empty($show))
                       <button class="btn-primary" type="submit">
-                          {{ $method === 'PUT' ? 'Update' : 'Save' }} Promoter
+                          {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} PROMOTER
                       </button>
-                  @endif
-                  <a href="{{ route('promotor.index') }}" class="btn-outline inline-flex items-center justify-center">
-                      Back
-                  </a>
-                  @if ($method === 'POST')
-                      <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
-                          Reset
-                      </button>
+
+                      @if ($method === 'POST')
+                          <button class="btn-outline" type="reset"
+                              onclick="document.getElementById('companyForm').reset();">
+                              RESET
+                          </button>
+                      @endif
                   @endif
 
+                  <a href="{{ route('promotor.index') }}" class="btn-outline inline-flex items-center justify-center">
+                      BACK
+                  </a>
               </div>
+
           </form>
       </div>
       <script>
