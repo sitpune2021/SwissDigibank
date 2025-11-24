@@ -1,5 +1,6 @@
 @extends('layout.main')
 @section('content')
+
 <style>
     input[type="checkbox"] {
         width: 28px;
@@ -31,14 +32,9 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold uppercase dark:text-white">Gold Loan - 
+            <h1 class="text-xl font-semibold uppercase dark:text-white">Mortgage Loan - 
                 <span class="text-gray-500 text-sm">Transactions</span>
             </h1>
-            <!-- <p class="text-gray-500 dark:text-gray-400">
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Gold Loans</a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">03754</a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm ">Transactions</a>
-            </p> -->
         </div>
     </div>
 
@@ -99,6 +95,7 @@
                             class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                     </div>
                 </div>
+
             </div>
 
 
@@ -112,6 +109,7 @@
                     CLEAR FORM
                 </a>
             </div>
+
         </form>
     </div>
 
@@ -133,39 +131,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700">
-                        <td class="px-4 py-2 text-start">13/08/2025</td>
-                        <td class="px-4 py-2 text-start">Cash</td>
-                        <td class="px-4 py-2 text-start"></td>
-                        <td class="px-4 py-2 text-start">Pending</td>
-                        <td class="px-4 py-2 text-start"></td>
-                        <td class="px-4 py-2 text-start">45,000.00</td>
-                        <td class="px-4 py-2 text-start"></td>
-                        <td class="px-4 py-2 text-center ">
-                            <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                Yes
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 text-start space-x-1">
-                            <div class="flex justify-center">
-                                <div class="relative">
-                                    <i
-                                        class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                    <ul class="horiz-option popover-content">
-                                        <li><a href="" class="single-option capitalize">View</a></li>
-                                        <li><a href="" class="single-option capitalize">Print</a></li>
+                    @foreach($mergedData as $row)
+                        <tr>
+                            {{-- DATE --}}
+                            <td>{{ \Carbon\Carbon::parse($row->date)->format('d/m/Y') }}</td>
 
-                                    </ul>
+                            {{-- PAY MODE --}}
+                            <td>{{ $row->fee_mode ?? '-' }}</td>
 
-                                    {{-- @include('partials._vertical-options', [
-                                            /* 'id' =>base64_encode($director->id),
-                                            'viewRoute' => 'director.show',
-                                            'editRoute' => 'director.edit'*/
-                                            ]) --}}
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                            {{-- REMARKS --}}
+                            <td>{{ $row->remarks ?? '-' }}</td>
+
+                            {{-- STATUS --}}
+                            <td>{{ ucfirst($row->status) }}</td>
+
+                            {{-- DEBIT (Other Charges only) --}}
+                            <td>
+                                @if($row->type === 'other_charge' || $row->type === 'foreclosure')
+                                    {{ number_format($row->amount, 2) }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+
+                            {{-- CREDIT (Transactions only) --}}
+                            <td>
+                                @if($row->type === 'transaction')
+                                    {{ number_format($row->amount_collected, 2) }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+
+                            {{-- BALANCE (Transactions only) --}}
+                            <td>
+                               {{ number_format($row->balance, 2) }}
+                            </td>
+
+                            {{-- ACCOUNTED --}}
+                            <td>
+                                <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">-</span>
+                            </td>
+
+                            {{-- ACTIONS --}}
+                            <td>
+                                <i class="las la-ellipsis-v"></i>
+                            </td>
+                        </tr>
+                     @endforeach
                 </tbody>
             </table>
         </div>
