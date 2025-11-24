@@ -285,7 +285,7 @@ class CcOdLoanController extends Controller
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            return redirect()->route('cc_od.applications.index')
+            return redirect()->route('cc_od.disbursements.index')
                 ->with('success', 'cc / od Loan Application + Credit Scores saved successfully!');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
