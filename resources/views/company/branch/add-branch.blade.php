@@ -16,6 +16,11 @@
                 accent-color: green;
 
             }
+             button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
+            }
         </style>
     </head>
     @include('fields.errormessage')

@@ -67,7 +67,6 @@
         </div>
 
         <div class="pb-4 overflow-x-auto lg:pb-6">
-
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
@@ -159,13 +158,73 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($associates as $key => $a)
-                    <tr>
-                        <td style="font-family: dejavusans; ">{{ $key + 1 }}</td>
-                        <td style="font-family: dejavusans; ">{{ $a->dd_no }}</td>
-                        <td style="font-family: dejavusans; ">{{ $a->title }} {{ $a->name }} {{ $a->last_name }}</td>
-                        <td style="font-family: dejavusans; ">{{$a->amount}}</td>
+                    @foreach ($account as $row)
+                    <tr class="border-b dark:border-bg3">
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1 uppercase">
+                                {{ $row->dd_account_no ?? ''}}
+                            </div>
+                        </td>
 
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1 capitalize">
+                                {{ $row->member->member_info_first_name??'' }} {{ $row->member->member_info_last_name??'' }}
+                            </div>
+                        </td>
+
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->branch->branch_name??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->scheme->scheme_name??'' }} {{ $row->scheme->scheme_code??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->dd_amount??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->open_date ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') : '' }}
+
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->maturity_date ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') : '' }}
+
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{$row->scheme->rr_dd_frequency??''}}
+
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->final_status }}
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                     <tr>

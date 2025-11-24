@@ -44,7 +44,7 @@ class RdAccount extends Model
 
     public function scheme()
     {
-        return $this->belongsTo(Rdscheme::class,'scheme', 'id');
+        return $this->belongsTo(Rdscheme::class, 'scheme', 'id');
     }
 
     public function branch()
@@ -55,5 +55,25 @@ class RdAccount extends Model
     public function minor()
     {
         return $this->belongsTo(Minor::class);
+    }
+    public function getFinalStatusAttribute()
+    {
+        if ($this->approve_status == 2) {
+            return 'Disapproved';
+        }
+
+        if ($this->approve_status == 0) {
+            return 'Pending';
+        }
+
+        if ($this->approve_status == 1 && $this->status == 0) {
+            return 'Closed';
+        }
+
+        if ($this->approve_status == 1 && $this->status == 1) {
+            return 'Active';
+        }
+
+        return '--';
     }
 }

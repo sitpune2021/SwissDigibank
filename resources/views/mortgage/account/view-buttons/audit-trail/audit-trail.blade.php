@@ -77,14 +77,8 @@
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
                 <h1 class="text-xl font-semibold uppercase">
-                Gold Loan - 00461 - Auddit Trail
+                Mortgage Loan - Auddit Trail
                 </h1>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500 text-sm">Gold Loan </a> >
-                    <a href="#" class="text-gray-500 text-sm">00461 </a> >
-                    <a href="#" class="text-gray-500  text-sm">Auddit Trail</a>
-                </p>
-
             </div>
 
         </div>
@@ -99,7 +93,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between rounded-10 bg-secondary/5 px-4 py-3 cursor-pointer"
            onclick="this.nextElementSibling.classList.toggle('hidden')">
-        <h3 class="text-lg text-black font-semibold">GOLD LOAN ACCOUNT AUDIT TRAIL</h3>
+        <h3 class="text-lg text-black font-semibold">Mortgage LOAN ACCOUNT AUDIT TRAIL</h3>
       
       </div>
 
@@ -128,7 +122,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between rounded-10 bg-secondary/5 px-4 py-3 cursor-pointer"
            onclick="this.nextElementSibling.classList.toggle('hidden')">
-        <h3 class="text-lg font-semibold">GOLD LOAN APPLICATION AUDIT TRAIL</h3>
+        <h3 class="text-lg font-semibold">Mortgage LOAN APPLICATION AUDIT TRAIL</h3>
         
       </div>
 

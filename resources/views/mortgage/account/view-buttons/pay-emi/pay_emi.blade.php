@@ -36,23 +36,16 @@ $settingLabel = '';
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
                 <h1 class="text-2xl font-semibold uppercase capitalize">
-                    Gold Loan - 004604
-
-                    </h3>
-                    <!-- <p>Pay Due EMIs</p> -->
+                    Mortgage Loan 
+                </h3>                 
             </div>
-            <!-- <p class="text-gray-500">
-                    <a href="#" class="text-gray-500">Gold Loans</a> >
-                    <a href="#" class="text-gray-500">00063</a> >
-                    <a href="#" class="text-gray-500">Pay Due EMIs</a>
-                </p> -->
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                <form action="{{ route('goldloan.payEmiLoan', $goldLoan->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('mortgage.payEmiLoan', $goldLoan->id) }}" method="POST" enctype="multipart/form-data">
                     <!-- Header -->
                     @csrf
                     <div class="px-4 py-3">
@@ -65,7 +58,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="remaining_due" name="remaining_due" value="{{ $currentDebt ?? 0 }}"
+                        <input type="number" id="remaining_due" name="remaining_due" value="{{ $emiAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                         <x-number-to-word for="remaining_due_amount" />
@@ -87,11 +80,11 @@ $settingLabel = '';
                                 <!-- Input Row -->
                                 <tr class="">
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" value="{{ $overdueInterest ?? 0 }}" readonly
+                                        <input type="text" name="overdueInterest" id="overdueInterest" placeholder="0.0" value="{{ $overdueInterest ?? 0 }}" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0.0" value="{{ $otherCharges ?? 0 }}" readonly
+                                        <input type="text" name="otherCharges" id="otherCharges" placeholder="0.0" value="{{ $otherCharges ?? 0 }}" readonly
                                             class="w-full px-2 py-2 text-center  bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -117,15 +110,15 @@ $settingLabel = '';
                                 <!-- Input Row -->
                                 <tr class="">
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" value="{{ $overdueInterest ?? 0 }}" id="amount" placeholder="0" readonly
+                                        <input type="text" name="amount" value="{{ $overdueInterest ?? 0 }}" id="amount" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" value="{{ $gstRate ?? 0 }}" placeholder="0.0" readonly
+                                        <input type="text" name="gstRate" id="gstRate" value="{{ $gstRate ?? 0 }}" placeholder="0.0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="totalAmount" value="{{ $totalOverdueWithGst ?? 0 }}" placeholder="0.0"
+                                        <input type="text" name="totalAmount" id="totalAmount" value="{{ $totalOverdueWithGst ?? 0 }}" placeholder="0.0"
                                             class="w-full px-2 py-2 text-center border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -139,7 +132,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="t_Amount" name="" value="{{ $totalAmount ?? 0 }}"
+                        <input type="number" id="t_Amount" name="t_Amount" value="{{ $emiAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                     </div>
@@ -150,7 +143,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="rounding" name="" value="{{ $rounding ?? 0 }}"
+                        <input type="number" id="rounding" name="rounding" value="{{ $rounding ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0" readonly>
                     </div>
@@ -161,7 +154,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="number" id="netAmount" name="" value="{{ $netAmount ?? 0 }}"
+                        <input type="number" id="netAmount" name="netAmount" value="{{ $emiAmount ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0" readonly>
                         <x-number-to-word for="netAmount" />
@@ -228,7 +221,7 @@ $settingLabel = '';
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg mb-4">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Account Info</h3>
+                    <h3 class="text-black font-semibold text-lg">Mortgage Loan Account Info</h3>
 
                     <!-- Toggle Button -->
                     <button

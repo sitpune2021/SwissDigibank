@@ -1,6 +1,7 @@
 @extends('layout.main')
 
 @section('content')
+
 @php
 $setting = $goldLoan->scheme->gold_loan_setting ?? '';
 switch ($setting) {
@@ -31,12 +32,13 @@ $settingLabel = '';
         }
     </style>
 </head>
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
                 <h3 class="text-xl font-semibold uppercase ">
-                    Gold Loan Payment - 00467
+                    Mortgage Loan Payment
                 </h3>
                 <p class="text-gray-500">Pay</p>
             </div>
@@ -46,8 +48,9 @@ $settingLabel = '';
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                <form action="{{ route('goldloan.payEmi') }}" method="POST">
+                <form action="{{ route('mortgage.payEmi') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="loan_id" value="{{$goldLoan->id}}">
                     <div class="col-span-2 md:col-span-1">
                         <label for="" class="md:text-lg font-medium uppercase block mb-4">
                             Transaction Date
@@ -57,15 +60,13 @@ $settingLabel = '';
                         <input type="text" id="transaction_date" name="transaction_date"
                             class=" datepicker-field w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="DD/MM/YYYY">
-
                     </div>
                     <div class="col-span-2 md:col-span-1">
                         <label for="" class="md:text-lg font-medium mt-4 uppercase block mb-4">
                             Current Debt (A)
                             <span class="text-error">*</span>
                         </label>
-
-                        <input type="text" id="current_debt" name="current_debt" readonly  value="{{ $currentDebt ?? 0 }}"
+                        <input type="text" id="current_debt" name="current_debt" readonly value="{{ $currentDebt ?? 0 }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.00">
                         <x-number-to-word for="" />
@@ -76,7 +77,7 @@ $settingLabel = '';
                             <span class="text-error">*</span>
                         </label>
 
-                        <input type="text" id="total_payable" name="total_payable" readonly
+                        <input type="text" id="total_payable" name="total_payable" readonly value="{{$currentDebt??0}}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.00">
                         <x-number-to-word for="" />
@@ -112,10 +113,6 @@ $settingLabel = '';
                         </div>
                     </div>
 
-                    {{-- <x-paymode :mode_2="$misaccount->amount ?? '' " :showSaving="true" id="amount" :readonly="false"
-                        :amountClass="true" :bgColor="false" :hiddenheading="false" :checkedDefault="'cash'"
-                        groupName="disburse_Mode_two" :rdShowing="true" /> --}}
-
                     <!-- Radio Buttons -->
                     <div class="mt-3 flex gap-3 ">
                         <!-- Pay Mode -->
@@ -134,19 +131,25 @@ $settingLabel = '';
                                             $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
                         </label>
                     </div>
+
                     <!-- Bank + Cheque Fields -->
                     <div id="bankDropdownWrapper" class="mt-3 hidden">
+
                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                         <select id="bank_id" name="bank_id"
                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                             <option value="">-- Select Bank --</option>
-                            @foreach($banks as $id => $name)
-                            <option value="{{ $id }}" {{ old('bank_id', $application->bank_id ?? '') == $id ?
-                                            'selected' : '' }}>
-                                {{ $name }}
+
+                            @forelse($banks as $bank)
+                            <option value="{{ $bank->id }}"
+                                {{ old('bank_id', $application->bank_id ?? '') == $bank->id ? 'selected' : '' }}>
+                                {{ $bank->name ?? $bank->bank_name ?? 'Unnamed Bank' }}
                             </option>
-                            @endforeach
+                            @empty
+                            <option value="">No banks available</option>
+                            @endforelse
                         </select>
+
 
                         <!-- Cheque No -->
                         <div class="mt-3">
@@ -159,7 +162,7 @@ $settingLabel = '';
                         <!-- Cheque Date -->
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                            <input type="date" id="cheque_date" name="cheque_date" value="    {{ old('cheque_date', $application->cheque_date ?? '') }}"
+                            <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
                     </div>
@@ -233,7 +236,7 @@ $settingLabel = '';
                             PAY
                         </button>
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                            <a href="{{ route('mortgage.account.show', $goldLoan->id) }}"> BACK</a>
                         </button>
                     </div>
                 </form>
@@ -244,7 +247,7 @@ $settingLabel = '';
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg mb-4">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Account Info</h3>
+                    <h3 class="text-black font-semibold text-lg">Mortgage Loan Account Info</h3>
                     <!-- Toggle Button -->
                     <button
                         class="p-1 rounded transition"
@@ -393,18 +396,18 @@ $settingLabel = '';
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-    const debt = document.getElementById('current_debt');
-    const other = document.getElementById('other_charges');
-    const total = document.getElementById('total_payable');
+        const debt = document.getElementById('current_debt');
+        const other = document.getElementById('other_charges');
+        const total = document.getElementById('total_payable');
 
-    function calcTotal() {
-        const a = parseFloat(debt.value) || 0;
-        const b = parseFloat(other.value) || 0;
-        total.value = (a + b).toFixed(2);
-    }
+        function calcTotal() {
+            const a = parseFloat(debt.value) || 0;
+            const b = parseFloat(other.value) || 0;
+            total.value = (a + b).toFixed(2);
+        }
 
-    other.addEventListener('input', calcTotal);
-    calcTotal(); // initial calculation
-});
+        other.addEventListener('input', calcTotal);
+        calcTotal(); // initial calculation
+    });
 </script>
 @endsection

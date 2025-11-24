@@ -15,6 +15,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Models\Account;
+use App\Models\Member;
 
 class PromotorController extends Controller
 {
@@ -214,7 +216,7 @@ class PromotorController extends Controller
                 abort(404, 'Invalid promoter ID.');
             }
 
-            $promoter = Promotor::with('minor')->findOrFail($decryptedId);
+            $promoter = Promotor::with('minor','members','accounts','branch')->findOrFail($decryptedId);
 
             $documents = KycDocument::where('promoter_id', $decryptedId)->get()->keyBy('document_category');
 
@@ -222,6 +224,7 @@ class PromotorController extends Controller
                 'branches' => Branch::pluck('branch_name', 'id'),
                 'marital_statuses' => MaritalStatus::pluck('status', 'id'),
                 'religions' => Religion::pluck('name', 'id'),
+                // 'account'=>Account::pluck('account_type','id')
             ];
 
             $route = "";

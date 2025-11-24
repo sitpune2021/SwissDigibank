@@ -31,12 +31,12 @@
           <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
           <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>
           <td class="font-semibold py-2 px-3 border border-gray-300">EMI Count</td>
-          <td class="py-2 px-3 border border-gray-300">{{ $installments }}</td>
+          <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }}</td>
         </tr>
 
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Tenure</td>
-          <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }} MONTHS</td>
+          <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }} {{ $tenure_unit }}</td>
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate  }} %</td>
         </tr>

@@ -104,7 +104,7 @@
             @foreach($associates as $associate)
                 <tr>
                     <td style="font-family: dejavusans; ">{{ $associate['sr_no'] }}</td>
-                    <td style="font-family: dejavusans; ">{{ $associate['account_no'] }}</td>
+                    <td style="font-family: dejavusans; ">{{ $associate['dd_account_no'] }}</td>
                     <td style="font-family: dejavusans; ">{{ $associate['name'] }}</td>
                     <td style="font-family: dejavusans; ">{{ $associate['amount'] }}</td>
                     
@@ -113,7 +113,7 @@
             <tr>
                     <td colspan="3" style="font-family: dejavusans;text-align: center; font-weight: bold; font-size: 12px; ">Total</td>
                     
-                    <td style="font-family: dejavusans; ">{{ $totals['amount'] }}</td>
+                    <td style="font-family: dejavusans; ">  {{ number_format($totalAmount ?? 0, 2) }}</td>
                     
                 </tr>
         </table>

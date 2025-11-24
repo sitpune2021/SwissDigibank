@@ -341,19 +341,16 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label class="md:text-lg font-medium block mb-4 uppercase">
                                 EMI Collection <span class="text-error">* </span>
                             </label>
-                            <select name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                            <option value="">Please Select</option>
-                            <option value="Monthaly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Monthaly' ? 'selected' : '' }}>Monthaly</option>
-                            <option value="Qaurterly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Qaurterly' ? 'selected' : '' }}>Qaurterly</option>
-                            <option value="Half_yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Half_yearly' ? 'selected' : '' }}>Half_yearly</option>
-                            <option value="Yearly" {{ old('emi_collection', $application->emi_collection ?? '') == 'Yearly' ? 'selected' : '' }}>Yearly</option>
-                        </select>
+                            <select id="emi_collection" name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Please Select</option>
+                                {{-- options will be dynamically added --}}
+                            </select>
                             @error('emi_collection')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                            <p class="text-error text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -1045,71 +1042,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
-<!-- submit data -->
-<!-- <script>
-let isCalculated = false;
-
-// Update Net Loan automatically
-function updateNetLoanAmount() {
-    const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-    const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-    const netLoan = loanAmount + insurance;
-    document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
-}
-
-document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
-document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
-
-// On Calculate click
-document.getElementById("calculateBtn").addEventListener("click", function (e) {
-    const button = this;
-
-    // Step 1: Basic amounts
-    let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-    let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-    let securityValue = parseFloat(document.getElementById("security_amount")?.value) || 0;
-    let netLoan = loanAmount + insurance;
-
-    // Step 2: Scheme data
-    let scheme = document.getElementById("scheme_id");
-    let selected = scheme.options[scheme.selectedIndex];
-    let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
-    let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
-
-    // Step 3: Calculations
-    // 🔹 Maximum Approvable = (Security Value × Limit%) ÷ 100
-    let approvable = (securityValue * limit) / 100;
-    // 🔹 Approved Loan = minimum of approvable and maxLoan
-    let approved = Math.min(approvable, maxLoan);
-
-    // Step 4: Display Results
-    document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
-    document.getElementById("resSecurity").textContent = securityValue.toFixed(2);
-    document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
-    document.getElementById("resLimit").textContent = limit + "%";
-    document.getElementById("resApprovable").textContent = approvable.toFixed(2);
-    document.getElementById("resApproved").textContent = approved.toFixed(2);
-
-    // Step 5: Hidden inputs (for backend)
-    document.getElementById("inputSecurity").value = securityValue.toFixed(2);
-    document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
-    document.getElementById("inputLimit").value = limit;
-    document.getElementById("inputApprovable").value = approvable.toFixed(2);
-    document.getElementById("inputApproved").value = approved.toFixed(2);
-
-    // Step 6: Show Calculation Box
-    document.getElementById("calculationBox").classList.remove("hidden");
-
-    // Step 7: Convert Calculate → Submit on 2nd click
-    if (!isCalculated) {
-        e.preventDefault();
-        button.textContent = "Submit";
-        button.type = "submit";
-        isCalculated = true;
-    }
-});
-</script>  -->
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const cibilBody = document.getElementById("cibilBody");
@@ -1185,7 +1117,7 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
 </script>
 
 <!-- branch Auto populate when select customer -->
- <script>
+<script>
     document.addEventListener("DOMContentLoaded", function () {
         const memberSelect = document.getElementById("member_id");
         const branchSelect = document.getElementById("branch_id");
@@ -1204,7 +1136,7 @@ document.getElementById("calculateBtn").addEventListener("click", function (e) {
 </script>
 
 <!-- loan amount & insurance amount sub text massage -->
- <script>
+<script>
 function numberToWords(num) {
     const a = [
         '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
@@ -1247,43 +1179,6 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
 });
 </script>
 
-<!-- Max Tenure & tenure vaule Validation -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const schemeSelect = document.getElementById("scheme_id");
-        const tenureInput = document.getElementById("tenure_value");
-
-        function validateTenure() {
-            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-            const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
-            const val = parseInt(tenureInput.value) || 0;
-
-            // If maxTenure not defined, skip
-            if (!maxTenure) return;
-
-            // Validate
-            if (val > maxTenure) {
-                tenureInput.classList.add("border-red-500");
-                document.getElementById("tenureError")?.remove();
-
-                const errorMsg = document.createElement("p");
-                errorMsg.id = "tenureError";
-                errorMsg.className = "text-error text-sm mt-1";
-                errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
-                tenureInput.insertAdjacentElement("afterend", errorMsg);
-
-                tenureInput.value = maxTenure; // optional cap
-            } else {
-                tenureInput.classList.remove("border-red-500");
-                document.getElementById("tenureError")?.remove();
-            }
-        }
-
-        schemeSelect.addEventListener("change", validateTenure);
-        tenureInput.addEventListener("input", validateTenure);
-    });
-    </script>
-
 <!-- tynure tye change -->
 <script>
     document.querySelectorAll('input[name="tenure_type"]').forEach(radio => {
@@ -1293,6 +1188,143 @@ document.getElementById("insuranceAmount").addEventListener("input", function ()
       });
     }); 
 </script>
+
+
+    <!-- Max Tenure & tenure vaule Validation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+        const schemeSelect = document.getElementById("scheme_id");
+        const tenureInput = document.getElementById("tenure_value");
+        const tenureRadios = document.querySelectorAll('input[name="tenure_type"]');
+        const tenureLabel = document.getElementById("tenureLabel");
+
+        let maxMonths = parseInt(schemeSelect.options[schemeSelect.selectedIndex]?.getAttribute("data-tenure")) || 0;
+
+        // Update Tenure label on type change
+        function updateTenureLabel(type) {
+            if (type === "months") tenureLabel.textContent = "( MONTHS )";
+            else if (type === "weeks") tenureLabel.textContent = "( WEEKS )";
+            else if (type === "days") tenureLabel.textContent = "( DAYS )";
+        }
+
+        // Compute max based on type
+        function getMaxTenure(type) {
+            if (type === "months") return maxMonths;
+            else if (type === "weeks") return maxMonths * 4;  // approx 4 weeks per month
+            else if (type === "days") return maxMonths * 30;  // approx 30 days per month
+            return maxMonths;
+        }
+
+        // Validate Tenure input
+        function validateTenure() {
+            const type = document.querySelector('input[name="tenure_type"]:checked')?.value || "months";
+            const maxVal = getMaxTenure(type);
+            const val = parseInt(tenureInput.value) || 0;
+
+            // Remove previous error
+            document.getElementById("tenureError")?.remove();
+            tenureInput.classList.remove("border-red-500");
+
+            if (val > maxVal) {
+                tenureInput.classList.add("border-red-500");
+
+                const errorMsg = document.createElement("p");
+                errorMsg.id = "tenureError";
+                errorMsg.className = "text-error text-sm mt-1";
+                errorMsg.textContent = `Tenure cannot exceed ${maxVal} ${type.toUpperCase()}.`;
+                tenureInput.insertAdjacentElement("afterend", errorMsg);
+
+                tenureInput.value = maxVal; // optional: auto cap to max
+            }
+        }
+
+        // Event listener: scheme change
+        schemeSelect.addEventListener("change", function() {
+            maxMonths = parseInt(this.options[this.selectedIndex]?.getAttribute("data-tenure")) || 0;
+            validateTenure();
+        });
+
+        // Event listener: tenure input
+        tenureInput.addEventListener("input", validateTenure);
+
+        // Event listener: tenure type change
+        tenureRadios.forEach(radio => {
+            radio.addEventListener("change", function() {
+                updateTenureLabel(this.value);
+                validateTenure();
+            });
+
+            // Initial load
+            if (radio.checked) updateTenureLabel(radio.value);
+        });
+
+        // Initial validation
+        validateTenure();
+
+    });
+    </script>
+
+    <!-- change tunuer type and emi collcetion -->
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+        const tenureRadios = document.querySelectorAll('input[name="tenure_type"]');
+        const emiSelect = document.getElementById("emi_collection");
+
+        function updateEMIOptions(type) {
+            type = type.toLowerCase(); // normalize
+            emiSelect.innerHTML = `<option value="">Select EMI Collection</option>`;
+
+            let options = [];
+
+            if(type === "months") {
+                options = [
+                    { value: "monthly", text: "Monthly" },
+                    { value: "quarterly", text: "Quarterly" },
+                    { value: "half_yearly", text: "Half-Yearly" },
+                    { value: "yearly", text: "Yearly" }
+                ];
+                document.getElementById("tenureLabel").textContent = "( MONTHS )";
+            }
+            else if(type === "weeks") {
+                options = [
+                    { value: "weekly", text: "Weekly" },
+                    { value: "bi_weekly", text: "Bi-Weekly" },
+                    { value: "4_weekly", text: "4-Weekly" }
+                ];
+                document.getElementById("tenureLabel").textContent = "( WEEKS )";
+            }
+            else if(type === "days") {
+                options = [
+                    { value: "daily", text: "Daily" }
+                ];
+                document.getElementById("tenureLabel").textContent = "( DAYS )";
+            }
+
+            // Preserve old selected value if exists
+            const oldValue = "{{ old('emi_collection', $application->emi_collection ?? '') }}";
+
+            options.forEach(opt => {
+                const selected = (oldValue.toLowerCase() === opt.value) ? "selected" : "";
+                emiSelect.innerHTML += `<option value="${opt.value}" ${selected}>${opt.text}</option>`;
+            });
+        }
+
+        tenureRadios.forEach(radio => {
+            radio.addEventListener("change", function () {
+                updateEMIOptions(this.value);
+            });
+
+            // Initial load for edit page
+            if(radio.checked) {
+                updateEMIOptions(radio.value);
+            }
+        });
+
+    });
+    </script>
+
 
 @endsection
 
