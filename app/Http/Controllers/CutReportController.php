@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\DdsAccount;
 use App\Models\FdAccount;
 use App\Models\Misaccount;
+use App\Models\RdAccount;
 use Illuminate\Http\Request;
 
 class CutReportController extends Controller
@@ -404,32 +405,47 @@ class CutReportController extends Controller
     // RD Account Cut Reports Start here
     public function rd_account_index()
     {
-        return view('cut-reports.report.rd-account');
+        $account = RdAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->get();
+        return view('cut-reports.report.rd-account', compact('account'));
     }
+    
     public function rdIndex()
     {
-        // Data for the PDF
+        $associates = RdAccount::select(
+            'rd_accounts.id',
+            'rd_accounts.rd_no',
+            'members.member_info_first_name as name',
+            'members.member_info_first_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'rd_accounts.member_id')
+            ->get();
+
+        $associates = collect($associates)->map(function ($item) {
+
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
+
+            return $item;
+        });
+
+        $totalAmount = $associates->sum('amount');
         $data = [
             'company' => [
-                'name' => 'SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED'
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
-            'associates' => [
-                [
-                    'sr_no' => 1,
-                    'account_no' => 'RD00013',
-                    'name' => 'Mrs. NISHA SWAPNIL THAKARE',
-                    'amount' => '100082.19',
-                    'shillak' => 'िशल्लक'
-                ]
-            ],
-            'totals' => [
-                'amount' => '122222.00',
-            ],
-            'photoPath' => public_path('assets/images/sbc-image.jpg')
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/sbc-image.jpg'),
         ];
 
-        // Render Blade HTML
-        $html = view('associates-advisor.pdf.cut-report-rd', $data)->render();
+        $html = view('cut-reports.pdf.cut-report-rd', $data)->render();
         $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
         $fontDirs = $defaultConfig['fontDir'];
 
@@ -447,7 +463,6 @@ class CutReportController extends Controller
                 'mukta' => [
                     'R' => 'TiroDevanagariMarathi-Regular.ttf',
                     'B' => 'Mukta-Bold.ttf',
-                    // include other weights if needed
                 ]
             ],
             'default_font' => 'mukta',
@@ -456,8 +471,7 @@ class CutReportController extends Controller
         $mpdf->SetAutoPageBreak(true, 10);
         $mpdf->WriteHTML($html);
 
-        // Stream PDF to browser
-        return response($mpdf->Output('cut-report-rd.pdf', 'D'))
+        return response($mpdf->Output('cut-report-rd_account.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
     // RD Account Cut Reports End here

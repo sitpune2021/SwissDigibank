@@ -67,7 +67,6 @@
         </div>
 
         <div class="pb-4 overflow-x-auto lg:pb-6">
-
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
@@ -164,100 +163,69 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($account as $row)
+
                     <tr class="border-b dark:border-bg3">
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1  uppercase">
-                                02839	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 Capitalize">
-                              SAHIL CHINTAMANI - DEMO-01135	
+                            <div class="flex items-center gap-1 uppercase">
+                                {{ $row->rd_no ?? ''}}
                             </div>
                         </td>
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center  gap-1">
-                                DEEPAK SHRMA	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center t gap-1">
-                                DEEPAK SHRMA	
+                            <div class="flex items-center gap-1 capitalize">
+                                {{ $row->member->member_info_first_name??'' }} {{ $row->member->member_info_last_name??'' }}
                             </div>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                               8502970566	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                KHANNA
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                               recurring deposit scheme sept 2025 - RDS25	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                            1,500.00	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                10-11-2024
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                10-11-2024
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                Monthly	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                Active
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                130	
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                12
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                0
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                0
-                            </div>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                               0
-                            </div>
-                        </td>
-                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                              364
+
                             </div>
                         </td>
 
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->member->member_info_mobile_no??''  }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->branch->branch_name??'' }}
+                            </div>
+                        </td>
+
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->scheme->scheme_name??'' }} {{ $row->scheme->scheme_code??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->rd_amount??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->open_date??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->maturity_date??'' }}
+                            </div>
+                        </td>
+                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center gap-1">
+                                {{ $row->final_status }}
+                            </div>
+                        </td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
