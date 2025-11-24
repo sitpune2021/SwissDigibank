@@ -223,7 +223,7 @@ class AccountsController extends Controller
                 'amount'            => $request->amount,
                 'transaction_type'  => 'credit',
                 'transaction_date'  => now(),
-                'approve_status'    => 'pending',
+                'approve_status'    => 'approved',
                 'comment'           => 'Opening deposit',
                 'utr_number'        => $request->pay1_transfer_utr ?? null,
                 'transfer_mode'     => $request->transfer_mode ?? null,

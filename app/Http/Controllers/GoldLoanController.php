@@ -983,6 +983,55 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application', 'emiChart'));
     }
 
+    // public function generateEmiChart($application)
+    // {
+    //     $principalAmount = $application->approved_loan_amount;
+    //     $months = $application->tenure;
+    //     $annualInterest = $application->scheme->annual_interest_rate;
+
+    //     $monthlyInterestRate = ($annualInterest / 12) / 100;
+
+    //     // Other Charges Per EMI (set your correct field)
+    //     $otherPerEmi = $application->scheme->other_charge_per_emi ?? 0;
+
+    //     // EMI Formula
+    //     $emi = ($principalAmount * $monthlyInterestRate * pow(1 + $monthlyInterestRate, $months))
+    //         / (pow(1 + $monthlyInterestRate, $months) - 1);
+
+    //     $balance = $principalAmount;
+    //     $schedule = [];
+
+    //     $totalInterest = 0;
+
+    //     for ($i = 1; $i <= $months; $i++) {
+
+    //         $interest = $balance * $monthlyInterestRate;
+    //         $principal = $emi - $interest;
+
+    //         $balance -= $principal;
+
+    //         $totalInterest += $interest;
+
+    //         $schedule[] = [
+    //             'no'         => $i,
+    //             'principal'  => round($principal, 2),
+    //             'interest'   => round($interest, 2),
+    //             'other_charges' => round($otherPerEmi, 2),
+    //             'emi'        => round($emi + $otherPerEmi, 2),
+    //             'start_date' => now()->format('d/m/Y'),
+    //             'date'       => now()->addMonths($i)->format('d/m/Y'),
+    //             'due_date'   => now()->addMonths($i)->addDay()->format('d/m/Y'),
+    //             'due_principal' => round(max($balance, 0), 2),
+    //         ];
+    //     }
+
+    //     return [
+    //         "rows" => $schedule,
+    //         "total_interest" => round($totalInterest, 2),
+    //         "total_other" => round($months * $otherPerEmi, 2),
+    //     ];
+    // }
+
 
     public function generateEmiChart($application)
     {
@@ -990,25 +1039,31 @@ class GoldLoanController extends Controller
         $months = $application->tenure;
         $annualInterest = $application->scheme->annual_interest_rate;
 
+        if (empty($months) || $months <= 0) {
+            $months = 1; // या error throw कर दो
+        }
+
         $monthlyInterestRate = ($annualInterest / 12) / 100;
 
-        // Other Charges Per EMI (set your correct field)
+        // Other Charges Per EMI
         $otherPerEmi = $application->scheme->other_charge_per_emi ?? 0;
 
-        // EMI Formula
-        $emi = ($principalAmount * $monthlyInterestRate * pow(1 + $monthlyInterestRate, $months))
-            / (pow(1 + $monthlyInterestRate, $months) - 1);
+        // Zero-interest protection
+        if (abs($monthlyInterestRate) < 1e-9) {
+            $emi = $principalAmount / $months;
+        } else {
+            $emi = ($principalAmount * $monthlyInterestRate * pow(1 + $monthlyInterestRate, $months))
+                / (pow(1 + $monthlyInterestRate, $months) - 1);
+        }
 
         $balance = $principalAmount;
         $schedule = [];
-
         $totalInterest = 0;
 
         for ($i = 1; $i <= $months; $i++) {
 
             $interest = $balance * $monthlyInterestRate;
             $principal = $emi - $interest;
-
             $balance -= $principal;
 
             $totalInterest += $interest;
@@ -1032,7 +1087,6 @@ class GoldLoanController extends Controller
             "total_other" => round($months * $otherPerEmi, 2),
         ];
     }
-
 
     public function upload_cibil_score()
     {

@@ -74,6 +74,12 @@
 
               }
 
+              button[type="reset"]:active {
+                  transform: scale(0.95);
+                  opacity: 0.7;
+                  transition: 0.1s;
+              }
+
               .slider .switch-off {
                   right: 0;
                   font-size: 12px;

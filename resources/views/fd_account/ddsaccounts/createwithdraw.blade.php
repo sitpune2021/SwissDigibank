@@ -6,6 +6,11 @@
             color: #14532d;
         }
 
+        .btn-outline:active {
+            transform: scale(0.96);
+            opacity: 0.7;
+        }
+
         .custom-thead th {
             font-weight: 600;
             border-bottom: 1px solid #ccc;
@@ -102,8 +107,8 @@
                                 Amount to Withdraw <span class="text-red-500">*</span>
                             </label>
 
-                            <input type="number" min="0"name="amount" id="amount" max="{{ $balanceAvailable }}" name="amount"
-                                id="amountToWithdraw" placeholder="Enter Amount to Withdraw"
+                            <input type="number" min="0"name="amount" id="amount" max="{{ $balanceAvailable }}"
+                                name="amount" id="amountToWithdraw" placeholder="Enter Amount to Withdraw"
                                 class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"
                                 required>
 
@@ -244,7 +249,10 @@
                             <button type="submit" class="btn-primary  ">
                                 DEPOSIT
                             </button>
-                            <a href="#" class="btn-outline ">
+                            <button class="btn-outline uppercase" type="reset">
+                                Reset
+                            </button>
+                            <a href="{{ route('ddsaccounts.show', $withraw->id) }}" class="btn-outline">
                                 CANCEL
                             </a>
                         </div>

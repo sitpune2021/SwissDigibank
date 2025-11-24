@@ -41,6 +41,11 @@ class Account extends Model
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class, 'bank_id');
+    }
+
 
     public function minor()
     {
@@ -79,7 +84,10 @@ class Account extends Model
     {
         return $this->hasMany(SavingOtherCharge::class, 'account_id', 'id');
     }
-
+    public function promotor()
+    {
+        return $this->belongsTo(Promotor::class);
+    }
     public function getFinalStatusAttribute()
     {
         if ($this->approve_status == 2) {

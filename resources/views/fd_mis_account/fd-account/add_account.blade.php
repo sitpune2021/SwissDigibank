@@ -30,6 +30,12 @@
         .bg-yellow {
             background-color: #e17100;
         }
+
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
     </style>
 
     <div class="main-inner">
@@ -691,7 +697,7 @@
                         member.minors.forEach(minor => {
                             $minorSelect.append(
                                 `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
-                                );
+                            );
                         });
                     }
 
@@ -703,7 +709,7 @@
                         // if you load single branch as object
                         $branchSelect.append(
                             `<option value="${member.branch_id.id}" selected>${member.branch_id.branch_name}</option>`
-                            );
+                        );
                     } else if (member.branch && member.branch.length > 0) {
                         // if member has multiple branches
                         member.branch.forEach(branch => {

@@ -2,7 +2,7 @@
 @section('content')
 <div class="main-inner">
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h3 class="h2">APPROVALS - REVERSE TRANSACTIONS</h3>
+        <h4 class="h2">APPROVALS - REVERSE TRANSACTIONS</h4>
     </div>
 
     <!-- Latest Transactions -->

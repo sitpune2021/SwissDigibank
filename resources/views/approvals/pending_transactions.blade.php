@@ -3,7 +3,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <!-- <div class="flex items-center gap-2"> -->
-        <h3 class="h2">APPROVALS - TRANSACTIONS</h3>
+        <h4 class="h2">APPROVALS - TRANSACTIONS</h4>
     </div>
     <!-- Latest Transactions -->
     <div class="col-span-12 box lg:col-span-6">
