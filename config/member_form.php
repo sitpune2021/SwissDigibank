@@ -151,7 +151,7 @@ return [
             'type' => 'text',
             'required' => false,
         ],
-         [
+        [
             'label' => 'MARITAL STATUS',
             'name' => 'member_info_marital_status',
             'id' => 'marital_status',
@@ -212,7 +212,7 @@ return [
             'dynamic' => true,
             'options_key' => 'religion',
         ],
-        
+
     ],
 
     // Member Address
@@ -636,6 +636,7 @@ return [
             'id' => 'pay_mode',
             'type' => 'radio',
             'required' => false,
+            'default' => config('settings.default_pay_mode', 'cash'),
             'options' => [
                 'cash' => 'Cash',
                 'online' => 'Online Tr.',

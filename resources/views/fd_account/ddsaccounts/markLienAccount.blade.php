@@ -176,9 +176,9 @@
                             <button class="btn-primary  uppercase">
                                 Link Account
                             </button>
-                            <button class="btn-outline  uppercase">
-                                back
-                            </button>
+                            <a href="{{ route('ddsaccounts.show', $ddaccount->id) }}" class="btn-outline uppercase">
+                                CANCEL
+                            </a>
                         </div>
                     </div>
 
@@ -242,7 +242,8 @@
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Balance Available</td>
-                                        <td class="py-2">{{ optional($ddaccount->transactions->last())->balance_available }}</td>
+                                        <td class="py-2">
+                                            {{ optional($ddaccount->transactions->last())->balance_available }}</td>
                                     </tr>
                                 </tbody>
                             </table>

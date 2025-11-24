@@ -436,6 +436,8 @@ class DdsAccountsController extends Controller
             'savingAccounts'       => $savingAccounts,
             'linkedSavingAcc'      => $linkedSavingAcc,
             'isLinked'             => $isLinked, // NEW
+            'transactions' => $transactions,
+
         ]);
     }
 
@@ -1740,7 +1742,7 @@ class DdsAccountsController extends Controller
     {
 
         $account = DdsAccount::findOrFail($id);
-   
+
         DB::beginTransaction();
 
         try {
@@ -1748,9 +1750,9 @@ class DdsAccountsController extends Controller
                 'account_id'  => $account->id,
                 'request_data' => $request->all(),
             ]);
- 
+
             if ($request->nominee === 'no') {
- 
+
                 $deletedCount = $account->nominee()->count();
                 $account->nominee()->delete();
 
@@ -1785,7 +1787,7 @@ class DdsAccountsController extends Controller
             foreach ($submittedNominees as $nomineeData) {
 
                 $nominee = null;
-  
+
                 if (!empty($nomineeData['id'])) {
                     $nominee = $account->nominee()
                         ->where('id', $nomineeData['id'])

@@ -6,6 +6,11 @@
             color: #14532d;
         }
 
+        .btn-outline:active {
+            transform: scale(0.96);
+            opacity: 0.7;
+        }
+
         .custom-thead th {
             font-weight: 600;
             border-bottom: 1px solid #ccc;
@@ -63,7 +68,7 @@
                     <form class="space-y-6" action="{{ route('ddsaccounts.deposit', $ddAccount->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                    
+
                         <!-- Member Signature -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer's
@@ -140,7 +145,7 @@
                             </label>
                             <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
                                 <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600" checked >
+                                    <input type="radio" name="pay_mode" value="cash" class="text-green-600" checked>
                                     Cash
                                 </label>
                                 <label class="flex items-center gap-2">
@@ -235,9 +240,14 @@
                             <button type="submit" class="btn-primary  ">
                                 DEPOSIT
                             </button>
-                            <a href="#" class="btn-outline ">
+                            <button class="btn-outline uppercase " type="reset">
+                                Reset
+                            </button>
+
+                            <a href="{{ route('ddsaccounts.show', $ddAccount->id) }}" class="btn-outline">
                                 CANCEL
                             </a>
+
                         </div>
                     </form>
                 </div>

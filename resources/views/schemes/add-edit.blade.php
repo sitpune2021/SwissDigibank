@@ -33,6 +33,11 @@
             width: 0;
             height: 0;
         }
+         button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
+            }
 
         .slider {
             position: absolute;
@@ -92,14 +97,14 @@
     </style>
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">
+            <h4 class="h2">
                 {!! isset($show) && $show
                     ? 'SAVING / CURRENT SCHEME - ' . $schemes->scheme_name
                     : (isset($schemes)
                         ? 'EDIT SAVING / CURRENT SCHEME - ' . $schemes->scheme_name
                         : 'NEW SAVING / CURRENT SCHEME 
                             ') !!}
-            </h3>
+            </h4>
         </div>
         @if (session('success'))
             <div id="success-alert"
@@ -261,7 +266,7 @@
             <table class="table-auto w-full border border-gray-300 mb-6">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th class="border px-4 py-2 text-left">Limit</th>
+                        <th class="border px-4 py-2 uppercase text-left">Limit</th>
                         @foreach ($transferChargeSections as $mode)
                             <th class="border px-4 py-2 text-center">{{ strtoupper($mode) }}</th>
                         @endforeach

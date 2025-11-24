@@ -9,6 +9,12 @@
             height: 30px;
         }
 
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
+
         .switch input {
             opacity: 0;
             width: 0;
@@ -116,7 +122,7 @@
                             @enderror
                         </div>
                     </div>
-                   
+
 
 
                     <div class="flex items-start gap-4">
