@@ -205,7 +205,6 @@
         </div>
 
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
-
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="text-end p-3">
@@ -279,7 +278,7 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
                                 <td class="px-4 py-2">
-                                    {{ optional($transactions->last())->interest_amount ?? '0.00' }}
+                                    {{ optional($ddaccount->transactions->last())->interest_amount ?? '0.00' }}
                                 </td>
                             </tr>
                             <tr>
