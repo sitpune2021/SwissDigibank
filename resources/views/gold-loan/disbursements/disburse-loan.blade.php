@@ -258,26 +258,34 @@
                         </div>
 
  
-                        <hr>
-                        <h4>Advance Interest</h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                        @if($isAdvanceInterest)
+                            <hr>
+                            <h4>Advance Interest</h4>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
 
-                            <input type="number" id="finalAmount" name="advance_interest"
-                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
-                            value="{{ $advanceInterest }}" readonly>
+                                <input type="number" id="advance_interest" name="advance_interest"
+                                class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
+                                value="{{ $advanceInterest }}" readonly>
 
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="" data-target="advance-interest"
-                                    class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
+                                <div class="flex items-center gap-1 mt-3">
+                                    <input type="checkbox" name="" id="" data-target="advance-interest"
+                                        class="block toggle-paymode">
+                                    <span class="block">Collect Processing Fee Separately</span>
+                                </div>
+
+                                <div id="advance-interest" class="mt-3 hidden">
+                                    <x-paymode :amount="$misaccount->amount ?? ''"
+                                        :showSaving="false" 
+                                        id="processing_fee3" 
+                                        :readonly="false" :amountClass="true"
+                                        :bgColor="false" :hiddenheading="true"
+                                        :checkedDefault="'cash'"
+                                        groupName="advance-interest"
+                                    />
+                                </div>
                             </div>
+                        @endif
 
-                            <div id="advance-interest" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
-                                    id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
-                                    :hiddenheading="true" :checkedDefault="'cash'" groupName="advance-interest" />
-                            </div>
-                        </div>
 
                          <hr>
                         <div class="col-span-2 md:col-span-1 mb-4">
@@ -783,6 +791,7 @@ document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
     window.onload = calculateTotal;
 </script>
 
+<!-- advance-interest calculateTotal -->
 <script>
     // Helper function to convert string to float, safely
     function parseAmount(value) {
