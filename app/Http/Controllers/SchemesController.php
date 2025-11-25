@@ -56,7 +56,7 @@ class SchemesController extends Controller
             Log::info('Scheme store request received', $request->all());
 
             $validated = $request->validate([
-                'scheme_name'   => 'required|string|max:255',
+                'scheme_name' => 'required|string|regex:/^[A-Za-z\s]+$/|max:255',
                 'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
                 'min_opening_balance'   => 'required|numeric|min:0',
                 'min_monthly_avg_balance' => 'required|numeric|min:0',
@@ -210,7 +210,7 @@ class SchemesController extends Controller
             $scheme = Scheme::with('schemeCharges')->findOrFail($id);
 
             $validated = $request->validate([
-                'scheme_name'                   => 'required|string|max:255',
+                'scheme_name' => 'required|string|regex:/^[A-Za-z\s]+$/|max:255',
                 'scheme_code'                   => 'required|alpha_num|max:100',
                 'min_opening_balance'          => 'required|numeric|min:0',
                 'min_monthly_avg_balance'      => 'required|numeric|min:0',

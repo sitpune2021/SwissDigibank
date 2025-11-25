@@ -3,7 +3,7 @@
 
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center uppercase justify-between gap-4 lg:mb-8">
-        <h3 class="h3">MIS ACCOUNTS</h3>
+        <h4 class="h3">MIS ACCOUNTS</h4>
         <a class="btn-primary flex items-center gap-2 uppercase" href="{{route('misaccount.create')}}">
             Add
         </a>

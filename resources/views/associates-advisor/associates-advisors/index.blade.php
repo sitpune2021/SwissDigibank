@@ -50,9 +50,9 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+            <h4 class=" flex text-xl block  uppercase  font-bold">
                 Associates/ Advisors
-            </h3>
+            </h4>
             <div class="flex flex-col md:flex-row  lg:flex-row gap-3">
                 <a href="" class=" block flex btn-primary justify-center uppercase ">
                     ADD

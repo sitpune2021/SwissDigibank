@@ -136,7 +136,7 @@
 
                     <div class="col-span-2 md:col-span-1">
                         <label class="font-medium block mb-2 uppercase">Scheme <span class="text-red-500">*</span>
-                            :</label>
+                        </label>
                         <select id="" name="scheme"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Scheme</option>
@@ -150,17 +150,23 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
-                        <label class="font-medium block mb-2 uppercase">RD Amount <span class="text-red-500">*</span>
-                            :</label>
+                        <label class="font-medium block mb-2 uppercase">
+                            RD Amount <span class="text-red-500">*</span>
+                        </label>
+
+                        <p id="minAmountMsg" class="text-sm hidden"></p>
+
                         <input type="number" id="rdAmount" name="rd_amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Amount" value="">
+
                         <x-number-to-word for="rdAmount" />
+
                         @error('rd_amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-
                     </div>
+
 
                     <div class="col-span-2 md:col-span-1 relative">
                         <x-datepicker-disabled label="OPEN DATE" name="open_date" value="{{ old('open_date') }}"
@@ -172,7 +178,7 @@
 
                     <!-- TDS -->
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">TDS Deduction<span
+                        <label class="font-medium block mb-2 uppercase">TDS Deduction <span
                                 class="text-red-500">*</span></label>
                         <div class="flex items-center  gap-2">
                             <label class="flex items-center gap-2"><input class="ms-4" type="radio" name="tds"
@@ -426,6 +432,227 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        /* ===============================
+       RD Amount → Auto-fill Amount
+       =============================== */
+        document.addEventListener('DOMContentLoaded', () => {
+            const rdAmount = document.getElementById('rdAmount');
+            const amountField = document.querySelector('input[name="amount"]');
+
+            if (rdAmount && amountField) {
+                rdAmount.addEventListener('input', () => {
+                    amountField.value = rdAmount.value;
+                });
+            }
+        });
+    </script>
+
+    <script>
+        /* ===============================
+       Payment Mode Toggle
+       =============================== */
+        function togglePaymentMode(type) {
+
+            ['cash', 'onlineTr', 'cheque', 'savingAcc'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            document.getElementById('accountBalanceDiv').classList.add('hidden');
+
+            if (type === 'onlineTr') {
+                document.getElementById('onlineTr').classList.remove('hidden');
+            }
+            if (type === 'cheque') {
+                document.getElementById('cheque').classList.remove('hidden');
+            }
+            if (type === 'savingAcc') {
+                document.getElementById('savingAcc').classList.remove('hidden');
+                document.getElementById('accountBalanceDiv').classList.remove('hidden');
+            }
+        }
+    </script>
+
+    <script>
+        /* ===============================
+       Account Type Toggle
+       =============================== */
+        function toggleAccountType(type) {
+
+            ['single', 'joint'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            if (type === 'joint') {
+                document.getElementById('joint').classList.remove('hidden');
+            } else {
+                document.getElementById('single').classList.remove('hidden');
+            }
+        }
+    </script>
+
+    <script>
+        /* ===============================
+       Member Dropdown → Fetch Accounts
+       =============================== */
+        $(document).ready(function() {
+
+            $('#memberDropdown').on('change', function() {
+
+                let memberId = $(this).val();
+
+                const $jointSelect = $('#savingAccountJoint');
+                const $savingSelect = $('#savingAccountSelect');
+
+                $jointSelect.empty().append('<option value="">Select Account</option>');
+                $savingSelect.empty().append('<option value="">Select Account</option>');
+
+                if (!memberId) {
+                    $('#memberName').val('');
+                    $('#memberAddress').val('');
+                    $('#memberMobile').val('');
+                    $('#minor_id').empty().append('<option value="">Select Minor</option>');
+                    $('#branch_id').empty().append('<option value="">Select branch</option>');
+
+                    $('#accountBalance').text('');
+                    $('#accountBalanceDiv').addClass('hidden');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('members.get', '') }}/" + memberId,
+                    type: 'GET',
+                    success: function(response) {
+
+                        /* ========== Member Info ========== */
+                        $('#memberName').val(response.member?.member_info_first_name ??
+                            'Not Available');
+                        $('#memberAddress').val(response.member?.address
+                            ?.member_address_line_1 ?? 'Not Available');
+                        $('#memberMobile').val(response.member?.member_info_mobile_no ?? '');
+                        $('#branch_id').val(response.member?.branch?.id ?? '');
+
+                        /* ========== Minors ========== */
+                        const $minorSelect = $('#minor_id');
+                        $minorSelect.empty();
+
+                        if (response.member?.minors?.length > 0) {
+                            response.member.minors.forEach(minor => {
+                                $minorSelect.append(
+                                    `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
+                                    );
+                            });
+                        } else {
+                            $minorSelect.append('<option value="">No minors found</option>');
+                        }
+
+                        /* ========== Branch Dropdown ========== */
+                        const $branchSelect = $('#branch_id');
+                        $branchSelect.empty();
+
+                        if (response.member?.branch?.id) {
+                            $branchSelect.append(
+                                `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
+                                );
+                        } else {
+                            $branchSelect.append(
+                                '<option value="">No branches available</option>');
+                        }
+
+                        /* ========== Populate Accounts ========== */
+                        if (response.accounts?.length > 0) {
+                            response.accounts.forEach(account => {
+                                $jointSelect.append(
+                                    `<option value="${account.id}">${account.account_no}</option>`
+                                    );
+                                $savingSelect.append(
+                                    `<option value="${account.id}" data-balance="${account.amount_deposit}">${account.account_no}</option>`
+                                    );
+                            });
+                        } else {
+                            $jointSelect.append('<option value="">No accounts found</option>');
+                            $savingSelect.append('<option value="">No accounts found</option>');
+                        }
+
+                        /* ========== Balance Display ========== */
+                        $savingSelect.off('change').on('change', function() {
+                            const selected = $(this).find('option:selected');
+                            const balance = selected.data('balance');
+
+                            if (balance || balance === 0) {
+                                $('#accountBalance').text('₹ ' + balance);
+                                $('#accountBalanceDiv').removeClass('hidden');
+                            } else {
+                                $('#accountBalance').text('');
+                                $('#accountBalanceDiv').addClass('hidden');
+                            }
+                        });
+
+                        $('#accountBalance').text('');
+                        $('#accountBalanceDiv').addClass('hidden');
+                    },
+                    error: function() {
+                        alert('Unable to fetch member details and accounts.');
+                    }
+                });
+            });
+        });
+    </script>
+
+  <script>
+/* ===============================
+   RD Minimum Amount + Auto Fill
+   =============================== */
+document.addEventListener('DOMContentLoaded', function () {
+
+    const schemeSelect = document.getElementById('scheme_id');
+    const rdAmountInput = document.getElementById('rdAmount');
+    const amountField = document.querySelector('input[name="amount"]');
+    const minAmountMsg = document.getElementById('minAmountMsg');
+
+    let currentMinAmount = 0;
+
+    // When Scheme is selected
+    schemeSelect.addEventListener('change', function () {
+
+        const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+        const minAmount = selectedOption.getAttribute('data-min');
+
+        currentMinAmount = (minAmount && !isNaN(minAmount)) ? parseFloat(minAmount) : 0;
+
+        // Show green message
+        minAmountMsg.textContent = currentMinAmount
+            ? `Minimum amount to be deposited ₹ ${currentMinAmount.toFixed(2)}`
+            : '';
+        minAmountMsg.classList.remove('hidden');
+        minAmountMsg.style.color = "green";
+
+        // Auto-fill RD Amount + Final Amount
+        if (currentMinAmount > 0) {
+            rdAmountInput.value = currentMinAmount.toFixed(2);
+            amountField.value = currentMinAmount.toFixed(2);
+            rdAmountInput.style.borderColor = ""; // remove red border if previously invalid
+        }
+    });
+
+    // Validate RD amount while typing
+    rdAmountInput.addEventListener('input', function () {
+        let value = parseFloat(rdAmountInput.value) || 0;
+
+        // Update last Amount field when user edits RD amount
+        amountField.value = rdAmountInput.value;
+
+        if (value < currentMinAmount) {
+            rdAmountInput.style.borderColor = "red";
+        } else {
+            rdAmountInput.style.borderColor = "";
+        }
+    });
+
+});
+</script>
+
+
+    {{-- <script>
         const rdAmount = document.getElementById('rdAmount');
         const amountField = document.querySelector('input[name="amount"]');
 
@@ -474,9 +701,6 @@
 
         }
     </script>
-
-
-
     <script>
         $(document).ready(function() {
             $('#memberDropdown').on('change', function() {
@@ -603,4 +827,39 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const schemeSelect = document.getElementById('scheme_id');
+            const rdAmountInput = document.getElementById('rdAmount');
+            const minAmountMsg = document.getElementById('minAmountMsg');
+
+            let currentMinAmount = 0;
+
+            // When scheme changes
+            schemeSelect.addEventListener('change', function() {
+                const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+                const minAmount = selectedOption.getAttribute('data-min');
+
+                currentMinAmount = (minAmount && !isNaN(minAmount)) ? parseFloat(minAmount) : 0;
+
+                minAmountMsg.textContent = currentMinAmount ?
+                    `Minimum amount to be deposited ₹ ${currentMinAmount.toFixed(2)}` :
+                    '';
+
+                minAmountMsg.classList.remove('hidden');
+                minAmountMsg.style.color = "green";
+            });
+
+            // When RD amount is typed
+            rdAmountInput.addEventListener('input', function() {
+                let value = parseFloat(rdAmountInput.value) || 0;
+
+                if (value < currentMinAmount) {
+                    rdAmountInput.style.borderColor = "red";
+                } else {
+                    rdAmountInput.style.borderColor = "";
+                }
+            });
+        });
+    </script> --}}
 @endsection

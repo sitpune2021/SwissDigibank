@@ -16,7 +16,7 @@
     </style>
 </head>
 <div class="main-inner">
-    <h2 class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h2>
+    <h4 class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h4>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
         <!-- Calculator Section -->

@@ -126,7 +126,6 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="bonus_rate_type" class="md:text-lg font-medium block mb-4 uppercase">
                     Bonus Rate
-                    <span class="text-red-500">*</span>
                 </label>
                 <div class="col-sm-7">
                     <div class="flex items-center gap-2">
@@ -377,7 +376,7 @@
             <!-- Buttons -->
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                 <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
-                    Save Scheme
+                    Save RD Scheme
                 </button>
                 <button class="btn-outline" type="reset">RESET</button>
 
