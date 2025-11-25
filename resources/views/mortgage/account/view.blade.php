@@ -699,7 +699,7 @@ $settingLabel = '';
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
-                        Gold Loan Scheme Info
+                        MORTGAGE LOAN SCHEME INFO
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"
@@ -925,7 +925,7 @@ $settingLabel = '';
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
-                        MORTGAGE Loan Basic Details
+                        MORTGAGE LOAN BASIC DETAILS
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"

@@ -16,7 +16,7 @@
     </style>
 </head>
 <div class="main-inner">
-    <h2 class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h2>
+    <h4 class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h4>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
         <!-- Calculator Section -->
@@ -487,59 +487,24 @@
                             } [comp] || 1;
 
                             // ---- maturity & interest ----
-                            // let maturity = 0;
-                            // for (let i = 1; i <= deposits; i++) {
-                            //     const monthsLeft = months - (i - 1) * (months / deposits);
-                            //     const n = monthsLeft / compMonths;
-                            //     const effRate = Math.pow(1 + rate / (12 / compMonths), n);
-                            //     maturity += amt * effRate;
-                            // }
+                            let maturity = 0;
+                            for (let i = 1; i <= deposits; i++) {
+                                const monthsLeft = months - (i - 1) * (months / deposits);
+                                const n = monthsLeft / compMonths;
+                                const effRate = Math.pow(1 + rate / (12 / compMonths), n);
+                                maturity += amt * effRate;
+                            }
 
-                            // ---- maturity & interest (FIXED FORMULA) ----
-                            // ---- Correct Maturity Calculation ----
-// ---- Correct Maturity Calculation (Revised for Accurate Interest) ----
-// ---- Corrected RD Interest Calculation (Custom to match expected output) ----
-const totalDeposit = amt * deposits;
-let interestEarned = 0;
+                            const interestEarned = maturity - totalDeposit;
+                            const bonus = totalDeposit * (bonusPct / 100);
+                            const maturityFinal = maturity + bonus;
 
-// Custom simple-average formula for DAILY RD
-if (freq === "DAILY") {
-    // ✅ Approximation that gives ₹1250.00 interest for 30,000 @10% for 300 days
-    interestEarned = (totalDeposit * rate * (tVal / 365)) / 2;
-} 
-else {
-    // ✅ Keep your normal compound formula for others
-    const n = 12; // compounding per year
-    const tYears = months / 12;
-    const P = amt;
-    const maturityTemp = P * ((Math.pow(1 + rate / n, n * tYears) - 1) / (1 - Math.pow(1 + rate / n, -1 / n)));
-    interestEarned = maturityTemp - totalDeposit;
-}
-
-const bonus = totalDeposit * (bonusPct / 100);
-const maturityFinal = totalDeposit + interestEarned + bonus;
-
-return {
-    totalDeposit: totalDeposit.toFixed(2),
-    interestEarned: interestEarned.toFixed(2),
-    bonus: bonus.toFixed(2),
-    maturity: maturityFinal.toFixed(2)
-};
-
-
-
-
-
-                            // const interestEarned = maturity - totalDeposit;
-                            // const bonus = totalDeposit * (bonusPct / 100);
-                            // const maturityFinal = maturity + bonus;
-
-                            // return {
-                            //     totalDeposit: totalDeposit.toFixed(2),
-                            //     interestEarned: interestEarned.toFixed(2),
-                            //     bonus: bonus.toFixed(2),
-                            //     maturity: maturityFinal.toFixed(2)
-                            // };
+                            return {
+                                totalDeposit: totalDeposit.toFixed(2),
+                                interestEarned: interestEarned.toFixed(2),
+                                bonus: bonus.toFixed(2),
+                                maturity: maturityFinal.toFixed(2)
+                            };
                         }
                         // ----- calculate button click -----
                         els.calculateBtn.addEventListener('click', function(e) {

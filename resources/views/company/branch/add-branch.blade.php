@@ -115,14 +115,7 @@
                     }
                 });
 
-                if (exactLength) {
-                    input.addEventListener('blur', function() {
-                        if (this.value.length !== maxLength) {
-                            alert(`${id.replace(/_/g, ' ')} must be exactly ${maxLength} digits.`);
-                            this.focus();
-                        }
-                    });
-                }
+                
             }
 
             // IFSC Code validation

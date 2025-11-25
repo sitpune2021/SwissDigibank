@@ -103,6 +103,16 @@ public function scheme()
     return $this->belongsTo(LoanAgainstScheme::class, 'scheme_id');
 }
 
+    public function LoanAgainstTransaction()
+    {
+        return $this->hasMany(LoanAgainstTransactions::class, 'loan_id', 'id');
+    }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(LoanAgainstTransactions::class, 'loan_id', 'id');
+    }
+
 
 
 }

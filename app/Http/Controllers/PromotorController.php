@@ -219,6 +219,7 @@ class PromotorController extends Controller
             $promoter = Promotor::with('minor','members','accounts','branch')->findOrFail($decryptedId);
 
             $documents = KycDocument::where('promoter_id', $decryptedId)->get()->keyBy('document_category');
+$totalShares = $promoter->shareholdings->sum('total_share_held');
 
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
@@ -231,7 +232,7 @@ class PromotorController extends Controller
             $method = "";
             $show = true;
 
-            return view('company.promoters.show', compact('promoter', 'documents', 'dynamicOptions', 'route', 'show', 'method'));
+            return view('company.promoters.show', compact('promoter', 'documents', 'dynamicOptions', 'route', 'show', 'method','totalShares'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         } catch (\Exception $e) {

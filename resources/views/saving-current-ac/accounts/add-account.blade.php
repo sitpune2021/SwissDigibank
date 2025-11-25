@@ -31,7 +31,7 @@
     </head>
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h3>
+            <h4 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h4>
         </div>
 
         @if (session('success'))
@@ -185,7 +185,7 @@
                     <label for="advisor_id" class="font-medium block mb-4 uppercase">Advisor/Staff</label>
                     <select name="advisor_id" id="advisor_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Branch --</option>
+                        <option value="">-- Select Advisor/Staff--</option>
                         @foreach ($advisors as $id => $advisors)
                             <option value="{{ $id }}"
                                 {{ old('advisor_id', $account->advisor_id ?? '') == $id ? 'selected' : '' }}>

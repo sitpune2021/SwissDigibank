@@ -8,11 +8,11 @@ use App\Models\Account;
 use App\Models\Member;
 use App\Models\Branch;
 use Carbon\Carbon;
-use App\Models\FDAccount;
+use App\Models\FdAccount;
 use App\Models\FdTransaction;
 use App\Models\FdMaturityStatement;
 use App\Models\RdTransactions;
-use App\Models\RDAccount;
+use App\Models\RdAccount;
 use App\Models\Rdscheme;
 
 use Illuminate\Support\Facades\Auth;
@@ -191,7 +191,7 @@ class AccountController extends Controller
         }
 
         // Fetch the latest RD Account
-        $rdAccount = RDAccount::with([
+        $rdAccount = RdAccount::with([
             'branch:id,branch_name,ifsc_code',
             'scheme:id,scheme_name,anuual_interest_rate'
         ])

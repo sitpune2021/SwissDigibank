@@ -117,7 +117,7 @@ class PersonalDisbursementController extends Controller
             ]);
 
             return redirect()
-                ->route('personal.disbursements.index')
+                ->route('personal.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 

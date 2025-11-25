@@ -174,7 +174,7 @@ public function calculateInvestmentAjax(Request $request)
 public function getSchemes()
 {
     // fd_schemes table से id और scheme_name लाकर dropdown के लिए भेज रहे हैं
-    $schemes = \DB::table('fd_schemes')->select('id', 'scheme_name')->get();
+    $schemes = DB::table('fd_schemes')->select('id', 'scheme_name')->get();
 
     return response()->json([
         'success' => true,
@@ -184,7 +184,7 @@ public function getSchemes()
 
 public function getSchemeDetails($id)
 {
-    $scheme = \DB::table('fd_schemes')
+    $scheme = DB::table('fd_schemes')
         ->select('id', 'scheme_name', 'scheme_code', 'min_amount', 'tenure', 'annual_interest_rate')
         ->where('id', $id)
         ->first();

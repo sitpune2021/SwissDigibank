@@ -56,7 +56,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col gap-2">
-            <h1 class="text-xl font-semibold">{{ $fdScheme->scheme_name}}</h1><small>FD SCHEME</small>
+            <h1 class="text-xl font-semibold">{{ $fdScheme->scheme_name}}</h1>
 
         </div>
     </div>
@@ -107,7 +107,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-bold px-4 py-2 uppercase">Interest Lock in Period</td>
-                            <td class="px-4 py-2"> {{ $slab->months ?? '0' }} Months</td>
+                            <td class="px-4 py-2"> {{ $fdScheme->interest_lock_in ?? '0' }} Months</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-bold px-4 py-2 uppercase">Active</td>

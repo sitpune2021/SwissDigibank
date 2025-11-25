@@ -47,11 +47,7 @@ class BusinessLoanDisburments extends Controller
     public function store(Request $request)
     {
         try {
-            // Start log
-            // Log::info('--- Loan Disbursement Store Started ---', [
-            //     'user_id' => auth()->id(),
-            //     'input' => $request->all(),
-            // ]);
+            
             Log::info('--- Loan Disbursement Store Started ---', [
                 'user_id' => Auth::id(),  // Auth facade
                 'input'   => $request->all(),
@@ -125,7 +121,7 @@ class BusinessLoanDisburments extends Controller
             ]);
 
             return redirect()
-                ->route('bussiness.disbursements.index')
+                ->route('bussiness.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 

@@ -30,12 +30,12 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                MEMBER NO
+                                CUSTOMER NO
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                MEMBER NAME
+                                CUSTOMER NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -91,12 +91,12 @@
                         <tr class="border-b dark:border-bg3">
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    <!-- {{ $loan->member->member_info_first_name ?? 'N/A' }} --> N/A
+                                    <!-- {{ $loan->member->member_info_first_name ?? 'N/A' }} --> -
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1 capitalize">
-                                    N/A
+                                   -
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -109,7 +109,10 @@
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
-                                    {{ $loan->member->member_no ?? 'N/A' }}
+                                     <a href="{{ url('members/member/' . $loan->member_id) }}" 
+                                        class="text-blue-600 hover:underline">
+                                        {{ $loan->member->member_no ?? 'N/A' }}
+                                    </a>
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
