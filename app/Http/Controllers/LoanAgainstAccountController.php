@@ -83,14 +83,23 @@ class LoanAgainstAccountController extends Controller
         $totalDeposit = DB::table('loan_against_transactions')
             ->where('loan_id', $id)
             ->sum('amount_collected');
-        
-        // // Total from Other Charges (only paid)
+            
+            // NEW: Total Foreclosure Amount
+            $foreclosureDeposit = DB::table('loan_against_fore_closures')
+                ->where('loan_id', $id)
+                ->sum('net_amount_k');
+
+            // Update Total Deposit (Already Transactions + Other Charges calculated)
+            $totalDeposit = $totalDeposit + $foreclosureDeposit;
+
+
+        // Total from Other Charges (only paid)
         $otherChargesDeposit = DB::table('loan_against_other_charges')
             ->where('loan_id', $id)
             ->where('status', 'paid')
             ->sum('amount');
 
-        // // FINAL DEPOSIT = Transactions + Other Charges
+        // FINAL DEPOSIT = Transactions + Other Charges
         $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
         // Latest total_payable (from last transaction)
@@ -100,40 +109,6 @@ class LoanAgainstAccountController extends Controller
             ->value('total_payable') ?? 0;
 
         
-        // 1️ Total EMI Paid Amount
-        $transactionDeposit = DB::table('loan_against_transactions')
-            ->where('loan_id', $id)
-            ->sum('amount_collected');
-
-        // 2️⃣ Other Charges Paid Only
-        $otherChargesDeposit = DB::table('loan_against_other_charges')
-            ->where('loan_id', $id)
-            ->where('status', 'paid')
-            ->sum('amount');
-
-        // 3️⃣ Foreclosure Paid Amount (net_amount_k)
-        $foreclosurePaid = DB::table('loan_against_fore_closures')
-            ->where('loan_id', $id)
-            ->sum('net_amount_k');
-
-        // 4️⃣ Foreclosure Remaining (for adjusting debt)
-        $foreclosureRemaining = DB::table('loan_against_fore_closures')
-            ->where('loan_id', $id)
-            ->value('remaining_amount') ?? 0;
-
-        // 5️⃣ Loan Principal
-        $principal = DB::table('loan_applications')
-            ->where('id', $id)
-            ->value('loan_amount');
-
-        // 6️⃣ FINAL Total Deposit (display purpose)
-        $totalDeposit = $transactionDeposit + $otherChargesDeposit + $foreclosurePaid;
-
-        // 7️⃣ FINAL Correct Current Debt
-        $currentDebt = $principal - $totalDeposit - $foreclosureRemaining;
-        if ($currentDebt < 0) $currentDebt = 0;
-
-
         $goldLoan = LoanAgainstApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'LoanAgainstTransaction'])->find($id);
 
         
@@ -551,6 +526,8 @@ class LoanAgainstAccountController extends Controller
         
         // end DYNAMIC SUMMARY CHART VALUES 
 
+        $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
+
 
         return view('loanagainst.account.view', compact(
             'goldLoan',
@@ -558,14 +535,12 @@ class LoanAgainstAccountController extends Controller
             'firstEmiDate',
             'emiSchedule',
             'eirSchedule',
-            'totalDeposit',
-            'currentDebt',
-            'foreclosureRemaining',
             'closeDate',
             'currentStatement',
             'ornaments',
-            'paidSummary', 'dueSummary'
-
+            'paidSummary', 'dueSummary',
+            'totalDeposit',   
+            'currentDebt'     
         ));
         
     }

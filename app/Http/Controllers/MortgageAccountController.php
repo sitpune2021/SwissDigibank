@@ -83,6 +83,15 @@ class MortgageAccountController extends Controller
         $totalDeposit = DB::table('mortgage_loan_transactions')
             ->where('loan_id', $id)
             ->sum('amount_collected');
+
+        // ⭐ NEW: Total Foreclosure Amount
+        $foreclosureDeposit = DB::table('loan_against_fore_closures')
+            ->where('loan_id', $id)
+            ->sum('net_amount_k');
+
+        // ⭐ Update Total Deposit (Already Transactions + Other Charges calculated)
+        $totalDeposit = $totalDeposit + $foreclosureDeposit;
+
         
         // // Total from Other Charges (only paid)
         $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
@@ -100,40 +109,6 @@ class MortgageAccountController extends Controller
             ->value('total_payable') ?? 0;
 
         
-        // 1️ Total EMI Paid Amount
-        $transactionDeposit = DB::table('mortgage_loan_transactions')
-            ->where('loan_id', $id)
-            ->sum('amount_collected');
-
-        // 2️⃣ Other Charges Paid Only
-        $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
-            ->where('loan_id', $id)
-            ->where('status', 'paid')
-            ->sum('amount');
-
-        // 3️⃣ Foreclosure Paid Amount (net_amount_k)
-        $foreclosurePaid = DB::table('mortgage_loan_fore_closures')
-            ->where('loan_id', $id)
-            ->sum('net_amount_k');
-
-        // 4️⃣ Foreclosure Remaining (for adjusting debt)
-        $foreclosureRemaining = DB::table('mortgage_loan_fore_closures')
-            ->where('loan_id', $id)
-            ->value('remaining_amount') ?? 0;
-
-        // 5️⃣ Loan Principal
-        $principal = DB::table('loan_applications')
-            ->where('id', $id)
-            ->value('loan_amount');
-
-        // 6️⃣ FINAL Total Deposit (display purpose)
-        $totalDeposit = $transactionDeposit + $otherChargesDeposit + $foreclosurePaid;
-
-        // 7️⃣ FINAL Correct Current Debt
-        $currentDebt = $principal - $totalDeposit - $foreclosureRemaining;
-        if ($currentDebt < 0) $currentDebt = 0;
-
-
         $goldLoan = MortgageLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'MortgageLoanTransactions'])->find($id);
 
         
@@ -551,20 +526,20 @@ class MortgageAccountController extends Controller
         
         // end DYNAMIC SUMMARY CHART VALUES 
 
+        $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
 
         return view('mortgage.account.view', compact(
             'goldLoan',
             'principal',
             'firstEmiDate',
             'emiSchedule',
-            'eirSchedule',
-            'totalDeposit',
-            'currentDebt',
-            'foreclosureRemaining',
+            'eirSchedule',        
             'closeDate',
             'currentStatement',
             'ornaments',
-            'paidSummary', 'dueSummary'
+            'paidSummary', 'dueSummary',
+             'totalDeposit',   
+            'currentDebt'  
 
         ));
         

@@ -368,15 +368,17 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Loan Amount</td>
-                            <td class="px-4 py-2">₹ {{$goldLoan->loan_amount ?? 'N/A'}}</td>
+                            <td class="px-4 py-2">₹ {{ number_format($goldLoan->loan_amount,2) }}</td>
                         </tr>
+
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Total Deposit</td>
-                            <td class="px-4 py-2">₹ {{ number_format($totalDeposit, 2) }}</td>
+                            <td class="px-4 py-2">₹ {{ number_format($totalDeposit,2) }}</td>
                         </tr>
+
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Current Debt</td>
-                            <td class="px-4 py-2">₹ {{ number_format($currentDebt, 2) }}</td>
+                            <td class="px-4 py-2">₹ {{ number_format($currentDebt,2) }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2"> Close Date</td>
@@ -487,13 +489,13 @@ $settingLabel = '';
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap  text-sm px-4 py-2">C. DEBT</td>
                                     <td class="px-4 py-2 ">
-                                        <span class="font-bold">{{ number_format($currentDebt, 2) }}</span>
+                                        <span class="font-bold"></span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap text-sm px-4 py-2">T. DEPOSIT</td>
                                     <td class="px-4 py-2 ">
-                                        <span class="font-bold">{{ number_format($totalDeposit, 2) }}</span>
+                                        <span class="font-bold"></span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
