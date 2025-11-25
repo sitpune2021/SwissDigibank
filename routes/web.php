@@ -989,7 +989,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
-        
+
 });
 
 
@@ -1076,9 +1076,75 @@ Route::group(['prefix' => 'bussiness'], function () {
     Route::post('/bussiness/disbursements/store', [BusinessLoanDisburments::class, 'store'])->name('businessdisbursements.store');
 
 
-    // bussiness Loan Account Page
-    Route::get('account/index', [BusinessLoanAccount::class, 'index'])
-        ->name('bussiness.account.index');
+    // account section start
+
+        Route::get('account/index', [BusinessLoanAccount::class, 'index'])->name('bussiness.account.index');
+        Route::get('account/show/{id}', [BusinessLoanAccount::class, 'show'])
+            ->name('bussiness.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [BusinessLoanAccount::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
+
+        // pay emi tab
+        Route::get('bussiness-account/payemi/{id}', [BusinessLoanAccount::class, 'mortgagePayEmi'])
+        ->name('bussiness.account.pay-emi');
+        Route::post('bussiness-account/payemi/{id}/pay', [BusinessLoanAccount::class, 'mortgagepayEmiLoan'])->name('bussiness.payEmiLoan');
+    
+        // View Transction tab
+        Route::get('bussiness-account/transaction/{id}', [BusinessLoanAccount::class, 'mortgageTransaction'])
+            ->name('bussiness.account.transaction');
+
+        // loan extension tab
+        Route::get('account/extension/{id}', [BusinessLoanAccount::class, 'loanextension'])
+            ->name('bussiness.account.extension');
+        // POST - FINAL SAVE loan extension
+        Route::post('/loan-extension/store/{id}', [BusinessLoanAccount::class, 'storeLoanExtension'])->name('bussiness.extension.store');
+
+        // only pay tab
+        Route::get('bussiness-account/pay/{id}', [BusinessLoanAccount::class, 'mortgagePay'])
+            ->name('bussiness.account.pay');
+        Route::post('/update-emi-status', [BusinessLoanAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::post('/bussiness/pay-emi', [BusinessLoanAccount::class, 'payEmi'])->name('bussiness.payEmi');
+
+        // foure close account
+        Route::get('account/fourcloser/{id}', [BusinessLoanAccount::class, 'fourcloser'])
+            ->name('bussiness.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [BusinessLoanAccount::class, 'storeForeCloser'])
+            ->name('bussiness.account.forecloser.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [BusinessLoanAccount::class, 'linksaving'])
+            ->name('bussiness.account.linksaving');
+        Route::post('account/linksaving/{id}', [BusinessLoanAccount::class, 'storeSavingAccount'])
+            ->name('bussiness.account.storeSavingAccount');
+
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/bussiness/{id}/remove', [BusinessLoanAccount::class, 'removeAccount'])
+            ->name('bussiness.remove');
+
+        // show audit trial tab
+        Route::get('account/audit', [BusinessLoanAccount::class, 'audit'])
+            ->name('bussiness.account.audit-trail');
+
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/bussiness/{id}/debit-charges-list', [BusinessLoanAccount::class, 'showDebitChargesList'])
+            ->name('bussiness.debitChargesList.form');
+
+        // debit other charge page    
+        Route::get('/bussiness/{id}/debit-other-charges', [BusinessLoanAccount::class, 'DebitOtherCharges'])
+            ->name('bussiness.debitOtherCharges.form');
+        // Store Debit Other Charges page
+        Route::post('/bussiness/{id}/debit-other-charges', [BusinessLoanAccount::class, 'storeDebitOtherCharges'])
+            ->name('bussiness.debitOtherCharges.store');
+
+        //clear due 
+        Route::get('/bussiness/{id}/clear-due', [BusinessLoanAccount::class, 'mortgageLoanClearDues'])
+            ->name('bussiness.clear-due.form');
+        Route::post('/bussiness/{loan_id}/other-charge', [BusinessLoanAccount::class, 'clearDue'])->name('bussiness.clear-due');
+
+    // account section end
+
+       
 
     // Show emi chart 
     Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');

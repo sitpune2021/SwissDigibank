@@ -489,13 +489,13 @@ $settingLabel = '';
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap  text-sm px-4 py-2">C. DEBT</td>
                                     <td class="px-4 py-2 ">
-                                        <span class="font-bold"></span>
+                                        <span class="font-bold">{{ number_format($currentDebt,2) }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="whitespace-nowrap text-sm px-4 py-2">T. DEPOSIT</td>
                                     <td class="px-4 py-2 ">
-                                        <span class="font-bold"></span>
+                                        <span class="font-bold">{{ number_format($totalDeposit,2) }}</span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
