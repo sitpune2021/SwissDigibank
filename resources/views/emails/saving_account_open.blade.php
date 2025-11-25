@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Standard Chartered Email</title>
+    <title>Sbc Global Email</title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -179,36 +179,32 @@
                 Number mentioned above in your communication regarding this transaction.)
             </p>
             <p style="font-size:12px; margin-top:50px; color:#444;">
-                Dont miss out on the latest Standard Chartered promotions & benefits,
-                Log on to <a href="" style="color: #2e84fc; text-decoration: none;">www.sc.com/in</a> to find out more!
+                Dont miss out on the latest Sbc Global promotions & benefits,
+                Log on to <a href="" style="color: #2e84fc; text-decoration: none;">www.sbcgloabal.com</a> to find out more!
 
             </p>
 
 
         </div>
         <div class="banner" style="margin: 20px; text-align: center ;  ">
-            <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Standard Chartered" style="height: 60px; width: 250px; object-fit: cover;">
+            <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Sbc Global" style="height: 60px; width: 250px; object-fit: cover;">
         </div>
         <div class="footer">
             <p>To unsubscribe or modify these alerts, please login to your Online Banking account and Select Alerts and
                 SMS Banking. This is a system-generated e-mail and does not require an authorised signature.
                 Please do not reply to the sender of this email.</p>
-
-
             <div>
                 <p>
-                    Please note Standard Chartered Bank will never ask you for your account
+                    Please note Sbc Global Bank will never ask you for your account
                     details. To learn more on important legal notices, our
                     <a href="" style="color: #2e84fc; text-decoration: none;">data protection and privacy policy</a> and
                     how
                     you can avoid online fraud please visit our website on online security tips at <a href=""
-                        style="color: #2e84fc; text-decoration: none;">www.sc.com/in</a>
+                        style="color: #2e84fc; text-decoration: none;">www.sbcgloabal.com</a>
                 </p>
             </div>
         </div>
-
     </div>
-
 </body>
 
 </html>

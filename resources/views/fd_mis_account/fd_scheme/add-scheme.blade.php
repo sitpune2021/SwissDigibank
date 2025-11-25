@@ -7,6 +7,11 @@
             accent-color: green;
             /* For modern browsers */
         }
+         button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
+            }
 
         /* Fallback for browsers without accent-color support */
         input[type="checkbox"]:checked {

@@ -9,6 +9,12 @@
             height: 30px;
         }
 
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
+
         .switch input {
             opacity: 0;
             width: 0;
@@ -216,47 +222,46 @@
             </form>
         </div>
     </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const titleRadios = document.querySelectorAll('input[name="title"]');
-        const genderRadios = document.querySelectorAll('input[name="gender"]');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleRadios = document.querySelectorAll('input[name="title"]');
+            const genderRadios = document.querySelectorAll('input[name="gender"]');
 
-        titleRadios.forEach(radio => {
-            radio.addEventListener('change', function () {
-                const title = this.value.toLowerCase();  // ensure lowercase
-                let genderToSelect = '';
+            titleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const title = this.value.toLowerCase(); // ensure lowercase
+                    let genderToSelect = '';
 
-                if (title === 'md' || title === 'mr') {
-                    genderToSelect = 'male';
-                } else if (title === 'ms' || title === 'mrs') {
-                    genderToSelect = 'female';
-                }
+                    if (title === 'md' || title === 'mr') {
+                        genderToSelect = 'male';
+                    } else if (title === 'ms' || title === 'mrs') {
+                        genderToSelect = 'female';
+                    }
 
-                genderRadios.forEach(genderRadio => {
-                    genderRadio.checked = (genderRadio.value === genderToSelect);
+                    genderRadios.forEach(genderRadio => {
+                        genderRadio.checked = (genderRadio.value === genderToSelect);
+                    });
                 });
             });
         });
-    });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const aadhaarInput = document.getElementById('aadhaar_no');
-    if (!aadhaarInput) return;
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aadhaarInput = document.getElementById('aadhaar_no');
+            if (!aadhaarInput) return;
 
-    aadhaarInput.addEventListener('input', function () {
-        // Only digits, max 12 characters
-        this.value = this.value.replace(/\D/g, '').slice(0, 12);
-    });
+            aadhaarInput.addEventListener('input', function() {
+                // Only digits, max 12 characters
+                this.value = this.value.replace(/\D/g, '').slice(0, 12);
+            });
 
-    aadhaarInput.addEventListener('blur', function () {
-        if (this.value && this.value.length !== 12) {
-            alert('Aadhaar number must be exactly 12 digits.');
-            this.focus();
-        }
-    });
-});
-</script>
+            aadhaarInput.addEventListener('blur', function() {
+                if (this.value && this.value.length !== 12) {
+                    alert('Aadhaar number must be exactly 12 digits.');
+                    this.focus();
+                }
+            });
+        });
+    </script>
 
 @endsection
-

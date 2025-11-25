@@ -9,6 +9,11 @@
         font-size: 14px;
     }
 
+    .btn-outline:active {
+        transform: scale(0.96);
+        opacity: 0.7;
+    }
+
     .breadcrumb li+li::before {
         content: "/";
         padding: 0 8px;
@@ -192,10 +197,13 @@
                         <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
                             CREDIT Interest
                         </button>
-
-                        <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                        <button class="btn-outline uppercase" type="reset">
+                            Reset
                         </button>
+
+                         <a href="{{ route('ddsaccounts.show', $ddaccount->id) }}" class="btn-outline uppercase">
+                                CANCEL
+                            </a>
                     </div>
 
                 </form>
