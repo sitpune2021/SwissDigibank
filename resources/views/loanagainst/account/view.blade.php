@@ -699,7 +699,7 @@ $settingLabel = '';
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
-                        Gold Loan Scheme Info
+                        LOAN AGAINST DEPOSITE SCHEME INFO
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"
@@ -925,7 +925,7 @@ $settingLabel = '';
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
-                        MORTGAGE Loan Basic Details
+                        LOAN AGAINST DEPOSITE BASIC DETAILS
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"
@@ -1046,13 +1046,6 @@ $settingLabel = '';
                     class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
                     data-tab="tab2">
                     Current Statement
-                </button>
-            </li>
-            <li>
-                <button
-                    class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
-                    data-tab="tab3">
-                    Security Deposit
                 </button>
             </li>
             @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
@@ -1189,35 +1182,6 @@ $settingLabel = '';
                             @empty
                                 <tr>
                                     <td colspan="5" class="text-center text-gray-500 p-3">No Records Found</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="tab3" class="tab-pane hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse whitespace-nowrap  text-sm">
-                        <thead class="bg-gray-100">
-                            <tr class="bg-secondary/5">
-                                <th class=" p-2">PROPERTY TYPE</th>
-                                <th class=" p-2">EXPECTED VALUE</th>
-                                <th class=" p-2">REGISTERED</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($ornaments as $orn)
-                                <tr class="border-b">
-                                    <td class="p-2">{{ $orn->property_type }}</td>
-                                    <td class="p-2">{{ $orn->expected_value }}</td>
-                                    <td class="p-2">{{ $orn->registered }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="11" class="text-center p-3 text-gray-500">
-                                        No ornaments added.
-                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
