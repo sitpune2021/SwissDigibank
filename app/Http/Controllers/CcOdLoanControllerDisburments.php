@@ -83,7 +83,7 @@ class CcOdLoanControllerDisburments extends Controller
             ]);
 
             return redirect()
-                ->route('cc_od.disbursements.index')
+                ->route('cc_od.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 

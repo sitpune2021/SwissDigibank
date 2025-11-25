@@ -22,7 +22,7 @@ class GoldLoanAccountController extends Controller
     public function index(Request $request)
     {
         $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
-            ->where('status', [1,4])
+            ->where('status', [2])
             ->orderBy('id', 'desc')
             ->get();
 

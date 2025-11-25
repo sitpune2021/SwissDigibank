@@ -263,6 +263,7 @@
                         </div>
                         @endif
  
+                        @if($isAdvanceInterest)
                         <hr>
                         <h4>Advance Interest</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
@@ -283,6 +284,7 @@
                                     :hiddenheading="true" :checkedDefault="'cash'" groupName="advance-interest" />
                             </div>
                         </div>
+                        @endif
 
                          <hr>
                         <div class="col-span-2 md:col-span-1 mb-4">

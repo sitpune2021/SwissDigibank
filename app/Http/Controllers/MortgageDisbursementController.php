@@ -124,7 +124,7 @@ class MortgageDisbursementController extends Controller
             ]);
 
             return redirect()
-                ->route('mortgage.disbursements.index')
+                ->route('mortgage.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 
@@ -192,11 +192,21 @@ class MortgageDisbursementController extends Controller
         $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
 
         // ===== Total deductions =====
-        $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        //$totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        if ($scheme->gold_loan_setting === 'flat_advanced_interest') {
+            $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        } else {
+            $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal;
+        }
 
         // ===== Final amount to disburse =====
         $loanAmount = $disbursement->approved_loan_amount ?? 0;
-        $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        //$finalAmountToDisburse = $loanAmount - $totalDeductions;
+        if ($scheme->gold_loan_setting === 'flat_advanced_interest') {
+            $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        } else {
+            $finalAmountToDisburse = $loanAmount - ($processingTotal + $stampTotal + $insuranceTotal);
+        }
         if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
         // Approved Loan Amount
@@ -228,6 +238,7 @@ class MortgageDisbursementController extends Controller
         // Total Recover Amount
         $totalRecover = round($approvedLoan + $totalInterest, 2);
 
+        $isAdvanceInterest = ($scheme->gold_loan_setting === 'flat_advanced_interest');
 
         return view(
             "mortgage.disbursements.disburse-loan",
@@ -245,7 +256,8 @@ class MortgageDisbursementController extends Controller
                 'totalDeductions',
                 'totalInterest',      
                 'totalRecover',       
-                'emi'
+                'emi',
+                'isAdvanceInterest'
                
             )
         );

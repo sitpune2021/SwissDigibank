@@ -119,7 +119,7 @@ class DailyWeeklyDisburments extends Controller
             ]);
 
             return redirect()
-                ->route('daily_weekly.disbursements.index')
+                ->route('daily_weekly.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 

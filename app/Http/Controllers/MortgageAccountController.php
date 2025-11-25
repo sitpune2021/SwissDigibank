@@ -22,7 +22,7 @@ class MortgageAccountController extends Controller
     public function index(Request $request)
     {
         $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'MortgageLoanTransactions'])
-            ->where('status', [1,4])
+            ->where('status', [2])
             ->orderBy('id', 'desc')
             ->get();
 

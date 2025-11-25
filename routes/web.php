@@ -904,9 +904,74 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::post('/loanagainst/disbursements/store', [LoanAgainstDisbursementController::class, 'store'])->name('disbursements.store');
 
 
-    // loanagainst Loan Account Page
-    Route::get('account/index', [LoanAgainstAccountController::class, 'index'])
-        ->name('loanagainst.account.index');
+    // account section start
+
+        Route::get('account/index', [LoanAgainstAccountController::class, 'index'])->name('loanagainst.account.index');
+        Route::get('account/show/{id}', [LoanAgainstAccountController::class, 'show'])
+            ->name('loanagainst.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [LoanAgainstAccountController::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
+
+        // pay emi tab
+        Route::get('loanagainst-account/payemi/{id}', [LoanAgainstAccountController::class, 'mortgagePayEmi'])
+        ->name('loanagainst.account.pay-emi');
+        Route::post('loanagainst-account/payemi/{id}/pay', [LoanAgainstAccountController::class, 'mortgagepayEmiLoan'])->name('loanagainst.payEmiLoan');
+    
+        // View Transction tab
+        Route::get('loanagainst-account/transaction/{id}', [LoanAgainstAccountController::class, 'mortgageTransaction'])
+            ->name('loanagainst.account.transaction');
+
+        // loan extension tab
+        Route::get('account/extension/{id}', [LoanAgainstAccountController::class, 'loanextension'])
+            ->name('loanagainst.account.extension');
+        // POST - FINAL SAVE loan extension
+        Route::post('/loan-extension/store/{id}', [LoanAgainstAccountController::class, 'storeLoanExtension'])->name('loanagainst.extension.store');
+
+        // only pay tab
+        Route::get('loanagainst-account/pay/{id}', [LoanAgainstAccountController::class, 'mortgagePay'])
+            ->name('loanagainst.account.pay');
+        Route::post('/update-emi-status', [LoanAgainstAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::post('/loanagainst/pay-emi', [LoanAgainstAccountController::class, 'payEmi'])->name('loanagainst.payEmi');
+
+        // foure close account
+        Route::get('account/fourcloser/{id}', [LoanAgainstAccountController::class, 'fourcloser'])
+            ->name('loanagainst.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [LoanAgainstAccountController::class, 'storeForeCloser'])
+            ->name('loanagainst.account.forecloser.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [LoanAgainstAccountController::class, 'linksaving'])
+            ->name('loanagainst.account.linksaving');
+        Route::post('account/linksaving/{id}', [LoanAgainstAccountController::class, 'storeSavingAccount'])
+            ->name('loanagainst.account.storeSavingAccount');
+
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/loanagainst/{id}/remove', [LoanAgainstAccountController::class, 'removeAccount'])
+            ->name('loanagainst.remove');
+
+        // show audit trial tab
+        Route::get('account/audit', [LoanAgainstAccountController::class, 'audit'])
+            ->name('loanagainst.account.audit-trail');
+
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/loanagainst/{id}/debit-charges-list', [LoanAgainstAccountController::class, 'showDebitChargesList'])
+            ->name('loanagainst.debitChargesList.form');
+
+        // debit other charge page    
+        Route::get('/loanagainst/{id}/debit-other-charges', [LoanAgainstAccountController::class, 'DebitOtherCharges'])
+            ->name('loanagainst.debitOtherCharges.form');
+        // Store Debit Other Charges page
+        Route::post('/loanagainst/{id}/debit-other-charges', [LoanAgainstAccountController::class, 'storeDebitOtherCharges'])
+            ->name('loanagainst.debitOtherCharges.store');
+
+        //clear due 
+        Route::get('/loanagainst/{id}/clear-due', [LoanAgainstAccountController::class, 'mortgageLoanClearDues'])
+            ->name('loanagainst.clear-due.form');
+        Route::post('/loanagainst/{loan_id}/other-charge', [LoanAgainstAccountController::class, 'clearDue'])->name('loanagainst.clear-due');
+
+    // account section end
+       
 
     // line property
     Route::get('lineproperty/index', [LoanAgainstController::class, 'linepropertyindex'])
@@ -924,6 +989,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
 
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
+        
 });
 
 
