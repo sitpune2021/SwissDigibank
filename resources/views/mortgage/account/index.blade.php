@@ -94,12 +94,12 @@
                         <tr class="border-b dark:border-bg3">
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    <!-- {{ $loan->member->member_info_first_name ?? 'N/A' }} --> N/A
+                                    <!-- {{ $loan->member->member_info_first_name ?? 'N/A' }} --> -
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1 capitalize">
-                                    N/A
+                                    -
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">

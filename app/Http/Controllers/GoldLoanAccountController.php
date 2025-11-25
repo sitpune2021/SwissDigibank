@@ -22,7 +22,7 @@ class GoldLoanAccountController extends Controller
     public function index(Request $request)
     {
         $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
-            ->where('status', [1,4])
+            ->where('status', [2])
             ->orderBy('id', 'desc')
             ->get();
 
@@ -1366,8 +1366,8 @@ class GoldLoanAccountController extends Controller
 
         $annualRate = (float) $goldLoan->interest_rate;
 
-        $today = \Carbon\Carbon::today();
-        $dueDate = \Carbon\Carbon::parse($nextDue->emi_date);
+        $today = Carbon::today();
+        $dueDate = Carbon::parse($nextDue->emi_date);
 
         $daysLate = $dueDate->diffInDays($today, false);
         $daysLate = $daysLate > 0 ? $daysLate : 0;
@@ -1610,7 +1610,7 @@ class GoldLoanAccountController extends Controller
                 'charge_date'  => 'required|date',
             ]);
 
-            $formattedDate = \Carbon\Carbon::parse($request->charge_date)->format('Y-m-d');
+            $formattedDate = Carbon::parse($request->charge_date)->format('Y-m-d');
 
             $charge = GoldLoanOtherCharge::create([
                 'loan_id'   => $id,

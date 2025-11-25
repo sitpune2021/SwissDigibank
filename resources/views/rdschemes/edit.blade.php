@@ -149,7 +149,6 @@
             <div class="col-span-2 md:col-span-1">
                 <label for="bonus_rate_type" class="md:text-lg font-medium block mb-4 uppercase">
                     Bonus Rate
-                    <span class="text-red-500">*</span>
                 </label>
                 <div class="col-sm-7">
                     <div class="flex items-center gap-2">

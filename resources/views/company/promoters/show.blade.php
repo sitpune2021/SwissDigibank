@@ -668,8 +668,10 @@
                                                 No. of Shares
                                             </th>
                                             <td class="px-4 py-2 text-sm text-center text-gray-700">
-                                                0
+                                                {{ $totalShares ?? 0 }}
                                             </td>
+
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -791,7 +793,7 @@
                             <div class="p-4 text-sm bg-white" x-show="showBankDetails" x-transition>
                                 <div class="flex justify-between py-2 border-b">
                                     <span class="font-medium">Bank Name</span>
-                                    <span>{{ $promoter->branch->branch_name ?? ''}}</span>
+                                    <span>{{ $promoter->branch->branch_name ?? '' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b">
                                     <span class="font-medium">IFSC Code</span>
@@ -1039,15 +1041,15 @@
 
                 <!-- Modal HTML -->
                 <!-- <div id="docPreviewModal"
-                class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
-                    <button onclick="closePreview()"
-                        class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
-                    <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
-                    <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
-                    </div>
-                </div>
-            </div> -->
+                        class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+                        <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                            <button onclick="closePreview()"
+                                class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                            <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                            <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                            </div>
+                        </div>
+                    </div> -->
 
                 <!-- JS Script -->
                 <script>

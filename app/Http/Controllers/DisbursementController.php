@@ -128,7 +128,7 @@ class DisbursementController extends Controller
             ]);
 
             return redirect()
-                ->route('gold-loan.disbursements.index')
+                ->route('gold-loan.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 
@@ -197,11 +197,25 @@ class DisbursementController extends Controller
         $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
 
         // ===== Total deductions =====
-        $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        //$totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        // ===== Total deductions (based on scheme setting) =====
+        if ($scheme->gold_loan_setting === 'flat_advanced_interest') {
+            $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        } else {
+            $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal;
+        }
+
 
         // ===== Final amount to disburse =====
         $loanAmount = $disbursement->approved_loan_amount ?? 0;
-        $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        //$finalAmountToDisburse = $loanAmount - $totalDeductions;
+        // ===== Final amount calculation =====
+        if ($scheme->gold_loan_setting === 'flat_advanced_interest') {
+            $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        } else {
+            $finalAmountToDisburse = $loanAmount - ($processingTotal + $stampTotal + $insuranceTotal);
+        }
+
         if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
         // Approved Loan Amount
@@ -233,6 +247,7 @@ class DisbursementController extends Controller
         // Total Recover Amount
         $totalRecover = round($approvedLoan + $totalInterest, 2);
 
+        $isAdvanceInterest = ($scheme->gold_loan_setting === 'flat_advanced_interest');
 
         return view(
             "gold-loan.disbursements.disburse-loan",
@@ -251,12 +266,11 @@ class DisbursementController extends Controller
                 'totalInterest',      
                 'totalRecover',       
                 'emi',
-                'savingAccounts'                 
+                'savingAccounts' ,
+                'isAdvanceInterest'                
             )
         );
     }
-
-
 
    
 }
