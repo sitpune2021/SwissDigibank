@@ -1182,7 +1182,7 @@ class LoanAgainstAccountController extends Controller
     // foure closer tab
     public function fourcloser($id)
     {
-        $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransactions'])
+        $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransaction'])
             ->findOrFail($id);
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']

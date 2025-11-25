@@ -61,7 +61,7 @@ class CcOdLoanControllerDisburments extends Controller
             DB::beginTransaction();
 
             // Convert date format
-            $disbursalDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
+            $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
 
             // Create disbursement
             $disbursement = CcOdLoanDisbursment::create([

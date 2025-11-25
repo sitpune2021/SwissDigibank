@@ -100,7 +100,7 @@ class GoldLoanController extends Controller
                 ->route('gold-loan.schemes.index')
                 ->with('success', 'Scheme created successfully!');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             Log::warning('Validation failed', ['errors' => $e->errors()]);
             return redirect()->back()->withErrors($e->validator)->withInput();
 
