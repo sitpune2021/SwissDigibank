@@ -501,6 +501,7 @@ Route::group(['prefix' => 'approvals'], function () {
         ->name('loans.update-status');
 
     Route::get('approvals_history', [ApproveController::class, 'approvals_history'])->name('approvals_history');
+    
 });
 
 
