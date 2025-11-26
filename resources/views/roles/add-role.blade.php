@@ -8,7 +8,7 @@
 @section('content')
     <div class="box col-span-12 lg:col-span-6">
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
-            <h3 class="h3">ADD NEW ROLE / PERMISSION</h3>
+            <h4 class="h3">ADD NEW ROLE / PERMISSION</h4>
             <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
             </ol>
             <hr class="my-2 border-gray-300" />

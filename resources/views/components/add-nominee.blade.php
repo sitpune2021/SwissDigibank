@@ -3,23 +3,13 @@
 </label>
 
 @php
+$nomineeSource = $account;
 
-if ($type === 'rd') {
-$nomineeSource = $rdAccount;
-} elseif ($type === 'saving') {
-$nomineeSource = $savingAccount;
-} elseif ($type === 'dd') {
-$nomineeSource = $ddAccount; // ← NEW
-} else {
-$nomineeSource = null;
-}
-
-$hasNominee = isset($nomineeSource) && $nomineeSource->nominee;
+$hasNominee = $account->nominee()->exists();
 
 @endphp
 
 <div class="flex items-center gap-4">
-    <!-- $hasNominee = isset($nomineeSource) && $nomineeSource->nominee && $nomineeSource->nominee->count() > 0; -->
     <label class="flex items-center gap-2">
         <input class="ms-2" type="radio" name="nominee" value="yes"
             onclick="toggleAddMore(true)"

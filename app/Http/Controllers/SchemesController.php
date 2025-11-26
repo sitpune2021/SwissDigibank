@@ -56,12 +56,15 @@ class SchemesController extends Controller
             Log::info('Scheme store request received', $request->all());
 
             $validated = $request->validate([
-                'scheme_name' => 'required|string|regex:/^[A-Za-z\s]+$/|max:255',
+                'scheme_name' => 'required|string|regex:/^[A-Za-z0-9\s]+$/|max:255',
                 'scheme_code'   => 'required|alpha_num|max:100|unique:schemes,scheme_code',
                 'min_opening_balance'   => 'required|numeric|min:0',
                 'min_monthly_avg_balance' => 'required|numeric|min:0',
                 'annual_int_rate' => 'required|numeric|min:0|max:8',
-                'sr_citizen_add_on_int_rate'       => 'required|numeric|min:0|max:5',
+                'sr_citizen_add_on_int_rate' => [
+                    'required',
+                    'regex:/^\d+(\.\d+)?%?$/'
+                ],
                 'interest_pay_cycle'      => 'required|string|max:50',
                 'lock_in_amount'    => 'required|numeric|min:0',
                 'min_monthly_avg_bal_charge'    => 'required|numeric|min:0',
@@ -210,12 +213,15 @@ class SchemesController extends Controller
             $scheme = Scheme::with('schemeCharges')->findOrFail($id);
 
             $validated = $request->validate([
-                'scheme_name' => 'required|string|regex:/^[A-Za-z\s]+$/|max:255',
+                'scheme_name' => 'required|string|regex:/^[A-Za-z0-9\s]+$/|max:255',
                 'scheme_code'                   => 'required|alpha_num|max:100',
                 'min_opening_balance'          => 'required|numeric|min:0',
                 'min_monthly_avg_balance'      => 'required|numeric|min:0',
                 'annual_int_rate'              => 'required|numeric|min:0|max:8',
-                'sr_citizen_add_on_int_rate'   => 'required|numeric|min:0|max:5|decimal:2',
+                'sr_citizen_add_on_int_rate' => [
+                    'required',
+                    'regex:/^\d+(\.\d+)?%?$/'
+                ],
                 'interest_pay_cycle'           => 'required|string|max:50',
                 'lock_in_amount'               => 'required|numeric|min:0',
                 'min_monthly_avg_bal_charge'   => 'required|numeric|min:0',

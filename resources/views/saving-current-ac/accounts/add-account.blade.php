@@ -223,10 +223,10 @@
                 {{-- Open Date --}}
                 <div class="col-span-2 md:col-span-1">
                     <!-- <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
-                                    <input type="text" readonly name="open_date" id="open_date"
-                                        value="{{ date('D M d Y h:i:s A') }}"
-                                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                                    @error('open_date')
+                                                <input type="text" readonly name="open_date" id="open_date"
+                                                    value="{{ date('D M d Y h:i:s A') }}"
+                                                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                                                @error('open_date')
         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
     @enderror -->
 
@@ -483,11 +483,11 @@
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
                             <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                                <option value="">Select Bank</option>
-                                                <option value="SBI">SBI</option>
-                                                <option value="HDFC">HDFC</option>
-                                                <option value="ICICI">ICICI</option>
-                                            </select> -->
+                                                            <option value="">Select Bank</option>
+                                                            <option value="SBI">SBI</option>
+                                                            <option value="HDFC">HDFC</option>
+                                                            <option value="ICICI">ICICI</option>
+                                                        </select> -->
                             <x-searchable-dropdown :items="$banks" label="Select Bank" name="pay1_bank"
                                 display-field="name" value-field="id" event="Bank-selected" :selected="null" />
                             @error('pay1_bank')

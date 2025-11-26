@@ -27,7 +27,7 @@ class BusinessLoanTransaction extends Model
         'credited_to_company'
     ];
 
-    public function LoanAgainstTransactions()
+    public function BusinessLoanTransaction()
     {
         return $this->hasMany(BusinessLoanTransaction::class, 'loan_id', 'id');
     }

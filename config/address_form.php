@@ -4,6 +4,7 @@ return [
 
     // Member Address
     'CUSTOMER_CORRESPONDENCE_ADDRESS' => [
+        'required_group' => true,
         [
             'label' => 'ADDRESS LINE 1',
             'name' => 'member_address_line_1',
