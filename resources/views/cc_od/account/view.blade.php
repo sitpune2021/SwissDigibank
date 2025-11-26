@@ -1033,16 +1033,16 @@ $settingLabel = '';
 
 
     <!-- Tabs Wrapper -->
+     
     <div class="w-full box mt-5">
         <!-- Tab Navigation -->
         <ul class="flex border-b overflow-x-auto text-sm font-medium text-gray-600">
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
             <li>
                 <button class="tab-btn px-4 py-2 border-b-2 uppercase text-primary" data-tab="tab1">
                     Repayment Schedule (Installments)
                 </button>
             </li>
-            @endif
+            
             <li>
                 <button
                     class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
@@ -1050,9 +1050,7 @@ $settingLabel = '';
                     Current Statement
                 </button>
             </li>
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
-                strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest'
-            )
+           
             <li>
                 <button
                     class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
@@ -1060,11 +1058,11 @@ $settingLabel = '';
                     EIR Payout Chart
                 </button>
             </li>
-            @endif
+            
         </ul>
 
         <div class="tab-content p-4">
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
+            
             <div id="tab1" class="tab-pane block">
                 <div class="overflow-x-auto">
                     <input type="hidden" id="loan_id" value="{{ $goldLoan->id }}">
@@ -1152,7 +1150,7 @@ $settingLabel = '';
 
                 </div>
             </div>
-            @endif
+           
 
             <div id="tab2" class="tab-pane hidden">
                 <div class="overflow-x-auto">
@@ -1191,9 +1189,7 @@ $settingLabel = '';
                 </div>
             </div>
 
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
-                strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest'
-            )
+
             <div id="tab4" class="tab-pane hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse whitespace-nowrap text-sm">
@@ -1247,10 +1243,11 @@ $settingLabel = '';
                     </table>
                 </div>
             </div>
-            @endif
 
         </div>
     </div>
+
+
 </div>
 
 

@@ -123,7 +123,8 @@ class CcOdLoanControllerAccount extends Controller
         $principal = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->annual_interest_rate ?? 0;
 
-        $interestType = strtolower($goldLoan->scheme->gold_loan_setting ?? 'flat_emi'); // default
+        //$interestType = strtolower($goldLoan->scheme->gold_loan_setting ?? 'flat_emi'); // default
+        $interestType = 'reducing_emi';
         $emiSchedule = [];
         $balance = $principal;
 
@@ -156,131 +157,15 @@ class CcOdLoanControllerAccount extends Controller
                         'processed' => 'No',
                     ];
                 }
-
                 break;
 
-            case 'flat_emi':
-                $totalInterest = $principal * ($interestRate / 100) * ($emiCount / 12);
-                $emi = ($principal + $totalInterest) / $emiCount;
-                $emiPrincipal = $principal / $emiCount;
-
-                for ($i = 0; $i < $emiCount; $i++) {
-                    $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
-                    $interest = $totalInterest / $emiCount;
-                    $balance -= $emiPrincipal;
-
-                    $emiSchedule[] = [
-                        'emi_no' => $i + 1,
-                        'emi_date' => $emiDate->format('d-m-Y'),
-                        'emi_due_date' => $emiDate->copy()->addDay()->format('d-m-Y'),
-                        'principal' => number_format($emiPrincipal, 2),
-                        'interest' => number_format($interest, 2),
-                        'other_charges' => '0.00',
-                        'emi_amount' => number_format($emi, 2),
-                        'balance_principal' => number_format(max($balance, 0), 2),
-                        'remaining_amount' => '0.00',
-                        'paid_date' => '',
-                        'status' => 'PENDING',
-                        'processed' => 'No',
-                    ];
-                }
-                break;
-
-            case 'flat_advanced_interest':
-                $totalInterest = $principal * ($interestRate / 100) * ($emiCount / 12);
-                $netDisbursed = $principal - $totalInterest;
-                $monthlyRate = $interestRate / (12 * 100);
-                $firstEmiDate = $applicationDate->copy()->addMonth();
-                $lastEmiDate  = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
-
-                $lastCurrentDebt = CcodLoanTransaction::where('loan_id', $goldLoan->id)
-                    ->orderByDesc('id')
-                    ->value('current_debt');
-
-                $monthlyPrincipal = $principal / $emiCount;
-                $lastEmiDate  = $firstEmiDate;
-
-                $totalPayable =
-                    $emiSchedule = [];
-
-                $emi = $monthlyPrincipal * $monthlyRate * pow(1 + $monthlyRate, 12) / (pow(1 + $monthlyRate, 12) - 1);
-
-                $emi = round($emi, 2);
-
-                $payableAmount = $monthlyPrincipal + $emi;
-
-
-                for ($i = 0; $i < $emiCount; $i++) {
-                    $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
-                    $balancePrincipal = max($principal - ($monthlyPrincipal * ($i + 1)), 0);
-
-                    $emiSchedule[] = [
-                        'emi_no' => $i + 1,
-                        'emi_date' => $emiDate->format('d/m/Y'),
-                        'emi_due_date' => $emiDate->copy()->addDay()->format('d/m/Y'),
-                        'principal' => number_format($monthlyPrincipal, 2),
-                        'interest' =>   $emi,
-                        'other_charges' => '0.00',
-                        'emi_amount' => number_format($payableAmount, 2),
-                        'balance_principal' => number_format($balancePrincipal, 2),
-                        'remaining_amount' => number_format($payableAmount, 2),
-                        'paid_date' => '',
-                        'status' => 'UNPAID',
-                        'processed' => 'No',
-                    ];
-                }
-
-                $lastEmiDate = $firstEmiDate;
-
-                $goldLoan->net_disbursed = number_format($netDisbursed, 2);
-                break;
-
-            case 'no_emi':
-                $interestPerMonth = $principal * ($interestRate / 100) / 12;
-                for ($i = 0; $i < $emiCount; $i++) {
-                    $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
-
-                    $emiAmount = $interestPerMonth;
-                    $balancePrincipal = max($principal - ($interestPerMonth * ($i + 1)), 0);
-
-                    $emiSchedule[] = [
-                        'emi_no' => $i + 1,
-                        'emi_date' => $emiDate->format('d-m-Y'),
-                        'emi_due_date' => $emiDate->copy()->addDay()->format('d-m-Y'),
-                        'principal' => '0.00',
-                        'interest' => number_format($interestPerMonth, 2),
-                        'other_charges' => '0.00',
-                        'emi_amount' => number_format($interestPerMonth, 2),
-                        'balance_principal' => number_format($balance, 2),
-                        'remaining_amount' => '0.00',
-                        'paid_date' => '',
-                        'status' => 'PENDING',
-                        'processed' => 'No',
-                    ];
-                }
-
-                $finalDate = $firstEmiDate->copy()->addMonthsNoOverflow($emiCount);
-                $emiSchedule[] = [
-                    'emi_no' => $emiCount + 1,
-                    'emi_date' => $finalDate->format('d-m-Y'),
-                    'emi_due_date' => $finalDate->copy()->addDay()->format('d-m-Y'),
-                    'principal' => number_format($principal, 2),
-                    'interest' => '0.00',
-                    'other_charges' => '0.00',
-                    'emi_amount' => number_format($principal, 2),
-                    'balance_principal' => '0.00',
-                    'remaining_amount' => '0.00',
-                    'paid_date' => '',
-                    'status' => 'PENDING',
-                    'processed' => 'No',
-                ];
-                break;
-        }
+            }
 
        
-        // Apply payments & auto status logic
-        // ⭐ Apply payments on EMI schedule (front-end calculation only)
-        $totalPaid = CcodLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        // Apply payments on EMI schedule (front-end calculation only)
+        //$totalPaid = CcOdLoanApplication::where('loan_id', $id)->sum('amount_collected');
+        //$totalPaid = CcOdLoanApplication::where('loan_id', $id);
+        $totalPaid = $totalDeposit;
 
         foreach ($emiSchedule as &$emi) 
         {
@@ -1387,7 +1272,7 @@ class CcOdLoanControllerAccount extends Controller
         DB::table('accounts')
             ->where('id', $request->saving_account_id)
             ->update([
-                'loan_type'   => 'loan against deposit', // this page का loan category
+                'loan_type'   => 'cc od', // this page का loan category
                 'loan_number' => $loan->id, // loan_applications का id
             ]);
 
