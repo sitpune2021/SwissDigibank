@@ -1636,8 +1636,75 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::get('disbursements/disburse-loan/{id}', [VehicalDisbursementController::class, 'show'])->name('vehical.disbursements.disburse-loan');
     Route::post('disbursements/store', [VehicalDisbursementController::class, 'store'])->name('vehicaldisbursements.store');
 
-    // Account
-    Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
+    
+    // account section start
+
+        Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
+        Route::get('account/show/{id}', [VehicalAccountController::class, 'show'])
+            ->name('vehical.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [VehicalAccountController::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
+
+        // pay emi tab
+        Route::get('vehical-account/payemi/{id}', [VehicalAccountController::class, 'mortgagePayEmi'])
+        ->name('vehical.account.pay-emi');
+        Route::post('vehical-account/payemi/{id}/pay', [VehicalAccountController::class, 'mortgagepayEmiLoan'])->name('vehical.payEmiLoan');
+    
+        // View Transction tab
+        Route::get('vehical-account/transaction/{id}', [VehicalAccountController::class, 'mortgageTransaction'])
+            ->name('vehical.account.transaction');
+
+        // loan extension tab
+        Route::get('account/extension/{id}', [VehicalAccountController::class, 'loanextension'])
+            ->name('vehical.account.extension');
+        // POST - FINAL SAVE loan extension
+        Route::post('/loan-extension/store/{id}', [VehicalAccountController::class, 'storeLoanExtension'])->name('vehical.extension.store');
+
+        // only pay tab
+        Route::get('vehical-account/pay/{id}', [VehicalAccountController::class, 'mortgagePay'])
+            ->name('vehical.account.pay');
+        Route::post('/update-emi-status', [VehicalAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::post('/vehical/pay-emi', [VehicalAccountController::class, 'payEmi'])->name('vehical.payEmi');
+
+        // foure close account
+        Route::get('account/fourcloser/{id}', [VehicalAccountController::class, 'fourcloser'])
+            ->name('vehical.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [VehicalAccountController::class, 'storeForeCloser'])
+            ->name('vehical.account.forecloser.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [VehicalAccountController::class, 'linksaving'])
+            ->name('vehical.account.linksaving');
+        Route::post('account/linksaving/{id}', [VehicalAccountController::class, 'storeSavingAccount'])
+            ->name('vehical.account.storeSavingAccount');
+
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/vehical/{id}/remove', [VehicalAccountController::class, 'removeAccount'])
+            ->name('vehical.remove');
+
+        // show audit trial tab
+        Route::get('account/audit', [VehicalAccountController::class, 'audit'])
+            ->name('vehical.account.audit-trail');
+
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/vehical/{id}/debit-charges-list', [VehicalAccountController::class, 'showDebitChargesList'])
+            ->name('vehical.debitChargesList.form');
+
+        // debit other charge page    
+        Route::get('/vehical/{id}/debit-other-charges', [VehicalAccountController::class, 'DebitOtherCharges'])
+            ->name('vehical.debitOtherCharges.form');
+        // Store Debit Other Charges page
+        Route::post('/vehical/{id}/debit-other-charges', [VehicalAccountController::class, 'storeDebitOtherCharges'])
+            ->name('vehical.debitOtherCharges.store');
+
+        //clear due 
+        Route::get('/vehical/{id}/clear-due', [VehicalAccountController::class, 'mortgageLoanClearDues'])
+            ->name('vehical.clear-due.form');
+        Route::post('/vehical/{loan_id}/other-charge', [VehicalAccountController::class, 'clearDue'])->name('vehical.clear-due');
+
+    // account section end
+
 
     // Distributors 
     Route::get('distributor/index', [VehicalDistributorController::class, 'index'])->name('vehical.distributors.index');
