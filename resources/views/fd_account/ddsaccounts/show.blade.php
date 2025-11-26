@@ -153,7 +153,7 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('dds-accounts.nominee', $ddaccount->id) }}"
+                            <a href="{{ route('dd.accounts.nominee', ['type'=>'dd','id'=>base64_encode($ddaccount->id)]) }}"
                                 class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">ADD NOMINEE</a>
                             </a>
                         </li>

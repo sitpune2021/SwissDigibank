@@ -6,24 +6,26 @@ use Illuminate\View\Component;
 
 class AddNominee extends Component
 {
-    public $rdAccount;
-    public $savingAccount;
+    public $account;     // <-- single variable for all account types
     public $member;
     public $submitText;
     public $backText;
     public $type;
     public $isUpdate;
-    public $ddAccount;
 
-    public function __construct($rdAccount = null,  $type = 'rd',  $savingAccount = null, $member = null, $submitText = 'Save', $backText = 'Back', $isUpdate = false,  $ddAccount = null)
-    {
-        $this->rdAccount = $rdAccount;
-        $this->savingAccount = $savingAccount;
-        $this->type = $type;
+    public function __construct(
+        $account = null,
+        $member = null,
+        $type = 'saving-account',
+        $submitText = 'Save',
+        $backText = 'Back',
+        $isUpdate = false
+    ) {
+        $this->account = $account;
         $this->member = $member;
+        $this->type = $type;
         $this->submitText = $submitText;
         $this->backText = $backText;
-        $this->ddAccount = $ddAccount;
         $this->isUpdate = $isUpdate;
     }
 
