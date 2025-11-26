@@ -341,8 +341,8 @@
                   <input type="number" id="amt_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
               </div>
 
-          </div>
-         
+          </div><br><br>
+         <br><br>
         <!-- Buttons -->
         <div class="flex justify-center gap-4 pt-6">
           <button type="submit" class="btn-primary">CALCULATE</button>
