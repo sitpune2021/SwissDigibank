@@ -319,7 +319,7 @@
 
         <div class="col-span-1 md:col-span-3">
             <div class="flex flex-wrap gap-4 rounded-10 px-3 md:px-4 py-2">
-                <label class="text-xl font-semibold mb-1">App Type <span class="text-red-500">*</span></label>
+                <label class="text-xm font-semibold mb-1">App Type <span class="text-red-500">*</span></label>
                 {{-- Admin --}}
                 <label class="flex items-center gap-2">
                     <input type="hidden" name="app_type" value="0">
@@ -329,7 +329,7 @@
                     <span>Admin</span>
                 </label>
                 @error('app_type')
-                    <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                    <span class="text-red-500 text-xm block mt-1">{{ $message }}</span>
                 @enderror
                 {{-- Associate --}}
                 <label class="flex items-center gap-2">
@@ -357,7 +357,7 @@
         </div>
         <div class="col-span-1 md:col-span-3">
             <div class="flex flex-wrap gap-4 rounded-10 px-3 md:px-4 py-2">
-                <label class="text-xl font-semibold mb-2">
+                <label class="text-xm font-semibold mb-2">
                     Scheme Active <span class="text-red-500">*</span>
                 </label>
                 <div class="flex gap-6">

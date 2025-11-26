@@ -229,7 +229,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">Pan No.</th>
+                                <th class="px-6 py-2 font-semibold text-start">PAN No.</th>
                                 <td class="flex items-center justify-between px-6 py-2 text-start">
                                     <span>{{ $promoter->kyc->pan_no }}</span>
                                     <i class="text-green-600 fa fa-check-circle"></i>

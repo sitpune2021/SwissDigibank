@@ -798,42 +798,68 @@
             });
         });
     </script>
-    <script>
-        document.getElementById('pan_no').addEventListener('input', function() {
-            let value = this.value.toUpperCase();
+   <script>
+    // PAN Validation
+    document.getElementById('pan_no').addEventListener('input', function() {
+        let value = this.value.toUpperCase();
 
-            value = value.replace(/[^A-Z0-9]/g, '');
+        value = value.replace(/[^A-Z0-9]/g, '');
 
-            if (value.length > 10) {
-                value = value.slice(0, 10);
-            }
+        if (value.length > 10) {
+            value = value.slice(0, 10);
+        }
 
-            this.value = value;
+        this.value = value;
 
-            const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-            if (!panPattern.test(value) && value.length === 10) {
-                this.setCustomValidity("Invalid PAN format. Example: ABCDE1234F");
-            } else {
-                this.setCustomValidity("");
-            }
-        });
+        const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (!panPattern.test(value) && value.length === 10) {
+            this.setCustomValidity("Invalid PAN format. Example: ABCDE1234F");
+        } else {
+            this.setCustomValidity("");
+        }
+    });
 
-        document.getElementById('aadhar_no').addEventListener('input', function() {
-            let value = this.value.replace(/\D/g, '');
+    // Aadhar Validation
+    document.getElementById('aadhar_no').addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, '');
 
-            if (value.length > 12) {
-                value = value.slice(0, 12);
-            }
+        if (value.length > 12) {
+            value = value.slice(0, 12);
+        }
 
-            this.value = value;
+        this.value = value;
 
-            if (value.length !== 12) {
-                this.setCustomValidity("Aadhar must be exactly 12 digits.");
-            } else {
-                this.setCustomValidity("");
-            }
-        });
-    </script>
+        if (value.length !== 12) {
+            this.setCustomValidity("Aadhar must be exactly 12 digits.");
+        } else {
+            this.setCustomValidity("");
+        }
+    });
+
+    // IFSC Validation
+    document.getElementById('ifsc').addEventListener('input', function() {
+        let value = this.value.toUpperCase();
+
+        // allow only A–Z and 0–9
+        value = value.replace(/[^A-Z0-9]/g, '');
+
+        // max length is 11
+        if (value.length > 11) {
+            value = value.slice(0, 11);
+        }
+
+        this.value = value;
+
+        const ifscPattern = /^[A-Z]{4}[0-9]{7}$/;
+
+        if (!ifscPattern.test(value) && value.length === 11) {
+            this.setCustomValidity("Invalid IFSC format. Example: ABCD0123456");
+        } else {
+            this.setCustomValidity("");
+        }
+    });
+</script>
+
 
 
 @endsection
