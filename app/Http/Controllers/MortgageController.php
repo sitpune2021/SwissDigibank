@@ -290,13 +290,13 @@ class MortgageController extends Controller
         $tenureMonths = (float) $tenureMonths;
 
         // Calculate installments robustly for every payout type
-        if (in_array($payout, ['daily', 'daily'])) {
+        if (in_array($payout, ['daily'])) {
             // approximate 30 days per month
             $installments = max(1, (int) ceil($tenureMonths * 30));
         } elseif (in_array($payout, ['weekly', 'weekly'])) {
             // approx 4 weeks per month
             $installments = max(1, (int) ceil($tenureMonths * 4));
-        } elseif (in_array($payout, ['bi_weekly', 'bi-weekly', 'bi_weekly'])) {
+        } elseif (in_array($payout, ['bi_weekly'])) {
             // 2 installments per month
             $installments = max(1, (int) ceil($tenureMonths * 2));
         } elseif (in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
@@ -385,16 +385,16 @@ class MortgageController extends Controller
 
             for ($i = 1; $i <= $installments; $i++) {
 
-                if ($payout === 'DAILY') {
+                if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
                 }
-                elseif ($payout === 'WEEKLY') {
+                elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
                 }
-                elseif ($payout === 'BI_WEEKLY') {
+                elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
                 }
-                elseif ($payout === '4_WEEKLY') {
+                elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
                 }
                 else {
