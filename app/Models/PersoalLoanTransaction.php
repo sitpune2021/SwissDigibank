@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BusinessLoanTransaction extends Model
+class PersoalLoanTransaction extends Model
 {
-      protected $fillable = [
+    protected $table = 'personal_loan_transactions';
+
+       protected $fillable = [
         'loan_id',
         'emi_no',
         'transaction_date',
@@ -27,8 +29,8 @@ class BusinessLoanTransaction extends Model
         'credited_to_company'
     ];
 
-    public function BusinessLoanTransaction()
+    public function PersoalLoanTransaction()
     {
-        return $this->hasMany(BusinessLoanTransaction::class, 'loan_id', 'id');
+        return $this->hasMany(PersoalLoanTransaction::class, 'loan_id', 'id');
     }
 }

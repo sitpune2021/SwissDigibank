@@ -1514,7 +1514,76 @@ Route::group(['prefix' => 'personal'], function () {
     Route::get('disbursements/disburse-loan/{id}', [PersonalDisbursementController::class, 'show'])->name('personal.disbursements.disburse-loan');
     Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
 
-    Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
+    
+    // account section start
+
+        Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
+        Route::get('account/show/{id}', [PersonalAccountController::class, 'show'])
+            ->name('personal.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [PersonalAccountController::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
+
+        // pay emi tab
+        Route::get('personal-account/payemi/{id}', [PersonalAccountController::class, 'mortgagePayEmi'])
+        ->name('personal.account.pay-emi');
+        Route::post('personal-account/payemi/{id}/pay', [PersonalAccountController::class, 'mortgagepayEmiLoan'])->name('personal.payEmiLoan');
+    
+        // View Transction tab
+        Route::get('personal-account/transaction/{id}', [PersonalAccountController::class, 'mortgageTransaction'])
+            ->name('personal.account.transaction');
+
+        // loan extension tab
+        Route::get('account/extension/{id}', [PersonalAccountController::class, 'loanextension'])
+            ->name('personal.account.extension');
+        // POST - FINAL SAVE loan extension
+        Route::post('/loan-extension/store/{id}', [PersonalAccountController::class, 'storeLoanExtension'])->name('personal.extension.store');
+
+        // only pay tab
+        Route::get('personal-account/pay/{id}', [PersonalAccountController::class, 'mortgagePay'])
+            ->name('personal.account.pay');
+        Route::post('/update-emi-status', [PersonalAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::post('/personal/pay-emi', [PersonalAccountController::class, 'payEmi'])->name('personal.payEmi');
+
+        // foure close account
+        Route::get('account/fourcloser/{id}', [PersonalAccountController::class, 'fourcloser'])
+            ->name('personal.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [PersonalAccountController::class, 'storeForeCloser'])
+            ->name('personal.account.forecloser.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [PersonalAccountController::class, 'linksaving'])
+            ->name('personal.account.linksaving');
+        Route::post('account/linksaving/{id}', [PersonalAccountController::class, 'storeSavingAccount'])
+            ->name('personal.account.storeSavingAccount');
+
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/personal/{id}/remove', [PersonalAccountController::class, 'removeAccount'])
+            ->name('personal.remove');
+
+        // show audit trial tab
+        Route::get('account/audit', [PersonalAccountController::class, 'audit'])
+            ->name('personal.account.audit-trail');
+
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/personal/{id}/debit-charges-list', [PersonalAccountController::class, 'showDebitChargesList'])
+            ->name('personal.debitChargesList.form');
+
+        // debit other charge page    
+        Route::get('/personal/{id}/debit-other-charges', [PersonalAccountController::class, 'DebitOtherCharges'])
+            ->name('personal.debitOtherCharges.form');
+        // Store Debit Other Charges page
+        Route::post('/personal/{id}/debit-other-charges', [PersonalAccountController::class, 'storeDebitOtherCharges'])
+            ->name('personal.debitOtherCharges.store');
+
+        //clear due 
+        Route::get('/personal/{id}/clear-due', [PersonalAccountController::class, 'mortgageLoanClearDues'])
+            ->name('personal.clear-due.form');
+        Route::post('/personal/{loan_id}/other-charge', [PersonalAccountController::class, 'clearDue'])->name('personal.clear-due');
+
+    // account section end
+
+
 
     Route::get('{id}/emi-chart', [PersonalController::class, 'emiChart'])->name('personal.applications.view-buttons.show-emi-chart');
 
