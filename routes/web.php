@@ -1389,9 +1389,75 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::post('/daily_weekly/disbursements/store', [DailyWeeklyDisburments::class, 'store'])->name('daily_weekly_disbursment.store');
 
 
-    // daily_weekly Loan Account Page
-    Route::get('account/index', [DailyWeeklyAccount::class, 'index'])
-        ->name('daily_weekly.account.index');
+    // account section start
+
+        Route::get('account/index', [DailyWeeklyAccount::class, 'index'])->name('daily_weekly.account.index');
+        Route::get('account/show/{id}', [DailyWeeklyAccount::class, 'show'])
+            ->name('daily_weekly.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [DailyWeeklyAccount::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
+
+        // pay emi tab
+        Route::get('daily_weekly-account/payemi/{id}', [DailyWeeklyAccount::class, 'mortgagePayEmi'])
+        ->name('daily_weekly.account.pay-emi');
+        Route::post('daily_weekly-account/payemi/{id}/pay', [DailyWeeklyAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
+    
+        // View Transction tab
+        Route::get('daily_weekly-account/transaction/{id}', [DailyWeeklyAccount::class, 'mortgageTransaction'])
+            ->name('daily_weekly.account.transaction');
+
+        // loan extension tab
+        Route::get('account/extension/{id}', [DailyWeeklyAccount::class, 'loanextension'])
+            ->name('daily_weekly.account.extension');
+        // POST - FINAL SAVE loan extension
+        Route::post('/loan-extension/store/{id}', [DailyWeeklyAccount::class, 'storeLoanExtension'])->name('daily_weekly.extension.store');
+
+        // only pay tab
+        Route::get('daily_weekly-account/pay/{id}', [DailyWeeklyAccount::class, 'mortgagePay'])
+            ->name('daily_weekly.account.pay');
+        Route::post('/update-emi-status', [DailyWeeklyAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::post('/daily_weekly/pay-emi', [DailyWeeklyAccount::class, 'payEmi'])->name('daily_weekly.payEmi');
+
+        // foure close account
+        Route::get('account/fourcloser/{id}', [DailyWeeklyAccount::class, 'fourcloser'])
+            ->name('daily_weekly.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [DailyWeeklyAccount::class, 'storeForeCloser'])
+            ->name('daily_weekly.account.forecloser.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [DailyWeeklyAccount::class, 'linksaving'])
+            ->name('daily_weekly.account.linksaving');
+        Route::post('account/linksaving/{id}', [DailyWeeklyAccount::class, 'storeSavingAccount'])
+            ->name('daily_weekly.account.storeSavingAccount');
+
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/daily_weekly/{id}/remove', [DailyWeeklyAccount::class, 'removeAccount'])
+            ->name('daily_weekly.remove');
+
+        // show audit trial tab
+        Route::get('account/audit', [DailyWeeklyAccount::class, 'audit'])
+            ->name('daily_weekly.account.audit-trail');
+
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/daily_weekly/{id}/debit-charges-list', [DailyWeeklyAccount::class, 'showDebitChargesList'])
+            ->name('daily_weekly.debitChargesList.form');
+
+        // debit other charge page    
+        Route::get('/daily_weekly/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'DebitOtherCharges'])
+            ->name('daily_weekly.debitOtherCharges.form');
+        // Store Debit Other Charges page
+        Route::post('/daily_weekly/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'storeDebitOtherCharges'])
+            ->name('daily_weekly.debitOtherCharges.store');
+
+        //clear due 
+        Route::get('/daily_weekly/{id}/clear-due', [DailyWeeklyAccount::class, 'mortgageLoanClearDues'])
+            ->name('daily_weekly.clear-due.form');
+        Route::post('/daily_weekly/{loan_id}/other-charge', [DailyWeeklyAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
+
+    // account section end
+
+
 
     // Collect Processing fee page in application view page
     Route::get('daily_weekly/col-process-fee/{id}', [DailyWeeklyController::class, 'col_process_fee'])
