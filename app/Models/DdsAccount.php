@@ -61,11 +61,11 @@ class DdsAccount extends Model
     {
         return $this->belongsTo(Account::class, 'account_id');
     }
-
     public function nominee()
     {
-        return $this->hasMany(AccountNominee::class, 'dds_account_id', 'id');
+        return $this->hasMany(AccountNominee::class, 'dds_account_id');
     }
+
     public function getFinalStatusAttribute()
     {
         if ($this->approve_status == 2) {

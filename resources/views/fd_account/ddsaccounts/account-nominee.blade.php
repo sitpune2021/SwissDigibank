@@ -24,7 +24,7 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-xl font-semibold dark:text-white">
-                DD ACCOUNT - {{ $ddaccount->dd_no }} - NOMINEE
+                DD ACCOUNT - {{ $account->dd_no }} - NOMINEE
             </h1>
         </div>
     </div>
@@ -33,21 +33,19 @@
         <div>
             <h4 class="uppercase">Update Nominee Details</h4>
         </div>
-
         <div>
             <hr>
         </div>
 
-        <form action="{{ route('dds-accounts.nominees.save', $ddaccount->id) }}" method="POST">
+        <form action="{{ route('accounts.nominees.save',['type' => 'dd', 'id' => $account->id]) }}" method="POST">
             @csrf
-
             <x-add-nominee
-                :ddAccount="$ddaccount"
+                :account="$account"
                 :member="$member"
                 type="dd"
                 submitText="Save"
                 backText="Back"
-                :isUpdate="true" />
+                :isUpdate="$hasNominee" />
         </form>
     </div>
 </div>

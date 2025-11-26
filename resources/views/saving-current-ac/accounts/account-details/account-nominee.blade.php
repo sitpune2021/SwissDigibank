@@ -47,17 +47,16 @@
         <div>
             <hr>
         </div>
-        <form action="{{ route('accounts.nominees.save', $account->id) }}" method="POST">
+        <form action="{{ route('accounts.nominees.save', ['type' => 'saving-account', 'id' => $account->id]) }}" method="POST">
             @csrf
-
             <x-add-nominee
-                :savingAccount="$account"
+                :account="$account"
                 :member="$member"
                 type="saving-account"
-                :isUpdate="true"
-                submitText="Change account info"
-                backText="Back" />
-           
+                submitText="Save"
+                backText="Back"
+                :isUpdate="$hasNominee" />
+
         </form>
     </div>
     @endsection

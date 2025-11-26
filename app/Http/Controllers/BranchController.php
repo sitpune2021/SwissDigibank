@@ -7,6 +7,8 @@ use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class BranchController extends Controller
 {
@@ -64,8 +66,15 @@ class BranchController extends Controller
                 'branch_name'      => 'required|string|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
                 'branch_code'      => 'required|string|max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
                 'open_date'        => 'required',
-                'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
-                'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
+                'address_line1' => 'required|string|max:255|regex:/^(?=.*[A-Za-z0-9])[A-Za-z0-9\s.,\-\/#]+$/',
+
+                'address_line2' => [
+                    'nullable',
+                    'string',
+                    'max:255',
+                    'regex:/^(?=.*[A-Za-z0-9])[A-Za-z0-9\s.,\-\/#]+$/'
+                ],
+
                 'ifsc_code'        => 'nullable|string|size:11|regex:/^[A-Za-z0-9]+$/',
                 'city'             => 'required|string|max:100',
                 'state'            => 'required|integer|exists:states,id',
@@ -155,10 +164,23 @@ class BranchController extends Controller
 
             $request->validate([
                 'branch_name'      => 'required|string|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
-                'branch_code'      => 'required|string|max:20|unique:branches,branch_code|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
+                'branch_code' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    'regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
+                    Rule::unique('branches', 'branch_code')->ignore($decryptedId),
+                ],
                 'open_date'        => 'required',
-                'address_line1'    => 'required|string|max:255|regex:/^[^\s].*$/',
-                'address_line2'    => 'nullable|string|max:255|regex:/^[^\s].*$/',
+                'address_line1'    => 'required|string|max:255|regex:/^(?=.*[A-Za-z0-9])[A-Za-z0-9\s.,\-\/#]+$/',
+
+                'address_line2' => [
+                    'nullable',
+                    'string',
+                    'max:255',
+                    'regex:/^(?=.*[A-Za-z0-9])[A-Za-z0-9\s.,\-\/#]+$/'
+                ],
+
                 'ifsc_code'        => 'nullable|string|size:11|regex:/^[A-Za-z0-9]+$/',
                 'city'             => 'required|string|max:100',
                 'state'            => 'required|integer|exists:states,id',
@@ -174,7 +196,24 @@ class BranchController extends Controller
             ]);
 
             $branch = Branch::findOrFail($decryptedId);
-            $branch->update($request->all());
+
+            $data = $request->except('permission_letter');
+
+            // Handle file upload
+            if ($request->hasFile('permission_letter')) {
+
+                // delete old file if exists
+                if ($branch->permission_letter && Storage::disk('public')->exists($branch->permission_letter)) {
+                    Storage::disk('public')->delete($branch->permission_letter);
+                }
+
+                $file = $request->file('permission_letter');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('permission_letter', $filename, 'public');
+                $data['permission_letter'] = $filePath;
+            }
+
+            $branch->update($data);
 
             return redirect()->route('branch.index')->with('success', 'Branch updated successfully.');
         } catch (\Exception $e) {
@@ -182,6 +221,7 @@ class BranchController extends Controller
             return redirect()->back()->with('error', 'Update failed: ' . $e->getMessage())->withInput();
         }
     }
+
 
     public function destroy($id)
     {

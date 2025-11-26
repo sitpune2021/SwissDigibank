@@ -103,5 +103,15 @@ public function creditScores()
     return $this->hasMany(VehicalCreditScore::class, 'loan_application_id');
 }
 
+    public function VehicalLoanTransaction()
+    {
+        return $this->hasMany(VehicalLoanTransaction::class, 'loan_id', 'id');
+    }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(VehicalLoanTransaction::class, 'loan_id', 'id');
+    }
+
 
 }

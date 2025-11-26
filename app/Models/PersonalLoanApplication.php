@@ -89,5 +89,15 @@ public function creditScores()
     return $this->hasMany(PersonalCreditScore::class, 'loan_application_id');
 }
 
+    public function PersoalLoanTransaction()
+    {
+        return $this->hasMany(PersoalLoanTransaction::class, 'loan_id', 'id');
+    }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(PersoalLoanTransaction::class, 'loan_id', 'id');
+    }
+
 
 }

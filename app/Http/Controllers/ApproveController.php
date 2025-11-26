@@ -909,19 +909,7 @@ class ApproveController extends Controller
                 return $item;
             });
 
-
-        // Merge all 4 collections
-        // $applications = $loanApplications
-        //     ->concat($mortgageLoans)
-        //     ->concat($loanAgainst)
-        //     ->concat($businessLoans)
-        //     ->concat($cc_od)
-        //     ->concat($daily_weekly)
-        //     ->concat($personal)
-        //     ->concat($vehical)
-        //     ->sortByDesc('created_at');
-        // ... after concatenating collections into $applications
-
+            
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
@@ -947,7 +935,19 @@ class ApproveController extends Controller
             'vehical' => 'Vehical Loan',
         ];
 
-        return view('approvals.loans', compact('applications', 'types'));
+        $routeMap = [
+            'loan' => 'gold-loan.applications.view',
+            'mortgage' => 'mortgage.applications.view',
+            'loan_against' => 'loanagainst.applications.view',
+            'business_loan' => 'bussiness.applications.view',
+            'cc_od' => 'cc_od.applications.view',
+            'daily_weekly' => 'daily_weekly.applications.view',
+            'personal' => 'personal.applications.view',
+            'vehical' => 'vehical.applications.view',
+        ];
+
+
+        return view('approvals.loans', compact('applications', 'types','routeMap'));
     }
 
 

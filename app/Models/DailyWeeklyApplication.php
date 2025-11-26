@@ -59,8 +59,6 @@ class DailyWeeklyApplication extends Model
     ];
 
 
-  
-
 public function creditScores()
 {
     return $this->hasMany(DailyWeeklyCreditScore::class, 'loan_application_id', 'id');
@@ -105,6 +103,16 @@ public function scheme()
 {
     return $this->belongsTo(DailyWeeklyScheme::class, 'scheme_id');
 }
+
+    public function DailyWeeklyLoanTransaction()
+    {
+        return $this->hasMany(DailyWeeklyLoanTransaction::class, 'loan_id', 'id');
+    }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(DailyWeeklyLoanTransaction::class, 'loan_id', 'id');
+    }
 
 
 }

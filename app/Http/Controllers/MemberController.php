@@ -120,6 +120,7 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             // Membership Type
             'membership_type' => 'required|in:nominal,regular',
@@ -146,8 +147,8 @@ class MemberController extends Controller
             'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
 
             'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
-
-            'member_info_mobile_no' => 'required|digits:10',
+            'member_info_email' => 'required|unique:members,member_info_email|unique:users,email',
+            'member_info_mobile_no' => 'required|digits:10|unique:members,member_info_mobile_no|unique:users,mobile',
 
             // Address Info
             'member_address_line_1' => 'nullable|string',
@@ -328,6 +329,130 @@ class MemberController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+    //     Log::info('Member store initiated', ['request_data' => $request->all()]);
+
+    //     try {
+    //         Log::info('Member store: Validation started');
+    //         $request->validate([
+    //             // (your validation rules here...)
+    //         ]);
+    //         Log::info('Validation successful');
+
+    //         // Format date fields
+    //         Log::info('Formatting dates');
+    //         $dates = ['general_enrollment_date', 'member_info_dob', 'charges_transaction_date', 'online_transfer_date', 'cheque_date'];
+    //         foreach ($dates as $dateField) {
+    //             if ($request->filled($dateField)) {
+    //                 $request->merge([
+    //                     $dateField => Carbon::parse($request->$dateField)->format('Y-m-d')
+    //                 ]);
+    //             }
+    //         }
+
+    //         // Member No generation
+    //         $nextId = (Member::max('id') ?? 0) + 1;
+    //         $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
+    //         Log::info('Generated Member Number', ['member_no' => $memberNo]);
+
+    //         // Create Member
+    //         $memberData = $request->only((new Member)->getFillable());
+    //         $memberData['member_no'] = $memberNo;
+    //         Log::info('Creating Member Record', ['member_data' => $memberData]);
+
+    //         $member = Member::create($memberData);
+    //         Log::info('Member created successfully', ['member_id' => $member->id]);
+
+    //         // Create Address
+    //         $addressData = $request->only((new Address)->getFillable());
+    //         $member->address()->create($addressData);
+    //         Log::info('Address data stored', ['address_data' => $addressData]);
+
+    //         // KYC & Nominee
+    //         $kycData = $request->only((new KycAndNominee)->getFillable());
+    //         $member->kyc()->create($kycData);
+    //         Log::info('KYC saved', ['kyc_data' => $kycData]);
+
+    //         // Documents
+    //         if ($request->has('documents')) {
+    //             foreach ($request->documents as $doc) {
+    //                 if (isset($doc['file'])) {
+    //                     $path = $doc['file']->store('documents', 'public');
+    //                     KycDocument::create([
+    //                         'member_id' => $member->id,
+    //                         'document_category' => $doc['category'],
+    //                         'document_type' => $doc['type'] ?? null,
+    //                         'file_path' => $path,
+    //                     ]);
+    //                     Log::info('Document uploaded', [
+    //                         'path' => $path,
+    //                         'category' => $doc['category']
+    //                     ]);
+    //                 }
+    //             }
+    //         }
+
+    //         // Membership Charge Transaction
+    //         $transaction = MembershipChargeTransaction::create([
+    //             'member_id' => $member->id,
+    //             'transaction_date' => $request->charges_transaction_date,
+    //             'membership_fee' => $request->charges_membership_fee ?? 0,
+    //             'net_fee_to_collect' => $request->charges_net_fee,
+    //             'remarks' => $request->charges_remarks ?? null,
+    //             'charges_pay_mode' => $request->charges_pay_mode,
+    //             'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
+    //             'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
+    //             'bank_id' => in_array($request->charges_pay_mode, ['cheque', 'online']) ? $request->bank_id : null,
+    //             'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
+    //             'cheque_date' => $request->charges_pay_mode === 'cheque' ? $request->cheque_date : null,
+    //             'type' => "Membership Charges",
+    //         ]);
+    //         Log::info('Membership transaction created', ['transaction' => $transaction]);
+
+    //         // Create login user
+    //         $managerRole = Role::where('name', 'Member')->first();
+    //         if ($managerRole) {
+    //             $user = User::create([
+    //                 'name' => $managerRole->name,
+    //                 'fname' => $request->member_info_first_name,
+    //                 'lname' => $request->member_info_last_name,
+    //                 'email' => $request->member_info_email,
+    //                 'mobile' => $request->member_info_mobile_no,
+    //                 'username' => 'Member' . $member->id,
+    //                 'password' => Hash::make('member123'),
+    //                 'role_id' => $managerRole->id,
+    //                 'branch_id' => $member->general_branch,
+    //                 'user_active' => true,
+    //             ]);
+    //             Log::info('Login user created for member', [
+    //                 'user_id' => $user->id,
+    //                 'member_id' => $member->id
+    //             ]);
+
+    //             $member->update(['user_id' => $user->id]);
+    //         }
+
+    //         // Send SMS
+    //         try {
+    //             $mobile = $member->member_info_mobile_no;
+    //             $dlttemplateid = 1707173529330693298;
+    //             $password = "member123";
+    //             $message = "Dear Customer, Thanks for becoming member. Your USERNAME - $mobile, PASSWORD - $password.";
+
+    //            \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+    //             Log::info('SMS sent successfully', ['mobile' => $mobile]);
+    //         } catch (\Exception $e) {
+    //             Log::error('SMS sending failed', ['error' => $e->getMessage()]);
+    //         }
+
+    //         return redirect()->route('member.index')->with('success', 'Member created successfully.');
+    //     } catch (\Exception $e) {
+    //         Log::error('Member store error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+    //         return back()->withErrors(['error' => 'Something went wrong']);
+    //     }
+    // }
+
     public function show(string $id)
     {
         try {
@@ -336,7 +461,7 @@ class MemberController extends Controller
                 'branch' => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
-            $member = Member::with('address', 'kyc', 'minors', 'religion','accounts.bank','memberOtherCharges')->findOrFail($id);
+            $member = Member::with('address', 'kyc', 'minors', 'religion', 'accounts.bank', 'memberOtherCharges')->findOrFail($id);
 
             $comments = MembershipChargeTransaction::where('member_id', $id)
                 ->where('status', 'comment')
@@ -1079,7 +1204,7 @@ class MemberController extends Controller
                 membership_charges_transaction
             WHERE
                 id = ?
-                AND type = 'Share amount'
+            AND type IN ('Share amount', 'Membership Charges')
             LIMIT 1
         ";
 
@@ -1489,6 +1614,7 @@ class MemberController extends Controller
 
     public function printReceipt($id)
     {
+
         // Detect which table has this transaction ID
         $isMemberOtherCharge = DB::table('member_other_charges')
             ->where('id', $id)
@@ -1535,45 +1661,50 @@ class MemberController extends Controller
         ";
             $transaction = DB::selectOne($query, [$id]);
         } else {
-            //Otherwise, get from membership_charges_transaction
-            $query = "
-            SELECT
-                id,
-                member_id,
-                transaction_date,
-                membership_fee AS amount,
-                charges_pay_mode AS pay_mode,
-                'Share amount' AS type,
-                remarks,
-                CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
-                is_accounted,
-                'Membership Charge' AS transaction_source,
-                created_at,
-                updated_at,
-                NULL AS charge_type,
-                NULL AS clearance_id,
-                NULL AS charges_due,
-                NULL AS waived_amount,
-                NULL AS gst_rate,
-                NULL AS total_amount,
-                NULL AS rounding_off,
-                NULL AS net_amount,
-                NULL AS clear_due_remarks,
-                NULL AS transfer_date,
-                NULL AS utr_no,
-                NULL AS transfer_mode,
-                NULL AS credited_in_account,
-                NULL AS bank_id,
-                NULL AS cheque_no,
-                NULL AS cheque_date
-            FROM
-                membership_charges_transaction
-            WHERE
-                id = ? AND deleted_at IS NULL AND type = 'Share amount'
-            LIMIT 1
-        ";
-            $transaction = DB::selectOne($query, [$id]);
-        }
+
+    $query = "
+        SELECT
+            id,
+            member_id,
+            transaction_date,
+            net_fee_to_collect AS amount,
+            charges_pay_mode AS pay_mode,
+            type,
+            CASE 
+                WHEN type = 'Membership Charges' THEN 'Member Registration'
+                ELSE remarks
+            END AS remarks,
+            CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+            is_accounted,
+            'Membership Charge' AS transaction_source,
+            created_at,
+            updated_at,
+            NULL AS charge_type,
+            NULL AS clearance_id,
+            NULL AS charges_due,
+            NULL AS waived_amount,
+            NULL AS gst_rate,
+            NULL AS total_amount,
+            NULL AS rounding_off,
+            NULL AS net_amount,
+            NULL AS clear_due_remarks,
+            NULL AS transfer_date,
+            NULL AS utr_no,
+            NULL AS transfer_mode,
+            NULL AS credited_in_account,
+            NULL AS bank_id,
+            NULL AS cheque_no,
+            NULL AS cheque_date
+        FROM membership_charges_transaction
+        WHERE id = ?
+          AND deleted_at IS NULL
+          AND type IN ('Share amount', 'Membership Charges')
+        LIMIT 1
+    ";
+
+    $transaction = DB::selectOne($query, [$id]);
+}
+
 
         if (!$transaction) {
             abort(404, 'Transaction not found.');

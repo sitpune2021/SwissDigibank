@@ -16,15 +16,37 @@ class AccountNominee extends Model
         'nominee_address',
         'share_percentage',
     ];
-     public function nominee()
+    public function savingAccount()
     {
-        return $this->hasMany(Account::class, 'account_id');
+        return $this->belongsTo(Account::class, 'account_id');
     }
+
+    public function rdAccount()
+    {
+        return $this->belongsTo(RdAccount::class, 'rd_account_id');
+    }
+
+    public function fdAccount()
+    {
+        return $this->belongsTo(FdAccount::class, 'fd_account_id');
+    }
+
     public function ddsAccount()
-{
-    return $this->belongsTo(DdsAccount::class, 'dds_account_id');
-}
+    {
+        return $this->belongsTo(DdsAccount::class, 'dds_account_id');
+    }
 
- 
-}
+    public function misAccount()
+    {
+        return $this->belongsTo(MisAccount::class, 'mis_account_id');
+    }
 
+    //  public function nominee()
+    // {
+    //     return $this->hasMany(Account::class, 'account_id');
+    // }
+    // public function ddsAccount()
+    // {
+    //     return $this->belongsTo(DdsAccount::class, 'dds_account_id');
+    // }
+}

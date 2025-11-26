@@ -106,7 +106,7 @@
                         <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Change Account Type</a>
                     </li>
                     <li>
-                        <a href="{{route('saving.accounts.nominee',base64_encode($account->id))}}" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Add Nominee</a>
+                        <a href="{{route('saving.accounts.nominee',['type'=>'saving-account','id'=>base64_encode($account->id)])}}" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Add Nominee</a>
                     </li>
                     <li>
                         <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Upgrade Account</a>

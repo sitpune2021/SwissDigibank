@@ -91,11 +91,12 @@
         .slider .switch-off {
             right: 0;
         }
-         button[type="reset"]:active {
-                transform: scale(0.95);
-                opacity: 0.7;
-                transition: 0.1s;
-            }
+
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
     </style>
 @endpush
 @section('page-title',
@@ -134,16 +135,21 @@
 
                     {{-- Handle Correspondence and Permanent Address checkbox toggles --}}
                     @if (in_array($sectionName, ['CUSTOMER_CORRESPONDENCE_ADDRESS', 'CUSTOMER_PERMANENT_ADDRESS']))
-                        {{-- Checkbox to toggle this address section --}}
-                        <div class="col-span-2  flex items-center gap-2">
+                        <div class="col-span-2 flex items-center gap-2 mt-6">
+
+                            {{-- Checkbox --}}
                             <input type="checkbox" id="toggle_{{ strtolower($sectionName) }}"
-                                class="toggle-address-checkbox">
+                                class="toggle-address-checkbox w-5 h-5 cursor-pointer">
+
+                            {{-- Label with Asterisk --}}
                             <label for="toggle_{{ strtolower($sectionName) }}"
-                                class="font-medium cursor-pointer select-none">
+                                class="font-semibold text-lg cursor-pointer select-none">
                                 {{ str_replace('_', ' ', $sectionName) }}
+                                <span class="text-red-500">*</span>
                             </label>
                         </div>
             </div>
+
             {{-- Address fields wrapped inside div for toggling --}}
             <div class="w-full grid grid-cols-2 gap-4 mt-4 xl:mt-8 xxxxxl:gap-6 address-section {{ strtolower($sectionName) }}"
                 style="display:none;">
