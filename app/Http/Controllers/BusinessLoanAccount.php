@@ -1387,7 +1387,7 @@ class BusinessLoanAccount extends Controller
         DB::table('accounts')
             ->where('id', $request->saving_account_id)
             ->update([
-                'loan_type'   => 'loan against deposit', // this page का loan category
+                'loan_type'   => 'business loan', // this page का loan category
                 'loan_number' => $loan->id, // loan_applications का id
             ]);
 
