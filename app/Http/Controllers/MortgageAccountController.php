@@ -4,26 +4,114 @@ namespace App\Http\Controllers;
 
 use App\Helpers\CsvExportHelper;
 use App\Models\Bank;
-use App\Models\GoldLoanTransaction;
+use App\Models\MortgageLoanTransaction;
 use App\Models\MortgageLoanApplication;
+use App\Models\MortgageLoanForeClosure;
+use App\Models\MortgageLoanOtherCharge;
+use App\Models\MortgageLoanExtension;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MortgageAccountController extends Controller
 {
+
+    // index page
     public function index(Request $request)
     {
-        $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme'])->where('status', 1)
-            ->orderBy('id', 'desc')->get();
-        // dd( $goldLoan);
+        $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'MortgageLoanTransactions'])
+            ->where('status', [2])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        foreach ($goldLoan as $loan) 
+        {
+
+            // Loan total amount
+            $loanAmount = $loan->loan_amount;
+
+            // Sum of collected EMI from mortgage_loan_transactions table
+            $collectedAmount = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            // Sum of other charges from mortgage_loan_other_charges table
+            $otherCharges = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            // Foreclosure remaining amount
+            $remainingAmount = DB::table('mortgage_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            // Final CURRENT DEBT Calculation
+            $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
+            if ($currentDebt < 0) $currentDebt = 0;
+
+            // Attach dynamic values for UI
+            $loan->current_debt = $currentDebt;
+
+            $loan->close_date = DB::table('mortgage_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('created_at');
+
+            // Status update
+            $loan->foreclosure_status = $remainingAmount > 0 || $currentDebt == 0 ? 'Fore Close' : 'Active';
+        }
+
         return view('mortgage.account.index', compact('goldLoan'));
     }
 
+    // view page
     public function show(Request $request, $id)
     {
-        $goldLoan = MortgageLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
 
+        $savedStatuses = DB::table('mortgage_loan_emi_status')
+        ->where('loan_id', $id)
+        ->pluck('status', 'emi_no')
+        ->toArray();
+
+        $savedPaidDates = DB::table('mortgage_loan_emi_status')
+        ->where('loan_id', $id)
+        ->pluck('paid_date', 'emi_no')
+        ->toArray();
+
+        // Total Deposit
+        $totalDeposit = DB::table('mortgage_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
+
+        // ⭐ NEW: Total Foreclosure Amount
+        $foreclosureDeposit = DB::table('loan_against_fore_closures')
+            ->where('loan_id', $id)
+            ->sum('net_amount_k');
+
+        // ⭐ Update Total Deposit (Already Transactions + Other Charges calculated)
+        $totalDeposit = $totalDeposit + $foreclosureDeposit;
+
+        
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
+
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
+
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('mortgage_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? 0;
+
+        
+        $goldLoan = MortgageLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'MortgageLoanTransactions'])->find($id);
+
+        
         if (!$goldLoan) {
             return redirect()->back()->with('error', 'Loan not found.');
         }
@@ -34,22 +122,16 @@ class MortgageAccountController extends Controller
         $emiCount = $goldLoan->tenure_value;
         $principal = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->annual_interest_rate ?? 0;
+
         $interestType = strtolower($goldLoan->scheme->gold_loan_setting ?? 'flat_emi'); // default
         $emiSchedule = [];
         $balance = $principal;
 
-        // Monthly interest rate
         $monthlyRate = $interestRate / 12 / 100;
 
-        // ==========================
-        // INTEREST TYPE CONDITIONS
-        // ==========================
+        switch ($interestType) 
+        {
 
-        switch ($interestType) {
-
-            // ---------------------------------
-            // 1️⃣ REDUCING EMI
-            // ---------------------------------
             case 'reducing_emi':
 
                 $emi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
@@ -74,12 +156,9 @@ class MortgageAccountController extends Controller
                         'processed' => 'No',
                     ];
                 }
-                //    dd($emiSchedule);
+
                 break;
 
-            // ---------------------------------
-            // 2️⃣ FLAT EMI
-            // ---------------------------------
             case 'flat_emi':
                 $totalInterest = $principal * ($interestRate / 100) * ($emiCount / 12);
                 $emi = ($principal + $totalInterest) / $emiCount;
@@ -107,45 +186,62 @@ class MortgageAccountController extends Controller
                 }
                 break;
 
-            // ---------------------------------
-            // 3️⃣ FLAT ADVANCED INTEREST DEDUCTION
-            // ---------------------------------
             case 'flat_advanced_interest':
                 $totalInterest = $principal * ($interestRate / 100) * ($emiCount / 12);
                 $netDisbursed = $principal - $totalInterest;
+                $monthlyRate = $interestRate / (12 * 100);
+                $firstEmiDate = $applicationDate->copy()->addMonth();
+                $lastEmiDate  = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
 
-                $firstEmiDate = $applicationDate->copy()->addMonthsNoOverflow($emiCount);
+                $lastCurrentDebt = MortgageLoanTransaction::where('loan_id', $goldLoan->id)
+                    ->orderByDesc('id')
+                    ->value('current_debt');
+
+                $monthlyPrincipal = $principal / $emiCount;
                 $lastEmiDate  = $firstEmiDate;
 
-                $emiSchedule = [];
+                $totalPayable =
+                    $emiSchedule = [];
 
-                // Row 2: Single EMI (principal only)
-                $emiSchedule[] = [
-                    'emi_no' => 1,
-                    'emi_date' => $firstEmiDate->format('d/m/Y'),
-                    'emi_due_date' => $firstEmiDate->copy()->addDay()->format('d/m/Y'),
-                    'principal' => number_format($principal, 2),
-                    'interest' => '0.00',
-                    'other_charges' => '0.00',
-                    'emi_amount' => number_format($principal, 2),
-                    'balance_principal' => '0.00',
-                    'remaining_amount' => number_format($principal, 2),
-                    'paid_date' => '',
-                    'status' => 'DUE',
-                    'processed' => 'No',
-                ];
+                $emi = $monthlyPrincipal * $monthlyRate * pow(1 + $monthlyRate, 12) / (pow(1 + $monthlyRate, 12) - 1);
+
+                $emi = round($emi, 2);
+
+                $payableAmount = $monthlyPrincipal + $emi;
+
+
+                for ($i = 0; $i < $emiCount; $i++) {
+                    $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
+                    $balancePrincipal = max($principal - ($monthlyPrincipal * ($i + 1)), 0);
+
+                    $emiSchedule[] = [
+                        'emi_no' => $i + 1,
+                        'emi_date' => $emiDate->format('d/m/Y'),
+                        'emi_due_date' => $emiDate->copy()->addDay()->format('d/m/Y'),
+                        'principal' => number_format($monthlyPrincipal, 2),
+                        'interest' =>   $emi,
+                        'other_charges' => '0.00',
+                        'emi_amount' => number_format($payableAmount, 2),
+                        'balance_principal' => number_format($balancePrincipal, 2),
+                        'remaining_amount' => number_format($payableAmount, 2),
+                        'paid_date' => '',
+                        'status' => 'UNPAID',
+                        'processed' => 'No',
+                    ];
+                }
 
                 $lastEmiDate = $firstEmiDate;
 
                 $goldLoan->net_disbursed = number_format($netDisbursed, 2);
                 break;
-            // ---------------------------------
-            // 4️⃣ NO EMI (BULLET PAYMENT)
-            // ---------------------------------
+
             case 'no_emi':
                 $interestPerMonth = $principal * ($interestRate / 100) / 12;
                 for ($i = 0; $i < $emiCount; $i++) {
                     $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
+
+                    $emiAmount = $interestPerMonth;
+                    $balancePrincipal = max($principal - ($interestPerMonth * ($i + 1)), 0);
 
                     $emiSchedule[] = [
                         'emi_no' => $i + 1,
@@ -163,7 +259,6 @@ class MortgageAccountController extends Controller
                     ];
                 }
 
-                // Add one final bullet payment (principal)
                 $finalDate = $firstEmiDate->copy()->addMonthsNoOverflow($emiCount);
                 $emiSchedule[] = [
                     'emi_no' => $emiCount + 1,
@@ -182,54 +277,382 @@ class MortgageAccountController extends Controller
                 break;
         }
 
+       
+        // Apply payments & auto status logic
+        // ⭐ Apply payments on EMI schedule (front-end calculation only)
+        $totalPaid = MortgageLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+
+        foreach ($emiSchedule as &$emi) 
+        {
+
+            $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
+
+            // Already paid nothing?
+            if ($totalPaid <= 0) 
+            {
+                $emi['remaining_amount'] = number_format($emiAmount, 2);
+
+                // ⭐ ALWAYS load saved statuses from DB
+                if (isset($savedStatuses[$emi['emi_no']])) {
+                    $emi['status'] = $savedStatuses[$emi['emi_no']];
+                    $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
+                } else {
+                    // Default if no data saved
+                    $emi['status'] = "UNPAID";
+                }
+
+                continue;
+            }
+
+            // Full payment
+            if ($totalPaid >= $emiAmount) {
+                $emi['remaining_amount'] = "0.00";
+                $emi['status'] = "PAID";
+                $totalPaid -= $emiAmount;
+            }
+            // Partial payment
+            else {
+                $emi['remaining_amount'] = number_format($emiAmount - $totalPaid, 2);
+                $emi['status'] = "PARTIAL";
+                $totalPaid = 0;
+            }
+
+        }
+
+        $eirSchedule = [];
+
+        // EIR should run for both flat_emi AND reducing_emi
+        if (in_array($interestType, ['flat_emi', 'reducing_emi'])) {
+
+            $monthlyRate = $interestRate / 12 / 100;
+            $balanceEIR = $principal;
+
+            // effective EMI formula
+            $eirEmi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
+                    (pow(1 + $monthlyRate, $emiCount) - 1);
+
+            for ($i = 0; $i < $emiCount; $i++) {
+
+                $emiDate = $firstEmiDate->copy()->addMonthsNoOverflow($i);
+
+                $interestEIR = $balanceEIR * $monthlyRate;
+                $principalEIR = $eirEmi - $interestEIR;
+                $balanceEIR -= $principalEIR;
+
+                $eirSchedule[] = [
+                    'emi_no' => $i + 1,
+                    'emi_date' => $emiDate->format('d-m-Y'),
+                    'emi_due_date' => $emiDate->copy()->addDay()->format('d-m-Y'),
+                    'principal' => number_format($principalEIR, 2),
+                    'interest' => number_format($interestEIR, 2),
+                    'other_charges' => '0.00',
+                    'emi_amount' => number_format($eirEmi, 2),
+                    'balance_principal' => number_format(max($balanceEIR, 0), 2),
+                    'remaining_amount' => '0.00',
+                ];
+            }
+        }
+
+        // Close date code
+            // Fetch Principal Loan Amount
+            $loanAmount = $principal;
+
+            // Step 1: Collect all deposits with their date
+            $depositTimeline = [];
+
+            // EMI Transactions
+            $transactions = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->select('amount_collected as amount', 'created_at')
+                ->get();
+
+            // Other Charges (Only Paid)
+            $otherCharges = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->select('amount', 'created_at')
+                ->get();
+
+            // Foreclosure Deposit
+            $foreclosurePayments = DB::table('mortgage_loan_fore_closures')
+                ->where('loan_id', $id)
+                ->select('net_amount_k as amount', 'created_at')
+                ->get();
+
+            // Merge All
+            foreach ($transactions as $t) {
+                $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+            }
+            foreach ($otherCharges as $oc) {
+                $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
+            }
+            foreach ($foreclosurePayments as $f) {
+                $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
+            }
+
+            // Sort by Date
+            usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+
+            // STEP 2: Find close date (when cumulative >= loan amount)
+            $cumulative = 0;
+            $closeDate = null;
+
+            foreach ($depositTimeline as $entry) {
+                $cumulative += $entry['amount'];
+
+                if ($cumulative >= $loanAmount) {
+                    $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
+                    break;
+                }
+            }
+        // end close date code
+
+        // current statment chart code
+
+            // ⭐ CURRENT STATEMENT TABLE DATA ⭐
+            $currentStatement = collect([]);
+
+            // 1️⃣ Transactions (EMI)
+            $transactions = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->select(
+                    'created_at as date',
+                    DB::raw("'EMI Payment' as type"),
+                    DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
+                    'amount_collected as amount',
+                    DB::raw("'PAID' as status")
+                )
+                ->get();
+
+            // 2️⃣ Other Charges
+            $otherCharges = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->select(
+                    'created_at as date',
+                    DB::raw("'Other Charge' as type"),
+                    DB::raw("'' AS payment_mode"),              // ← empty
+                    'amount',
+                    'status'
+                )
+                ->get();
+
+            // 3️⃣ Foreclosure Payments
+            $closures = DB::table('mortgage_loan_fore_closures')
+                ->where('loan_id', $id)
+                ->select(
+                    'created_at as date',
+                    DB::raw("'Foreclosure Payment' as type"),
+                    DB::raw("'' AS payment_mode"),              // ← empty
+                    'net_amount_k as amount',
+                    DB::raw("'PAID' as status")
+                )
+                ->get();
+
+            $currentStatement = $currentStatement
+                ->merge($transactions)
+                ->merge($otherCharges)
+                ->merge($closures);
+
+            // Sort latest first
+            $currentStatement = $currentStatement->sortByDesc('date')->values();
+
+        // end current statement code
+
+        // ornaments show on chart
+
+            // ⭐ Fetch Ornaments Based on Loan ID
+            $ornaments = DB::table('mortgage_properties')
+                ->where('loan_application_id', $id)
+                ->select(
+                    'property_type',
+                    'expected_value',
+                    'registered'   
+                )
+                ->get();
+
+        // end ornaments show on chart
+
+        // DYNAMIC SUMMARY CHART VALUES 
+
+            // PAID = Total deposit from calculation above
+            $paidNetPrincipal = min($totalDeposit, $principal); 
+
+            // SINCE interest_paid column exists nahi hai → default zero rakho
+            $paidInterest = 0;
+
+            // PRINCIPAL DUE
+            $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
+
+            // TOTAL INTEREST PLANNED (from schedule)
+            $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
+
+            // INTEREST DUE = full interest (because no interest deposited yet)
+            $interestDue = $totalInterestPlanned;
+
+            // OTHER CHARGES PAID
+            $otherChargesPaid = $otherChargesDeposit;
+
+            // OTHER CHARGES DUE
+            $otherChargesTotal = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->sum('amount');
+            $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
+
+
+            // BUILD DATA FOR TABLE (PAID ROW)
+            $paidSummary = [
+                'net_p' => number_format($paidNetPrincipal, 2),
+                'emi_p' => number_format($paidNetPrincipal, 2),
+                'emi_int' => "0.00", // because interest_paid not stored yet
+                'emi_charges' => "0.00",
+                'overdue_int' => "0.00",
+                'other_charges' => number_format($otherChargesPaid, 2),
+                'advance' => "0.00",
+                'discount' => "0.00",
+            ];
+
+            // BUILD DATA FOR TABLE (DUE ROW)
+            $dueSummary = [
+                'net_p' => number_format($emiPrincipalDue, 2),
+                'emi_p' => number_format($emiPrincipalDue, 2),
+                'emi_int' => number_format($interestDue, 2),
+                'emi_charges' => "0.00",
+                'overdue_int' => "0.00",
+                'other_charges' => number_format($otherChargesDue, 2),
+                'advance' => "-",
+                'discount' => "-",
+            ];
+        
+        // end DYNAMIC SUMMARY CHART VALUES 
+
+        $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
+
         return view('mortgage.account.view', compact(
             'goldLoan',
             'principal',
             'firstEmiDate',
-            'emiSchedule'
+            'emiSchedule',
+            'eirSchedule',        
+            'closeDate',
+            'currentStatement',
+            'ornaments',
+            'paidSummary', 'dueSummary',
+             'totalDeposit',   
+            'currentDebt'  
+
         ));
+        
     }
 
-    public function mortgageTransaction(Request $request, $id)
+    // process button status store
+    public function saveEmiStatus(Request $request)
     {
+        $request->validate([
+            'loan_id' => 'required|integer',
+            'emi_no'  => 'required|integer',
+            'status'  => 'required|string',
+        ]);
 
-        return view('mortgage.account.view-buttons.view-transactions.view_transactions');
+        DB::table('mortgage_loan_emi_status')->updateOrInsert(
+            [
+                'loan_id' => $request->loan_id,
+                'emi_no'  => $request->emi_no
+            ],
+            [
+                'status'    => $request->status,
+                'paid_date' => now()->format('d-m-Y')
+            ]
+        );
+
+        return response()->json(['success' => true]);
     }
 
+    // pay emi tab page
     public function mortgagePayEmi($id)
     {
-        $goldLoan = MortgageLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])
-            ->whereHas('scheme', function ($query) {
-                $query->where('gold_loan_setting', 'flat_advanced_interest');
-            })
-            ->find($id);
+        $goldLoan = MortgageLoanApplication::with([
+            'member.branch',
+            'branch',
+            'scheme',
+            'coApplicant1',
+            'guarantor1'
+        ])->findOrFail($id);
 
+        $emiType = $goldLoan->scheme->gold_loan_setting;
         $totalLoan = $goldLoan->loan_amount;
+        $interestRate = $goldLoan->scheme->interest_rate ?? 0;
+        $emiCount = $goldLoan->scheme->emi_count ?? 12;
 
-        $totalPaid = \App\Models\GoldLoanTransaction::where('loan_id', $goldLoan->id)
+        $totalPaid = MortgageLoanTransaction::where('loan_id', $goldLoan->id)
             ->sum('amount_collected');
 
-        $currentDebt = $totalLoan - $totalPaid;
+        $remainingAmount = 0;
+        $emiAmount = 0;
+        $netDisbursed = 0;
 
-        $goldLoan->current_debt = $currentDebt;
+        switch ($emiType) {
+            case 'flat_advanced_interest':
+                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
+                $netDisbursed = $totalLoan - $totalInterest;
+                $emiAmount = round($totalLoan / $emiCount, 2);
+                $remainingAmount = $totalLoan - $totalPaid;
+                break;
 
+            case 'flat_interest':
+                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
+                $totalPayable = $totalLoan + $totalInterest;
+                $emiAmount = $totalPayable / $emiCount;
+                $remainingAmount = $totalPayable - $totalPaid;
+                break;
+
+            case 'reducing_interest':
+                $monthlyRate = $interestRate / (12 * 100);
+                $emiAmount = $totalLoan * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
+                $totalPayable = $emiAmount * $emiCount;
+                $remainingAmount = $totalPayable - $totalPaid;
+                break;
+
+            default:
+                $emiAmount = $totalLoan / $emiCount;
+                $remainingAmount = $totalLoan - $totalPaid;
+                break;
+        }
 
         $overdueInterest = 0;
         $otherCharges = 0;
-        $gstRate = 18; // Example
-
+        $gstRate = 18;
         $gstAmount = ($overdueInterest * $gstRate) / 100;
-
         $totalOverdueWithGst = $overdueInterest + $gstAmount;
-
-        $totalAmount = $currentDebt + $overdueInterest + $otherCharges;
+        $totalAmount = $remainingAmount + $overdueInterest + $otherCharges;
 
         $rounding = round($totalAmount) - $totalAmount;
         $netAmount = $totalAmount + $rounding;
 
+        $goldLoan->current_debt = $remainingAmount;
+
+        $firstPendingEmi = MortgageLoanTransaction::where('loan_id', $goldLoan->id)
+            ->where('status', '!=', 'PAID')
+            ->orderBy('emi_no', 'asc')
+            ->first();
+
+        if ($firstPendingEmi) {
+            $firstPendingEmi->status = 'PROCESSING';
+            $firstPendingEmi->paid_date = now();
+            $firstPendingEmi->save();
+
+            Log::info('First EMI updated successfully', [
+                'loan_id' => $goldLoan->id,
+                'emi_no' => $firstPendingEmi->emi_no,
+                'status' => $firstPendingEmi->status,
+            ]);
+        }
+
         return view('mortgage.account.view-buttons.pay-emi.pay_emi', compact(
             'goldLoan',
-            'currentDebt',
+            'emiAmount',
+            'remainingAmount',
+            'netDisbursed',
             'overdueInterest',
             'otherCharges',
             'gstRate',
@@ -240,104 +663,347 @@ class MortgageAccountController extends Controller
         ));
     }
 
-    public function payEmiLoan(Request $request, $id)
+    // pay emi tab data store in mortage loan transiction table
+    public function mortgagepayEmiLoan(Request $request, $id)
     {
-        $request->validate([
-            'transaction_date' => 'required|date',
-            'amount_collected' => 'required|numeric|min:1',
-            'remarks' => 'nullable|string|max:255',
-            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        Log::info("🟩 EMI Payment Request Received", [
+            'loan_id' => $id,
+            'payload' => $request->all()
         ]);
 
-        // Fetch the loan with its scheme to check gold_loan_setting type
-        $loan = MortgageLoanApplication::with('scheme')->findOrFail($id);
+        try {
 
-        // Calculate total paid till date
-        $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
-            ->sum('amount_collected');
+            // 🔥 REMOVE COMMA FROM AMOUNT BEFORE VALIDATION
+            $cleanAmount = str_replace(',', '', $request->amount_collected);
+            $request->merge(['amount_collected' => $cleanAmount]);
 
-        // Current remaining debt before new payment
-        $remainingDue = max($loan->loan_amount - $totalPaid, 0);
 
-        $amountCollected = $request->amount_collected;
-        $newRemainingDue = max($remainingDue - $amountCollected, 0);
+            $request->validate([
+                'transaction_date' => 'required|date',
+                'amount_collected' => 'required|numeric|min:1',
+                'remarks' => 'nullable|string|max:255',
+                'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            ]);
 
-        // Handle receipt upload (optional)
-        $receiptPath = null;
-        if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
+            Log::info("🟦 Validation Passed for Loan ID: $id");
+
+            $loan = MortgageLoanApplication::with('scheme')->findOrFail($id);
+
+            $totalPaid = MortgageLoanTransaction::where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $remainingDue = max($loan->loan_amount - $totalPaid, 0);
+
+            $amountCollected = (float) $cleanAmount;
+            $newRemainingDue = max($remainingDue - $amountCollected, 0);
+
+
+            Log::info("🔍 Calculation", [
+                'remaining_due' => $remainingDue,
+                'amount_collected' => $amountCollected,
+                'new_remaining_due' => $newRemainingDue
+            ]);
+
+
+            // Upload File
+            $receiptPath = null;
+            if ($request->hasFile('receipt')) {
+                $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
+                Log::info("🟨 Receipt uploaded: " . $receiptPath);
+            }
+
+            // Store Transaction
+            $transaction = new MortgageLoanTransaction();
+            $transaction->loan_id = $loan->id;
+            $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
+            $transaction->amount_collected = $amountCollected;
+            $transaction->current_debt = $newRemainingDue;
+            $transaction->other_charges = 0;
+            $transaction->total_payable = $remainingDue;
+            $transaction->status = 'paid';
+            $transaction->remarks = $request->remarks ?? null;
+            $transaction->flag = 'emi_payment';
+            $transaction->created_by = Auth::id() ?? null;
+
+            if ($receiptPath) {
+                $transaction->receipt = $receiptPath;
+            }
+
+            Log::info("📝 Transaction Before Save", $transaction->toArray());
+
+            $transaction->save();
+
+            Log::info("🟩 Transaction saved successfully!", [
+                'transaction_id' => $transaction->id
+            ]);
+
+            if ($newRemainingDue <= 0) {
+                $loan->status = 'closed';
+                $loan->save();
+
+                Log::info("🟢 Loan Closed Automatically", [
+                    'loan_id' => $loan->id
+                ]);
+            }
+
+            return redirect()->route('mortgage.account.show', $loan->id)
+                ->with('success', 'EMI Payment recorded successfully!');
+
+        } catch (\Exception $e) {
+
+            Log::error("❌ EMI PAYMENT ERROR", [
+                'loan_id' => $id,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+
+            return back()->with('error', "Something went wrong: " . $e->getMessage());
         }
-
-        // Create new EMI transaction entry
-        $transaction = new GoldLoanTransaction();
-        $transaction->loan_id = $loan->id;
-        $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
-        $transaction->amount_collected = $amountCollected;
-        $transaction->current_debt = $newRemainingDue;
-        $transaction->other_charges = 0;
-        $transaction->total_payable = $remainingDue; // before paying this EMI
-        $transaction->status = 'paid';
-        $transaction->remarks = $request->remarks ?? null;
-        $transaction->flag = 'emi_payment';
-        $transaction->created_by = Auth::id() ?? null;
-
-        if ($receiptPath) {
-            $transaction->receipt = $receiptPath;
-        }
-
-        $transaction->save();
-
-        // If fully paid, mark loan as closed
-        if ($newRemainingDue <= 0) {
-            $loan->status = 'closed';
-            $loan->save();
-        }
-
-        return redirect()->route('mortgage.account.show', $loan->id)
-            ->with('success', 'EMI Payment recorded successfully!');
     }
 
+    // Transiction tab 
+    public function mortgageTransaction(Request $request, $id)
+    {
+        $account = MortgageLoanApplication::findOrFail($id);
+
+        // 1. TRANSACTIONS
+        $transactions = MortgageLoanTransaction::where('loan_id', $id)
+            ->get()
+            ->map(function ($t) {
+                return (object)[
+                    'date' => $t->transaction_date,
+                    'fee_mode' => $t->fee_mode,
+                    'remarks' => $t->remarks,
+                    'status' => $t->status,
+                    'type' => 'transaction',
+                    'amount' => 0,
+                    'amount_collected' => $t->amount_collected,
+                    'total_payable' => $t->total_payable,
+                ];
+            });
+
+        // 2. OTHER CHARGES (PAID ONLY)
+        $otherCharges = MortgageLoanOtherCharge::where('loan_id', $id)
+            ->where('status', 'paid')
+            ->get()
+            ->map(function ($o) {
+                return (object)[
+                    'date' => $o->charge_date,
+                    'fee_mode' => 'system',
+                    'remarks' => $o->remarks,
+                    'status' => $o->status,
+                    'type' => 'other_charge',
+                    'amount' => $o->amount,
+                    'amount_collected' => 0,
+                    'total_payable' => 0,
+                ];
+            });
+
+        // 3. FORECLOSURE ENTRIES
+        $foreclosure = MortgageLoanForeClosure::where('loan_id', $id)
+            ->get()
+            ->map(function ($f) {
+                return (object)[
+                    'date' => $f->transaction_date,
+                    'fee_mode' => $f->payment_mode ?? 'closure',
+                    'remarks' => $f->remarks ?? 'Loan Foreclosed',
+                    'status' => $f->status == 1 ? 'closed' : 'pending',
+                    'type' => 'foreclosure',
+                    'amount' => $f->remaining_amount, // debit column value
+                    'amount_collected' => 0,
+                    'total_payable' => 0,
+                ];
+            });
+
+
+        // 4. MERGE + SORT ASC (balance calculation ke liye)
+        $merged = $transactions
+            ->merge($otherCharges)
+            ->merge($foreclosure)
+            ->sortBy('date')
+            ->values();
+
+        // 4. RUNNING BALANCE
+        $runningBalance = 0;
+        $started = false;
+
+        $processed = $merged->map(function ($row) use (&$runningBalance, &$started) {
+
+            if (!$started && $row->type === 'transaction') {
+                // first transaction row initializes balance
+                $runningBalance = $row->total_payable - $row->amount_collected;
+                $started = true;
+            } else {
+                if ($row->type === 'transaction') {
+                    $runningBalance -= $row->amount_collected;
+                }
+               if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
+                    $runningBalance -= $row->amount;
+                }
+
+            }
+
+            $row->balance = $runningBalance;
+            return $row;
+        });
+
+        // 5. LAST STEP → Latest first
+        $mergedData = $processed->sortByDesc('date')->values();
+
+        return view(
+            'mortgage.account.view-buttons.view-transactions.view_transactions',
+            compact('account', 'mergedData')
+        );
+    }
+
+    // Loan extenstion tab page
+    public function loanextension($id)
+    {
+        $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'mortgageLoanTransactions'])
+            ->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        // Total Deposit
+            $totalDeposit = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+            
+            // // Total from Other Charges (only paid)
+            $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // // FINAL DEPOSIT = Transactions + Other Charges
+            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+
+            // Latest total_payable (from last transaction)
+            $totalPayable = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->orderByDesc('id')
+                ->value('total_payable') ?? $goldLoan->loan_amount;
+
+            // 1. Total Transaction Deposit
+            $transactionDeposit = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+
+            // 2. Total Paid Other Charges
+            $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // 3. FINAL Total Deposit
+            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+
+            // 4. FINAL Correct Current Debt
+            $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('mortgage.account.loan-extension', compact('goldLoan','currentDebt','banks'));
+
+    }
+
+    // Loan extenstion tab page data store
+    public function storeLoanExtension(Request $request, $id)
+    {
+        Log::info('--- Loan Extension Request Received ---', [
+            'loan_id' => $id,
+            'input' => $request->all()
+        ]);
+
+        try 
+        {
+
+            $validated = $request->validate([
+                'remaining_amount' => 'required|numeric',
+                'interest_accrued' => 'nullable|numeric',
+                'total_amount_h' => 'required|numeric',
+                'rounding_off_i' => 'nullable|numeric',
+                'net_amount_k' => 'required|numeric',
+                'transaction_date' => 'required',
+                'reschedule_date' => 'required',
+                'first_emi_date' => 'required',
+                'interest_rate' => 'required|numeric',
+                'tenure' => 'required|numeric',
+                'reason' => 'required|string',
+            ]);
+
+            // Convert Dates AFTER validation
+            $validated['transaction_date'] = Carbon::parse($validated['transaction_date'])->format('Y-m-d');
+            $validated['reschedule_date'] = Carbon::parse($validated['reschedule_date'])->format('Y-m-d');
+            $validated['first_emi_date'] = Carbon::parse($validated['first_emi_date'])->format('Y-m-d');
+
+            $validated['loan_id'] = $id;
+
+            $extension = MortgageLoanExtension::create($validated);
+
+            Log::info('✔ Loan Extension Saved Successfully!', [
+                'extension_id' => $extension->id,
+            ]);
+
+            return redirect()->route('mortgage.account.show')->with('success', 'Loan Extension Successfully Added!');
+
+        } 
+        catch (\Throwable $e) 
+        {
+
+            Log::error('Loan Extension Save Failed', [
+                'loan_id' => $id,
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving!');
+        }
+    }
+
+    // only pay tab page
     public function mortgagePay($id)
     {
-        $goldLoan = MortgageLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1'])->find($id);
+        $goldLoan = MortgageLoanApplication::with([
+            'member.branch',
+            'mortgageLoanTransactions',
+            'branch',
+            'scheme',
+            'coApplicant1',
+            'guarantor1'
+        ])->findOrFail($id);
 
-        // dd($goldLoan);
         $banks = Bank::all();
 
-        $P = (float)$goldLoan->loan_amount;
-        $annualRate = (float)$goldLoan->interest_rate;
-        $N = (int)$goldLoan->tenure_value;
-        $R = $annualRate / 12 / 100;
+        $lastTransaction = $goldLoan->mortgageLoanTransactions->last();
+        $payableAmount = $lastTransaction->total_payable ?? 0;
 
-        $paidCount = MortgageLoanApplication::where('status', 'PAID')->count();
-
-        if ($paidCount == 0) {
-            $currentDebt = $P;
+        if ($lastTransaction) {
+            $currentDebt = (float) $lastTransaction->current_debt;
         } else {
-            $currentDebt = $P * ((pow(1 + $R, $N) - pow(1 + $R, $paidCount)) / (pow(1 + $R, $N) - 1));
+            $currentDebt = (float) $goldLoan->loan_amount;
         }
 
         $currentDebt = round($currentDebt, 2);
-        // dd($currentDebt);
-        // --- Find next due EMI ---
+
         $nextDue = $goldLoan->emiPayments()
             ->where('status', 'pending')
-            ->orderBy('emi_no', 'asc')
             ->first();
 
-        // If no pending EMI, loan is fully paid
         if (!$nextDue) {
             return view('mortgage.account.view-buttons.pay.pay', [
                 'goldLoan' => $goldLoan,
                 'banks' => $banks,
                 'currentDebt' => 0,
                 'payableAmount' => 0,
-                'message' => 'All EMIs are paid.'
+                'message' => 'All EMIs are fully paid.'
             ]);
         }
 
-        $today = \Carbon\Carbon::today();
-        $dueDate = \Carbon\Carbon::parse($nextDue->emi_date);
+        $annualRate = (float) $goldLoan->interest_rate;
+
+        $today = Carbon::today();
+        $dueDate = Carbon::parse($nextDue->emi_date);
+
         $daysLate = $dueDate->diffInDays($today, false);
         $daysLate = $daysLate > 0 ? $daysLate : 0;
 
@@ -346,8 +1012,8 @@ class MortgageAccountController extends Controller
         $lateFee = $daysLate * 10;
 
         $emiAmount = (float) $nextDue->emi_amount;
-        $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
-        dd($payableAmount);
+
+        // $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
 
         return view('mortgage.account.view-buttons.pay.pay', compact(
             'goldLoan',
@@ -361,40 +1027,628 @@ class MortgageAccountController extends Controller
         ));
     }
 
+    // update emi status on pay tab
+    public function updateEmiStatus(Request $request)
+    {
+        Log::info('🟢 updateEmiStatus() called', $request->all());
+
+        $request->validate([
+            'loan_id' => 'required|integer',
+            'status'  => 'required|string',
+        ]);
+
+        $emi = MortgageLoanTransaction::where('loan_id', $request->loan_id)
+            ->where('status', 'UNPAID')
+            ->orderBy('id', 'asc')
+            ->first();
+
+        if (!$emi) {
+            Log::warning("⚠️ No unpaid EMI found for loan_id={$request->loan_id}");
+            return response()->json(['success' => false, 'message' => 'No unpaid EMI found'], 404);
+        }
+
+        Log::info("📝 Before update:", $emi->toArray());
+
+        $emi->status = $request->status; // e.g. 'PAID' or 'DUE'
+        $emi->paid_date = now();
+        $emi->save();
+
+        Log::info("✅ After update:", $emi->fresh()->toArray());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'First unpaid EMI status updated successfully',
+            'emi' => $emi
+        ]);
+    }
+
+    // store pay tab data in table
     public function payEmi(Request $request)
     {
-        $request->validate([
-            'loan_id' => 'required|exists:loan_applications,id',
-            'transaction_date' => 'required|date',
-            'current_debt' => 'required|numeric',
-            'total_payable' => 'required|numeric',
-            'amount_collected' => 'required|numeric|min:1',
-        ]);
+        Log::info('payEmi() called', ['request_data' => $request->all()]);
 
-        $loan = MortgageLoanApplication::find($request->loan_id);
+        try {
 
-        // Store transaction
-        $transaction = GoldLoanTransaction::create([
-            'loan_id' => $loan->id,
-            'transaction_date' => $request->transaction_date,
-            'current_debt' => $request->current_debt,
-            'other_charges' => $request->other_charges ?? 0,
-            'total_payable' => $request->total_payable,
-            'amount_collected' => $request->amount_collected,
-            'remarks' => $request->remarks ?? null,
-            'created_by' => Auth::id(),
-        ]);
+            Log::info('payEmi(): Starting validation');
 
-        // Update remaining balance in loan table
-        $loan->balance_amount = $loan->balance_amount - $request->amount_collected;
-        if ($loan->balance_amount < 0) $loan->balance_amount = 0;
+            $rules = [
+                'loan_id'           => 'required|exists:mortgage_loan_applications,id',
+                'transaction_date'  => 'required|date',
+                'current_debt'      => 'required|numeric',
+                'total_payable'     => 'required|numeric',
+                'amount_collected'  => 'required|numeric|min:1',
+                'fee_mode'          => 'required|in:cash,cheque,online',
+            ];
+
+            if ($request->fee_mode === 'cheque') {
+
+                $rules['bank_id']     = 'required';
+                $rules['cheque_no']   = 'required';
+                $rules['cheque_date'] = 'required|date';
+            }
+
+            if ($request->fee_mode === 'online') {
+                $rules['transfer_date'] = 'required|date';
+                $rules['utr_no']        = 'required';
+                $rules['transfer_mode'] = 'required|in:imps,vpa,neft_rtgs';
+                $rules['credited']      = 'required|in:yes,no';
+            }
+
+            $request->validate($rules);
+
+            Log::info('payEmi(): Validation passed');
+
+            $loan = MortgageLoanApplication::find($request->loan_id);
+
+            if (!$loan) {
+                Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
+                return back()->withErrors(['loan_id' => 'Loan not found.']);
+            }
+
+            $lastEmiNo = MortgageLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
+            $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
+
+            Log::info('payEmi(): Next EMI Number', [
+                'emi_no' => $nextEmiNo,
+            ]);
+
+            $paymentDetails = ['mode' => $request->fee_mode];
+
+            if ($request->fee_mode === 'cash') {
+                $paymentDetails['fee_mode']  = $request->fee_mode;
+                $paymentDetails['description'] = 'Cash payment received';
+            }
+
+            if ($request->fee_mode === 'cheque') {
+                $paymentDetails['fee_mode']  = $request->fee_mode;
+                $paymentDetails['bank_id']     = $request->bank_id;
+                $paymentDetails['cheque_no']   = $request->cheque_no;
+                $paymentDetails['cheque_date'] = $request->cheque_date;
+            }
+
+            if ($request->fee_mode === 'online') {
+                $paymentDetails['fee_mode']  = $request->fee_mode;
+                $paymentDetails['transfer_date'] = $request->transfer_date;
+                $paymentDetails['utr_no']        = $request->utr_no;
+                $paymentDetails['transfer_mode'] = $request->transfer_mode;
+                $paymentDetails['credited']      = $request->credited;
+            }
 
 
-        dd($loan);
-        $loan->save();
+            $transaction = MortgageLoanTransaction::create([
+                'loan_id'          => $loan->id,
+                'emi_no'           => $nextEmiNo,
+                'transaction_date' => Carbon::parse($request->transaction_date)->format('Y-m-d'),
 
-        return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
+                'current_debt'     => $request->current_debt,
+                'other_charges'    => $request->other_charges ?? 0,
+                'total_payable'    => $request->total_payable,
+                'amount_collected' => $request->amount_collected,
+
+                'remarks'          => $request->remarks ?? null,
+                'payment_mode'     => $request->fee_mode,
+                'payment_details'  => json_encode($paymentDetails),
+
+                'bank_id'          => $request->bank_id ?? null,
+                'cheque_no'        => $request->cheque_no ?? null,
+                'cheque_date'      => $request->cheque_date ?? null,
+
+                'transfer_date'    => $request->transfer_date ?? null,
+                'utr_no'           => $request->utr_no ?? null,
+                'transfer_mode'    => $request->transfer_mode ?? null,
+                'credited'         => $request->credited ?? null,
+
+                'created_by'       => Auth::id(),
+            ]);
+
+            Log::info('payEmi(): Transaction Created', [
+                'transaction_id' => $transaction->id,
+                'data' => $transaction->toArray()
+            ]);
+
+            return redirect()->route('mortgage.account.show', $loan->id)->with('success', 'EMI Payment Recorded Successfully.');
+        } catch (\Exception $e) {
+
+            Log::error('payEmi(): Exception Occurred', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
+        }
     }
+
+    // foure closer tab
+    public function fourcloser($id)
+    {
+        $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'mortgageLoanTransactions'])
+            ->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        // Total Deposit
+            $totalDeposit = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+            
+            // // Total from Other Charges (only paid)
+            $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // // FINAL DEPOSIT = Transactions + Other Charges
+            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+
+            // Latest total_payable (from last transaction)
+            $totalPayable = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->orderByDesc('id')
+                ->value('total_payable') ?? $goldLoan->loan_amount;
+
+            // 1. Total Transaction Deposit
+            $transactionDeposit = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+
+            // 2. Total Paid Other Charges
+            $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // 3. FINAL Total Deposit
+            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+
+            // 4. FINAL Correct Current Debt
+            $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('mortgage.account.view-buttons.fore-close.fore-close', compact('goldLoan','currentDebt','banks'));
+    }
+
+    // foure closer store tab
+    public function storeForeCloser(Request $request, $loanId)
+    {
+        Log::info('---- ForeClosure Store Request START ----', [
+            'loan_id' => $loanId,
+            'request_data' => $request->all()
+        ]);
+
+        try {
+
+            // VALIDATION
+            $request->validate([
+                'remaining_amount'   => 'required|numeric',
+                'interest_accrued'   => 'required|numeric',
+                'overdue_interest'   => 'required|numeric',
+                'notice_charges'     => 'required|numeric',
+                'service_charges'    => 'required|numeric',
+                'other_charges'      => 'required|numeric',
+                'foreclosure_charges'=> 'required|numeric',
+                'total_amount_h'     => 'required|numeric',
+                'rounding_off_i'     => 'required|numeric',
+                'closure_discount_j' => 'required|numeric',
+                'net_amount_k'       => 'required|numeric',
+                'transaction_date'   => 'required',
+                 // optional payment fields validation:
+                'payment_mode'           => 'nullable|in:cash,cheque,online',
+                'bank_id'            => 'nullable|exists:banks,id',
+                'cheque_no'          => 'nullable|string|max:100',
+                'cheque_date'        => 'nullable|date',
+                'transfer_date'      => 'nullable|date',
+                'utr_no'             => 'nullable|string|max:150',
+                'transfer_mode'      => 'nullable|in:imps,vpa,neft_rtgs',
+                'credited'           => 'nullable|in:0,1',
+            ]);
+
+            // STORE DATA
+            $save = MortgageLoanForeClosure::create([
+                'loan_id'               => $loanId,
+
+                'remaining_amount'      => $request->remaining_amount,
+                'interest_accrued'      => $request->interest_accrued,
+                'overdue_interest'      => $request->overdue_interest,
+
+                'notice_charges'        => $request->notice_charges,
+                'service_charges'       => $request->service_charges,
+                'other_charges'         => $request->other_charges,
+                'foreclosure_charges'   => $request->foreclosure_charges,
+
+                'total_amount_h'        => $request->total_amount_h,
+                'rounding_off_i'        => $request->rounding_off_i,
+                'closure_discount_j'    => $request->closure_discount_j,
+                'net_amount_k'          => $request->net_amount_k,
+
+                'transaction_date'      => Carbon::createFromFormat('d-m-Y', $request->transaction_date),
+                'remarks'               => $request->remarks,
+
+                 // NEW payment fields mapping from your form names
+                'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
+                'bank_id'               => $request->input('bank_id') ?? null,
+                'cheque_no'             => $request->input('cheque_no') ?? null,
+                'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
+                'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
+                'utr_no'                => $request->input('utr_no') ?? null,
+                'transfer_mode'         => $request->input('transfer_mode') ?? null,
+                'credited'              => is_null($request->input('credited')) ? null : (int)$request->input('credited'),
+
+                'status'                => 0
+            ]);
+
+            Log::info('---- ForeClosure Stored Successfully ----', [
+                'saved_record' => $save
+            ]);
+
+            // UPDATE LOAN STATUS (Active → Inactive)
+            MortgageLoanApplication::where('id', $loanId)->update(['status' => 4]);
+
+            return redirect()
+                ->route('mortgage.account.show', $loanId)
+                ->with('success', 'Fore Closure Stored Successfully!');
+
+        } catch (\Exception $e) {
+
+            Log::error('ForeClosure Store Error', [
+                'loan_id' => $loanId,
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+    // link saving account tab
+    public function linksaving($id)
+    {
+        $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'mortgageLoanTransactions'])
+            ->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        // Fetch all saving accounts for the same member
+        $savingAccounts = DB::table('accounts')
+            ->where('member_id', $goldLoan->member_id)
+            ->where('account_type', 'SAVING')
+            ->pluck('account_no', 'id'); // ['id' => 'account_no']
+
+
+        // Total Deposit
+            $totalDeposit = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+            
+            // // Total from Other Charges (only paid)
+            $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // // FINAL DEPOSIT = Transactions + Other Charges
+            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+
+            // Latest total_payable (from last transaction)
+            $totalPayable = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->orderByDesc('id')
+                ->value('total_payable') ?? $goldLoan->loan_amount;
+
+            // 1. Total Transaction Deposit
+            $transactionDeposit = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->sum('amount_collected');
+
+            // 2. Total Paid Other Charges
+            $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            // 3. FINAL Total Deposit
+            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+
+            // 4. FINAL Correct Current Debt
+            $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('mortgage.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan','currentDebt', 'banks', 'savingAccounts'));
+    }
+
+    // update and store link saving account in account table and aplication table
+    public function storeSavingAccount(Request $request, $loanId)
+    {
+        $request->validate([
+            'saving_account_id' => 'required|exists:accounts,id',
+        ]);
+
+        $loan = MortgageLoanApplication::findOrFail($loanId);
+
+        // Update selected saving account
+        DB::table('accounts')
+            ->where('id', $request->saving_account_id)
+            ->update([
+                'loan_type'   => 'mortgage loan', // this page का loan category
+                'loan_number' => $loan->id, // loan_applications का id
+            ]);
+
+        return redirect()->route('mortgage.account.show', $loanId)
+        ->with('success', 'Saving Account Linked Successfully!');
+    }
+
+    // remove account tab
+    public function removeAccount(Request $request, $id)
+    {
+        
+        // Basic validation: confirm flag (optional)
+        if (!$request->filled('confirm') || $request->input('confirm') != 1) {
+            return redirect()->back()->with('error', 'Confirmation missing.');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // 1) find loan
+            $loan = MortgageLoanApplication::findOrFail($id);
+
+            // 2) update loan status to 0
+            $loan->status = 0;        // or the exact column name you use
+            $loan->save();
+
+            // 3) delete related rows from gold_loan_transactions
+            MortgageLoanTransaction::where('loan_id', $loan->id)->delete();
+
+            // 4) delete related rows from gold_loan_other_charges
+            MortgageLoanOtherCharge::where('loan_id', $loan->id)->delete();
+
+            // 5) commit
+            DB::commit();
+
+            // optional logging
+            Log::info('Mortgage loan removed', [
+                'loan_id' => $loan->id,
+                'user_id' => $request->user()->id ?? null,
+            ]);
+
+            return redirect()->back()->with('success', 'Account removed, related transactions & charges deleted and status set to 0.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error removing gold loan account', [
+                'loan_id' => $id,
+                'error' => $e->getMessage(),
+                'stack' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()
+            ->route('mortgage.account.index')
+            ->with('error', 'Something went wrong while removing the account: '.$e->getMessage());
+        }
+    }
+
+    // audit tab
+    public function audit(Request $request)
+    { 
+        return view('mortgage.account.view-buttons.audit-trail.audit-trail');
+    }
+
+    // Gold loan debit other charges list page functionality
+    public function showDebitChargesList($id)
+    {
+        $goldLoan = MortgageLoanApplication::with(['member'])->findOrFail($id);
+        return view('mortgage.account.view-buttons.debit-other-charges.other-charges-list', compact('goldLoan'));
+    }
+
+    public function DebitOtherCharges($id)
+    {
+        $goldLoan = MortgageLoanApplication::with(['member', 'scheme', 'mortgageLoanTransactions'])->findOrFail($id);
+        return view('mortgage.account.view-buttons.debit-other-charges.debit-other-charges', compact('goldLoan'));
+    }
+
+    // store data other debit charge
+    public function storeDebitOtherCharges(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'charge_type'  => 'required',
+                'amount'       => 'required|numeric|min:0',
+                'gst_rate'     => 'required|numeric|min:0',
+                'total_amount' => 'required|numeric|min:0',
+                'charge_date'  => 'required|date',
+            ]);
+
+            $formattedDate = Carbon::parse($request->charge_date)->format('Y-m-d');
+
+            $charge = MortgageLoanOtherCharge::create([
+                'loan_id'   => $id,
+                'charge_type'  => $request->charge_type,
+                'amount'       => $request->amount,
+                'gst_rate'     => $request->gst_rate,
+                'total_amount' => $request->total_amount,
+                'charge_date'  => $formattedDate,
+                'remarks'      => $request->remarks,
+                'created_by'   => Auth::id(),
+            ]);
+
+            DB::beginTransaction();
+
+            $loan = MortgageLoanApplication::with('mortgageLoanTransactions')->findOrFail($id);
+            $transaction = $loan->mortgageLoanTransactions()->first();
+
+            if ($transaction) {
+                $oldDebt = $transaction->current_debt ?? 0;
+                $transaction->current_debt = $oldDebt + $request->total_amount;
+                $transaction->save();
+            } else {
+                Log::warning('⚠️ No related gold loan transaction found for loan', [
+                    'loan_id' => $id,
+                    'user_id' => Auth::id(),
+                ]);
+            }
+
+            DB::commit();
+
+            Log::info('Other charge debited successfully', [
+                'user_id'     => Auth::id(),
+                'account_id'  => $request->loan_id,
+                'charge_id'   => $charge->id ?? null,
+                'data'        => $request->all(),
+            ]);
+
+            return redirect()->route('mortgage.debitChargesList.form', $id)->with('success', 'Other charge debited successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed while debiting other charge', [
+                'errors' => $e->errors(),
+                'user_id' => Auth::id(),
+            ]);
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error occurred while storing other charge', [
+                'error'      => $e->getMessage(),
+                'trace'      => $e->getTraceAsString(),
+                'user_id'    => Auth::id(),
+                'input_data' => $request->all(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving the other charge. Please try again.');
+        }
+    }
+
+    // Clear Due
+    public function mortgageLoanClearDues($id)
+    {
+        $goldLoan = MortgageLoanApplication::with(['member', 'scheme', 'mortgageLoanTransactions'])->findOrFail($id);
+        $totalDue = MortgageLoanOtherCharge::where('loan_id', $id)
+            ->where('status', 'unpaid')
+            ->sum('amount');
+        $banks = Bank::all();
+        return view('mortgage.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks'));
+    }
+
+    // update / store clear due tab
+    public function clearDue(Request $request, $id)
+    {
+        $request->validate([
+            'waived_amount' => 'required|numeric|min:0.01',
+            'remarks'       => 'nullable|string|max:255',
+            'payment_mode'          => 'required|in:cash,online,cheque',
+        ]);
+
+        Log::info('🟢 Starting gold loan due clearance process', [
+            'loan_id'       => $id,
+            'waived_amount' => $request->waived_amount,
+            'user_id'       => Auth::id(),
+            'timestamp'     => now()->toDateTimeString(),
+        ]);
+
+        if ($request->payment_mode === 'online') {
+            $rules['pay1_transfer_utr'] = 'required|string|max:50';
+            $rules['transfer_mode'] = 'nullable|string|max:50';
+            $rules['credited'] = 'nullable|numeric|max:100';
+        }
+
+        if ($request->payment_mode === 'cheque') {
+            $rules['pay1_bank'] = 'required|string|max:50';
+            $rules['pay1_cheque_no'] = 'required|numeric';
+            $rules['pay1_cheque_date'] = 'nullable|date';
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $loan = MortgageLoanApplication::with('mortgageLoanTransactions')->findOrFail($id);
+
+            $goldTxn = $loan->goldLoanTransactions;
+
+            if (!$goldTxn) {
+                Log::warning('⚠️ mortgage Loan transaction record missing', [
+                    'loan_id' => $id,
+                    'user_id' => Auth::id(),
+                ]);
+                return back()->with('error', 'Gold Loan transaction not found.');
+            }
+
+            // Step 1: Create a record in mortgage_loan_other_charges
+            $clearDue = MortgageLoanOtherCharge::create([
+                'loan_id'          => $id,
+                'transaction_type' => 'credit',
+                'charge_type'      => 'Clear Due',
+                'amount'           => $request->waived_amount,
+                'charge_date'      => now(),
+                'remarks'          => $request->remarks,
+                'status'           => 'paid',
+                'created_by'       => Auth::id(),
+            ]);
+
+            Log::info('🧾 mortgage Loan Clear Due entry created successfully', [
+                'loan_id'        => $id,
+                'charge_id'      => $clearDue->id,
+                'charge_type'    => 'Clear Due',
+                'amount'         => $request->waived_amount,
+                'created_by'     => Auth::id(),
+            ]);
+
+            // Step 2: Update the current_debt
+            $oldDebt = $goldTxn->current_debt ?? 0;
+            $goldTxn->current_debt = max(0, $oldDebt - $request->waived_amount);
+            $goldTxn->save();
+
+            Log::info('💰 mortgage Loan current debt updated', [
+                'loan_id'        => $id,
+                'previous_debt'  => $oldDebt,
+                'cleared_amount' => $request->waived_amount,
+                'remaining_debt' => $goldTxn->current_debt,
+                'updated_by'     => Auth::id(),
+            ]);
+
+            DB::commit();
+
+            Log::info('✅ mortgage Loan due cleared successfully', [
+                'loan_id'         => $id,
+                'transaction_id'  => $clearDue->id,
+                'cleared_amount'  => $request->waived_amount,
+                'remaining_debt'  => $goldTxn->current_debt,
+                'user_id'         => Auth::id(),
+                'timestamp'       => now()->toDateTimeString(),
+            ]);
+
+            return redirect()->route('mortgage.debitChargesList.form', $id)->with('success', 'Due cleared successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('❌ Error while clearing gold loan due', [
+                'loan_id' => $id,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
+                'timestamp' => now()->toDateTimeString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+
+
 
 
 }

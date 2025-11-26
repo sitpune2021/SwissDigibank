@@ -44,12 +44,11 @@ class MembershipChargeTransaction extends Model
     {
         return $this->belongsTo(Account::class, 'saving_account_id');
     }
-
     public function members() {
         return $this->belongsTo(Member::class, 'member_id');
     }
     public function member()
     {
-        return $this->belongsTo(Member::class, 'member_id'); // Ensure 'member_id' is the correct foreign key
+        return $this->belongsTo(Member::class, 'member_id'); 
     }
 }

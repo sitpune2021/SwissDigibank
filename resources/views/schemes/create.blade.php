@@ -5,16 +5,22 @@
     <head>
         <style>
             input[type="radio"] {
-                width: 24px ;
-                height: 24px ;
-                accent-color: green ;
+                width: 24px;
+                height: 24px;
+                accent-color: green;
+            }
+
+            button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
             }
         </style>
     </head>
-    
+
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">Add Schemes</h3>
+            <h4 class="h2">Add Schemes</h4>
         </div>
         @if (session('success'))
             <div id="success-alert"
@@ -243,8 +249,8 @@
                         Save Branch
                     </button>
                     <!-- <button class="btn-outline" type="reset" onclick="window.location.href='{{ route('branch.index') }}'">
-                        Back
-                    </button> -->
+                            Back
+                        </button> -->
                     <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
                         Reset
                     </button>

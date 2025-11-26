@@ -408,27 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<style>
-.form-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-.btn-outline {
-    border: 1px solid #2563eb;
-    color: #2563eb;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-</style>
+
 
                 </div>
             </div>

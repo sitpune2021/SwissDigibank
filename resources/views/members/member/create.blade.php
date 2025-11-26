@@ -91,6 +91,11 @@
         .slider .switch-off {
             right: 0;
         }
+         button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
+            }
     </style>
 @endpush
 @section('page-title',
@@ -120,9 +125,10 @@
                     {{-- Section Heading --}}
                     @if ($sectionName && (!isset($member) || $sectionName != 'member_KYC_documents'))
                         <div class="col-span-2 {{ str_replace('_', ' ', $sectionName) }}">
-                            <h3 class="text-xl font-semibold text-center text-gray-800 mb-4 capitalize">
-                                {{ str_replace('_', ' ', $sectionName) }}
+                            <h3 class="text-xl font-semibold text-center text-gray-800 mb-4">
+                                {{ strtoupper(str_replace('_', ' ', $sectionName)) }}
                             </h3>
+
                         </div>
                     @endif
 
@@ -576,9 +582,9 @@
                         <button class="btn-primary" type="submit"> {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} CUSTOMER
                         </button>
                         @if ($method !== 'PUT')
-                        <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
-                            onclick="document.getElementById('companyForm').reset();"> RESET </button>
-                    @endif
+                            <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
+                                onclick="document.getElementById('companyForm').reset();"> RESET </button>
+                        @endif
                     @endif <a href="{{ route('member.index') }}"
                         class="btn-outline inline-flex items-center justify-center"> BACK </a>
                     {{-- @if ($method !== 'PUT')

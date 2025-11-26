@@ -117,7 +117,7 @@ class LoanAgainstDisbursementController extends Controller
             ]);
 
             return redirect()
-                ->route('loanagainst.disbursements.index')
+                ->route('loanagainst.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 

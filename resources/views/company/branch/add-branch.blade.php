@@ -16,6 +16,11 @@
                 accent-color: green;
 
             }
+             button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
+            }
         </style>
     </head>
     @include('fields.errormessage')
@@ -110,14 +115,7 @@
                     }
                 });
 
-                if (exactLength) {
-                    input.addEventListener('blur', function() {
-                        if (this.value.length !== maxLength) {
-                            alert(`${id.replace(/_/g, ' ')} must be exactly ${maxLength} digits.`);
-                            this.focus();
-                        }
-                    });
-                }
+                
             }
 
             // IFSC Code validation

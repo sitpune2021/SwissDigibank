@@ -1,6 +1,6 @@
 @extends('layout.main')
-@section('page-title', isset($misaccount) ? (!empty($show) ? 'VIEW ' . $misaccount->name . '  MIS ACCOUNT' : 'EDIT ' .
-$misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
+@section('page-title', isset($misaccount) ? (!empty($show) ? 'VIEW ' . $misaccount->name . ' MIS ACCOUNT' : 'EDIT ' .
+    $misaccount->name . ' MIS ACCOUNT') : 'ADD MIS ACCOUNT')
 @section('content')
 
     <style>
@@ -29,6 +29,12 @@ $misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
 
         }
 
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
+
         .bg-yellow {
             background-color: #e17100;
         }
@@ -39,13 +45,13 @@ $misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
             <div class="flex items-start flex-col  gap-2">
                 <!-- <h1 class="text-xl font-semibold">NEW MIS ACCOUNT</h1> -->
                 <!-- <p class="text-gray-500">
-                    <a href="{{ route('misaccount.index') }}" class="text-gray-500 text-sm">MIS Accounts</a> >
-                    @if (isset($misaccount))
-                        <a href="#" class="text-gray-500  text-sm"> edit</a>
-                    @else
-                        <a href="#" class="text-gray-500  text-sm"> New</a>
-                    @endif
-                </p> -->
+                        <a href="{{ route('misaccount.index') }}" class="text-gray-500 text-sm">MIS Accounts</a> >
+                        @if (isset($misaccount))
+    <a href="#" class="text-gray-500  text-sm"> edit</a>
+@else
+    <a href="#" class="text-gray-500  text-sm"> New</a>
+    @endif
+                    </p> -->
 
             </div>
 
@@ -461,7 +467,8 @@ $misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
 
                             <!-- Relation -->
                             <div class="flex-1 min-w-[200px]">
-                                <label class="font-medium mb-2 block uppercase">Relation <span class="text-red-500">*</span></label>
+                                <label class="font-medium mb-2 block uppercase">Relation <span
+                                        class="text-red-500">*</span></label>
                                 <select name="nominee_relation[]"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3 capitalize">
                                     <option value="">Select Relation</option>
@@ -505,14 +512,16 @@ $misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
 
                             <!-- Name -->
                             <div class="flex-1 min-w-[200px]">
-                                <label class="font-medium mb-2 block uppercase">Name <span class="text-red-500">*</span></label>
+                                <label class="font-medium mb-2 block uppercase">Name <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" name="nominee_name[]" value="{{ $nominee->nominee_name }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3 capitalize">
                             </div>
 
                             <!-- Address -->
                             <div class="flex-1 min-w-[250px]">
-                                <label class="font-medium mb-2 block uppercase">Address <span class="text-red-500">*</span></label>
+                                <label class="font-medium mb-2 block uppercase">Address <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" name="nominee_address[]" value="{{ $nominee->nominee_address }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3 capitalize">
                             </div>
@@ -657,8 +666,8 @@ $misaccount->name . '  MIS ACCOUNT') : 'ADD  MIS ACCOUNT')
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
-                                                        <x-searchable-dropdown :items="$banks" label="Bank Name" name="bank_id"
-                                    display-field="name" value-field="id" :selected="old('bank_id')" />
+                            <x-searchable-dropdown :items="$banks" label="Bank Name" name="bank_id"
+                                display-field="name" value-field="id" :selected="old('bank_id')" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Cheque No. <span

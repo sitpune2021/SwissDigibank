@@ -40,11 +40,23 @@
     @endif
 
 <div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
-        <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW CC LIMIT APPLICATION</h1>
+
+   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+        <div class="flex items-start flex-col gap-2">
+            <h1 id="formHeading" class="text-xl font-semibold"></h1>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if this is an edit page based on URL
+        const isEdit = window.location.href.includes('/edit'); // true if editing
+
+        const heading = document.getElementById('formHeading');
+        heading.textContent = isEdit ? 'UPDATE CC LIMIT APPLICATION' : 'NEW CC LIMIT APPLICATION';
+    });
+    </script>
+
 
     <div class="box">
         <form method="POST" 

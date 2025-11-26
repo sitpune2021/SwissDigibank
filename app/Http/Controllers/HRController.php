@@ -65,11 +65,22 @@ class HRController extends Controller
                          'date',
                          'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
                     ],
-                    'mobile_no' => 'required|digits:10',
+                    'name'         => 'required|regex:/^[A-Za-z\s]+$/|min:2',
+                    'father_name'  => 'nullable|regex:/^[A-Za-z\s]+$/|min:2',
+                    'nominee_name' => 'nullable|regex:/^[A-Za-z\s]+$/|min:2',
+                    'pan_no'       => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|size:10',
+                    'aadhar_no'    => 'nullable|digits:12',
+                    'mobile_no' => [
+                         'required',
+                         'regex:/^[1-9][0-9]{9}$/'
+                    ],
                     'address' => 'nullable|string',
                     'email' => 'nullable|email|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/',
-                    'name' => 'required',
-                    'designation' => 'nullable'
+                    'designation' => 'nullable',
+                    'ifsc' => [
+                         'nullable',
+                         'regex:/^[A-Za-z]{4}[0-9]{7}$/'
+                    ],
                ]);
 
                try {
@@ -155,7 +166,16 @@ class HRController extends Controller
                     'address' => 'nullable|string',
                     'email' => 'nullable|email',
                     'name' => 'required',
-                    'designation' => 'nullable'
+                    'designation' => 'nullable',
+                    'ifsc' => [
+                         'required',
+                         'regex:/^[A-Za-z]{4}[0-9]{7}$/'
+                    ],
+                    'name'         => 'required|regex:/^[A-Za-z\s]+$/|min:2',
+                    'father_name'  => 'nullable|regex:/^[A-Za-z\s]+$/|min:2',
+                    'nominee_name' => 'nullable|regex:/^[A-Za-z\s]+$/|min:2',
+                    'pan_no'       => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|size:10',
+                    'aadhar_no'    => 'nullable|digits:12',
                ]);
 
                try {

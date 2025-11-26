@@ -29,21 +29,12 @@
             <div class="flex items-start flex-col gap-2">
                 <div class="flex items-center gap-2">
                     <h3 class="uppercase font-semibold">
-                        Gold Loan - 00462
+                        BUSINESS LOAN
                     </h3>
                     <p class="text-gray-500 uppercase text-sm">
                         Other Charges
                     </p>
                 </div>
-                <p class="text-gray-500">
-                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
-                    <a href="#" class="text-gray-500 text-sm">00460 </a>>
-                    <a href="#" class="text-gray-500 text-sm">Other Charges </a>>
-
-                    <a href="#" class="text-gray-500 text-sm">
-                        Debit Charges
-                    </a>
-                </p>
             </div>
         </div>
 
@@ -125,7 +116,6 @@
                                         <input type="text" name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
-
 
                                 </tr>
                             </tbody>

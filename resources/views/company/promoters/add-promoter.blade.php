@@ -74,6 +74,12 @@
 
               }
 
+              button[type="reset"]:active {
+                  transform: scale(0.95);
+                  opacity: 0.7;
+                  transition: 0.1s;
+              }
+
               .slider .switch-off {
                   right: 0;
                   font-size: 12px;
@@ -255,6 +261,7 @@
   @push('script')
       <script>
           document.addEventListener('DOMContentLoaded', () => {
+
               const applyDigitValidation = (id, maxLength, exactLength = false) => {
                   const input = document.getElementById(id);
                   if (!input) return;
@@ -313,11 +320,14 @@
               // Voter ID (alphanumeric, max 10)
               applyAlphaNumValidation('voter_id_no', 10);
 
+              // nominee Voter ID (added now) ✔️
+              applyAlphaNumValidation('nominee_voter_id_no', 10);
+
               // Ration Card No. (alphanumeric, max 16)
               applyAlphaNumValidation('ration_card_no', 16);
-              applyAlphaNumValidation('meter_no', 16); // ✅ Added
-              applyAlphaNumValidation('ci_no', 16); // ✅ Added
-              applyAlphaNumValidation('dl_no', 16); // ✅ Added
+              applyAlphaNumValidation('meter_no', 16);
+              applyAlphaNumValidation('ci_no', 16);
+              applyAlphaNumValidation('dl_no', 16);
               applyAlphaNumValidation('ci_relation', 20);
           });
       </script>

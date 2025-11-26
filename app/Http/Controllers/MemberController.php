@@ -459,18 +459,14 @@ class MemberController extends Controller
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id'),
                 'branch' => Branch::pluck('branch_name', 'id'),
-                'religion' => Religion::pluck('name', 'id')
+                'religion' => Religion::pluck('name', 'id'),
             ];
-            // Fetch the member by ID
-            $member = Member::with('address', 'kyc', 'minors', 'religion')->findOrFail($id);
-            // $comments = MembershipChargeTransaction::where('member_id', $id)
-            //     ->orderBy('transaction_date', 'desc')
-            //     ->paginate(5);
+            $member = Member::with('address', 'kyc', 'minors', 'religion','accounts.bank','memberOtherCharges')->findOrFail($id);
+
             $comments = MembershipChargeTransaction::where('member_id', $id)
                 ->where('status', 'comment')
                 ->orderBy('transaction_date', 'desc')
                 ->paginate(5);
-            // Fetch the first due charge for this member (or adjust the query as needed)
             $charge = MemberOtherCharge::where('status', 'DUE')
                 ->first();
 
@@ -510,6 +506,7 @@ class MemberController extends Controller
             abort(404);
         }
     }
+
     public function documentShow(string $id)
     {
         try {
@@ -566,26 +563,45 @@ class MemberController extends Controller
     {
         try {
             $dynamicOptions = [
-                'states' => State::pluck('name', 'id'),
-                'branch' => Branch::pluck('branch_name', 'id'),
+                'states'   => State::pluck('name', 'id'),
+                'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id')
-
             ];
+
             $method = 'PUT';
             $banks = Bank::all();
+
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
-            $documents = KycDocument::where('member_id', $id)->get();
+
             $member = array_merge(
                 $memberModel->toArray(),
                 $memberModel->address?->toArray() ?? [],
                 $memberModel->kyc?->toArray() ?? []
             );
 
+            $dateFields = [
+                'general_enrollment_date',
+                'member_info_dob',
+                'member_info_spouse_dob',
+                'nominee_dob',
+                'charges_transaction_date',
+            ];
+
+            foreach ($dateFields as $field) {
+                if (!empty($member[$field])) {
+                    try {
+                        $member[$field] = \Carbon\Carbon::parse($member[$field])->format('d-m-Y');
+                    } catch (\Exception $e) {
+                        // keep original if parsing fails
+                    }
+                }
+            }
+
             $sections = config('member_form');
             $route = route('member.update', $id);
             session(['member_id' => $id]);
             $minor = true;
-            // 🔹 Prepare documents (either existing or empty defaults)
+
             $empty = fn($category) => (object)[
                 'file'          => null,
                 'category'      => $category,
@@ -593,7 +609,9 @@ class MemberController extends Controller
                 'document_type' => null,
             ];
 
-            $existingDocs = KycDocument::where('member_id', $id)->get()->keyBy('document_category');
+            $existingDocs = KycDocument::where('member_id', $id)
+                ->get()
+                ->keyBy('document_category');
 
             $documents = [
                 'photo'              => $existingDocs['photo'] ?? $empty('photo'),
@@ -605,11 +623,21 @@ class MemberController extends Controller
                 'pan_number'         => $existingDocs['pan_number'] ?? $empty('pan_number'),
             ];
 
-            return view('members.member.create', compact('sections', 'member', 'route', 'method', 'dynamicOptions', 'minor', 'documents', 'banks'));
+            return view('members.member.create', compact(
+                'sections',
+                'member',
+                'route',
+                'method',
+                'dynamicOptions',
+                'minor',
+                'documents',
+                'banks'
+            ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
+
 
     public function update(Request $request, string $id)
     {

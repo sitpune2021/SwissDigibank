@@ -8,9 +8,12 @@ use App\Models\Account;
 use App\Models\Member;
 use App\Models\Branch;
 use Carbon\Carbon;
-use App\Models\FDAccount;
+use App\Models\FdAccount;
 use App\Models\FdTransaction;
 use App\Models\FdMaturityStatement;
+use App\Models\RdTransactions;
+use App\Models\RdAccount;
+use App\Models\Rdscheme;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -165,4 +168,66 @@ class AccountController extends Controller
             ], 500);
         }
     }
+   public function getRDAccountDetails()
+{
+    try {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized. Please log in.'
+            ], 401);
+        }
+
+        // Find member for this user
+        $member = Member::where('user_id', $user->id)->first();
+
+        if (!$member) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Member not found for this user.'
+            ], 404);
+        }
+
+        // Fetch the latest RD Account
+        $rdAccount = RdAccount::with([
+            'branch:id,branch_name,ifsc_code',
+            'scheme:id,scheme_name,anuual_interest_rate'
+        ])
+        ->where('member_id', $member->id)
+        ->latest('created_at')
+        ->first();
+
+        if (!$rdAccount) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No RD account found for this user.',
+                'data' => null
+            ], 404);
+        }
+
+        // Fetch rd_transactions for this RD account
+        $transactions = RdTransactions::where('rd_account_id', $rdAccount->id)
+            ->orderBy('transfer_date', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'RD account details fetched successfully.',
+            'data' => [
+                'rd_account'   => $rdAccount,
+                'transactions' => $transactions
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'   => false,
+            'message'  => 'Something went wrong.',
+            'error'    => $e->getMessage(),
+        ], 500);
+    }
+}
+
 }

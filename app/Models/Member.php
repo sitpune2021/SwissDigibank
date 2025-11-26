@@ -101,11 +101,11 @@ class Member extends Model
                 ($this->member_info_last_name ?? '')
         );
     }
-    public function promotors()
+   
+ public function promotor()
     {
-        return $this->hasMany(Promotor::class);
+        return $this->belongsTo(Promotor::class);
     }
-
     public function shareHoldings()
     {
         return $this->hasMany(ShareHolding::class, 'promotor_id');

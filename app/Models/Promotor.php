@@ -9,6 +9,8 @@ use App\Models\Religion;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\PromotorKYC;
 use App\Models\PromotorNomine;
+use App\Models\Account;
+use App\Models\Member;
 
 class Promotor extends Model
 {
@@ -49,12 +51,18 @@ class Promotor extends Model
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
-
+    public function members()
+    {
+        return $this->belongsTo(Member::class, 'member_id');
+    }
     public function maritalStatus()
     {
         return $this->belongsTo(MaritalStatus::class, 'marital_statuses_id');
     }
-
+    public function accounts()
+    {
+        return $this->hasOne(Account::class, 'member_id', 'id');
+    }
     public function religion()
     {
         return $this->belongsTo(Religion::class, 'religions_id');
@@ -76,5 +84,9 @@ class Promotor extends Model
     public function form15G15H()
     {
         return $this->hasMany(Form15G15H::class, 'promotor_id');
+    }
+    public function shareholdings()
+    {
+        return $this->hasMany(Shareholding::class, 'promotor_id');
     }
 }

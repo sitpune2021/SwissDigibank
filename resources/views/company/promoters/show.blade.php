@@ -2,8 +2,8 @@
 @section('page-title', isset($promoter) ? $promoter->first_name : 'Add Promoter')
 
 @section('content')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
@@ -36,7 +36,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->branch->branch_name ?? ''}}</span>
+                                    <span>{{ $promoter->branch->branch_name ?? '' }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -67,7 +67,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                   <span>{{ $promoter->date_of_birth ? \Carbon\Carbon::parse($promoter->date_of_birth)->format('d-m-Y') : 'N/A' }}</span>
+                                    <span>{{ $promoter->date_of_birth ? \Carbon\Carbon::parse($promoter->date_of_birth)->format('d-m-Y') : 'N/A' }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -129,7 +129,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->father_name ??''}}</span>
+                                    <span>{{ $promoter->father_name ?? '' }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -139,7 +139,7 @@
                             </th>
                             <td class="p-2">
                                 <div>
-                                    <span>{{ $promoter->mother_name ?? ''}}</span>
+                                    <span>{{ $promoter->mother_name ?? '' }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -362,16 +362,16 @@
                                 <tr class="border-b">
                                     <th class="px-6 py-2 font-semibold text-start">Photo (Photo)</th>
                                     <td class="px-6 py-2 text-start">
-                                        @php 
-            $photo = $documents->get('photo'); // use keyBy for easy access
-        @endphp
+                                        @php
+                                            $photo = $documents->get('photo'); // use keyBy for easy access
+                                        @endphp
 
-        @if ($photo && $photo->file_path)
-            {{-- View Button --}}
-            <button type="button" class="text-blue-600 underline"
-                    onclick="window.open('{{ asset('storage/' . $photo->file_path) }}','_blank')">
-                View
-            </button>
+                                        @if ($photo && $photo->file_path)
+                                            {{-- View Button --}}
+                                            <button type="button" class="text-blue-600 underline"
+                                                onclick="window.open('{{ asset('storage/' . $photo->file_path) }}','_blank')">
+                                                View
+                                            </button>
                                         @endif
                                     </td>
                                 </tr>
@@ -668,8 +668,10 @@
                                                 No. of Shares
                                             </th>
                                             <td class="px-4 py-2 text-sm text-center text-gray-700">
-                                                0
+                                                {{ $totalShares ?? 0 }}
                                             </td>
+
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -791,20 +793,20 @@
                             <div class="p-4 text-sm bg-white" x-show="showBankDetails" x-transition>
                                 <div class="flex justify-between py-2 border-b">
                                     <span class="font-medium">Bank Name</span>
-                                    {{-- <span>{{ $member->branch->branch_name }}</span> --}}
+                                    <span>{{ $promoter->branch->branch_name ?? '' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b">
                                     <span class="font-medium">IFSC Code</span>
-                                    {{-- <span>{{ $member->branch->ifsc_code }}</span> --}}
+                                    <span>{{ $promoter->branch->ifsc_code }}</span>
                                 </div>
-                                {{-- <div class="flex justify-between py-2 border-b">
-        <span class="font-medium">Account Type</span>
-        <span>{{ $member->accounts->account_type }}</span>
-                    </div>
-                    <div class="flex justify-between py-2">
-                        <span class="font-medium">Account No.</span>
-                        <span>{{ $member->accounts->account_no }}</span>
-                    </div> --}}
+                                <div class="flex justify-between py-2 border-b">
+                                    <span class="font-medium">Account Type</span>
+                                    {{-- <span>{{ $promoter->account->account_type }}</span> --}}
+                                </div>
+                                <div class="flex justify-between py-2">
+                                    <span class="font-medium">Account No.</span>
+                                    {{-- <span>{{ $promoter->account->account_no }}</span> --}}
+                                </div>
                             </div>
                         </div>
 
@@ -1036,46 +1038,46 @@
 
                     </div>
                 </div>
-    
-        <!-- Modal HTML -->
-        <!-- <div id="docPreviewModal"
-            class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
-                <button onclick="closePreview()"
-                    class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
-                <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
-                <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
-                </div>
+
+                <!-- Modal HTML -->
+                <!-- <div id="docPreviewModal"
+                        class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+                        <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                            <button onclick="closePreview()"
+                                class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                            <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                            <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                            </div>
+                        </div>
+                    </div> -->
+
+                <!-- JS Script -->
+                <script>
+                    function previewDoc(fileUrl, title) {
+                        const modal = document.getElementById("docPreviewModal");
+                        const content = document.getElementById("docContent");
+                        const docTitle = document.getElementById("docTitle");
+
+                        docTitle.textContent = title;
+                        content.innerHTML = "";
+
+                        const ext = fileUrl.split('.').pop().toLowerCase();
+
+                        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                            content.innerHTML = `<img src="${fileUrl}" alt="${title}" class="max-w-full max-h-[60vh] mx-auto" />`;
+                        } else if (ext === 'pdf') {
+                            content.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[70vh]" frameborder="0"></iframe>`;
+                        } else {
+                            content.innerHTML =
+                                `<p>Cannot preview this file. <a href="${fileUrl}" target="_blank" class="text-blue-600 underline">Download</a></p>`;
+                        }
+
+                        modal.classList.remove("hidden");
+                    }
+
+                    function closePreview() {
+                        document.getElementById("docPreviewModal").classList.add("hidden");
+                    }
+                </script>
             </div>
-        </div> -->
-
-        <!-- JS Script -->
-        <script>
-            function previewDoc(fileUrl, title) {
-                const modal = document.getElementById("docPreviewModal");
-                const content = document.getElementById("docContent");
-                const docTitle = document.getElementById("docTitle");
-
-                docTitle.textContent = title;
-                content.innerHTML = "";
-
-                const ext = fileUrl.split('.').pop().toLowerCase();
-
-                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
-                    content.innerHTML = `<img src="${fileUrl}" alt="${title}" class="max-w-full max-h-[60vh] mx-auto" />`;
-                } else if (ext === 'pdf') {
-                    content.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[70vh]" frameborder="0"></iframe>`;
-                } else {
-                    content.innerHTML =
-                        `<p>Cannot preview this file. <a href="${fileUrl}" target="_blank" class="text-blue-600 underline">Download</a></p>`;
-                }
-
-                modal.classList.remove("hidden");
-            }
-
-            function closePreview() {
-                document.getElementById("docPreviewModal").classList.add("hidden");
-            }
-        </script>
-        </div>
         @endsection

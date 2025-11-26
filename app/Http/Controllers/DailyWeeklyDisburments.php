@@ -64,8 +64,8 @@ class DailyWeeklyDisburments extends Controller
             DB::beginTransaction();
 
             // Convert date format
-            $disbursalDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
-            $emiDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
+            $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
+            $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
 
             // Create disbursement
             $disbursement = DailyWeeklyDisburment::create([
@@ -119,7 +119,7 @@ class DailyWeeklyDisburments extends Controller
             ]);
 
             return redirect()
-                ->route('daily_weekly.disbursements.index')
+                ->route('daily_weekly.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
         }
 

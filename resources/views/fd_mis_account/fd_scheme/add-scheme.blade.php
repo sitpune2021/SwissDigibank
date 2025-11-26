@@ -8,6 +8,12 @@
             /* For modern browsers */
         }
 
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
+
         /* Fallback for browsers without accent-color support */
         input[type="checkbox"]:checked {
             background-color: green;
@@ -39,9 +45,9 @@
                     {{ isset($fdScheme) ? 'EDIT FD SCHEME' : 'ADD FD SCHEME' }}
                 </h1>
                 <!-- <p class="text-gray-500">
-                    <a href="#" class="text-gray-500">Fd Scheme</a> >
-                    <a href="#" class="text-gray-500"> New</a>
-                </p> -->
+                        <a href="#" class="text-gray-500">Fd Scheme</a> >
+                        <a href="#" class="text-gray-500"> New</a>
+                    </p> -->
             </div>
         </div>
 
@@ -101,7 +107,7 @@
                         FD/ MIS Lock In Period
                         <span class="text-red-500">*</span>
                     </label>
-                    <select name="lock_in_period" class="w-full text-sm bg-primary/5 border rounded-10 px-3 py-2">
+                    <select name="lock_in_period" class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         @foreach ([0, 1, 3, 6, 9, 12, 15, 18, 21, 24, 25, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60] as $month)
                             <option value="{{ $month }}"
                                 {{ old('lock_in_period', $fdScheme->lock_in_period ?? '') == $month ? 'selected' : '' }}>
@@ -225,7 +231,7 @@
                         placeholder="0.0">
                     <x-number-to-word for="stationary_fee" />
                 </div>
-
+<br>
                 <div class="col-span-2 md:col-span-1"> <label for="contact_email"
                         class="md:text-lg font-medium block mb-4 uppercase"> App Type <span class="text-red-500">*</span>
                     </label>
@@ -352,17 +358,16 @@
 
 
                 <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                    <button type="submit"
-                        class="bg-green-500 p-2 border border-green-500 text-white uppercase rounded  sm:w-auto">
-                        SAVE SCHEME
+                    <button type="submit" class="btn-primary uppercase justify-center">
+                        SAVE FD SCHEME
                     </button>
-                    <button type="submit" class="bg-yellow p-2 border text-white uppercase rounded sm:w-auto">
+                    <button type="reset" class="btn-outline">
                         RESET
                     </button>
-                    <button type="submit"
-                        class="bg-red-500 p-2 border border-red-500 text-white uppercase rounded  sm:w-auto">
-                        CANCLE
-                    </button>
+                    <a href="{{ route('fd-mis-schemes.index') }}" class="btn-outline uppercase justify-center">
+                        CANCEL
+                    </a>
+
 
                 </div>
             </form>

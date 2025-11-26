@@ -21,11 +21,17 @@
                 background-color: green;
                 border: none;
             }
+
+            button[type="reset"]:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: 0.1s;
+            }
         </style>
     </head>
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h3 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h3>
+            <h4 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h4>
         </div>
 
         @if (session('success'))
@@ -155,7 +161,8 @@
 
                 {{-- Branch --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label for="branch_id" class="font-medium block mb-4 uppercase">Branch <span class="text-red-500">*</span></label>
+                    <label for="branch_id" class="font-medium block mb-4 uppercase">Branch <span
+                            class="text-red-500">*</span></label>
                     <select name="branch_id" id="branch_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                         <option value="">-- Select Branch --</option>
@@ -178,7 +185,7 @@
                     <label for="advisor_id" class="font-medium block mb-4 uppercase">Advisor/Staff</label>
                     <select name="advisor_id" id="advisor_id"
                         class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                        <option value="">-- Select Branch --</option>
+                        <option value="">-- Select Advisor/Staff--</option>
                         @foreach ($advisors as $id => $advisors)
                             <option value="{{ $id }}"
                                 {{ old('advisor_id', $account->advisor_id ?? '') == $id ? 'selected' : '' }}>
@@ -216,10 +223,10 @@
                 {{-- Open Date --}}
                 <div class="col-span-2 md:col-span-1">
                     <!-- <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
-                    <input type="text" readonly name="open_date" id="open_date"
-                        value="{{ date('D M d Y h:i:s A') }}"
-                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                    @error('open_date')
+                                    <input type="text" readonly name="open_date" id="open_date"
+                                        value="{{ date('D M d Y h:i:s A') }}"
+                                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                                    @error('open_date')
         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
     @enderror -->
 
@@ -244,7 +251,8 @@
                 {{-- Account Holder Type --}}
 
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4 uppercase">Account Holder Type <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase">Account Holder Type <span
+                            class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="account_holder_type" value="single"
@@ -307,7 +315,8 @@
 
                 {{-- Mode of Operation --}}
                 <div class="col-span-2 md:col-span-1 hidden jointAccountSection3" id="mode-operation">
-                    <label class="font-medium block mb-4 uppercase">Mode of Operation <span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-4 uppercase">Mode of Operation <span
+                            class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
                             <input type="radio" name="mode_of_operation" value="single"
@@ -340,15 +349,16 @@
                     <label class="font-medium block mb-4 uppercase">Nominee <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
                         <label>
-                            <input type="radio" name="nominee" value="no"
-                                {{ old('nominee', $account->nominee ?? null) === 'no' || old('nominee', $account->nominee ?? null) === null ? 'checked' : '' }}>
-                            No
-                        </label>
-                        <label>
                             <input type="radio" name="nominee" value="yes"
                                 {{ old('nominee', $account->nominee ?? null) === 'yes' ? 'checked' : '' }}>
                             Yes
                         </label>
+                        <label>
+                            <input type="radio" name="nominee" value="no"
+                                {{ old('nominee', $account->nominee ?? null) === 'no' || old('nominee', $account->nominee ?? null) === null ? 'checked' : '' }}>
+                            No
+                        </label>
+
                         @error('nominee')
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                         @enderror
@@ -359,7 +369,8 @@
                 <div id="nomineeDetails"
                     class="{{ old('nominee', $account->nominee ?? null) === 'yes' ? '' : 'hidden' }}">
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">Relation <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Relation <span
+                                class="text-red-500">*</span></label>
                         <select name="nominee_relation"
                             class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
                             <option value="">Select Relation</option>
@@ -422,7 +433,8 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-1 mt-4">
-                        <label class="font-medium block mb-2 uppercase">Address <span class="text-red-500">*</span></label>
+                        <label class="font-medium block mb-2 uppercase">Address <span
+                                class="text-red-500">*</span></label>
                         <textarea name="nominee_address" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3"
                             placeholder="Enter Nominee Address">{{ old('nominee_address', $account->nominee_address ?? '') }}</textarea>
                         @error('nominee_address')
@@ -438,16 +450,16 @@
                 </div>
                 <!-- -----------------------nominees--------------- -->
 
-                {{-- Section Heading --}}
                 <div class="col-span-2">
                     <hr class="my-4">
-                    <h4 class="text-lg font-semibold mb-2 uppercase">Payment Info</h4>
+                    {{-- <h4 class="text-lg font-semibold mb-2 uppercase">Payment Info</h4> --}}
                 </div>
 
                 {{-- Payment Mode --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4 uppercase" >Payment Mode <span class="text-red-500">*</span></label>
-                    <div class="flex gap-5">
+                    <label class="font-medium block mb-4 uppercase">Payment Mode <span
+                            class="text-red-500">*</span></label>
+                    <div class="flex gap-5  items-center">
                         <label>
                             <input type="radio" name="payment_mode" value="cash"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cash' || old('payment_mode', $account->payment_mode ?? '') === '' ? 'checked' : '' }}>
@@ -471,11 +483,11 @@
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
                             <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                <option value="">Select Bank</option>
-                                <option value="SBI">SBI</option>
-                                <option value="HDFC">HDFC</option>
-                                <option value="ICICI">ICICI</option>
-                            </select> -->
+                                                <option value="">Select Bank</option>
+                                                <option value="SBI">SBI</option>
+                                                <option value="HDFC">HDFC</option>
+                                                <option value="ICICI">ICICI</option>
+                                            </select> -->
                             <x-searchable-dropdown :items="$banks" label="Select Bank" name="pay1_bank"
                                 display-field="name" value-field="id" event="Bank-selected" :selected="null" />
                             @error('pay1_bank')
@@ -650,7 +662,7 @@
                         member.minors.forEach(minor => {
                             $minorSelect.append(
                                 `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
-                                );
+                            );
                         });
                     }
 
@@ -741,26 +753,41 @@
 
             // Handle Add More Nominee button
             $('#addMoreNominee').on('click', function() {
-                const index = $('#additionalNominees .nominee-block').length;
-
                 const nomineeBlock = `
-                    <div class="nominee-block border border-gray-300 rounded p-4 mb-4">
-                        <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
-                        <select name="additional_nominee_relation[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3">
-                            <option value="">Select Relation</option>
-                            <option value="father">Father</option>
-                            <option value="mother">Mother</option>
-                            <option value="spouse">Spouse</option>
-                            <option value="child">Child</option>
-                            <!-- Add more as needed -->
-                        </select>
-                        <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="additional_nominee_name[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3" placeholder="Enter Nominee Name">
-                        <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
-                        <textarea name="additional_nominee_address[]" class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" placeholder="Enter Nominee Address"></textarea>
-                        <button type="button" class="removeNominee btn-outline mt-2">Remove</button>
-                    </div>
-                    `;
+        <div class="nominee-block border border-gray-300 rounded p-4 mb-4">
+            
+            <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
+            <select name="additional_nominee_relation[]" 
+                class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3">
+                <option value="">Select Relation</option>
+                <option value="father">Father</option>
+                <option value="mother">Mother</option>
+                <option value="spouse">Spouse</option>
+                <option value="child">Child</option>
+                <option value="son">Son</option>
+                <option value="daughter">Daughter</option>
+                <option value="brother">Brother</option>
+                <option value="sister">Sister</option>
+                <option value="grandfather">Grandfather</option>
+                <option value="grandmother">Grandmother</option>
+                <option value="uncle">Uncle</option>
+                <option value="aunt">Aunt</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label class="font-medium block mb-2">Name <span class="text-red-500">*</span></label>
+            <input type="text" name="additional_nominee_name[]" 
+                class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3 mb-3" 
+                placeholder="Enter Nominee Name">
+
+            <label class="font-medium block mb-2">Address <span class="text-red-500">*</span></label>
+            <textarea name="additional_nominee_address[]" 
+                class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3" 
+                placeholder="Enter Nominee Address"></textarea>
+
+            <button type="button" class="removeNominee btn-outline mt-2">Remove</button>
+        </div>
+    `;
 
                 $('#additionalNominees').append(nomineeBlock);
             });
