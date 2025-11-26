@@ -3,9 +3,9 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h3 class="h2">USER</h3>
+        <h4 class="h2">USER</h4>
         <a class="btn-primary" href="{{route('users.create')}}">
-            Add
+            ADD
         </a>
     </div>
 

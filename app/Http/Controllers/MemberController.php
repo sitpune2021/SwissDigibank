@@ -336,7 +336,7 @@ class MemberController extends Controller
                 'branch' => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
-            $member = Member::with('address', 'kyc', 'minors', 'religion','accounts.bank','memberOtherCharges')->findOrFail($id);
+            $member = Member::with('address', 'kyc', 'minors', 'religion', 'accounts.bank', 'memberOtherCharges')->findOrFail($id);
 
             $comments = MembershipChargeTransaction::where('member_id', $id)
                 ->where('status', 'comment')
@@ -1079,7 +1079,7 @@ class MemberController extends Controller
                 membership_charges_transaction
             WHERE
                 id = ?
-                AND type = 'Share amount'
+            AND type IN ('Share amount', 'Membership Charges')
             LIMIT 1
         ";
 
@@ -1489,6 +1489,7 @@ class MemberController extends Controller
 
     public function printReceipt($id)
     {
+
         // Detect which table has this transaction ID
         $isMemberOtherCharge = DB::table('member_other_charges')
             ->where('id', $id)
@@ -1535,45 +1536,50 @@ class MemberController extends Controller
         ";
             $transaction = DB::selectOne($query, [$id]);
         } else {
-            //Otherwise, get from membership_charges_transaction
-            $query = "
-            SELECT
-                id,
-                member_id,
-                transaction_date,
-                membership_fee AS amount,
-                charges_pay_mode AS pay_mode,
-                'Share amount' AS type,
-                remarks,
-                CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
-                is_accounted,
-                'Membership Charge' AS transaction_source,
-                created_at,
-                updated_at,
-                NULL AS charge_type,
-                NULL AS clearance_id,
-                NULL AS charges_due,
-                NULL AS waived_amount,
-                NULL AS gst_rate,
-                NULL AS total_amount,
-                NULL AS rounding_off,
-                NULL AS net_amount,
-                NULL AS clear_due_remarks,
-                NULL AS transfer_date,
-                NULL AS utr_no,
-                NULL AS transfer_mode,
-                NULL AS credited_in_account,
-                NULL AS bank_id,
-                NULL AS cheque_no,
-                NULL AS cheque_date
-            FROM
-                membership_charges_transaction
-            WHERE
-                id = ? AND deleted_at IS NULL AND type = 'Share amount'
-            LIMIT 1
-        ";
-            $transaction = DB::selectOne($query, [$id]);
-        }
+
+    $query = "
+        SELECT
+            id,
+            member_id,
+            transaction_date,
+            net_fee_to_collect AS amount,
+            charges_pay_mode AS pay_mode,
+            type,
+            CASE 
+                WHEN type = 'Membership Charges' THEN 'Member Registration'
+                ELSE remarks
+            END AS remarks,
+            CASE WHEN approve_status = 1 THEN 'Approved' ELSE 'Pending' END AS status,
+            is_accounted,
+            'Membership Charge' AS transaction_source,
+            created_at,
+            updated_at,
+            NULL AS charge_type,
+            NULL AS clearance_id,
+            NULL AS charges_due,
+            NULL AS waived_amount,
+            NULL AS gst_rate,
+            NULL AS total_amount,
+            NULL AS rounding_off,
+            NULL AS net_amount,
+            NULL AS clear_due_remarks,
+            NULL AS transfer_date,
+            NULL AS utr_no,
+            NULL AS transfer_mode,
+            NULL AS credited_in_account,
+            NULL AS bank_id,
+            NULL AS cheque_no,
+            NULL AS cheque_date
+        FROM membership_charges_transaction
+        WHERE id = ?
+          AND deleted_at IS NULL
+          AND type IN ('Share amount', 'Membership Charges')
+        LIMIT 1
+    ";
+
+    $transaction = DB::selectOne($query, [$id]);
+}
+
 
         if (!$transaction) {
             abort(404, 'Transaction not found.');

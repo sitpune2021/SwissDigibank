@@ -216,10 +216,10 @@ class PromotorController extends Controller
                 abort(404, 'Invalid promoter ID.');
             }
 
-            $promoter = Promotor::with('minor','members','accounts','branch')->findOrFail($decryptedId);
+            $promoter = Promotor::with('minor', 'members', 'accounts', 'branch')->findOrFail($decryptedId);
 
             $documents = KycDocument::where('promoter_id', $decryptedId)->get()->keyBy('document_category');
-$totalShares = $promoter->shareholdings->sum('total_share_held');
+            $totalShares = $promoter->shareholdings->sum('total_share_held');
 
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
@@ -232,7 +232,7 @@ $totalShares = $promoter->shareholdings->sum('total_share_held');
             $method = "";
             $show = true;
 
-            return view('company.promoters.show', compact('promoter', 'documents', 'dynamicOptions', 'route', 'show', 'method','totalShares'));
+            return view('company.promoters.show', compact('promoter', 'documents', 'dynamicOptions', 'route', 'show', 'method', 'totalShares'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         } catch (\Exception $e) {

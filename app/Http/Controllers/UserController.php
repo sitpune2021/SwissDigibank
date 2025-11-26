@@ -64,29 +64,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'employee'           => 'nullable|integer',
+            'designation'        => 'nullable|string|max:100',
+            'user_name'          => 'required|string|max:255|unique:users,username',
+            'first_name'         => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+            'last_name'          => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+            'email'              => 'required|email|max:255|regex:/^[A-Za-z0-9._]+@[^@\s]+\.[A-Za-z]{2,}$/',
+            'mobile_no'          => 'required|string|max:10',
+            'back_date'          => 'required|integer|min:0',
+            'permission_role'    => 'required|integer|exists:roles,id',
+            'branch'             => 'required|integer|exists:branches,id',
+            'login_on_holidays'  => 'required|in:0,1',
+            'searchable_account' => 'required|in:0,1',
+            'user_active'        => 'required|in:0,1',
+            'name'               => 'nullable',
+        ]);
+        Log::info('Validated data:', $validated);
+
         try {
-            // Validate the input data
-            $validated = $request->validate([
-                'employee'           => 'nullable|integer',
-                'designation'        => 'nullable|string|max:100',
-                'user_name'          => 'required|string|max:255|unique:users,username',
-                'first_name'         => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-                'last_name'          => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'email'              => 'required|email|max:255|regex:/^[A-Za-z0-9._]+@[^@\s]+\.[A-Za-z]{2,}$/',
-                'mobile_no'          => 'required|string|max:10',
-                'back_date'          => 'required|integer|min:0',
-                'permission_role'    => 'required|integer|exists:roles,id',
-                'branch'             => 'required|integer|exists:branches,id',
-                'login_on_holidays'  => 'required|in:0,1',
-                'searchable_account' => 'required|in:0,1',
-                'user_active'        => 'required|in:0,1',
-                'name'               => 'nullable',
-            ]);
-
-            // Log the validated input data (for debugging purposes)
-            Log::info('Validated data:', $validated);
-
-            // Save user
             User::create([
                 'name' =>                $validated['first_name'] . ' ' . $validated['last_name'] ?? '',
                 'emp_id'               => $validated['employee'],
