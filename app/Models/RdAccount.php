@@ -31,7 +31,7 @@ class RdAccount extends Model
         return $this->hasMany(RdTransactions::class);
     }
 
-    public function nominees()
+    public function nominee()
     {
         return $this->hasMany(AccountNominee::class, 'rd_account_id');
     }

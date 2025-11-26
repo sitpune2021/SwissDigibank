@@ -3,8 +3,8 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h2 class="h2">EMPLOYEES </h2>
-        <a class="btn-primary" href="{{route('employee.create')}}">
+        <h4 class="h2">EMPLOYEES </h4>
+        <a class="btn-primary uppercase" href="{{route('employee.create')}}">
             Add
         </a>
     </div>

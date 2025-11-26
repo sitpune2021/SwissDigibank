@@ -49,10 +49,11 @@ return [
             'name'     => 'sr_citizen_add_on_int_rate',
             'id'       => 'sr_citizen_add_on_interest_rate',
             'type'     => 'number',
-            'default'=>'0.0',
+            'step'     => '0.01',
+            'default'  => '0.0',
             'required' => true,
-
         ],
+
         [
             'label'         => 'INTEREST PAYOUT',
             'name'          => 'interest_pay_cycle',

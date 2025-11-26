@@ -194,7 +194,7 @@ return [
             'name' => 'member_info_email',
             'id' => 'email',
             'type' => 'email',
-            'required' => false,
+            'required' => true,
         ],
         [
             'label' => 'COLLECTION TIME',
