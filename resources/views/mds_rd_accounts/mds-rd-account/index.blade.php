@@ -4,7 +4,7 @@
 <div class="main-inner">
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h2 class="h2">MDS/ RD ACCOUNTS</h2>
+        <h4 class="h2">MDS/ RD ACCOUNTS</h4>
         <a class="btn-primary flex items-center gap-2" href="{{ route('mds-rd-accounts.create-rd-account') }}">
             ADD
         </a>

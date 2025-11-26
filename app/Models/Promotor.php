@@ -85,4 +85,8 @@ class Promotor extends Model
     {
         return $this->hasMany(Form15G15H::class, 'promotor_id');
     }
+    public function shareholdings()
+    {
+        return $this->hasMany(Shareholding::class, 'promotor_id');
+    }
 }

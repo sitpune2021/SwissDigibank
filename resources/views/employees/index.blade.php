@@ -50,9 +50,9 @@
     <div class="main-inner">
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block uppercase font-semibold">
+                <h4 class=" flex text-xl block uppercase font-semibold">
                     Employees
-                </h3>
+                </h4>
                 <a href="#" class=" block flex btn-primary capitalize ">add
                     {{-- <i class="las la-plus text-lg"></i> --}}
                 </a>

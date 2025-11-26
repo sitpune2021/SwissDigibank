@@ -78,7 +78,7 @@ class HRController extends Controller
                     'email' => 'nullable|email|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/',
                     'designation' => 'nullable',
                     'ifsc' => [
-                         'required',
+                         'nullable',
                          'regex:/^[A-Za-z]{4}[0-9]{7}$/'
                     ],
                ]);

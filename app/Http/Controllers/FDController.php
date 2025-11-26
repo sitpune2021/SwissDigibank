@@ -26,6 +26,7 @@ class FDController extends Controller
 
     public function index(Request $request)
     {
+
         $search = $request->input('search');
 
         $fdSchemes = FDScheme::with('fdslabs')
@@ -47,7 +48,6 @@ class FDController extends Controller
      */
     public function create()
     {
-
         return view('fd_mis_account.fd_scheme.add-scheme');
     }
     public function store(Request $request)
