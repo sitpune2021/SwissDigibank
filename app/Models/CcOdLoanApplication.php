@@ -92,5 +92,15 @@ public function scheme()
     return $this->belongsTo(CcOdLoanScheme::class, 'scheme_id');
 }
 
+    public function CcodLoanTransaction()
+    {
+        return $this->hasMany(CcodLoanTransaction::class, 'loan_id', 'id');
+    }
+
+    public function emiPayments()
+    {
+        return $this->hasMany(CcodLoanTransaction::class, 'loan_id', 'id');
+    }
+
 
 }

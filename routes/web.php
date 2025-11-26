@@ -1233,9 +1233,75 @@ Route::group(['prefix' => 'cc_od'], function () {
     Route::post('/cc_od/disbursements/store', [CcOdLoanControllerDisburments::class, 'store'])->name('cc_od_disbursment.store');
 
 
-    // cc_od Loan Account Page
-    Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])
-        ->name('cc_od.account.index');
+    // account section start
+
+        Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])->name('cc_od.account.index');
+        Route::get('account/show/{id}', [CcOdLoanControllerAccount::class, 'show'])
+            ->name('cc_od.account.show');
+        // emi chart for process button
+        Route::post('/emi/save-status', [CcOdLoanControllerAccount::class, 'saveEmiStatus'])
+            ->name('emi.saveEmiStatus');
+
+        // pay emi tab
+        Route::get('cc_od-account/payemi/{id}', [CcOdLoanControllerAccount::class, 'mortgagePayEmi'])
+        ->name('cc_od.account.pay-emi');
+        Route::post('cc_od-account/payemi/{id}/pay', [CcOdLoanControllerAccount::class, 'mortgagepayEmiLoan'])->name('cc_od.payEmiLoan');
+    
+        // View Transction tab
+        Route::get('cc_od-account/transaction/{id}', [CcOdLoanControllerAccount::class, 'mortgageTransaction'])
+            ->name('cc_od.account.transaction');
+
+        // loan extension tab
+        Route::get('account/extension/{id}', [CcOdLoanControllerAccount::class, 'loanextension'])
+            ->name('cc_od.account.extension');
+        // POST - FINAL SAVE loan extension
+        Route::post('/loan-extension/store/{id}', [CcOdLoanControllerAccount::class, 'storeLoanExtension'])->name('cc_od.extension.store');
+
+        // only pay tab
+        Route::get('cc_od-account/pay/{id}', [CcOdLoanControllerAccount::class, 'mortgagePay'])
+            ->name('cc_od.account.pay');
+        Route::post('/update-emi-status', [CcOdLoanControllerAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+        Route::post('/cc_od/pay-emi', [CcOdLoanControllerAccount::class, 'payEmi'])->name('cc_od.payEmi');
+
+        // foure close account
+        Route::get('account/fourcloser/{id}', [CcOdLoanControllerAccount::class, 'fourcloser'])
+            ->name('cc_od.account.fourcloser');
+        Route::post('account/fourcloser/store/{id}', [CcOdLoanControllerAccount::class, 'storeForeCloser'])
+            ->name('cc_od.account.forecloser.store');
+
+        // link saving account
+        Route::get('account/linksaving/{id}', [CcOdLoanControllerAccount::class, 'linksaving'])
+            ->name('cc_od.account.linksaving');
+        Route::post('account/linksaving/{id}', [CcOdLoanControllerAccount::class, 'storeSavingAccount'])
+            ->name('cc_od.account.storeSavingAccount');
+
+        // Remove account (POST to avoid CSRF problems with GET)
+        Route::post('/cc_od/{id}/remove', [CcOdLoanControllerAccount::class, 'removeAccount'])
+            ->name('cc_od.remove');
+
+        // show audit trial tab
+        Route::get('account/audit', [CcOdLoanControllerAccount::class, 'audit'])
+            ->name('cc_od.account.audit-trail');
+
+        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+        Route::get('/cc_od/{id}/debit-charges-list', [CcOdLoanControllerAccount::class, 'showDebitChargesList'])
+            ->name('cc_od.debitChargesList.form');
+
+        // debit other charge page    
+        Route::get('/cc_od/{id}/debit-other-charges', [CcOdLoanControllerAccount::class, 'DebitOtherCharges'])
+            ->name('cc_od.debitOtherCharges.form');
+        // Store Debit Other Charges page
+        Route::post('/cc_od/{id}/debit-other-charges', [CcOdLoanControllerAccount::class, 'storeDebitOtherCharges'])
+            ->name('cc_od.debitOtherCharges.store');
+
+        //clear due 
+        Route::get('/cc_od/{id}/clear-due', [CcOdLoanControllerAccount::class, 'mortgageLoanClearDues'])
+            ->name('cc_od.clear-due.form');
+        Route::post('/cc_od/{loan_id}/other-charge', [CcOdLoanControllerAccount::class, 'clearDue'])->name('cc_od.clear-due');
+
+    // account section end
+
+
 
     // Collect Processing fee page in application view page
     Route::get('cc-od/col-process-fee/{id}', [CcOdLoanController::class, 'col_process_fee'])
