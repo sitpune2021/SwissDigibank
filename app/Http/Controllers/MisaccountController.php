@@ -857,7 +857,7 @@ class MisaccountController extends Controller
             $txn->balance = $balance;
         }
 
-        return view('fd_mis_account.misaccount.view-transaction.viewTransaction', compact('misaccount', 'transactions', 'balance'));
+        return view('fd_mis_account.misaccount.view-transaction.viewtransaction', compact('misaccount', 'transactions', 'balance'));
     }
 
     public function transaction($id)

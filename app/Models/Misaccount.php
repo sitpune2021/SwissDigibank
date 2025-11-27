@@ -26,10 +26,6 @@ class Misaccount extends Model
         'senior_citizen',
         'account_type',
         'joint_member_id',
-        'nominee',
-        'nominee_name',
-        'nominee_relation',
-        'nominee_address',
         'final_amount',
         'transaction_date',
         'mis_joint_date',
@@ -54,7 +50,7 @@ class Misaccount extends Model
         return $this->hasMany(MisTransaction::class, 'misaccount_id');
     }
 
-    public function nominees()
+    public function nominee()
     {
         return $this->hasMany(AccountNominee::class, 'mis_account_id');
     }

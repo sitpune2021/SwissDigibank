@@ -11,6 +11,7 @@ class AccountNominee extends Model
         'fd_account_id',
         'rd_account_id',
         'dds_account_id',
+        'mis_account_id',
         'nominee_name',
         'nominee_relation',
         'nominee_address',
