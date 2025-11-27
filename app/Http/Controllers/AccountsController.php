@@ -673,7 +673,7 @@ class AccountsController extends Controller
             case 'fd':
                 $account = FdAccount::with('member', 'nominee')->findOrFail($account_id);
                 $member = $account->member ?? null;
-                $view = 'fd.account-details.account-nominee';
+                $view = 'fd_mis_account.fd-account.fd-accountnominee';
                 break;
 
             case 'dd':
@@ -685,9 +685,8 @@ class AccountsController extends Controller
             case 'mis':
                 $account = Misaccount::with('member', 'nominee')->findOrFail($account_id);
                 $member = $account->member ?? null;
-                $view = 'mis.account-details.account-nominee';
+                $view = 'fd_mis_account.misaccount.account-details.add_nominee';
                 break;
-
             default:
                 abort(404, 'Invalid account type');
         }
@@ -834,7 +833,7 @@ class AccountsController extends Controller
                 'account_id' => $account->id
             ]);
 
-            return redirect()->route('')->with('success', 'Nominee saved successfully.');
+            return back()->with('success', 'Nominee saved successfully.');
         } catch (\Throwable $e) {
 
             Log::error("Nominee save failed", [
@@ -869,8 +868,6 @@ class AccountsController extends Controller
 
         // Rounding off
         $round_off = round($total_value, 0);
-
-
         return view('saving-current-ac.accounts.close-acc', compact(
             'account',
             'available_balance',

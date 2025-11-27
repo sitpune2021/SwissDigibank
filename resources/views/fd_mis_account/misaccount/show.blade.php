@@ -126,7 +126,7 @@
           class="block px-4 py-2 uppercase hover:bg-warning">
           Change Account Info
         </a>
-        <a href="{{ route('misaccount.addNominee', $misaccount->id) }}"
+        <a href="{{ route('mis.accounts.nominee', ['type'=>'mis','id'=>base64_encode($misaccount->id)]) }}"
           class="block px-4 py-2 uppercase hover:bg-warning">
           Add Nominee
         </a>

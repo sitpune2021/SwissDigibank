@@ -96,21 +96,12 @@
     </div>
 
     <div class="flex flex-wrap gap-3">
-        <!-- FD Payout Plan -->
         <a href="{{ route('fd-mis-account.fd-payoutplan.fdpayoutplan', $fdAccount->id) }}" class="btn-primary px-4 py-2 rounded-10">
             FD PAYOUT PLAN
         </a>
-
-        <!-- View Transactions -->
         <button class="btn-primary px-4 py-2 rounded-10 ">
             VIEW TRANSACTIONS
         </button>
-
-        <!-- Account Details -->
-        <!-- <button class="btn-primary px-4 py-2 rounded-10 ">
-            ACCOUNT DETAILS
-        </button> -->
-
         <div x-data="{ open: false }" class="relative inline-block">
             <a @click="open = !open"
                 class="btn-primary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
@@ -119,7 +110,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </a>
-            <!-- Dropdown -->
             <div x-show="open" @click.outside="open = false"
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
@@ -128,7 +118,7 @@
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Change A/c Info</a>
                     </li>
                     <li>
-                        <a href="{{route('fd.add.nominee',$fdAccount->id)}}"
+                        <a href="{{route('fd.add.nominee',['type'=>'fd','id'=>base64_encode($fdAccount->id)])}}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Add Nominee</a>
                     </li>
                 </ul>
@@ -144,8 +134,6 @@
             SHOW AUDIT TRAIL
         </button>
     </div>
-
-
 
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 

@@ -335,7 +335,8 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/fd/process-payout', [FdController::class, 'processPayout'])->name('fd.processPayout');
 
     Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
-    Route::get('/fd-add-nominee/{id}', [FdController::class, 'addNominee'])->name('fd.add.nominee');
+    Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');
+    Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
 
     Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
@@ -363,11 +364,15 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('misaccount.updateAccountInfo');
 
     // Add Nominee
-    Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
-        ->name('misaccount.addNominee');
+    // Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
+    //     ->name('misaccount.addNominee');
 
-    Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
-        ->name('misaccount.updateNominee');
+    // Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
+    //     ->name('misaccount.updateNominee');
+
+    Route::get('/mis/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('mis.accounts.nominee');
+    Route::post('mis/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('mis.nominees.save');
+
 
     //edit and update branches
 
@@ -453,7 +458,6 @@ Route::group(['prefix' => 'approvals'], function () {
         ->name('loans.update-status');
 
     Route::get('approvals_history', [ApproveController::class, 'approvals_history'])->name('approvals_history');
-    
 });
 
 
@@ -1184,69 +1188,69 @@ Route::group(['prefix' => 'cc_od'], function () {
 
     // account section start
 
-        Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])->name('cc_od.account.index');
-        Route::get('account/show/{id}', [CcOdLoanControllerAccount::class, 'show'])
-            ->name('cc_od.account.show');
-        // emi chart for process button
-        Route::post('/emi/save-status', [CcOdLoanControllerAccount::class, 'saveEmiStatus'])
-            ->name('emi.saveEmiStatus');
+    Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])->name('cc_od.account.index');
+    Route::get('account/show/{id}', [CcOdLoanControllerAccount::class, 'show'])
+        ->name('cc_od.account.show');
+    // emi chart for process button
+    Route::post('/emi/save-status', [CcOdLoanControllerAccount::class, 'saveEmiStatus'])
+        ->name('emi.saveEmiStatus');
 
-        // pay emi tab
-        Route::get('cc_od-account/payemi/{id}', [CcOdLoanControllerAccount::class, 'mortgagePayEmi'])
+    // pay emi tab
+    Route::get('cc_od-account/payemi/{id}', [CcOdLoanControllerAccount::class, 'mortgagePayEmi'])
         ->name('cc_od.account.pay-emi');
-        Route::post('cc_od-account/payemi/{id}/pay', [CcOdLoanControllerAccount::class, 'mortgagepayEmiLoan'])->name('cc_od.payEmiLoan');
-    
-        // View Transction tab
-        Route::get('cc_od-account/transaction/{id}', [CcOdLoanControllerAccount::class, 'mortgageTransaction'])
-            ->name('cc_od.account.transaction');
+    Route::post('cc_od-account/payemi/{id}/pay', [CcOdLoanControllerAccount::class, 'mortgagepayEmiLoan'])->name('cc_od.payEmiLoan');
 
-        // loan extension tab
-        Route::get('account/extension/{id}', [CcOdLoanControllerAccount::class, 'loanextension'])
-            ->name('cc_od.account.extension');
-        // POST - FINAL SAVE loan extension
-        Route::post('/loan-extension/store/{id}', [CcOdLoanControllerAccount::class, 'storeLoanExtension'])->name('cc_od.extension.store');
+    // View Transction tab
+    Route::get('cc_od-account/transaction/{id}', [CcOdLoanControllerAccount::class, 'mortgageTransaction'])
+        ->name('cc_od.account.transaction');
 
-        // only pay tab
-        Route::get('cc_od-account/pay/{id}', [CcOdLoanControllerAccount::class, 'mortgagePay'])
-            ->name('cc_od.account.pay');
-        Route::post('/update-emi-status', [CcOdLoanControllerAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
-        Route::post('/cc_od/pay-emi', [CcOdLoanControllerAccount::class, 'payEmi'])->name('cc_od.payEmi');
+    // loan extension tab
+    Route::get('account/extension/{id}', [CcOdLoanControllerAccount::class, 'loanextension'])
+        ->name('cc_od.account.extension');
+    // POST - FINAL SAVE loan extension
+    Route::post('/loan-extension/store/{id}', [CcOdLoanControllerAccount::class, 'storeLoanExtension'])->name('cc_od.extension.store');
 
-        // foure close account
-        Route::get('account/fourcloser/{id}', [CcOdLoanControllerAccount::class, 'fourcloser'])
-            ->name('cc_od.account.fourcloser');
-        Route::post('account/fourcloser/store/{id}', [CcOdLoanControllerAccount::class, 'storeForeCloser'])
-            ->name('cc_od.account.forecloser.store');
+    // only pay tab
+    Route::get('cc_od-account/pay/{id}', [CcOdLoanControllerAccount::class, 'mortgagePay'])
+        ->name('cc_od.account.pay');
+    Route::post('/update-emi-status', [CcOdLoanControllerAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+    Route::post('/cc_od/pay-emi', [CcOdLoanControllerAccount::class, 'payEmi'])->name('cc_od.payEmi');
 
-        // link saving account
-        Route::get('account/linksaving/{id}', [CcOdLoanControllerAccount::class, 'linksaving'])
-            ->name('cc_od.account.linksaving');
-        Route::post('account/linksaving/{id}', [CcOdLoanControllerAccount::class, 'storeSavingAccount'])
-            ->name('cc_od.account.storeSavingAccount');
+    // foure close account
+    Route::get('account/fourcloser/{id}', [CcOdLoanControllerAccount::class, 'fourcloser'])
+        ->name('cc_od.account.fourcloser');
+    Route::post('account/fourcloser/store/{id}', [CcOdLoanControllerAccount::class, 'storeForeCloser'])
+        ->name('cc_od.account.forecloser.store');
 
-        // Remove account (POST to avoid CSRF problems with GET)
-        Route::post('/cc_od/{id}/remove', [CcOdLoanControllerAccount::class, 'removeAccount'])
-            ->name('cc_od.remove');
+    // link saving account
+    Route::get('account/linksaving/{id}', [CcOdLoanControllerAccount::class, 'linksaving'])
+        ->name('cc_od.account.linksaving');
+    Route::post('account/linksaving/{id}', [CcOdLoanControllerAccount::class, 'storeSavingAccount'])
+        ->name('cc_od.account.storeSavingAccount');
 
-        // show audit trial tab
-        Route::get('account/audit', [CcOdLoanControllerAccount::class, 'audit'])
-            ->name('cc_od.account.audit-trail');
+    // Remove account (POST to avoid CSRF problems with GET)
+    Route::post('/cc_od/{id}/remove', [CcOdLoanControllerAccount::class, 'removeAccount'])
+        ->name('cc_od.remove');
 
-        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-        Route::get('/cc_od/{id}/debit-charges-list', [CcOdLoanControllerAccount::class, 'showDebitChargesList'])
-            ->name('cc_od.debitChargesList.form');
+    // show audit trial tab
+    Route::get('account/audit', [CcOdLoanControllerAccount::class, 'audit'])
+        ->name('cc_od.account.audit-trail');
 
-        // debit other charge page    
-        Route::get('/cc_od/{id}/debit-other-charges', [CcOdLoanControllerAccount::class, 'DebitOtherCharges'])
-            ->name('cc_od.debitOtherCharges.form');
-        // Store Debit Other Charges page
-        Route::post('/cc_od/{id}/debit-other-charges', [CcOdLoanControllerAccount::class, 'storeDebitOtherCharges'])
-            ->name('cc_od.debitOtherCharges.store');
+    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+    Route::get('/cc_od/{id}/debit-charges-list', [CcOdLoanControllerAccount::class, 'showDebitChargesList'])
+        ->name('cc_od.debitChargesList.form');
 
-        //clear due 
-        Route::get('/cc_od/{id}/clear-due', [CcOdLoanControllerAccount::class, 'mortgageLoanClearDues'])
-            ->name('cc_od.clear-due.form');
-        Route::post('/cc_od/{loan_id}/other-charge', [CcOdLoanControllerAccount::class, 'clearDue'])->name('cc_od.clear-due');
+    // debit other charge page    
+    Route::get('/cc_od/{id}/debit-other-charges', [CcOdLoanControllerAccount::class, 'DebitOtherCharges'])
+        ->name('cc_od.debitOtherCharges.form');
+    // Store Debit Other Charges page
+    Route::post('/cc_od/{id}/debit-other-charges', [CcOdLoanControllerAccount::class, 'storeDebitOtherCharges'])
+        ->name('cc_od.debitOtherCharges.store');
+
+    //clear due 
+    Route::get('/cc_od/{id}/clear-due', [CcOdLoanControllerAccount::class, 'mortgageLoanClearDues'])
+        ->name('cc_od.clear-due.form');
+    Route::post('/cc_od/{loan_id}/other-charge', [CcOdLoanControllerAccount::class, 'clearDue'])->name('cc_od.clear-due');
 
     // account section end
 
@@ -1340,69 +1344,69 @@ Route::group(['prefix' => 'daily_weekly'], function () {
 
     // account section start
 
-        Route::get('account/index', [DailyWeeklyAccount::class, 'index'])->name('daily_weekly.account.index');
-        Route::get('account/show/{id}', [DailyWeeklyAccount::class, 'show'])
-            ->name('daily_weekly.account.show');
-        // emi chart for process button
-        Route::post('/emi/save-status', [DailyWeeklyAccount::class, 'saveEmiStatus'])
-            ->name('emi.saveEmiStatus');
+    Route::get('account/index', [DailyWeeklyAccount::class, 'index'])->name('daily_weekly.account.index');
+    Route::get('account/show/{id}', [DailyWeeklyAccount::class, 'show'])
+        ->name('daily_weekly.account.show');
+    // emi chart for process button
+    Route::post('/emi/save-status', [DailyWeeklyAccount::class, 'saveEmiStatus'])
+        ->name('emi.saveEmiStatus');
 
-        // pay emi tab
-        Route::get('daily_weekly-account/payemi/{id}', [DailyWeeklyAccount::class, 'mortgagePayEmi'])
+    // pay emi tab
+    Route::get('daily_weekly-account/payemi/{id}', [DailyWeeklyAccount::class, 'mortgagePayEmi'])
         ->name('daily_weekly.account.pay-emi');
-        Route::post('daily_weekly-account/payemi/{id}/pay', [DailyWeeklyAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
-    
-        // View Transction tab
-        Route::get('daily_weekly-account/transaction/{id}', [DailyWeeklyAccount::class, 'mortgageTransaction'])
-            ->name('daily_weekly.account.transaction');
+    Route::post('daily_weekly-account/payemi/{id}/pay', [DailyWeeklyAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
 
-        // loan extension tab
-        Route::get('account/extension/{id}', [DailyWeeklyAccount::class, 'loanextension'])
-            ->name('daily_weekly.account.extension');
-        // POST - FINAL SAVE loan extension
-        Route::post('/loan-extension/store/{id}', [DailyWeeklyAccount::class, 'storeLoanExtension'])->name('daily_weekly.extension.store');
+    // View Transction tab
+    Route::get('daily_weekly-account/transaction/{id}', [DailyWeeklyAccount::class, 'mortgageTransaction'])
+        ->name('daily_weekly.account.transaction');
 
-        // only pay tab
-        Route::get('daily_weekly-account/pay/{id}', [DailyWeeklyAccount::class, 'mortgagePay'])
-            ->name('daily_weekly.account.pay');
-        Route::post('/update-emi-status', [DailyWeeklyAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
-        Route::post('/daily_weekly/pay-emi', [DailyWeeklyAccount::class, 'payEmi'])->name('daily_weekly.payEmi');
+    // loan extension tab
+    Route::get('account/extension/{id}', [DailyWeeklyAccount::class, 'loanextension'])
+        ->name('daily_weekly.account.extension');
+    // POST - FINAL SAVE loan extension
+    Route::post('/loan-extension/store/{id}', [DailyWeeklyAccount::class, 'storeLoanExtension'])->name('daily_weekly.extension.store');
 
-        // foure close account
-        Route::get('account/fourcloser/{id}', [DailyWeeklyAccount::class, 'fourcloser'])
-            ->name('daily_weekly.account.fourcloser');
-        Route::post('account/fourcloser/store/{id}', [DailyWeeklyAccount::class, 'storeForeCloser'])
-            ->name('daily_weekly.account.forecloser.store');
+    // only pay tab
+    Route::get('daily_weekly-account/pay/{id}', [DailyWeeklyAccount::class, 'mortgagePay'])
+        ->name('daily_weekly.account.pay');
+    Route::post('/update-emi-status', [DailyWeeklyAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+    Route::post('/daily_weekly/pay-emi', [DailyWeeklyAccount::class, 'payEmi'])->name('daily_weekly.payEmi');
 
-        // link saving account
-        Route::get('account/linksaving/{id}', [DailyWeeklyAccount::class, 'linksaving'])
-            ->name('daily_weekly.account.linksaving');
-        Route::post('account/linksaving/{id}', [DailyWeeklyAccount::class, 'storeSavingAccount'])
-            ->name('daily_weekly.account.storeSavingAccount');
+    // foure close account
+    Route::get('account/fourcloser/{id}', [DailyWeeklyAccount::class, 'fourcloser'])
+        ->name('daily_weekly.account.fourcloser');
+    Route::post('account/fourcloser/store/{id}', [DailyWeeklyAccount::class, 'storeForeCloser'])
+        ->name('daily_weekly.account.forecloser.store');
 
-        // Remove account (POST to avoid CSRF problems with GET)
-        Route::post('/daily_weekly/{id}/remove', [DailyWeeklyAccount::class, 'removeAccount'])
-            ->name('daily_weekly.remove');
+    // link saving account
+    Route::get('account/linksaving/{id}', [DailyWeeklyAccount::class, 'linksaving'])
+        ->name('daily_weekly.account.linksaving');
+    Route::post('account/linksaving/{id}', [DailyWeeklyAccount::class, 'storeSavingAccount'])
+        ->name('daily_weekly.account.storeSavingAccount');
 
-        // show audit trial tab
-        Route::get('account/audit', [DailyWeeklyAccount::class, 'audit'])
-            ->name('daily_weekly.account.audit-trail');
+    // Remove account (POST to avoid CSRF problems with GET)
+    Route::post('/daily_weekly/{id}/remove', [DailyWeeklyAccount::class, 'removeAccount'])
+        ->name('daily_weekly.remove');
 
-        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-        Route::get('/daily_weekly/{id}/debit-charges-list', [DailyWeeklyAccount::class, 'showDebitChargesList'])
-            ->name('daily_weekly.debitChargesList.form');
+    // show audit trial tab
+    Route::get('account/audit', [DailyWeeklyAccount::class, 'audit'])
+        ->name('daily_weekly.account.audit-trail');
 
-        // debit other charge page    
-        Route::get('/daily_weekly/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'DebitOtherCharges'])
-            ->name('daily_weekly.debitOtherCharges.form');
-        // Store Debit Other Charges page
-        Route::post('/daily_weekly/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'storeDebitOtherCharges'])
-            ->name('daily_weekly.debitOtherCharges.store');
+    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+    Route::get('/daily_weekly/{id}/debit-charges-list', [DailyWeeklyAccount::class, 'showDebitChargesList'])
+        ->name('daily_weekly.debitChargesList.form');
 
-        //clear due 
-        Route::get('/daily_weekly/{id}/clear-due', [DailyWeeklyAccount::class, 'mortgageLoanClearDues'])
-            ->name('daily_weekly.clear-due.form');
-        Route::post('/daily_weekly/{loan_id}/other-charge', [DailyWeeklyAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
+    // debit other charge page    
+    Route::get('/daily_weekly/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'DebitOtherCharges'])
+        ->name('daily_weekly.debitOtherCharges.form');
+    // Store Debit Other Charges page
+    Route::post('/daily_weekly/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'storeDebitOtherCharges'])
+        ->name('daily_weekly.debitOtherCharges.store');
+
+    //clear due 
+    Route::get('/daily_weekly/{id}/clear-due', [DailyWeeklyAccount::class, 'mortgageLoanClearDues'])
+        ->name('daily_weekly.clear-due.form');
+    Route::post('/daily_weekly/{loan_id}/other-charge', [DailyWeeklyAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
 
     // account section end
 
@@ -1463,72 +1467,72 @@ Route::group(['prefix' => 'personal'], function () {
     Route::get('disbursements/disburse-loan/{id}', [PersonalDisbursementController::class, 'show'])->name('personal.disbursements.disburse-loan');
     Route::post('disbursements/store', [PersonalDisbursementController::class, 'store'])->name('personaldisbursements.store');
 
-    
+
     // account section start
 
-        Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
-        Route::get('account/show/{id}', [PersonalAccountController::class, 'show'])
-            ->name('personal.account.show');
-        // emi chart for process button
-        Route::post('/emi/save-status', [PersonalAccountController::class, 'saveEmiStatus'])
-            ->name('emi.saveEmiStatus');
+    Route::get('account/index', [PersonalAccountController::class, 'index'])->name('personal.account.index');
+    Route::get('account/show/{id}', [PersonalAccountController::class, 'show'])
+        ->name('personal.account.show');
+    // emi chart for process button
+    Route::post('/emi/save-status', [PersonalAccountController::class, 'saveEmiStatus'])
+        ->name('emi.saveEmiStatus');
 
-        // pay emi tab
-        Route::get('personal-account/payemi/{id}', [PersonalAccountController::class, 'mortgagePayEmi'])
+    // pay emi tab
+    Route::get('personal-account/payemi/{id}', [PersonalAccountController::class, 'mortgagePayEmi'])
         ->name('personal.account.pay-emi');
-        Route::post('personal-account/payemi/{id}/pay', [PersonalAccountController::class, 'mortgagepayEmiLoan'])->name('personal.payEmiLoan');
-    
-        // View Transction tab
-        Route::get('personal-account/transaction/{id}', [PersonalAccountController::class, 'mortgageTransaction'])
-            ->name('personal.account.transaction');
+    Route::post('personal-account/payemi/{id}/pay', [PersonalAccountController::class, 'mortgagepayEmiLoan'])->name('personal.payEmiLoan');
 
-        // loan extension tab
-        Route::get('account/extension/{id}', [PersonalAccountController::class, 'loanextension'])
-            ->name('personal.account.extension');
-        // POST - FINAL SAVE loan extension
-        Route::post('/loan-extension/store/{id}', [PersonalAccountController::class, 'storeLoanExtension'])->name('personal.extension.store');
+    // View Transction tab
+    Route::get('personal-account/transaction/{id}', [PersonalAccountController::class, 'mortgageTransaction'])
+        ->name('personal.account.transaction');
 
-        // only pay tab
-        Route::get('personal-account/pay/{id}', [PersonalAccountController::class, 'mortgagePay'])
-            ->name('personal.account.pay');
-        Route::post('/update-emi-status', [PersonalAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
-        Route::post('/personal/pay-emi', [PersonalAccountController::class, 'payEmi'])->name('personal.payEmi');
+    // loan extension tab
+    Route::get('account/extension/{id}', [PersonalAccountController::class, 'loanextension'])
+        ->name('personal.account.extension');
+    // POST - FINAL SAVE loan extension
+    Route::post('/loan-extension/store/{id}', [PersonalAccountController::class, 'storeLoanExtension'])->name('personal.extension.store');
 
-        // foure close account
-        Route::get('account/fourcloser/{id}', [PersonalAccountController::class, 'fourcloser'])
-            ->name('personal.account.fourcloser');
-        Route::post('account/fourcloser/store/{id}', [PersonalAccountController::class, 'storeForeCloser'])
-            ->name('personal.account.forecloser.store');
+    // only pay tab
+    Route::get('personal-account/pay/{id}', [PersonalAccountController::class, 'mortgagePay'])
+        ->name('personal.account.pay');
+    Route::post('/update-emi-status', [PersonalAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+    Route::post('/personal/pay-emi', [PersonalAccountController::class, 'payEmi'])->name('personal.payEmi');
 
-        // link saving account
-        Route::get('account/linksaving/{id}', [PersonalAccountController::class, 'linksaving'])
-            ->name('personal.account.linksaving');
-        Route::post('account/linksaving/{id}', [PersonalAccountController::class, 'storeSavingAccount'])
-            ->name('personal.account.storeSavingAccount');
+    // foure close account
+    Route::get('account/fourcloser/{id}', [PersonalAccountController::class, 'fourcloser'])
+        ->name('personal.account.fourcloser');
+    Route::post('account/fourcloser/store/{id}', [PersonalAccountController::class, 'storeForeCloser'])
+        ->name('personal.account.forecloser.store');
 
-        // Remove account (POST to avoid CSRF problems with GET)
-        Route::post('/personal/{id}/remove', [PersonalAccountController::class, 'removeAccount'])
-            ->name('personal.remove');
+    // link saving account
+    Route::get('account/linksaving/{id}', [PersonalAccountController::class, 'linksaving'])
+        ->name('personal.account.linksaving');
+    Route::post('account/linksaving/{id}', [PersonalAccountController::class, 'storeSavingAccount'])
+        ->name('personal.account.storeSavingAccount');
 
-        // show audit trial tab
-        Route::get('account/audit', [PersonalAccountController::class, 'audit'])
-            ->name('personal.account.audit-trail');
+    // Remove account (POST to avoid CSRF problems with GET)
+    Route::post('/personal/{id}/remove', [PersonalAccountController::class, 'removeAccount'])
+        ->name('personal.remove');
 
-        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-        Route::get('/personal/{id}/debit-charges-list', [PersonalAccountController::class, 'showDebitChargesList'])
-            ->name('personal.debitChargesList.form');
+    // show audit trial tab
+    Route::get('account/audit', [PersonalAccountController::class, 'audit'])
+        ->name('personal.account.audit-trail');
 
-        // debit other charge page    
-        Route::get('/personal/{id}/debit-other-charges', [PersonalAccountController::class, 'DebitOtherCharges'])
-            ->name('personal.debitOtherCharges.form');
-        // Store Debit Other Charges page
-        Route::post('/personal/{id}/debit-other-charges', [PersonalAccountController::class, 'storeDebitOtherCharges'])
-            ->name('personal.debitOtherCharges.store');
+    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+    Route::get('/personal/{id}/debit-charges-list', [PersonalAccountController::class, 'showDebitChargesList'])
+        ->name('personal.debitChargesList.form');
 
-        //clear due 
-        Route::get('/personal/{id}/clear-due', [PersonalAccountController::class, 'mortgageLoanClearDues'])
-            ->name('personal.clear-due.form');
-        Route::post('/personal/{loan_id}/other-charge', [PersonalAccountController::class, 'clearDue'])->name('personal.clear-due');
+    // debit other charge page    
+    Route::get('/personal/{id}/debit-other-charges', [PersonalAccountController::class, 'DebitOtherCharges'])
+        ->name('personal.debitOtherCharges.form');
+    // Store Debit Other Charges page
+    Route::post('/personal/{id}/debit-other-charges', [PersonalAccountController::class, 'storeDebitOtherCharges'])
+        ->name('personal.debitOtherCharges.store');
+
+    //clear due 
+    Route::get('/personal/{id}/clear-due', [PersonalAccountController::class, 'mortgageLoanClearDues'])
+        ->name('personal.clear-due.form');
+    Route::post('/personal/{loan_id}/other-charge', [PersonalAccountController::class, 'clearDue'])->name('personal.clear-due');
 
     // account section end
 
@@ -1585,72 +1589,72 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::get('disbursements/disburse-loan/{id}', [VehicalDisbursementController::class, 'show'])->name('vehical.disbursements.disburse-loan');
     Route::post('disbursements/store', [VehicalDisbursementController::class, 'store'])->name('vehicaldisbursements.store');
 
-    
+
     // account section start
 
-        Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
-        Route::get('account/show/{id}', [VehicalAccountController::class, 'show'])
-            ->name('vehical.account.show');
-        // emi chart for process button
-        Route::post('/emi/save-status', [VehicalAccountController::class, 'saveEmiStatus'])
-            ->name('emi.saveEmiStatus');
+    Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
+    Route::get('account/show/{id}', [VehicalAccountController::class, 'show'])
+        ->name('vehical.account.show');
+    // emi chart for process button
+    Route::post('/emi/save-status', [VehicalAccountController::class, 'saveEmiStatus'])
+        ->name('emi.saveEmiStatus');
 
-        // pay emi tab
-        Route::get('vehical-account/payemi/{id}', [VehicalAccountController::class, 'mortgagePayEmi'])
+    // pay emi tab
+    Route::get('vehical-account/payemi/{id}', [VehicalAccountController::class, 'mortgagePayEmi'])
         ->name('vehical.account.pay-emi');
-        Route::post('vehical-account/payemi/{id}/pay', [VehicalAccountController::class, 'mortgagepayEmiLoan'])->name('vehical.payEmiLoan');
-    
-        // View Transction tab
-        Route::get('vehical-account/transaction/{id}', [VehicalAccountController::class, 'mortgageTransaction'])
-            ->name('vehical.account.transaction');
+    Route::post('vehical-account/payemi/{id}/pay', [VehicalAccountController::class, 'mortgagepayEmiLoan'])->name('vehical.payEmiLoan');
 
-        // loan extension tab
-        Route::get('account/extension/{id}', [VehicalAccountController::class, 'loanextension'])
-            ->name('vehical.account.extension');
-        // POST - FINAL SAVE loan extension
-        Route::post('/loan-extension/store/{id}', [VehicalAccountController::class, 'storeLoanExtension'])->name('vehical.extension.store');
+    // View Transction tab
+    Route::get('vehical-account/transaction/{id}', [VehicalAccountController::class, 'mortgageTransaction'])
+        ->name('vehical.account.transaction');
 
-        // only pay tab
-        Route::get('vehical-account/pay/{id}', [VehicalAccountController::class, 'mortgagePay'])
-            ->name('vehical.account.pay');
-        Route::post('/update-emi-status', [VehicalAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
-        Route::post('/vehical/pay-emi', [VehicalAccountController::class, 'payEmi'])->name('vehical.payEmi');
+    // loan extension tab
+    Route::get('account/extension/{id}', [VehicalAccountController::class, 'loanextension'])
+        ->name('vehical.account.extension');
+    // POST - FINAL SAVE loan extension
+    Route::post('/loan-extension/store/{id}', [VehicalAccountController::class, 'storeLoanExtension'])->name('vehical.extension.store');
 
-        // foure close account
-        Route::get('account/fourcloser/{id}', [VehicalAccountController::class, 'fourcloser'])
-            ->name('vehical.account.fourcloser');
-        Route::post('account/fourcloser/store/{id}', [VehicalAccountController::class, 'storeForeCloser'])
-            ->name('vehical.account.forecloser.store');
+    // only pay tab
+    Route::get('vehical-account/pay/{id}', [VehicalAccountController::class, 'mortgagePay'])
+        ->name('vehical.account.pay');
+    Route::post('/update-emi-status', [VehicalAccountController::class, 'updateEmiStatus'])->name('emi.updateStatus');
+    Route::post('/vehical/pay-emi', [VehicalAccountController::class, 'payEmi'])->name('vehical.payEmi');
 
-        // link saving account
-        Route::get('account/linksaving/{id}', [VehicalAccountController::class, 'linksaving'])
-            ->name('vehical.account.linksaving');
-        Route::post('account/linksaving/{id}', [VehicalAccountController::class, 'storeSavingAccount'])
-            ->name('vehical.account.storeSavingAccount');
+    // foure close account
+    Route::get('account/fourcloser/{id}', [VehicalAccountController::class, 'fourcloser'])
+        ->name('vehical.account.fourcloser');
+    Route::post('account/fourcloser/store/{id}', [VehicalAccountController::class, 'storeForeCloser'])
+        ->name('vehical.account.forecloser.store');
 
-        // Remove account (POST to avoid CSRF problems with GET)
-        Route::post('/vehical/{id}/remove', [VehicalAccountController::class, 'removeAccount'])
-            ->name('vehical.remove');
+    // link saving account
+    Route::get('account/linksaving/{id}', [VehicalAccountController::class, 'linksaving'])
+        ->name('vehical.account.linksaving');
+    Route::post('account/linksaving/{id}', [VehicalAccountController::class, 'storeSavingAccount'])
+        ->name('vehical.account.storeSavingAccount');
 
-        // show audit trial tab
-        Route::get('account/audit', [VehicalAccountController::class, 'audit'])
-            ->name('vehical.account.audit-trail');
+    // Remove account (POST to avoid CSRF problems with GET)
+    Route::post('/vehical/{id}/remove', [VehicalAccountController::class, 'removeAccount'])
+        ->name('vehical.remove');
 
-        // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-        Route::get('/vehical/{id}/debit-charges-list', [VehicalAccountController::class, 'showDebitChargesList'])
-            ->name('vehical.debitChargesList.form');
+    // show audit trial tab
+    Route::get('account/audit', [VehicalAccountController::class, 'audit'])
+        ->name('vehical.account.audit-trail');
 
-        // debit other charge page    
-        Route::get('/vehical/{id}/debit-other-charges', [VehicalAccountController::class, 'DebitOtherCharges'])
-            ->name('vehical.debitOtherCharges.form');
-        // Store Debit Other Charges page
-        Route::post('/vehical/{id}/debit-other-charges', [VehicalAccountController::class, 'storeDebitOtherCharges'])
-            ->name('vehical.debitOtherCharges.store');
+    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+    Route::get('/vehical/{id}/debit-charges-list', [VehicalAccountController::class, 'showDebitChargesList'])
+        ->name('vehical.debitChargesList.form');
 
-        //clear due 
-        Route::get('/vehical/{id}/clear-due', [VehicalAccountController::class, 'mortgageLoanClearDues'])
-            ->name('vehical.clear-due.form');
-        Route::post('/vehical/{loan_id}/other-charge', [VehicalAccountController::class, 'clearDue'])->name('vehical.clear-due');
+    // debit other charge page    
+    Route::get('/vehical/{id}/debit-other-charges', [VehicalAccountController::class, 'DebitOtherCharges'])
+        ->name('vehical.debitOtherCharges.form');
+    // Store Debit Other Charges page
+    Route::post('/vehical/{id}/debit-other-charges', [VehicalAccountController::class, 'storeDebitOtherCharges'])
+        ->name('vehical.debitOtherCharges.store');
+
+    //clear due 
+    Route::get('/vehical/{id}/clear-due', [VehicalAccountController::class, 'mortgageLoanClearDues'])
+        ->name('vehical.clear-due.form');
+    Route::post('/vehical/{loan_id}/other-charge', [VehicalAccountController::class, 'clearDue'])->name('vehical.clear-due');
 
     // account section end
 
