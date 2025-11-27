@@ -1759,15 +1759,28 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::post('associates/update/{id}', [AdvisorController::class, 'update_rank'])
         ->name('associates-advisor.rank-structure.update');
 
-
+    // add associate 
     Route::get('associates/add', [AdvisorController::class, 'add_adc_asc'])
         ->name('associates-advisor.associates-advisors.add');
+    Route::post('associate/store', [AdvisorController::class, 'store_adc_asc'])
+    ->name('associate.store');
 
+    // index associate page
     Route::get('associates/adv-index', [AdvisorController::class, 'adv_index'])
         ->name('associates-advisor.associates-advisors.index');
 
-    Route::get('associates/adv-view', [AdvisorController::class, 'adv_view'])
-        ->name('associates-advisor.associates-advisors.view');
+    // view
+    Route::get('associates/adv-view/{id}', [AdvisorController::class, 'adv_view'])
+    ->name('associates-advisor.associates-advisors.view');
+
+    // SHOW EDIT FORM
+    Route::get('associate/{id}/edit', [AdvisorController::class, 'edit'])
+        ->name('associate.edit');
+
+    // UPDATE REQUEST
+    Route::put('associate/{id}', [AdvisorController::class, 'update'])
+    ->name('associate.update');
+
 
     Route::get('associates/chnage-photo', [AdvisorController::class, 'change_photo'])
         ->name('associates-advisor.associates-advisors.change-photo');
