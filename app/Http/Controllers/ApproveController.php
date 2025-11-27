@@ -125,8 +125,8 @@ class ApproveController extends Controller
             Log::info('Combining transaction and membership queries...');
             //$unionQuery = $transactionQuery->unionAll($membershipQuery);
             $unionQuery = $transactionQuery
-            ->unionAll($membershipQuery)
-            ->unionAll($foreclosureQuery);
+                ->unionAll($membershipQuery)
+                ->unionAll($foreclosureQuery);
 
 
             Log::info('Creating final combined query...');
@@ -215,7 +215,7 @@ class ApproveController extends Controller
                     if (!empty($member->member_info_email)) {
 
                         if ($transaction->transaction_type === 'debit') {
-                            $pdf = Pdf::loadView('emails.saving_account_withdraw', compact('member', 'Account','available_balance'));
+                            $pdf = Pdf::loadView('emails.saving_account_withdraw', compact('member', 'Account', 'available_balance'));
                             $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
                             $pdf->save($pdfPath);
                             // MONEY WITHDRAWN
@@ -225,7 +225,7 @@ class ApproveController extends Controller
                             );
                         } elseif ($transaction->transaction_type === 'credit') {
 
-                            $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account','available_balance'));
+                            $pdf = Pdf::loadView('emails.saving_account_deposit', compact('member', 'Account', 'available_balance'));
                             $pdfPath = storage_path('app/public/account_details_' .  $Account->id . '.pdf');
                             $pdf->save($pdfPath);
 
@@ -487,12 +487,219 @@ class ApproveController extends Controller
         }
     }
 
+    //     public function approveAccounts(Request $request)
+    //     {
+    //         try {
+    //             $search = $request->input('search');
+    //             $perPage = $request->input('perPage', 10);
+
+    //             $sql = "
+    //         SELECT 
+    //             accounts.id,
+    //             accounts.account_no,
+    //             accounts.account_type,
+    //             accounts.firm_name,
+    //             accounts.amount_deposit,
+    //             accounts.payment_mode,
+    //             accounts.account_holder_type,
+    //             accounts.mode_of_operation,
+    //             accounts.approve_status,
+    //             accounts.open_date,
+    //             accounts.branch_id,
+    //             accounts.member_id,
+    //             JSON_OBJECT(
+    //              'id', members.id,
+    //              'member_no', members.member_no,
+    //                 'member_info_first_name', members.member_info_first_name,
+    //                 'member_info_last_name', members.member_info_last_name
+    //             ) AS members,
+    //               JSON_OBJECT(
+    //             'branch_name', branches.branch_name
+    //             ) AS branch,
+    //             'accounts' AS source_table,
+    //             accounts.created_at
+    //         FROM accounts
+    //         INNER JOIN branches ON accounts.branch_id = branches.id
+    //         INNER JOIN members ON accounts.member_id = members.id
+    //         WHERE accounts.account_type IN ('SAVING', 'CURRENT', 'RD', 'MIS')
+    //           AND accounts.approve_status = '0'
+
+    //         UNION ALL
+
+    //         SELECT 
+    //             fd_accounts.id,
+    //             fd_accounts.account_no AS account_no,
+    //             'FD' AS account_type,
+    //             null,
+    //             fd_accounts.fd_amount AS amount_deposit,
+    //             fd_accounts.payment_mode,
+    //             fd_accounts.account_holder_type,
+    //             fd_accounts.mode_of_operation,
+    //             fd_accounts.status AS approve_status,
+    //             fd_accounts.open_date,
+    //             fd_accounts.branch_id,
+    //             fd_accounts.member_id,
+    //             JSON_OBJECT(
+    //              'id', members.id,
+    //              'member_no', members.member_no,
+    //                 'member_info_first_name', members.member_info_first_name,
+    //                 'member_info_last_name', members.member_info_last_name
+    //             ) AS members,
+    //             JSON_OBJECT(
+    //             'branch_name', branches.branch_name
+    //              ) AS branch,
+    //             'fd_accounts' AS source_table,
+    //             fd_accounts.created_at
+    //         FROM fd_accounts
+    //         INNER JOIN branches ON fd_accounts.branch_id = branches.id
+    //         INNER JOIN members ON fd_accounts.member_id = members.id
+    //         WHERE fd_accounts.status = '0'
+    //  UNION ALL
+    //         SELECT 
+    //         misaccounts.id,
+    //         misaccounts.mis_account_no AS account_no,
+    //         'MIS' AS account_type,
+    //         NULL AS firm_name,
+    //         misaccounts.mis_amount AS amount_deposit,
+    //         NULL AS payment_mode,
+    //         NULL AS account_holder_type,
+    //         NULL AS mode_of_operation,
+    //         misaccounts.status AS approve_status,
+    //         misaccounts.open_date,
+    //         misaccounts.branch_id,
+    //         misaccounts.member_id,
+    //         JSON_OBJECT(
+    //             'id', members.id,
+    //             'member_no', members.member_no,
+    //             'member_info_first_name', members.member_info_first_name,
+    //             'member_info_last_name', members.member_info_last_name
+    //         ) AS members,
+    //         JSON_OBJECT(
+    //             'branch_name', branches.branch_name
+    //         ) AS branch,
+    //         'misaccounts' AS source_table,
+    //         misaccounts.created_at
+    //     FROM misaccounts
+    //     INNER JOIN branches ON misaccounts.branch_id = branches.id
+    //     INNER JOIN members ON misaccounts.member_id = members.id
+    //     WHERE misaccounts.status = '0'
+
+    //     UNION ALL
+    //         SELECT 
+    //         rd_accounts.id,
+    //         rd_accounts.rd_no AS account_no,
+    //         'RD' AS account_type,
+    //         NULL AS firm_name,
+    //         rd_accounts.rd_amount AS amount_deposit,
+    //         NULL AS payment_mode,
+    //         NULL AS account_holder_type,
+    //         NULL AS mode_of_operation,
+    //         rd_accounts.approve_status AS approve_status,
+    //         rd_accounts.open_date,
+    //         rd_accounts.branch_id,
+    //         rd_accounts.member_id,
+    //         JSON_OBJECT(
+    //             'id', members.id,
+    //             'member_no', members.member_no,
+    //             'member_info_first_name', members.member_info_first_name,
+    //             'member_info_last_name', members.member_info_last_name
+    //         ) AS members,
+    //         JSON_OBJECT(
+    //             'branch_name', branches.branch_name
+    //         ) AS branch,
+    //         'rd_accounts' AS source_table,
+    //         rd_accounts.created_at
+    //     FROM rd_accounts
+    //     INNER JOIN branches ON rd_accounts.branch_id = branches.id
+    //     INNER JOIN members ON rd_accounts.member_id = members.id
+    //     WHERE rd_accounts.approve_status = 'Pending'
+    //  UNION ALL
+
+    //         SELECT
+    //         dds_accounts.id,
+    //         dds_accounts.dd_no AS account_no,
+    //         'DDS' AS account_type,
+    //         NULL AS firm_name,
+    //         dds_accounts.dd_amount AS amount_deposit,
+    //         NULL AS payment_mode,
+    //         NULL AS account_holder_type,
+    //         NULL AS mode_of_operation,
+    //         dds_accounts.status AS approve_status,
+    //         dds_accounts.open_date,
+    //         dds_accounts.branch_id,
+    //         dds_accounts.member_id,
+    //         JSON_OBJECT(
+    //             'id', members.id,
+    //             'member_no', members.member_no,
+    //             'member_info_first_name', members.member_info_first_name,
+    //             'member_info_last_name', members.member_info_last_name
+    //         ) AS members,
+    //         JSON_OBJECT(
+    //             'branch_name', branches.branch_name
+    //         ) AS branch,
+    //         'dds_accounts' AS source_table,
+    //         dds_accounts.created_at
+    //     FROM dds_accounts
+    //     INNER JOIN branches ON dds_accounts.branch_id = branches.id
+    //     INNER JOIN members ON dds_accounts.member_id = members.id
+    //     WHERE dds_accounts.status = 0";
+
+    //             $query = DB::table(DB::raw("({$sql}) as combined"))
+    //                 ->orderBy('created_at', 'desc');
+
+
+    //             if ($search) {
+    //                 $query->where(function ($q) use ($search) {
+    //                     $q->where('account_no', 'like', "%{$search}%")
+    //                         ->orWhere('firm_name', 'like', "%{$search}%")
+    //                         ->orWhere('amount_deposit', 'like', "%{$search}%")
+    //                         ->orWhere('payment_mode', 'like', "%{$search}%")
+    //                         ->orWhere('account_holder_type', 'like', "%{$search}%")
+    //                         ->orWhere('mode_of_operation', 'like', "%{$search}%")
+    //                         ->orWhere('branch_name', 'like', "%{$search}%")
+    //                         ->orWhereRaw("JSON_EXTRACT(members, '$.member_info_first_name') LIKE ?", ["%{$search}%"])
+    //                         ->orWhereRaw("JSON_EXTRACT(members, '$.member_info_last_name') LIKE ?", ["%{$search}%"]);
+    //                 });
+    //             }
+
+    //             $pending_transactions = $query->paginate($perPage)->appends($request->all());
+    //             // dd($pending_transactions);
+    //             $pending_transactions->getCollection()->transform(function ($item) {
+    //                 $item->members = json_decode($item->members);
+    //                 $item->branch  = json_decode($item->branch);
+    //                 return $item;
+    //             });
+
+    //             return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
+    //         } catch (\Exception $e) {
+    //             Log::error('Error in approveAccounts: ' . $e->getMessage(), [
+    //                 'trace' => $e->getTraceAsString(),
+    //                 'request' => $request->all(),
+    //             ]);
+
+    //             return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
+    //         }
+    //     }
+
+
     public function approveAccounts(Request $request)
     {
+        // Log incoming request
+        Log::info("approveAccounts() called", [
+            'request_data' => $request->all()
+        ]);
+
         try {
+
             $search = $request->input('search');
             $perPage = $request->input('perPage', 10);
 
+            Log::info("approveAccounts() - Parameters", [
+                'search'  => $search,
+                'perPage' => $perPage
+            ]);
+
+            // Main SQL
             $sql = "
         SELECT 
             accounts.id,
@@ -508,13 +715,13 @@ class ApproveController extends Controller
             accounts.branch_id,
             accounts.member_id,
             JSON_OBJECT(
-             'id', members.id,
-             'member_no', members.member_no,
+                'id', members.id,
+                'member_no', members.member_no,
                 'member_info_first_name', members.member_info_first_name,
                 'member_info_last_name', members.member_info_last_name
             ) AS members,
-              JSON_OBJECT(
-            'branch_name', branches.branch_name
+            JSON_OBJECT(
+                'branch_name', branches.branch_name
             ) AS branch,
             'accounts' AS source_table,
             accounts.created_at
@@ -522,7 +729,7 @@ class ApproveController extends Controller
         INNER JOIN branches ON accounts.branch_id = branches.id
         INNER JOIN members ON accounts.member_id = members.id
         WHERE accounts.account_type IN ('SAVING', 'CURRENT', 'RD', 'MIS')
-          AND accounts.approve_status = '0'
+        AND accounts.approve_status = '0'
 
         UNION ALL
 
@@ -530,7 +737,7 @@ class ApproveController extends Controller
             fd_accounts.id,
             fd_accounts.account_no AS account_no,
             'FD' AS account_type,
-            null,
+            NULL,
             fd_accounts.fd_amount AS amount_deposit,
             fd_accounts.payment_mode,
             fd_accounts.account_holder_type,
@@ -540,146 +747,161 @@ class ApproveController extends Controller
             fd_accounts.branch_id,
             fd_accounts.member_id,
             JSON_OBJECT(
-             'id', members.id,
-             'member_no', members.member_no,
+                'id', members.id,
+                'member_no', members.member_no,
                 'member_info_first_name', members.member_info_first_name,
                 'member_info_last_name', members.member_info_last_name
             ) AS members,
             JSON_OBJECT(
-            'branch_name', branches.branch_name
-             ) AS branch,
+                'branch_name', branches.branch_name
+            ) AS branch,
             'fd_accounts' AS source_table,
             fd_accounts.created_at
         FROM fd_accounts
         INNER JOIN branches ON fd_accounts.branch_id = branches.id
         INNER JOIN members ON fd_accounts.member_id = members.id
         WHERE fd_accounts.status = '0'
- UNION ALL
-        SELECT 
-        misaccounts.id,
-        misaccounts.mis_account_no AS account_no,
-        'MIS' AS account_type,
-        NULL AS firm_name,
-        misaccounts.mis_amount AS amount_deposit,
-        NULL AS payment_mode,
-        NULL AS account_holder_type,
-        NULL AS mode_of_operation,
-        misaccounts.status AS approve_status,
-        misaccounts.open_date,
-        misaccounts.branch_id,
-        misaccounts.member_id,
-        JSON_OBJECT(
-            'id', members.id,
-            'member_no', members.member_no,
-            'member_info_first_name', members.member_info_first_name,
-            'member_info_last_name', members.member_info_last_name
-        ) AS members,
-        JSON_OBJECT(
-            'branch_name', branches.branch_name
-        ) AS branch,
-        'misaccounts' AS source_table,
-        misaccounts.created_at
-    FROM misaccounts
-    INNER JOIN branches ON misaccounts.branch_id = branches.id
-    INNER JOIN members ON misaccounts.member_id = members.id
-    WHERE misaccounts.status = '0'
 
-    UNION ALL
+        UNION ALL
+
         SELECT 
-        rd_accounts.id,
-        rd_accounts.rd_no AS account_no,
-        'RD' AS account_type,
-        NULL AS firm_name,
-        rd_accounts.rd_amount AS amount_deposit,
-        NULL AS payment_mode,
-        NULL AS account_holder_type,
-        NULL AS mode_of_operation,
-        rd_accounts.approve_status AS approve_status,
-        rd_accounts.open_date,
-        rd_accounts.branch_id,
-        rd_accounts.member_id,
-        JSON_OBJECT(
-            'id', members.id,
-            'member_no', members.member_no,
-            'member_info_first_name', members.member_info_first_name,
-            'member_info_last_name', members.member_info_last_name
-        ) AS members,
-        JSON_OBJECT(
-            'branch_name', branches.branch_name
-        ) AS branch,
-        'rd_accounts' AS source_table,
-        rd_accounts.created_at
-    FROM rd_accounts
-    INNER JOIN branches ON rd_accounts.branch_id = branches.id
-    INNER JOIN members ON rd_accounts.member_id = members.id
-    WHERE rd_accounts.approve_status = 'Pending'
- UNION ALL
- 
+            misaccounts.id,
+            misaccounts.mis_account_no AS account_no,
+            'MIS' AS account_type,
+            NULL AS firm_name,
+            misaccounts.mis_amount AS amount_deposit,
+            NULL AS payment_mode,
+            NULL AS account_holder_type,
+            NULL AS mode_of_operation,
+            misaccounts.status AS approve_status,
+            misaccounts.open_date,
+            misaccounts.branch_id,
+            misaccounts.member_id,
+            JSON_OBJECT(
+                'id', members.id,
+                'member_no', members.member_no,
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+            JSON_OBJECT(
+                'branch_name', branches.branch_name
+            ) AS branch,
+            'misaccounts' AS source_table,
+            misaccounts.created_at
+        FROM misaccounts
+        INNER JOIN branches ON misaccounts.branch_id = branches.id
+        INNER JOIN members ON misaccounts.member_id = members.id
+        WHERE misaccounts.status = '0'
+
+        UNION ALL
+
+        SELECT 
+            rd_accounts.id,
+            rd_accounts.rd_no AS account_no,
+            'RD' AS account_type,
+            NULL AS firm_name,
+            rd_accounts.rd_amount AS amount_deposit,
+            NULL AS payment_mode,
+            NULL AS account_holder_type,
+            NULL AS mode_of_operation,
+            rd_accounts.approve_status AS approve_status,
+            rd_accounts.open_date,
+            rd_accounts.branch_id,
+            rd_accounts.member_id,
+            JSON_OBJECT(
+                'id', members.id,
+                'member_no', members.member_no,
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+            JSON_OBJECT(
+                'branch_name', branches.branch_name
+            ) AS branch,
+            'rd_accounts' AS source_table,
+            rd_accounts.created_at
+        FROM rd_accounts
+        INNER JOIN branches ON rd_accounts.branch_id = branches.id
+        INNER JOIN members ON rd_accounts.member_id = members.id
+        WHERE rd_accounts.approve_status = 'Pending'
+
+        UNION ALL
+
         SELECT
-        dds_accounts.id,
-        dds_accounts.dd_no AS account_no,
-        'DDS' AS account_type,
-        NULL AS firm_name,
-        dds_accounts.dd_amount AS amount_deposit,
-        NULL AS payment_mode,
-        NULL AS account_holder_type,
-        NULL AS mode_of_operation,
-        dds_accounts.status AS approve_status,
-        dds_accounts.open_date,
-        dds_accounts.branch_id,
-        dds_accounts.member_id,
-        JSON_OBJECT(
-            'id', members.id,
-            'member_no', members.member_no,
-            'member_info_first_name', members.member_info_first_name,
-            'member_info_last_name', members.member_info_last_name
-        ) AS members,
-        JSON_OBJECT(
-            'branch_name', branches.branch_name
-        ) AS branch,
-        'dds_accounts' AS source_table,
-        dds_accounts.created_at
-    FROM dds_accounts
-    INNER JOIN branches ON dds_accounts.branch_id = branches.id
-    INNER JOIN members ON dds_accounts.member_id = members.id
-    WHERE dds_accounts.status = 0";
+            dds_accounts.id,
+            dds_accounts.dd_no AS account_no,
+            'DDS' AS account_type,
+            NULL AS firm_name,
+            dds_accounts.dd_amount AS amount_deposit,
+            NULL AS payment_mode,
+            NULL AS account_holder_type,
+            NULL AS mode_of_operation,
+            dds_accounts.status AS approve_status,
+            dds_accounts.open_date,
+            dds_accounts.branch_id,
+            dds_accounts.member_id,
+            JSON_OBJECT(
+                'id', members.id,
+                'member_no', members.member_no,
+                'member_info_first_name', members.member_info_first_name,
+                'member_info_last_name', members.member_info_last_name
+            ) AS members,
+            JSON_OBJECT(
+                'branch_name', branches.branch_name
+            ) AS branch,
+            'dds_accounts' AS source_table,
+            dds_accounts.created_at
+        FROM dds_accounts
+        INNER JOIN branches ON dds_accounts.branch_id = branches.id
+        INNER JOIN members ON dds_accounts.member_id = members.id
+        WHERE dds_accounts.status = 0
+        ";
+
+            Log::info("approveAccounts() - Executing SQL UNION Query");
 
             $query = DB::table(DB::raw("({$sql}) as combined"))
                 ->orderBy('created_at', 'desc');
 
+            Log::info("approveAccounts() - Query Built Successfully");
 
             if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('account_no', 'like', "%{$search}%")
-                        ->orWhere('firm_name', 'like', "%{$search}%")
-                        ->orWhere('amount_deposit', 'like', "%{$search}%")
-                        ->orWhere('payment_mode', 'like', "%{$search}%")
-                        ->orWhere('account_holder_type', 'like', "%{$search}%")
-                        ->orWhere('mode_of_operation', 'like', "%{$search}%")
-                        ->orWhere('branch_name', 'like', "%{$search}%")
-                        ->orWhereRaw("JSON_EXTRACT(members, '$.member_info_first_name') LIKE ?", ["%{$search}%"])
-                        ->orWhereRaw("JSON_EXTRACT(members, '$.member_info_last_name') LIKE ?", ["%{$search}%"]);
-                });
+                Log::info("approveAccounts() - Applying Search Filter", [
+                    'search' => $search
+                ]);
             }
 
             $pending_transactions = $query->paginate($perPage)->appends($request->all());
-            // dd($pending_transactions);
+
+            Log::info("approveAccounts() - Pagination Completed", [
+                'total_records' => $pending_transactions->total(),
+                'current_page'  => $pending_transactions->currentPage()
+            ]);
+
             $pending_transactions->getCollection()->transform(function ($item) {
                 $item->members = json_decode($item->members);
-                $item->branch  = json_decode($item->branch);
+                $item->branch = json_decode($item->branch);
                 return $item;
             });
 
+            Log::info("approveAccounts() - Transformation Completed");
+
             return view('approvals.saving_rd_fd_mis', compact('pending_transactions'));
         } catch (\Exception $e) {
-            Log::error('Error in approveAccounts: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request' => $request->all(),
+
+            Log::error("approveAccounts() FAILED", [
+                'error_message' => $e->getMessage(),
+                'file'          => $e->getFile(),
+                'line'          => $e->getLine(),
+                'trace'         => $e->getTraceAsString(),
+                'request_data'  => $request->all(),
+                'sql'           => isset($sql) ? $sql : null,
+                'search'        => $request->input('search'),
+                'perPage'       => $request->input('perPage'),
             ]);
 
-            return back()->withErrors(['error' => 'Something went wrong, please check logs.']);
+            return back()->withErrors(['error' => 'Something went wrong. Check logs.']);
         }
     }
+
     // Approve account status ends
 
     // Approve Share Transfer 
@@ -909,7 +1131,7 @@ class ApproveController extends Controller
                 return $item;
             });
 
-            
+
         $applications = $loanApplications
             ->concat($mortgageLoans)
             ->concat($loanAgainst)
@@ -947,7 +1169,7 @@ class ApproveController extends Controller
         ];
 
 
-        return view('approvals.loans', compact('applications', 'types','routeMap'));
+        return view('approvals.loans', compact('applications', 'types', 'routeMap'));
     }
 
 
