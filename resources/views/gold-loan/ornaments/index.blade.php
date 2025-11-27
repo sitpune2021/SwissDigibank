@@ -87,7 +87,7 @@
 
                     <div class="mt-4">
                         {{-- mortgage_page pagination name already set in controller --}}
-                        {{ $mortgageItems->links() }}
+                        <x-pagination :paginator="$ornaments" />
                     </div>
                 </div>
 

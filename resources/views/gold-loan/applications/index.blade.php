@@ -165,9 +165,9 @@
 
                 </table>
                 <!-- Pagination Links -->
-<div class="mt-4">
-    {{ $applications->links() }}
-</div>
+                <div class="mt-4">  
+                    <x-pagination :paginator="$applications" />
+                </div>
             </div>
 
 

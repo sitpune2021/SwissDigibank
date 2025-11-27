@@ -24,7 +24,7 @@ class VehicalAccountController extends Controller
         $goldLoan = VehicalApplication::with(['member', 'branch', 'scheme', 'VehicalLoanTransaction'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         foreach ($goldLoan as $loan) 
         {

@@ -160,7 +160,7 @@
                 </table>
                  <!-- Pagination Links -->
                 <div class="mt-4">
-                    {{ $applications->links() }}
+                    <x-pagination :paginator="$applications" />
                 </div>
             </div>
         </div>

@@ -153,9 +153,7 @@
                 </tbody>
             </table>
 
-                <div class="mt-6">
-                    {{ $schemes->links('pagination::tailwind') }}
-                </div>
+            <x-pagination :paginator="$schemes" />
 
         </div>
 

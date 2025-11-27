@@ -297,14 +297,7 @@ $settingLabel = '';
         <!-- Left: Details -->
         <div class=" w-full overflow-x-auto   overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
-                {{-- <div class="text-end p-3">
-                    <a href="#" class=" p-2 btn-primary">
-                        <i class="las la-pencil-alt"></i>
-                    </a>
-                    <a href="#" class=" p-2 btn-error">
-                        <i class="las la-trash-alt"></i>
-                    </a>
-                </div> --}}
+               
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
@@ -320,15 +313,15 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold  px-4 py-2"> ACTIVE
-                                Member</td>
+                                CUSTOMER</td>
                             <td class="px-4 py-2 capitalize  text-primary">{{$goldLoan->member->member_no ?? ''}} {{$goldLoan->member->member_info_first_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Member Contact No</td>
+                            <td class="font-semibold px-4 py-2">Customer Contact No</td>
                             <td class="px-4 py-2 capitalize text-primary">{{$goldLoan->member->member_info_mobile_no ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Guarantor 1 Member</td>
+                            <td class="font-semibold px-4 py-2">Guarantor 1 Customer</td>
                             <td class="px-4 py-2">{{$goldLoan->coApplicant1->member_no ?? ''}} - {{$goldLoan->coApplicant1->member_info_first_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
@@ -403,6 +396,7 @@ $settingLabel = '';
                         </tr>
                     </tbody>
                 </table>
+                
             </div>
 
             <!--APPOINTMENT DETAILS-->
