@@ -687,6 +687,9 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('applications/{id}/edit', [MortgageController::class, 'appedit'])->name('mortgage.applications.edit');
     Route::put('applications/{id}', [MortgageController::class, 'appupdate'])->name('mortgage.applications.update');
     Route::get('applications/show-emi-chart', [MortgageController::class, 'showEmiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
+     // show audit trial tab
+    Route::get('applications/audit', [MortgageAccountController::class, 'audit'])
+        ->name('mortgage.applications.audit-trail');
 
     Route::get('disbursements/index', [MortgageDisbursementController::class, 'index'])->name('mortgage.disbursements.index');
     Route::post('disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('mortgagedisbursements.cancel');
@@ -804,7 +807,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('scheme/view/{id}', [LoanAgainstController::class, 'view'])
         ->name('loanagainst.schemes.view');
 
-
+    
     // loanagainst Loan Calculation
     Route::get('calculator/index', [LoanAgainstController::class, 'calculator'])
         ->name('loanagainst.calculator.index');

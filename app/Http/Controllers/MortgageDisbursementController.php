@@ -21,6 +21,7 @@ class MortgageDisbursementController extends Controller
             $disbursements = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
             // ->whereNotIn('id', $disbursedIds)
+            ->orderBy('id', 'DESC')
             ->paginate(10);
 
         return view('mortgage.disbursements.index', compact('disbursements'));

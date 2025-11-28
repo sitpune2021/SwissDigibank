@@ -966,7 +966,7 @@
                 <!-- Buttons -->
                 <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                     <button type="button" id="calculateBtn" class="btn-outline justify-center">
-                        Calculate
+                        {{ isset($application) ? 'Update Application' : 'Calculate' }}
                     </button>
                     <button class="btn-outline justify-center" type="reset">
                         <a href="{{route('gold-loan.applications.index')}}"> Back</a>
