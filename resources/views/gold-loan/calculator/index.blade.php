@@ -449,6 +449,9 @@
     const chkEmiBox = document.getElementById("chk_emi_box");
     const chkFirstBox = document.getElementById("chk_first_box");
     const chkEmiText = document.getElementById("chk_emi_text");
+    // NEW: Checkbox variables
+    const optEmi = document.getElementById("option_interest_emi");
+    const optFirst = document.getElementById("option_interest_first");
 
     const reduceBox = document.getElementById("reduce_ratio_box");
     const ratioFields = document.getElementById("ratioFields");
@@ -478,7 +481,8 @@
 
     manualInterestTypeCheck();
 
-    schemeSelect.addEventListener("change", function () {
+    schemeSelect.addEventListener("change", function () 
+    {
         let selected = this.options[this.selectedIndex];
         let type = (selected.dataset.type || "").toLowerCase();
 
@@ -511,6 +515,16 @@
             chkDivide.checked = false;
         }
     });
+
+    // NEW: Allow ONLY ONE checkbox at a time
+    optEmi.addEventListener("change", function () {
+        if (this.checked) optFirst.checked = false;
+    });
+
+    optFirst.addEventListener("change", function () {
+        if (this.checked) optEmi.checked = false;
+    });
+
 
     chkDivide.addEventListener("change", function () {
         ratioFields.style.display = this.checked ? "block" : "none";

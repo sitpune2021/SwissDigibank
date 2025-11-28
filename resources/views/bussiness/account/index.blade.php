@@ -185,6 +185,11 @@
                 </tbody>
 
             </table>
+
+            <div class="mt-4">
+                <x-pagination :paginator="$goldLoan" />
+            </div>
+            
         </div>
     </div>
     @endsection

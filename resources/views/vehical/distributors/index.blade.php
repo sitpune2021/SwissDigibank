@@ -171,7 +171,7 @@
 
                  <!-- Pagination Links -->
                 <div class="mt-4">
-                    {{ $distributors->links() }}
+                    <x-pagination :paginator="$distributors" />
                 </div>
 
             </div>

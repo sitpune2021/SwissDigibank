@@ -11,6 +11,9 @@ use App\Models\Rank;
 use App\Models\CommissionChart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\Employee;
+use App\Models\Associate;
+use App\Models\Branch;
 
 
 class AdvisorController extends Controller
@@ -132,18 +135,182 @@ class AdvisorController extends Controller
     // Associates/ Advisors
         public function add_adc_asc()
         {
-            return view('associates-advisor.associates-advisors.add');
+            $employees = Employee::select('id', 'name')->orderBy('name', 'asc')->get();
+            $branches = Branch::select('id', 'branch_name')->orderBy('branch_name', 'asc')->get();
+
+            return view('associates-advisor.associates-advisors.add', compact('employees','branches'));
         }
+       
+        public function store_adc_asc(Request $request)
+        {
+            Log::info('--- ASSOCIATE CREATE REQUEST STARTED ---', [
+                'user_id' => auth()->id(),
+                'input' => $request->all(),
+            ]);
+
+            // 🔥 VALIDATION FIX
+            $validated = $request->validate([
+                'employee_id' => 'nullable|integer',
+                'first_name' => 'required|string',
+                'username' => 'required|string',
+                'mobile' => 'required|digits:10', // ensure mobile input name exists in form
+            ]);
+
+            try {
+
+                // 🔥 DATE FIX (if DB requires Y-m-d)
+                $enrollment_date = null;
+                $dob = null;
+
+                if ($request->enrollment_date) {
+                    $enrollment_date = \Carbon\Carbon::createFromFormat('d-m-Y', $request->enrollment_date)
+                                        ->format('Y-m-d');
+                }
+
+                if ($request->dob) {
+                    $dob = \Carbon\Carbon::createFromFormat('d-m-Y', $request->dob)
+                                        ->format('Y-m-d');
+                }
+
+                $associate = Associate::create([
+                    'employee_id' => $request->employee_id,
+                    'rank' => $request->rank,
+                    'supervisor_id' => $request->supervisor_id,
+                    'enrollment_date' => $enrollment_date,
+
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'mobile' => $request->mobile,
+
+                    'dob' => $dob,
+                    'father_name' => $request->father_name,
+                    'husband_wife_name' => $request->husband_wife_name,
+
+                    'pan' => $request->pan,
+                    'aadhaar' => $request->aadhaar,
+                    'address' => $request->address,
+
+                    'back_date_days' => $request->back_date_days,
+                    'role' => $request->role,
+                    'branch_id' => $request->branch_id,
+
+                    'access_type' => $request->access_type,
+                    'login_holiday' => $request->login_holiday,
+
+                    // 🔥 FIX: wrong field removed
+                    'searchable_accounts' => $request->searchable_accounts,
+
+                    'active' => $request->active,
+
+                    'nominee_name' => $request->nominee_name,
+                    'nominee_relation' => $request->nominee_relation,
+                    'nominee_address' => $request->nominee_address,
+                ]);
+
+                Log::info('--- ASSOCIATE CREATED SUCCESSFULLY ---', [
+                    'associate_id' => $associate->id
+                ]);
+
+                return redirect()->route('associates-advisor.associates-advisors.index')
+                 ->with('success', 'Associate Created Successfully!');
+
+            } catch (\Exception $e) {
+
+                Log::error('ASSOCIATE CREATE ERROR', [
+                    'error' => $e->getMessage()
+                ]);
+
+                return back()->with('error', 'Something went wrong!');
+            }
+        }
+
 
         public function adv_index()
         {
-            return view('associates-advisor.associates-advisors.index');
+            $associates = Associate::with('supervisor')->orderBy('id','desc')->get();
+
+            return view('associates-advisor.associates-advisors.index', compact('associates'));
         }
 
-        public function adv_view()
+
+        public function adv_view($id)
         {
-            return view('associates-advisor.associates-advisors.view');
+            $associate = Associate::findOrFail($id);
+
+            // Convert date fields into Carbon (if they are not already dates)
+            $associate->dob = $associate->dob ? \Carbon\Carbon::parse($associate->dob) : null;
+            $associate->enrollment_date = $associate->enrollment_date ? \Carbon\Carbon::parse($associate->enrollment_date) : null;
+
+            return view('associates-advisor.associates-advisors.view', compact('associate'));
         }
+
+        public function edit($id)
+        {
+            $associate = Associate::findOrFail($id);
+
+            $employees = Employee::all();
+            $branches = Branch::all();
+
+            return view('associates-advisor.associates-advisors.add', compact('associate', 'employees', 'branches'));
+        }
+
+        public function update(Request $request, $id)
+        {
+            Log::info('--- Associate Update Request Started ---', [
+                'id' => $id,
+                'input' => $request->all()
+            ]);
+
+            try {
+                $associate = Associate::findOrFail($id);
+
+                $data = $request->all();
+
+                // DOB Convert
+                if (!empty($request->dob)) {
+                    $dob = str_replace('/', '-', $request->dob);
+
+                    Log::info('Parsing DOB...', ['dob_raw' => $request->dob, 'dob_parsed' => $dob]);
+
+                    $data['dob'] = date('Y-m-d', strtotime($dob));
+                }
+
+                // Enrollment Date Convert
+                if (!empty($request->enrollment_date)) {
+                    $enrollDate = str_replace('/', '-', $request->enrollment_date);
+
+                    Log::info('Parsing Enrollment Date...', ['enrollment_raw' => $request->enrollment_date, 'parsed' => $enrollDate]);
+
+                    $data['enrollment_date'] = date('Y-m-d', strtotime($enrollDate));
+                }
+
+                // Update model
+                $associate->update($data);
+
+                Log::info('--- Associate Updated Successfully ---', [
+                    'updated_data' => $data
+                ]);
+
+                return redirect()
+                    ->route('associates-advisor.associates-advisors.view', $associate->id)
+                    ->with('success', 'Associate Updated Successfully!');
+
+            } catch (\Exception $e) {
+
+                Log::error('*** ERROR Updating Associate ***', [
+                    'id' => $id,
+                    'message' => $e->getMessage(),
+                    'line' => $e->getLine(),
+                    'file' => $e->getFile(),
+                ]);
+
+                return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+            }
+        }
+
 
         public function change_photo()
         {
