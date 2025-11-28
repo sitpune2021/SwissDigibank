@@ -24,8 +24,22 @@ class CompanyController extends Controller
             $dynamicOptions = [
                 'state' => State::pluck('name', 'id')
             ];
-            $show = true;
+
             $route = '';
+            if ($userId == 1) {
+                // Admin: get company record
+                $company = Company::with(['State', 'incorporationState'])->first();
+                $show = true; // editable
+            } else {
+                // Non-admin (Customer / Manager)
+                $company = Company::with(['State', 'incorporationState'])->first(); // still fetch the first record if needed
+                $show = true; // view-only
+
+                if (!$company) {
+                    abort(404, 'Company record not found.');
+                }
+            }
+
             return view('company.company-profile.profile', compact('company', 'dynamicOptions', 'show', 'route'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

@@ -74,15 +74,26 @@ use App\Http\Controllers\VehicalController;
 use App\Http\Controllers\VehicalAccountController;
 use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
+use App\Http\Middleware\SessionProtection;
 
 // Clear cache 
-Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
+// Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
-Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
-Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
-Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+// Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
+// Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
+// Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+
+Route::middleware(['guest', SessionProtection::class])->group(function () {
+
+    Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
+    Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
+    Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+});
+Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
 
 Route::middleware('auth.user')->group(function () {
+    Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
+
     Route::get('/dashboard', [DashboardController::class, 'index1'])->name('index1');
     Route::get('/get-branches', [BranchController::class, 'getBranches']);
     Route::get('/get-marital-statuses', [PromotorController::class, 'getMariatalStatuses']);
@@ -390,6 +401,16 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
     Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
         ->name('misaccount.closingform');
+
+    Route::get('/misaccount/uploadDocuments/{id}', [MisaccountController::class, 'uploadDocuments'])->name('mis.uploadDocuments');
+    Route::post('/misaccount/storeDocuments/{id}', [MisaccountController::class, 'storeDocuments'])->name('mis.storeDocuments');
+    Route::delete('/documents/{id}', [MisaccountController::class, 'destroy'])->name('documents.destroy');
+
+    Route::get('/misacccount/comment/{id}', [MisaccountController::class, 'addComment'])->name('mis.comments');
+    Route::post('/misaccount/store-comment/{id}', [MisaccountController::class, 'storeComment'])->name('mis.storeComment');
+
+    Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
+        ->name('mis.updateSetting');
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -1764,7 +1785,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::get('associates/add', [AdvisorController::class, 'add_adc_asc'])
         ->name('associates-advisor.associates-advisors.add');
     Route::post('associate/store', [AdvisorController::class, 'store_adc_asc'])
-    ->name('associate.store');
+        ->name('associate.store');
 
     // index associate page
     Route::get('associates/adv-index', [AdvisorController::class, 'adv_index'])
@@ -1772,7 +1793,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
     // view
     Route::get('associates/adv-view/{id}', [AdvisorController::class, 'adv_view'])
-    ->name('associates-advisor.associates-advisors.view');
+        ->name('associates-advisor.associates-advisors.view');
 
     // SHOW EDIT FORM
     Route::get('associate/{id}/edit', [AdvisorController::class, 'edit'])
@@ -1780,7 +1801,7 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
     // UPDATE REQUEST
     Route::put('associate/{id}', [AdvisorController::class, 'update'])
-    ->name('associate.update');
+        ->name('associate.update');
 
 
     Route::get('associates/chnage-photo', [AdvisorController::class, 'change_photo'])

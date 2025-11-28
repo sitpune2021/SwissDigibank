@@ -11,11 +11,14 @@
     <title>Swiss Payment - Digital Banking</title>
 
     <style>
-    html, body {
-  overflow-x: auto;   /* horizontal scroll allowed */
-  overflow-y: hidden; /* vertical scroll disabled */
-}
-</style>
+        html,
+        body {
+            overflow-x: auto;
+            /* horizontal scroll allowed */
+            overflow-y: hidden;
+            /* vertical scroll disabled */
+        }
+    </style>
 
 </head>
 
@@ -34,12 +37,17 @@
             class="absolute bottom-6 ltr:left-0 rtl:right-0 ltr:sm:left-32 rtl:sm:right-32" alt="ellipse" />
         <a href="{{ route('index1') }}">
             <img src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
-                class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" width="300" style="top: 10px;"/>
+                class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" width="300" style="top: 10px;" />
         </a>
         <!-- <div class="flex items-center justify-center mt-7">
             <div class="relative z-[2] max-w-[1416px] mx-auto px-3 pb-10"> -->
         <div class="relative z-10 flex justify-center items-center min-h-screen" style="top: -75px;">
             <div class="w-full max-w-3xl px-4">
+                @if (session('session_expired'))
+                <div class="w-full alert alert-warning">
+                    {{ session('session_expired') }}
+                </div>
+                @endif
                 <div class="box p-3 md:p-4 xl:p-6 grid grid-cols-12 items-center">
                     <form action="{{ route('log.in') }}" method="post" id="loginForm" class="col-span-12 lg:col-span-12">
                         @csrf
@@ -67,9 +75,9 @@
                                 Enter Your Email ID
                             </label>
                             <div class="mb-4">
-                                <input type="text" name="email"
+                                <input type="text" name="login" 
                                     class="w-full text-sm bg-n0 dark:bg-bg4 border border-n30 dark:border-n500 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter Your Email" id="email" />
+                                    placeholder="Enter Your Email" id="loginInput" />
                             </div>
                             <label for="password" class="md:text-lg font-medium block mb-2">
                                 Enter Your Password
@@ -81,7 +89,7 @@
                                         placeholder="Enter Password" id="password2" />
                                     <span
                                         class="absolute eye-icon ltr:right-5 rtl:left-5 top-1/2 -translate-y-1/2 cursor-pointer"
-                                        id="togglePassword" style="top:21px";>
+                                        id="togglePassword" style="top:21px" ;>
                                         <i class="las la-eye" style="display: none;"></i>
                                         <i class="las la-eye-slash"></i>
                                     </span>
@@ -129,10 +137,10 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="w-full text-sm bg-n0 dark:bg-bg4 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" id="email" name="email"
+                            <label for="login" class="form-label">Email Address</label>
+                            <input type="text" class="w-full text-sm bg-n0 dark:bg-bg4 border border-n30 dark:border-n500 rounded-3xl px-3 md:px-6 py-2 md:py-3" id="forgotLoginInput" name="login"
                                 placeholder="Enter your registered email">
-                            @error('email')
+                            @error('login')
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
@@ -164,7 +172,71 @@
         </div>
     </div>
 
-    @vite('resources/js/app.js')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // --- Login Input ---
+            const loginInput = document.getElementById('loginInput');
+            const forgotLoginInput = document.getElementById('forgotLoginInput');
+
+            // --- Forgot Password Modal Reset ---
+            const modal = document.getElementById('forgotPasswordModal');
+            const form = document.getElementById('forgetForm');
+
+            if (modal && form) {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    form.reset();
+                });
+            }
+
+            // --- Toggle Password for Main Login ---
+            const toggleBtn1 = document.getElementById('togglePassword');
+            const passwordInput1 = document.getElementById('password2');
+            if (toggleBtn1 && passwordInput1) {
+                const eyeOpen1 = toggleBtn1.querySelector('.la-eye');
+                const eyeSlash1 = toggleBtn1.querySelector('.la-eye-slash');
+
+                toggleBtn1.addEventListener('click', () => {
+                    const isPassword = passwordInput1.type === 'password';
+                    passwordInput1.type = isPassword ? 'text' : 'password';
+                    if (eyeOpen1) eyeOpen1.style.display = isPassword ? 'inline' : 'none';
+                    if (eyeSlash1) eyeSlash1.style.display = isPassword ? 'none' : 'inline';
+                });
+            }
+
+            // --- Toggle Password for Forgot Password Modal ---
+            const toggleBtn = document.getElementById('toggleNewPassword');
+            const passwordInput = document.getElementById('newPassword');
+            if (toggleBtn && passwordInput) {
+                const eyeOpen = toggleBtn.querySelector('.la-eye');
+                const eyeSlash = toggleBtn.querySelector('.la-eye-slash');
+
+                toggleBtn.addEventListener('click', () => {
+                    const isPassword = passwordInput.type === 'password';
+                    passwordInput.type = isPassword ? 'text' : 'password';
+                    if (eyeOpen) eyeOpen.style.display = isPassword ? 'inline' : 'none';
+                    if (eyeSlash) eyeSlash.style.display = isPassword ? 'none' : 'inline';
+                });
+            }
+
+            // --- Optional: Form validation on submit ---
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm && loginInput) {
+                loginForm.addEventListener('submit', function(e) {
+                    const value = loginInput.value.trim();
+                    if (!value) {
+                        alert('Email or mobile is required');
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+
+        });
+    </script>
+
+    <!-- @vite('resources/js/app.js')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -204,7 +276,7 @@
             eyeOpen1.style.display = isPassword ? 'inline' : 'none';
             eyeSlash1.style.display = isPassword ? 'none' : 'inline';
         });
-    </script>
+    </script> -->
 </body>
 
 

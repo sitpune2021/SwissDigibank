@@ -7,11 +7,13 @@ use App\Models\Account;
 use App\Models\AccountNominee;
 use App\Models\Bank;
 use App\Models\Branch;
+use App\Models\Comments;
 use App\Models\FDScheme;
 use App\Models\Member;
 use App\Models\Minor;
 use App\Models\Misaccount;
 use App\Models\MisTransaction;
+use App\Models\Document;
 use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Exception;
@@ -913,6 +915,7 @@ class MisaccountController extends Controller
         $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])->where('id', $id)->first();
 
         $branches = Branch::all();
+        $documents = Document::where('mis_id', $misaccount->id)->get();
 
         $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
             ->whereHas('misaccount', function ($q) use ($misaccount) {
@@ -927,7 +930,7 @@ class MisaccountController extends Controller
             ->where('account_type', 'SAVING')
             ->get();
 
-        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches', 'balance', 'transactions'));
+        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches', 'balance', 'documents', 'transactions'));
     }
 
     //edit editBranch
@@ -1259,7 +1262,7 @@ class MisaccountController extends Controller
 
         $member = $account->member;
 
-        
+
         return view('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'));
     }
 
@@ -1284,5 +1287,100 @@ class MisaccountController extends Controller
             ->setOption('isRemoteEnabled', true);
 
         return $pdf->stream('mis-closing-form-' . $misaccount->id . '.pdf');
+    }
+
+
+    public function uploadDocuments($id)
+    {
+        $misaccount = Misaccount::with('member')->findOrFail($id);
+        return view('fd_mis_account.misaccount.upload_documents', compact('misaccount'));
+    }
+
+    public function storeDocuments(Request $request, $id)
+    {
+        $misaccount = Misaccount::findOrFail($id);
+
+        // Validate fields properly
+        $request->validate([
+            'document_type.*' => 'required|string',
+            'file_path.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        // Loop through uploaded documents
+        foreach ($request->document_type as $index => $docType) {
+
+            $file = $request->file('file_path')[$index] ?? null;
+
+            if ($file) {
+                $path = $file->store('public/assets/images', 'public');
+
+                Document::create([
+                    'mis_id' => $misaccount->id,
+                    'document_type' => $docType,
+                    'file_path' => $path,
+                    'uploaded_by' => Auth::id(),
+                ]);
+            }
+        }
+
+        return redirect()->route('misaccount.show', $id)
+            ->with('success', 'Documents uploaded successfully.');
+    }
+    
+    public function addComment($id)
+    {
+        $misaccount = Misaccount::with('comments')->findOrFail($id);
+        return view('fd_mis_account.misaccount.add-comment', compact('misaccount'));
+    }
+
+    public function storeComment(Request $request, $id)
+    {
+
+        $request->validate([
+            'comment'       => 'required|string',
+        ]);
+
+        Comments::create([
+            'misaccount_id' => $id,
+            'commented_by'  => auth::id(),
+            'date'          => now()->toDateString(),
+            'comment'       => $request->comment,
+        ]);
+
+        return back()->with('success', 'Comment added successfully!');
+    }
+
+    public function updateSetting(Request $request, $id)
+    {
+        $mis = Misaccount::findOrFail($id);
+
+        $field = $request->field;
+        $value = $request->value;
+
+        if (!in_array($field, ['sms', 'tds', 'hold'])) {
+            return response()->json(['error' => 'Invalid field'], 400);
+        }
+
+        $mis->$field = $value;
+        if ($field === 'tds') {
+            $mis->tds_deduction = $value ? 'yes' : 'no';
+        }
+        $mis->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function destroy($id)
+    {
+        $document = Document::findOrFail($id);
+
+        // Delete file from storage
+        if (file_exists(storage_path('app/public/' . $document->file_path))) {
+            unlink(storage_path('app/public/' . $document->file_path));
+        }
+
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully.');
     }
 }

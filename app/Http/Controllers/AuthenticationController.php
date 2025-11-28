@@ -59,34 +59,72 @@ class AuthenticationController extends Controller
 
         // return redirect()->route('/')->with('success', 'Registration successful!');
     }
+    // public function login(Request $request)
+    // {
+    //     try {
+    //           $credentials = $request->validate(
+    //             [
+    //                 'email' => 'required|email|exists:users,email',
+    //                 'password' => 'required|min:6',
+    //             ],
+    //             [
+    //                 'email.required' => 'Email is required.',
+    //                 'email.email' => 'Please enter a valid email address.',
+    //                 'email.exists' => 'This email is not registered.',
+    //                 'password.required' => 'Password is required.',
+    //                 'password.min' => 'Password must be at least 6 characters.',
+    //             ]
+    //         );
+
+    //         if (Auth::attempt($credentials)) {
+    //             $request->session()->regenerate();
+
+    //             return redirect()->intended('dashboard')->with('success', 'Login successful!');
+    //         }
+
+    //         // Invalid credentials
+    //         return redirect()->back()->with('error', 'Invalid email or password.')->withInput();
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         abort(404);
+    //     }
+    // }
+
     public function login(Request $request)
     {
         try {
-          
-            $credentials = $request->validate(
-                [
-                    'email' => 'required|email|exists:users,email',
-                    'password' => 'required|min:6',
-                ],
-                [
-                    'email.required' => 'Email is required.',
-                    'email.email' => 'Please enter a valid email address.',
-                    'email.exists' => 'This email is not registered.',
-                    'password.required' => 'Password is required.',
-                    'password.min' => 'Password must be at least 6 characters.',
-                ]
-            );
-             
-            if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
+            $request->validate([
+                'login' => 'required',
+                'password' => 'required',
+            ]);
 
-                return redirect()->intended('dashboard')->with('success', 'Login successful!');
+            $loginInput = trim($request->login);
+            $password = $request->password;
+
+            $field = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+            if ($field === 'mobile') {
+                $loginInput = preg_replace('/\D/', '', $loginInput); // keep only digits
+                if (str_starts_with($loginInput, '91') && strlen($loginInput) > 10) {
+                    $loginInput = substr($loginInput, -10);
+                }
             }
 
-            // Invalid credentials
-            return redirect()->back()->with('error', 'Invalid email or password.')->withInput();
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+            $user = User::where($field, $loginInput)->first();
+            if (!$user) {
+                return back()->with('error', ucfirst($field) . ' not found')->withInput();
+            }
+
+            if (!Hash::check($password, $user->password)) {
+                return back()->with('error', 'Incorrect password')->withInput();
+            }
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->intended('dashboard')->with('success', 'Login successful');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
 
@@ -96,7 +134,7 @@ class AuthenticationController extends Controller
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            return redirect()->route('sign.in');
+            return redirect()->route('sign.in')->with('session_expired', 'You have been logged out successfully.');;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }

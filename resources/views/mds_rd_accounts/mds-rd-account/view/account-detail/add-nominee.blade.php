@@ -29,7 +29,6 @@
             </div>
         </div>
 
-
         <div class="bg-white dark:bg-bg3 rounded-xl shadow p-6">
             <h1 class="text-lg font-semibold mb-4 border-b">
                 Update Nominee Details
