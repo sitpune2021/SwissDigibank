@@ -123,9 +123,10 @@
                     style="position: absolute; top: 5px; right: 10px; cursor: pointer; color: #721c24;">&times;</span>
             </div>
         @endif
-
-        <div class="box mb-4 xxxl:mb-6">
-            <form id="Schemes_Form" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+<div class="box">
+    
+        <div class=" mb-4 xxxl:mb-6">
+            <form id="Schemes_Form" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6 ">
                 @csrf
                 @if (isset($schemes) && empty($show))
                     @method('PUT')
@@ -348,7 +349,7 @@
                     <input type="checkbox" name="app_type_member" value="1" class="form-checkbox"
                         {{ old('app_type_member', isset($schemes) ? $schemes->app_type_member : 0) == 1 ? 'checked' : '' }}
                         @if (isset($show) && $show) disabled @endif>
-                    <span>Member</span>
+                    <span>customer</span>
                 </label>
                 @error('app_type_member')
                     <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
@@ -400,6 +401,7 @@
             </a>
 
         </div>
+</div>
 
         </form>
     </div>

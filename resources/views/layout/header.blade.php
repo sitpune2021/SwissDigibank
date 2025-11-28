@@ -17,6 +17,26 @@
         label {
             text-transform: uppercase;
         }
+
+        input[type="checkbox"] {
+            width: 20px !important;
+            height: 20px !importan t;
+            accent-color: green;
+            /* For modern browsers */
+        }
+
+        /* Fallback for browsers without accent-color support */
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+
+        input[type="radio"] {
+            width: 20px !important;
+            height: 20px !important;
+            accent-color: green;
+            /* Modern browser support */
+        }
     </style>
 
 </head>
