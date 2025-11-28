@@ -48,11 +48,13 @@ return [
             'label'    => 'SR. CITIZEN ADD-ON INTEREST RATE (%)',
             'name'     => 'sr_citizen_add_on_int_rate',
             'id'       => 'sr_citizen_add_on_interest_rate',
-            'type'     => 'number',
-            'step'     => '0.01',
+            // 'type'     => 'number',
+            'step'     => 'any',
+            'min'      => '0',
             'default'  => '0.0',
             'required' => true,
         ],
+
 
         [
             'label'         => 'INTEREST PAYOUT',

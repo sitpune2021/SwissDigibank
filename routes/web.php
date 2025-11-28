@@ -122,7 +122,7 @@ Route::middleware('auth.user')->group(function () {
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
             ->name('nominee.update');
-       
+
 
 
         Route::resource('shareholding', ShareHoldingController::class);
@@ -214,6 +214,9 @@ Route::middleware('auth.user')->group(function () {
             '/ddsaccounts/{id}/update-minor',
             [DdsAccountsController::class, 'updateMinor']
         )->name('ddsaccounts.updateMinor');
+
+        Route::get('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'createforeClose'])->name('dds-accounts.fore-close');
+        // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
 
 
         // Show Account Details

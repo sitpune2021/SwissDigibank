@@ -443,11 +443,12 @@
                         @enderror
                     </div>
 
-                    <div class="col-span-2 mt-4">
-                        <button type="button" id="addMoreNominee" class="btn-outline">+ ADD MORE NOMINEE</button>
-                    </div>
+                   
 
                     <div id="additionalNominees" class="col-span-2 mt-4"></div>
+                     <div class="col-span-2 mt-4">
+                        <button type="button" id="addMoreNominee" class="btn-outline">+ ADD MORE NOMINEE</button>
+                    </div>
                 </div>
                 <!-- -----------------------nominees--------------- -->
 
@@ -755,7 +756,7 @@
             // Handle Add More Nominee button
             $('#addMoreNominee').on('click', function() {
                 const nomineeBlock = `
-        <div class="nominee-block border border-gray-300 rounded p-4 mb-4">
+        <div class="nominee-block   rounded p-4 mb-4">
             
             <label class="font-medium block mb-2">Relation <span class="text-red-500">*</span></label>
             <select name="additional_nominee_relation[]" 
