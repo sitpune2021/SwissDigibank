@@ -126,7 +126,7 @@
           class="block px-4 py-2 uppercase hover:bg-warning">
           Change Account Info
         </a>
-        <a href="{{ route('misaccount.addNominee', $misaccount->id) }}"
+        <a href="{{ route('mis.accounts.nominee', ['type'=>'mis','id'=>base64_encode($misaccount->id)]) }}"
           class="block px-4 py-2 uppercase hover:bg-warning">
           Add Nominee
         </a>
@@ -353,17 +353,51 @@
         <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
           onclick="this.nextElementSibling.classList.toggle('hidden')">
           <h3 class="text-lg font-semibold">DOCUMENTS</h3>
-          <button class=" btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i>
-          </button>
+          <a href="{{ route('mis.uploadDocuments',$misaccount->id) }}" class=" btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i>
+          </a>
         </div>
 
         <!-- Body -->
         <div class="p-4">
           <div class="overflow-x-auto">
-            <p class="capitalize">No documents found</p>
+            @if($documents->isEmpty())
+            <p class="capitalize text-gray-500">No documents found</p>
+            @else
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+              <thead class="bg-gray-100  text-gray-700">
+                <tr class="border-b">
+                  <th class="px-4 py-2 font-semibold">Name</th>
+                  <th class="px-4 py-2 font-semibold">URL</th>
+                  <th class="px-4 py-2 font-semibold">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                @foreach($documents as $doc)
+                <tr class="border-b text-center">
+                  <td class="px-4 py-2">{{ $doc->document_type }}</td>
+                  <td class="px-4 py-2">
+                    <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="text-blue-600 underline">
+                      Show
+                    </a>
+                  </td>
+                  <td class="px-4 py-2">
+                    <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="text-red-600 hover:text-red-800">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+            @endif
           </div>
         </div>
       </div>
+
 
       <!--COMMENTS-->
       <div class="bg-white box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
@@ -377,13 +411,10 @@
         <!-- Body -->
         <div class="p-4">
           <div class="overflow-x-auto text-center mt-5">
-            <button class="btn-primary px-3 py-2 capitalize rounded-3xl text-white">Add Comments</button>
+            <a href="{{ route('mis.comments',$misaccount->id) }}" class="btn-primary px-3 py-2 capitalize rounded-3xl text-white">Add Comments</a>
           </div>
         </div>
-
       </div>
-
-
       <!--Transactions Info-->
       <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
@@ -436,7 +467,7 @@
               </table>
             </div>
 
-            <button class="btn-primary px-3 py-2 mt-3 rounded-3xl text-white">View All</button>
+            <a href="{{ route('mis.transaction',$misaccount->id) }}" class="btn-primary px-3 py-2 mt-3 rounded-3xl text-white">View All</a>
           </div>
         </div>
 
@@ -447,7 +478,7 @@
     <div class=" w-full ">
 
       <!--settings-->
-      <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
+  <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
         <!-- Header -->
         <div class="px-4 py-3">
           <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
@@ -455,13 +486,14 @@
         <div class="p-4 overflow-x-auto">
           <table class="min-w-full text-sm text-left">
             <tbody class="divide-y divide-gray-200">
-
+ 
               <!-- SMS Toggle -->
               <tr>
                 <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
                 <td class="px-4 py-3">
+                  <!-- <input type="hidden" name="sms" id="smsValue" value="0"> -->
                   <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="smsToggle" class="sr-only slider-toggle" data-label-id="smsLabel">
+                    <input type="checkbox" id="smsToggle" class="sr-only slider-toggle" data-label-id="smsLabel" {{ $misaccount->sms ? 'checked' : '' }}>
                     <div class="relative">
                       <div class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
                       </div>
@@ -473,13 +505,14 @@
                   </label>
                 </td>
               </tr>
-
+ 
               <!-- DEDUCT TDS Toggle -->
               <tr>
                 <td class="font-semibold text-center align-middle px-4 py-3">DEDUCT TDS</td>
                 <td class="px-4 py-3">
+                  <!-- <input type="hidden" name="tds" id="tdsValue" value="0"> -->
                   <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="tdsToggle" class="sr-only slider-toggle" data-label-id="tdsLabel">
+                    <input type="checkbox" id="tdsToggle" class="sr-only slider-toggle" data-label-id="tdsLabel" {{ $misaccount->tds ? 'checked' : '' }}>
                     <div class="relative">
                       <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all">
                       </div>
@@ -491,13 +524,14 @@
                   </label>
                 </td>
               </tr>
-
+ 
               <!-- ACCOUNT ON HOLD Toggle -->
               <tr>
                 <td class="font-semibold text-center align-middle px-4 py-3">ACCOUNT ON HOLD</td>
                 <td class="px-4 py-3">
+                  <!-- <input type="hidden" name="hold" id="holdValue" value="0"> -->
                   <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="holdToggle" class="sr-only slider-toggle" data-label-id="holdLabel">
+                    <input type="checkbox" id="holdToggle" class="sr-only slider-toggle" data-label-id="holdLabel" {{ $misaccount->hold ? 'checked' : '' }}>
                     <div class="relative">
                       <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all">
                       </div>
@@ -512,9 +546,9 @@
             </tbody>
           </table>
         </div>
-
+ 
       </div>
-
+ 
 
       <!--AUTO RENEW SETTINGS-->
       <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
@@ -936,10 +970,6 @@
   </div>
 </div>
 
-
-
-
-
 <script>
   //Account Details
   const accountButton = document.getElementById('accountButton');
@@ -1019,20 +1049,44 @@
     arrow.classList.remove('la-angle-up');
     arrow.classList.add('la-angle-down');
   });
-</script>
 
-<script>
-  //Settings toggle
-  // Label UPDATE on toggle
+  // Slider Toggle Functionality
+  const mappings = {
+    smsToggle: 'sms',
+    tdsToggle: 'tds',
+    holdToggle: 'hold'
+  };
+  const updateUrl = "{{ route('mis.updateSetting', $misaccount->id) }}";
+ 
   document.querySelectorAll('.slider-toggle').forEach(toggle => {
+ 
     toggle.addEventListener('change', function() {
+      const field = mappings[this.id];
+      const value = this.checked ? 1 : 0;
       const label = document.getElementById(this.dataset.labelId);
-      label.textContent = this.checked ? '' : '';
+ 
+      // Update label
+      label.textContent = value ? "" : "";
+ 
+      fetch(updateUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+          },
+          body: JSON.stringify({
+            field: field,
+            value: value
+          })
+        })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.error('Error:', err));
     });
-
-    // Initialize label on page load
+ 
     toggle.dispatchEvent(new Event('change'));
   });
+ 
 </script>
 
 

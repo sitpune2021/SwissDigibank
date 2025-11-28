@@ -136,6 +136,12 @@
                         <a href="#"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100">REMOVE ACCOUNT</a>
                     </li>
+                </ul>
+                <ul class="py-2">
+                    <li>
+                        <a href="{{route('rd.accounts.nominee',['type'=>'rd','id'=>base64_encode($rdAccount->id)])}}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">ADD NOMINEE</a>
+                    </li>
 
                 </ul>
             </div>
@@ -744,7 +750,7 @@
                                 <td class="font-semibold px-3 py-2 uppercase">Scheme Name</td>
                                 <td class="px-3 py-2">---</td>
                             </tr>
-                            <tr class="border-b border-gray-200"> 
+                            <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Available Balance</td>
                                 <td class="px-3 py-2">--</td>
                             </tr>
@@ -913,8 +919,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if($rdAccount->nominees->isNotEmpty())
-                            @foreach($rdAccount->nominees as $nominee)
+                            @if($rdAccount->nominee->isNotEmpty())
+                            @foreach($rdAccount->nominee as $nominee)
                             <tr>
                                 <td class="px-3 py-2">{{ $nominee->nominee_name ?? '-' }}</td>
                                 <td class="px-3 py-2">{{ $nominee->nominee_relation ?? '-' }}</td>

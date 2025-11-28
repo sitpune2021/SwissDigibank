@@ -25,6 +25,8 @@
 
     <div class="main-inner">
 
+        <h3>APPROVALS - LOAN APPLICATIONS</h3>
+
         <div class="col-span-12 box lg:col-span-12">
             <div class="  flex justify-end mb-5">
                 <a href="{{ route('approvals_history') }}" class=" btn-primary uppercase rounded-10 ">

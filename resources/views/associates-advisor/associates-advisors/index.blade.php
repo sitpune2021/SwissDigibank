@@ -54,10 +54,9 @@
                 Associates/ Advisors
             </h4>
             <div class="flex flex-col md:flex-row  lg:flex-row gap-3">
-                <a href="" class=" block flex btn-primary justify-center uppercase ">
+                <a href="{{ route('associates-advisor.associates-advisors.add') }}" class=" block flex btn-primary justify-center uppercase ">
                     ADD
                 </a>
-
             </div>
 
         </div>
@@ -131,98 +130,88 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($associates as $a)
+                                <tr>
+                                    {{-- SUPERVISOR --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ $a->supervisor->first_name ?? 'N/A' }}
+                                    </td>
 
-
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1 uppercase">
-                                        RAVI RANJAN
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1 Capitalize">
+                                    {{-- ADVISOR CODE (employee_id) --}}
+                                    <td class="text-start !py-5 px-6">
                                         <a href="" class="text-primary">
-                                            112320
+                                            {{ $a->employee_id }}
                                         </a>
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        18 - SALES OFFICER
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        suresh
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        sur12
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        CASA EXECUTIVE
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        MAVLI
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        10-10-2024
-                                    </div>
-                                </td>
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        <span
-                                            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                            Yes
-                                        </span>
-                                        <span
-                                            class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                            No
-                                        </span>
-                                    </div>
-                                </td>
+                                    </td>
 
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
-                                        <span
-                                            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                            Yes
-                                        </span>
-                                        <span
-                                            class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                            No
-                                        </span>
-                                    </div>
-                                </td>
+                                    {{-- RANK --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ $a->rank }}
+                                    </td>
 
-                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                    <div class="flex items-center gap-1">
+                                    {{-- NAME --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ $a->first_name }} {{ $a->last_name }}
+                                    </td>
+
+                                    {{-- LOGIN USERNAME --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ $a->username }}
+                                    </td>
+
+                                    {{-- ROLE --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ $a->role ?? 'N/A' }}
+                                    </td>
+
+                                    {{-- BRANCH --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ $a->branch_id }}
+                                    </td>
+
+                                    {{-- ENROLL DATE --}}
+                                    <td class="text-start !py-5 px-6">
+                                        {{ \Carbon\Carbon::parse($a->enrollment_date)->format('d-m-Y') }}
+                                    </td>
+
+                                    {{-- ACTIVE --}}
+                                    <td class="text-start !py-5 px-6">
+                                        @if($a->active == 1)
+                                            <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-center text-xs text-primary">
+                                                Yes
+                                            </span>
+                                        @else
+                                            <span class="block w-28 rounded-[30px] border bg-error/20 py-2 text-center text-xs text-error">
+                                                No
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- LOCKED --}}
+                                    <td class="text-start !py-5 px-6">
+                                        @if($a->login_holiday == 'yes')
+                                            <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-center text-xs text-primary">
+                                                Yes
+                                            </span>
+                                        @else
+                                            <span class="block w-28 rounded-[30px] border bg-error/20 py-2 text-center text-xs text-error">
+                                                No
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- ACTIONS --}}
+                                    <td class="text-start !py-5 px-6">
                                         <div class="relative">
-                                            <i
-                                                class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                             <ul class="horiz-option popover-content">
-                                                <li><a href="" class="single-option uppercase">View</a></li>
-                                                <li><a href="" class="single-option uppercase">
-                                                        print joining form
-                                                    </a></li>
+                                                <li><a href="{{ route('associates-advisor.associates-advisors.view', $a->id) }}" class="single-option uppercase">View</a></li>
+                                                <li><a href="" class="single-option uppercase">Print Joining Form</a></li>
                                             </ul>
-
-                                            {{-- @include('partials._vertical-options', [
-                                            /* 'id' =>base64_encode($director->id),
-                                            'viewRoute' => 'director.show',
-                                            'editRoute' => 'director.edit'*/
-                                            ]) --}}
                                         </div>
-                                    </div>
-                                </td>
-
+                                    </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

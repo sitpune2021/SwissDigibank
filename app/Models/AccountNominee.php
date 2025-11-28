@@ -11,6 +11,7 @@ class AccountNominee extends Model
         'fd_account_id',
         'rd_account_id',
         'dds_account_id',
+        'mis_account_id',
         'nominee_name',
         'nominee_relation',
         'nominee_address',
@@ -40,13 +41,4 @@ class AccountNominee extends Model
     {
         return $this->belongsTo(MisAccount::class, 'mis_account_id');
     }
-
-    //  public function nominee()
-    // {
-    //     return $this->hasMany(Account::class, 'account_id');
-    // }
-    // public function ddsAccount()
-    // {
-    //     return $this->belongsTo(DdsAccount::class, 'dds_account_id');
-    // }
 }

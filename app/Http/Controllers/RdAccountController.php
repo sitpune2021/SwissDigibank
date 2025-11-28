@@ -288,7 +288,7 @@ class RdAccountController extends Controller
 
     public function show($id)
     {
-        $rdAccount = RdAccount::with(['member.address', 'branch', 'minor', 'nominees', 'rdTransactions' => function ($q) {
+        $rdAccount = RdAccount::with(['member.address', 'branch', 'minor', 'nominee', 'rdTransactions' => function ($q) {
             $q->whereIn('approve_status', ['Pending', 'Approved'])
                 ->orderBy('t_date', 'desc')
                 ->limit(5);
@@ -627,7 +627,7 @@ class RdAccountController extends Controller
     // Show Add Nominee Form
     public function showAddNomineeForm($id)
     {
-        $rdAccount = RdAccount::with(['member', 'rdScheme', 'minor', 'nominees'])
+        $rdAccount = RdAccount::with(['member', 'rdScheme', 'minor', 'nominee'])
             ->findOrFail($id);
 
         return view('mds_rd_accounts.mds-rd-account.view.account-detail.add-nominee', compact('rdAccount'));
@@ -637,7 +637,7 @@ class RdAccountController extends Controller
     public function saveNominee(Request $request, $id)
     {
         try {
-            $rdAccount = RdAccount::with('nominees')->findOrFail($id);
+            $rdAccount = RdAccount::with('nominee')->findOrFail($id);
 
             $request->validate([
                 'nominees'            => 'required|array|min:1',
@@ -646,7 +646,7 @@ class RdAccountController extends Controller
                 'nominees.*.address'  => 'required|string|max:255',
             ]);
 
-            $existingNominees = $rdAccount->nominees;
+            $existingNominees = $rdAccount->nominee;
 
             foreach ($request->nominees as $index => $nomineeData) {
                 // If nominee exists at this index → update
@@ -665,7 +665,7 @@ class RdAccountController extends Controller
                     ]);
                 } else {
                     // Else create a new nominee
-                    $newNominee = $rdAccount->nominees()->create([
+                    $newNominee = $rdAccount->nominee()->create([
                         'nominee_name'     => $nomineeData['name'],
                         'nominee_relation' => $nomineeData['relation'],
                         'nominee_address'  => $nomineeData['address'],

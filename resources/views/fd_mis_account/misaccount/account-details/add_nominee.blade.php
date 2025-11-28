@@ -40,17 +40,16 @@
                 Update Nominee Details
             </h1>
 
-            <form method="POST" action="{{ route('misaccount.updateNominee', $account->id) }}">
+            <form method="POST" action="{{ route('mis.nominees.save', ['type'=>'mis','id'=>$account->id]) }}">
                 @csrf
-
                 <x-add-nominee
-                :misAccount="$account"
+                :account="$account"
                 :member="$member"
-                type="saving-account"
+                type="mis"
                 :isUpdate="true"
                 submitText="Change account info"
                 backText="Back" />
-
+                
             </form>
         </div>
     </div>

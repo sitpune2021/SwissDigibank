@@ -233,7 +233,6 @@
                                                 ? ucfirst($ddaccount->member->member_info_first_name) . ' ' . ucfirst($ddaccount->member->member_info_last_name)
                                                 : 'N/A') }}
                                     </a>
-
                                 </td>
                             </tr>
                             <tr>

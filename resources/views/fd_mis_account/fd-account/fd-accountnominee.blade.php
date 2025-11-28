@@ -50,10 +50,16 @@
             <hr>
         </div>
 
-
-        <x-add-nominee
-            submitText="Change account info"
-            backText="Back" />
+        <form action="{{ route('fd.nominees.save', ['type' => 'fd', 'id' => $account->id]) }}" method="POST">
+            @csrf
+            <x-add-nominee
+                :account="$account"
+                :member="$member"
+                type="fd"
+                submitText="Save"
+                backText="Back"
+                :isUpdate="true" />
+        </form>
     </div>
 
 

@@ -24,7 +24,7 @@ class FdAccount extends Model
         'senior_citizen',
         'account_type',
 
-        'nominees',
+        // 'nominees',
         'final_amount',
         'transaction_date',
         'pay1_amount',
@@ -44,7 +44,6 @@ class FdAccount extends Model
         'maturity_date',
 
     ];
-
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id', 'id');
@@ -56,6 +55,10 @@ class FdAccount extends Model
     public function fdscheme()
     {
         return $this->belongsTo(FDScheme::class, 'scheme_id');
+    }
+    public function nominee()
+    {
+        return $this->hasMany(AccountNominee::class, 'fd_account_id');
     }
     public function getFinalStatusAttribute()
     {
