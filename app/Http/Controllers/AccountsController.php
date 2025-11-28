@@ -564,98 +564,12 @@ class AccountsController extends Controller
             ->route('accounts.show', base64_encode($account->id))
             ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
     }
-    // public function accountNominee(string $id)
-    // {
-    //     $account_id = base64_decode($id);
-    //     $account = Account::with('members', 'nominee')->where('id', $account_id)->first();
-    //     $member = $account->members;
-    //     return view('saving-current-ac.accounts.account-details.account-nominee', compact('account', 'member'));
-    // }
-
-
-    // public function saveNominees(Request $request, $accountId, $type)
-    // {
-    //     // 1️⃣ VALIDATION
-    //     $request->validate([
-    //         'nominee' => 'required|in:yes,no',
-    //         'nominees' => 'nullable|array',
-    //         'nominees.*.relation' => 'required_if:nominee,yes',
-    //         'nominees.*.name' => 'required_if:nominee,yes',
-    //         'nominees.*.address' => 'required_if:nominee,yes',
-    //     ]);
-
-    //     // 2️⃣ DETERMINE ACCOUNT MODEL AND NOMINEE COLUMN
-    //     switch ($type) {
-    //         case 'saving-account':
-    //             $account = Account::findOrFail($accountId);
-    //             $column = 'account_id';
-    //             break;
-
-    //         case 'rd':
-    //             $account = RdAccount::findOrFail($accountId);
-    //             $column = 'rd_account_id';
-    //             break;
-
-    //         case 'fd':
-    //             $account = FdAccount::findOrFail($accountId);
-    //             $column = 'fd_account_id';
-    //             break;
-
-    //         case 'dd':
-    //             $account = DdsAccount::findOrFail($accountId);
-    //             $column = 'dds_account_id';
-    //             break;
-
-    //         case 'mis':
-    //             $account = Misaccount::findOrFail($accountId);
-    //             $column = 'mis_account_id';
-    //             break;
-
-    //         default:
-    //             return back()->with('error', 'Invalid account type.');
-    //     }
-
-    //     if ($request->nominees === 'no') {
-    //         $account->nominee()->delete();
-
-    //         return back()->with('success', 'Nominee removed successfully.');
-    //     }
-
-    //     $submittedIds = collect($request->nominees)
-    //         ->pluck('id')
-    //         ->filter() 
-    //         ->toArray();
-
-    //     $account->nominee()
-    //         ->whereNotIn('id', $submittedIds)
-    //         ->delete();
-
-    //     foreach ($request->nominees as $nominee) {
-
-    //         if (!empty($nominee['id'])) {
-    //             AccountNominee::where('id', $nominee['id'])->update([
-    //                 'nominee_relation' => $nominee['relation'],
-    //                 'nominee_name' => $nominee['name'],
-    //                 'nominee_address' => $nominee['address'],
-    //             ]);
-    //         } else {
-    //             AccountNominee::create([
-    //                 $column => $account->id,
-    //                 'nominee_relation' => $nominee['relation'],
-    //                 'nominee_name' => $nominee['name'],
-    //                 'nominee_address' => $nominee['address'],
-    //             ]);
-    //         }
-    //     }
-
-    //     return back()->with('success', 'Nominee saved successfully.');
-    // }
-
-
+   
     public function accountNominee($type, $id)
     {
+       
         $account_id = base64_decode($id);
-
+ 
         switch ($type) {
 
             case 'saving-account':
@@ -666,8 +580,8 @@ class AccountsController extends Controller
 
             case 'rd':
                 $account = RdAccount::with('member', 'nominee')->findOrFail($account_id);
-                $member = $account->member ?? null;
-                $view = 'rd.account-details.account-nominee';
+                $member = $account->member ?? null;               
+                $view = 'mds_rd_accounts.mds-rd-account.view.account-detail.add-nominee';
                 break;
 
             case 'fd':
@@ -709,6 +623,7 @@ class AccountsController extends Controller
 
     public function saveNominees(Request $request, $type, $accountId)
     {
+       
         Log::info("Nominee save process started", [
             'account_id' => $accountId,
             'type'       => $type,
@@ -727,7 +642,6 @@ class AccountsController extends Controller
 
             Log::info("Validation passed successfully");
 
-            // 2️⃣ DETERMINE ACCOUNT MODEL AND NOMINEE COLUMN
             switch ($type) {
                 case 'saving-account':
                     $account = Account::findOrFail($accountId);
@@ -764,7 +678,6 @@ class AccountsController extends Controller
                 'account_id' => $account->id
             ]);
 
-            // 3️⃣ REMOVE NOMINEES IF 'NO'
             if ($request->nominees === 'no') {
 
                 $deleted = $account->nominee()->count();
@@ -778,7 +691,6 @@ class AccountsController extends Controller
                 return back()->with('success', 'Nominee removed successfully.');
             }
 
-            // 4️⃣ PREPARE NOMINEE UPDATE/DELETE
             $submittedIds = collect($request->nominees)
                 ->pluck('id')
                 ->filter()
@@ -786,7 +698,6 @@ class AccountsController extends Controller
 
             Log::info("Submitted nominee IDs", ['ids' => $submittedIds]);
 
-            // Delete nominees not in submitted list
             $deleted = $account->nominee()
                 ->whereNotIn('id', $submittedIds)
                 ->delete();
@@ -798,7 +709,6 @@ class AccountsController extends Controller
                 ]);
             }
 
-            // 5️⃣ ADD OR UPDATE NOMINEES
             foreach ($request->nominees as $nominee) {
 
                 if (!empty($nominee['id'])) {

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Member;
+use App\Models\Role;
 use App\Models\State;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -15,6 +20,34 @@ class BranchController extends Controller
     public function index(Request $request)
     {
         try {
+            $user = Auth::user();
+
+            if ($user && $user->role_id && in_array($user->role->name, ['Manager', 'Customer'])) {
+
+                // Initialize $branch variable
+                $branch = null;
+
+                if ($user->role->name === 'Manager') {
+                    // Manager: find branch by user's email or mobile
+                    $branch = Branch::where('contact_email', $user->email)
+                        ->orWhere('mobile_no', $user->mobile)
+                        ->first();
+                } elseif ($user->role->name === 'Customer') {
+                    $member = \App\Models\Member::where('member_info_email', $user->email)
+                        ->orWhere('member_info_mobile_no', $user->mobile)
+                        ->first();
+
+                    if ($member) {
+                        $branch = Branch::find($member->general_branch);
+                    }
+                }
+
+                if ($branch) {
+                    return redirect()->route('branch.show', base64_encode($branch->id));
+                } else {
+                    abort(403, 'Branch record not found for this user.');
+                }
+            }
             $perPage = $request->input('perPage', 10);
 
             $query = Branch::with(['State'])
@@ -107,7 +140,21 @@ class BranchController extends Controller
                 $data['permission_letter'] = $filePath;
             }
 
-            Branch::create($data);
+            $branch = Branch::create($data);
+
+            $managerRole = Role::where('name', 'Manager')->first();
+            if ($managerRole) {
+                User::create([
+                    'name'       => $managerRole->name ?? 'Branch Manager',
+                    'email'      => $request->contact_email ?? 'manager' . $branch->id . '@example.com',
+                    'mobile'     => $request->mobile_no ?? null,
+                    'username'   => 'manager' . $branch->id,
+                    'password'   => Hash::make('manager123'),
+                    'role_id'    => $managerRole->id,
+                    'branch_id'  => $branch->id,
+                    'user_active' => true,
+                ]);
+            }
 
             return redirect()->route('branch.index')->with('success', 'Branch added successfully.');
         } catch (\Exception $e) {
@@ -124,6 +171,34 @@ class BranchController extends Controller
     {
         try {
             $decryptedId = base64_decode($id);
+            $branch = Branch::findOrFail($decryptedId);
+
+            $user = Auth::user();
+            $loggedInEmail  = $user->email;
+            $loggedInMobile = $user->mobile;
+
+            $loggedInBranch = null;
+
+            if ($user->role->name === 'Manager') {
+
+                $loggedInBranch = Branch::where('contact_email', $loggedInEmail)
+                    ->orWhere('mobile_no', $loggedInMobile)
+                    ->first();
+            } elseif ($user->role->name === 'Customer') {
+ 
+                $member = Member::where('member_info_email', $loggedInEmail)
+                    ->orWhere('member_info_mobile_no', $loggedInMobile)
+                    ->first();
+
+                if ($member) {
+                    $loggedInBranch = Branch::find($member->general_branch);
+                }
+            }
+
+            if ($loggedInBranch && $loggedInBranch->id != $decryptedId) {
+                abort(403, 'Unauthorized access');
+            }
+
             $branch = Branch::with(['State'])->findOrFail($decryptedId);
             $formFields = config('branch_form');
             $dynamicOptions = [

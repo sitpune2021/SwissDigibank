@@ -163,7 +163,7 @@
                 </table>
 
                 <div class="mt-6">
-                    {{ $schemes->links('pagination::tailwind') }}
+                    <x-pagination :paginator="$schemes" />
                 </div>
             </div>
 

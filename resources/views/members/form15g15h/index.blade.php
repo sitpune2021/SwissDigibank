@@ -14,8 +14,8 @@
                 
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-                    <thead>
-                        <tr>
+                    <thead >
+                        <tr class="bg-secondary/5">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     CUSTOMER

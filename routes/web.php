@@ -74,15 +74,26 @@ use App\Http\Controllers\VehicalController;
 use App\Http\Controllers\VehicalAccountController;
 use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
+use App\Http\Middleware\SessionProtection;
 
 // Clear cache 
-Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
+// Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
-Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
-Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
-Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+// Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
+// Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
+// Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+
+Route::middleware(['guest', SessionProtection::class])->group(function () {
+
+    Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
+    Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
+    Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+});
+Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
 
 Route::middleware('auth.user')->group(function () {
+    Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
+
     Route::get('/dashboard', [DashboardController::class, 'index1'])->name('index1');
     Route::get('/get-branches', [BranchController::class, 'getBranches']);
     Route::get('/get-marital-statuses', [PromotorController::class, 'getMariatalStatuses']);
@@ -104,6 +115,16 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/promotor/{id}/address', [PromotorController::class, 'addressupdate'])->name('promotor.address.update');
         Route::get('/company/promotor/{id}/documents', [PromotorController::class, 'documentShow'])->name('promotor.document');
         Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
+        // Show edit nominee page
+        Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
+            ->name('nominee.edit');
+
+        // Save updated nominee
+        Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
+            ->name('nominee.update');
+
+
+
         Route::resource('shareholding', ShareHoldingController::class);
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
             ->name('shareholding.transfer');
@@ -193,6 +214,9 @@ Route::middleware('auth.user')->group(function () {
             '/ddsaccounts/{id}/update-minor',
             [DdsAccountsController::class, 'updateMinor']
         )->name('ddsaccounts.updateMinor');
+
+        Route::get('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'createforeClose'])->name('dds-accounts.fore-close');
+        // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
 
 
         // Show Account Details
@@ -364,18 +388,11 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('misaccount.updateAccountInfo');
 
     // Add Nominee
-    // Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
-    //     ->name('misaccount.addNominee');
-
-    // Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
-    //     ->name('misaccount.updateNominee');
-
     Route::get('/mis/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('mis.accounts.nominee');
     Route::post('mis/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('mis.nominees.save');
 
 
     //edit and update branches
-
     Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
         ->name('misaccount.update-branch');
 
@@ -397,6 +414,16 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
     Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
         ->name('misaccount.closingform');
+
+    Route::get('/misaccount/uploadDocuments/{id}', [MisaccountController::class, 'uploadDocuments'])->name('mis.uploadDocuments');
+    Route::post('/misaccount/storeDocuments/{id}', [MisaccountController::class, 'storeDocuments'])->name('mis.storeDocuments');
+    Route::delete('/documents/{id}', [MisaccountController::class, 'destroy'])->name('documents.destroy');
+
+    Route::get('/misacccount/comment/{id}', [MisaccountController::class, 'addComment'])->name('mis.comments');
+    Route::post('/misaccount/store-comment/{id}', [MisaccountController::class, 'storeComment'])->name('mis.storeComment');
+
+    Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
+        ->name('mis.updateSetting');
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -423,6 +450,10 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::post('/rd-accounts/{rdAccount}/withdraw', [RdAccountController::class, 'storeWithdraw'])->name('rd.withdraw.store');
     Route::get('/rd-accounts/{id}/change-info', [RdAccountController::class, 'showChangeInfoForm'])->name('rd-accounts.change-info');
     Route::post('/rd-accounts/{rdAccount}/change-info', [RdAccountController::class, 'storeChangeInfo'])->name('rd.change-info.store');
+
+    // Add nominee
+    Route::get('/rd/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('rd.accounts.nominee');
+    Route::post('/accounts/{type}/{id}/save-nominee', [AccountsController::class, 'saveNominees'])->name('rd-accounts.saveNominee');
 });
 
 Route::group(['prefix' => 'deposits'], function () {
@@ -1763,15 +1794,28 @@ Route::group(['prefix' => 'associate-advisor'], function () {
     Route::post('associates/update/{id}', [AdvisorController::class, 'update_rank'])
         ->name('associates-advisor.rank-structure.update');
 
-
+    // add associate 
     Route::get('associates/add', [AdvisorController::class, 'add_adc_asc'])
         ->name('associates-advisor.associates-advisors.add');
+    Route::post('associate/store', [AdvisorController::class, 'store_adc_asc'])
+        ->name('associate.store');
 
+    // index associate page
     Route::get('associates/adv-index', [AdvisorController::class, 'adv_index'])
         ->name('associates-advisor.associates-advisors.index');
 
-    Route::get('associates/adv-view', [AdvisorController::class, 'adv_view'])
+    // view
+    Route::get('associates/adv-view/{id}', [AdvisorController::class, 'adv_view'])
         ->name('associates-advisor.associates-advisors.view');
+
+    // SHOW EDIT FORM
+    Route::get('associate/{id}/edit', [AdvisorController::class, 'edit'])
+        ->name('associate.edit');
+
+    // UPDATE REQUEST
+    Route::put('associate/{id}', [AdvisorController::class, 'update'])
+        ->name('associate.update');
+
 
     Route::get('associates/chnage-photo', [AdvisorController::class, 'change_photo'])
         ->name('associates-advisor.associates-advisors.change-photo');

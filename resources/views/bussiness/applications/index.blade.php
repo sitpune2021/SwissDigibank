@@ -148,33 +148,17 @@
             </td>
 
             <!-- Actions -->
-            <!-- <td class="text-start !py-5 px-6">
+            <td class="text-start !py-5 px-6">
                 <div class="flex justify-center">
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
                             <li><a href="{{ route('bussiness.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                             @if($application->status != 2)
                             <li><a href="{{ route('bussiness.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            @endif
                         </ul>
                     </div>
-                </div>
-            </td> -->
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-3 justify-center">
-                    <!-- View Icon -->
-                    <a href="{{ route('bussiness.applications.view', $application->id) }}" 
-                    class="text-blue-500 hover:text-blue-700" 
-                    title="View">
-                        <i class="las la-eye text-xl"></i>
-                    </a>
-                    @if($application->status != 2)
-                    <!-- Edit Icon -->
-                    <a href="{{ route('bussiness.applications.edit', $application->id) }}" 
-                    class="text-green-500 hover:text-green-700" 
-                    title="Edit">
-                        <i class="las la-edit text-xl"></i>
-                    </a>
-                    @endif
                 </div>
             </td>
         </tr>
@@ -184,7 +168,7 @@
 
                 </table>
                 <div class="mt-6">
-                    {{ $applications->links('pagination::tailwind') }}
+                    <x-pagination :paginator="$applications" />
                 </div>
             </div>
 

@@ -24,7 +24,7 @@ class DailyWeeklyAccount extends Controller
         $goldLoan = DailyWeeklyApplication::with(['member', 'branch', 'scheme', 'DailyWeeklyLoanTransaction'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         foreach ($goldLoan as $loan) 
         {
