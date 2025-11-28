@@ -691,46 +691,47 @@
                                     <table class="w-full text-sm text-left">
                                         <thead>
                                             <tr>
-                                                <th class="font-semibold px-4 py-2 text-start">ACCOUNT TYPE</th>
-                                                <th class="font-semibold px-4 py-2 text-start">ACCOUNT NO.</th>
-                                                <th class="font-semibold px-4 py-2 text-start">OPEN DATE</th>
-                                                <th class="font-semibold px-4 py-2 text-start">STATUS</th>
+                                                <th class="font-semibold px-4 py-2 text-start">NAME</th>
+                                                <th class="font-semibold px-4 py-2 text-start">RELATION</th>
+                                                <th class="font-semibold px-4 py-2 text-start">ADDRESS</th>
+                                                <th class="font-semibold px-4 py-2 text-start">SHARE %</th>
+                                                <th class="font-semibold px-4 py-2 text-start">ACTION</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (!empty($promoter->minor) && is_iterable($promoter->minor))
-                                                @foreach ($promoter->minor as $minors)
-                                                    <tr>
-                                                        <td>{{ $minors?->first_name ?? '' }}
-                                                            {{ $minors?->last_name ?? '' }}
-                                                        </td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                                        <td>
-                                                            <a href="{{ route('minor.show', $minors->id) }}"
-                                                                title="View"
-                                                                class="text-green-600 hover:underline mr-2">
-                                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                                            </a>
-                                                            <a href="{{ route('minor.edit', $minors->id) }}"
-                                                                title="Edit" class="text-green-600 hover:underline">
-                                                                <i class="fa fa-edit"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @else
-                                                <tr>
-                                                    <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
-                                                        No minors available.
+                                            @php
+                                                // Get all nominees for this nominee's promotor, or empty collection
+                                                $nomineeList = $promoter->nominees
+                                                    ? $promoter->nominees
+                                                    : collect() ?? null;
+                                            @endphp
+
+                                            @forelse ($nomineeList as $nom)
+                                                <tr class="border-b">
+                                                    <td class="px-4 py-2">{{ $nom->name }}</td>
+                                                    <td class="px-4 py-2">{{ $nom->relation }}</td>
+                                                    <td class="px-4 py-2">{{ $nom->address }}</td>
+                                                    <td class="px-4 py-2">{{ $nom->share_holding ?? '0' }}</td>
+                                                    <td class="px-4 py-2">
+                                                        <a href="{{ route('nominee.edit', $nom->id) }}"
+                                                            class="text-blue-600 hover:underline">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
                                                     </td>
                                                 </tr>
-                                            @endif
+                                            @empty
+                                                <tr>
+                                                    <td colspan="5" class="border px-4 py-2 text-center text-gray-500">
+                                                        No nominee available.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
+
                         <!-- ADDRESS & CONTACT INFO -->
                         <div class="mt-4 border rounded shadow">
                             <div class="flex items-center justify-between px-4 py-2 text-white rounded-t"
@@ -1041,15 +1042,15 @@
 
                 <!-- Modal HTML -->
                 <!-- <div id="docPreviewModal"
-                        class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
-                        <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
-                            <button onclick="closePreview()"
-                                class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
-                            <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
-                            <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
-                            </div>
-                        </div>
-                    </div> -->
+                                            class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+                                            <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                                                <button onclick="closePreview()"
+                                                    class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                                                <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                                                <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                                                </div>
+                                            </div>
+                                        </div> -->
 
                 <!-- JS Script -->
                 <script>

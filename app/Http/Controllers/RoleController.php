@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Role;
+use App\Models\RolePermission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Models\Permissions;
 
 class RoleController extends Controller
 {
@@ -37,7 +41,10 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('roles.add-role');
+        $roles = Role::all();
+        $allPermissions = Permissions::all();
+
+        return view('roles.add-role', compact('roles', 'allPermissions'));
     }
 
     /**
@@ -45,7 +52,53 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+
+            $request->validate([
+                'role_id' => 'required|exists:roles,id',
+                'role_position' => 'required|string|nullable',
+                'permission_type' => 'required|in:admin,agent,both',
+                'active' => 'required|in:Yes,No',
+                'permissions' => 'nullable|array',
+                'permissions.*' => 'string',
+            ]);
+
+            Log::info('Storing new role permission', [
+                'role_id' => $request->role_id,
+
+                'role_position' => $request->role_position,
+                'permission_type' => $request->permission_type,
+                'active' => $request->active,
+                'permissions' => $request->permissions,
+            ]);
+
+            // Save to database
+            $rolePermission = RolePermission::create([
+                'role_id' => $request->role_id,
+                'role_position' => $request->role_position,
+                'permission_type' => $request->permission_type,
+                'active' => $request->active,
+                'permissions' => json_encode([
+                    'role_id' => $request->role_id,
+                    'permissions' => $request->permissions
+                ]), // store as JSON
+            ]);
+            Log::info('Role permission saved successfully', [
+                'id' => $rolePermission->id,
+                'role_id' => $rolePermission->role_id,
+            ]);
+
+            return redirect()->back()->with('success', 'Role permissions saved successfully!');
+        } catch (\Exception $e) {
+            // Log any error
+            Log::error('Error storing role permission', [
+                'message' => $e->getMessage(),
+                'stack' => $e->getTraceAsString(),
+                'input' => $request->all(),
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to save role permissions.');
+        }
     }
 
     /**

@@ -133,21 +133,15 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="text-start !py-5 px-6">                                   
-                                    <div class="flex items-center gap-3 justify-center">
-                                        <!-- View Icon -->
-                                        <a href="{{ route('gold-loan.schemes.view', $scheme->id) }}" 
-                                        class="text-blue-500 hover:text-blue-700" 
-                                        title="View">
-                                            <i class="las la-eye text-xl"></i>
-                                        </a>
-
-                                        <!-- Edit Icon -->
-                                        <a href="{{ route('gold-loan.schemes.edit', $scheme->id) }}" 
-                                        class="text-green-500 hover:text-green-700" 
-                                        title="Edit">
-                                            <i class="las la-edit text-xl"></i>
-                                        </a>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex justify-center">
+                                        <div class="relative">
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                            <ul class="horiz-option popover-content">
+                                                <li><a href="{{ route('gold-loan.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
+                                                <li><a href="{{ route('gold-loan.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -159,9 +153,7 @@
                 </tbody>
             </table>
 
-                <div class="mt-6">
-                    {{ $schemes->links('pagination::tailwind') }}
-                </div>
+            <x-pagination :paginator="$schemes" />
 
         </div>
 

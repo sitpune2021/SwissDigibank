@@ -24,7 +24,7 @@ class CcOdLoanControllerAccount extends Controller
         $goldLoan = CcOdLoanApplication::with(['member', 'branch', 'scheme', 'CcodLoanTransaction'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         foreach ($goldLoan as $loan) 
         {

@@ -191,7 +191,7 @@
                 </table>
                 <!-- Pagination Links -->
             <div class="mt-4">
-                {{ $disbursements->links() }}
+                <x-pagination :paginator="$disbursements" />
             </div>
             </div>
         </div>

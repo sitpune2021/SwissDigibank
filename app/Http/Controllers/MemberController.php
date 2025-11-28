@@ -34,6 +34,20 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         try {
+            $user = Auth::user();
+
+            // If the logged-in user is a Member, redirect to their own profile
+            if ($user && optional($user->role)->name === 'Member') {
+                $member = Member::where('member_info_email', $user->email)
+                    ->orWhere('member_info_mobile_no', $user->mobile)
+                    ->first();
+
+                if ($member) {
+                    return redirect()->route('member.show', $member->id);
+                } else {
+                    abort(403, 'Member record not found for this user.');
+                }
+            }
             $query = Member::with(['branch', 'kyc']);
 
             if ($request->has('search') && $request->search != '') {
@@ -73,6 +87,7 @@ class MemberController extends Controller
             abort(404);
         }
     }
+    
     public function create()
     {
         try {
@@ -329,132 +344,20 @@ class MemberController extends Controller
         }
     }
 
-    // public function store(Request $request)
-    // {
-    //     Log::info('Member store initiated', ['request_data' => $request->all()]);
-
-    //     try {
-    //         Log::info('Member store: Validation started');
-    //         $request->validate([
-    //             // (your validation rules here...)
-    //         ]);
-    //         Log::info('Validation successful');
-
-    //         // Format date fields
-    //         Log::info('Formatting dates');
-    //         $dates = ['general_enrollment_date', 'member_info_dob', 'charges_transaction_date', 'online_transfer_date', 'cheque_date'];
-    //         foreach ($dates as $dateField) {
-    //             if ($request->filled($dateField)) {
-    //                 $request->merge([
-    //                     $dateField => Carbon::parse($request->$dateField)->format('Y-m-d')
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Member No generation
-    //         $nextId = (Member::max('id') ?? 0) + 1;
-    //         $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
-    //         Log::info('Generated Member Number', ['member_no' => $memberNo]);
-
-    //         // Create Member
-    //         $memberData = $request->only((new Member)->getFillable());
-    //         $memberData['member_no'] = $memberNo;
-    //         Log::info('Creating Member Record', ['member_data' => $memberData]);
-
-    //         $member = Member::create($memberData);
-    //         Log::info('Member created successfully', ['member_id' => $member->id]);
-
-    //         // Create Address
-    //         $addressData = $request->only((new Address)->getFillable());
-    //         $member->address()->create($addressData);
-    //         Log::info('Address data stored', ['address_data' => $addressData]);
-
-    //         // KYC & Nominee
-    //         $kycData = $request->only((new KycAndNominee)->getFillable());
-    //         $member->kyc()->create($kycData);
-    //         Log::info('KYC saved', ['kyc_data' => $kycData]);
-
-    //         // Documents
-    //         if ($request->has('documents')) {
-    //             foreach ($request->documents as $doc) {
-    //                 if (isset($doc['file'])) {
-    //                     $path = $doc['file']->store('documents', 'public');
-    //                     KycDocument::create([
-    //                         'member_id' => $member->id,
-    //                         'document_category' => $doc['category'],
-    //                         'document_type' => $doc['type'] ?? null,
-    //                         'file_path' => $path,
-    //                     ]);
-    //                     Log::info('Document uploaded', [
-    //                         'path' => $path,
-    //                         'category' => $doc['category']
-    //                     ]);
-    //                 }
-    //             }
-    //         }
-
-    //         // Membership Charge Transaction
-    //         $transaction = MembershipChargeTransaction::create([
-    //             'member_id' => $member->id,
-    //             'transaction_date' => $request->charges_transaction_date,
-    //             'membership_fee' => $request->charges_membership_fee ?? 0,
-    //             'net_fee_to_collect' => $request->charges_net_fee,
-    //             'remarks' => $request->charges_remarks ?? null,
-    //             'charges_pay_mode' => $request->charges_pay_mode,
-    //             'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
-    //             'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
-    //             'bank_id' => in_array($request->charges_pay_mode, ['cheque', 'online']) ? $request->bank_id : null,
-    //             'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
-    //             'cheque_date' => $request->charges_pay_mode === 'cheque' ? $request->cheque_date : null,
-    //             'type' => "Membership Charges",
-    //         ]);
-    //         Log::info('Membership transaction created', ['transaction' => $transaction]);
-
-    //         // Create login user
-    //         $managerRole = Role::where('name', 'Member')->first();
-    //         if ($managerRole) {
-    //             $user = User::create([
-    //                 'name' => $managerRole->name,
-    //                 'fname' => $request->member_info_first_name,
-    //                 'lname' => $request->member_info_last_name,
-    //                 'email' => $request->member_info_email,
-    //                 'mobile' => $request->member_info_mobile_no,
-    //                 'username' => 'Member' . $member->id,
-    //                 'password' => Hash::make('member123'),
-    //                 'role_id' => $managerRole->id,
-    //                 'branch_id' => $member->general_branch,
-    //                 'user_active' => true,
-    //             ]);
-    //             Log::info('Login user created for member', [
-    //                 'user_id' => $user->id,
-    //                 'member_id' => $member->id
-    //             ]);
-
-    //             $member->update(['user_id' => $user->id]);
-    //         }
-
-    //         // Send SMS
-    //         try {
-    //             $mobile = $member->member_info_mobile_no;
-    //             $dlttemplateid = 1707173529330693298;
-    //             $password = "member123";
-    //             $message = "Dear Customer, Thanks for becoming member. Your USERNAME - $mobile, PASSWORD - $password.";
-
-    //            \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-    //             Log::info('SMS sent successfully', ['mobile' => $mobile]);
-    //         } catch (\Exception $e) {
-    //             Log::error('SMS sending failed', ['error' => $e->getMessage()]);
-    //         }
-
-    //         return redirect()->route('member.index')->with('success', 'Member created successfully.');
-    //     } catch (\Exception $e) {
-    //         Log::error('Member store error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-    //         return back()->withErrors(['error' => 'Something went wrong']);
-    //     }
-    // }
 
     public function show(string $id)
     {
+        $member = Member::findOrFail($id);
+        $loggedInEmail  = Auth::user()->email;
+        $loggedInMobile = Auth::user()->mobile;
+
+        $loggedInMember = Member::where('member_info_email', $loggedInEmail)
+            ->orWhere('member_info_mobile_no', $loggedInMobile)
+            ->first();
+
+        if ($loggedInMember && $loggedInMember->id != $id) {
+            abort(403, 'Unauthorized access');
+        }
         try {
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id'),
@@ -1662,7 +1565,7 @@ class MemberController extends Controller
             $transaction = DB::selectOne($query, [$id]);
         } else {
 
-    $query = "
+            $query = "
         SELECT
             id,
             member_id,
@@ -1702,8 +1605,8 @@ class MemberController extends Controller
         LIMIT 1
     ";
 
-    $transaction = DB::selectOne($query, [$id]);
-}
+            $transaction = DB::selectOne($query, [$id]);
+        }
 
 
         if (!$transaction) {

@@ -24,7 +24,7 @@ class FdAccount extends Model
         'senior_citizen',
         'account_type',
 
-        'nominees',
+        // 'nominees',
         'final_amount',
         'transaction_date',
         'pay1_amount',

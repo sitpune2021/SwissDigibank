@@ -34,11 +34,11 @@
 
             {{-- Photo --}}
             <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', ['id' => 'photo', 'label' => 'Photo', 'required' => true])
+                @include('fields.label', ['id' => 'photo', 'label' => 'Photo', 'required' => false])
                 @include('fields.inputs', [
                     'id' => 'photo',
                     'label' => 'Photo',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'file',
                     'name' => 'documents[0][file]',
                     'value' => old('documents.0.file', $documents['photo']->file ?? ''),
@@ -61,11 +61,11 @@
 
             {{-- Signature --}}
             <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', ['id' => 'signature', 'label' => 'Signature', 'required' => true])
+                @include('fields.label', ['id' => 'signature', 'label' => 'Signature', 'required' => false])
                 @include('fields.inputs', [
                     'id' => 'signature',
                     'label' => 'Signature',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'file',
                     'name' => 'documents[1][file]',
                     'value' => old('documents.1.file', $documents['signature']->file ?? ''),
@@ -88,11 +88,11 @@
 
             {{-- ID Proof --}}
             <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', ['id' => 'id_proof', 'label' => 'ID Proof', 'required' => true])
+                @include('fields.label', ['id' => 'id_proof', 'label' => 'ID Proof', 'required' => false])
                 @include('fields.inputs', [
                     'id' => 'id_proof_type',
                     'label' => 'ID Proof Type',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'select',
                     'value' => old('documents.2.type', $documents['id_proof']->document_type ?? ''),
                     'name' => 'documents[2][type]',
@@ -134,12 +134,12 @@
                 @include('fields.label', [
                     'id' => 'id_proof_back',
                     'label' => 'ID Proof Back',
-                    'required' => true,
+                    'required' => false,
                 ])
                 @include('fields.inputs', [
                     'id' => 'id_proof_back_type',
                     'label' => 'ID Proof Back Type',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'select',
                     'value' => old('documents.3.type', $documents['id_proof_back']->document_type ?? ''),
                     'name' => 'documents[3][type]',
@@ -155,7 +155,7 @@
                 @include('fields.inputs', [
                     'id' => 'id_proof_back',
                     'label' => 'ID Proof Back',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'file',
                     'name' => 'documents[3][file]',
                     'value' => '',
@@ -181,12 +181,12 @@
                 @include('fields.label', [
                     'id' => 'address_proof',
                     'label' => 'Address Proof',
-                    'required' => true,
+                    'required' => false,
                 ])
                 @include('fields.inputs', [
                     'id' => 'address_proof_type',
                     'label' => 'Address Proof Type',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'select',
                     'value' => old('documents.4.type', $documents['address_proof']->document_type ?? ''),
                     'name' => 'documents[4][type]',
@@ -202,7 +202,7 @@
                 @include('fields.inputs', [
                     'id' => 'address_proof',
                     'label' => 'Address Proof',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'file',
                     'name' => 'documents[4][file]',
                     'value' => '',
@@ -228,12 +228,12 @@
                 @include('fields.label', [
                     'id' => 'address_proof_back',
                     'label' => 'Address Proof Back',
-                    'required' => true,
+                    'required' => false,
                 ])
                 @include('fields.inputs', [
                     'id' => 'address_proof_back_type',
                     'label' => 'Address Proof Back Type',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'select',
                     'value' => old('documents.5.type', $documents['address_proof_back']->document_type ?? ''),
                     'name' => 'documents[5][type]',
@@ -249,7 +249,7 @@
                 @include('fields.inputs', [
                     'id' => 'address_proof_back',
                     'label' => 'Address Proof Back',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'file',
                     'name' => 'documents[5][file]',
                     'value' => '',
@@ -272,11 +272,11 @@
 
             {{-- PAN --}}
             <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', ['id' => 'pan_number', 'label' => 'PAN', 'required' => true])
+                @include('fields.label', ['id' => 'pan_number', 'label' => 'PAN', 'required' => false])
                 @include('fields.inputs', [
                     'id' => 'pan_number_type',
                     'label' => 'PAN Type',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'select',
                     'value' => old('documents.6.type', $documents['pan_number']->document_type ?? ''),
                     'name' => 'documents[6][type]',
@@ -289,7 +289,7 @@
                 @include('fields.inputs', [
                     'id' => 'pan_number',
                     'label' => 'PAN',
-                    'required' => true,
+                    'required' => false,
                     'type' => 'file',
                     'name' => 'documents[6][file]',
                     'value' => '',

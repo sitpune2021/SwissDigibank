@@ -127,13 +127,13 @@
 </style>
 
 @section('content')
+
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
                 <h3 class="text-xl uppercase font-semibold">
                     ASSOCIATE/ ADVISOR - GAYATRI DEVI
                 </h3>
-
             </div>
         </div>
 
@@ -216,10 +216,7 @@
                         <h3 class="text-lg font-semibold text-black  uppercase">
                             Transaction Info
                         </h3>
-
                         <div class="">
-
-
                             <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'tinfo')">
                                 <span class="toggle-icon text-lg font-bold">−</span>
                             </button>
@@ -229,7 +226,6 @@
                     <div class="p-4" id="tinfo">
                         <div class="overflow-x-auto">
                             <p class="capitalize">No Transaction Found</p>
-
                         </div>
                     </div>
                 </div>
@@ -255,8 +251,9 @@
                                             {{-- print --}}
                                             <i class="las la-print"></i>
                                         </a>
-                                        <a href="#" class=" p-2 rounded-10 text-sm btn-primary">
-                                            <i class="las la-pencil-alt"></i>
+                                        <a href="{{ route('associate.edit', $associate->id) }}" 
+                                            class="p-2 rounded-10 text-sm btn-primary">
+                                                <i class="las la-pencil-alt"></i>
                                         </a>
                                         <a href="#" class=" p-2 rounded-10 text-sm btn-secondary uppercase">
                                             <i class="las la-sync"></i>
@@ -275,7 +272,7 @@
                                 <td class="font-semibold uppercase px-4 py-2 w-1/3">Employee Profile</td>
                                 <td class="px-4 py-2">
                                     <a href="" class="  capitalize text-primary">
-                                        undertaker
+                                        {{ $associate->first_name }} {{ $associate->last_name }}
                                     </a>
                                 </td>
                             </tr>
@@ -285,7 +282,7 @@
                                 </td>
                                 <td class="px-4 py-2 capitalize ">
                                     <a href="" class="  capitalize text-primary">
-                                        RAVI RANJAN
+                                        {{ $associate->supervisor ? $associate->supervisor->first_name.' '.$associate->supervisor->last_name : '—' }}
                                     </a>
                                 </td>
                             </tr>
@@ -299,14 +296,14 @@
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2">Code</td>
-                                <td class="px-4 py-2 capitalize">112320</td>
+                                <td class="px-4 py-2 capitalize">{{ $associate->code }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">
                                     User Name (LOGIN)
                                 </td>
                                 <td class="px-4 py-2 capitalize">
-                                    gayatri
+                                    {{ $associate->username }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -314,7 +311,7 @@
                                     Name
                                 </td>
                                 <td class="px-4 py-2 uppercase">
-                                    GAYATRI DEVI
+                                    {{ $associate->first_name }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -322,7 +319,7 @@
                                     Date Of Birth
                                 </td>
                                 <td class="px-4 py-2 capitalize">
-                                    10-10-2023
+                                    {{ $associate->dob ? $associate->dob->format('d-m-Y') : '' }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -330,7 +327,7 @@
                                     Enrollment Date
                                 </td>
                                 <td class="px-4 py-2 capitalize">
-                                    10-10-2025
+                                    {{ $associate->enrollment_date ? $associate->enrollment_date->format('d-m-Y') : '' }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -356,7 +353,7 @@
                                     Contact No.
                                 </td>
                                 <td class="px-4 py-2 capitalize">
-                                    9856452356
+                                    {{ $associate->phone }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -410,7 +407,6 @@
                                     </div>
                                 </td>
                             </tr>
-
                             <tr class="border-b">
                                 <td class="font-semibold uppercase px-4 py-2">
                                     Account Login Locked

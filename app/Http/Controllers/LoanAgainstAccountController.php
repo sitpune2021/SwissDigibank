@@ -24,7 +24,7 @@ class LoanAgainstAccountController extends Controller
         $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransaction'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         foreach ($goldLoan as $loan) 
         {

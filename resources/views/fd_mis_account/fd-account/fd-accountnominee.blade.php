@@ -58,8 +58,7 @@
                 type="fd"
                 submitText="Save"
                 backText="Back"
-                :isUpdate="$hasNominee" />
-
+                :isUpdate="true" />
         </form>
     </div>
 

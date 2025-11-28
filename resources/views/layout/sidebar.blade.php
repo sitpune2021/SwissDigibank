@@ -1,6 +1,11 @@
 @php
-    use App\Models\Menu;
-    $menuItems = Menu::with('submenus')->orderBy('id')->get();
+use App\Models\Menu;
+use Illuminate\Support\Facades\Auth;
+$menuItems = Menu::with('submenus')->orderBy('id')->get();
+$user = Auth::user();
+$roleName = optional($user->role)->name; // safely get role name
+
+
 @endphp
 
 <aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
@@ -26,66 +31,87 @@
                 <div class="menu-wrapper">
                     <ul class="menu-ul">
                         @foreach ($menuItems as $item)
-                            @php
-                                $isActive = request()->routeIs($item?->route ?? '');
-                                $submenuActive = $item->submenus->contains(function ($sub) {
-                                    return request()->routeIs($sub->route);
-                                });
-                            @endphp
+                        @php
 
-                            {{-- ✅ Future-ready: Add tab/section separator logic --}}
-                            @if (!empty($item->is_tab_start))
-                                <hr style="margin: 10px 0; border-color: #ccc;">
-                            @endif
+                         // Skip "User" menu for Customer
+                        if (
+                        in_array($roleName, ['Customer']) &&
+                        in_array(strtolower($item->title), ['approvals', 'user', 'hr management'])
+                        ) {
+                        continue;
+                        }
+ 
+                        $filteredSubmenus = $item->submenus;
+ 
+                        // If Role Customer and menu title is "Company" → hide specific submenus
+                        if ($roleName === 'Customer' && strtolower($item->title) === 'company') {
+                            $filteredSubmenus = $filteredSubmenus->filter(function ($sub) {
+                                return !in_array(
+                                strtolower($sub->title),
+                                    ['promotors', 'promotor share holdings', 'director']
+                                );
+                            });
+                        }
+ 
+                        $isActive = request()->routeIs($item?->route ?? '');
+                        $submenuActive = $item->submenus->contains(function ($sub) {
+                        return request()->routeIs($sub->route);
+                        });
+                        @endphp
 
-                            <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}">
-                                @if ($item->submenus->isNotEmpty())
-                                    <button
-                                        class="menu-btn group bg-n0 dark:!border-n500 dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
-                                        type="button"
-                                        onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
+                        {{-- ✅ Future-ready: Add tab/section separator logic --}}
+                        @if (!empty($item->is_tab_start))
+                        <hr style="margin: 10px 0; border-color: #ccc;">
+                        @endif
+
+                        <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}">
+                            @if ($item->submenus->isNotEmpty())
+                            <button
+                                class="menu-btn group bg-n0 dark:!border-n500 dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
+                                type="button"
+                                onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
                                             this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
                                             this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
-                                        <span class="flex items-center justify-center gap-2">
-                                            <span class="menu-icon">
-                                                <i class="{{ $item->icon }}"></i>
-                                            </span>
-                                            <span class="menu-title font-medium">{{ $item->title }}</span>
-                                        </span>
-                                        <span class="plus-minus">
-                                            <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"></i>
-                                            <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"></i>
-                                        </span>
-                                    </button>
+                                <span class="flex items-center justify-center gap-2">
+                                    <span class="menu-icon">
+                                        <i class="{{ $item->icon }}"></i>
+                                    </span>
+                                    <span class="menu-title font-medium">{{ $item->title }}</span>
+                                </span>
+                                <span class="plus-minus">
+                                    <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"></i>
+                                    <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"></i>
+                                </span>
+                            </button>
 
-                                    <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
-                                        @foreach ($item->submenus as $sub)
-                                            <li>
-                                                <a href="{{ route($sub->route) }}"
-                                                    class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}">
-                                                    <i class="las la-minus text-xl"></i>
-                                                    <span>{{ $sub->title }}</span>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    <a href="{{ route($item?->route) }}"
-                                        class="menu-btn border-n30 bg-n0 dark:!border-n500 dark:bg-bg4 flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
-                                        <span class="flex items-center justify-center gap-2">
-                                            <span class="menu-icon">
-                                                <i class="{{ $item->icon }}"></i>
-                                            </span>
-                                            <span class="menu-title font-medium">{{ $item->title }}</span>
-                                        </span>
+                            <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
+                                @foreach ($item->submenus as $sub)
+                                <li>
+                                    <a href="{{ route($sub->route) }}"
+                                        class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}">
+                                        <i class="las la-minus text-xl"></i>
+                                        <span>{{ $sub->title }}</span>
                                     </a>
-                                @endif
-                            </li>
-
-                            {{-- ✅ Always add <hr> AFTER HR MANAGEMENT --}}
-                            @if ($item->title === 'HR MANAGEMENT')
-                                <hr style="margin: 10px 0; border-color: #ccc;">
+                                </li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <a href="{{ route($item?->route) }}"
+                                class="menu-btn border-n30 bg-n0 dark:!border-n500 dark:bg-bg4 flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
+                                <span class="flex items-center justify-center gap-2">
+                                    <span class="menu-icon">
+                                        <i class="{{ $item->icon }}"></i>
+                                    </span>
+                                    <span class="menu-title font-medium">{{ $item->title }}</span>
+                                </span>
+                            </a>
                             @endif
+                        </li>
+
+                        {{-- ✅ Always add <hr> AFTER HR MANAGEMENT --}}
+                        @if ($item->title === 'HR MANAGEMENT')
+                        <hr style="margin: 10px 0; border-color: #ccc;">
+                        @endif
                         @endforeach
                     </ul>
                 </div>
@@ -97,7 +123,7 @@
 {{-- ✅ Optional JS: Only one submenu open at a time --}}
 <script>
     document.querySelectorAll('.menu-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function() {
             document.querySelectorAll('.submenu-show').forEach(sub => {
                 if (sub !== this.nextElementSibling) {
                     sub.classList.remove('submenu-show');

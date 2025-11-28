@@ -24,7 +24,7 @@ class MortgageAccountController extends Controller
         $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'MortgageLoanTransactions'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         foreach ($goldLoan as $loan) 
         {
