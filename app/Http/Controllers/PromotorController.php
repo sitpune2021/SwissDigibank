@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use App\Models\Account;
 use App\Models\Member;
+use Illuminate\Support\Facades\Log;
 
 class PromotorController extends Controller
 {
@@ -216,8 +217,7 @@ class PromotorController extends Controller
                 abort(404, 'Invalid promoter ID.');
             }
 
-            $promoter = Promotor::with('minor', 'members', 'accounts', 'branch')->findOrFail($decryptedId);
-
+            $promoter = Promotor::with('minor', 'members', 'accounts', 'branch', 'nominees')->findOrFail($decryptedId);
             $documents = KycDocument::where('promoter_id', $decryptedId)->get()->keyBy('document_category');
             $totalShares = $promoter->shareholdings->sum('total_share_held');
 
@@ -458,7 +458,7 @@ class PromotorController extends Controller
         }
     }
 
-    public function documentUpdate(Request $request)
+    public function documentUpdate(Request $request, $id)
     {
         try {
             $request->validate([
@@ -466,31 +466,36 @@ class PromotorController extends Controller
                 'documents.*.file' => 'nullable|file',
                 'documents.*.category' => 'nullable|string',
                 'documents.*.type' => 'nullable|string',
-                'member_id' => 'nullable'
             ]);
 
-            foreach ($request->documents as $doc) {
-                if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
-                    $path = $doc['file']->store('documents', 'public');
-                    KycDocument::updateOrCreate(
-                        [
-                            'member_id' => $request->member_id,
-                            'document_category' => $doc['category'],
-                            'document_type' => $doc['type'] ?? null,
-                        ],
-                        [
-                            'file_path' => $path,
-                            'type' => 'member',
-                        ]
-                    );
+            if ($request->has('documents')) {
+                foreach ($request->documents as $doc) {
+                    if (isset($doc['file']) && $doc['file'] instanceof UploadedFile) {
+
+                        $path = $doc['file']->store('documents', 'public');
+
+                        KycDocument::updateOrCreate(
+                            [
+                                'promoter_id' => $id, // 👈 store promoter_id
+                                'document_category' => $doc['category'],
+                            ],
+                            [
+                                'document_type' => $doc['type'] ?? null,
+                                'file_path' => $path,
+                                'type' => 'promoter', // optional
+                            ]
+                        );
+                    }
                 }
             }
 
-            return redirect()->route('promotor.index')->with('success', 'Documents updated successfully.');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+            return redirect()->route('promotor.index')
+                ->with('success', 'Documents updated successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
+
     public function addressedit($id)
     {
         try {
@@ -630,5 +635,122 @@ class PromotorController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
+    }
+
+
+    public function editNominee($id)
+    {
+        if (str_starts_with($id, 'new-')) {
+            // New nominee mode
+            $promoterId = str_replace('new-', '', $id);
+            $promoter = Promotor::findOrFail($promoterId);
+
+            return view('company.promoters.add-nominee', [
+                'nominee' => null,
+                'promoter' => $promoter,
+                'isUpdate' => false
+            ]);
+        }
+
+        $nominee = PromotorNomine::findOrFail($id);
+        $promoter = $nominee->promotor;
+        $promoter = $nominee->promotor;
+
+        return view('company.promoters.add-nominee', [
+            'nominee' => $nominee,
+            'promoter' => $promoter,
+            'isUpdate' => true
+        ]);
+    }
+
+    public function updateNominee(Request $request, $id)
+    {
+        Log::info("Nominee update request received", [
+            'nominee_id' => $id,
+            'request_data' => $request->all()
+        ]);
+
+        $request->validate([
+            'nominee' => 'required|in:yes,no',
+            'nominees' => 'required_if:nominee,yes|array',
+            'nominees.*.relation' => 'required|string|max:50',
+            'nominees.*.name' => 'required|string|max:100',
+            'nominees.*.address' => 'required|string|max:255',
+            'nominees.*.share_holding' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $nominee = PromotorNomine::findOrFail($id);
+        $promotor = $nominee->promotor;
+
+        if (!$promotor) {
+            Log::warning("Promoter not found for nominee ID: {$id}");
+            return back()->with('error', 'Promoter not found for this nominee.');
+        }
+
+        // If user selected NO nominee
+        if ($request->nominee === 'no') {
+
+            Log::info("Deleting all nominees for promoter", [
+                'promoter_id' => $promotor->id,
+            ]);
+
+            $promotor->nominees()->delete();
+
+            return back()->with('success', 'Nominee removed.');
+        }
+
+        // Incoming nominee array
+        $incomingNominees = $request->nominees ?? [];
+        $incomingIds = collect($incomingNominees)->pluck('id')->filter()->toArray();
+
+        Log::info("Incoming nominee IDs for update", [
+            'promoter_id' => $promotor->id,
+            'incoming_ids' => $incomingIds
+        ]);
+
+        // Delete removed nominees
+        $deleted = $promotor->nominees()
+            ->whereNotIn('id', $incomingIds)
+            ->delete();
+
+        Log::info("Deleted nominees count", [
+            'count' => $deleted
+        ]);
+
+        // Update or create nominees
+        foreach ($incomingNominees as $nomineeData) {
+
+            Log::info("Processing nominee entry", $nomineeData);
+
+            $data = [
+                'relation' => $nomineeData['relation'],
+                'name' => $nomineeData['name'],
+                'address' => $nomineeData['address'],
+                'share_holding' => $nomineeData['share_holding'] ?? 0,
+            ];
+
+            if (!empty($nomineeData['id'])) {
+                Log::info("Updating nominee", [
+                    'nominee_id' => $nomineeData['id'],
+                    'data' => $data
+                ]);
+
+                $promotor->nominees()
+                    ->where('id', $nomineeData['id'])
+                    ->update($data);
+            } else {
+                Log::info("Creating new nominee", [
+                    'data' => $data
+                ]);
+
+                $promotor->nominees()->create($data);
+            }
+        }
+
+        Log::info("Nominee updated successfully", [
+            'promoter_id' => $promotor->id
+        ]);
+
+        return back()->with('success', 'Nominee updated successfully.');
     }
 }

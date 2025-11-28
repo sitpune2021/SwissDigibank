@@ -63,15 +63,15 @@
                 <div class="col-span-2 md:col-span-1">
                     <label class="font-medium block mb-4 uppercase">Account Type <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="account_type" value="saving"
                                 {{ old('account_type', $account->account_type ?? 'saving') === 'saving' ? 'checked' : '' }}>
-                            Saving
+                            <p>Saving</p>
                         </label>
-                        <label>
+                        <label class="flex gap-2" >
                             <input type="radio" name="account_type" value="current"
                                 {{ old('account_type', $account->account_type ?? '') === 'current' ? 'checked' : '' }}>
-                            Current
+                           <p> Current</p>
                         </label>
                     </div>
                 </div>
@@ -254,15 +254,15 @@
                     <label class="font-medium block mb-4 uppercase">Account Holder Type <span
                             class="text-red-500">*</span></label>
                     <div class="flex gap-5">
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="account_holder_type" value="single"
                                 {{ old('account_holder_type', $account->account_holder_type ?? 'single') === 'single' ? 'checked' : '' }}>
-                            Single
+                           <p> Single</p>
                         </label>
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="account_holder_type" value="joint"
                                 {{ old('account_holder_type', $account->account_holder_type ?? '') === 'joint' ? 'checked' : '' }}>
-                            Joint A/C
+                         <p>   Joint A/C</p>
                         </label>
                         @error('account_holder_type')
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
@@ -348,15 +348,16 @@
                 <div class="col-span-2 md:col-span-1">
                     <label class="font-medium block mb-4 uppercase">Nominee <span class="text-red-500">*</span></label>
                     <div class="flex gap-5">
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="nominee" value="yes"
                                 {{ old('nominee', $account->nominee ?? null) === 'yes' ? 'checked' : '' }}>
-                            Yes
+                           <p> Yes</p>
                         </label>
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="nominee" value="no"
                                 {{ old('nominee', $account->nominee ?? null) === 'no' || old('nominee', $account->nominee ?? null) === null ? 'checked' : '' }}>
-                            No
+                           <p> No</p>
+
                         </label>
 
                         @error('nominee')
@@ -460,21 +461,21 @@
                     <label class="font-medium block mb-4 uppercase">Payment Mode <span
                             class="text-red-500">*</span></label>
                     <div class="flex gap-5  items-center">
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="cash"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cash' || old('payment_mode', $account->payment_mode ?? '') === '' ? 'checked' : '' }}>
-                            Cash
+                           <p>  Cash</p>
                         </label>
 
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="online"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'online' ? 'checked' : '' }}>
-                            Online Tr.
+                            <p>Online Tr.</p>
                         </label>
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="cheque"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cheque' ? 'checked' : '' }}>
-                            Cheque
+                           <p> Cheque</p>
                         </label>
                     </div>
                     <!-- Cheque Fields -->
@@ -498,7 +499,7 @@
                             <label class="block text-sm font-medium text-gray-700">Cheque No.<span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_cheque_no"
-                                class="w-full border rounded-10 px-3 py-2.5 text-sm bg-white dark:bg-bg3"
+                                class="w-full border bg-secondary/5 rounded-10 px-3 py-2.5 text-sm  dark:bg-bg3"
                                 placeholder="Enter Cheque No.">
                             @error('pay1_cheque_no')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -522,7 +523,7 @@
                             <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_transfer_utr"
-                                class="w-full border rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 bg-white"
+                                class="w-full border bg-secondary/5  rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 "
                                 placeholder="Enter Transaction No.">
                         </div>
                         <div>
