@@ -364,18 +364,11 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('misaccount.updateAccountInfo');
 
     // Add Nominee
-    // Route::get('misaccount/{id}/add-nominee', [MisaccountController::class, 'addNominee'])
-    //     ->name('misaccount.addNominee');
-
-    // Route::post('misaccount/{id}/update-nominee', [MisaccountController::class, 'updateNominee'])
-    //     ->name('misaccount.updateNominee');
-
     Route::get('/mis/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('mis.accounts.nominee');
     Route::post('mis/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('mis.nominees.save');
 
 
     //edit and update branches
-
     Route::put('/misaccount/member/{misaccountId}/update-branch', [MisaccountController::class, 'updateBranch'])
         ->name('misaccount.update-branch');
 
@@ -423,6 +416,10 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::post('/rd-accounts/{rdAccount}/withdraw', [RdAccountController::class, 'storeWithdraw'])->name('rd.withdraw.store');
     Route::get('/rd-accounts/{id}/change-info', [RdAccountController::class, 'showChangeInfoForm'])->name('rd-accounts.change-info');
     Route::post('/rd-accounts/{rdAccount}/change-info', [RdAccountController::class, 'storeChangeInfo'])->name('rd.change-info.store');
+
+    // Add nominee
+    Route::get('/rd/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('rd.accounts.nominee');
+    Route::post('/accounts/{type}/{id}/save-nominee', [AccountsController::class, 'saveNominees'])->name('rd-accounts.saveNominee');
 });
 
 Route::group(['prefix' => 'deposits'], function () {

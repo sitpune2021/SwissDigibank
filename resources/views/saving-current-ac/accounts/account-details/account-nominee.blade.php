@@ -55,7 +55,7 @@
                 type="saving-account"
                 submitText="Save"
                 backText="Back"
-                :isUpdate="$hasNominee" />
+                :isUpdate="true" />
 
         </form>
     </div>
