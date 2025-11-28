@@ -341,7 +341,7 @@
                                     <td class="font-semibold px-3 py-2 uppercase">
                                         Fore Closure Charges
                                     </td>
-                                    <td class="px-3 py-2"> (static)
+                                    <td class="px-3 py-2"> {{ $ddaccount->scheme->cancellation_charges_value ?? '' }} %
                                     </td>
                                 </tr>
                             </tbody>
