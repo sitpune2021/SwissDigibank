@@ -115,6 +115,16 @@ Route::middleware('auth.user')->group(function () {
         Route::put('/promotor/{id}/address', [PromotorController::class, 'addressupdate'])->name('promotor.address.update');
         Route::get('/company/promotor/{id}/documents', [PromotorController::class, 'documentShow'])->name('promotor.document');
         Route::post('/company/promotor/{id}/documents/update', [PromotorController::class, 'documentUpdate'])->name('promoter.documentupdate');
+        // Show edit nominee page
+        Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
+            ->name('nominee.edit');
+
+        // Save updated nominee
+        Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
+            ->name('nominee.update');
+       
+
+
         Route::resource('shareholding', ShareHoldingController::class);
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
             ->name('shareholding.transfer');

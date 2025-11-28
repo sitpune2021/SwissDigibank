@@ -56,8 +56,8 @@
                                 NAME
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px] cursor-pointer" data-sortable="false">
-                            <div class="flex items-center gap-1">
+                        <th class="text-end !py-5 min-w-[100px] cursor-pointer" data-sortable="false">
+                            <div class="text-start">
                                 GENDER
                             </div>
                         </th>
@@ -94,7 +94,7 @@
                                     <p class="font-medium mb-1">{{ $promotor->first_name ?? '' }}</p>
                                 </div>
                             </td>
-                            <td class="py-5 px-6">{{ $promotor->gender ?? '' }}</td>
+                            <td class="text-start !py-5 min-w-[130px] cursor-pointer" >{{ $promotor->gender ?? '' }}</td>
                             <td class="py-2">
                                 @if (($promotor->is_senior ?? '') === 'Yes')
                                     <span

@@ -24,13 +24,17 @@
                                 USER NAME
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px]" data-sortable="false">EMAIL</th>
-                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer" data-sortable="false">
+                           <div class="flex items-center gap-1">
+                             EMAIL
+                           </div>
+                        </th>
+                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 CONTACT
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[130px] cursor-pointer">
+                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 ACTIVE
                             </div>
@@ -46,11 +50,11 @@
                 <tbody>
                     @forelse ($users as $index => $user)
                     <tr>
-                        <td class="px-6 py-4">{{ $user->fname . ' ' . $user->lname ?? 'N/A' }}</td>
-                        <td class="px-6 py-4">{{ $user->email }}</td>
+                        <td class="px-6 py-4=">{{ $user->fname . ' ' . $user->lname ?? 'N/A' }}</td>
+                        <td class="px-6 py-4  ">{{ $user->email }}</td>
                         <td class="px-6 py-4">{{ $user->mobile ?? 'N/A' }}</td>
-                        <!-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td> -->
-                        <td class="px-6 py-4">
+                     {{-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td>  --}}
+                        <td class="px-6 py-4 ">
                             @if ($user->user_active == 1)
                             <span
                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">

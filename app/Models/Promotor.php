@@ -11,6 +11,7 @@ use App\Models\PromotorKYC;
 use App\Models\PromotorNomine;
 use App\Models\Account;
 use App\Models\Member;
+use App\Models\KycDocument;
 
 class Promotor extends Model
 {
@@ -88,5 +89,9 @@ class Promotor extends Model
     public function shareholdings()
     {
         return $this->hasMany(Shareholding::class, 'promotor_id');
+    }
+    public function documents()
+    {
+        return $this->hasMany(KycDocument::class, 'promoter_id');
     }
 }

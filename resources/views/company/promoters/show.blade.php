@@ -278,15 +278,7 @@
                     <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
                 </div>
 
-                <div x-show="open" x-transition class="bg-white">
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b">
-                                <th class="px-6 py-2 font-semibold text-start">Name</th>
-                                <td class="flex items-center justify-between px-6 py-2">
-                                    <span>{{ $promoter->nominees->first()?->name }}</span>
-                                </td>
-                            </tr>
+    
 
                             <div x-show="open" x-transition class="bg-white">
                                 <table class="w-full text-sm">
@@ -598,7 +590,7 @@
 
                                 <!-- Redirect to create page -->
                                 <a href="{{ isset($promoter) ? route('minor.create', ['promotor_id' => $promoter->id, 'type' => 'promotor']) : '#' }}"
-                                    class="px-4 py-1 text-sm text-white bg-green-500 {{ isset($promoter) ? 'rounded-r hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed' }}"
+                                    class="px-4 py-1 uppercase text-sm text-white bg-green-500 {{ isset($promoter) ? 'rounded-r hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed' }}"
                                     {{ isset($promoter) ? '' : 'onclick="return false;"' }}>
                                     + Minor
                                 </a>
@@ -654,10 +646,26 @@
                             <div class="h-1 rounded-t" style="background:red;"></div>
 
                             <!-- Header -->
-                            <div class="px-4 py-3 bg-white border-b">
+                            <div class="px-4 py-3 bg-white border-b flex justify-between">
                                 <h6 class="font-medium tracking-wide text-gray-700 text-md">
                                     SHARE HOLDING DETAILS
                                 </h6>
+
+                                @php
+                                    $firstNominee = $promoter->nominees->first();
+                                @endphp
+
+                                @if ($firstNominee)
+                                    <a href="{{ route('nominee.edit', $firstNominee->id) }}"
+                                        class="text-blue-600 hover:underline">
+                                        + Nominee
+                                    </a>
+                                @else
+                                    <a href="{{ route('nominee.edit', $promoter->nominees()->create([])->id) }}"
+                                        class="text-blue-600 hover:underline">
+                                        + Nominee
+                                    </a>
+                                @endif
                             </div>
                             <!-- Table Body -->
                             <div class="px-6 py-4">
@@ -677,60 +685,51 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="mt-4 bg-green-500 border rounded shadow" x-data="{ showPromoterAccounts: false }">
-                            <div class="flex items-center justify-between px-4 py-2 text-white bg-orange-500 rounded-t">
-                                <span class="font-semibold uppercase">SHARE HOLDING NOMINEE'S INFO</span>
-                                <div class="flex gap-2 space-x-2">
-                                    <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
-                                        @click="showPromoterAccounts = !showPromoterAccounts"></i>
+                        @if ($promoter->nominees->count() > 0)
+                            <div class="mt-4 bg-green-500 border rounded shadow" x-data="{ showPromoterAccounts: false }">
+                                <div
+                                    class="flex items-center justify-between px-4 py-2 text-white bg-orange-500 rounded-t">
+                                    <span class="font-semibold uppercase">SHARE HOLDING NOMINEE'S INFO</span>
+                                    <div class="flex gap-2 space-x-2">
+                                        <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
+                                            @click="showPromoterAccounts = !showPromoterAccounts"></i>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
-                                <div class="p-4">
-                                    <table class="w-full text-sm text-left">
-                                        <thead>
-                                            <tr>
-                                                <th class="font-semibold px-4 py-2 text-start">NAME</th>
-                                                <th class="font-semibold px-4 py-2 text-start">RELATION</th>
-                                                <th class="font-semibold px-4 py-2 text-start">ADDRESS</th>
-                                                <th class="font-semibold px-4 py-2 text-start">SHARE %</th>
-                                                <th class="font-semibold px-4 py-2 text-start">ACTION</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                // Get all nominees for this nominee's promotor, or empty collection
-                                                $nomineeList = $promoter->nominees
-                                                    ? $promoter->nominees
-                                                    : collect() ?? null;
-                                            @endphp
-
-                                            @forelse ($nomineeList as $nom)
-                                                <tr class="border-b">
-                                                    <td class="px-4 py-2">{{ $nom->name }}</td>
-                                                    <td class="px-4 py-2">{{ $nom->relation }}</td>
-                                                    <td class="px-4 py-2">{{ $nom->address }}</td>
-                                                    <td class="px-4 py-2">{{ $nom->share_holding ?? '0' }}</td>
-                                                    <td class="px-4 py-2">
-                                                        <a href="{{ route('nominee.edit', $nom->id) }}"
-                                                            class="text-blue-600 hover:underline">
-                                                            <i class="fa fa-edit"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            @empty
+                                <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
+                                    <div class="p-4">
+                                        <table class="w-full text-sm text-left">
+                                            <thead>
                                                 <tr>
-                                                    <td colspan="5" class="border px-4 py-2 text-center text-gray-500">
-                                                        No nominee available.
-                                                    </td>
+                                                    <th class="font-semibold px-4 py-2 text-start">NAME</th>
+                                                    <th class="font-semibold px-4 py-2 text-start">RELATION</th>
+                                                    <th class="font-semibold px-4 py-2 text-start">ADDRESS</th>
+                                                    <th class="font-semibold px-4 py-2 text-start">SHARE %</th>
+                                                    <th class="font-semibold px-4 py-2 text-start">ACTION</th>
                                                 </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($promoter->nominees as $nom)
+                                                    <tr class="border-b">
+                                                        <td class="px-4 py-2">{{ $nom->name }}</td>
+                                                        <td class="px-4 py-2">{{ $nom->relation }}</td>
+                                                        <td class="px-4 py-2">{{ $nom->address }}</td>
+                                                        <td class="px-4 py-2">{{ $nom->share_holding ?? '0' }}</td>
+                                                        <td class="px-4 py-2">
+                                                            <a href="{{ route('nominee.edit', $nom->id) }}"
+                                                                class="text-blue-600 hover:underline">
+                                                                <i class="fa fa-edit"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
+
 
                         <!-- ADDRESS & CONTACT INFO -->
                         <div class="mt-4 border rounded shadow">
@@ -1042,15 +1041,15 @@
 
                 <!-- Modal HTML -->
                 <!-- <div id="docPreviewModal"
-                                            class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
-                                            <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
-                                                <button onclick="closePreview()"
-                                                    class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
-                                                <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
-                                                <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
-                                                </div>
-                                            </div>
-                                        </div> -->
+                                                                        class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+                                                                        <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                                                                            <button onclick="closePreview()"
+                                                                                class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                                                                            <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                                                                            <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div> -->
 
                 <!-- JS Script -->
                 <script>

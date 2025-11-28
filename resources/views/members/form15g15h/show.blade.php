@@ -12,14 +12,16 @@
         <div class="flex items-center justify-between mb-6 lg:mb-8">
             <h5 class="font-bold text-gray-800 h2 uppercase">Form 15G/ 15H</h5>
         </div>
-        <div class="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen md-4">
+        <div class="box w-full col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 ">
+         <div class="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
             <!-- Member Name -->
             <span class="text-sm font-semibold text-blue-600"></span>
 
             <!-- Icons -->
             <div class="flex gap-2">
 
-                <a href="{{ route('form15g15h.edit', $form15g15h->id) }}" class="class=" btn btn-default btn-xs
+                <a href="{{ route('form15g15h.edit', $form15g15h->id) }}" class=" btn-primary p-2 rounded-10" 
                     title="Print">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                 </a>
@@ -27,7 +29,7 @@
                     onsubmit="return confirm('Are you sure to delete Form 15G/ 15H?');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="class=" btn btn-danger btn-xs title="Delete">
+                    <button type="submit" class="  btn-error p-2 rounded-10" title="Delete">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </form>
@@ -70,13 +72,15 @@
                                 $fileUrl = asset('storage/' . $form15g15h['form_15_upload']);
                             @endphp
                             <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer"
-                                class="text-blue-600 underline"> VIEW
+                                class="text-primary underline"> VIEW
                             </a>
                         @endif
                     </td>
                 </tr>
             </tbody>
         </table>
+       </div>
+       </div>
     </div>
 
     </div>
