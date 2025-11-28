@@ -1723,4 +1723,35 @@ class DdsAccountsController extends Controller
             return back()->with('error', 'Something went wrong while updating minor.');
         }
     }
+    public function createforeClose($id)
+    {
+        // Fetch DDS Account with required relations
+        $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions', 'account'])
+            ->findOrFail($id);
+
+        // -----------------------------------------
+        // CALCULATE BALANCE AVAILABLE
+        // -----------------------------------------
+        $transactions = $ddaccount->transactions ?? collect();
+
+        $installmentReceived = $transactions->sum('amount') ?? 0;
+        $penaltyReceived     = $transactions->sum('penalty_amount') ?? 0;
+        $interestCredited    = $transactions->sum('interest_amount') ?? 0;
+        $tdsDeduction        = $ddaccount->tds_deduction ?? 0;
+
+        // Same calculation used in show()
+        $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
+
+        // -----------------------------------------
+        // RETURN FORE CLOSE VIEW
+        // -----------------------------------------
+        return view('fd_account.ddsaccounts.fore-close', [
+            'ddaccount'         => $ddaccount,
+            'installmentReceived' => $installmentReceived,
+            'penaltyReceived'     => $penaltyReceived,
+            'interestCredited'    => $interestCredited,
+            'tdsDeduction'        => $tdsDeduction,
+            'balanceAvailable'    => $balanceAvailable,
+        ]);
+    }
 }

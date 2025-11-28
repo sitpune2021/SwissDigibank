@@ -153,7 +153,7 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('dd.accounts.nominee', ['type'=>'dd','id'=>base64_encode($ddaccount->id)]) }}"
+                            <a href="{{ route('dd.accounts.nominee', ['type' => 'dd', 'id' => base64_encode($ddaccount->id)]) }}"
                                 class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">ADD NOMINEE</a>
                             </a>
                         </li>
@@ -164,7 +164,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
+                            <a href="{{ route('dds-accounts.fore-close', $ddaccount->id) }}"
+                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">
                                 FORE CLOSE DD
                             </a>
                         </li>
@@ -208,7 +209,7 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="text-end p-3">
-                       
+
                     </div>
                     <table class="min-w-full text-sm text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
@@ -460,7 +461,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                                                                                                            </labels> -->
+                                                                                                                                                                    </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->
