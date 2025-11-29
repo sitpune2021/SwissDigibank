@@ -276,9 +276,10 @@
                             <input type="number" id="security_amount" name="security_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0" value="{{ old('security_amount', $application->security_amount ?? 0) }}">
+                                <x-number-to-word for="security_amount"/> 
                                 @error('security_amount')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror                       
+                            @enderror                                                 
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
@@ -309,24 +310,12 @@
                             @enderror
                             </div>
                         </div>
-
-                        <!-- <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Tenure <span id="tenureLabel" class="text-black uppercase">( MONTHS )</span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="tenure_value" name="tenure_value"
-                                value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                @error('tenure_value')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                        </div> -->
+                        
                         <!--  Tenure ( MONTHS ) -->
                         <div class="w-full mt-4 ">
                             <div class="mb-2">
-                                <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
-                                    Tenure ( MONTHS )                           
+                                <label class="font-medium text-gray-700 uppercase">
+                                    Tenure <span id="tenureLabel">( MONTHS )</span>                           
                                 </label>
                                 <span class="text-error">*</span>
                             </div>
@@ -816,7 +805,7 @@
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                 <button type="button" id="calculateBtn"
                     class="btn-primary ruppercase justify-center">
-                    Calculate
+                    {{ isset($application) ? 'Update Application' : 'Calculate' }}
                 </button>
                 <button class="btn-outline uppercase justify-center" type="reset">
                 <a href="{{route('loanagainst.applications.index')}}"> BAck</a>
@@ -1041,7 +1030,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
+<!-- Cibil score -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
     const cibilBody = document.getElementById("cibilBody");

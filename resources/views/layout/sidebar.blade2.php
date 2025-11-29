@@ -64,33 +64,33 @@ $roleName = optional($user->role)->name; // safely get role name
                         <hr style="margin: 10px 0; border-color: #ccc;">
                         @endif
 
-                        <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}   ">
+                        <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}">
                             @if ($item->submenus->isNotEmpty())
-                            <button style="padding: 5px 13px;"
-                                class="menu-btn group bg-n0 dark:!border-n500  dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
+                            <button
+                                class="menu-btn group bg-n0 dark:!border-n500 dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
                                 type="button"
                                 onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
                                             this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
                                             this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
                                 <span class="flex items-center justify-center gap-2">
-                                    <span class="menu-icon" style="font-size: 14px !important;">
+                                    <span class="menu-icon">
                                         <i class="{{ $item->icon }}"></i>
                                     </span>
-                                    <span class="menu-title font-medium  text-start " style="font-size: 14px !important;">{{ $item->title }}</span>
+                                    <span class="menu-title font-medium">{{ $item->title }}</span>
                                 </span>
-                                <span class="plus-minus" style="font-size: 14px !important;">
-                                    <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}" style="font-size: 14px !important;"></i>
-                                    <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}" style="font-size: 14px !important;"  ></i>
+                                <span class="plus-minus">
+                                    <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"></i>
+                                    <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"></i>
                                 </span>
                             </button>
 
                             <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
                                 @foreach ($item->submenus as $sub)
-                                <li >
+                                <li>
                                     <a href="{{ route($sub->route) }}"
-                                        class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}"  style="padding: 3px 10px;">
+                                        class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}">
                                         <i class="las la-minus text-xl"></i>
-                                        <span style="font-size: 14px !important;">{{ $sub->title }}</span>
+                                        <span>{{ $sub->title }}</span>
                                     </a>
                                 </li>
                                 @endforeach
@@ -98,16 +98,11 @@ $roleName = optional($user->role)->name; // safely get role name
                             @else
                             <a href="{{ route($item?->route) }}"
                                 class="menu-btn border-n30 bg-n0 dark:!border-n500 dark:bg-bg4 flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
-                                <span class=" flex justify-start gap-2 ">
-                                    <span class="menu-icon ">
+                                <span class="flex items-center justify-center gap-2">
+                                    <span class="menu-icon">
                                         <i class="{{ $item->icon }}"></i>
                                     </span>
-                                    <span class="menu-title font-medium" style="font-size: 14px !important ;">{{ $item->title }}</span>
-                                    
-                                </span>
-                                 <span class="plus-minus" style="font-size: 14px !important;">
-                                    <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}" style="font-size: 14px !important;"></i>
-                                    <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}" style="font-size: 14px !important;"  ></i>
+                                    <span class="menu-title font-medium">{{ $item->title }}</span>
                                 </span>
                             </a>
                             @endif

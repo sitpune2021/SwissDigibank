@@ -683,7 +683,9 @@ class LoanAgainstController extends Controller
             * 3. If security_type = dd_to_self → check dds_accounts table (DD_OF_SELF)
             * If the required account doesn’t exist, throw a validation error.
             */
-            if ($request->filled('securety_type')) {
+           
+            if ($request->filled('securety_type')) 
+            {
                 $scheme = DB::table('loan_against_schemes')->where('id', $request->scheme_id)->first();
 
                 if (!$scheme) {
@@ -697,7 +699,7 @@ class LoanAgainstController extends Controller
                 // 🔸 FD check
                 if ($request->securety_type === 'fd_to_self' && $schemeSecurityType === 'FD_OF_SELF') {
                     $exists = DB::table('fd_accounts')->where('member_id', $request->member_id)->exists();
-                    if (! $exists) {
+                    if (!$exists) {
                         throw ValidationException::withMessages([
                             'member_id' => ['This customer does not have any FD account for the selected scheme.']
                         ]);
@@ -707,7 +709,7 @@ class LoanAgainstController extends Controller
                 // 🔸 RD check
                 if ($request->securety_type === 'rd_to_self' && $schemeSecurityType === 'RD_OF_SELF') {
                     $exists = DB::table('rd_accounts')->where('member_id', $request->member_id)->exists();
-                    if (! $exists) {
+                    if (!$exists) {
                         throw ValidationException::withMessages([
                             'member_id' => ['This customer does not have any RD account for the selected scheme.']
                         ]);
@@ -717,13 +719,14 @@ class LoanAgainstController extends Controller
                 // 🔸 DD check
                 if ($request->securety_type === 'dd_to_self' && $schemeSecurityType === 'DD_OF_SELF') {
                     $exists = DB::table('dds_accounts')->where('member_id', $request->member_id)->exists();
-                    if (! $exists) {
+                    if (!$exists) {
                         throw ValidationException::withMessages([
                             'member_id' => ['This customer does not have any DD account for the selected scheme.']
                         ]);
                     }
                 }
             }
+
             // ---------- End block ----------
 
 

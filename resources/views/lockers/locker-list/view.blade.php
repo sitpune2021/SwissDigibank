@@ -125,7 +125,7 @@
                             <thead class="bg-gray-100 dark:bg-gray-800">
                                 <tr class="border-b">
                                     <th class="px-4 py-2 text-start text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase">
-                                        Member Name
+                                        Customer Name
                                     </th>
                                     <th class="px-4 py-2 text-start text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase">
                                         S/Ac. No

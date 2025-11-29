@@ -139,53 +139,37 @@
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1 Capitalize">
-                                    <span class="text-primary">
+                                    <a href="{{ url('members/member/' . $application->member_id) }}" 
+                                    class="text-blue-600 hover:underline">
+                                    
                                         {{ $application->member->member_info_first_name ?? 'N/A' }}
-                                    </span>
+                                    
+                                    </a>
                                 </div>
                             </td>
 
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-
-                                    @switch($application->model_type)
-                                        @case('loan')
-                                            Gold Loan
-                                            @break
-                                        @case('mortgage')
-                                            Mortgage Loan
-                                            @break
-                                        @case('loan_against')
-                                            Loan Against
-                                            @break
-                                        @case('business_loan')
-                                            Business Loan
-                                            @break
-                                        @case('cc_od')
-                                            CC / OD Loan
-                                            @break
-                                        @case('daily_weekly')
-                                            Daily / Weekly Loan
-                                            @break
-                                             @case('personal')
-                                            Personal Loan
-                                            @break
-                                             @case('vehical')
-                                            Vehical Loan
-                                            @break
-                                        @default
-                                            Unknown Type
-                                    @endswitch
-
-                                </div>
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                <a href="{{ route($routeMap[$application->model_type], $application->id) }}"
+                                class="
+                                        @if($application->model_type === 'loan') text-blue-600
+                                        @elseif($application->model_type === 'mortgage') text-green-600
+                                        @elseif($application->model_type === 'loan_against') text-orange-600
+                                        @elseif($application->model_type === 'business_loan') text-purple-600
+                                        @elseif($application->model_type === 'cc_od') text-yellow-600
+                                        @elseif($application->model_type === 'daily_weekly') text-green-600
+                                        @elseif($application->model_type === 'personal') text-green-600
+                                        @elseif($application->model_type === 'vehical') text-green-600
+                                        @endif
+                                        hover:underline cursor-pointer">
+                                    {{ $types[$application->model_type] ?? 'Unknown' }}
+                                </a>
                             </td>
 
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center  gap-1">
-                                    <span class="text-primary">
-                                        {{ $application->id }}
-                                    </span>
-                                </div>
+                           <td class="text-start !py-5 px-6 min-w-[100px]">
+                                <a href="{{ route($routeMap[$application->model_type], $application->id) }}"
+                                class="text-blue-600 hover:underline cursor-pointer">
+                                    {{ $application->id }}
+                                </a>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">                   
@@ -213,11 +197,11 @@
                                     @if($application->model_type == 'daily_weekly')
                                         <input type="number"
                                             value="{{ $application->loan_amount }}"
-                                            class="border py-2 bg-secondary/5 rounded-10 px-3">
+                                            class="border py-2 bg-secondary/5 rounded-10 px-3" readonly>
                                     @else
                                         <input type="number"
                                             value="{{ $application->approved_loan_amount }}"
-                                            class="border py-2 bg-secondary/5 rounded-10 px-3">
+                                            class="py-2 rounded-10 px-3" readonly>
                                     @endif
                                 </div>
                             </td>

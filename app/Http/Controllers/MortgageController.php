@@ -1344,5 +1344,10 @@ class MortgageController extends Controller
         
     }
 
+    public function audit(Request $request)
+    { 
+        return view('mortgage.applications.view-buttons.audit-trail');
+    }
+
 
 }
