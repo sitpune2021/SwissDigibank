@@ -109,7 +109,7 @@
                             </thead>
 
                             <tbody>
-                                @foreach ($lockers as $locker)
+                                @foreach ($lockers as $key => $locker)
                                     <tr class="border-b dark:border-bg3">
 
                                         {{-- Locker No --}}
@@ -163,13 +163,23 @@
                                         <td class="px-6 py-5 text-sm">
                                             <div class="relative">
                                                 <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+
                                                 <ul class="horiz-option popover-content">
-                                                    <li><a href="{{ url('locker/locker-list/view/'.$locker->id) }}" class="single-option uppercase">View</a></li>
+                                                    <li>
+                                                        <a href="{{ route('locker.member-locker.view', ['locker_id' => $locker->id, 'index' => $key]) }}">
+                                                            View
+                                                        </a>
+                                                    </li>
 
                                                     @if ($locker->is_assigned == 'Yes')
-                                                        <li><a href="{{ route('lockers.locker-list.release-locker', $locker->id) }}" class="single-option uppercase">Release</a></li>
+                                                        <li>
+                                                            <a href="{{ route('lockers.locker-list.release-locker', $locker->id) }}" class="single-option uppercase">
+                                                                Release
+                                                            </a>
+                                                        </li>
                                                     @endif
                                                 </ul>
+
                                             </div>
                                         </td>
                                     </tr>

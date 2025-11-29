@@ -111,50 +111,47 @@
             <div class="tab-content p-4">
                 <!-- Tab 1 -->
                 <div id="tab1" class="tab-pane block">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5">
-                                    <th class="px-6 py-5 text-start">S. NO.</th>
-                                    <th class="px-6 py-5 text-start">RANK / MONTH</th>
+                    <div class="overflow-x-auto rounded-lg shadow border border-gray-300">
+                        <table class="w-full border-collapse text-sm">
+                            <thead class="bg-secondary/5 sticky top-0 z-10 border-b border-gray-300">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-semibold border-r border-gray-300">S. NO.</th>
+                                    <th class="px-6 py-4 text-left font-semibold border-r border-gray-300">RANK / MONTH</th>
 
                                     @for($m=1; $m <= $chart->tenure_months; $m++)
-                                        <th class="px-6 py-5 text-start">{{ $m }} M</th>
+                                        <th class="px-6 py-4 text-left font-semibold border-r border-gray-300">{{ $m }} M</th>
                                     @endfor
                                 </tr>
                             </thead>
-
                             <tbody>
 
                                 @php
                                     $months = $chart->tenure_months;
                                     $commissionSymbol = $chart->commission_type === 'inr' ? '₹' : '%';
-
-                                    // Auto TOTAL calculation array
                                     $autoTotals = array_fill(1, $months, 0);
                                 @endphp
-
 
                                 {{-- RANK ROWS --}}
                                 @foreach($rankData as $rankId => $rankName)
 
                                     @php
-                                        $rankEntry = $rankValues[$rankName][0] ?? [];  // month wise values
+                                        $rankEntry = $rankValues[$rankName][0] ?? [];
                                     @endphp
 
-                                    <tr class="border-b">
-                                        <td class="text-start !py-5 px-6">{{ $rankId }}</td>
+                                    <tr class="hover:bg-gray-50 transition border-b border-gray-200">
+                                        <td class="px-6 py-4 border-r border-gray-200">{{ $rankId }}</td>
 
-                                        <td class="text-start !py-5 px-6 uppercase">{{ $rankName }}</td>
+                                        <td class="px-6 py-4 border-r border-gray-200 uppercase font-medium text-gray-700">
+                                            {{ $rankName }}
+                                        </td>
 
-                                        {{-- Month values --}}
                                         @for($m = 1; $m <= $months; $m++)
                                             @php
                                                 $value = isset($rankEntry[$m]) ? (float)$rankEntry[$m] : 0;
                                                 $autoTotals[$m] += $value;
                                             @endphp
 
-                                            <td class="text-start !py-5 px-6">
+                                            <td class="px-6 py-4 border-r border-gray-200 text-gray-700">
                                                 {{ $rankEntry[$m] ?? '' }}
                                             </td>
                                         @endfor
@@ -163,12 +160,12 @@
                                 @endforeach
 
                                 {{-- TOTAL ROW --}}
-                                <tr class="border-b bg-gray-100 font-semibold">
-                                    <td class="text-start !py-5 px-6">#</td>
-                                    <td class="text-start !py-5 px-6 uppercase">TOTAL</td>
+                                <tr class="bg-gray-100 font-semibold border-t border-gray-300">
+                                    <td class="px-6 py-4 border-r border-gray-300">#</td>
+                                    <td class="px-6 py-4 border-r border-gray-300 uppercase">TOTAL</td>
 
                                     @for($m = 1; $m <= $months; $m++)
-                                        <td class="text-start !py-5 px-6">
+                                        <td class="px-6 py-4 border-r border-gray-300">
                                             {{ $autoTotals[$m] }} {!! $commissionSymbol !!}
                                         </td>
                                     @endfor
@@ -176,27 +173,26 @@
 
                                 {{-- COLLECTION CHARGE ROW --}}
                                 @if(isset($rankValues['Collection Charge']))
+
                                     @php
                                         $collection = $rankValues['Collection Charge'][0] ?? [];
                                     @endphp
 
-                                    <tr class="border-b bg-yellow-50 font-semibold">
-                                        <td class="text-start !py-5 px-6">#</td>
-                                        <td class="text-start !py-5 px-6 uppercase">COLLECTION CHARGE</td>
+                                    <tr class="bg-yellow-50 font-semibold border-t border-gray-300">
+                                        <td class="px-6 py-4 border-r border-gray-300">#</td>
+                                        <td class="px-6 py-4 border-r border-gray-300 uppercase">COLLECTION CHARGE</td>
 
                                         @for($m = 1; $m <= $months; $m++)
-                                            <td class="text-start !py-5 px-6">
+                                            <td class="px-6 py-4 border-r border-gray-300">
                                                 {{ $collection[$m] ?? 0 }} {{ $commissionSymbol }}
                                             </td>
                                         @endfor
                                     </tr>
+
                                 @endif
-
                             </tbody>
-
                         </table>
                     </div>
-
                 </div>
 
             </div>
