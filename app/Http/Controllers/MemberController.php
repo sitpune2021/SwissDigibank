@@ -347,17 +347,17 @@ class MemberController extends Controller
 
     public function show(string $id)
     {
-        $member = Member::findOrFail($id);
-        $loggedInEmail  = Auth::user()->email;
-        $loggedInMobile = Auth::user()->mobile;
+        // $member = Member::findOrFail($id);
+        // $loggedInEmail  = Auth::user()->email;
+        // $loggedInMobile = Auth::user()->mobile;
 
-        $loggedInMember = Member::where('member_info_email', $loggedInEmail)
-            ->orWhere('member_info_mobile_no', $loggedInMobile)
-            ->first();
+        // $loggedInMember = Member::where('member_info_email', $loggedInEmail)
+        //     ->orWhere('member_info_mobile_no', $loggedInMobile)
+        //     ->first();
 
-        if ($loggedInMember && $loggedInMember->id != $id) {
-            abort(403, 'Unauthorized access');
-        }
+        // if ($loggedInMember && $loggedInMember->id != $id) {
+        //     abort(403, 'Unauthorized access');
+        // }
         try {
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id'),
@@ -1380,7 +1380,7 @@ class MemberController extends Controller
         foreach ($dueCharges as $charge) {
             $charge->total_amount = $charge->charges * (1 + $charge->gst_rate / 100);
         }
-        $gstRate = 18.0; // ✅ Define GST Rate
+        $gstRate = 18.0; 
 
         $totalChargesDue = $dueCharges->sum('charges');
 
