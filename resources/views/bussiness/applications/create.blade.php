@@ -281,8 +281,8 @@
                         <!--  Tenure ( MONTHS ) -->
                         <div class="w-full mt-4 ">
                             <div class="mb-2">
-                                <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
-                                    Tenure ( MONTHS )                           
+                                <label class="font-medium text-gray-700 uppercase">
+                                    Tenure <span id="tenureLabel">( MONTHS )</span>                          
                                 </label>
                                 <span class="text-error">*</span>
                             </div>

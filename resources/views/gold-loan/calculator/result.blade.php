@@ -3,7 +3,7 @@
 <div class="p-6 bg-white shadow rounded-lg">
   <h2 class="text-xl font-bold mb-4 text-gray-700"><center>Calculator Result</center></h2>
 
-  <div class="overflow-x-auto">  
+  <div class="overflow-x-auto box">  
     <table class="w-full text-sm border border-gray-400 rounded-lg">
       <tbody>
         <tr>
@@ -40,17 +40,22 @@
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
         </tr>
+        
         <tr>
+          @if ($interest_as_first)
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
           <td class="py-2 px-3 border border-gray-300">
             {{ $interest_as_first }}
           </td>
-
+        @endif
+        @if ($interest_as_emi)
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
           <td class="py-2 px-3 border border-gray-300">
             {{ $interest_as_emi }}
           </td>
+          @endif
         </tr>
+        
         @if($isReducingWithRatio)
           <tr>
             <td colspan="4" class="py-3 px-4 border border-gray-300 bg-gray-50">
@@ -81,7 +86,7 @@
 </div>
 
   <h3 class="text-lg font-semibold mt-6 mb-2"><center>EMI CHART</center></h3>
-  <div class="overflow-auto">
+  <div class="overflow-auto box">
 
     <table class="w-full table-auto text-sm border border-gray-300 border-collapse">
 
@@ -157,20 +162,28 @@
          
         <tr class="bg-blue-600 text-white font-bold border border-gray-300">
             <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
+
             @if(strtolower($interest_type) === 'no emi')
-              <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
-              <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
-              <td class="p-2 text-center border border-gray-300">-</td>
-              <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
-              <td class="p-2 text-center border border-gray-300">-</td>
+                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+                <td class="p-2 text-center border border-gray-300">-</td>
+                <td class="p-2 text-right border border-gray-300">₹ 0.00</td>
+                <td class="p-2 text-center border border-gray-300">-</td>
+
             @else
-              <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td>
-              <td class="p-2 text-right border border-gray-300">{{ $total_interest > 0 ? '₹ '.number_format($total_interest,2) : '' }}</td>
-              <td class="p-2 text-center border border-gray-300">-</td>
-              <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
-              <td class="p-2 text-center border border-gray-300">-</td>
-        </tr>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($totalPrincipal, 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_interest, 2) }}</td>
+
+                {{-- ⭐ NEW CHARGES TOTAL --}}
+                <td class="p-2 text-right border border-gray-300">
+                    ₹ {{ number_format($totalChargesPerEmi, 2) }}
+                </td>
+
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($totalEmi, 2) }}</td>
+                <td class="p-2 text-center border border-gray-300">-</td>
             @endif
+        </tr>
+
     </table>
 
   </div>

@@ -86,9 +86,9 @@
 
                     {{-- Member --}}
                     <div class="mb-4">
-                        <label class="block mb-1 uppercase">Member <span class="text-red-500">*</span></label>
+                        <label class="block mb-1 uppercase">CUSTOMER <span class="text-red-500">*</span></label>
                         <select name="member_id" id="memberSelect" class="w-full rounded px-3 py-2 border">
-                            <option value="">Select Member</option>
+                            <option value="">Select Customer</option>
                                 @foreach($members as $m)
                                     <option value="{{ $m->id }}"
                                         {{ old('member_id') == $m->id ? 'selected' : '' }}>

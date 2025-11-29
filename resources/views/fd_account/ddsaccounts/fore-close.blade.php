@@ -79,7 +79,7 @@
                             <input type="number" id=""
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0.0">
-                            <x-number-to-word for="" />
+                            {{-- <x-number-to-word for="" /> --}}
 
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-2">
@@ -91,7 +91,7 @@
                             <input type="number" id=""
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0.0">
-                            <x-number-to-word for="" />
+                            {{-- <x-number-to-word for="" /> --}}
 
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-2">
@@ -114,13 +114,14 @@
 
                                         <td class="px-2 py-2 ">
                                             <input type="number" name="" id="" placeholder="0"
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border rounded-10 text-sm md:text-base" />
                                         </td>
 
-
                                         <td class="px-2 py-2 ">
-                                            <input type="number" name="" id="" placeholder="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number"
+                                                value="{{ $ddaccount->transactions->last()->gst_rate ?? 0 }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border rounded-10 text-sm md:text-base" />
+
                                         </td>
 
 
@@ -156,13 +157,16 @@
 
                                         <td class="px-2 py-2 ">
                                             <input type="number" name="" id="" placeholder="0"
+                                                value="{{ $balanceAvailable ?? 0.0 }}"
                                                 class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                         </td>
 
 
                                         <td class="px-2 py-2 ">
-                                            <input type="number" name="" id="" placeholder="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                            <input type="number"
+                                                value="{{ $ddaccount->transactions->last()->gst_rate ?? 0 }}" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border rounded-10 text-sm md:text-base" />
+
                                         </td>
 
 
@@ -189,7 +193,7 @@
                             <input type="number" id=""
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0.0" readonly>
-                            <x-number-to-word for="" />
+                            {{-- <x-number-to-word for="" /> --}}
 
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-2">
@@ -214,7 +218,7 @@
                             <input type="number" id="" readonly
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0.0">
-                            <x-number-to-word for="" />
+                            {{-- <x-number-to-word for="" /> --}}
 
                         </div>
 
@@ -335,13 +339,13 @@
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="font-semibold px-3 py-2 uppercase">Penal Charges </td>
-                                    <td class="px-3 py-2">{{ $ddaccount->scheme->penal_charges ?? '-' }} %</td>
+                                    <td class="px-3 py-2">{{ $ddaccount->scheme->penal_charges ?? '' }}</td>
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="font-semibold px-3 py-2 uppercase">
                                         Fore Closure Charges
                                     </td>
-                                    <td class="px-3 py-2"> (static)
+                                    <td class="px-3 py-2"> {{ $ddaccount->scheme->cancellation_charges_value ?? 'NA' }}
                                     </td>
                                 </tr>
                             </tbody>

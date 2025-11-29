@@ -202,8 +202,7 @@
                 </div>
 
                 <div>
-                    <!-- <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['branchesCount'] }}</h4> -->
-                     <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['goldloan'] }}</h4>                     
                 </div>
             </div>
         </div>
@@ -227,10 +226,11 @@
                 </div>
 
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['mortgageloan'] }}</h4>
                 </div>
             </div>
         </div>
+
         <!-- LOAN AGAINST DEPOSITE  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -248,10 +248,11 @@
                     <i class="text-3xl las xl:text-5xl la-file-invoice-dollar"></i>
                 </div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['loanagainst'] }}</h4>
                 </div>
             </div>
         </div>
+
         <!-- BUSINESS LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -269,10 +270,11 @@
                     <i class="text-3xl las xl:text-5xl la-briefcase"></i>
                 </div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['businessloan'] }}</h4>
                 </div>
             </div>
         </div>
+
          <!-- CC / OD LIMIT LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -290,10 +292,11 @@
                     <i class="text-3xl las xl:text-5xl la-sync"></i>
                 </div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['ccodloan'] }}</h4>
                 </div>
             </div>
         </div>
+
         <!-- DAILY WEEKLY LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -311,10 +314,11 @@
                     <i class="text-3xl las xl:text-5xl la-calendar"></i>
                 </div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['dailyweeklyloan'] }}</h4>
                 </div>
             </div>
         </div>
+
         <!-- PERSONAL LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -332,10 +336,11 @@
                     <i class="text-3xl las xl:text-5xl la-user"></i>
                 </div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['personalloan'] }}</h4>
                 </div>
             </div>
         </div>
+
         <!-- VEHICAL LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -353,7 +358,7 @@
                     <i class="text-3xl las xl:text-5xl la-car"></i>
                 </div>
                 <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['vehicalloan'] }}</h4>
                 </div>
             </div>
         </div>

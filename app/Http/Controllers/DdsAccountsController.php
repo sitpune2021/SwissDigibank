@@ -112,7 +112,6 @@ class DdsAccountsController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         Log::info('🔹 DdsAccountsController@store called');
         Log::info('Request data:', $request->all());
         if ($request->branch_id === 'null' || $request->branch_id === '') {
@@ -125,7 +124,6 @@ class DdsAccountsController extends Controller
             'scheme_id' => 'required|integer|exists:rdschemes,id',
             'open_date' => 'required|date',
             'amount' => 'required|numeric',
-            'nominee' => 'required|in:yes,no',
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
             'dd_amount' => 'required|numeric',
             'remarks' => 'nullable|string',
@@ -196,7 +194,7 @@ class DdsAccountsController extends Controller
             $ddsAccount->scheme_id = $request->scheme_id;
             $ddsAccount->dd_amount = $request->dd_amount;
             $ddsAccount->open_date = $request->open_date;
-            $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
+            // $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
             $ddsAccount->account_type = 'single';
             $ddsAccount->remarks = $request->remarks;
             $ddsAccount->tds_deduction = 0;
@@ -236,8 +234,9 @@ class DdsAccountsController extends Controller
             $transaction = new DdTransaction();
             $transaction->dds_account_id = $ddsAccount->id;
             $transaction->transaction_date = now()->format('Y-m-d');
-            $transaction->balance_available = $request->amount;
             $transaction->account_id = null;
+            $transaction->amount           = $request->amount;
+            $transaction->balance_available = $request->amount;
             $transaction->pay_mode = $request->pay_mode;
             $transaction->save();
 
@@ -252,10 +251,10 @@ class DdsAccountsController extends Controller
                 foreach ($request->nominee_name as $key => $name) {
                     if (!empty($name)) {
                         AccountNominee::create([
-                            'account_id' => $ddsAccount->id,
-                            'nominee_name' => $name,
+                            'dds_account_id'   => $ddsAccount->id, // FIXED HERE
+                            'nominee_name'     => $name,
                             'nominee_relation' => $request->nominee_relation[$key] ?? null,
-                            'nominee_address' => $request->nominee_address[$key] ?? null,
+                            'nominee_address'  => $request->nominee_address[$key] ?? null,
                             'share_percentage' => $share,
                         ]);
                     }
@@ -263,6 +262,7 @@ class DdsAccountsController extends Controller
 
                 Log::info('👥 Nominees added', ['total_nominees' => $totalNominees]);
             }
+
 
             return redirect()->route('dds-accounts.index')
                 ->with('success', 'Please approve status!.');
@@ -1340,222 +1340,115 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
-    // public function storeCreditInterest(Request $request, $id)
-    // {
-    //     Log::info("DDS Interest Transaction Validation Started", [
-    //         'dds_account_id' => $id,
-    //         'request_data' => $request->all(),
-    //     ]);
-
-    //     $request->validate([
-    //         'transaction_date' => 'required|date',
-    //         'transaction_type' => 'required|in:credit,reverse',
-    //         'interest_amount'  => 'required|numeric|min:1',
-    //         'remarks'          => 'nullable|string|max:255',
-    //     ]);
-
-    //     $ddaccount = DdsAccount::findOrFail($id);
-
-    //     DB::beginTransaction();
-
-    //     try {
-    //         // Current balance
-    //         $oldBalance = $ddaccount->balance ?? 0;
-
-    //         // Determine addition or subtraction
-    //         $interestAmount = $request->transaction_type === 'credit'
-    //             ? $request->interest_amount
-    //             : -$request->interest_amount;
-
-    //         // New balance
-    //         $newBalance = $oldBalance + $interestAmount;
-
-    //         Log::info("DDS Interest Calculation", [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'transaction_type' => $request->transaction_type,
-    //             'old_balance' => $oldBalance,
-    //             'interest_amount' => $interestAmount,
-    //             'new_balance' => $newBalance,
-    //         ]);
-    //         $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
-
-    //         // Save transaction
-    //         $transaction = DdTransaction::create([
-    //             'dds_account_id'     => $ddaccount->id, // <-- correct column name
-    //             'transaction_date'  => $transactionDate,
-    //             'transaction_type'  => $request->transaction_type,
-    //             'interest_amount'   => $interestAmount,
-    //             'balance_available' => $newBalance,
-    //             'remarks'           => $request->remarks,
-    //             'amount'             => $request->interest_amount, // <-- Add this
-
-    //         ]);
-
-    //         Log::info("DDS Interest Transaction Saved", [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'transaction_id' => $transaction->id,
-    //             'transaction_data' => $transaction->toArray(),
-    //         ]);
-
-    //         // Update account balance
-    //         $ddaccount->update(['balance' => $newBalance]);
-
-    //         Log::info("DDS Account Balance Updated", [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'old_balance' => $oldBalance,
-    //             'new_balance' => $newBalance,
-    //         ]);
-
-    //         DB::commit();
-
-    //         Log::info("DDS Interest Transaction Completed", [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'transaction_id' => $transaction->id,
-    //         ]);
-
-    //         return redirect()->route('ddsaccounts.show', $ddaccount->id)
-    //             ->with('success', 'Interest transaction updated successfully.');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-
-    //         Log::error("DDS Interest Transaction FAILED", [
-    //             'dds_account_id' => $id,
-    //             'error_message' => $e->getMessage(),
-    //             'line' => $e->getLine(),
-    //             'file' => $e->getFile(),
-    //         ]);
-
-    //         return back()->with('error', 'Something went wrong. Try again.');
-    //     }
-    // }
-    // public function storeCreditInterest(Request $request, $id)
-    // {
-    //     Log::info("DDS Interest Transaction Validation Started", [
-    //         'dds_account_id' => $id,
-    //         'request_data' => $request->all(),
-    //     ]);
-
-    //     $request->validate([
-    //         'transaction_date' => 'required|date',
-    //         'transaction_type' => 'required|in:credit,reverse',
-    //         'interest_amount'  => 'required|numeric|min:1',
-    //         'remarks'          => 'nullable|string|max:255',
-    //     ]);
-
-    //     $ddaccount = DdsAccount::findOrFail($id);
-
-    //     DB::beginTransaction();
-
-    //     try {
-    //         $oldBalance = $ddaccount->balance ?? 0;
-    //         $interestAmount = $request->interest_amount;
-
-    //         // Credit or reverse logic
-    //         if ($request->transaction_type === 'credit') {
-    //             $balanceAvailable = $oldBalance - $interestAmount; // deduct from balance
-    //             $amountReceived = $oldBalance + $interestAmount;   // total received
-    //             $interestAmountToStore = -$interestAmount;         // store negative
-    //         } else { // reverse
-    //             $balanceAvailable = $oldBalance + $interestAmount; // add to balance
-    //             $amountReceived = $oldBalance + $interestAmount;   // total received
-    //             $interestAmountToStore = $interestAmount;          // store positive
-    //         }
-
-    //         $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
-    //             ->format('Y-m-d');
-
-    //         $transaction = DdTransaction::create([
-    //             'dds_account_id'     => $ddaccount->id,
-    //             'transaction_date'   => $transactionDate,
-    //             'transaction_type'   => $request->transaction_type,
-    //             'amount'             => $amountReceived,        // Amount Received
-    //             'interest_amount'    => $interestAmountToStore, // stored interest
-    //             'balance_available'  => $balanceAvailable,     // balance after deduction/add
-    //             'remarks'            => $request->remarks,
-    //         ]);
-
-    //         // Update account balance
-    //         $ddaccount->update(['balance' => $balanceAvailable]);
-
-    //         DB::commit();
-
-    //         return redirect()->route('ddsaccounts.show', $ddaccount->id)
-    //             ->with('success', 'Interest transaction updated successfully.');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::error("DDS Interest Transaction FAILED", [
-    //             'dds_account_id' => $id,
-    //             'error_message' => $e->getMessage(),
-    //             'line' => $e->getLine(),
-    //             'file' => $e->getFile(),
-    //         ]);
-
-    //         return back()->with('error', 'Something went wrong. Try again.');
-    //     }
-    // }
     public function storeCreditInterest(Request $request, $id)
     {
-        Log::info("DDS Interest Transaction Validation Started", [
+        Log::info("DDS Interest Transaction Start", [
             'dds_account_id' => $id,
-            'request_data' => $request->all(),
+            'data' => $request->all(),
         ]);
 
         $request->validate([
-            'transaction_date' => 'required|date',
+            'transaction_date' => 'required|date_format:d-m-Y',
             'transaction_type' => 'required|in:credit,reverse',
             'interest_amount'  => 'required|numeric|min:1',
-            'remarks'          => 'nullable|string|max:255',
         ]);
 
         $ddaccount = DdsAccount::findOrFail($id);
 
+        // Fix incorrect MySQL date (d-m-Y → Y-m-d)
+        $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+            ->format('Y-m-d');
+
         DB::beginTransaction();
 
         try {
+
             $oldBalance = $ddaccount->balance ?? 0;
-            $interestAmount = $request->interest_amount;
 
-            // Opposite logic
-            if ($request->transaction_type === 'credit') {
-                $balanceAvailable = $oldBalance + $interestAmount; // add to balance
-                $amountReceived = $oldBalance + $interestAmount;   // total received
-                $interestAmountToStore = $interestAmount;          // store positive
-            } else { // reverse
-                $balanceAvailable = $oldBalance - $interestAmount; // deduct from balance
-                $amountReceived = $oldBalance + $interestAmount;   // total received
-                $interestAmountToStore = -$interestAmount;         // store negative
-            }
+            Log::info("Old Balance", ['balance' => $oldBalance]);
 
-            $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
-                ->format('Y-m-d');
+            $oldAmountReceived = DdTransaction::where('dds_account_id', $ddaccount->id)
+                ->where('type', 'installment')
+                ->sum('amount');
 
-            $transaction = DdTransaction::create([
-                'dds_account_id'     => $ddaccount->id,
-                'transaction_date'   => $transactionDate,
-                'transaction_type'   => $request->transaction_type,
-                'amount'             => $amountReceived,        // Amount Received
-                'interest_amount'    => $interestAmountToStore, // stored interest
-                'balance_available'  => $balanceAvailable,     // updated balance
-                'remarks'            => $request->remarks,
+            Log::info("Old Amount Received", [
+                'amount_received' => $oldAmountReceived
             ]);
 
-            // Update account balance
-            $ddaccount->update(['balance' => $balanceAvailable]);
+            $interest = $request->interest_amount;
+
+            // DEFAULT VALUES
+            $amountReceived = $oldAmountReceived;
+            $balanceAvailable = $oldBalance;
+
+            if ($request->transaction_type == 'credit') {
+
+                // ⭐ CREDIT LOGIC ⭐  
+                // Add interest only in balance  
+                $balanceAvailable = $oldBalance + $interest;
+
+                Log::info("CREDIT Interest Applied", [
+                    'interest' => $interest,
+                    'new_balance' => $balanceAvailable,
+                    'amount_received_unchanged' => $amountReceived
+                ]);
+            } else {
+
+                // ⭐ REVERSE LOGIC ⭐  
+                // Add interest to Amount Received (like installment added back)
+                // Reduce from balance
+                $amountReceived = $oldAmountReceived + $interest;
+                $balanceAvailable = $oldBalance - $interest;
+
+                Log::info("REVERSE Interest Applied", [
+                    'interest' => $interest,
+                    'amount_received_new' => $amountReceived,
+                    'new_balance' => $balanceAvailable
+                ]);
+            }
+
+            // SAVE TRANSACTION
+            $transaction = DdTransaction::create([
+                'dds_account_id'    => $ddaccount->id,
+                'transaction_date'  => $transactionDate,
+                'transaction_type'  => $request->transaction_type,
+                'interest_amount'   => $interest,
+                'amount'            => $amountReceived,
+                'balance_available' => $balanceAvailable
+            ]);
+
+            Log::info("Interest Transaction Saved", [
+                'transaction_id' => $transaction->id
+            ]);
+
+            // UPDATE ACCOUNT BALANCE
+            $ddaccount->update([
+                'balance' => $balanceAvailable,
+                'amount_received' => $amountReceived
+
+            ]);
+
+            Log::info("DDS Account Updated", [
+                'dds_account_id' => $ddaccount->id,
+                'new_balance' => $balanceAvailable
+            ]);
 
             DB::commit();
 
-            return redirect()->route('ddsaccounts.show', $ddaccount->id)
-                ->with('success', 'Interest transaction updated successfully.');
+            Log::info("DDS Interest Transaction Completed Successfully");
+
+            return back()->with('success', 'Interest updated successfully.');
         } catch (\Exception $e) {
+
             DB::rollBack();
+
             Log::error("DDS Interest Transaction FAILED", [
-                'dds_account_id' => $id,
-                'error_message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
+                'error' => $e->getMessage(),
+                'line'  => $e->getLine(),
+                'file'  => $e->getFile(),
             ]);
 
-            return back()->with('error', 'Something went wrong. Try again.');
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -1725,13 +1618,10 @@ class DdsAccountsController extends Controller
     }
     public function createforeClose($id)
     {
-        // Fetch DDS Account with required relations
         $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions', 'account'])
             ->findOrFail($id);
 
-        // -----------------------------------------
-        // CALCULATE BALANCE AVAILABLE
-        // -----------------------------------------
+
         $transactions = $ddaccount->transactions ?? collect();
 
         $installmentReceived = $transactions->sum('amount') ?? 0;
@@ -1739,12 +1629,8 @@ class DdsAccountsController extends Controller
         $interestCredited    = $transactions->sum('interest_amount') ?? 0;
         $tdsDeduction        = $ddaccount->tds_deduction ?? 0;
 
-        // Same calculation used in show()
         $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
 
-        // -----------------------------------------
-        // RETURN FORE CLOSE VIEW
-        // -----------------------------------------
         return view('fd_account.ddsaccounts.fore-close', [
             'ddaccount'         => $ddaccount,
             'installmentReceived' => $installmentReceived,

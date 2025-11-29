@@ -90,7 +90,6 @@
         <div id="manualFields" class="hidden bg-secondary/5 rounded-10 p-3 mt-3 dark:bg-bg3">
             <div class="grid grid-cols-2 gap-4">
 
-            <!-- Max Tenure -->
           <!-- Max Tenure Dropdown -->
             <div class="col-span-2">
                 <label class="md:text-lg font-medium block mb-2">Max. Tenure *</label>
@@ -622,7 +621,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (this.value) {
         schemeCode.textContent = selectedOption.dataset.code || "-";
         schemeName.textContent = selectedOption.dataset.name || "-";
-        schemeTenure.textContent = selectedOption.dataset.tenure || "-";
+        //schemeTenure.textContent = selectedOption.dataset.tenure || "-";
+        schemeTenure.textContent = selectedOption.dataset.tenure 
+        ? selectedOption.dataset.tenure + " Months"
+        : "-";
         schemeMax.textContent = selectedOption.dataset.max || "-";
         schemeLimit.textContent = (selectedOption.dataset.limit ? selectedOption.dataset.limit + " %" : "-");
         schemeMin.textContent = selectedOption.dataset.min || "-";

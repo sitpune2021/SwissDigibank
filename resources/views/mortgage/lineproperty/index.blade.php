@@ -40,8 +40,14 @@
                     DisApprove
                 @endif
             </td>
-            <td class="p-2">-</td>
-            <td class="p-2">-</td>
+            <td class="p-2">{{ $application->id }}</td>
+            <td class="p-2">
+                @if($application->status == 2)
+                    <span class="text-green-600 font-semibold">Active</span>
+                @else
+                    <span class="text-red-600 font-semibold">Inactive</span>
+                @endif
+            </td>
             <td class="p-2">
                 {{ $application->properties->pluck('property_type')->implode(', ') ?: '-' }}
             </td>
