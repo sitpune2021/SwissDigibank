@@ -10,7 +10,7 @@ use App\Models\Member;
 use App\Models\LockerList;
 use App\Models\Account;
 use App\Models\Transaction;
-
+use Illuminate\Validation\Rule;
 
 class LockerController extends Controller
 {
@@ -31,10 +31,29 @@ class LockerController extends Controller
 
     public function locker_list_store(Request $request)
     {
+        $branchId = $request->branch_id; // <- first pick here
+
         $validated = $request->validate([
             'branch_id'       => 'required|exists:branches,id',
-            'locker_no'       => 'required|string|max:255',
-            'locker_name'     => 'required|string|max:255',
+
+            'locker_no' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('locker_lists')->where(function ($q) use ($branchId) {
+                    return $q->where('branch_id', $branchId);
+                }),
+            ],
+
+            'locker_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('locker_lists')->where(function ($q) use ($branchId) {
+                    return $q->where('branch_id', $branchId);
+                }),
+            ],
+
             'monthly_charges' => 'required|numeric',
         ]);
 
@@ -76,12 +95,32 @@ class LockerController extends Controller
 
     public function locker_list_update(Request $request, $id)
     {
-        $request->validate([
-            'branch_id' => 'required',
-            'locker_no' => 'required',
-            'locker_name' => 'required',
+        $branchId = $request->branch_id; // <- first pick here
+
+        $validated = $request->validate([
+            'branch_id'       => 'required|exists:branches,id',
+
+            'locker_no' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('locker_lists')->where(function ($q) use ($branchId) {
+                    return $q->where('branch_id', $branchId);
+                }),
+            ],
+
+            'locker_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('locker_lists')->where(function ($q) use ($branchId) {
+                    return $q->where('branch_id', $branchId);
+                }),
+            ],
+
             'monthly_charges' => 'required|numeric',
         ]);
+
 
         $locker = LockerList::findOrFail($id);
 
@@ -102,6 +141,79 @@ class LockerController extends Controller
         $members = Member::all();
 
         return view('lockers.locker-list.assign-locker', compact('locker','members'));
+    }
+    public function member_locker_index()
+    {
+        $lockers = LockerList::all();
+        $finalData = [];
+
+        foreach ($lockers as $locker) {
+
+            $memberIds    = $locker->member_id ? explode(',', $locker->member_id) : [];
+            $assignDates  = $locker->assign_date ? explode(',', $locker->assign_date) : [];
+            $releaseDates = $locker->release_date ? explode(',', $locker->release_date) : [];
+
+            $total = count($memberIds);
+
+            for ($i = 0; $i < $total; $i++) {
+
+                $mid = $memberIds[$i] ?? null;
+
+                $item = new \stdClass;
+
+                // Locker details
+                $item->id = $locker->id;
+                $item->locker_no = $locker->locker_no;
+                $item->locker_name = $locker->locker_name;
+
+                if ($mid) {
+                    $member = Member::find($mid);
+                    if ($member) {
+                        $item->member_name = $member->member_info_first_name;
+                        $item->member_no = $member->member_no;
+                        $item->account_no = Account::where('member_id', $mid)->value('account_no') ?? '—';
+                    } else {
+                        $item->member_name = 'Unknown';
+                        $item->member_no = '—';
+                        $item->account_no = '—';
+                    }
+                }
+
+                $item->assign_on = $assignDates[$i] ?? null;
+                $item->release_on = $releaseDates[$i] ?? null;
+
+                $item->is_assigned = empty($item->release_on) ? 'Yes' : 'No';
+
+                $finalData[] = $item;
+            }
+        }
+
+        return view('lockers.member-locker.index', ['lockers' => $finalData]);
+    }
+
+    public function member_locker_view($locker_id, $index)
+    {
+        $locker = LockerList::findOrFail($locker_id);
+
+        $memberIds    = explode(',', $locker->member_id);
+        $assignDates  = explode(',', $locker->assign_date);
+        $releaseDates = explode(',', $locker->release_date);
+
+        $mid = $memberIds[$index] ?? null;
+
+        if (!$mid) {
+            abort(404, "Member not found in locker.");
+        }
+
+        $member = Member::find($mid);
+
+        if ($member) {
+            $member->account_no  = Account::where('member_id', $mid)->value('account_no') ?? '—';
+            $member->assign_date = $assignDates[$index] ?? null;
+            $member->release_date = $releaseDates[$index] ?? null;
+        }
+
+        return view('lockers.member-locker.view', compact('locker', 'member'));
     }
 
     public function getMemberAccounts($member_id)
@@ -243,13 +355,6 @@ class LockerController extends Controller
             ->with('success', 'Locker assigned successfully with history & transaction added.');
     }
 
-    // public function release_locker($id)
-    // {
-    //     $locker = LockerList::findOrFail($id);
-    //     $members = Member::all();
-    //     return view('lockers.locker-list.release-locker', compact('locker','members'));
-    // }
-
     public function release_locker($id)
     {
         $locker = LockerList::findOrFail($id);
@@ -316,59 +421,10 @@ class LockerController extends Controller
             ->with('success', 'Locker released successfully.');
     }
 
-    public function member_locker_index()
-    {
-        $lockers = LockerList::all();
-        $finalData = [];
+   
 
-        foreach ($lockers as $locker) {
 
-            $memberIds    = $locker->member_id ? explode(',', $locker->member_id) : [];
-            $assignDates  = $locker->assign_date ? explode(',', $locker->assign_date) : [];
-            $releaseDates = $locker->release_date ? explode(',', $locker->release_date) : [];
 
-            $total = count($memberIds);
-
-            for ($i = 0; $i < $total; $i++) {
-
-                $mid = $memberIds[$i] ?? null;
-
-                $item = new \stdClass;
-
-                // Locker details
-                $item->id = $locker->id;
-                $item->locker_no = $locker->locker_no;
-                $item->locker_name = $locker->locker_name;
-
-                if ($mid) {
-                    $member = Member::find($mid);
-                    if ($member) {
-                        $item->member_name = $member->member_info_first_name;
-                        $item->member_no = $member->member_no;
-                        $item->account_no = Account::where('member_id', $mid)->value('account_no') ?? '—';
-                    } else {
-                        $item->member_name = 'Unknown';
-                        $item->member_no = '—';
-                        $item->account_no = '—';
-                    }
-                }
-
-                $item->assign_on = $assignDates[$i] ?? null;
-                $item->release_on = $releaseDates[$i] ?? null;
-
-                $item->is_assigned = empty($item->release_on) ? 'Yes' : 'No';
-
-                $finalData[] = $item;
-            }
-        }
-
-        return view('lockers.member-locker.index', ['lockers' => $finalData]);
-    }
-
-    public function member_locker_view()
-    {
-        return view('lockers.member-locker.view');
-    }
 
     
 }

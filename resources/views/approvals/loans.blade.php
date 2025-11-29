@@ -165,7 +165,7 @@
                                     @if($application->model_type == 'daily_weekly')
                                         <input type="number"
                                             value="{{ $application->loan_amount }}"
-                                            class="border py-2 bg-secondary/5 rounded-10 px-3">
+                                            class="py-2 rounded-10 px-3">
                                     @else
                                         <input type="number"
                                             value="{{ $application->approved_loan_amount }}" readonly

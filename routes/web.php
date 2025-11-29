@@ -1727,8 +1727,11 @@ Route::group(['prefix' => 'locker'], function () {
 
     Route::get('member-locker/index', [LockerController::class, 'member_locker_index'])
         ->name('lockers.member-locker.index');
-    Route::get('member-locker/view', [LockerController::class, 'member_locker_view'])
-        ->name('lockers.member-locker.view');
+    // Route::get('member-locker/view/{id}', [LockerController::class, 'member_locker_view'])
+    //     ->name('lockers.member-locker.view');
+        Route::get('locker/member/view/{locker_id}/{index}', 
+    [LockerController::class, 'member_locker_view']
+)->name('locker.member-locker.view');
 });
 
 

@@ -1072,6 +1072,30 @@ class ApproveController extends Controller
                 $item->model_type = 'vehical';
             });
 
+             $routeMap = [
+            'loan' => 'gold-loan.applications.view',
+            'mortgage' => 'mortgage.applications.view',
+            'loan_against' => 'loanagainst.applications.view',
+            'business_loan' => 'bussiness.applications.view',
+            'cc_od' => 'cc_od.applications.view',
+            'daily_weekly' => 'daily_weekly.applications.view',
+            'personal' => 'personal.applications.view',
+            'vehical' => 'vehical.applications.view',
+        ];
+
+        // Account types array
+        $types = [
+            'loan' => 'Gold Loan',
+            'mortgage' => 'Mortgage Loan',
+            'loan_against' => 'Loan Against',
+            'business_loan' => 'Business Loan',
+            'cc_od' => 'CC OD',
+            'daily_weekly' => 'Daily Weekly',
+            'personal' => 'Personal Loan',
+            'vehical' => 'Vehical Loan',
+        ];
+
+
         // Merge all 5 collections
         $applications = $loanApplications
             ->concat($mortgageLoans)
@@ -1082,6 +1106,6 @@ class ApproveController extends Controller
             ->concat($vehical)
             ->sortByDesc('created_at');
 
-        return view('approvals.approvals_history', compact('applications'));
+        return view('approvals.approvals_history', compact('applications','routeMap','types'));
     }
 }
