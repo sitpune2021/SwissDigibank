@@ -115,7 +115,7 @@
         <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
             @csrf
             <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
-                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                onclick="return confirm('Submit this application for approval')">
                 SUBMIT FOR APPROVAL
             </button>
         </form>
@@ -328,45 +328,45 @@
 
                 <!-- Body -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                    <table class="min-w-full text-sm text-left">
                         <thead class="bg-gray-100 text-gray-700">
                             <tr>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
-                                <th class="px-4 py-2 font-semibold border">Report Date</th>
-                                <th class="px-4 py-2 font-semibold border">View Report</th>
+                                <th class="px-4 py-2 font-semibold">CIBIL Type</th>
+                                <th class="px-4 py-2 font-semibold">CIBIL Score</th>
+                                <th class="px-4 py-2 font-semibold">Report Date</th>
+                                <th class="px-4 py-2 font-semibold">View Report</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                        @if($application->creditScores && $application->creditScores->isNotEmpty())
-                            @foreach($application->creditScores as $score)
-                                @if($score)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">
-                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-2 border">
-                                            @if(!empty($score->report_file_path))
-                                                <!-- <a href="javascript:void(0);" 
-                                                onclick="showImage('{{ asset($score->report_file_path) }}')" 
-                                                class="text-blue-600 hover:underline">View Report</a> -->
-                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
-                                            
-                                            @else
-                                                <span class="text-gray-500">No File Available</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endif
-                            @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                            @if($application->creditScores && $application->creditScores->isNotEmpty())
+                                @foreach($application->creditScores as $score)
+                                    @if($score)
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                            <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                            <td class="px-4 py-2">
+                                                {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                @if(!empty($score->report_file_path))
+                                                    <!-- <a href="javascript:void(0);" 
+                                                    onclick="showImage('{{ asset($score->report_file_path) }}')" 
+                                                    class="text-blue-600 hover:underline">View Report</a> -->
+                                                    <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
+                                                
+                                                @else
+                                                    <span class="text-gray-500">No File Available</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endif
-                                </tbody>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                                </tr>
+                            @endif
+                        </tbody>
                     </table>
                 </div>
 
@@ -500,8 +500,6 @@
                         LOAN AGAINST DEPOSITE SCHEME INFO
                     </h3>
                     <div class="">
-
-
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'goldLoanSchemeInfo')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -562,8 +560,10 @@
                                 </td>
                             </tr>
 
-                            <tr class="border-b">
-                               <td class="font-bold px-4 py-2 uppercase" style="text-align: right;">Per EMI Charges</td>                    
+                            <tr class=" text-center">
+                                <td class="font-bold px-4 py-2" colspan="2">
+                                    Per EMI Charges
+                                </td>
                             </tr>
 
                             @if(!empty($application->scheme->sms_charge))
