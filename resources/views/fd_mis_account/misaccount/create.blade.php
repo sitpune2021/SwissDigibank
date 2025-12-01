@@ -612,7 +612,7 @@
                 <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
 
                     <!-- Section Title -->
-                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode </h4>
+                    <h4 class="md:text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode </h4>
 
                     <!-- Amount Field -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">

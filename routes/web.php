@@ -168,6 +168,12 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
+
+        // Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallments'])
+        //     ->name('dds.installments.regenerate');
+        Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallment'])
+            ->name('dds.installments.regenerate');
+
         Route::get('/dds-accounts/{id}/installment-receipt', [DdsAccountsController::class, 'installmentReceipt'])
             ->name('dds.installment.receipt');
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
@@ -722,7 +728,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('applications/{id}/edit', [MortgageController::class, 'appedit'])->name('mortgage.applications.edit');
     Route::put('applications/{id}', [MortgageController::class, 'appupdate'])->name('mortgage.applications.update');
     Route::get('applications/show-emi-chart', [MortgageController::class, 'showEmiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
-     // show audit trial tab
+    // show audit trial tab
     Route::get('applications/audit', [MortgageAccountController::class, 'audit'])
         ->name('mortgage.applications.audit-trail');
 
@@ -842,7 +848,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('scheme/view/{id}', [LoanAgainstController::class, 'view'])
         ->name('loanagainst.schemes.view');
 
-    
+
     // loanagainst Loan Calculation
     Route::get('calculator/index', [LoanAgainstController::class, 'calculator'])
         ->name('loanagainst.calculator.index');
@@ -1764,9 +1770,10 @@ Route::group(['prefix' => 'locker'], function () {
         ->name('lockers.member-locker.index');
     // Route::get('member-locker/view/{id}', [LockerController::class, 'member_locker_view'])
     //     ->name('lockers.member-locker.view');
-        Route::get('locker/member/view/{locker_id}/{index}', 
-    [LockerController::class, 'member_locker_view']
-)->name('locker.member-locker.view');
+    Route::get(
+        'locker/member/view/{locker_id}/{index}',
+        [LockerController::class, 'member_locker_view']
+    )->name('locker.member-locker.view');
 });
 
 
