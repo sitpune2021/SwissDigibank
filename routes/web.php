@@ -75,6 +75,8 @@ use App\Http\Controllers\VehicalAccountController;
 use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\SessionProtection;
+use App\Http\Controllers\EmployeeAkash;
+
 
 // Clear cache 
 // Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -1925,6 +1927,29 @@ Route::group(['prefix' => 'hr-managment'], function () {
     Route::get('employee/view-tran', [EmployeeController::class, 'view_tran'])
         ->name('hr-management.employee.view-trans');
 });
+/////////Akash//////////
+Route::get('attendance/attendance-index', [EmployeeAkash::class, 'attendance_index'])
+    ->name('hr-management.attendance.index');
+
+Route::get('salary-disbursement/disbursement-index', [EmployeeAkash::class, 'disbursement_index'])
+    ->name('hr-management.salary-disbursement.index');
+
+Route::get('salary-disbursement/disbursement-view', [EmployeeAkash::class, 'disbursement_view'])
+    ->name('hr-management.salary-disbursement.view');
+
+Route::get('salary-disbursement/release-salary', [EmployeeAkash::class, 'release_salary'])
+    ->name('hr-management.salary-disbursement.release-salary');
+
+Route::get('salary-disbursement/multiple-payout', [EmployeeAkash::class, 'multiple_payout'])
+    ->name('hr-management.salary-disbursement.multiple-payout');
+
+Route::get('salary-disbursement/pay-salary', [EmployeeAkash::class, 'pay_salaries'])
+    ->name('hr-management.salary-disbursement.pay-salary');
+
+Route::get('salary-disbursement/monthly-salary', [EmployeeAkash::class, 'monthly_salaries'])
+    ->name('hr-management.salary-disbursement.monthly-salary');
+
+//////
 
 
 Route::group(['prefix' => 'cut-report'], function () {

@@ -242,6 +242,9 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'EMPLOYEES', 'route' => 'employee.index'],
+            ['title' => 'ATTENDANCE', 'route' => 'hr-management.attendance.index'],
+            ['title' => 'SALARY DISBURSEMENTS', 'route' => 'hr-management.salary-disbursement.index'],
+
         ],
     ],
     [
