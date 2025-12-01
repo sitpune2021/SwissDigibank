@@ -89,8 +89,8 @@ return [
             ['title' => 'CALCULATOR', 'route' => 'gold-loan.calculator.index'],
             ['title' => 'APPLICATIONS', 'route' => 'gold-loan.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'gold-loan.disbursements.index'],
-            ['title' => 'ORNAMENTS INVENTORY', 'route' => 'gold-loan.ornaments.index'],
             ['title' => 'ACCOUNTS', 'route' => 'gold-loan.account.index'],
+            ['title' => 'ORNAMENTS INVENTORY', 'route' => 'gold-loan.ornaments.index'],        
         ],
     ],
     [
