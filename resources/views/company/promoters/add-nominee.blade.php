@@ -29,25 +29,24 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-xl font-semibold dark:text-white">
-                    DD ACCOUNT - {{ $promoter->dd_no }} - NOMINEE
+                 {{ $promoter->id }} - NOMINEE
                 </h1>
             </div>
         </div>
 
         <div class="flex box flex-col lg:flex-col gap-6">
             <div>
-                <h4 class="uppercase">Update Nominee Details</h4>
+                <h4 class="uppercase">Update Share Holding Nominee's Info</h4>
             </div>
             <div>
                 <hr>
             </div>
 
-            <form action="{{ route('nominee.update', ['type' => 'dd', 'id' => $nominee->id]) }}" method="POST">
+            <form action="{{ route('nominee.update', ['id' => $nominee->id]) }}" method="POST">
                 @csrf
-                @method('PUT') {{-- Corrected: use PUT for update --}}
+                @method('PUT') 
 
-                <x-promoter-add-nominee :promoter="$promoter" type="dd" submitText="Save" backText="Back"
-                    :isUpdate="true" />
+                <x-promoter-add-nominee :promoter="$promoter" submitText="Save" backText="Back" :isUpdate="true" />
             </form>
         </div>
     </div>

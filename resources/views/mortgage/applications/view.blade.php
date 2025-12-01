@@ -115,7 +115,7 @@
         <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
             @csrf
             <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
-                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                onclick="return confirm('Submit this application for approval')">
                 SUBMIT FOR APPROVAL
             </button>
         </form>
@@ -307,13 +307,13 @@
 
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto" id="cibilInfo">
-                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                    <table class="min-w-full text-sm text-left">
                         <thead class="bg-gray-100 text-gray-700">
                             <tr>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
-                                <th class="px-4 py-2 font-semibold border">Report Date</th>
-                                <th class="px-4 py-2 font-semibold border">View Report</th>
+                                <th class="px-4 py-2 font-semibold">CIBIL Type</th>
+                                <th class="px-4 py-2 font-semibold">CIBIL Score</th>
+                                <th class="px-4 py-2 font-semibold">Report Date</th>
+                                <th class="px-4 py-2 font-semibold">View Report</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -321,12 +321,12 @@
                             @foreach($application->creditScores as $score)
                                 @if($score)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">
+                                        <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">
                                             {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
                                         </td>
-                                        <td class="px-4 py-2 border">
+                                        <td class="px-4 py-2">
                                             @if(!empty($score->report_file_path))                               
                                                 <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>                                           
                                             @else
@@ -545,8 +545,10 @@
                                 </td>
                             </tr>
 
-                            <tr class="border-b">
-                               <td class="font-bold px-4 py-2 uppercase" style="text-align: right;">Per EMI Charges</td>                    
+                            <tr class=" text-center">
+                                <td class="font-bold px-4 py-2" colspan="2">
+                                    Per EMI Charges
+                                </td>
                             </tr>
 
                             @if(!empty($application->scheme->sms_charge))

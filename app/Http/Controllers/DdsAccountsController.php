@@ -620,20 +620,16 @@ class DdsAccountsController extends Controller
         $totalInstallments = $ddaccount->total_installments;
         $frequency = strtolower($ddaccount->rd_dd_frequency);
 
-        // TOTAL AMOUNT PAID
         $totalPaid = $ddaccount->transactions->sum('amount');
 
-        // FULL INSTALLMENTS PAID
         $fullyPaidCount = floor($totalPaid / $emiAmount);
 
-        // Remaining balance (not used for any installment)
         $remaining = $totalPaid - ($fullyPaidCount * $emiAmount);
 
         $installments = [];
 
         for ($i = 0; $i < $totalInstallments; $i++) {
 
-            // Calculate installment due date
             $dueDate = match ($frequency) {
                 'daily'   => $openDate->copy()->addDays($i),
                 'monthly' => $openDate->copy()->addMonths($i),
@@ -641,7 +637,6 @@ class DdsAccountsController extends Controller
                 default   => $openDate->copy()->addDays($i),
             };
 
-            // Status Logic
             if ($i < $fullyPaidCount) {
                 $state = 'PAID';
                 $paidOn = $ddaccount->transactions->last()->transaction_date;
@@ -661,6 +656,10 @@ class DdsAccountsController extends Controller
                 'paid_on'    => $paidOn ? Carbon::parse($paidOn)->format('d-m-Y') : '',
                 'created_at' => $ddaccount->created_at->format('d-m-Y h:i A'),
                 'updated_at' => $ddaccount->updated_at->format('d-m-Y h:i A'),
+                // 'created_at' => $ddaccount->fresh()->created_at->format('d-m-Y h:i A'),
+                // 'updated_at' => $ddaccount->fresh()->updated_at->format('d-m-Y h:i A'),
+
+
             ];
         }
 
@@ -682,6 +681,21 @@ class DdsAccountsController extends Controller
             'installments' => $paginatedInstallments,
         ]);
     }
+
+    public function regenerateInstallment($id)
+    {
+        $dd = DdsAccount::findOrFail($id);
+
+        $dd->timestamps = false;
+        $dd->created_at = now();
+        $dd->updated_at = now();
+        $dd->save();
+
+        return redirect()
+            ->route('ddsaccounts.installments', $id)
+            ->with('success', 'Installment chart regenerated!');
+    }
+
 
     public function installmentReceipt($id)
     {

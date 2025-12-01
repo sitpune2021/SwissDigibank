@@ -714,10 +714,11 @@
                                                         {{ $nom->share_holding ? $nom->share_holding . '%' : '%' }}
                                                     </td>
                                                     <td class="px-4 py-2">
-                                                        <a href="{{ route('nominee.edit', $nom->id) }}"
-                                                            class="text-green-600 px-4 py-2 hover:underline">
-                                                            <i class="fa fa-edit"></i>
-                                                        </a>
+                                                        @if ($promoter->nominees->count() > 0)
+                                                            <a href="{{ route('nominee.edit', $nom->id) }}">
+                                                                <i class="fa fa-edit text-green-600"></i>
+                                                            </a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -1035,15 +1036,15 @@
 
             <!-- Modal HTML -->
             <!-- <div id="docPreviewModal"
-                                                                                class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
-                                                                                <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
-                                                                                    <button onclick="closePreview()"
-                                                                                        class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
-                                                                                    <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
-                                                                                    <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                                                                                    class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+                                                                                    <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                                                                                        <button onclick="closePreview()"
+                                                                                            class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                                                                                        <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                                                                                        <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </div> -->
+                                                                                </div> -->
 
             <!-- JS Script -->
             <script>

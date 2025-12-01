@@ -290,9 +290,9 @@
           </div>
 
 
-          <input type="hidden" name="ratio_enabled" id="ratio_enabled" value="No">
-          <input type="hidden" name="ratio_first_emi" id="ratio_first_emi" value="">
-          <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage" value="">
+          <input type="hidden" name="ratio_enabled" id="ratio_enabled">
+          <input type="hidden" name="ratio_first_emi" id="ratio_first_emi">
+          <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage">
 
 
           <div id="interestOptions" style="display:none; margin-top:10px;">
@@ -551,29 +551,43 @@
 </script>
 
 <!-- reducig emi check box result show o result page -->
- <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("loanForm");
-
+    const form = document.querySelector("form");
     const chkDivide = document.getElementById("divide_emi_ratio");
+
     const emi1 = document.getElementById("emi_ratio_1");
     const amt1 = document.getElementById("amt_ratio_1");
 
-    form.addEventListener("submit", function () {
+    const hEnabled = document.getElementById("ratio_enabled");
+    const hFirstEmi = document.getElementById("ratio_first_emi");
+    const hFirstAmt = document.getElementById("ratio_first_percentage");
 
-        document.getElementById("ratio_enabled").value =
-            chkDivide.checked ? "Yes" : "No";
-
-        document.getElementById("ratio_first_emi").value =
-            emi1.value || "";
-
-        document.getElementById("ratio_first_percentage").value =
-            amt1.value || "";
+    // ⭐ Checkbox toggle event → Show/Hide fields
+    chkDivide.addEventListener("change", function() {
+        document.getElementById("ratioFields").style.display =
+            chkDivide.checked ? "block" : "none";
     });
 
+    form.addEventListener("submit", function () {
+
+        // Checkbox ON → Yes, OFF → No
+        hEnabled.value = chkDivide.checked ? "Yes" : "No";
+
+        // If OFF → empty values must be sent
+        if (chkDivide.checked) {
+            hFirstEmi.value = emi1.value || "";
+            hFirstAmt.value = amt1.value || "";
+        } else {
+            hFirstEmi.value = "";
+            hFirstAmt.value = "";
+        }
+    });
 });
 </script>
+
+
 
 <script>
   // this script for get scheme details 

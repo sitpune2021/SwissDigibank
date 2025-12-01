@@ -75,6 +75,8 @@ use App\Http\Controllers\VehicalAccountController;
 use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\SessionProtection;
+use App\Http\Controllers\EmployeeAkash;
+
 
 // Clear cache 
 // Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -168,6 +170,12 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
+
+        // Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallments'])
+        //     ->name('dds.installments.regenerate');
+        Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallment'])
+            ->name('dds.installments.regenerate');
+
         Route::get('/dds-accounts/{id}/installment-receipt', [DdsAccountsController::class, 'installmentReceipt'])
             ->name('dds.installment.receipt');
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
@@ -722,7 +730,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('applications/{id}/edit', [MortgageController::class, 'appedit'])->name('mortgage.applications.edit');
     Route::put('applications/{id}', [MortgageController::class, 'appupdate'])->name('mortgage.applications.update');
     Route::get('applications/show-emi-chart', [MortgageController::class, 'showEmiChart'])->name('mortgage.applications.view-buttons.show-emi-chart');
-     // show audit trial tab
+    // show audit trial tab
     Route::get('applications/audit', [MortgageAccountController::class, 'audit'])
         ->name('mortgage.applications.audit-trail');
 
@@ -842,7 +850,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('scheme/view/{id}', [LoanAgainstController::class, 'view'])
         ->name('loanagainst.schemes.view');
 
-    
+
     // loanagainst Loan Calculation
     Route::get('calculator/index', [LoanAgainstController::class, 'calculator'])
         ->name('loanagainst.calculator.index');
@@ -1764,9 +1772,10 @@ Route::group(['prefix' => 'locker'], function () {
         ->name('lockers.member-locker.index');
     // Route::get('member-locker/view/{id}', [LockerController::class, 'member_locker_view'])
     //     ->name('lockers.member-locker.view');
-        Route::get('locker/member/view/{locker_id}/{index}', 
-    [LockerController::class, 'member_locker_view']
-)->name('locker.member-locker.view');
+    Route::get(
+        'locker/member/view/{locker_id}/{index}',
+        [LockerController::class, 'member_locker_view']
+    )->name('locker.member-locker.view');
 });
 
 
@@ -1918,6 +1927,29 @@ Route::group(['prefix' => 'hr-managment'], function () {
     Route::get('employee/view-tran', [EmployeeController::class, 'view_tran'])
         ->name('hr-management.employee.view-trans');
 });
+/////////Akash//////////
+Route::get('attendance/attendance-index', [EmployeeAkash::class, 'attendance_index'])
+    ->name('hr-management.attendance.index');
+
+Route::get('salary-disbursement/disbursement-index', [EmployeeAkash::class, 'disbursement_index'])
+    ->name('hr-management.salary-disbursement.index');
+
+Route::get('salary-disbursement/disbursement-view', [EmployeeAkash::class, 'disbursement_view'])
+    ->name('hr-management.salary-disbursement.view');
+
+Route::get('salary-disbursement/release-salary', [EmployeeAkash::class, 'release_salary'])
+    ->name('hr-management.salary-disbursement.release-salary');
+
+Route::get('salary-disbursement/multiple-payout', [EmployeeAkash::class, 'multiple_payout'])
+    ->name('hr-management.salary-disbursement.multiple-payout');
+
+Route::get('salary-disbursement/pay-salary', [EmployeeAkash::class, 'pay_salaries'])
+    ->name('hr-management.salary-disbursement.pay-salary');
+
+Route::get('salary-disbursement/monthly-salary', [EmployeeAkash::class, 'monthly_salaries'])
+    ->name('hr-management.salary-disbursement.monthly-salary');
+
+//////
 
 
 Route::group(['prefix' => 'cut-report'], function () {

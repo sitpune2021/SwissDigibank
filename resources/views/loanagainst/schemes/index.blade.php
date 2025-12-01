@@ -3,13 +3,15 @@
 
 <div class="main-inner">
 
-  @if(session('success'))
-        <div 
-            id="successMessage" 
-            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
-        >
-            {{ session('success') }}
-        </div>
+    @if(session('success'))     
+            <div class="flex justify-end">
+                <div 
+                        id="successMessage" 
+                        class="flex    mt-4 bg-primary/20 border border-primary text-primary text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+                    style="width: 50%;" >
+                        {{ session('success') }}
+                </div>
+            </div>
 
         <script>
             // Auto hide after 30 seconds (30000 ms)
@@ -24,7 +26,7 @@
     @endif
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h1 class=" flex text-xl block font-semibold">LOAN AGAINST DEPOSITE SCHEME</h1>
+                <h1 class="flex text-xl block font-semibold uppercase">Loan Against Property Schemes</h1>
                 <a href="{{route('loanagainst.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
                 </a>
             </div>  
