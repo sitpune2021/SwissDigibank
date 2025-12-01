@@ -751,6 +751,8 @@ class PromotorController extends Controller
             'promoter_id' => $promotor->id
         ]);
 
-        return back()->with('success', 'Nominee updated successfully.');
+        return redirect()
+            ->route('promotor.show', base64_encode($promotor->id))
+            ->with('success', 'Nominee updated successfully.');
     }
 }

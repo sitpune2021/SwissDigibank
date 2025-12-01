@@ -2,10 +2,14 @@
     Nominee <span class="text-red-500">*</span>
 </label>
 
-@php
+{{-- @php
     // Ensure $promoter exists
     $nomineeSource = $promoter ?? null;
     $hasNominee = $nomineeSource ? $nomineeSource->nominees()->exists() : false;
+@endphp --}}
+@php
+
+    $hasNominee = $promoter->nominees()->exists();
 @endphp
 
 <div class="flex items-center gap-4">
@@ -14,11 +18,13 @@
             {{ $hasNominee ? 'checked' : '' }}>
         Yes
     </label>
+
     <label class="flex items-center gap-2">
         <input class="ms-2" type="radio" name="nominee" value="no" onclick="toggleAddMore(false)"
             {{ !$hasNominee ? 'checked' : '' }}>
         No
     </label>
+
     @error('nominee')
         <span class="text-red-500 text-sm">{{ $message }}</span>
     @enderror
@@ -38,7 +44,7 @@
 
     {{-- Prefilled Nominees (for update) --}}
     @if ($hasNominee)
-        @foreach ($nomineeSource->nominees as $index => $nominee)
+        @foreach ($promoter->nominees as $index => $nominee)
             <div class="w-full nominee-item columns-4 border-t gap-4 items-end bg-white p-4 rounded dark:bg-bg3">
                 <div class="nominee-row flex flex-wrap justify-start gap-6">
 
@@ -79,9 +85,11 @@
 
                     <!-- Share Holding -->
                     <div class="flex-1 min-w-[200px]">
-                        <label class="font-medium block mb-2 uppercase">Share Holding (%)</label>
+                        <label class="font-medium block mb-2 uppercase">Share Holding (%)<span
+                                class="text-red-500">*</span></label>
                         <input type="number" step="0.01" min="0"
-                            name="nominees[{{ $index }}][share_holding]" value="{{ $nominee->share_holding }}"
+                            name="nominees[{{ $index }}][share_holding]"
+                            value="{{ number_format($nominee->share_holding, 1) }}"
                             placeholder="Enter Share Holding (%)"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-2">
                     </div>
@@ -118,7 +126,11 @@
 
         // If in update mode and nominees exist, show them
         if (hasNominee || (yesBtn && yesBtn.checked)) {
-            toggleAddMore(true);
+            if (hasNominee) {
+                toggleAddMore(true);
+            } else {
+                toggleAddMore(false);
+            }
         }
     });
 

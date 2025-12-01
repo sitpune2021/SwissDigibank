@@ -68,10 +68,10 @@
                                 {{ old('account_type', $account->account_type ?? 'saving') === 'saving' ? 'checked' : '' }}>
                             <p>Saving</p>
                         </label>
-                        <label class="flex gap-2" >
+                        <label class="flex gap-2">
                             <input type="radio" name="account_type" value="current"
                                 {{ old('account_type', $account->account_type ?? '') === 'current' ? 'checked' : '' }}>
-                           <p> Current</p>
+                            <p> Current</p>
                         </label>
                     </div>
                 </div>
@@ -223,10 +223,10 @@
                 {{-- Open Date --}}
                 <div class="col-span-2 md:col-span-1">
                     <!-- <label for="open_date" class="font-medium block mb-4">Open Date <span class="text-red-500">*</span></label>
-                                                <input type="text" readonly name="open_date" id="open_date"
-                                                    value="{{ date('D M d Y h:i:s A') }}"
-                                                    class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
-                                                @error('open_date')
+                                                    <input type="text" readonly name="open_date" id="open_date"
+                                                        value="{{ date('D M d Y h:i:s A') }}"
+                                                        class="w-full bg-secondary/5 border border-n30 rounded-10 px-3 py-3">
+                                                    @error('open_date')
         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
     @enderror -->
 
@@ -241,6 +241,7 @@
                     @error('amount')
                         <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                     @enderror
+
                 </div>
 
                 {{-- Section Heading --}}
@@ -257,12 +258,12 @@
                         <label class="flex gap-2">
                             <input type="radio" name="account_holder_type" value="single"
                                 {{ old('account_holder_type', $account->account_holder_type ?? 'single') === 'single' ? 'checked' : '' }}>
-                           <p> Single</p>
+                            <p> Single</p>
                         </label>
                         <label class="flex gap-2">
                             <input type="radio" name="account_holder_type" value="joint"
                                 {{ old('account_holder_type', $account->account_holder_type ?? '') === 'joint' ? 'checked' : '' }}>
-                         <p>   Joint A/C</p>
+                            <p> Joint A/C</p>
                         </label>
                         @error('account_holder_type')
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
@@ -351,12 +352,12 @@
                         <label class="flex gap-2">
                             <input type="radio" name="nominee" value="yes"
                                 {{ old('nominee', $account->nominee ?? null) === 'yes' ? 'checked' : '' }}>
-                           <p> Yes</p>
+                            <p> Yes</p>
                         </label>
                         <label class="flex gap-2">
                             <input type="radio" name="nominee" value="no"
                                 {{ old('nominee', $account->nominee ?? null) === 'no' || old('nominee', $account->nominee ?? null) === null ? 'checked' : '' }}>
-                           <p> No</p>
+                            <p> No</p>
 
                         </label>
 
@@ -443,10 +444,10 @@
                         @enderror
                     </div>
 
-                   
+
 
                     <div id="additionalNominees" class="col-span-2 mt-4"></div>
-                     <div class="col-span-2 mt-4">
+                    <div class="col-span-2 mt-4">
                         <button type="button" id="addMoreNominee" class="btn-outline">+ ADD MORE NOMINEE</button>
                     </div>
                 </div>
@@ -465,7 +466,7 @@
                         <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="cash"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cash' || old('payment_mode', $account->payment_mode ?? '') === '' ? 'checked' : '' }}>
-                           <p>  Cash</p>
+                            <p> Cash</p>
                         </label>
 
                         <label class="flex gap-2">
@@ -476,7 +477,7 @@
                         <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="cheque"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cheque' ? 'checked' : '' }}>
-                           <p> Cheque</p>
+                            <p> Cheque</p>
                         </label>
                     </div>
                     <!-- Cheque Fields -->
@@ -485,11 +486,11 @@
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
                             <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                                            <option value="">Select Bank</option>
-                                                            <option value="SBI">SBI</option>
-                                                            <option value="HDFC">HDFC</option>
-                                                            <option value="ICICI">ICICI</option>
-                                                        </select> -->
+                                                                <option value="">Select Bank</option>
+                                                                <option value="SBI">SBI</option>
+                                                                <option value="HDFC">HDFC</option>
+                                                                <option value="ICICI">ICICI</option>
+                                                            </select> -->
                             <x-searchable-dropdown :items="$banks" label="Select Bank" name="pay1_bank"
                                 display-field="name" value-field="id" event="Bank-selected" :selected="null" />
                             @error('pay1_bank')

@@ -119,7 +119,7 @@
         <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
             @csrf
             <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
-                onclick="return confirm('Submit this application for approval (only timestamp will be updated)?')">
+                onclick="return confirm('Submit this application for approval')">
                 SUBMIT FOR APPROVAL
             </button>
         </form>
@@ -212,9 +212,9 @@
                    <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
-                    <!-- <a href="#" class=" p-2 btn-error">
+                    <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
-                    </a> -->
+                    </a>
                 </div>
                 
 

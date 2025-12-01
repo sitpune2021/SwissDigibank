@@ -8,8 +8,14 @@
             </div>
         </div>
         <div class="col-span-12 lg:col-span-12">
-            <div class="my-4">
+            {{-- <div class="my-4">
                 <a href="" class="uppercase text-sm rounded-10 btn-warning">Re-generate Installment Chart</a>
+            </div> --}}
+            <div class="my-4">
+                <a href="{{ route('dds.installments.regenerate', $ddaccount->id) }}"
+                    class="uppercase text-sm rounded-10 btn-warning">
+                    Re-generate Installment Chart
+                </a>
             </div>
 
             <div class="shadow-lg rounded-lg box overflow-x-auto">
@@ -58,7 +64,7 @@
 
                 </table>
             </div>
-<x-pagination :paginator="$installments" />
+            <x-pagination :paginator="$installments" />
 
         </div>
     </div>
