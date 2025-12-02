@@ -142,7 +142,7 @@ class RdAccountController extends Controller
 
             Log::info('RD Summary Calculated', $summary);
 
-            $rdAccount = RdAccount::create([
+            $account = RdAccount::create([
                 'member_id'   => $validated['member_id'],
                 'minor_id'    => $validated['minor_id'] ?? null,
                 'branch_id'   => $validated['branch_id'],
@@ -161,13 +161,13 @@ class RdAccountController extends Controller
                 'total_interest' => $summary['total_interest'],
             ]);
 
-            $rdAccount->rd_no = 'RD' . str_pad($rdAccount->id, 5, '0', STR_PAD_LEFT);
-            $rdAccount->save();
+            $account->rd_no = 'RD' . str_pad($account->id, 5, '0', STR_PAD_LEFT);
+            $account->save();
 
-            Log::info('RD Account Created', $rdAccount->toArray());
+            Log::info('RD Account Created', $account->toArray());
 
             try {
-                $rdaccount = \App\Models\RdAccount::with('member')->find($rdAccount->id);
+                $rdaccount = \App\Models\RdAccount::with('member')->find($account->id);
                 $mobile = $rdaccount->member->member_info_mobile_no;
                 $dlttemplateid = 1707172234132264486;
 
@@ -180,7 +180,7 @@ class RdAccountController extends Controller
             if ($validated['nominee'] === 'yes' && isset($validated['nominees'])) {
                 foreach ($validated['nominees'] as $nominee) {
                     AccountNominee::create([
-                        'rd_account_id'    => $rdAccount->id,
+                        'rd_account_id'    => $account->id,
                         'nominee_name'     => $nominee['name'],
                         'nominee_relation' => $nominee['relation'],
                         'nominee_address'  => $nominee['address'],
@@ -190,7 +190,7 @@ class RdAccountController extends Controller
             }
 
             $transactionData = [
-                'rd_account_id'    => $rdAccount->id,
+                'rd_account_id'    => $account->id,
                 'payment_mode'     => $validated['payment_mode'],
                 't_date'           => $validated['t_date'],
                 'amount'           => $validated['rd_amount'],
