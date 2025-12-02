@@ -144,7 +144,7 @@
                     <!-- Ye New Row Yaha Add Karni Thi -->
                     <tbody>
                         <tr class="bg-blue-50 font-semibold">
-                            <td colspan="7" class="border px-2 py-2 text-right">Starting Balance</td>
+                            <td colspan="7" class="border px-2 py-2 text-right"></td>
                             <td class="border px-2 py-2 text-right">₹ {{ number_format($loanAmount, 2) }}</td>
                         </tr>
 

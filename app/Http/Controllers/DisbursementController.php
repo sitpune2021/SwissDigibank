@@ -22,6 +22,7 @@ class DisbursementController extends Controller
     {
         $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('gold-loan.disbursements.index', compact('disbursements'));
