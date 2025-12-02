@@ -248,8 +248,8 @@
                                         data-stamp="{{ $sc->stamp_duty_charge ?? 0 }}"
                                         data-insurance="{{ $sc->insurance_fee ?? 0 }}"
                                         data-penalty="{{ $sc->penalty_charge ?? 0 }}"
-                                        data-overdue="{{ $sc->overdue_interest_rate ?? 0 }}"
-                                        data-overdue-type="{{ $sc->overdue_interest_type ?? '' }}"
+                                        data-overdue="{{ $sc->overdue_rate ?? 0 }}"
+                                        data-overdue-type="{{ $sc->overdue_type ?? '' }}"
 
                                         data-created="{{ $sc->created_at ? $sc->created_at->format('d/m/Y H:i') : '-' }}"
                                         data-updated="{{ $sc->updated_at ? $sc->updated_at->format('d/m/Y H:i') : '-' }}"
@@ -743,6 +743,11 @@
                                                 <td class="py-2" id="schemeInterest">-</td>
                                             </tr>
                                             <tr>
+                                                <td class="font-semibold py-2 pr-4 uppercase">Overdue Interest Rate (%) </td>
+                                                <td class="py-2" id="schemeOverdue">-</td>
+                                            </tr>
+
+                                            <tr>
                                                 <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
                                                 <td class="py-2" id="schemeType">-</td>
                                             </tr>
@@ -905,6 +910,20 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- Scheme details info -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
+    // ⭐⭐⭐ ADD THIS FUNCTION AT THE TOP ⭐⭐⭐
+    function formatDate(dateStr) {
+        if (!dateStr) return "-";
+
+        let d = new Date(dateStr);
+
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let year = d.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
     const schemeSelect = document.getElementById("scheme_id");
     const schemeBox = document.getElementById("schemeBox");
 
@@ -914,6 +933,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const schemeMax = document.getElementById("schemeMax");
             
     const schemeInterest = document.getElementById("schemeInterest");
+    const schemeOverdue = document.getElementById("schemeOverdue");
     const schemeType = document.getElementById("schemeType");
 
     const schemeActive = document.getElementById("schemeActive");
@@ -958,6 +978,16 @@ document.addEventListener("DOMContentLoaded", function () {
         schemeTenure.textContent = selected.getAttribute("data-tenure");
         schemeMax.textContent = selected.getAttribute("data-max");
         schemeInterest.textContent = selected.getAttribute("data-interest");
+
+        let overdueRate = selected.getAttribute("data-overdue") || 0;
+        let overdueType = selected.getAttribute("data-overdue-type") || '';
+
+        if (overdueType !== '') {
+            schemeOverdue.textContent = overdueRate + " % of " + overdueType;
+        } else {
+            schemeOverdue.textContent = overdueRate + " %";
+        }
+
         schemeType.textContent = selected.getAttribute("data-type");
         schemeActive.textContent = selected.getAttribute("data-active");
         schemeCharge.textContent = "₹ " + selected.getAttribute("data-charge");
@@ -975,8 +1005,8 @@ document.addEventListener("DOMContentLoaded", function () {
         schemeInsurance.textContent = "₹ " + selected.getAttribute("data-insurance");
         schemePenalty.textContent = selected.getAttribute("data-penalty") + " %";
 
-        schemeCreated.textContent = selected.getAttribute("data-created");
-        schemeUpdated.textContent = selected.getAttribute("data-updated");
+        schemeCreated.textContent = formatDate(selected.getAttribute("data-created"));
+        schemeUpdated.textContent = formatDate(selected.getAttribute("data-updated"));
 
         tenureValue.value = selected.getAttribute("data-emi") || "";
         loanAmount.setAttribute("max", selected.getAttribute("data-max"));

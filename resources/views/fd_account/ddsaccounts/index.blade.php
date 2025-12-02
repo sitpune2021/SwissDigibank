@@ -76,7 +76,8 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->scheme->scheme_name ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">{{ number_format($ddaccount->dd_amount, 2) }}</td>
-                                <td class="px-6 py-4 text-center">{{ $ddaccount->total_installments ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">{{ $ddaccount->scheme->tenure_of_rd_dd_value ?? '-' }}</td>
+                                
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->paid_installments ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->due_installments ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">{{ $ddaccount->overdue_installments ?? '-' }}

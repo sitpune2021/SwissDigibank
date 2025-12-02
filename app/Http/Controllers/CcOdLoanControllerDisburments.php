@@ -21,7 +21,7 @@ class CcOdLoanControllerDisburments extends Controller
     {       
         $disbursements = CcOdLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            // ->whereNotIn('id', $disbursedIds)
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('cc_od.disbursements.index', compact('disbursements'));

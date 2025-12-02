@@ -50,17 +50,21 @@
           <td class="py-2 px-3 border border-gray-300"></td>
         </tr>
 
+        {{-- Show ONLY Interest as First EMI --}}
+        @if($interest_as_first === 'Yes')
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
-          <td class="py-2 px-3 border border-gray-300">
-            {{ $interest_as_first }}
-          </td>
-
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
-          <td class="py-2 px-3 border border-gray-300">
-            {{ $interest_as_emi }}
-          </td>
+            <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
+            <td class="py-2 px-3 border border-gray-300">{{ $interest_as_first }}</td>
         </tr>
+        @endif
+
+        {{-- Show ONLY Interest as EMI --}}
+        @if($interest_as_emi === 'Yes')
+        <tr>
+            <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
+            <td class="py-2 px-3 border border-gray-300">{{ $interest_as_emi }}</td>
+        </tr>
+        @endif
 
         @if ($interest_type == 'Reducing balance' && $ratio_enabled == 'Yes')
           <tr>
