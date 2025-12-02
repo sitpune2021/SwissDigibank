@@ -3,12 +3,12 @@
 <div class="p-6 bg-white shadow rounded-lg">
   <h2 class="text-xl font-bold mb-4 text-gray-700"><center>Calculator Result</center></h2>
 
-  <div class="overflow-x-auto box">  
+  <div class="overflow-x-auto">
     <table class="w-full text-sm border border-gray-400 rounded-lg">
       <tbody>
         <tr>
           <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Disburse Date</td>
-          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d-m-Y') }}</td>
+          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d/m/Y') }}</td>
           <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Loan Amount</td>
           <td class="py-2 px-3 w-1/4 border border-gray-300">₹ {{ number_format($loan,2) }}</td>
         </tr>
@@ -23,26 +23,25 @@
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Insurance Charges</td>
           <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($insurance_amount,2) }} (Incl. 0% GST)</td>
-           <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
-          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_amount,2) }} (Incl. 18% GST)</td> 
+          <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
+          <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_amount,2) }} (Incl. 18% GST)</td>       
         </tr>
 
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">EMI Count</td>
           <td class="py-2 px-3 border border-gray-300">{{ $installments }}</td>
           <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
-          <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>         
-         </tr>
+          <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>        
+        </tr>
 
         <tr>
           <td class="font-semibold py-2 px-3 border border-gray-300">Tenure</td>
           <td class="py-2 px-3 border border-gray-300">{{ $tenure_display }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
-          <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>
+          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate (Annually)</td>
+          <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>        
         </tr>
-        
         <tr>
-          @if ($interest_as_first)
+        @if ($interest_as_first)
           <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
           <td class="py-2 px-3 border border-gray-300">
             {{ $interest_as_first }}
@@ -55,30 +54,27 @@
           </td>
           @endif
         </tr>
-        
+
         @if($isReducingWithRatio)
           <tr>
-            <td colspan="4" class="py-3 px-4 border border-gray-300 bg-gray-50">
-                <p class="font-semibold text-gray-800">Loan In Ratio: Yes</p>
-            </td>
+              <td colspan="4" class="py-3 px-4 border bg-gray-50">
+                  <p class="font-semibold text-gray-800">Loan In Ratio: Yes</p>
+              </td>
           </tr>
           <tr>
               <td>
-                <p class="mt-1 text-gray-700">
-                    First <strong>{{ $ratioFirstEmi }}</strong> EMIs will Recover 
-                    <strong>{{ $ratioFirstPercentage }} %</strong> of loan amount.
-                </p>
+                  First <strong>{{ $ratioFirstEmi }}</strong> EMIs will recover
+                  <strong>{{ $ratioFirstPercentage }}%</strong> amount.
               </td>
               <td></td>
               <td>
-                <p class="mt-1 text-gray-700">
-                    Remaining <strong>{{ $installments - $ratioFirstEmi }}</strong> EMIs will Recover 
-                    <strong>{{ 100 - $ratioFirstPercentage }} %</strong> of loan amount.
-                </p>
+                  Remaining <strong>{{ $installments - $ratioFirstEmi }}</strong> EMIs will recover
+                  <strong>{{ 100 - $ratioFirstPercentage }}%</strong> amount.
               </td>
               <td></td>
           </tr>
         @endif
+
       </tbody>
     </table>
   </div>
@@ -121,7 +117,6 @@
                     {{ !empty($row['due_date']) ? \Carbon\Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('d-m-Y') : '-' }}
                 </td>
                 <td class="p-2 text-right border border-gray-300">₹ {{ number_format($row['principal'],2) }}</td>
-                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['interest'] !== null ? '₹ '.number_format($row['interest'],2) : '' }}</td> -->
                 <td class="p-2 text-right border border-gray-300">
                     @if(strtolower($interest_type) === 'no emi')
                         {{-- EMPTY --}}
@@ -130,7 +125,6 @@
                     @endif
                 </td>
 
-                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['charges'] !== null ? '₹ '.number_format($row['charges'],2) : '' }}</td> -->
                 <td class="p-2 text-right border border-gray-300">
                     @if(strtolower($interest_type) === 'no emi')
                         {{-- EMPTY --}}
@@ -139,7 +133,6 @@
                     @endif
                 </td>
 
-                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['emi'] !== null ? '₹ '.number_format($row['emi'],2) : '' }}</td> -->
                 <td class="p-2 text-right border border-gray-300">
                     @if(strtolower($interest_type) === 'no emi')
                         {{-- EMPTY --}}
@@ -148,7 +141,6 @@
                     @endif
                 </td>
 
-                <!-- <td class="p-2 text-right border border-gray-300">{{ $row['balance'] !== null ? '₹ '.number_format($row['balance'],2) : '' }}</td> -->
                 <td class="p-2 text-right border border-gray-300">
                     @if(strtolower($interest_type) === 'no emi')
                         {{-- EMPTY --}}
@@ -171,19 +163,19 @@
                 <td class="p-2 text-center border border-gray-300">-</td>
 
             @else
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($totalPrincipal, 2) }}</td>
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_interest, 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">{{ $total_interest > 0 ? '₹ '.number_format($total_interest,2) : '' }}</td>
 
                 {{-- ⭐ NEW CHARGES TOTAL --}}
                 <td class="p-2 text-right border border-gray-300">
-                    ₹ {{ number_format($totalChargesPerEmi, 2) }}
+                    -
                 </td>
 
-                <td class="p-2 text-right border border-gray-300">₹ {{ number_format($totalEmi, 2) }}</td>
+                <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
                 <td class="p-2 text-center border border-gray-300">-</td>
             @endif
         </tr>
-
+ 
     </table>
 
   </div>

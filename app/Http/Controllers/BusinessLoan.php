@@ -149,16 +149,47 @@ class BusinessLoan extends Controller
         return view("bussiness.calculator.index", compact('scheme'));
     }
 
+    // same function use business and personal loan
     public function calculateResult(Request $request)
     {
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
-        $interestAsEmi = $request->option_interest_emi ? 'Yes' : 'No';
-        $interestAsFirst = $request->option_interest_first ? 'Yes' : 'No';
+        
+        //  ADD HERE (Correct Location)
+        $interestType = $request->interest_type;
+
+        // ADD THIS EXACTLY HERE
+        $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : '';
+        $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : '';
+
+        // 🔥 If one is selected, hide the other
+        if ($interestAsEmi === 'Yes') {
+            $interestAsFirst = '';
+        }
+
+        if ($interestAsFirst === 'Yes') {
+            $interestAsEmi = '';
+        }
+        // END
+        // If both set, prefer interestAsFirst (mutually exclusive in UI ideally)
+        if ($interestAsEmi === 'Yes' && $interestAsFirst === 'Yes') {
+            // you can choose preferred behaviour; here we prioritize interestAsFirst
+            $interestAsEmi = 'No';
+        }
+        //  END
+
+        //  EMI Ratio Handling
+        $ratioEnabled = ($request->ratio_enabled == 'Yes') ? 'Yes' : 'No';
+        $ratioFirstEmi = $request->ratio_first_emi ?? null;
+        $ratioFirstPercentage = $request->ratio_first_percentage ?? null;
+
+        $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
+
 
         // ---------------------------------------------
         // STEP 1: BASIC VALIDATION & SETUP
         // ---------------------------------------------
-        if ($isManual) {
+        if ($isManual) 
+        {
             $request->validate([
                 'loan_amount' => 'required|numeric|min:1',
                 'max_tenure' => 'required|integer|min:1',
@@ -184,7 +215,9 @@ class BusinessLoan extends Controller
             }
 
             $scheme = null;
-        } else {
+        } 
+        else 
+        {
             $request->validate([
                 'scheme_id' => 'required|exists:business_loan_schemes,id',
                 'loan_amount' => 'required|numeric|min:1',
@@ -231,7 +264,8 @@ class BusinessLoan extends Controller
         // ---------------------------------------------
         $tenureType = strtoupper($request->tenure_type ?? 'MONTHS');
 
-        if ($tenureType === 'MONTHS') {
+        if ($tenureType === 'MONTHS') 
+        {
             $monthsPerInstallment = match ($payout) {
                 'monthly' => 1,
                 'quarterly' => 3,
@@ -240,21 +274,34 @@ class BusinessLoan extends Controller
                 default => 1,
             };
             $installments = (int) ceil($tenureMonths / $monthsPerInstallment);
-        } elseif ($tenureType === 'WEEKS') {
+        } 
+        elseif ($tenureType === 'WEEKS') 
+        {
+            // Here $tenureMonths actually contains number of WEEKS (user input).
+            // installments should be number of payout periods (weeks/groups of weeks)
             $weeksPerInstallment = match ($payout) {
                 'weekly' => 1,
                 'bi_weekly' => 2,
                 '4_weekly' => 4,
                 default => 1,
             };
-            $installments = (int) ceil(($tenureMonths * 4.345) / $weeksPerInstallment);
-        } elseif ($tenureType === 'DAYS') {
+
+            // IMPORTANT: use tenure value as weeks directly
+            $installments = (int) max(1, ceil($tenureMonths / $weeksPerInstallment));
+        } 
+        elseif ($tenureType === 'DAYS') 
+        {
+            // Here $tenureMonths actually contains number of DAYS (user input).
             $daysPerInstallment = match ($payout) {
                 'daily' => 1,
                 default => 1,
             };
-            $installments = (int) ceil(($tenureMonths * 30) / $daysPerInstallment);
-        } else {
+
+            // use tenure value as days directly
+            $installments = (int) max(1, ceil($tenureMonths / $daysPerInstallment));
+        }
+        else 
+        {
             $installments = (int) ceil($tenureMonths);
         }
 
@@ -274,12 +321,14 @@ class BusinessLoan extends Controller
         // ---------------------------------------------
         // STEP 4: EMI CALCULATION
         // ---------------------------------------------
-        if ($interestType === 'reducing_balance') {
+        if ($interestType === 'reducing_balance') 
+        {
             $emi = round(($loan * $ratePerInstallment * pow(1 + $ratePerInstallment, $installments)) / 
                         (pow(1 + $ratePerInstallment, $installments) - 1), 2);
             $outstanding = $loan;
 
-            for ($i = 1; $i <= $installments; $i++) {
+            for ($i = 1; $i <= $installments; $i++) 
+            {
                 // EMI & Due date
                 if ($tenureType === 'WEEKS') {
                     $emiDate = now()->copy()->addWeeks($i * $weeksPerInstallment);
@@ -295,9 +344,14 @@ class BusinessLoan extends Controller
                 $outstanding -= $principal;
                 $balance = max(round($outstanding, 2), 0);
 
-                $charges = ($charge_per_emi_type === 'ON EMI')
-                    ? 207
-                    : round(($loan * (2.549 / 100)) / $installments, 2);
+                // if no charges selected → no EMI charges
+                if ($processingFee == 0 && $stampAmount == 0 && $insuranceAmount == 0) {
+                    $charges = 0;
+                } else {
+                    $charges = ($charge_per_emi_type === 'ON EMI')
+                        ? 207
+                        : round(($loan * 0.02549) / $installments, 2);
+                }
 
                 $emiTotal = round($principal + $interest + $charges, 2);
                 if ($interestAsEmi === 'Yes') $principal = 0;
@@ -324,10 +378,21 @@ class BusinessLoan extends Controller
                 $diff = round($loan - array_sum(array_column($schedule, 'principal')), 2);
                 $schedule[$lastIndex]['principal'] += $diff;
             }
-        } elseif ($interestType === 'flat_advanced_interest') {
+        } 
+        elseif ($interestType === 'flat_advanced_interest') 
+        {
             $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12), 2);
             $principal = $loan;
-            $charges = ($charge_per_emi_type === 'ON EMI') ? 207 : round($loan * 0.02549, 2);
+            //$charges = ($charge_per_emi_type === 'ON EMI') ? 207 : round($loan * 0.02549, 2);
+            // if no charges selected → no EMI charges
+            if ($processingFee == 0 && $stampAmount == 0 && $insuranceAmount == 0) {
+                $charges = 0;
+            } else {
+                $charges = ($charge_per_emi_type === 'ON EMI')
+                    ? 207
+                    : round(($loan * 0.02549) / $installments, 2);
+            }
+
             $emiTotal = round($principal + $charges, 2);
 
             $emiDate = now()->copy()->addMonths($tenureMonths);
@@ -345,13 +410,40 @@ class BusinessLoan extends Controller
             ];
 
             $totalCharges = $charges;
-        } else { // Flat Interest
+        } 
+        else 
+        { 
+            // Flat Interest
             $totalInterest = round($loan * ($annualRate / 100) * ($tenureMonths / 12), 2);
             $principalPerInstallment = round($loan / $installments, 2);
             $interestPerInstallment = round($totalInterest / $installments, 2);
             $outstanding = $loan;
 
-            for ($i = 1; $i <= $installments; $i++) {
+            // Auto calculate phase count for FIRST INTEREST EMIs
+            // $interestPhaseCount = (int) floor($installments / 6.25);
+            // if ($interestPhaseCount < 1) $interestPhaseCount = 1;
+            // ---------------------------------------------
+                // DAILY PAYOUT SPECIAL RULE
+            // ---------------------------------------------
+            if ($payout === 'daily') {
+
+                // Example:
+                // 100 days → 2 EMIs
+                // 200 days → 10 EMIs
+                // 50 days → 1 EMI
+
+                $interestPhaseCount = max(1, floor($tenureMonths / 100) * 2);
+
+            } else {
+
+                // OLD logic for weekly/monthly
+                $interestPhaseCount = (int) floor($installments / 6.25);
+                if ($interestPhaseCount < 1) $interestPhaseCount = 1;
+            }
+
+
+            for ($i = 1; $i <= $installments; $i++) 
+            {
                 // EMI & Due date
                 if ($tenureType === 'WEEKS') {
                     $emiDate = now()->copy()->addWeeks($i * $weeksPerInstallment);
@@ -363,28 +455,42 @@ class BusinessLoan extends Controller
                 $dueDate = $emiDate->copy()->addDay();
 
                 // Phase-based interest logic
+                // ---------------------------------------------
+                    // NEW Phase-based Interest Logic
+                // ---------------------------------------------
                 if ($interestAsFirst === 'Yes') {
-                    if ($i === 1) {
-                        $interest = $interestPerInstallment;
+
+                    // 1) FIRST N EMIs → ONLY INTEREST
+                    if ($i <= $interestPhaseCount) {
                         $principal = 0;
-                    } elseif ($i === 2) {
-                        $interest = $totalInterest - $interestPerInstallment;
-                        $principal = 0;
-                    } else {
-                        $interest = 0;
-                        $principal = $principalPerInstallment;
+                        $interest  = $interestPerInstallment;
                     }
-                } else {
-                    $principal = ($interestAsEmi === 'Yes') ? 0 : $principalPerInstallment;
-                    $interest = ($interestAsEmi === 'Yes') ? $interestPerInstallment : $interestPerInstallment;
+
+                    // 2) AFTER N EMIs → ONLY PRINCIPAL
+                    else {
+                        $principal = $principalPerInstallment;
+                        $interest  = 0;
+                    }
                 }
+
+                else {
+                    // Normal flat interest logic
+                    $principal = ($interestAsEmi === 'Yes') ? 0 : $principalPerInstallment;
+                    $interest  = $interestPerInstallment;
+                }
+                // END NEW Phase-based Interest Logic
 
                 $outstanding -= $principal;
                 $balance = max(round($outstanding, 2), 0);
 
-                $charges = ($charge_per_emi_type === 'ON EMI')
-                    ? 207
-                    : round(($loan * 0.02549) / $installments, 2);
+                if ($processingFee == 0 && $stampAmount == 0 && $insuranceAmount == 0) {
+                    $charges = 0;
+                } else {
+                    $charges = ($charge_per_emi_type === 'ON EMI')
+                        ? 207
+                        : round(($loan * (2.549 / 100)) / $installments, 2);
+                }
+
 
                 $emiTotal = round($principal + $interest + $charges, 2);
                 if ($interestAsEmi === 'Yes') $principal = 0;
@@ -1057,8 +1163,6 @@ class BusinessLoan extends Controller
         ->with('success', 'Submitted for approval!');      
         
     }
-
-
 
     
 }

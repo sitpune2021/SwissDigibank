@@ -946,7 +946,102 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
  <!-- loan amount & max amount valication and submit-->
-<script>
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    let isCalculated = false;
+    const calcBtn = document.getElementById("calculateBtn");
+    const form = calcBtn.closest("form");
+
+    const inputsToWatch = [
+        "loanAmount",
+        "insuranceAmount",
+        "security_amount",
+        "scheme_id"
+    ];
+
+    function resetCalculation() {
+        if (isCalculated) {
+            isCalculated = false;
+            calcBtn.textContent = "Calculate";
+            document.getElementById("calculationBox").classList.add("hidden");
+        }
+    }
+
+    inputsToWatch.forEach(id => {
+        let el = document.getElementById(id);
+        if (el) {
+            el.addEventListener("input", resetCalculation);
+            el.addEventListener("change", resetCalculation);
+        }
+    });
+
+    function updateNetLoanAmount() {
+        const loan = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        document.getElementById("netLoanAmount").value = (loan + insurance).toFixed(2);
+    }
+
+    document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
+    document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
+
+    calcBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+        let insuranceAmount = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+        let securityValue = parseFloat(document.getElementById("security_amount")?.value) || 0;
+        let netLoan = loanAmount + insuranceAmount;
+
+        let scheme = document.getElementById("scheme_id");
+        let selected = scheme.options[scheme.selectedIndex];
+        let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+        let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+
+        if (netLoan > maxLoan) {
+            alert("Net Loan Amount (" + netLoan + ") cannot exceed Maximum Loan (" + maxLoan + ")");
+            return;
+        }
+
+        if (loanAmount > maxLoan) {
+            alert("Requested Loan Amount cannot exceed Maximum Loan Limit of ₹" + maxLoan);
+            document.getElementById("loanAmount").value = maxLoan.toFixed(2);
+            loanAmount = maxLoan;
+            netLoan = loanAmount + insuranceAmount;
+        }
+
+        let approvable = (securityValue * limit) / 100;
+        let approved = Math.min(netLoan, approvable, maxLoan);
+
+        document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
+        document.getElementById("resSecurity").textContent = securityValue.toFixed(2);
+        document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
+        document.getElementById("resLimit").textContent = limit + "%";
+        document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+        document.getElementById("resApproved").textContent = approved.toFixed(2);
+
+        document.getElementById("inputSecurity").value = securityValue.toFixed(2);
+        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+        document.getElementById("inputLimit").value = limit;
+        document.getElementById("inputApprovable").value = approvable.toFixed(2);
+        document.getElementById("inputApproved").value = approved.toFixed(2);
+        document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
+
+        document.getElementById("calculationBox").classList.remove("hidden");
+
+        if (!isCalculated) {
+            isCalculated = true;
+            calcBtn.textContent = "Submit Application";
+            return;
+        }
+
+        form.submit();
+    });
+});
+</script>
+
+<!-- old script withou recalculate logic -->
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function () {
 
     let isCalculated = false;
@@ -995,7 +1090,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // CALCULATIONS
         let approvable = (securityValue * limit) / 100;
-        let approved = Math.min(approvable, maxLoan);
+        //let approved = Math.min(approvable, maxLoan);
+        let approved = Math.min(netLoan, approvable, maxLoan);
 
         // DISPLAY RESULT
         document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
@@ -1028,7 +1124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.submit();
     });
 });
-</script>
+</script> -->
 
 <!-- Cibil score -->
 <script>
