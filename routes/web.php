@@ -124,7 +124,7 @@ Route::middleware('auth.user')->group(function () {
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
             ->name('nominee.update');
-
+        Route::get('/promotor/{id}/transactions', [PromotorController::class, 'viewTransactions'])->name('promotor.transactions');
 
 
         Route::resource('shareholding', ShareHoldingController::class);

@@ -11,40 +11,151 @@
                 <i class="las la-angle-left text-lg"></i>
             </button>
             <!-- Select layout -->
-            <div class="topnav-layout">
-                <div id="layout-btn"
-                    class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-[30px] border border-n30 bg-primary/5 px-4 py-1 dark:border-n500 dark:bg-bg3 lg:py-1.5 xxl:px-6 xxl:py-2">
-                    <span class="flex select-none items-center gap-2">
-                        <i class="las la-border-all text-3xl text-primary"></i>
-                        <span id="selected-layout" class="capitalize">Vertical</span>
-                    </span>
-                    <i id="drop-arrow" class="las la-angle-down shrink-0 text-lg duration-300"></i>
-                </div>
-                <ul id="layout"
-                    class="hide absolute left-0 top-full z-20 w-full origin-top rounded-lg bg-n0 p-2 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4">
-                    <li data-layout="vertical"
-                        class="active block cursor-pointer select-none rounded-md p-2 duration-300 hover:text-primary">
-                        Vertical
+             <!-- Dropdown Trigger -->
+        <div class="whitespace-norwrap  relative inline-block grow items-center gap-2 xxl:gap-4 ">
+            <!-- Main button -->
+            <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition">
+                Menu
+                <i id="dropdownArrow" class="las la-angle-down ml-2 transition-transform duration-200"></i>
+            </button>
+ 
+            <!-- Main dropdown -->
+            <div id="dropdownMenu"
+                class="hidden absolute left-5 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <ul>
+                    <li class="px-4 py-2  hover:bg-gray-100 uppercase cursor-pointer submenu-trigger" data-submenu="accountsMenu">
+                        Accounts →
                     </li>
-                    <li data-layout="two-column"
-                        class="block cursor-pointer select-none rounded-md p-2 duration-300 hover:text-primary">
-                        Two-Column
+ 
+                    <!-- Submenu triggers -->
+                    <li class="relative px-4 py-2 uppercase hover:bg-gray-100 cursor-pointer ">
+                       <a href="#"> New Journal Entry</a>
                     </li>
-                    <li data-layout="hovered"
-                        class="block cursor-pointer select-none rounded-md p-2 duration-300 hover:text-primary">
-                        Hovered
+ 
+                    <li class="relative px-4 py-2 uppercase hover:bg-gray-100 cursor-pointer ">
+                        <a href="#">Day Book</a>
                     </li>
-                    <li data-layout="horizontal"
-                        class="block cursor-pointer select-none rounded-md p-2 duration-300 hover:text-primary">
-                        Horizontal
+ 
+                    <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer">
+                       <a href="#">Schedule SMS</a>
                     </li>
-                    <li data-layout="detached"
-                        class="block cursor-pointer select-none rounded-md p-2 duration-300 hover:text-primary">
-                        Detached
+ 
+                    <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger " data-submenu="reportsMenu">
+                        Reports →
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger "
+                     data-submenu="dailycollectionMenu">
+                        DAILY COLLECTION →
                     </li>
                 </ul>
             </div>
-
+ 
+            <!-- Submenus -->
+            <div id="accountsMenu"
+                class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
+                style="margin-left: 5px; margin-top: 55px !important;">
+                <ul>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+ 
+                        <i class="las la-tree"></i>
+                        <a href="">Tree</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-user-friends"></i>
+                        <a href="{{ route('vendors.index') }}">vendors</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-object-group"></i>
+                        <a href="{{ route('ledger-group.index') }}">Ledger Groups</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-plus-circle"></i>
+                        <a href="{{ route('ledger.index') }}">Ledgers</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-list-ul"></i>
+                        <a href="">Entries</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-balance-scale"></i>
+                       <a href="">Trial Balance</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-rupee-sign"></i>
+                          <a href="">Profit and Loss (P&L)</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-random"></i>
+                       <a href="">Income Statement</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-chart-bar"></i>
+                        <a href=""> Balance Sheet</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-list"></i>
+                          <a href="">FY REPORT</a>
+                    </li>
+ 
+                </ul>
+            </div>
+ 
+            <div id="reportsMenu"
+                class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
+                style="margin-left: 5px; margin-top: 55px !important;">
+                <ul>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-user-secret"></i>
+                          <a href="">Associate Report</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-building"></i>
+                       <a href="">Branch Report</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-balance-scale"></i>
+                       <a href="">Maturity Report</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-money-bill"></i>
+                       <a href=""> Loan Report</a>
+                    </li>
+                </ul>
+            </div>
+             <div id="dailycollectionMenu"
+                class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
+                style="margin-left: 5px; margin-top: 55px !important;">
+                <ul>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-user-secret"></i>
+                        <a href=""> Dashboard</a>
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-building"></i>
+                         <a href="">Associate collection Approvals</a>  
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-balance-scale"></i>
+                         <a href="">Associate collection Report</a>  
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-balance-scale"></i>
+                       <a href="">Collection  Report</a>  
+                    </li>
+                     <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                       <i class="las la-id-badge" ></i>
+                        <a href="">Active Associates</a>  
+                    </li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <i class="las la-money-bill"></i>
+                       <a href="">Associates Collection Limit</a>
+                    </li>
+                </ul>
+            </div>
+           
+        </div>
+        <!-- Dropdown end -->
+ 
             <!-- Search bar -->
             <form class="topnav-search">
                 <input type="text" placeholder="Search"

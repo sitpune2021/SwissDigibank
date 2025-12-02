@@ -10,7 +10,10 @@
     </div>
     <div class="flex flex-wrap gap-3 mb-3 text-center">
 
-        <a class="btn-info rounded-md px-2 py-1 text-white  text-sm bg-blue-500 hover:bg-blue-600">VIEW TRANSACTIONS</a>
+        <a href="{{ route('promotor.transactions', ['id' => $promoter]) }}"
+            class="btn-info rounded-md px-2 py-1 text-white text-sm bg-blue-500 hover:bg-blue-600">
+            VIEW TRANSACTIONS
+        </a>
 
         <a href="{{ isset($promoter) ? route('form15g15h.download.promoter', $promoter->id) : '#' }}"
             title="DOWNLOAD 15G/ 15H"
@@ -1036,15 +1039,15 @@
 
             <!-- Modal HTML -->
             <!-- <div id="docPreviewModal"
-                                                                                    class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
-                                                                                    <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
-                                                                                        <button onclick="closePreview()"
-                                                                                            class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
-                                                                                        <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
-                                                                                        <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                                                                                        class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+                                                                                        <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
+                                                                                            <button onclick="closePreview()"
+                                                                                                class="absolute top-2 right-4 text-gray-800 text-xl font-bold">&times;</button>
+                                                                                            <h2 id="docTitle" class="text-lg font-semibold mb-4 text-center"></h2>
+                                                                                            <div id="docContent" class="max-h-[70vh] overflow-auto text-center">
+                                                                                            </div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div> -->
+                                                                                    </div> -->
 
             <!-- JS Script -->
             <script>

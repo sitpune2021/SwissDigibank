@@ -27,7 +27,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW CC / OD LIMIT APPLICATION</h1>
+            <h1 class="text-xl font-semibold">{{ isset($scheme) ? 'Update CC / OD LIMIT APPLICATION' : 'NEW CC / OD LIMIT APPLICATION' }}</h1>
         </div>
     </div>
     

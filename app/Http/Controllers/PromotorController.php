@@ -755,4 +755,8 @@ class PromotorController extends Controller
             ->route('promotor.show', base64_encode($promotor->id))
             ->with('success', 'Nominee updated successfully.');
     }
+    public function viewTransactions($id)
+    {
+        return view('company.promoters.view-transactions', compact('id'));
+    }
 }

@@ -298,7 +298,6 @@
                                 <tr class="border-b">
                                     <td class="font-semibold pr-4 py-3 uppercase">Balance Available</td>
                                     <td>{{ number_format($balanceAvailable, 2) }}</td>
-
                                 </tr>
                             </tbody>
                         </table>

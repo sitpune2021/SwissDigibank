@@ -16,18 +16,18 @@ use Illuminate\Support\Facades\Auth;
 
 class DailyWeeklyDisburments extends Controller
 {
+
     public function index()
     {
         // $disbursedIds = BusinessLoanDisbursment::pluck('loan_application_id');
 
         $disbursements = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            // ->whereNotIn('id', $disbursedIds)
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('daily_weekly.disbursements.index', compact('disbursements'));
     }
-
 
     public function cancelLoan($id)
     {
@@ -43,7 +43,6 @@ class DailyWeeklyDisburments extends Controller
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
     }
-
 
     public function store(Request $request)
     {
@@ -173,7 +172,6 @@ class DailyWeeklyDisburments extends Controller
             )
         );
     }
-
 
 
 }

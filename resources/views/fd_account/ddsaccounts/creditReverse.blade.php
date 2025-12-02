@@ -201,9 +201,9 @@
                             Reset
                         </button>
 
-                         <a href="{{ route('ddsaccounts.show', $ddaccount->id) }}" class="btn-outline uppercase">
-                                CANCEL
-                            </a>
+                        <a href="{{ route('ddsaccounts.show', $ddaccount->id) }}" class="btn-outline uppercase">
+                            CANCEL
+                        </a>
                     </div>
 
                 </form>
@@ -267,7 +267,7 @@
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Balance Available</td>
                                         <td class="py-2">
-                                            {{ optional($ddaccount->transactions->last())->balance_available }}
+                                            {{ number_format($ddaccount->transactions->sum('balance_available'), 2) }}
                                         </td>
                                     </tr>
                                 </tbody>

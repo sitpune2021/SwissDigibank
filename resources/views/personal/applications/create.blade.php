@@ -1031,65 +1031,79 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 </script>
 
-<!-- Calculation Script -->
+<!-- Calculation Script with multiple recalculate and after submit data-->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    let isCalculated = false;
-    const calcBtn = document.getElementById("calculateBtn");
 
-    calcBtn.addEventListener("click", function (e) {
+    const calcBtn = document.getElementById("calculateBtn");
+    const calcBox = document.getElementById("calculationBox");
+    const form = calcBtn.closest("form");
+
+    let mode = "calculate"; // calculate | submit
+
+    function runCalculation(e) {
         e.preventDefault();
 
-        // (1) Get entered values
-        let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
-        let insuranceAmount = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
-        let netLoanAmount = parseFloat(document.getElementById("netLoanAmount")?.value) || 0; // loan + insurance
+        let loanAmount = parseFloat(document.getElementById("loanAmount").value) || 0;
+        let insuranceAmount = parseFloat(document.getElementById("insuranceAmount").value) || 0;
+        let netLoanAmount = loanAmount + insuranceAmount;
 
-        // (2) Get selected scheme attributes
         let scheme = document.getElementById("scheme_id");
         let selected = scheme.options[scheme.selectedIndex];
         let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
-        let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
 
-        // (3) Validate requested (net loan) amount
         if (netLoanAmount > maxLoan) {
             alert("Requested Loan Amount (₹" + netLoanAmount + ") cannot exceed Maximum Loan Limit of ₹" + maxLoan);
-            document.getElementById("netLoanAmount").value = maxLoan.toFixed(2);
             netLoanAmount = maxLoan;
         }
 
-        // (4) Maximum Approvable Amount = scheme's max loan
-        let approvable = maxLoan;
-
-        // (5) Approved Loan Amount = min(net loan, max loan)
-        let approved = Math.min(netLoanAmount, maxLoan);
-
-        // (6) Show calculated values in the calculation box
         document.getElementById("net-loan-amt").textContent = netLoanAmount.toFixed(2);
-        document.getElementById("m-approval-amt").textContent = approvable.toFixed(2);
-        document.getElementById("approval-amt").textContent = approved.toFixed(2);
+        document.getElementById("m-approval-amt").textContent = maxLoan.toFixed(2);
+        document.getElementById("approval-amt").textContent = Math.min(netLoanAmount, maxLoan).toFixed(2);
 
-        // (7) Update hidden fields for backend
-        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
-        document.getElementById("inputLimit").value = limit;
-        document.getElementById("inputApprovable").value = approvable.toFixed(2);
-        document.getElementById("inputApproved").value = approved.toFixed(2);
+        calcBox.classList.remove("hidden");
 
-        // (8) Show calculation box
-        document.getElementById("calculationBox").classList.remove("hidden");
+        // Button ko submit mode me convert
+        calcBtn.textContent = "Submit Application";
+        calcBtn.type = "submit";
+        mode = "submit";
+    }
 
-        // (9) Change button text to "Submit Application"
-        if (!isCalculated) {
-            calcBtn.textContent = "Submit Application";
-            calcBtn.removeEventListener("click", arguments.callee);
-            calcBtn.addEventListener("click", function () {
-                calcBtn.closest("form").submit();
-            });
-            isCalculated = true;
+    // MAIN BUTTON CLICK
+    calcBtn.addEventListener("click", function (e) {
+        if (mode === "calculate") {
+            runCalculation(e); // prevent submit
+        }
+        // mode === submit → form naturally submit hoga (no JS submit)
+    });
+
+
+    // RESET LOGIC
+    function resetCalculation() {
+        if (mode === "calculate") return;
+
+        calcBox.classList.add("hidden");
+        calcBtn.textContent = "Calculate";
+        calcBtn.type = "button";
+        mode = "calculate";
+    }
+
+    const fieldsToWatch = [
+        "loanAmount", "insuranceAmount", "scheme_id",
+        "tenure", "interestRate", "emiPayout"
+    ];
+
+    fieldsToWatch.forEach(id => {
+        const f = document.getElementById(id);
+        if (f) {
+            f.addEventListener("input", resetCalculation);
+            f.addEventListener("change", resetCalculation);
         }
     });
+
 });
 </script>
+
 
 <!-- branch Auto populate when select customer -->
  <script>
