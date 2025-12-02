@@ -180,10 +180,10 @@
             <button class="btn-secondary px-4 py-2 rounded-3xl ">
                 PRINT DOCUMENTS
             </button>
-            <a href="{{ route('ddsaccounts.createCreditInterest', $ddaccount->id) }}"
+            {{-- <a href="{{ route('ddsaccounts.createCreditInterest', $ddaccount->id) }}"
                 class="btn-primary px-4 py-2 rounded-3xl">
                 CREDIT / REVERSE INTEREST
-            </a>
+            </a> --}}
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 DEBIT OTHER CHARGES
             </button>
@@ -278,7 +278,7 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
                                 <td class="px-4 py-2">
-                                    {{ optional($ddaccount->transactions->last())->interest_amount ?? '0.00' }}
+                                    ({{ optional($ddaccount->transactions->last())->interest_amount ?? '0.00' }})
                                 </td>
                             </tr>
                             <tr>
