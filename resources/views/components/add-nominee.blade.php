@@ -3,7 +3,7 @@
 </label>
 
 @php
-$nomineeSource = $account;
+$nomineeSource = $account ? $account->nominee : [];
 
 $hasNominee = $account->nominee()->exists();
 

@@ -1,0 +1,95 @@
+[2025-12-03 05:47:21] local.INFO: Deposit function called {"account_id":"1","request_data":{"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","collected_by":null,"amount":"1000.00","remarks":"asdcfv","transaction_date":"03-12-2025","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null}} 
+[2025-12-03 05:47:21] local.INFO: Cash mode selected – no extra validation fields required.  
+[2025-12-03 05:47:21] local.INFO: Validation passed  
+[2025-12-03 05:47:21] local.INFO: DDS Account found {"account_id":"1","balance":"3000.00"} 
+[2025-12-03 05:47:21] local.INFO: Transaction status determined {"status":"Pending","pay_mode":"cash","remarks":null} 
+[2025-12-03 05:47:21] local.INFO: Transaction created {"transaction_id":12,"status":"Pending"} 
+[2025-12-03 05:47:21] local.INFO: Deposit completed successfully {"account_id":"1","running_balance":4000.0} 
+[2025-12-03 05:47:22] local.INFO: DdsAccountsController@transactions called for DDS ID: 1  
+[2025-12-03 05:48:30] local.INFO: DdsAccountsController@transactions called for DDS ID: 1  
+[2025-12-03 05:49:55] local.INFO: Deposit function called {"account_id":"1","request_data":{"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","collected_by":null,"amount":"1000.00","remarks":null,"transaction_date":"03-12-2025","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null}} 
+[2025-12-03 05:49:55] local.INFO: Cash mode selected – no extra validation fields required.  
+[2025-12-03 05:49:55] local.INFO: Validation passed  
+[2025-12-03 05:49:55] local.INFO: DDS Account found {"account_id":"1","balance":"4000.00"} 
+[2025-12-03 05:49:55] local.INFO: Transaction status determined {"status":"Pending","pay_mode":"cash","remarks":null} 
+[2025-12-03 05:49:55] local.INFO: Transaction created {"transaction_id":13,"status":"Pending"} 
+[2025-12-03 05:49:55] local.INFO: Deposit completed successfully {"account_id":"1","running_balance":1000.0} 
+[2025-12-03 05:49:57] local.INFO: DdsAccountsController@transactions called for DDS ID: 1  
+[2025-12-03 05:53:24] local.INFO: DdsAccountsController@index called  
+[2025-12-03 05:53:35] local.INFO: DdsAccountsController@create called  
+[2025-12-03 05:53:35] local.INFO: All Schemes: {"RD Scheme":"monthly","RD Special Scheme":"quarterly","DDS Account scheme":"daily"} 
+[2025-12-03 05:53:47] local.INFO: DdsAccountsController@getMemberDetails called for member ID: 2  
+[2025-12-03 05:54:05] local.INFO: 🔹 DdsAccountsController@store called  
+[2025-12-03 05:54:05] local.INFO: Request data: {"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","member_id":"2","member_name":"Anuradha Jamdade","member_address":"Pune","member_mobile":"7020672418","minor_id":null,"branch_id":null,"advisor_id":null,"collection_advisor_id":null,"scheme_id":"3","dd_amount":"1000","open_date":"03-12-2025","remarks":null,"tds":"no","account_type":"single","nominee":"no","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null,"transaction_date":"03-12-2025","amount":"1000.00"} 
+[2025-12-03 05:54:05] local.INFO: ✅ Validation successful {"member_id":"2","branch_id":null,"scheme_id":"3","open_date":"03-12-2025","amount":"1000.00","pay_mode":"cash","dd_amount":"1000","remarks":null} 
+[2025-12-03 05:54:05] local.INFO: ✅ Scheme fetched {"scheme_id":3,"scheme_name":"N/A"} 
+[2025-12-03 05:54:05] local.INFO: 📅 Tenure calculated {"days":133225} 
+[2025-12-03 05:54:05] local.INFO: 📈 Maturity calculated {"total_deposit":365000.0,"interest_earned":3660.0,"bonus":7300.0,"maturity":375960.0,"maturity_date":"03-12-2026"} 
+[2025-12-03 05:54:05] local.INFO: ✅ DDS Account created {"dds_account_id":4} 
+[2025-12-03 05:54:06] local.INFO: ✅ SMS sent {"mobile":"7020672418","message":"Dear Customer, we have received your request for opening DD. Your temp. DD no. is DD004. SBC GLOBAL
+    "} 
+[2025-12-03 05:54:06] local.INFO: ✅ Transaction saved {"transaction_id":14} 
+[2025-12-03 05:54:06] local.DEBUG: 📦 Full transaction request payload {"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","member_id":"2","member_name":"Anuradha Jamdade","member_address":"Pune","member_mobile":"7020672418","minor_id":null,"branch_id":null,"advisor_id":null,"collection_advisor_id":null,"scheme_id":"3","dd_amount":"1000","open_date":"03-12-2025","remarks":null,"tds":"no","account_type":"single","nominee":"no","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null,"transaction_date":"03-12-2025","amount":"1000.00"} 
+[2025-12-03 05:54:07] local.INFO: DdsAccountsController@index called  
+[2025-12-03 05:54:27] local.INFO: approveAccounts() called {"request_data":[]} 
+[2025-12-03 05:54:27] local.INFO: approveAccounts() - Parameters {"search":null,"perPage":10} 
+[2025-12-03 05:54:27] local.INFO: approveAccounts() - Executing SQL UNION Query  
+[2025-12-03 05:54:27] local.INFO: approveAccounts() - Query Built Successfully  
+[2025-12-03 05:54:28] local.INFO: approveAccounts() - Pagination Completed {"total_records":27,"current_page":1} 
+[2025-12-03 05:54:28] local.INFO: approveAccounts() - Transformation Completed  
+[2025-12-03 05:55:28] local.INFO: approveAccounts() called {"request_data":[]} 
+[2025-12-03 05:55:28] local.INFO: approveAccounts() - Parameters {"search":null,"perPage":10} 
+[2025-12-03 05:55:28] local.INFO: approveAccounts() - Executing SQL UNION Query  
+[2025-12-03 05:55:28] local.INFO: approveAccounts() - Query Built Successfully  
+[2025-12-03 05:55:28] local.INFO: approveAccounts() - Pagination Completed {"total_records":26,"current_page":1} 
+[2025-12-03 05:55:28] local.INFO: approveAccounts() - Transformation Completed  
+[2025-12-03 05:55:52] local.INFO: DdsAccountsController@index called  
+[2025-12-03 05:57:02] local.INFO: DdsAccountsController@show called for ID: 4  
+[2025-12-03 05:58:19] local.INFO: Deposit function called {"account_id":"4","request_data":{"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","collected_by":null,"amount":"1000.00","remarks":"hgfd","transaction_date":"03-12-2025","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null}} 
+[2025-12-03 05:58:19] local.INFO: Cash mode selected – no extra validation fields required.  
+[2025-12-03 05:58:19] local.INFO: Validation passed  
+[2025-12-03 05:58:19] local.INFO: DDS Account found {"account_id":"4","balance":"0.00"} 
+[2025-12-03 05:58:19] local.INFO: Transaction status determined {"status":"Pending","pay_mode":"cash","remarks":null} 
+[2025-12-03 05:58:19] local.INFO: Transaction created {"transaction_id":15,"status":"Pending"} 
+[2025-12-03 05:58:19] local.INFO: Deposit completed successfully {"account_id":"4","running_balance":2000.0} 
+[2025-12-03 05:58:20] local.INFO: DdsAccountsController@transactions called for DDS ID: 4  
+[2025-12-03 06:00:01] local.INFO: DdsAccountsController@show called for ID: 4  
+[2025-12-03 06:00:04] local.INFO: DdsAccountsController@index called  
+[2025-12-03 06:00:08] local.INFO: DdsAccountsController@index called  
+[2025-12-03 06:00:12] local.INFO: DdsAccountsController@create called  
+[2025-12-03 06:00:12] local.INFO: All Schemes: {"RD Scheme":"monthly","RD Special Scheme":"quarterly","DDS Account scheme":"daily"} 
+[2025-12-03 06:00:19] local.INFO: DdsAccountsController@getMemberDetails called for member ID: 9  
+[2025-12-03 06:01:05] local.INFO: 🔹 DdsAccountsController@store called  
+[2025-12-03 06:01:05] local.INFO: Request data: {"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","member_id":"9","member_name":"Chandrashekhar Mudme","member_address":"S.no 03, nagpure building, dhankawadi, near durwankur Mangal karyalay, pune city, dhankawadi-43","member_mobile":"8830929599","minor_id":null,"branch_id":"1","advisor_id":null,"collection_advisor_id":null,"scheme_id":"3","dd_amount":"1000","open_date":"03-12-2025","remarks":"dfgh","tds":"no","account_type":"single","nominee":"no","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null,"transaction_date":"03-12-2025","amount":"1000.00"} 
+[2025-12-03 06:01:05] local.INFO: ✅ Validation successful {"member_id":"9","branch_id":"1","scheme_id":"3","open_date":"03-12-2025","amount":"1000.00","pay_mode":"cash","dd_amount":"1000","remarks":"dfgh"} 
+[2025-12-03 06:01:05] local.INFO: ✅ Scheme fetched {"scheme_id":3,"scheme_name":"N/A"} 
+[2025-12-03 06:01:05] local.INFO: 📅 Tenure calculated {"days":133225} 
+[2025-12-03 06:01:05] local.INFO: 📈 Maturity calculated {"total_deposit":365000.0,"interest_earned":3660.0,"bonus":7300.0,"maturity":375960.0,"maturity_date":"03-12-2026"} 
+[2025-12-03 06:01:05] local.INFO: ✅ DDS Account created {"dds_account_id":5} 
+[2025-12-03 06:01:08] local.INFO: ✅ SMS sent {"mobile":"8830929599","message":"Dear Customer, we have received your request for opening DD. Your temp. DD no. is DD005. SBC GLOBAL
+    "} 
+[2025-12-03 06:01:08] local.INFO: ✅ Transaction saved {"transaction_id":16} 
+[2025-12-03 06:01:08] local.DEBUG: 📦 Full transaction request payload {"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","member_id":"9","member_name":"Chandrashekhar Mudme","member_address":"S.no 03, nagpure building, dhankawadi, near durwankur Mangal karyalay, pune city, dhankawadi-43","member_mobile":"8830929599","minor_id":null,"branch_id":"1","advisor_id":null,"collection_advisor_id":null,"scheme_id":"3","dd_amount":"1000","open_date":"03-12-2025","remarks":"dfgh","tds":"no","account_type":"single","nominee":"no","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null,"transaction_date":"03-12-2025","amount":"1000.00"} 
+[2025-12-03 06:01:09] local.INFO: DdsAccountsController@index called  
+[2025-12-03 06:01:44] local.INFO: approveAccounts() called {"request_data":[]} 
+[2025-12-03 06:01:44] local.INFO: approveAccounts() - Parameters {"search":null,"perPage":10} 
+[2025-12-03 06:01:44] local.INFO: approveAccounts() - Executing SQL UNION Query  
+[2025-12-03 06:01:44] local.INFO: approveAccounts() - Query Built Successfully  
+[2025-12-03 06:01:44] local.INFO: approveAccounts() - Pagination Completed {"total_records":27,"current_page":1} 
+[2025-12-03 06:01:44] local.INFO: approveAccounts() - Transformation Completed  
+[2025-12-03 06:02:07] local.INFO: approveAccounts() called {"request_data":[]} 
+[2025-12-03 06:02:07] local.INFO: approveAccounts() - Parameters {"search":null,"perPage":10} 
+[2025-12-03 06:02:07] local.INFO: approveAccounts() - Executing SQL UNION Query  
+[2025-12-03 06:02:07] local.INFO: approveAccounts() - Query Built Successfully  
+[2025-12-03 06:02:07] local.INFO: approveAccounts() - Pagination Completed {"total_records":26,"current_page":1} 
+[2025-12-03 06:02:07] local.INFO: approveAccounts() - Transformation Completed  
+[2025-12-03 06:20:29] local.INFO: DdsAccountsController@index called  
+[2025-12-03 06:20:37] local.INFO: DdsAccountsController@show called for ID: 5  
+[2025-12-03 06:22:38] local.INFO: Deposit function called {"account_id":"5","request_data":{"_token":"BhrpHseRxiGAkFdTLWBBfIwLiz1DjLf6she3zkoL","collected_by":null,"amount":"1000.00","remarks":"zxcv","transaction_date":"03-12-2025","pay_mode":"cash","transfer_date":"03-12-2025","utr_no":null,"bank_name":null,"cheque_no":null,"cheque_date":"03-12-2025","saving_account_id":null}} 
+[2025-12-03 06:22:38] local.INFO: Cash mode selected – no extra validation fields required.  
+[2025-12-03 06:22:39] local.INFO: Validation passed  
+[2025-12-03 06:22:39] local.INFO: DDS Account found {"account_id":"5","balance":"0.00"} 
+[2025-12-03 06:22:39] local.INFO: Transaction status determined {"status":"Pending","pay_mode":"cash","remarks":null} 
+[2025-12-03 06:22:39] local.INFO: Transaction created {"transaction_id":17,"status":"Pending"} 
+[2025-12-03 06:22:39] local.INFO: Deposit completed successfully {"account_id":"5","running_balance":2000.0} 
+[2025-12-03 06:22:40] local.INFO: DdsAccountsController@transactions called for DDS ID: 5  

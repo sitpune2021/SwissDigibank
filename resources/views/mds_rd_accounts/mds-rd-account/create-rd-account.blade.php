@@ -233,8 +233,7 @@
                 </div>
                 <!-- Nominee -->
                 <div class="col-span-2 md:col-span-1 mt-4">
-                    <x-add-nominee :rdAccount="null" :member="$member ?? null" submitText="Add" backText="Back" />
-
+                    <x-add-nominee :account="new \App\Models\RdAccount" :member="$member" type="rd" submitText="Submit" backText="Back" :isUpdate="false"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-1"></div>
