@@ -1363,7 +1363,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // ⭐ AJAX CALL
-            fetch("{{ route('emi.saveEmiStatus') }}", {
+            fetch("{{ route('personal.emi.saveEmiStatus') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
