@@ -177,13 +177,13 @@
                     </ul>
                 </div>
             </div>
-            <button class="btn-secondary px-4 py-2 rounded-3xl ">
+            <button class="btn-primary px-4 py-2 rounded-3xl ">
                 PRINT DOCUMENTS
             </button>
-            {{-- <a href="{{ route('ddsaccounts.createCreditInterest', $ddaccount->id) }}"
+            <a href="{{ route('ddsaccounts.createCreditInterest', $ddaccount->id) }}"
                 class="btn-primary px-4 py-2 rounded-3xl">
                 CREDIT / REVERSE INTEREST
-            </a> --}}
+            </a>
             <button class="btn-primary px-4 py-2 rounded-3xl ">
                 DEBIT OTHER CHARGES
             </button>

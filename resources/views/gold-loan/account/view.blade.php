@@ -1422,7 +1422,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // ⭐ AJAX CALL
-            fetch("{{ route('emi.saveEmiStatus') }}", {
+            fetch("{{ route('gold-loan.emi.saveStatus') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

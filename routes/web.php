@@ -600,7 +600,7 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [GoldLoanAccountController::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('gold-loan.emi.saveStatus');
 
     // transiction page tab
     Route::get('goldloan-account/transaction/{id}', [GoldLoanAccountController::class, 'goldLoanTransaction'])
@@ -745,7 +745,7 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('mortgage.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [MortgageAccountController::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('mortgage.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('mortgage-account/payemi/{id}', [MortgageAccountController::class, 'mortgagePayEmi'])
@@ -908,7 +908,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [LoanAgainstAccountController::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('loanagainst.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('loanagainst-account/payemi/{id}', [LoanAgainstAccountController::class, 'mortgagePayEmi'])
@@ -1079,7 +1079,7 @@ Route::group(['prefix' => 'bussiness'], function () {
         ->name('bussiness.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [BusinessLoanAccount::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('business.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('bussiness-account/payemi/{id}', [BusinessLoanAccount::class, 'mortgagePayEmi'])
@@ -1235,7 +1235,7 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('cc_od.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [CcOdLoanControllerAccount::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('cc_od.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('cc_od-account/payemi/{id}', [CcOdLoanControllerAccount::class, 'mortgagePayEmi'])
@@ -1391,7 +1391,7 @@ Route::group(['prefix' => 'daily_weekly'], function () {
         ->name('daily_weekly.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [DailyWeeklyAccount::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('daily_weekly.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('daily_weekly-account/payemi/{id}', [DailyWeeklyAccount::class, 'mortgagePayEmi'])
@@ -1517,7 +1517,7 @@ Route::group(['prefix' => 'personal'], function () {
         ->name('personal.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [PersonalAccountController::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('personal.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('personal-account/payemi/{id}', [PersonalAccountController::class, 'mortgagePayEmi'])
@@ -1639,7 +1639,7 @@ Route::group(['prefix' => 'vehical'], function () {
         ->name('vehical.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [VehicalAccountController::class, 'saveEmiStatus'])
-        ->name('emi.saveEmiStatus');
+        ->name('vehical.emi.saveEmiStatus');
 
     // pay emi tab
     Route::get('vehical-account/payemi/{id}', [VehicalAccountController::class, 'mortgagePayEmi'])

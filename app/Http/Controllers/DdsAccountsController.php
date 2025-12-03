@@ -247,6 +247,7 @@ class DdsAccountsController extends Controller
             $transaction->account_id = null;
             $transaction->amount           = $request->amount;
             $transaction->balance_available = $request->amount;
+            $transaction->type = "credit";
             $transaction->pay_mode = $request->pay_mode;
             $transaction->save();
 
@@ -525,24 +526,22 @@ class DdsAccountsController extends Controller
         }
     }
 
-    public function getMemberDetails($id)
+     public function getMemberDetails($id)
     {
-        Log::info("DdsAccountsController@getMemberDetails called for member ID: $id");
-        $member = Member::with('branch', 'minors', 'address')->findOrFail($id);
+        $member = Member::with(['branch', 'minors'])->findOrFail($id);
 
         return response()->json([
             'member_info_first_name' => $member->member_info_first_name,
             'member_info_last_name'  => $member->member_info_last_name,
-            'member_address_line_1'  => $member->address->member_address_line_1 ?? '',
+            'member_address_line_1'  => $member->member_address_line_1,
             'member_info_mobile_no'  => $member->member_info_mobile_no,
-            'branch_id'   => $member->branch_id,
-            'branch_name' => $member->branch->branch_name ?? '',
-            'open_date'              => now()->format('Y-m-d'),
-            'minors' => $member->minors->map(function ($minor) {
+            'branch_id'              => $member->branch->id ?? null,
+            'branch_name'            => $member->branch->branch_name ?? null,
+            'minors'                 => $member->minors->map(function ($minor) {
                 return [
                     'id' => $minor->id,
                     'first_name' => $minor->first_name,
-                    'last_name' => $minor->last_name,
+                    'last_name' => $minor->last_name
                 ];
             }),
         ]);
@@ -971,6 +970,9 @@ class DdsAccountsController extends Controller
 
             // Modify validation rules based on pay_mode
             switch ($request->pay_mode) {
+                case 'cash':
+                    Log::info("Cash mode selected – no extra validation fields required.");
+                    break;
                 case 'onlineTr':
                     $rules['transfer_date'] = 'required|date_format:d-m-Y';
                     $rules['utr_no'] = 'required|string|max:255';
@@ -986,7 +988,6 @@ class DdsAccountsController extends Controller
                 case 'saving':
                     $rules['saving_account_id'] = 'required|exists:accounts,id';
                     break;
-
             }
 
             // Validate the request data with dynamically adjusted rules
@@ -999,8 +1000,10 @@ class DdsAccountsController extends Controller
         }
 
         $amount = $request->amount;
+
         // Step 2: Find DDS account
         $account = DdsAccount::find($id);
+
         if (!$account) {
             Log::error('DDS Account not found', ['account_id' => $id]);
             return redirect()->back()->with('error', 'Account not found!');
@@ -1023,7 +1026,6 @@ class DdsAccountsController extends Controller
                 Log::error('Saving account not found', ['saving_account_id' => $request->saving_account_id]);
                 return redirect()->back()->with('error', 'Saving account not found!');
             }
-
             if ($savingAccount->amount_deposit < $amount) {
                 Log::warning('Insufficient balance in saving account', ['saving_account_id' => $savingAccount->id]);
                 return redirect()->back()->with('error', 'Insufficient balance in saving account!');
@@ -1073,8 +1075,6 @@ class DdsAccountsController extends Controller
                 'cheque_date' => $chequeDate,
                 'saving_account_id' => $savingAccountId,
             ]);
-            // dd($transaction);
-
             Log::info('Transaction created', ['transaction_id' => $transaction->id, 'status' => $status]);
         } catch (\Exception $e) {
             Log::error('Failed to create transaction', ['error' => $e->getMessage()]);
@@ -1084,18 +1084,23 @@ class DdsAccountsController extends Controller
         // Step 7: Recalculate the running balance for all transactions
         try {
             $runningBalance = 0;
+
             $transactions = DdTransaction::where('dds_account_id', $id)
-                ->orderBy('transaction_date')
-                ->orderBy('id')
+                ->orderBy('transaction_date', 'asc')
+                ->orderBy('id', 'asc')
                 ->get();
 
             foreach ($transactions as $txn) {
-                $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
+
+                // Correct running balance formula
+                $runningBalance += ($txn->type === 'credit')
+                    ? $txn->amount
+                    : -$txn->amount;
+
                 $txn->balance_available = $runningBalance;
                 $txn->save();
             }
 
-            // Update the account balance
             $account->balance = $runningBalance;
             $account->save();
         } catch (\Exception $e) {
@@ -1384,6 +1389,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
+
     public function storeCreditInterest(Request $request, $id)
     {
         Log::info("DDS Interest Transaction Start", [
