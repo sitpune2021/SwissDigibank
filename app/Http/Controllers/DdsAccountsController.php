@@ -31,7 +31,6 @@ use App\Helpers\AccountsTransactionsHelper;
 
 class DdsAccountsController extends Controller
 {
-
     public function index()
     {
         Log::info('DdsAccountsController@index called');
@@ -42,9 +41,9 @@ class DdsAccountsController extends Controller
 
         foreach ($ddaccounts as $account) {
 
-            $installments = $account->total_installments ?? 0;
-            $openDate     = $account->open_date ? Carbon::parse($account->open_date) : null;
-            $today        = Carbon::today();
+            $installments = $account->total_installments ?? 0; // Default to 0 if not set
+            $openDate = $account->open_date ? Carbon::parse($account->open_date) : null;
+            $today = Carbon::today();
 
             $diff = 0;
             if ($openDate) {
@@ -63,13 +62,24 @@ class DdsAccountsController extends Controller
                 }
             }
 
+            if ($account->scheme) {
+                $tenureType = $account->scheme->tenure_of_rd_dd_type ?? 'months';
+                $tenureValue = $account->scheme->tenure_of_rd_dd_value ?? 12;
+
+                if ($tenureType === 'months') {
+                    $installments = $tenureValue;
+                } elseif ($tenureType === 'days') {
+                    $installments = ceil($tenureValue / 30);
+                } elseif ($tenureType === 'years') {
+                    $installments = $tenureValue * 12;
+                }
+            }
+
             $shouldHavePaid = min($diff, $installments);
 
-            $totalPrincipalPaid   = $account->transactions->sum('amount');
-            $installmentCleared   = floor($totalPrincipalPaid / $account->dd_amount);
-
+            $totalPrincipalPaid = $account->transactions->sum('amount');
+            $installmentCleared = floor($totalPrincipalPaid / $account->dd_amount);
             $paid = $installmentCleared;
-
             $due = max($shouldHavePaid - $paid, 0);
 
             $overdue = 0;
@@ -82,11 +92,11 @@ class DdsAccountsController extends Controller
 
             $notDue = $installments - $paid - $due;
 
-            $account->paid_installments     = $paid;
-            $account->due_installments      = $due;
-            $account->overdue_installments  = $overdue;
+            $account->paid_installments = $paid;
+            $account->due_installments = $due;
+            $account->overdue_installments = $overdue;
             $account->canceled_installments = 0;
-            $account->not_due_installments  = max($notDue, 0);
+            $account->not_due_installments = max($notDue, 0);
         }
 
         return view('fd_account.ddsaccounts.index', compact('ddaccounts'));
@@ -237,6 +247,7 @@ class DdsAccountsController extends Controller
             $transaction->account_id = null;
             $transaction->amount           = $request->amount;
             $transaction->balance_available = $request->amount;
+             $transaction->type="credit";
             $transaction->pay_mode = $request->pay_mode;
             $transaction->save();
 
@@ -613,23 +624,42 @@ class DdsAccountsController extends Controller
 
     public function installments($id)
     {
-        $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
+        $ddaccount = DdsAccount::with('transactions', 'scheme')->findOrFail($id);
 
         $emiAmount = $ddaccount->dd_amount;
         $openDate = Carbon::parse($ddaccount->open_date);
-        $totalInstallments = $ddaccount->total_installments;
+
+        // Get tenure type and value from the scheme
+        $tenureType = $ddaccount->scheme->tenure_of_rd_dd_type; // 'days', 'months', or 'years'
+        $tenureValue = $ddaccount->scheme->tenure_of_rd_dd_value; // e.g. 12 days, 365 days, etc.
+
         $frequency = strtolower($ddaccount->rd_dd_frequency);
+        $totalInstallments = 0;
+
+        // Determine total installments based on the tenure type
+        switch ($tenureType) {
+            case 'days':
+                $totalInstallments = $tenureValue; // If it's in days, directly use the tenure value
+                break;
+            case 'months':
+                $totalInstallments = $tenureValue; // If it's in months, use tenure value as is
+                break;
+            case 'years':
+                $totalInstallments = $tenureValue * 12; // Convert years to months
+                break;
+            default:
+                $totalInstallments = 12; // Default value in case the tenure type is not recognized
+        }
 
         $totalPaid = $ddaccount->transactions->sum('amount');
-
         $fullyPaidCount = floor($totalPaid / $emiAmount);
-
         $remaining = $totalPaid - ($fullyPaidCount * $emiAmount);
 
         $installments = [];
 
+        // Loop to create installments
         for ($i = 0; $i < $totalInstallments; $i++) {
-
+            // Handle the due dates based on the frequency type
             $dueDate = match ($frequency) {
                 'daily'   => $openDate->copy()->addDays($i),
                 'monthly' => $openDate->copy()->addMonths($i),
@@ -637,32 +667,35 @@ class DdsAccountsController extends Controller
                 default   => $openDate->copy()->addDays($i),
             };
 
+            // Ensure that installment does not exceed the scheme's duration
+            if ($i >= $totalInstallments) break;
+
+            // Determine installment state
             if ($i < $fullyPaidCount) {
                 $state = 'PAID';
                 $paidOn = $ddaccount->transactions->last()->transaction_date;
             } elseif ($i == $fullyPaidCount && $remaining > 0) {
-                $state = 'PARTIAL';  // Optional display
+                $state = 'PARTIAL';
                 $paidOn = '';
             } else {
                 $state = 'PENDING';
                 $paidOn = '';
             }
 
+            // Add installment data to the array
             $installments[] = [
                 'number'     => $i + 1,
                 'amount'     => number_format($emiAmount, 2),
                 'due_date'   => $dueDate->format('d-m-Y'),
                 'state'      => $state,
                 'paid_on'    => $paidOn ? Carbon::parse($paidOn)->format('d-m-Y') : '',
-                'created_at' => $ddaccount->created_at->format('d-m-Y h:i A'),
-                'updated_at' => $ddaccount->updated_at->format('d-m-Y h:i A'),
-                // 'created_at' => $ddaccount->fresh()->created_at->format('d-m-Y h:i A'),
-                // 'updated_at' => $ddaccount->fresh()->updated_at->format('d-m-Y h:i A'),
-
+                'created_at' => $ddaccount->created_at->format('d-m-Y'),
+                'updated_at' => $ddaccount->updated_at->format('d-m-Y'), // Add this line if needed
 
             ];
         }
 
+        // Pagination
         $collection = collect($installments);
         $perPage = 50;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
@@ -676,6 +709,7 @@ class DdsAccountsController extends Controller
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
+        // Return the view with installments
         return view('fd_account.ddsaccounts.installments', [
             'ddaccount' => $ddaccount,
             'installments' => $paginatedInstallments,
@@ -695,7 +729,6 @@ class DdsAccountsController extends Controller
             ->route('ddsaccounts.installments', $id)
             ->with('success', 'Installment chart regenerated!');
     }
-
 
     public function installmentReceipt($id)
     {
@@ -919,7 +952,8 @@ class DdsAccountsController extends Controller
             'members',
             'totalDeposited',
             'totalWithdrawn',
-            'balanceAvailable'
+            'balanceAvailable',
+            'transactions'
         ));
     }
 
@@ -938,6 +972,9 @@ class DdsAccountsController extends Controller
 
             // Modify validation rules based on pay_mode
             switch ($request->pay_mode) {
+                case 'cash':
+                    Log::info("Cash mode selected – no extra validation fields required.");
+                    break;
                 case 'onlineTr':
                     $rules['transfer_date'] = 'required|date_format:d-m-Y';
                     $rules['utr_no'] = 'required|string|max:255';
@@ -953,8 +990,6 @@ class DdsAccountsController extends Controller
                 case 'saving':
                     $rules['saving_account_id'] = 'required|exists:accounts,id';
                     break;
-
-                    // No extra validation for 'cash', since it's simple
             }
 
             // Validate the request data with dynamically adjusted rules
@@ -970,13 +1005,13 @@ class DdsAccountsController extends Controller
 
         // Step 2: Find DDS account
         $account = DdsAccount::find($id);
+
         if (!$account) {
             Log::error('DDS Account not found', ['account_id' => $id]);
             return redirect()->back()->with('error', 'Account not found!');
         }
         Log::info('DDS Account found', ['account_id' => $id, 'balance' => $account->balance]);
 
-        // Step 3: Convert dates (transaction date, transfer date, cheque date)
         try {
             $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
             $transferDate = $request->transfer_date ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d') : null;
@@ -986,7 +1021,6 @@ class DdsAccountsController extends Controller
             return redirect()->back()->with('error', 'Invalid date format');
         }
 
-        // Step 4: Deduct from saving account if pay_mode is saving
         $savingAccountId = null;
         if ($request->pay_mode === 'saving') {
             $savingAccount = Account::find($request->saving_account_id);
@@ -994,12 +1028,10 @@ class DdsAccountsController extends Controller
                 Log::error('Saving account not found', ['saving_account_id' => $request->saving_account_id]);
                 return redirect()->back()->with('error', 'Saving account not found!');
             }
-
             if ($savingAccount->amount_deposit < $amount) {
                 Log::warning('Insufficient balance in saving account', ['saving_account_id' => $savingAccount->id]);
                 return redirect()->back()->with('error', 'Insufficient balance in saving account!');
             }
-
             // Deduct amount from saving account
             $savingAccount->amount_deposit -= $amount;
             $savingAccount->save();
@@ -1054,18 +1086,23 @@ class DdsAccountsController extends Controller
         // Step 7: Recalculate the running balance for all transactions
         try {
             $runningBalance = 0;
+
             $transactions = DdTransaction::where('dds_account_id', $id)
-                ->orderBy('transaction_date')
-                ->orderBy('id')
+                ->orderBy('transaction_date', 'asc')
+                ->orderBy('id', 'asc')
                 ->get();
 
             foreach ($transactions as $txn) {
-                $runningBalance += ($txn->type === 'credit') ? $txn->amount : -$txn->amount;
+
+                // Correct running balance formula
+                $runningBalance += ($txn->type === 'credit')
+                    ? $txn->amount
+                    : -$txn->amount;
+
                 $txn->balance_available = $runningBalance;
                 $txn->save();
             }
 
-            // Update the account balance
             $account->balance = $runningBalance;
             $account->save();
         } catch (\Exception $e) {
@@ -1354,6 +1391,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
+
     public function storeCreditInterest(Request $request, $id)
     {
         Log::info("DDS Interest Transaction Start", [
@@ -1369,7 +1407,7 @@ class DdsAccountsController extends Controller
 
         $ddaccount = DdsAccount::findOrFail($id);
 
-        // Fix incorrect MySQL date (d-m-Y → Y-m-d)
+        // Convert date to Y-m-d
         $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
             ->format('Y-m-d');
 
@@ -1377,79 +1415,88 @@ class DdsAccountsController extends Controller
 
         try {
 
-            $oldBalance = $ddaccount->balance ?? 0;
+            // ------------------------------------------------------------
+            // GET OLD VALUES
+            // ------------------------------------------------------------
+            $oldBalance = $ddaccount->balance ?? 0; // 910
+            $oldAmountReceived = $ddaccount->amount_received ?? 0; // 1160
 
-            Log::info("Old Balance", ['balance' => $oldBalance]);
-
-            $oldAmountReceived = DdTransaction::where('dds_account_id', $ddaccount->id)
-                ->where('type', 'installment')
-                ->sum('amount');
-
-            Log::info("Old Amount Received", [
-                'amount_received' => $oldAmountReceived
+            Log::info("Old Values", [
+                'old_balance' => $oldBalance,
+                'old_amount_received' => $oldAmountReceived
             ]);
 
             $interest = $request->interest_amount;
 
-            // DEFAULT VALUES
-            $amountReceived = $oldAmountReceived;
-            $balanceAvailable = $oldBalance;
+            // Default
+            $newAmountReceived = $oldAmountReceived;
+            $newBalance = $oldBalance;
 
+            // ------------------------------------------------------------
+            // CREDIT LOGIC
+            // ------------------------------------------------------------
             if ($request->transaction_type == 'credit') {
 
-                // ⭐ CREDIT LOGIC ⭐  
-                // Add interest only in balance  
-                $balanceAvailable = $oldBalance + $interest;
+                // amount_received stays SAME
+                // balance increases  
+                $newBalance = $oldBalance + $interest;
 
                 Log::info("CREDIT Interest Applied", [
                     'interest' => $interest,
-                    'new_balance' => $balanceAvailable,
-                    'amount_received_unchanged' => $amountReceived
-                ]);
-            } else {
-
-                // ⭐ REVERSE LOGIC ⭐  
-                // Add interest to Amount Received (like installment added back)
-                // Reduce from balance
-                $amountReceived = $oldAmountReceived + $interest;
-                $balanceAvailable = $oldBalance - $interest;
-
-                Log::info("REVERSE Interest Applied", [
-                    'interest' => $interest,
-                    'amount_received_new' => $amountReceived,
-                    'new_balance' => $balanceAvailable
+                    'amount_received' => $newAmountReceived,
+                    'new_balance' => $newBalance,
                 ]);
             }
 
+            // ------------------------------------------------------------
+            // REVERSE LOGIC
+            // ------------------------------------------------------------
+            else {
+
+                // amount_received increases  
+                // balance decreases  
+                $newAmountReceived = $oldAmountReceived + $interest;
+                $newBalance = $oldBalance - $interest;
+
+                Log::info("REVERSE Interest Applied", [
+                    'interest' => $interest,
+                    'new_amount_received' => $newAmountReceived,
+                    'new_balance' => $newBalance,
+                ]);
+            }
+
+            // ------------------------------------------------------------
             // SAVE TRANSACTION
+            // ------------------------------------------------------------
             $transaction = DdTransaction::create([
                 'dds_account_id'    => $ddaccount->id,
                 'transaction_date'  => $transactionDate,
                 'transaction_type'  => $request->transaction_type,
                 'interest_amount'   => $interest,
-                'amount'            => $amountReceived,
-                'balance_available' => $balanceAvailable
+                'amount'            => $newAmountReceived,
+                'balance_available' => $newBalance,
+                'remarks'           => $request->remarks,
             ]);
 
             Log::info("Interest Transaction Saved", [
                 'transaction_id' => $transaction->id
             ]);
 
-            // UPDATE ACCOUNT BALANCE
+            // ------------------------------------------------------------
+            // UPDATE DDS ACCOUNT
+            // ------------------------------------------------------------
             $ddaccount->update([
-                'balance' => $balanceAvailable,
-                'amount_received' => $amountReceived
-
+                'balance'         => $newBalance,
+                'amount_received' => $newAmountReceived,
             ]);
 
             Log::info("DDS Account Updated", [
                 'dds_account_id' => $ddaccount->id,
-                'new_balance' => $balanceAvailable
+                'updated_balance' => $newBalance,
+                'updated_amount_received' => $newAmountReceived
             ]);
 
             DB::commit();
-
-            Log::info("DDS Interest Transaction Completed Successfully");
 
             return back()->with('success', 'Interest updated successfully.');
         } catch (\Exception $e) {
