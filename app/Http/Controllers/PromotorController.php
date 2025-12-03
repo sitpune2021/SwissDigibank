@@ -757,6 +757,7 @@ class PromotorController extends Controller
     }
     public function viewTransactions($id)
     {
+        $promotor = Promotor::findOrFail($id);
         return view('company.promoters.view-transactions', compact('id'));
     }
 }
