@@ -19,11 +19,12 @@
             height: 24px;
             accent-color: green;
         }
-         button[type="reset"]:active {
-                transform: scale(0.95);
-                opacity: 0.7;
-                transition: 0.1s;
-            }
+
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
     </style>
 
 @section('content')
@@ -657,18 +658,25 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-
+    {{-- member deatails --}}
     <script>
         document.getElementById('memberDropdown').addEventListener('change', function() {
             const memberId = this.value;
             const url = this.getAttribute('data-url').replace(':id', memberId);
 
+            const branchSelect = document.getElementById('branch_id');
+            const minorSelect = document.getElementById('minor_id');
+
             if (!memberId) {
                 document.getElementById('memberName').value = '';
                 document.getElementById('memberAddress').value = '';
                 document.getElementById('memberMobile').value = '';
-                document.getElementById('branch_id').selectedIndex = 0;
-                document.getElementById('minor_id').innerHTML = '<option value="">Select Minor</option>';
+
+                // Reset branch dropdown
+                branchSelect.innerHTML = '<option value="">Select Branch</option>';
+
+                // Reset minors dropdown
+                minorSelect.innerHTML = '<option value="">Select Minor</option>';
                 return;
             }
 
@@ -681,13 +689,21 @@
                     document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
                     document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
 
-                    // Auto-select branch
-                    const branchSelect = document.getElementById('branch_id');
-                    const branchId = data.branch_id ? String(data.branch_id) : '';
-                    branchSelect.value = branchId;
+                    // Replace branch dropdown with only customer's branch
+                    branchSelect.innerHTML = '';
+                    if (data.branch_id && data.branch_name) {
+                        const opt = document.createElement('option');
+                        opt.value = data.branch_id;
+                        opt.textContent = data.branch_name;
+                        branchSelect.appendChild(opt);
+                    } else {
+                        const opt = document.createElement('option');
+                        opt.value = '';
+                        opt.textContent = 'Branch not found';
+                        branchSelect.appendChild(opt);
+                    }
 
                     // Populate minors
-                    const minorSelect = document.getElementById('minor_id');
                     minorSelect.innerHTML = '<option value="">Select Minor</option>';
                     if (data.minors && data.minors.length > 0) {
                         data.minors.forEach(minor => {
