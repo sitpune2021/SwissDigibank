@@ -20,7 +20,7 @@ class LoanAgainstDisbursementController extends Controller
     {
         $disbursements = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            // ->whereNotIn('id', $disbursedIds)
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('loanagainst.disbursements.index', compact('disbursements'));

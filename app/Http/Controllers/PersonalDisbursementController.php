@@ -22,7 +22,7 @@ class PersonalDisbursementController extends Controller
     {   
         $disbursements = PersonalLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            // ->whereNotIn('id', $disbursedIds)
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('personal.disbursements.index', compact('disbursements'));
