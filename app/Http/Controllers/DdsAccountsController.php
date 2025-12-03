@@ -247,7 +247,7 @@ class DdsAccountsController extends Controller
             $transaction->account_id = null;
             $transaction->amount           = $request->amount;
             $transaction->balance_available = $request->amount;
-             $transaction->type="credit";
+            $transaction->type = "credit";
             $transaction->pay_mode = $request->pay_mode;
             $transaction->save();
 
@@ -526,24 +526,22 @@ class DdsAccountsController extends Controller
         }
     }
 
-    public function getMemberDetails($id)
+     public function getMemberDetails($id)
     {
-        Log::info("DdsAccountsController@getMemberDetails called for member ID: $id");
-        $member = Member::with('branch', 'minors', 'address')->findOrFail($id);
+        $member = Member::with(['branch', 'minors'])->findOrFail($id);
 
         return response()->json([
             'member_info_first_name' => $member->member_info_first_name,
             'member_info_last_name'  => $member->member_info_last_name,
-            'member_address_line_1'  => $member->address->member_address_line_1 ?? '',
+            'member_address_line_1'  => $member->member_address_line_1,
             'member_info_mobile_no'  => $member->member_info_mobile_no,
-            'branch_id'   => $member->branch_id,
-            'branch_name' => $member->branch->branch_name ?? '',
-            'open_date'              => now()->format('Y-m-d'),
-            'minors' => $member->minors->map(function ($minor) {
+            'branch_id'              => $member->branch->id ?? null,
+            'branch_name'            => $member->branch->branch_name ?? null,
+            'minors'                 => $member->minors->map(function ($minor) {
                 return [
                     'id' => $minor->id,
                     'first_name' => $minor->first_name,
-                    'last_name' => $minor->last_name,
+                    'last_name' => $minor->last_name
                 ];
             }),
         ]);
