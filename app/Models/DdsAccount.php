@@ -86,4 +86,8 @@ class DdsAccount extends Model
 
         return '--';
     }
+     public function comments()
+    {
+        return $this->hasMany(Comments::class, 'dds_account_id');
+    }
 }

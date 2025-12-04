@@ -186,12 +186,10 @@
                                 </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="box col-span-2 md:col-span-1 ">
-
                     <div class="tab-content mt-4">
                         <div class="tab-content mt-4">
                             <div class="tab tab-rd hidden"></div>
@@ -525,14 +523,14 @@
             </div>
 
             <div class="w-full box mt-5">
-                <div class="  rounded-10">
+                <div class="rounded-10">
                                                     
                     <div id="rd" class="tab p-4 bg-gray-100 rounded-10 mt-4">
                         
                         @php
                         // ensure variables exist
                         // if controller passes $chart, use its tenure_months; otherwise default 6
-                        $months = isset($chart) ? (int) $chart->tenure_months : 6;
+                         $months = isset($chart) ? (int) $chart->tenure_months : 6;
 
                         // rankValues might be passed from controller; ensure it's an array
                         $rankValues = $rankValues ?? [];
@@ -640,7 +638,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
 
 
@@ -894,6 +891,7 @@
 
                             // Old saved values (edit mode only)
                             $existingChart = $existingChart ?? [];
+                            
                         @endphp
 
                         <div class="w-full mt-4 overflow-x-auto">
@@ -968,8 +966,10 @@
                     <div id="mis_payout" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
 
                         @php
+                      
                             // Safe fallback (ADD mode me chart null hota hai)
                             $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
+                            
                             $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
 
                             // Auto TOTAL array
@@ -1044,7 +1044,6 @@
                                             </td>
                                         @endfor
                                     </tr>
-
                                 </tbody>
                             </table>
                         </div>
@@ -1381,10 +1380,7 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
-
-
                 <!-- Buttons -->
                 <div class="flex   min-w-10 sm:flex-row justify-center gap-3 mt-5">
                     <div class="">
@@ -1399,8 +1395,6 @@
                         </button>
                     </div>
                 </div>
-
-
             </div>
         </form>
     </div>

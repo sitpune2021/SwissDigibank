@@ -213,7 +213,7 @@
                 <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 w-1/3">Member</td>
+                            <td class="font-semibold px-4 py-2 w-1/3">Customer</td>
                             <td class="px-4 py-2">
                                 <a href="{{ url('members/member/'. $application->member->id) }}" 
                                 class="text-primary capitalize hover:underline">

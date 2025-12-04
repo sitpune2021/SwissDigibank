@@ -90,7 +90,7 @@ return [
             ['title' => 'APPLICATIONS', 'route' => 'gold-loan.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'gold-loan.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'gold-loan.account.index'],
-            ['title' => 'ORNAMENTS INVENTORY', 'route' => 'gold-loan.ornaments.index'],        
+            ['title' => 'ORNAMENTS INVENTORY', 'route' => 'gold-loan.ornaments.index'],
         ],
     ],
     [
@@ -248,6 +248,13 @@ return [
         ],
     ],
     [
+        'title' => 'PASSBOOK',
+        'icon' => 'las la-book',
+        'position' => '5',
+        'active' => '1',
+        'route' => 'passbook.index',
+    ],
+    [
         'title' => 'REPORTS',
         'icon' => 'las la-user',
         'position' => '10',
@@ -278,6 +285,7 @@ return [
             // ['title' => 'FY REPORT', 'route' => 'fy-report.index'],
         ],
     ],
+
     // [
     //     'title' => 'NEW JOURNAL ENTRY',
     //     'icon' => 'las la-user',
