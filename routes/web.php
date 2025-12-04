@@ -427,9 +427,11 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/misaccount/storeDocuments/{id}', [MisaccountController::class, 'storeDocuments'])->name('mis.storeDocuments');
     Route::delete('/documents/{id}', [MisaccountController::class, 'destroy'])->name('documents.destroy');
 
-    Route::get('/misacccount/comment/{id}', [MisaccountController::class, 'addComment'])->name('mis.comments');
+    Route::get('/misacccount/comment/{id}', [MisaccountController::class, 'addComment'])->name('mis.addComment');
     Route::post('/misaccount/store-comment/{id}', [MisaccountController::class, 'storeComment'])->name('mis.storeComment');
 
+    Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
+        ->name('mis.updateSetting');
     Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
         ->name('mis.updateSetting');
 });
@@ -2100,6 +2102,19 @@ Route::prefix('fd_account/calculator')->name('calculator.')->group(function () {
     Route::get('/create', [CalculatorController::class, 'create'])->name('create');
     Route::post('/store', [CalculatorController::class, 'store'])->name('store');
 });
+
+/////////////////////////////////////   Passbook   ////////////////////////////////////////////////////////
+
+Route::resource('passbook', PassbookController::class);
+Route::get('index', [PassbookController::class, 'index'])->name('passbook.index');
+Route::get('create-passbook', [PassbookController::class, 'create'])->name('passbook.create-passbook');
+Route::post('store-passbook', [PassbookController::class, 'store'])->name('passbook.store-passbook');
+Route::get('passbook/{passbook}', [PassbookController::class, 'show'])->name('passbook.show');
+Route::get('edit-passbook/{id}', [PassbookController::class, 'edit'])->name('passbook.edit-passbook');
+Route::delete('/passbook/{id}', [PassbookController::class, 'destroy'])->name('passbook.destroy');
+
+
+/////////////////////////////////////   end Passbook   ////////////////////////////////////////////////////////
 
 Route::get('/dev/run/{action}', function ($action) {
     try {
