@@ -127,6 +127,7 @@ class DdsAccountsController extends Controller
         if ($request->branch_id === 'null' || $request->branch_id === '') {
             $request->merge(['branch_id' => null]);
         }
+        $scheme = Rdscheme::findOrFail($request->scheme_id);
 
         $validated = $request->validate([
             'member_id' => 'required|integer',
@@ -134,8 +135,17 @@ class DdsAccountsController extends Controller
             'scheme_id' => 'required|integer|exists:rdschemes,id',
             'open_date' => 'required|date',
             'amount' => 'required|numeric',
+            'account_type' => 'required|in:single,joint',   // ✅ ADD THIS
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
-            'dd_amount' => 'required|numeric',
+            'dd_amount' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) use ($scheme) {
+                    if ($value < $scheme->min_rd_dd_amount) {
+                        $fail("Minimum DD amount must be ₹{$scheme->min_rd_dd_amount}.");
+                    }
+                }
+            ],
             'remarks' => 'nullable|string',
         ]);
 
@@ -151,24 +161,30 @@ class DdsAccountsController extends Controller
 
             $rate = $scheme->anuual_interest_rate;
 
-            switch ($scheme->rd_dd_frequency) {
-                case 'daily':
-                    $installments = 365;
-                    break;
-                case 'weekly':
-                    $installments = floor(365 / 7);
-                    break;
-                case 'bi-weekly':
-                    $installments = floor(365 / 14);
-                    break;
-                case 'monthly':
-                    $installments = $scheme->tenure_of_rd_dd_value;
-                    break;
-                case 'yearly':
-                    $installments = $scheme->tenure_of_rd_dd_value;
-                    break;
-                default:
-                    $installments = 365;
+            if ($scheme->tenure_of_rd_dd_type === 'days') {
+                // EXACT DAYS — USE VALUE DIRECTLY
+                $installments = $scheme->tenure_of_rd_dd_value;
+            } else {
+                // OLD LOGIC FOR months / years
+                switch ($scheme->rd_dd_frequency) {
+                    case 'daily':
+                        $installments = 365;
+                        break;
+                    case 'weekly':
+                        $installments = floor(365 / 7);
+                        break;
+                    case 'bi-weekly':
+                        $installments = floor(365 / 14);
+                        break;
+                    case 'monthly':
+                        $installments = $scheme->tenure_of_rd_dd_value;
+                        break;
+                    case 'yearly':
+                        $installments = $scheme->tenure_of_rd_dd_value;
+                        break;
+                    default:
+                        $installments = 365;
+                }
             }
 
             $bonusRate = $scheme->bonus_rate_type === 'percentage' ? $scheme->bonus_rate_value : 0;
@@ -177,7 +193,7 @@ class DdsAccountsController extends Controller
             $calculation = $this->calculateMaturity(
                 $request->dd_amount,
                 $installments,
-                'daily',
+                $scheme->rd_dd_frequency,   // USE REAL FREQUENCY
                 $rate,
                 $bonusRate,
                 $fixedBonus,
@@ -205,7 +221,7 @@ class DdsAccountsController extends Controller
             $ddsAccount->dd_amount = $request->dd_amount;
             $ddsAccount->open_date = $request->open_date;
             // $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
-            $ddsAccount->account_type = 'single';
+            $ddsAccount->account_type = $request->account_type; // ✅ FIXED
             $ddsAccount->remarks = $request->remarks;
             $ddsAccount->tds_deduction = 0;
             $ddsAccount->rd_dd_frequency = $scheme->rd_dd_frequency;
@@ -302,9 +318,7 @@ class DdsAccountsController extends Controller
             ->where('account_status', 1)
             ->get();
 
-        // -----------------------------
-        // GET LATEST TRANSACTION FOR LINK STATUS
-        // -----------------------------
+
         $latestTransaction = DdTransaction::where('dds_account_id', $id)
             ->latest('id')
             ->first();
@@ -526,7 +540,7 @@ class DdsAccountsController extends Controller
         }
     }
 
-     public function getMemberDetails($id)
+    public function getMemberDetails($id)
     {
         $member = Member::with(['branch', 'minors'])->findOrFail($id);
 
@@ -549,21 +563,21 @@ class DdsAccountsController extends Controller
 
     public function updateMember(Request $request, DdsAccount $ddaccount)
     {
+
         Log::info("DdsAccountsController@updateMember called for DDS ID: {$ddaccount->id}");
         $request->validate(['member_id' => 'required|exists:members,id']);
         $ddaccount->member_id = $request->member_id;
         $ddaccount->save();
-
         return back()->with('success', 'Member updated successfully');
     }
 
     public function updateBranch(Request $request, DdsAccount $ddaccount)
     {
         Log::info("DdsAccountsController@updateBranch called for DDS ID: {$ddaccount->id}");
+
         $request->validate(['branch_id' => 'required|exists:branches,id']);
         $ddaccount->branch_id = $request->branch_id;
         $ddaccount->save();
-
         return back()->with('success', 'Branch updated successfully');
     }
     function calculateMaturity(
@@ -1553,71 +1567,256 @@ class DdsAccountsController extends Controller
         );
     }
 
+    // public function updateAccountInfo(Request $request, $id)
+    // {
+    //     // -------------------------------
+    //     // VALIDATION
+    //     // -------------------------------
+    //     $request->validate([
+    //         'scheme_id'            => 'required|exists:rdschemes,id',
+    //         'account_holder_type'  => 'required|in:single,joint',   // <== important
+    //         'dd_amount'            => 'required|numeric|min:1',
+    //         'open_date'            => 'required|date',
+    //     ]);
+
+    //     $ddaccount = DdsAccount::findOrFail($id);
+
+    //     DB::beginTransaction();
+
+    //     try {
+
+    //         // -------------------------------
+    //         // LOG START
+    //         // -------------------------------
+    //         Log::info('DDS Account Info Update Started', [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'request_data'   => $request->all(),
+    //             'old_values'     => [
+    //                 'scheme_id'           => $ddaccount->scheme_id,
+    //                 'dd_amount'           => $ddaccount->dd_amount,
+    //                 'open_date'           => $ddaccount->open_date,
+    //                 'account_type'        => $ddaccount->account_type, // <== added
+    //                 'account_holder_type' => optional($ddaccount->account)->account_holder_type
+    //             ]
+    //         ]);
+
+    //         // -------------------------------
+    //         // UPDATE MAIN DDS ACCOUNT
+    //         // -------------------------------
+    //         $ddaccount->scheme_id   = $request->scheme_id;
+    //         $ddaccount->dd_amount   = $request->dd_amount;
+    //         $ddaccount->open_date   = $request->open_date;
+
+    //         // ⭐⭐ FIX ADDED — UPDATE account_type in dds_accounts table
+    //         $ddaccount->account_type = $request->account_holder_type;
+
+    //         $ddaccount->save();
+
+    //         // -------------------------------
+    //         // UPDATE ACCOUNT HOLDER TYPE (IF ACCOUNT EXISTS)
+    //         // -------------------------------
+    //         if ($ddaccount->account) {
+    //             $ddaccount->account->account_holder_type = $request->account_holder_type;
+    //             $ddaccount->account->save();
+    //         }
+
+    //         DB::commit();
+
+    //         // -------------------------------
+    //         // LOG SUCCESS
+    //         // -------------------------------
+    //         Log::info('DDS Account Info Updated Successfully', [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'new_values'     => [
+    //                 'scheme_id'           => $ddaccount->scheme_id,
+    //                 'dd_amount'           => $ddaccount->dd_amount,
+    //                 'open_date'           => $ddaccount->open_date,
+    //                 'account_type'        => $ddaccount->account_type, // <== added
+    //                 'account_holder_type' => optional($ddaccount->account)->account_holder_type
+    //             ]
+    //         ]);
+
+    //         return redirect()
+    //             ->route('ddsaccounts.show', $ddaccount->id)
+    //             ->with('success', 'Account Information Updated Successfully');
+    //     } catch (\Exception $e) {
+
+    //         DB::rollBack();
+
+    //         // -------------------------------
+    //         // LOG ERROR
+    //         // -------------------------------
+    //         Log::error('DDS Account Info Update Failed', [
+    //             'dds_account_id' => $ddaccount->id,
+    //             'error_message'  => $e->getMessage(),
+    //             'line'           => $e->getLine(),
+    //             'file'           => $e->getFile(),
+    //         ]);
+
+    //         return back()->with('error', 'Error: ' . $e->getMessage());
+    //     }
+    // }
     public function updateAccountInfo(Request $request, $id)
     {
+        // -----------------------------
+        // VALIDATION
+        // -----------------------------
         $request->validate([
-            'scheme_id' => 'required|exists:rdschemes,id',
+            'scheme_id'           => 'required|exists:rdschemes,id',
             'account_holder_type' => 'required|in:single,joint',
-            'dd_amount'  => 'required|numeric|min:1',
-            'open_date' => 'required|date',
+            'dd_amount'           => 'required|numeric|min:1',
+            'open_date'           => 'required|date',
         ]);
 
-        $ddaccount = DdsAccount::findOrFail($id);
+        Log::info("📌 updateAccountInfo() called", [
+            'dds_account_id' => $id,
+            'request'        => $request->all()
+        ]);
+
+        $dd = DdsAccount::with(['scheme', 'account'])->findOrFail($id);
+        $newScheme = Rdscheme::findOrFail($request->scheme_id);
+
+        // -----------------------------
+        // OLD VALUES LOG
+        // -----------------------------
+        Log::info("🔍 OLD DDS ACCOUNT VALUES", [
+            'scheme_id'         => $dd->scheme_id,
+            'dd_amount'         => $dd->dd_amount,
+            'open_date'         => $dd->open_date,
+            'account_type'      => $dd->account_type,
+            'holder_type'       => $dd->account?->account_holder_type,
+            'total_installment' => $dd->total_installments,
+            'maturity_date'     => $dd->maturity_date,
+            'maturity_amount'   => $dd->maturity_amount,
+        ]);
+
+        // -----------------------------
+        // NEW SCHEME LOG
+        // -----------------------------
+        Log::info("📘 NEW SCHEME SELECTED", [
+            'scheme_id'   => $newScheme->id,
+            'scheme_name' => $newScheme->scheme_name,
+            'tenure'      => $newScheme->tenure_of_rd_dd_value,
+            'frequency'   => $newScheme->rd_dd_frequency,
+            'interest'    => $newScheme->anuual_interest_rate,
+            'bonus'       => $newScheme->maturity_bonus_percent,
+        ]);
 
         DB::beginTransaction();
 
         try {
 
-            Log::info('DDS Account Info Update Started', [
-                'dds_account_id' => $ddaccount->id,
-                'request_data'   => $request->all(),
-                'old_values'     => [
-                    'scheme_id' => $ddaccount->scheme_id,
-                    'dd_amount' => $ddaccount->dd_amount,
-                    'open_date' => $ddaccount->open_date,
-                    'account_holder_type' => optional($ddaccount->account)->account_holder_type
-                ]
+            // -----------------------------
+            // UPDATE BASIC ACCOUNT INFO
+            // -----------------------------
+            $dd->scheme_id    = $newScheme->id;
+            $dd->dd_amount    = $request->dd_amount;
+            $dd->open_date    = $request->open_date;
+            $dd->account_type = $request->account_holder_type;
+
+            Log::info("✏ Updating DDS basic info...", [
+                'scheme_id'    => $dd->scheme_id,
+                'dd_amount'    => $dd->dd_amount,
+                'open_date'    => $dd->open_date,
+                'account_type' => $dd->account_type,
             ]);
 
-            $ddaccount->scheme_id = $request->scheme_id;
-            $ddaccount->dd_amount = $request->dd_amount;
-            $ddaccount->open_date = $request->open_date;
-            $ddaccount->save();
+            // -----------------------------
+            // UPDATE LINKED (MAIN ACCOUNT)
+            // -----------------------------
+            if ($dd->account) {
+                Log::info("✏ Updating Linked Account Holder Type", [
+                    'old_holder_type' => $dd->account->account_holder_type,
+                    'new_holder_type' => $request->account_holder_type
+                ]);
 
-            if ($ddaccount->account) {
-                $ddaccount->account->account_holder_type = $request->account_holder_type;
-                $ddaccount->account->save();
+                $dd->account->account_holder_type = $request->account_holder_type;
+                $dd->account->save();
             }
+
+            // -----------------------------
+            // RECALCULATE BASED ON SCHEME
+            // -----------------------------
+            $tenure = $newScheme->tenure_of_rd_dd_value ?? 0;
+            $frequency = strtolower($newScheme->rd_dd_frequency);
+
+            $annualInterestRate = $newScheme->anuual_interest_rate ?? 0;
+            $bonusPercent       = $newScheme->maturity_bonus_percent ?? 0;
+
+            Log::info("🔄 Starting maturity recalculation...", [
+                'amount'     => $dd->dd_amount,
+                'tenure'     => $tenure,
+                'frequency'  => $frequency,
+                'interest'   => $annualInterestRate,
+                'bonus'      => $bonusPercent,
+                'open_date'  => $request->open_date,
+            ]);
+
+            // -----------------------------
+            // MATURITY CALCULATION
+            // -----------------------------
+            $calc = $this->calculateMaturity(
+                $dd->dd_amount,
+                $tenure,
+                $frequency,
+                $annualInterestRate,
+                $bonusPercent,
+                0,
+                $request->open_date,
+                $tenure
+            );
+
+            Log::info("📊 RECALCULATED VALUES", [
+                'new_maturity_date'   => $calc['maturity_date'],
+                'new_maturity_amount' => $calc['maturity'],
+                'new_bonus'           => $calc['bonus']
+            ]);
+
+            // -----------------------------
+            // SAVE FINAL CALCULATED VALUES
+            // -----------------------------
+            $dd->total_installments = $tenure;
+            $dd->maturity_date      = $calc['maturity_date'];
+            $dd->maturity_amount    = $calc['maturity'];
+            $dd->bonus     = $calc['bonus'];
+            $dd->rd_dd_frequency    = $frequency;
+
+            $dd->save();
+
+            Log::info("✅ DDS ACCOUNT UPDATED SUCCESSFULLY", [
+                'dds_account_id' => $dd->id,
+                'saved_values' => [
+                    'scheme_id'         => $dd->scheme_id,
+                    'dd_amount'         => $dd->dd_amount,
+                    'total_installment' => $dd->total_installments,
+                    'maturity_date'     => $dd->maturity_date,
+                    'maturity_amount'   => $dd->maturity_amount,
+                    'bonus'    => $dd->bonus,
+                    'frequency'         => $dd->rd_dd_frequency,
+                ]
+            ]);
 
             DB::commit();
 
-            Log::info('DDS Account Info Updated Successfully', [
-                'dds_account_id' => $ddaccount->id,
-                'new_values'     => [
-                    'scheme_id' => $ddaccount->scheme_id,
-                    'dd_amount' => $ddaccount->dd_amount,
-                    'open_date' => $ddaccount->open_date,
-                    'account_holder_type' => optional($ddaccount->account)->account_holder_type
-                ]
-            ]);
-
             return redirect()
-                ->route('ddsaccounts.show', $ddaccount->id)
-                ->with('success', 'Account Information Updated Successfully');
+                ->route('ddsaccounts.show', $dd->id)
+                ->with('success', 'Account Information + Calculations Updated Successfully');
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            Log::error('DDS Account Info Update Failed', [
-                'dds_account_id' => $ddaccount->id,
+            Log::error("❌ ERROR updating DDS account", [
+                'dds_account_id' => $id,
                 'error_message'  => $e->getMessage(),
                 'line'           => $e->getLine(),
                 'file'           => $e->getFile(),
             ]);
 
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
+
+
     public function changeMinorInfo($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')

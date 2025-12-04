@@ -57,14 +57,14 @@
 
                             @if ($ddaccount->scheme)
                                 <option value="{{ $ddaccount->scheme->id }}" selected>
-                                    DDA00{{ $ddaccount->scheme->id }} - {{ $ddaccount->scheme->scheme_name }}
+                                {{ $ddaccount->scheme->id }} - {{ $ddaccount->scheme->scheme_name }}
                                 </option>
                             @endif
 
                             @foreach ($schemes as $scheme)
                                 @if ($ddaccount->scheme_id != $scheme->id)
                                     <option value="{{ $scheme->id }}">
-                                        DDA00{{ $scheme->id }} - {{ $scheme->scheme_name }}
+                                {{ $scheme->id }} - {{ $scheme->scheme_name }}
                                     </option>
                                 @endif
                             @endforeach
