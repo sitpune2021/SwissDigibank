@@ -244,12 +244,12 @@ class AccountsController extends Controller
             try {
                 $member = \App\Models\Member::find($account->member_id);
 
-                $dlttemplateid = 1707172181384295971;
+                $dlttemplateid = 1707172234093782668;
                 $mobile = $member->member_info_mobile_no;
 
                 $account1 = $account->account_no;
 
-                $message = "Dear Customer, we have received your saving a/c application. Your temp. a/c no. is $account1. SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LTD";
+                $message = "Dear Customer, we have received your saving a/c application. Your temp. a/c no. is $account1. SBC GLOBAL";
 
                 \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
             } catch (\Exception $e) {
