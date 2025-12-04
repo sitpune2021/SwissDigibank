@@ -28,6 +28,7 @@ use NumberFormatter;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Helpers\AccountsTransactionsHelper;
+use App\Models\Comments;
 
 class DdsAccountsController extends Controller
 {
@@ -1897,5 +1898,72 @@ class DdsAccountsController extends Controller
             'tdsDeduction'        => $tdsDeduction,
             'balanceAvailable'    => $balanceAvailable,
         ]);
+    }
+    public function addComment($id)
+    {
+        $ddaccount = DdsAccount::with('comments')->findOrFail($id);
+        return view('fd_account.ddsaccounts.add-comment', compact('ddaccount'));
+    }
+
+    public function storeComment(Request $request, $id)
+    {
+        // -------------------------------
+        // VALIDATION
+        // -------------------------------
+        $request->validate([
+            'comment' => 'required|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            // -------------------------------
+            // LOG START
+            // -------------------------------
+            Log::info('📝 Starting to add comment for DDS Account', [
+                'dds_account_id' => $id,
+                'requested_by'   => Auth::id(),
+                'request_data'   => $request->all()
+            ]);
+
+            // -------------------------------
+            // CREATE COMMENT
+            // -------------------------------
+            $comment = Comments::create([
+                'dds_account_id' => $id,
+                'commented_by'   => Auth::id(),
+                'date'           => now()->toDateString(),
+                'comment'        => $request->comment,
+            ]);
+
+            DB::commit();
+
+            // -------------------------------
+            // LOG SUCCESS
+            // -------------------------------
+            Log::info('✅ Comment added successfully!', [
+                'dds_account_id' => $id,
+                'comment_id'     => $comment->id,
+                'commented_by'   => Auth::id(),
+            ]);
+
+            return back()->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            // -------------------------------
+            // LOG ERROR
+            // -------------------------------
+            Log::error('❌ ERROR adding comment for DDS Account', [
+                'dds_account_id' => $id,
+                'error_message'  => $e->getMessage(),
+                'line'           => $e->getLine(),
+                'file'           => $e->getFile(),
+            ]);
+
+            return back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 }

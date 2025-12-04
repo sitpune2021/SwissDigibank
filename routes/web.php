@@ -225,6 +225,8 @@ Route::middleware('auth.user')->group(function () {
 
         Route::get('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'createforeClose'])->name('dds-accounts.fore-close');
         // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
+        Route::get('/dds-account/comment/{id}', [DdsAccountsController::class, 'addComment'])->name('dds.addComment');
+        Route::post('/dds-account/store-comment/{id}', [DdsAccountsController::class, 'storeComment'])->name('dds.storeComment');
 
 
         // Show Account Details
