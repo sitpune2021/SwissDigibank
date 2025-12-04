@@ -1354,7 +1354,7 @@ $settingLabel = '';
 
 <!-- process button -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
 
     const processButtons = document.querySelectorAll(".process-btn");
 
@@ -1372,7 +1372,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-
 
     // ⭐ STEP 2 — On Click Handler
     processButtons.forEach(btn => {
@@ -1421,7 +1420,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.classList.remove("opacity-50", "cursor-not-allowed");
             }
 
-            // ⭐ AJAX CALL
+            // AJAX CALL
+            // current row ka remaining amount
+            let remaining = parseFloat(
+                row.querySelector("td:nth-child(9)").textContent.replace(/,/g, "")
+            );
+
             fetch("{{ route('gold-loan.emi.saveStatus') }}", {
                 method: "POST",
                 headers: {
@@ -1432,7 +1436,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     loan_id: loanId,
                     emi_no: emiNo,
-                    status: "DUE"
+                    status: "DUE",
+                    remaining_amount: remaining
                 })
             })
             .then(async res => {

@@ -1885,6 +1885,27 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 /////////////////////////////////////////   END associate-advisor   ////////////////////////////////////////////////////
 
 
+////////////////////////////////////    START payment to collect     /////////////////////////////////////////////
+
+
+Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
+    ->name('payments-to-collect.index');
+Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
+    ->name('payments-to-collect.comments');
+Route::get('generate-collection-link/{loan_type}/{loan_id}', 
+    [PaymentsToCollectController::class, 'generateLink'])
+    ->name('loan.generate.collection.link');
+// mark done tab on index page
+Route::get('loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}', 
+    [PaymentsToCollectController::class, 'markDone']
+)->name('loan.mark.done');
+
+
+
+////////////////////////////////////    END payment to collect     /////////////////////////////////////////////
+
+
+
 Route::group(['prefix' => 'hr-managment'], function () {
     Route::resource('employee', HRController::class);
 
@@ -2065,13 +2086,6 @@ Route::group(['prefix' => 'day-book'], function () {
 });
 
 // Payments & payment collections
-//payments to collect
-
-
-Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
-    ->name('payments-to-collect.index');
-Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
-    ->name('payments-to-collect.comments');
 
 //payments to release
 
