@@ -1,5 +1,6 @@
 @extends('layout.main')
 @section('content')
+
     <style>
         .breadcrumb {
             list-style: none;
@@ -45,12 +46,12 @@
             background-color: #14532d;
         }
     </style>
+
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-xl block  uppercase font-semibold">RD/ DD/ LOAN EMI - PAYMENT COLLECTION
             </h3>
-
         </div>
 
         <div class="col-span-12 box lg:col-span-12">
@@ -68,6 +69,28 @@
                     download machine dat
                 </a>
             </div>
+
+            @php
+                function detectLoanType($loanId) {
+                    $map = [
+                        'gold_loan_emi_status' => 'Gold Loan',
+                        'mortgage_loan_emi_status' => 'Mortgage Loan',
+                        'loan_against_emi_status' => 'Loan Against Deposit',
+                        'daily_weekly_loan_emi_status' => 'Daily/Weekly Loan',
+                        'cc_od_loan_emi_status' => 'CC/OD Loan',
+                        'personal_loan_emi_status' => 'Personal Loan',
+                        'vehical_loan_emi_status' => 'Vehicle Loan',
+                        'business_loan_emi_status' => 'Business Loan',
+                    ];
+
+                    foreach ($map as $table => $label) {
+                        if (DB::table($table)->where('loan_id', $loanId)->exists()) {
+                            return $label;
+                        }
+                    }
+                    return '-';
+                }
+            @endphp
             
             <div class="pb-4 overflow-x-auto lg:pb-6">
                 
@@ -89,14 +112,11 @@
                                     ADV/ STAFF
                                 </div>
                             </th>
-
-
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    MEMBER
+                                    CUSTOMER
                                 </div>
                             </th>
-
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     A/C TYPE
@@ -153,287 +173,330 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach ($applications as $app)
                         <tr class="border-b dark:border-bg3">
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    Ananthapur
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 Capitalize">
 
+                            {{-- Branch Name --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center gap-1 uppercase">
+                                    {{ $app->branch_name ?? '-' }}
                                 </div>
                             </td>
 
+                            {{-- Branch Code --}}
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center  gap-1">
-                                    BHEEMANNA ANUMULA
+                                <div class="flex items-center gap-1 capitalize">
+                                    -
                                 </div>
                             </td>
+
+                            {{-- Member Full Name --}}
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center t gap-1">
-                                    <a href="" class="text-primary">
-                                        DEMO-03307 - SANGEETHA KM SANGEETHA
+                                <div class="flex items-center gap-1 uppercase">
+                                    -
+                                </div>
+                            </td>
+
+                            {{-- Member No & Name --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center gap-1">
+                                    <a href="{{ url('members/member/' . $app->member_id) }}" 
+                                    class="text-green-600 hover:underline">
+                                         {{ $app->member_no ?? '-' }} -
+                                        {{ $app->member_info_first_name ?? '-' }}
                                     </a>
                                 </div>
                             </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    DD
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    <a href="" class="text-primary">
-                                        DDA01304
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 ">
-                                    1
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    0
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    0
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    12-12-2024
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                1036 Days
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
 
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    100,000.00
-                                </div>
+                            {{-- Loan Type --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                {{ detectLoanType($app->app_id) }}
                             </td>
 
+                            {{-- Application Number --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                @php
+                                    $route = '';
+                                    if ($app->loan_type === 'Gold Loan') {
+                                        $route = route('gold-loan.account.show', $app->loan_id);
+                                    } elseif ($app->loan_type === 'Mortgage Loan') {
+                                        $route = route('mortgage.account.show', $app->loan_id);
+                                    } elseif ($app->loan_type === 'Personal Loan') {
+                                        $route = route('personal.account.show', $app->loan_id);
+                                    }
+                                    elseif ($app->loan_type === 'Loan Against Deposit') {
+                                        $route = route('loanagainst.account.show', $app->loan_id);
+                                    }
+                                    elseif ($app->loan_type === 'Daily/Weekly Loan') {
+                                        $route = route('daily_weekly.account.show', $app->loan_id);
+                                    }
+                                    elseif ($app->loan_type === 'CC/OD Loan') {
+                                        $route = route('cc_od.account.show', $app->loan_id);
+                                    }
+                                    elseif ($app->loan_type === 'Vehicle Loan') {
+                                        $route = route('vehical.account.show', $app->loan_id);
+                                    }
+                                    elseif ($app->loan_type === 'Business Loan') {
+                                        $route = route('bussiness.account.show', $app->loan_id);
+                                    }
+                                @endphp                          
+                                <a href="{{ $route }}" class="text-primary">
+                                    {{ $app->loan_id ?? '-' }}
+                                </a>
+                            </td>
+
+                            {{-- EMI --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                -
+                            </td>
+
+                            {{-- Pending EMI --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                -
+                            </td>
+
+                            {{-- Total Paid EMI --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                -
+                            </td>
+
+                            {{-- Loan Date --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                {{ $app->paid_date ? date('d-m-Y', strtotime($app->paid_date)) : '-' }}
+                            </td>
+
+                            {{-- Days --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                @if ($app->paid_date)
+                                    {{
+                                        \Carbon\Carbon::parse(
+                                            date('Y-m-d', strtotime($app->paid_date))
+                                        )->diffInDays(\Carbon\Carbon::now()->startOfDay())
+                                    }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+
+                            {{-- Advisor --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                                -
+                            </td>
+
+                            {{-- Loan Amount --}}
+                            <td class="text-start !py-5 px-6 min-w-[100px]">
+                               {{ number_format($app->remaining_amount ?? 0, 2) }}
+                            </td>
+
+                            {{-- Options --}}
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex justify-center">
                                     <div class="relative">
                                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                         <ul class="horiz-option popover-content">
-                                            <li><a href="" class="single-option">COLLECT</a></li>
                                             <li>
-                                                <a href="" class="single-option">
-                                                    GENERATE COLLECTION LINK
+                                                @php
+                                                    $collectRoute = '';
+
+                                                    if ($app->loan_type === 'Gold Loan') {
+                                                        $collectRoute = route('gold-loan.account.pay-emi', $app->loan_id);
+                                                    } elseif ($app->loan_type === 'Mortgage Loan') {
+                                                        $collectRoute = route('mortgage.account.pay-emi', $app->loan_id);
+                                                    } elseif ($app->loan_type === 'Personal Loan') {
+                                                        $collectRoute = route('personal.account.pay-emi', $app->loan_id); // OPTIONAL
+                                                    }
+                                                    elseif ($app->loan_type === 'Loan Against Deposit') {
+                                                        $collectRoute = route('loanagainst.account.pay-emi', $app->loan_id); // OPTIONAL
+                                                    }
+                                                    elseif ($app->loan_type === 'Daily/Weekly Loan') {
+                                                        $collectRoute = route('daily_weekly.account.pay-emi', $app->loan_id); // OPTIONAL
+                                                    }
+                                                    elseif ($app->loan_type === 'CC/OD Loan') {
+                                                        $collectRoute = route('cc_od.account.pay-emi', $app->loan_id); // OPTIONAL
+                                                    }
+                                                    elseif ($app->loan_type === 'Vehicle Loan') {
+                                                        $collectRoute = route('vehical.account.pay-emi', $app->loan_id); // OPTIONAL
+                                                    }
+                                                    elseif ($app->loan_type === 'Business Loan') {
+                                                        $collectRoute = route('bussiness.account.pay-emi', $app->loan_id); // OPTIONAL
+                                                    }                                                   
+                                                @endphp
+                                                <a href="{{ $collectRoute }}" class="single-option">COLLECT</a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ route('loan.generate.collection.link', [$app->loan_type, $app->loan_id]) }}"
+                                                class="single-option">
+                                                GENERATE COLLECTION LINK
                                                 </a>
                                             </li>
-                                            <li>
 
-                                                <button onclick="openLoanModal()" id="loanModal"
-                                                    class="single-option   hidden items-center justify-center bg-black/50"
-                                                    data-open-modal="loanModal">COMMENTS</button>
+                                            <li><button class="single-option">COMMENTS</button></li>
+                                            <li>
+                                                <a 
+                                                    href="{{ route('loan.mark.done', [$app->loan_type, $app->loan_id, $app->emi_no, $app->remaining_amount]) }}" 
+                                                    class="single-option"
+                                                >
+                                                    MARK DONE
+                                                </a>
                                             </li>
 
-                                            <li>
-                                                <a href="" class="single-option">MARK DONE</a>
-                                            </li>
                                         </ul>
-
-                                        {{-- @include('partials._vertical-options', [
-                                        /* 'id' =>base64_encode($director->id),
-                                        'viewRoute' => 'director.show',
-                                        'editRoute' => 'director.edit'*/
-                                        ]) --}}
                                     </div>
                                 </div>
                             </td>
+
                         </tr>
+                        @endforeach
                     </tbody>
+                    <!-- Pagination Links -->
+                    <div class="mt-4">
+                        <x-pagination :paginator="$applications" />
+                    </div>
                 </table>
+
             </div>
+
         </div>
+
+
         <!-- BACKDROP -->
         <div id="loanModal"
-    class="fixed inset-0 z-50 hidden bg-black/60 flex items-start justify-center overflow-y-auto pt-10">
+            class="fixed inset-0 z-50 hidden bg-black/60 flex items-start justify-center overflow-y-auto pt-10">
 
-    <!-- MODAL CONTAINER -->
-    <div class="w-full max-w-3xl mt-5 rounded-lg shadow-xl bg-white">
+            <!-- MODAL CONTAINER -->
+            <div class="w-full max-w-3xl mt-5 rounded-lg shadow-xl bg-white">
 
-        <div class="box">
+                <div class="box">
 
-            <!-- HEADER -->
-            <div class="flex items-center justify-between border-b px-4 py-3">
-                <h4 class="w-full text-center text-lg font-semibold uppercase tracking-wide">
-                    LOAN INFO
-                </h4>
+                    <!-- HEADER -->
+                    <div class="flex items-center justify-between border-b px-4 py-3">
+                        <h4 class="w-full text-center text-lg font-semibold uppercase tracking-wide">
+                            LOAN INFO
+                        </h4>
 
-                <button type="button"
-                    class="ml-4 inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
-                    onclick="closeLoanModal()">
-                    &times;
-                </button>
-            </div>
-
-            <!-- BODY -->
-            <div class="p-4 sm:p-6 space-y-6">
-
-                <!-- Loan info table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <tbody class="divide-y divide-gray-200">
-
-                            <tr class="border-b">
-                                <td class="font-semibold uppercase py-2 pr-4">Member No :</td>
-                                <td colspan="3" class="py-2 underline">
-                                    <a href="" class="text-primary">
-                                        DEMO-03253 - LAVANYA K
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold uppercase py-2 pr-4">Account Type :</td>
-                                <td class="py-2 pr-4">DD</td>
-                                <td class="font-semibold uppercase py-2 pr-4">Account No :</td>
-                                <td class="py-2 underline">
-                                    <a href="" class="text-primary">
-                                        DDA01450
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold uppercase py-2 pr-4">Inst Due :</td>
-                                <td class="py-2 pr-4">188</td>
-                                <td class="font-semibold uppercase py-2 pr-4">Due Date :</td>
-                                <td class="py-2">17/01/2023</td>
-                            </tr>
-
-                            <tr class="border-b">
-                                <td class="font-semibold uppercase py-2 pr-4">Saving Bal :</td>
-                                <td class="py-2 pr-4"></td>
-                                <td class="font-semibold uppercase py-2 pr-4">Amt to Collect :</td>
-                                <td class="py-2">282,000.00</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Last credit table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-
-                        <thead>
-                            <tr>
-                                <th colspan="5" class="bg-gray-50 py-2 text-center text-lg font-semibold uppercase">
-                                    Last Credit Transaction Info
-                                </th>
-                            </tr>
-                            <tr class="border-b text-md font-medium uppercase text-gray-500">
-                                <th class="py-2 pr-4 text-start">Trans Id</th>
-                                <th class="py-2 pr-4 text-start">T Date</th>
-                                <th class="py-2 pr-4 text-start">Pay Mode</th>
-                                <th class="py-2 pr-4 text-start">Amount</th>
-                                <th class="py-2 text-start">Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-gray-200">
-                            <tr>
-                                <td class="py-2 pr-4">DD6491</td>
-                                <td class="py-2 pr-4">13-12-2024</td>
-                                <td class="py-2 pr-4">Cash</td>
-                                <td class="py-2 pr-4">1500.0</td>
-                                <td class="py-2">
-                                    <div class="flex items-center gap-1">
-                                        <span
-                                            class="block w-28 rounded-[30px] border border-n30 bg-yellow-100 py-2 text-center text-xs text-yellow-600">
-                                            Pending
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </div>
-
-                <hr />
-
-                <!-- Comment Form -->
-                <form class="space-y-4 mt-4">
-                    <label class="text-lg uppercase font-medium">Add New Comment <span class="text-red-500">*</span></label>
-
-                    <textarea class="w-full bg-secondary/5 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500"
-                        rows="3" placeholder="Write Your Comment Here..."></textarea>
-
-                    <div class="flex items-center justify-center gap-3 pt-2">
-
-                        <button type="submit" class="btn-primary uppercase">
-                            SAVE
+                        <button type="button"
+                            class="ml-4 inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
+                            onclick="closeLoanModal()">
+                            &times;
                         </button>
+                    </div>
 
-                        <button type="button" onclick="closeLoanModal()"
-                            class="btn-outline uppercase">
-                            Back
-                        </button>
+                    <!-- BODY -->
+                    <div class="p-4 sm:p-6 space-y-6">
+
+                        <!-- Loan info table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <tbody class="divide-y divide-gray-200">
+
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Member No :</td>
+                                        <td colspan="3" class="py-2 underline">
+                                            <a href="" class="text-primary">
+                                                DEMO-03253 - LAVANYA K
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Account Type :</td>
+                                        <td class="py-2 pr-4">DD</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Account No :</td>
+                                        <td class="py-2 underline">
+                                            <a href="" class="text-primary">
+                                                DDA01450
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Inst Due :</td>
+                                        <td class="py-2 pr-4">188</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Due Date :</td>
+                                        <td class="py-2">17/01/2023</td>
+                                    </tr>
+
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Saving Bal :</td>
+                                        <td class="py-2 pr-4"></td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Amt to Collect :</td>
+                                        <td class="py-2">282,000.00</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Last credit table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+
+                                <thead>
+                                    <tr>
+                                        <th colspan="5" class="bg-gray-50 py-2 text-center text-lg font-semibold uppercase">
+                                            Last Credit Transaction Info
+                                        </th>
+                                    </tr>
+                                    <tr class="border-b text-md font-medium uppercase text-gray-500">
+                                        <th class="py-2 pr-4 text-start">Trans Id</th>
+                                        <th class="py-2 pr-4 text-start">T Date</th>
+                                        <th class="py-2 pr-4 text-start">Pay Mode</th>
+                                        <th class="py-2 pr-4 text-start">Amount</th>
+                                        <th class="py-2 text-start">Status</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="py-2 pr-4">DD6491</td>
+                                        <td class="py-2 pr-4">13-12-2024</td>
+                                        <td class="py-2 pr-4">Cash</td>
+                                        <td class="py-2 pr-4">1500.0</td>
+                                        <td class="py-2">
+                                            <div class="flex items-center gap-1">
+                                                <span
+                                                    class="block w-28 rounded-[30px] border border-n30 bg-yellow-100 py-2 text-center text-xs text-yellow-600">
+                                                    Pending
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                        <hr />
+
+                        <!-- Comment Form -->
+                        <form class="space-y-4 mt-4">
+                            <label class="text-lg uppercase font-medium">Add New Comment <span class="text-red-500">*</span></label>
+
+                            <textarea class="w-full bg-secondary/5 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500"
+                                rows="3" placeholder="Write Your Comment Here..."></textarea>
+
+                            <div class="flex items-center justify-center gap-3 pt-2">
+
+                                <button type="submit" class="btn-primary uppercase">
+                                    SAVE
+                                </button>
+
+                                <button type="button" onclick="closeLoanModal()"
+                                    class="btn-outline uppercase">
+                                    Back
+                                </button>
+
+                            </div>
+                        </form>
 
                     </div>
-                </form>
 
+                </div>
             </div>
 
         </div>
-    </div>
-</div>
 
-
-        {{-- <script>
-            document.addEventListener("DOMContentLoaded", () => {
-
-                // Open modal
-                document.querySelectorAll("[data-open-modal]").forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        const modalId = btn.getAttribute("data-open-modal");
-                        const modal = document.getElementById(modalId);
-
-                        modal.classList.remove("hidden");
-                        modal.classList.add("flex");
-                        document.body.classList.add("overflow-hidden");
-                    });
-                });
-
-                // Close modal
-                document.querySelectorAll("[data-close-modal]").forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        const modal = btn.closest("[id]");
-                        modal.classList.add("hidden");
-                        modal.classList.remove("flex");
-                        document.body.classList.remove("overflow-hidden");
-                    });
-                });
-
-                // Close when clicking outside modal
-                document.querySelectorAll("[id]").forEach(backdrop => {
-                    backdrop.addEventListener("click", (e) => {
-                        if (e.target === backdrop) {
-                            backdrop.classList.add("hidden");
-                            backdrop.classList.remove("flex");
-                            document.body.classList.remove("overflow-hidden");
-                        }
-                    });
-                });
-
-            });
-        </script> --}}
 
 <script>
     function openLoanModal() {
@@ -444,7 +507,6 @@
         document.getElementById('loanModal').classList.add('hidden');
     }
 </script>
-
 
 
 @endsection

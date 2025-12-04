@@ -89,7 +89,7 @@
             <!-- Application No. -->
            <td class="text-start !py-5 px-6">
                 <a href="{{ route('daily_weekly.applications.view', $application->id) }}" 
-                class="text-blue-600 hover:underline">
+                class="text-green-600 hover:underline">
                     {{ $application->id }}
                 </a>
             </td>
@@ -102,7 +102,7 @@
             <!-- Member No -->
             <td class="text-start !py-5 px-6">
                 <a href="{{ url('members/member/' . $application->member_id) }}" 
-                class="text-blue-600 hover:underline">
+                class="text-green-600 hover:underline">
                     {{ str_pad($application->member_id, 6, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
