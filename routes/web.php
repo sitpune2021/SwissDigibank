@@ -225,6 +225,8 @@ Route::middleware('auth.user')->group(function () {
 
         Route::get('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'createforeClose'])->name('dds-accounts.fore-close');
         // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
+        Route::get('/dds-account/comment/{id}', [DdsAccountsController::class, 'addComment'])->name('dds.addComment');
+        Route::post('/dds-account/store-comment/{id}', [DdsAccountsController::class, 'storeComment'])->name('dds.storeComment');
 
 
         // Show Account Details
@@ -427,9 +429,11 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/misaccount/storeDocuments/{id}', [MisaccountController::class, 'storeDocuments'])->name('mis.storeDocuments');
     Route::delete('/documents/{id}', [MisaccountController::class, 'destroy'])->name('documents.destroy');
 
-    Route::get('/misacccount/comment/{id}', [MisaccountController::class, 'addComment'])->name('mis.comments');
+    Route::get('/misacccount/comment/{id}', [MisaccountController::class, 'addComment'])->name('mis.addComment');
     Route::post('/misaccount/store-comment/{id}', [MisaccountController::class, 'storeComment'])->name('mis.storeComment');
 
+    Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
+        ->name('mis.updateSetting');
     Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
         ->name('mis.updateSetting');
 });
@@ -1885,6 +1889,27 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 /////////////////////////////////////////   END associate-advisor   ////////////////////////////////////////////////////
 
 
+////////////////////////////////////    START payment to collect     /////////////////////////////////////////////
+
+
+Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
+    ->name('payments-to-collect.index');
+Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
+    ->name('payments-to-collect.comments');
+Route::get('generate-collection-link/{loan_type}/{loan_id}', 
+    [PaymentsToCollectController::class, 'generateLink'])
+    ->name('loan.generate.collection.link');
+// mark done tab on index page
+Route::get('loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}', 
+    [PaymentsToCollectController::class, 'markDone']
+)->name('loan.mark.done');
+
+
+
+////////////////////////////////////    END payment to collect     /////////////////////////////////////////////
+
+
+
 Route::group(['prefix' => 'hr-managment'], function () {
     Route::resource('employee', HRController::class);
 
@@ -2065,13 +2090,6 @@ Route::group(['prefix' => 'day-book'], function () {
 });
 
 // Payments & payment collections
-//payments to collect
-
-
-Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
-    ->name('payments-to-collect.index');
-Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
-    ->name('payments-to-collect.comments');
 
 //payments to release
 
@@ -2100,6 +2118,19 @@ Route::prefix('fd_account/calculator')->name('calculator.')->group(function () {
     Route::get('/create', [CalculatorController::class, 'create'])->name('create');
     Route::post('/store', [CalculatorController::class, 'store'])->name('store');
 });
+
+/////////////////////////////////////   Passbook   ////////////////////////////////////////////////////////
+
+Route::resource('passbook', PassbookController::class);
+Route::get('index', [PassbookController::class, 'index'])->name('passbook.index');
+Route::get('create-passbook', [PassbookController::class, 'create'])->name('passbook.create-passbook');
+Route::post('store-passbook', [PassbookController::class, 'store'])->name('passbook.store-passbook');
+Route::get('passbook/{passbook}', [PassbookController::class, 'show'])->name('passbook.show');
+Route::get('edit-passbook/{id}', [PassbookController::class, 'edit'])->name('passbook.edit-passbook');
+Route::delete('/passbook/{id}', [PassbookController::class, 'destroy'])->name('passbook.destroy');
+
+
+/////////////////////////////////////   end Passbook   ////////////////////////////////////////////////////////
 
 Route::get('/dev/run/{action}', function ($action) {
     try {

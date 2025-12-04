@@ -84,7 +84,7 @@
         <tr class="border-b dark:border-bg3">
             <td class="text-start !py-5 px-6">
                 <div class="flex items-center gap-1 text-secondary uppercase">
-                    <a href="{{ route('bussiness.schemes.view', $scheme->id) }}" class="single-option">
+                    <a href="{{ route('bussiness.schemes.view', $scheme->id) }}" class="single-option text-green-600 hover:text-green-800 transition">
                         {{ $scheme->scheme_code }}
                     </a>
                 </div>

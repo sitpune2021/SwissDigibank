@@ -1362,7 +1362,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.classList.remove("opacity-50", "cursor-not-allowed");
             }
 
-            // ⭐ AJAX CALL
+            // AJAX CALL
+            // current row ka remaining amount
+            let remaining = parseFloat(
+                row.querySelector("td:nth-child(9)").textContent.replace(/,/g, "")
+            );
+
             fetch("{{ route('business.emi.saveEmiStatus') }}", {
                 method: "POST",
                 headers: {
@@ -1373,7 +1378,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     loan_id: loanId,
                     emi_no: emiNo,
-                    status: "DUE"
+                    status: "DUE",
+                    remaining_amount: remaining
                 })
             })
             .then(async res => {
@@ -1393,12 +1399,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- remove account -->
 <script>
-function confirmRemove(id) {
-    if (!confirm('Are you sure you want to remove this account? This will update loan status to 0 and delete related transactions and other charges.')) {
-        return;
+    function confirmRemove(id) {
+        if (!confirm('Are you sure you want to remove this account? This will update loan status to 0 and delete related transactions and other charges.')) {
+            return;
+        }
+        document.getElementById('remove-account-form-' + id).submit();
     }
-    document.getElementById('remove-account-form-' + id).submit();
-}
 </script>
 
 

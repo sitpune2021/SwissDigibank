@@ -246,7 +246,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Application Date</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d/m/Y') }}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}</td>
                         </tr>           
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Amount Approved</td>
@@ -320,13 +320,13 @@
 
                 <!-- Body -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                    <table class="min-w-full text-sm text-left">
                         <thead class="bg-gray-100 text-gray-700">
                             <tr>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Type</th>
-                                <th class="px-4 py-2 font-semibold border">CIBIL Score</th>
-                                <th class="px-4 py-2 font-semibold border">Report Date</th>
-                                <th class="px-4 py-2 font-semibold border">View Report</th>
+                                <th class="px-4 py-2 font-semibold">CIBIL Type</th>
+                                <th class="px-4 py-2 font-semibold">CIBIL Score</th>
+                                <th class="px-4 py-2 font-semibold">Report Date</th>
+                                <th class="px-4 py-2 font-semibold">View Report</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -334,18 +334,17 @@
                             @foreach($application->creditScores as $score)
                                 @if($score)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2 border">{{ $score->cibil_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">{{ $score->cibil_score ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 border">
+                                        <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">
                                             {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
                                         </td>
-                                        <td class="px-4 py-2 border">
+                                        <td class="px-4 py-2">
                                             @if(!empty($score->report_file_path))
                                                 <!-- <a href="javascript:void(0);" 
                                                 onclick="showImage('{{ asset($score->report_file_path) }}')" 
                                                 class="text-blue-600 hover:underline">View Report</a> -->
-                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
-                                            
+                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>                                                        
                                             @else
                                                 <span class="text-gray-500">No File Available</span>
                                             @endif
@@ -389,10 +388,32 @@
                     </thead>
                     <tbody>
                         <tr class="border-t border-b">
-                            <td class="px-2 py-2 text-gray-800 capitalize"> approved</td>
-                            <td class="px-2 py-2 text-gray-800 capitalize">—</td>
-                            <td class="px-2 py-2 text-gray-800">21/08/2025 </td>
-                            <td class="px-2 py-2 text-gray-800 capitalize">Test Test</td>
+                            <td class="px-2 py-2 text-gray-800 capitalize">
+                                 @php
+                                    $statusText = 'UNKNOWN';
+                                    $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
+
+                                    if ($application->status == 0) {
+                                        $statusText = 'DRAFT';
+                                        $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
+                                    } elseif ($application->status == 1) {
+                                        $statusText = 'APPROVED';
+                                        $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
+                                    } elseif ($application->status == 2) {
+                                        $statusText = 'DISBURSEMENT';
+                                        $statusClass = 'bg-green-200 text-green-600 border-green-300';
+                                    } elseif ($application->status == 3) {
+                                        $statusText = 'CANCELED';
+                                        $statusClass = 'bg-red-200 text-red-600 border-red-300';
+                                    }
+                                @endphp
+
+                                 {{ $statusText }}
+                              
+                            </td>
+                            <td class="px-2 py-2 text-gray-800 capitalize">-</td>
+                            <td class="px-2 py-2 text-gray-800">-</td>
+                            <td class="px-2 py-2 text-gray-800 uppercase">-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -556,8 +577,10 @@
                                 </td>
                             </tr>
 
-                            <tr class="border-b">
-                               <td class="font-bold px-4 py-2 uppercase" style="text-align: right;">Per EMI Charges</td>                    
+                            <tr class=" text-center">
+                                <td class="font-bold px-4 py-2" uppercase colspan="2">
+                                    Per EMI Charges
+                                </td>
                             </tr>
 
                             @if(!empty($application->scheme->sms_charge))
