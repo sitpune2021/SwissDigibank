@@ -339,13 +339,60 @@
         <!-- Header -->
         <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
           <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
-          <button class="btn-primary px-3 py-2 rounded-3xl text-white">
+          <a href="{{ route('passbook.create-passbook') }}" class="btn-primary px-3 py-2 rounded-3xl text-white">
             <i class="las la-plus"></i>
             passbook
-          </button>
+          </a>
+        </div>
+
+        <!-- Body -->
+        <div class="p-4">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+              <thead class="bg-gray-100 text-gray-700">
+                <tr class="border-b">
+                  <th class="px-4 py-2 font-semibold">Passbook No</th>
+                  <th class="px-4 py-2 font-semibold">Issue Date</th>
+                  <th class="px-4 py-2 font-semibold">Action</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y divide-gray-200 whitespace-nowrap">
+                @forelse($passbooks as $pass)
+                <tr class="border-b text-center">
+                  <td class="px-4 py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
+                  <td class="px-4 py-2">{{ \Carbon\Carbon::parse($pass->issue_date)->format('d-m-Y')  ?? 'N/A' }}</td>
+                  <td class="px-4 py-2">
+                    <div class="w-full flex gap-3 justify-center">
+
+                      <!-- Edit -->
+                      <a href="{{ route('passbook.edit-passbook', $pass->id) }}"
+                        class="btn-primary  p-1">
+                        <i class="las la-edit "></i>
+                      </a>
+
+                      <!-- View -->
+                      <a href="{{ route('passbook.show', $pass->id) }}"
+                        class="btn-primary  p-1">
+                        <i class="las la-eye "></i>
+                      </a>
+
+                    </div>
+                  </td>
+                </tr>
+                @empty
+                <tr>
+                  <td colspan="3" class="py-3 text-center text-gray-500">
+                    No MIS passbooks found.
+                  </td>
+                </tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+
         </div>
       </div>
-
 
       <!--documents-->
       <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
@@ -376,7 +423,7 @@
                 <tr class="border-b text-center">
                   <td class="px-4 py-2">{{ $doc->document_type }}</td>
                   <td class="px-4 py-2">
-                    <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="text-blue-600 underline">
+                    <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="text-primary underline">
                       Show
                     </a>
                   </td>
@@ -410,10 +457,45 @@
 
         <!-- Body -->
         <div class="p-4">
-          <div class="overflow-x-auto text-center mt-5">
-            <a href="{{ route('mis.comments',$misaccount->id) }}" class="btn-primary px-3 py-2 capitalize rounded-3xl text-white">Add Comments</a>
+
+          <div class="overflow-x-auto">
+
+            @if($misaccount->comments->count() == 0)
+            <p class="capitalize text-gray-500">No comments found</p>
+            @else
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b">
+                  <th class="px-4 py-2 uppercase font-semibold">Comment</th>
+                  <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
+                  <th class="px-4 py-2 uppercase font-semibold">Date</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                @foreach($misaccount->comments as $comment)
+                <tr class="hover:bg-gray-50 border-b">
+                  <td class="px-4 py-2">{{ $comment->comment }}</td>
+                  <td class="px-4 py-2">
+                    {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name : '-' }}
+                  </td>
+                  <td class="px-4 py-2">{{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ?? '' }}</td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+            @endif
+
+
+
+            <div class="overflow-x-auto text-center mt-5">
+              @if($misaccount->comments->count() > 0)
+              <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+              @endif
+              <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+            </div>
           </div>
         </div>
+
       </div>
       <!--Transactions Info-->
       <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
@@ -478,7 +560,7 @@
     <div class=" w-full ">
 
       <!--settings-->
-  <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
+      <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
         <!-- Header -->
         <div class="px-4 py-3">
           <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
@@ -486,7 +568,7 @@
         <div class="p-4 overflow-x-auto">
           <table class="min-w-full text-sm text-left">
             <tbody class="divide-y divide-gray-200">
- 
+
               <!-- SMS Toggle -->
               <tr>
                 <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
@@ -505,7 +587,7 @@
                   </label>
                 </td>
               </tr>
- 
+
               <!-- DEDUCT TDS Toggle -->
               <tr>
                 <td class="font-semibold text-center align-middle px-4 py-3">DEDUCT TDS</td>
@@ -524,7 +606,7 @@
                   </label>
                 </td>
               </tr>
- 
+
               <!-- ACCOUNT ON HOLD Toggle -->
               <tr>
                 <td class="font-semibold text-center align-middle px-4 py-3">ACCOUNT ON HOLD</td>
@@ -546,9 +628,9 @@
             </tbody>
           </table>
         </div>
- 
+
       </div>
- 
+
 
       <!--AUTO RENEW SETTINGS-->
       <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
@@ -1057,17 +1139,17 @@
     holdToggle: 'hold'
   };
   const updateUrl = "{{ route('mis.updateSetting', $misaccount->id) }}";
- 
+
   document.querySelectorAll('.slider-toggle').forEach(toggle => {
- 
+
     toggle.addEventListener('change', function() {
       const field = mappings[this.id];
       const value = this.checked ? 1 : 0;
       const label = document.getElementById(this.dataset.labelId);
- 
+
       // Update label
       label.textContent = value ? "" : "";
- 
+
       fetch(updateUrl, {
           method: "POST",
           headers: {
@@ -1083,10 +1165,9 @@
         .then(data => console.log(data))
         .catch(err => console.error('Error:', err));
     });
- 
+
     toggle.dispatchEvent(new Event('change'));
   });
- 
 </script>
 
 

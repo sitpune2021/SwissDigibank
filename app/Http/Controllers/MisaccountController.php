@@ -14,6 +14,7 @@ use App\Models\Minor;
 use App\Models\Misaccount;
 use App\Models\MisTransaction;
 use App\Models\Document;
+use App\Models\Passbook;
 use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Exception;
@@ -916,7 +917,9 @@ class MisaccountController extends Controller
 
         $branches = Branch::all();
         $documents = Document::where('mis_id', $misaccount->id)->get();
-
+        $passbooks = Passbook::where('account_type', 'MIS Accounts')
+            ->where('account_no', $misaccount->id)
+            ->get();
         $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
             ->whereHas('misaccount', function ($q) use ($misaccount) {
                 $q->where('member_id', $misaccount->member_id);
@@ -930,7 +933,7 @@ class MisaccountController extends Controller
             ->where('account_type', 'SAVING')
             ->get();
 
-        return view('fd_mis_account.misaccount.show', compact('misaccount', 'savingAccounts', 'branches', 'balance', 'documents', 'transactions'));
+        return view('fd_mis_account.misaccount.show', compact('misaccount', 'passbooks', 'savingAccounts', 'branches', 'balance', 'documents', 'transactions'));
     }
 
     //edit editBranch
@@ -1312,8 +1315,12 @@ class MisaccountController extends Controller
             $file = $request->file('file_path')[$index] ?? null;
 
             if ($file) {
-                $path = $file->store('public/assets/images', 'public');
+                $destinationPath = public_path('assets/documents');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
+                $file->move($destinationPath, $fileName);
+
+                $path = 'assets/documents/' . $fileName;
                 Document::create([
                     'mis_id' => $misaccount->id,
                     'document_type' => $docType,
@@ -1326,7 +1333,8 @@ class MisaccountController extends Controller
         return redirect()->route('misaccount.show', $id)
             ->with('success', 'Documents uploaded successfully.');
     }
-    
+
+
     public function addComment($id)
     {
         $misaccount = Misaccount::with('comments')->findOrFail($id);
@@ -1369,6 +1377,8 @@ class MisaccountController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+
 
     public function destroy($id)
     {
