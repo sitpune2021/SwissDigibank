@@ -123,8 +123,9 @@
                                         </td>
 
                                         {{-- Member Name --}}
-                                        <td class="px-6 py-5 text-sm">
-                                            <a href="#" class="text-primary">
+                                        <td class="text-start !py-5 px-6">
+                                            <a href="{{ url('members/member/' . $locker->member_no) }}" 
+                                            class="text-green-600 hover:underline">
                                                 {{ $locker->member_no }} - {{ $locker->member_name }}
                                             </a>
                                         </td>

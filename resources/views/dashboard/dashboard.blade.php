@@ -207,7 +207,6 @@
             </div>
         </div>
 
-
         <!-- MORTGAGE LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
@@ -363,6 +362,48 @@
             </div>
         </div>
 
+        <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
+            <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
+                <span class="font-medium">PAYMENT TO COLLECT</span>
+                @include('partials._horizontal-options')
+            </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h4 class="mb-4 h4">&#8377; {{ number_format($dashboardData['totalEmiDueAmount'], 2) }}</h4>
+                    <span class="flex items-center gap-1 whitespace-nowrap text-primary">
+                        <!-- <i class="text-lg las la-arrow-up"></i> -->
+                    </span>
+                </div>
+                <div class="progress-chart1" data-percent="{{ $dashboardData['duePercent'] }}"></div>  
+            </div>
+        </div>
+
+        <style>
+            .progress-chart1 {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: conic-gradient(#28a745 var(--value), #e5e7eb 0);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                font-weight: bold;
+                color: #111;
+            }
+
+            .progress-chart1::after {
+                content: attr(data-percent) "%";
+            }
+        </style>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll('.progress-chart1').forEach(function (chart) {
+                    let percent = chart.dataset.percent ?? 0;
+                    chart.style.setProperty('--value', percent * 3.6 + 'deg');
+                });
+            });
+        </script>
         
         <!-- Statistics -->
         <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">

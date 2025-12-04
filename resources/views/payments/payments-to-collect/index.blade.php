@@ -201,7 +201,7 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     <a href="{{ url('members/member/' . $app->member_id) }}" 
-                                    class="text-blue-600 hover:underline">
+                                    class="text-green-600 hover:underline">
                                          {{ $app->member_no ?? '-' }} -
                                         {{ $app->member_info_first_name ?? '-' }}
                                     </a>

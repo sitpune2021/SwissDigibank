@@ -131,7 +131,7 @@
                     <tbody>
                     @forelse($distributors as $row)
                         <tr class="border-b">
-                            <td class="py-3 px-6 uppercase text-primary"><a href="{{ route('distributors.show', $row->id) }}" class="single-option capitalize" style="color:#007bff">{{ $row->distributor_code }}</a></td>
+                            <td class="py-3 px-6 uppercase text-primary"><a href="{{ route('distributors.show', $row->id) }}" class="single-option text-green-600 hover:text-green-800 transition">{{ $row->distributor_code }}</a></td>
                             <td class="py-3 px-6 uppercase">{{ $row->distributor_name }}</td>
                             <td class="py-3 px-6 uppercase">{{ $row->distributor_type }}</td>
                             <td class="py-3 px-6 lowercase">{{ $row->contact_no }}</td>

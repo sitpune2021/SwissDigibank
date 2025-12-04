@@ -111,7 +111,7 @@
                             <tr class="border-b dark:border-bg3">
                                 <td class="text-start !py-5 px-6">
                                 <a href="{{ route('gold-loan.applications.view', $disbursement->id) }}" 
-                                    class="text-blue-600 hover:underline">
+                                    class="text-green-600 hover:underline">
                                         {{ $disbursement->id }}
                                     </a>
                                 </td>
@@ -122,7 +122,7 @@
                                 </td>
                                 <td class="text-start !py-5 px-6">
                                     <a href="{{ url('members/member/' . $disbursement->member_id) }}" 
-                                    class="text-blue-600 hover:underline">
+                                    class="text-green-600 hover:underline">
                                         {{ str_pad($disbursement->member_id, 6, '0', STR_PAD_LEFT) }}
                                     </a>
                                 </td>
