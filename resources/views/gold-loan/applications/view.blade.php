@@ -97,7 +97,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">Gold Loan Application </h1>
+            <h3 class="text-lg uppercase font-semibold">Gold Loan Application </h3>
         </div>
     </div>
 
@@ -105,12 +105,12 @@
 
         <!-- Always Visible -->
         <a href="{{ route('gold-loan.applications.view-buttons.show-emi-chart', $application->id) }}" 
-            target="_blank" class="btn-primary px-2 py-2 rounded-10">
+            target="_blank" class="btn-primary px-2 py-2 rounded-10 uppercase text-sm">
             Show EMI Chart
         </a>
         @if($application->status != 1 && $application->status != 2)
         <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
-            class="btn-warning uppercase px-2 py-2 rounded-10">
+            class="btn-warning uppercase px-2 py-2 rounded-10  text-sm">
             Collect Processing Fee
         </a>       
         <!-- <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
@@ -143,13 +143,13 @@
                     target="_blank" class="btn-warning uppercase px-2 py-2 rounded-10">
                     DISBURSE SETTINGS
                 </a>
-                <a href="#" class="btn-primary px-2 py-2 rounded-10">
+                <a href="#" class="btn-primary px-2  uppercase py-2 rounded-10">
                     REGISTER eNACH (Fidypay)
                 </a>
-                <a href="#" class="btn-primary px-2 py-2 rounded-10">
+                <a href="#" class="btn-primary px-2 uppercase py-2 rounded-10">
                     REGISTER eNACH (Rocketpay)
                 </a>
-                <a href="#" class="btn-primary px-2 py-2 rounded-10">
+                <a href="#" class="btn-primary px-2 uppercase py-2 rounded-10">
                     REGISTER eNACH (Rocketpay UPI)
                 </a>
             @endif
@@ -296,19 +296,19 @@
                             <td class="font-semibold px-4 py-2 uppercase">Status</td>
                             <td class="px-4 py-2">
                                 @if($application->status == 0)
-                                    <span class="block w-32 rounded-[30px] border border-yellow-400 bg-yellow-100 py-2 text-center text-xs text-yellow-600">
+                                    <span class="block w-32 rounded-[30px]  py-2 text-center text-xs text-warning">
                                         DRAFT
                                     </span>
                                 @elseif($application->status == 1)
-                                    <span class="block w-32 rounded-[30px] border border-green-400 bg-green-100 py-2 text-center text-xs text-green-600">
+                                    <span class="block w-32 rounded-[30px] text-primary py-2 text-center text-xs ">
                                         APPROVED
                                     </span>
                                 @elseif($application->status == 2)
-                                    <span class="block w-32 rounded-[30px] border border-blue-400 bg-blue-100 py-2 text-center text-xs text-blue-600">
+                                    <span class="block w-32 rounded-[30px] py-2 text-center text-xs text-secondary">
                                         DISBURSED
                                     </span>
                                 @elseif($application->status == 3)
-                                    <span class="block w-32 rounded-[30px] border border-red-400 bg-red-100 py-2 text-center text-xs text-red-600">
+                                    <span class="block w-32 rounded-[30px]  py-2 text-center text-xs text-error">
                                         CANCELLED
                                     </span>
                                 @endif
@@ -354,13 +354,13 @@
 
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto" id="cibilInfo">
-                    <table class="min-w-full text-sm text-left">
-                        <thead class="bg-gray-100 text-gray-700">
+                    <table class="w-full whitespace-nowrap text-sm text-left">
+                        <thead class="bg-secondary/5 text-gray-700">
                             <tr>
-                                <th class="px-4 py-2 font-semibold">CIBIL Type</th>
-                                <th class="px-4 py-2 font-semibold">CIBIL Score</th>
-                                <th class="px-4 py-2 font-semibold">Report Date</th>
-                                <th class="px-4 py-2 font-semibold">View Report</th>
+                                <th class="px-4 py-2 uppercase font-semibold">CIBIL Type</th>
+                                <th class="px-4 py-2 uppercase font-semibold">CIBIL Score</th>
+                                <th class="px-4 py-2 uppercase font-semibold">Report Date</th>
+                                <th class="px-4 py-2 uppercase font-semibold">View Report</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -394,9 +394,9 @@
             </div>
 
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
-                <table class="w-full text-md  whitesapce-nowrap">
+                <table class="w-full text-md  whitespace-nowrap">
                     <thead class="bg-gray-100  text-start">
-                        <tr class="text-start">
+                        <tr class="text-start bg-secondary/5">
                             <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Status</th>
                             <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Remarks</th>
                             <th class="px-2 py-2 font-semibold text-start text-gray-700 uppercase">Updated at</th>
@@ -441,7 +441,7 @@
 
                 <div
                     class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold capitalize">Security Deposits</h3>
+                    <h3 class="text-lg font-semibold uppercase">Security Deposits</h3>
                     <div class="">
 
 
@@ -456,7 +456,7 @@
                 <div class="p-4" id="SecurityDeposits">
                     <div class="overflow-x-auto text-center mt-5">
                         <div class="w-full overflow-x-auto">
-                            <table class="w-full  rounded-lg text-sm">
+                            <table class="w-full whitespace-nowrap rounded-lg text-sm">
                                 <thead class="bg-secondary/5">
                                     <tr>
                                         <th class="px-3 py-2 text-left uppercase">Item Type</th>
@@ -522,7 +522,7 @@
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black  capitalize">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
                         Documents
 
                     </h3>
@@ -672,35 +672,35 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">Interest Type</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Interest Type</td>
                                 <td class="px-4 py-2 text-right md:text-left">
                                     {{ $application->scheme->gold_loan_setting ?? '-' }}
                                 </td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">Interest Rate</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Interest Rate</td>
                                 <td class="px-4 py-2 text-right md:text-left">
                                     {{ $application->scheme->annual_interest_rate ?? 0 }} %
                                 </td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2 uppercase">Processing Fee</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Processing Fee</td>
                                 <td class="px-4 py-2 text-right md:text-left">
                                     {{ $application->scheme->processing_fee ?? 0 }} %
                                 </td>
                             </tr>
                        
                             <tr class=" text-center">
-                                <td class="font-bold px-4 py-2" uppercase colspan="2">
+                                <td class="font-semibold px-4 py-2 uppercase"  colspan="2">
                                     Per EMI Charges
                                 </td>
                             </tr>
 
                             @if(!empty($application->scheme->sms_charge))
                                 <tr class="border-b">
-                                    <td class="font-bold px-4 py-2 uppercase">SMS Charges</td>
+                                    <td class="font-semibold px-4 py-2 uppercase">SMS Charges</td>
                                     <td class="px-4 py-2 text-right md:text-left">
                                         {{ $application->scheme->sms_charge ?? 0 }} ₹ 
                                     </td>
@@ -709,7 +709,7 @@
 
                             @if(!empty($application->scheme->fuel_charge))
                                 <tr class="border-b">
-                                    <td class="font-bold px-4 py-2 uppercase">Fuel Charges</td>
+                                    <td class="font-semibold px-4 py-2 uppercase">Fuel Charges</td>
                                     <td class="px-4 py-2 text-right md:text-left">
                                         {{ $application->scheme->fuel_charge ?? 0 }} ₹ 
                                     </td>
@@ -718,7 +718,7 @@
 
                             @if(!empty($application->scheme->stationary_charge))
                                 <tr class="border-b">
-                                    <td class="font-bold px-4 py-2 uppercase">Stationary Charges</td>
+                                    <td class="font-semibold px-4 py-2 uppercase">Stationary Charges</td>
                                     <td class="px-4 py-2 text-right md:text-left">
                                         {{ $application->scheme->stationary_charge ?? 0 }} ₹ 
                                     </td>
@@ -727,7 +727,7 @@
 
                             @if(!empty($application->scheme->maintenance_charge))
                                 <tr class="border-b">
-                                    <td class="font-bold px-4 py-2 uppercase">Maintenance Charges</td>
+                                    <td class="font-semibold px-4 py-2 uppercase">Maintenance Charges</td>
                                     <td class="px-4 py-2 text-right md:text-left">
                                         {{ $application->scheme->maintenance_charge ?? 0 }} ₹ 
                                     </td>
@@ -736,7 +736,7 @@
                     
                             @if(!empty($application->scheme->collection))
                                 <tr class="border-b">
-                                    <td class="font-bold px-4 py-2 uppercase">Collection Charges</td>
+                                    <td class="font-semibold px-4 py-2 uppercase">Collection Charges</td>
                                     <td class="px-4 py-2 text-right md:text-left">
                                         {{ $application->scheme->collection ?? 0 }} ₹ 
                                     </td>
@@ -782,7 +782,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Amount Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -791,7 +791,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 uppercase py-2">
                                     Amount Approved
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -800,7 +800,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Interest Amount
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -808,7 +808,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -816,7 +816,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Annualized Percentage Rate (APR)
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -824,7 +824,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Credit Period
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -832,7 +832,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Total Amount to Recover
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -840,7 +840,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Tenure of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -848,7 +848,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     EMI Payout
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -856,7 +856,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold px-4 uppercase py-2">
                                     Insurance Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -864,7 +864,7 @@
                                 </td>
                             </tr>
                             <tr class="">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Purpose of Loan
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">

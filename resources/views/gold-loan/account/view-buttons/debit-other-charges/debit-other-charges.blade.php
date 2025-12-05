@@ -28,7 +28,7 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-2">
-                <h3 class="uppercase font-semibold">
+                <h3 class="uppercase text-lg font-semibold">
                     Gold Loan - {{$goldLoan->id}}
                 </h3>
             </div>
@@ -143,49 +143,53 @@
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Loan No.</td>
                                 <td class="px-3 py-2"> {{$goldLoan->id??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Member</td>
                                 <td class="px-3 py-2">{{$goldLoan->member->member_no??''}} {{$goldLoan->member->member_info_first_name??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Open Date</td>
-                                <td class="px-3 py-2">{{$goldLoan->application_date??''}} </td>
+                                <td class="font-semibold uppercase px-3 py-2">Open Date</td>
+                                <td class="px-3 py-2">
+                                
+                                {{\Carbon\Carbon::parse($goldLoan->application_date)->format('d-m-Y')  }}
+
+                                     </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme</td>
+                                <td class="font-semibold uppercase px-3 py-2">Scheme</td>
                                 <td class="px-3 py-2"> {{$goldLoan->scheme->scheme_name??''}} </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Loan Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Loan Amount</td>
                                 <td class="px-3 py-2">₹ {{$goldLoan->loan_amount??''}} </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Current Debt</td>
+                                <td class="font-semibold uppercase px-3 py-2">Current Debt</td>
                                 <td class="px-3 py-2">{{$goldLoan->goldLoanTransactions->first()->current_debt??''}} </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
                                     {{$goldLoan->scheme->annual_interest_rate??''}} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Type</td>
                                 <td class="px-3 py-2 capitalize">
                                     {{ ucwords(str_replace('_', ' ', $goldLoan->scheme->gold_loan_setting ?? '')) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure</td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure</td>
                                 <td class="px-3 py-2">
                                     {{$goldLoan->scheme->tenure??''}} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Status</td>
                                 <td class="px-3 py-2">
                                     @if($goldLoan->is_active == 1)
                                     <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">

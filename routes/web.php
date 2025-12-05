@@ -227,7 +227,9 @@ Route::middleware('auth.user')->group(function () {
         // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
         Route::get('/dds-account/comment/{id}', [DdsAccountsController::class, 'addComment'])->name('dds.addComment');
         Route::post('/dds-account/store-comment/{id}', [DdsAccountsController::class, 'storeComment'])->name('dds.storeComment');
-
+        Route::get('/dds-account/uploadDocuments/{id}', [DdsAccountsController::class, 'uploadDocuments'])->name('dds.uploadDocuments');
+        Route::post('/dds-account/storeDocuments/{id}', [DdsAccountsController::class, 'storeDocuments'])->name('dds.storeDocuments');
+        Route::delete('/dds-account/{id}', [DdsAccountsController::class, 'destroy'])->name('documents.destroy');
 
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
@@ -1896,11 +1898,14 @@ Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'pa
     ->name('payments-to-collect.index');
 Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
     ->name('payments-to-collect.comments');
-Route::get('generate-collection-link/{loan_type}/{loan_id}', 
-    [PaymentsToCollectController::class, 'generateLink'])
+Route::get(
+    'generate-collection-link/{loan_type}/{loan_id}',
+    [PaymentsToCollectController::class, 'generateLink']
+)
     ->name('loan.generate.collection.link');
 // mark done tab on index page
-Route::get('loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}', 
+Route::get(
+    'loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}',
     [PaymentsToCollectController::class, 'markDone']
 )->name('loan.mark.done');
 
@@ -1908,6 +1913,90 @@ Route::get('loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}',
 
 ////////////////////////////////////    END payment to collect     /////////////////////////////////////////////
 
+
+////////////////////////////////////    Start Cut Report     /////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'cut-report'], function () {
+    //reports
+    Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
+        ->name('report.saving-account');
+    Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
+        ->name('accounts.export.csv');
+    Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
+
+    Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
+        ->name('report.fd-account');
+    Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
+        ->name('fd-accounts.export.csv');
+    Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
+
+    Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
+        ->name('report.mis-account');
+    Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+
+
+    Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
+        ->name('report.dd-accounts');
+    Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
+        ->name('report.rd-account');
+
+
+    Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
+    Route::get('report/rd', [CutReportController::class, 'rdIndex'])->name('report.rd.index');
+
+    // Gold Loan Report
+    Route::get('report/gold-loan-account', [CutReportController::class, 'gold_loan_index'])
+        ->name('report.gold-loan-account');
+    Route::get('/accounts/gold-loan-export/csv', [CutReportController::class, 'gold_loan_exportCsv'])
+    ->name('accounts.export.csv');
+
+    // Mortgage Cut Report
+    Route::get('report/Mortgage-loan-account', [CutReportController::class, 'mortgage_index'])
+        ->name('report.mortgage-loan-account');
+    Route::get('/accounts/Mortgage-loan-export/csv', [CutReportController::class, 'mortgage_exportCsv'])
+    ->name('accounts.mortgage.export.csv');
+
+    // loanagainst Cut Report
+    Route::get('report/loanagainst-account', [CutReportController::class, 'loanagainst_index'])
+        ->name('report.loanagainst-account');
+    Route::get('/accounts/loanagainst-export/csv', [CutReportController::class, 'loanagainst_exportCsv'])
+    ->name('accounts.loanagainst.export.csv');
+
+    // Business Loan Accounts
+    Route::get('report/business-account', [CutReportController::class, 'business_index'])
+        ->name('report.business-loan-account');
+    Route::get('/accounts/business-export/csv', [CutReportController::class, 'business_exportCsv'])
+    ->name('accounts.business.export.csv');
+
+    // Personal Cut Report
+    Route::get('report/personal-account', [CutReportController::class, 'personal_index'])
+        ->name('report.personal-loan-account');
+    Route::get('/accounts/personal-export/csv', [CutReportController::class, 'personal_exportCsv'])
+    ->name('accounts.personal.export.csv');
+
+    // Daily Weekly Cut Report
+    Route::get('report/daily-weekly-account', [CutReportController::class, 'daily_weekly_index'])
+        ->name('report.daily_weekly-loan-account');
+    Route::get('/accounts/daily-weekly-export/csv', [CutReportController::class, 'dailyweekly_exportCsv'])
+    ->name('accounts.dailyweekly.export.csv');
+
+    // Vehical Cut Report
+    Route::get('report/vehical-account', [CutReportController::class, 'vehical_index'])
+        ->name('report.vehical-loan-account');
+    Route::get('/accounts/vehical-export/csv', [CutReportController::class, 'vehical_exportCsv'])
+    ->name('accounts.vehical.export.csv');
+
+    // CC OD Cut Report
+    Route::get('report/cc-od-account', [CutReportController::class, 'cc_od_index'])
+        ->name('report.cc_od-loan-account');
+    Route::get('/accounts/cc_od-export/csv', [CutReportController::class, 'cc_od_exportCsv'])
+    ->name('accounts.cc_od.export.csv');
+
+});
+
+
+////////////////////////////////////    END Cut Report     /////////////////////////////////////////////
 
 
 Route::group(['prefix' => 'hr-managment'], function () {
@@ -1977,34 +2066,7 @@ Route::get('salary-disbursement/monthly-salary', [EmployeeAkash::class, 'monthly
 //////
 
 
-Route::group(['prefix' => 'cut-report'], function () {
-    //reports
-    Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
-        ->name('report.saving-account');
-    Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
-        ->name('accounts.export.csv');
-    Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
 
-    Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
-        ->name('report.fd-account');
-    Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
-        ->name('fd-accounts.export.csv');
-    Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
-
-    Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
-        ->name('report.mis-account');
-    Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
-
-
-    Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
-        ->name('report.dd-accounts');
-    Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
-        ->name('report.rd-account');
-
-
-    Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
-    Route::get('report/rd', [CutReportController::class, 'rdIndex'])->name('report.rd.index');
-});
 // ledger 
 Route::group(['prefix' => 'ledger-group'], function () {
     Route::get('ledger-group/index', [LedgergroupController::class, 'index'])

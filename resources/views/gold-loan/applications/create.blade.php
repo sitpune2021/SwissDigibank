@@ -316,10 +316,10 @@
                             </div>
 
                             <div class="col-span-2 md:col-span-1">
-                                <label class="md:text-lg font-medium block mb-4 uppercase">
+                                <label class="md:text-lg font-medium block mb-4  uppercase">
                                     EMI Collection <span class="text-error">* </span>
                                 </label>
-                                <select id="emi_collection" name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <select id="emi_collection" name="emi_collection" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 mt-7 capitalize">
                                     <option value="">Please Select</option>
                                     {{-- options will be dynamically added --}}
                                 </select>
@@ -446,7 +446,7 @@
 
                                                     <td class="px-2 py-2 relative">
                                                         <input type="text" name="report_date[]" 
-                                                            value="{{ \Carbon\Carbon::parse($score->report_date)->format('d/m/Y') }}"
+                                                            value="{{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : '' }}"
                                                             class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
                                                     </td>
 
@@ -743,45 +743,45 @@
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-sm text-left">
                                         <tbody>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Scheme Code</td>
                                                 <td class="py-2" id="schemeCode">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Scheme Name</td>
                                                 <td class="py-2" id="schemeName">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Max Tenure</td>
                                                 <td class="py-2" id="schemeTenure">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Amount</td>
                                                 <td class="py-2" id="schemeMax">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Maximum Loan Limit Against
                                                     Security</td>
                                                 <td class="py-2" id="schemeLimit">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Minimum Loan Amount</td>
                                                 <td class="py-2" id="schemeMin">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Annual Interest Rate</td>
                                                 <td class="py-2" id="schemeInterest">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Interest Type</td>
                                                 <td class="py-2" id="schemeType">-</td>
                                             </tr>
 
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Active</td>
                                                 <td class="py-2" id="schemeActive">-</td>
                                             </tr>
-                                            <tr>
+                                            <tr class="border-b">
                                                 <td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td>
                                                 <td class="py-2" id="schemeCharge">-</td>
                                             </tr>

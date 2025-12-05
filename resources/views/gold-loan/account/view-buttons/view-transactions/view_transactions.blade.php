@@ -31,15 +31,16 @@
 
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold uppercase dark:text-white">Gold Loan - 
-                <span class="text-gray-500 text-sm">Transactions</span>
+        <div class="flex items-center uppercase flex-row gap-2">
+            <h1 class="text-lg font-semibold uppercase dark:text-white">
+                Gold Loan - 
             </h1>
+              <span class="text-gray-500 text-sm">Transactions</span>
         </div>
     </div>
 
     <div class="">
-        <button class="btn-primary rounded-10 capitalize  dark:bg-bg3">
+        <button class="btn-primary rounded-10 uppercase  dark:bg-bg3">
             Re-generate balance in ledger
         </button>
     </div>
@@ -50,12 +51,12 @@
             <!-- Tranx Id + Remarks -->
             <div class="flex flex-col sm:flex-row gap-6">
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tranx Id :</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tranx Id </label>
                     <input type="text" placeholder="Search Tranx Id"
                         class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                 </div>
                 <div class="w-full">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Remarks :</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Remarks </label>
                     <input type="text" placeholder="Search Remarks"
                         class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                 </div>
@@ -67,14 +68,14 @@
                 <!-- Dates Group -->
                 <div class="flex flex-col sm:flex-row gap-5 w-full">
                     <div class="w-full sm:w-1/2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Date
-                            From:</label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Transaction Date
+                            From</label>
                         <input type="text" id="date" placeholder="DD/MM/YYYY"
                             class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                     </div>
                     <div class="w-full sm:w-1/2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Date
-                            To:</label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Transaction Date
+                            To</label>
                         <input type="text" id="date2" placeholder="DD/MM/YYYY"
                             class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                     </div>
@@ -83,14 +84,14 @@
                 <!-- Amount Group -->
                 <div class="flex flex-col sm:flex-row gap-5 w-full">
                     <div class="w-full sm:w-1/2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount From
-                            :</label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Amount From
+                            </label>
                         <input type="text" placeholder="From Amount"
                             class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                     </div>
                     <div class="w-full sm:w-1/2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount To
-                            :</label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Amount To
+                            </label>
                         <input type="text" placeholder="To Amount"
                             class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" />
                     </div>
@@ -116,7 +117,7 @@
     <!-- Table -->
     <div class="box dark:bg-bg3 mt-5 shadow rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-start text-gray-700 dark:">
+            <table class="w-full whitespace-nowrap text-sm text-start text-gray-700 dark:">
                 <thead class="bg-secondary/5 text-start text-black uppercase text-lg dark:bg-green-700">
                     <tr>
                         <th class="px-4 py-2 text-start">DATE</th>
@@ -134,19 +135,19 @@
                     @foreach($mergedData as $row)
                         <tr>
                             {{-- DATE --}}
-                            <td>{{ \Carbon\Carbon::parse($row->date)->format('d/m/Y') }}</td>
+                            <td class="px-4 py-2 text-start">{{ \Carbon\Carbon::parse($row->date)->format('d-m-Y') }}</td>
 
                             {{-- PAY MODE --}}
-                            <td>{{ $row->fee_mode ?? '-' }}</td>
+                            <td class="px-4 py-2 text-start">{{ $row->fee_mode ?? '-' }}</td>
 
                             {{-- REMARKS --}}
-                            <td>{{ $row->remarks ?? '-' }}</td>
+                            <td class="px-4 py-2 text-start"> {{ $row->remarks ?? '-' }}</td>
 
                             {{-- STATUS --}}
-                            <td>{{ ucfirst($row->status) }}</td>
+                            <td class="px-4 py-2 text-start">{{ ucfirst($row->status) }}</td>
 
                             {{-- DEBIT (Other Charges only) --}}
-                            <td>
+                            <td class="px-4 py-2 text-start">
                                 @if($row->type === 'other_charge' || $row->type === 'foreclosure')
                                     {{ number_format($row->amount, 2) }}
                                 @else
@@ -155,7 +156,7 @@
                             </td>
 
                             {{-- CREDIT (Transactions only) --}}
-                            <td>
+                            <td class="px-4 py-2 text-start">
                                 @if($row->type === 'transaction')
                                     {{ number_format($row->amount_collected, 2) }}
                                 @else
@@ -164,17 +165,17 @@
                             </td>
 
                             {{-- BALANCE (Transactions only) --}}
-                            <td>
+                            <td class="px-4 py-2 text-start">
                                {{ number_format($row->balance, 2) }}
                             </td>
 
                             {{-- ACCOUNTED --}}
-                            <td>
-                                <span class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">-</span>
+                            <td class="px-4 py-2 text-start">
+                                <span class="block w-28 rounded-[30px] border mt-2 bg-primary/20 py-2 text-xs text-center uppercase text-primary">Yes</span>
                             </td>
 
                             {{-- ACTIONS --}}
-                            <td>
+                            <td class="px-4 py-2 text-start">
                                 <i class="las la-ellipsis-v"></i>
                             </td>
                         </tr>

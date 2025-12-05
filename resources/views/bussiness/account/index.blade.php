@@ -184,12 +184,11 @@
 
                 </tbody>
 
-            </table>
-
-            <div class="mt-4">
-                <x-pagination :paginator="$goldLoan" />
-            </div>
+            </table>            
             
+        </div>
+        <div class="mt-4">
+            <x-pagination :paginator="$goldLoan" />
         </div>
     </div>
     @endsection

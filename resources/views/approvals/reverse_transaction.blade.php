@@ -7,7 +7,7 @@
 
     <!-- Latest Transactions -->
     <div class="col-span-12 box lg:col-span-6">
-        DATE - {{ now()->format('d-m-Y H:i') }}
+        {{-- DATE - {{ now()->format('d-m-Y H:i') }} --}}
         <div class="pb-4 overflow-x-auto lg:pb-6">
             <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
                 <x-alert />

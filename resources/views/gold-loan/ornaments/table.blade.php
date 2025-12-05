@@ -1,20 +1,20 @@
 @forelse($ornaments as $ornament)
 <tr>
-    <td class="px-2 py-2 border">{{ $ornament->application_id }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->item_type }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->item_name }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->no_of_items }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->value_per_gram }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->gross_weight }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->net_weight }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->tunch }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->fine_weight }}</td>
-    <td class="px-2 py-2 border">{{ $ornament->total_value }}</td>
-    <td class="px-2 py-2 border">
+    <td class="px-2  border">{{ $ornament->application_id }}</td>
+    <td class="px-2  border">{{ $ornament->item_type }}</td>
+    <td class="px-2  border">{{ $ornament->item_name }}</td>
+    <td class="px-2  border">{{ $ornament->no_of_items }}</td>
+    <td class="px-2  border">{{ $ornament->value_per_gram }}</td>
+    <td class="px-2  border">{{ $ornament->gross_weight }}</td>
+    <td class="px-2  border">{{ $ornament->net_weight }}</td>
+    <td class="px-2  border">{{ $ornament->tunch }}</td>
+    <td class="px-2  border">{{ $ornament->fine_weight }}</td>
+    <td class="px-2  border">{{ $ornament->total_value }}</td>
+    <td class="px-2  border">
         <img src="{{ asset('uploads/'.$ornament->image) }}" width="50" />
     </td>
 
-    <td class="px-2 py-2 border">
+    <td class="px-2  border">
         {{-- Update Form --}}
         <form action="{{ route('gold-loan.ornaments.update', $ornament->id) }}" method="POST">
             @csrf
@@ -24,13 +24,13 @@
                 <option value="Mortgage" {{ $ornament->status == 'Mortgage' ? 'selected' : '' }}>Mortgage</option>
                 <option value="Released" {{ $ornament->status == 'Released' ? 'selected' : '' }}>Released</option>
             </select>
-<td>
-            <textarea name="remark" class="w-full border rounded mt-1" placeholder="Remarks">{{ $ornament->remark }}</textarea>
-</td>
-<td>
-            <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button></td>
-        </form>
-    </td>
+            <td class="px-2  border">
+               <textarea name="remark" class="w-full border rounded mt-1" placeholder="Remarks">{{ $ornament->remark }}</textarea>
+             </td>
+            <td class="px-2  border">
+               <button type="submit" class="btn btn-sm rounded-10 text-sm uppercase btn-primary mt-1">Update</button></td>
+              </form>
+             </td>
 </tr>
 @empty
 <tr>
