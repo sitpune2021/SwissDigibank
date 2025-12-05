@@ -77,7 +77,7 @@
       
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
-                <h1 class="text-xl font-semibold uppercase">
+                <h1 class="text-lg font-semibold uppercase">
                 Gold Loan - Audit Trail
                 </h1>
             </div>
@@ -93,7 +93,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between rounded-10 bg-secondary/5 px-4 py-3 cursor-pointer"
            onclick="this.nextElementSibling.classList.toggle('hidden')">
-        <h3 class="text-lg text-black font-semibold">GOLD LOAN ACCOUNT AUDIT TRAIL</h3>
+        <h3 class="text-lg text-black uppercase font-semibold">GOLD LOAN ACCOUNT AUDIT TRAIL</h3>
       
       </div>
 
@@ -103,10 +103,10 @@
           <table class="w-full border-collapse text-sm">
             <thead>
               <tr class="bg-gray-100 text-gray-700">
-                <th class=" px-4 py-2 text-left">Creator</th>
-                <th class="px-4 py-2 text-left">Event</th>
-                <th class=" px-4 py-2 text-left">Create On</th>
-                <th class=" px-4 py-2 text-left">Change Logs</th>
+                <th class=" px-4 py-2 uppercase text-left">Creator</th>
+                <th class="px-4 py-2 uppercase text-left">Event</th>
+                <th class=" px-4 py-2 uppercase text-left">Create On</th>
+                <th class=" px-4 py-2 uppercase text-left">Change Logs</th>
               </tr>
             </thead>
             <tbody>
@@ -122,7 +122,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between rounded-10 bg-secondary/5 px-4 py-3 cursor-pointer"
            onclick="this.nextElementSibling.classList.toggle('hidden')">
-        <h3 class="text-lg font-semibold">GOLD LOAN APPLICATION AUDIT TRAIL</h3>
+        <h3 class="text-lg uppercase font-semibold">GOLD LOAN APPLICATION AUDIT TRAIL</h3>
         
       </div>
 
@@ -131,10 +131,10 @@
           <table class="w-full border-collapse text-sm">
             <thead>
               <tr class="bg-gray-100 text-gray-700">
-                <th class="px-4 py-2 text-left">Creator</th>
-                <th class="px-4 py-2 text-left">Event</th>
-                <th class=" px-4 py-2 text-left">Create On</th>
-                <th class=" px-4 py-2 text-left">Change Logs</th>
+                <th class="px-4 py-2 uppercase text-left">Creator</th>
+                <th class="px-4 py-2 uppercase text-left">Event</th>
+                <th class=" px-4 py-2 uppercase text-left">Create On</th>
+                <th class=" px-4 py-2 uppercase text-left">Change Logs</th>
               </tr>
             </thead>
             <tbody>

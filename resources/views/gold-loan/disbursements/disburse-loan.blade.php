@@ -28,7 +28,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">Gold Loan Disbursements</h3>
+                <h3 class="uppercase text-lg font-semibold">Gold Loan Disbursements</h3>
             </div>
         </div>
 
@@ -41,7 +41,7 @@
                         <!-- Header -->
                         
                         <div class="px-4 py-3 ">
-                            <h3 class="text-lg border-b mb-4 font-semibold text-black">
+                            <h3 class="text-lg border-b mb-4 uppercase font-semibold text-black">
                                 Application No - {{ $disbursement->id }}
                                 <input type="hidden" name="loan_application_id" value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
                             </h3>
@@ -50,7 +50,7 @@
                         <!-- Body -->
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-2">
                                 Loan Disbursement Date
                                 <span class="text-red-500">*</span>
                             </label>
@@ -61,7 +61,7 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1 mt-1 mb-4">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-2">
                                 First EMI Date
                                 <span class="text-red-500">*</span>
                             </label>
@@ -73,7 +73,7 @@
 
                         <hr>
                         <div class="col-span-2 md:col-span-1 mb-4">
-                            <label for="" class="md:text-lg font-medium block mb-4">
+                            <label for="" class="md:text-lg font-medium block mb-2">
                                 Loan Amount
                             </label>
 
@@ -83,7 +83,7 @@
                         </div>
 
                         <hr>
-                        <h4>Processing Fee</h4>                     
+                        <h4 class="uppercase">Processing Fee</h4>                     
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
@@ -154,7 +154,7 @@
                         </div>
 
                         <hr>
-                        <h4>Stamp Duty Fee</h4>
+                        <h4 class="uppercase">Stamp Duty Fee</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
@@ -206,7 +206,7 @@
                         </div>
 
                         <hr>
-                        <h4>Insurance Fee</h4>
+                        <h4 class="uppercase">Insurance Fee</h4>
                         <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
                             <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
@@ -289,7 +289,7 @@
 
                          <hr>
                         <div class="col-span-2 md:col-span-1 mb-4">
-                            <label for="" class="md:text-lg font-medium block mb-4 mt-4">
+                            <label for="" class="md:text-lg font-semibold block mb-4 mt-4">
                                 Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
                             <input type="number" id="finalAmount"
@@ -300,8 +300,8 @@
                             <hr>
 
 
-                            <h3>Disbursement Amount :</h3>
-                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
+                            <h3 class="text-lg uppercase mt-4">Disbursement Amount :</h3>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-2">
                                 <div class="col-span-1 md:col-span-1 mb-4">
                                     <label for="" class="md:text-lg font-medium block mb-4 mt-4">
                                         Disburse Mode 1
@@ -312,21 +312,30 @@
                                         class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
+                                        <div class="flex grid col-span-1">
+                                        <div class="flex gap-3">
+                                             <label class="flex gap-2">
+                                        <input type="radio" name="payment_mode" value="cash" checked> 
+                                           <p>Cash</p>
                                         </label>
 
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="cheque"> Cheque
+                                        <label class="flex gap-2">
+                                        <input type="radio" name="payment_mode" value="cheque">
+                                         <p>Cheque</p> 
                                         </label>
+                                        <label class="flex gap-2">
+                                        <input type="radio" name="payment_mode" value="online"> 
+                                         <p>Online Transfer</p>
+                                        </label>
+                                        </div>
+                                       <div class="flex gap-3 mt-3">
+                                        <label class="flex gap-2">
+                                        <input type="radio" name="payment_mode" value="saving"> 
+                                         <p>Saving Account</p>
+                                        </label>
+                                       </div>
 
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="online"> Online Transfer
-                                        </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode" value="saving"> Saving Account
-                                        </label>
-
+                                        </div>
                                         <!-- Fields for Cheque -->
                                         <div id="cheque_fields" style="display:none; margin-top:10px;">
                                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
@@ -426,18 +435,28 @@
                                         class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     
                                     <div class="mt-3">
-                                       <label>
-                                        <input type="radio" name="payment_mode2" value="cash" checked> Cash
+                                       <div class="">
+                                       <div class="flex gap-2 items-center">
+                                         <label class="flex gap-2 items-center">
+                                        <input type="radio" name="payment_mode2" value="cash" checked>
+                                        <p>Cash</p> 
                                         </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode2" value="cheque"> Cheque
+                                        <label class="flex gap-2 items-center">
+                                        <input type="radio" name="payment_mode2" value="cheque">
+                                        <p>Cheque</p> 
                                         </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode2" value="online"> Online Transfer
+                                        <label class="flex gap-2 items-center">
+                                        <input type="radio" name="payment_mode2" value="online">
+                                        <p> Online Transfer</p>
                                         </label>
-                                        <label>
-                                        <input type="radio" name="payment_mode2" value="saving"> Saving Account
+                                       </div>
+                                       <div class="mt-3">
+                                         <label class="flex gap-2 items-center">
+                                        <input type="radio" name="payment_mode2" value="saving"> 
+                                        <p>Saving Account</p>
                                         </label>
+                                       </div>
+                                       </div>
                                         <!-- Fields for Disburse Mode 2 -->
                                         <div id="cheque_fields2" style="display:none; margin-top:10px;">
                                             <select id="bank_id2" name="bank_id2"
@@ -545,7 +564,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Application Info</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">Gold Loan Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
@@ -559,79 +578,79 @@
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Application Date</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Application Date</td>
                                 <td class="px-3 py-2">{{ $disbursement->application_date }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application Status</td>
                                 <td class="px-3 py-2">Approved</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application No</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application No</td>
                                 <td class="px-3 py-2">{{ $disbursement->id }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Branch</td>
+                                <td class="font-semibold uppercase px-3 py-2">Branch</td>
                                 <td class="px-3 py-2">{{ $disbursement->branch->branch_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Customer</td>
                                 <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} - {{ $disbursement->member->member_info_first_name ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">1st Co-Applicant Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">1st Co-Applicant Customer</td>
                                 <td class="px-3 py-2">{{ $disbursement->coApplicant1->id ?? '' }} - {{ $disbursement->coApplicant1->member_info_first_name ?? '' }}
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Requested</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Requested</td>
                                 <td class="px-3 py-2">{{ $disbursement->net_loan_amount ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approvable</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approvable</td>
                                 <td class="px-3 py-2">
                                  ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approved</td>
+                                <td class="font-semibold  uppercase px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interst Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
                                  {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Amount</td>
                                 <td class="px-3 py-2">₹ {{ number_format($totalInterest, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Credit Period</td>
+                                <td class="font-semibold uppercase px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                            <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
+                                <td class="font-semibold uppercase px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure of Loan</td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
+                                <td class="font-semibold uppercase px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
                                 <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                     No
@@ -639,19 +658,19 @@
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Processing Fee</td>
+                                <td class="font-semibold px-3 uppercase py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
                                     {{ number_format($processingTotal, 2, '.', '') }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
+                                <td class="font-semibold px-3 uppercase py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
                                    ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Insurance Fee</td>
+                                <td class="font-semibold px-3 uppercase py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
@@ -667,7 +686,7 @@
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <div
                     class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold capitalize">EMI Chart</h3>
+                    <h3 class="text-lg font-semibold uppercase">EMI Chart</h3>
 
                     <button type="button" class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">−</span>
@@ -683,7 +702,7 @@
                     </div>
                     <div class="overflow-x-auto text-center mt-4">
                         <div class="w-full overflow-x-auto">
-                            <table class="w-full  rounded-lg text-sm">
+                            <table class="w-full whitespace-nowrap  rounded-lg text-sm">
                                 <thead class="bg-secondary/5">
                                     <tr>
                                         <th class="px-3 py-2 text-left">NO</th>
