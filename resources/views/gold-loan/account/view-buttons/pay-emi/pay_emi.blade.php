@@ -35,7 +35,7 @@ $settingLabel = '';
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
-                <h1 class="text-2xl font-semibold uppercase capitalize">
+                <h1 class="text-lg font-semibold uppercase ">
                     Gold Loan - 004604
 
                     </h3>
@@ -79,8 +79,8 @@ $settingLabel = '';
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Overdue Interest(B)</th>
-                                    <th class="text-center px-3 py-2 ">Other Charges (C)</th>
+                                    <th class="text-center uppercase px-3 py-2 ">Overdue Interest(B)</th>
+                                    <th class="text-center uppercase px-3 py-2 ">Other Charges (C)</th>
 
                                 </tr>
 
@@ -109,9 +109,9 @@ $settingLabel = '';
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Amount</th>
-                                    <th class="text-center px-3 py-2 ">GST Rate (%) </th>
-                                    <th class="text-center px-3 py-2 ">Total Amount</th>
+                                    <th class="text-center uppercase px-3 py-2 ">Amount</th>
+                                    <th class="text-center uppercase px-3 py-2 ">GST Rate (%) </th>
+                                    <th class="text-center uppercase px-3 py-2 ">Total Amount</th>
                                 </tr>
 
                                 <!-- Input Row -->
@@ -228,7 +228,7 @@ $settingLabel = '';
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg mb-4">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Gold Loan Account Info</h3>
+                    <h3 class="text-black uppercase font-semibold text-lg">Gold Loan Account Info</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -244,48 +244,48 @@ $settingLabel = '';
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Loan No.</td>
                                 <td class="px-3 py-2">{{$goldLoan->id??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Member</td>
                                 <td class="px-3 py-2">{{$goldLoan->member->member_no??''}} - {{$goldLoan->member->member_info_first_name??''}}</td>
                             </tr>
 
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Open Date</td>
+                                <td class="font-semibold uppercase px-3 py-2">Open Date</td>
                                 <td class="px-3 py-2">{{ \Carbon\Carbon::parse($goldLoan->application_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme</td>
+                                <td class="font-semibold uppercase px-3 py-2">Scheme</td>
                                 <td class="px-3 py-2">{{$goldLoan->scheme->scheme_name??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Loan Amount</td>
+                                <td class="font-semibold  uppercase px-3 py-2">Loan Amount</td>
                                 <td class="px-3 py-2"> ₹ {{$goldLoan->loan_amount??'0'}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Current Debt</td>
+                                <td class="font-semibold uppercase px-3 py-2">Current Debt</td>
                                 <td class="px-3 py-2">{{ number_format($goldLoan->current_debt, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2"> {{$goldLoan->scheme->annual_interest_rate??''}} %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Type</td>
                                 <td class="px-3 py-2">
                                     {{$settingLabel }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure </td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure </td>
                                 <td class="px-3 py-2">
                                     {{$goldLoan->tenure_value??''}} {{$goldLoan->tenure_type??''}}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Status </td>
+                                <td class="font-semibold  uppercase px-3 py-2">Status </td>
                                 <td class="px-3 py-2">
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -301,7 +301,7 @@ $settingLabel = '';
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">EMIs Info</h3>
+                    <h3 class="text-black font-semibold  uppercase text-lg">EMIs Info</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -317,23 +317,23 @@ $settingLabel = '';
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">No. of EMIs</td>
+                                <td class="font-semibold px-3 uppercase py-2 w-1/3">No. of EMIs</td>
                                 <td class="px-3 py-2">000</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">PAID</td>
+                                <td class="font-semibold px-3 uppercase py-2 w-1/3">PAID</td>
                                 <td class="px-3 py-2">2</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">LEFT</td>
+                                <td class="font-semibold px-3 uppercase py-2">LEFT</td>
                                 <td class="px-3 py-2">0</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">DUE</td>
+                                <td class="font-semibold px-3 uppercase py-2">DUE</td>
                                 <td class="px-3 py-2">0</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">OVER DUE</td>
+                                <td class="font-semibold px-3 uppercase py-2">OVER DUE</td>
                                 <td class="px-3 py-2">0</td>
                             </tr>
                         </tbody>

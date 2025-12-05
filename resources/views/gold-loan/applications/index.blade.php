@@ -3,8 +3,10 @@
     <div class="main-inner">
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">GOLD LOAN APPLICATIONS</h3>
-                <a href="{{route('gold-loan.applications.create')}}" class=" block flex btn-primary capitalize ">add
+                <h3 class=" flex text-xl block uppercase font-semibold">GOLD LOAN APPLICATIONS</h3>
+                <a href="{{route('gold-loan.applications.create')}}" class=" block flex 
+                btn-primary uppercase ">
+                    add
                 </a>
             </div>
 

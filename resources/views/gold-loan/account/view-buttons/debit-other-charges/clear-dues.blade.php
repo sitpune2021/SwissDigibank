@@ -28,8 +28,8 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-2">
-                <h3 class="uppercase font-semibold">
-                    Gold Loan - 00462
+                <h3 class="uppercase text-lg font-semibold">
+                    Gold Loan
                 </h3>
             </div>
         </div>
@@ -38,8 +38,8 @@
 
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class=" w-full  box overflow-hidden">
-            <div class="">
-                <h3>CHARGES - CLEAR DUES</h3>
+            <div>
+                <h3  class="text-lg">CHARGES - CLEAR DUES</h3>
             </div>
             <hr class="mt-3">
             <form action="{{ route('gold-loan.clear-due', $goldLoan->id) }}" method="POST">
@@ -70,9 +70,9 @@
                         <tbody>
                             <!-- Column Labels -->
                             <tr class="">
-                                <th class="text-center px-3 py-1 ">Amount</th>
-                                <th class="text-center px-3 py-1 ">GST Rate (%) </th>
-                                <th class="text-center px-3 py-1 ">Total Amount</th>
+                                <th class="text-center uppercase px-3 py-1 ">Amount</th>
+                                <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
+                                <th class="text-center uppercase px-3 py-1 ">Total Amount</th>
 
                             </tr>
 
@@ -140,28 +140,30 @@
 
                 </div>
                 <div class="col-span-2 md:col-span-1">
-                    <label class="font-medium block mb-4 uppercase">Payment Mode <span class="text-red-500">*</span></label>
-                    <div class="flex gap-5">
-                        <label>
+                    <label class="font-medium block mb-4  mt-4 uppercase">Payment Mode <span class="text-red-500">*</span></label>
+                    <div class="flex gap-2 flex-col">
+                        <div class="flex gap-2">
+                            <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="cash"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cash' || old('payment_mode', $account->payment_mode ?? '') === '' ? 'checked' : '' }}>
-                            Cash
+                          <p>Payment </p>
                         </label>
 
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="online"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'online' ? 'checked' : '' }}>
-                            Online Tr.
+                           <p> Online Tr.</p>
                         </label>
-                        <label>
+                        <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="cheque"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'cheque' ? 'checked' : '' }}>
-                            Cheque
+                            <p>Cheque</p>
                         </label>
-                        <label>
+                        </div>
+                        <label class="flex gap-2">
                             <input type="radio" name="payment_mode" value="saving_account"
                                 {{ old('payment_mode', $account->payment_mode ?? '') === 'saving_account' ? 'checked' : '' }}>
-                            Saving Account
+                           <p> Saving Account</p>
                         </label>
                     </div>
                     <!-- Cheque Fields -->
@@ -180,7 +182,7 @@
                             <label class="block text-sm font-medium text-gray-700">Cheque No.<span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_cheque_no"
-                                class="w-full border rounded-10 px-3 py-2.5 text-sm bg-white dark:bg-bg3"
+                                class="w-full border  rounded-10 px-3 py-2.5 text-sm bg-secondary/5 dark:bg-bg3"
                                 placeholder="Enter Cheque No.">
                             @error('pay1_cheque_no')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -204,7 +206,7 @@
                             <label class="block text-sm font-medium text-gray-700">UTR / Transaction No. <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="pay1_transfer_utr"
-                                class="w-full border rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 bg-white"
+                                class="w-full border rounded-10 px-3 py-2.5 text-sm dark:bg-bg3 bg-secondary/5"
                                 placeholder="Enter Transaction No.">
                         </div>
                         <div>
