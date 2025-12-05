@@ -227,7 +227,9 @@ Route::middleware('auth.user')->group(function () {
         // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
         Route::get('/dds-account/comment/{id}', [DdsAccountsController::class, 'addComment'])->name('dds.addComment');
         Route::post('/dds-account/store-comment/{id}', [DdsAccountsController::class, 'storeComment'])->name('dds.storeComment');
-
+        Route::get('/dds-account/uploadDocuments/{id}', [DdsAccountsController::class, 'uploadDocuments'])->name('dds.uploadDocuments');
+        Route::post('/dds-account/storeDocuments/{id}', [DdsAccountsController::class, 'storeDocuments'])->name('dds.storeDocuments');
+        Route::delete('/dds-account/{id}', [DdsAccountsController::class, 'destroy'])->name('documents.destroy');
 
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
@@ -1896,11 +1898,14 @@ Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'pa
     ->name('payments-to-collect.index');
 Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
     ->name('payments-to-collect.comments');
-Route::get('generate-collection-link/{loan_type}/{loan_id}', 
-    [PaymentsToCollectController::class, 'generateLink'])
+Route::get(
+    'generate-collection-link/{loan_type}/{loan_id}',
+    [PaymentsToCollectController::class, 'generateLink']
+)
     ->name('loan.generate.collection.link');
 // mark done tab on index page
-Route::get('loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}', 
+Route::get(
+    'loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}',
     [PaymentsToCollectController::class, 'markDone']
 )->name('loan.mark.done');
 

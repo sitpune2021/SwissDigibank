@@ -1,5 +1,5 @@
 <div>
-    <label class="block mb-2 font-medium block mb-4 uppercase">
+    <label class=" mb-2 font-medium block uppercase">
         {{ $label ?? 'Date' }} <span class="text-red-500">*</span>
     </label>
     <div class="relative">
@@ -8,7 +8,7 @@
             id="{{ $inputId ?? 'date_pass' }}"
             name="{{ $name ?? 'issue_date' }}"
             value="{{ $value ?? '' }}"
-            class="datepicker-field w-full px-3 py-2 block text-sm border bg-secondary/5 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3 pr-10"
+            class="datepicker-field w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
             readonly
         />
         {{-- Optional calendar icon --}}
