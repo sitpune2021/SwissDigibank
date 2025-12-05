@@ -71,14 +71,8 @@
         }
     </style>
 @endpush
-@section('page-title',
-    isset($member)
-    ? (!empty($show)
-    ? 'VIEW ' .
-    $member['member_info_first_name'] .
-    'CUSTOMER'
-    : 'EDIT ' . $member['member_info_first_name'] . ' CUSTOMER')
-    : 'ADD CUSTOMER')
+@section('page-title', isset($member) ? (!empty($show) ? 'VIEW ' . $member['member_info_first_name'] . 'CUSTOMER' :
+    'EDIT ' . $member['member_info_first_name'] . ' CUSTOMER') : 'ADD CUSTOMER')
 
 @section('content')
     @include('fields.errormessage')
@@ -99,6 +93,9 @@
                     </div>
                 @endif
                 @foreach ($fields as $field)
+                    @if (!is_array($field))
+                        @continue
+                    @endif
                     @php
                         $name = $field['name'];
                         $type = $field['type'] ?? 'text';

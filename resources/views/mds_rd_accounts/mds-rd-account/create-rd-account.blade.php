@@ -233,7 +233,8 @@
                 </div>
                 <!-- Nominee -->
                 <div class="col-span-2 md:col-span-1 mt-4">
-                    <x-add-nominee :account="new \App\Models\RdAccount" :member="$member" type="rd" submitText="Submit" backText="Back" :isUpdate="false"/>
+                    <x-add-nominee :account="new \App\Models\RdAccount()" :member="$member" type="rd" submitText="Submit" backText="Back"
+                        :isUpdate="false" />
                 </div>
 
                 <div class="col-span-2 md:col-span-1"></div>
@@ -396,14 +397,14 @@
                 </div>
 
                 <!-- Date & Amount -->
+                <!-- Date & Amount -->
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 2xl:gap-6">
                     <div class="col-span-2 md:col-span-1 relative">
-
                         <x-datepicker-disabled label="T. DATE" name="t_date" value="{{ old('t_date') }}"
                             inputId="tdate" />
                     </div>
 
-                    <div class=" col-span-2 md:col-span-1">
+                    <div class=" col-span-2 md:col-span-1  ">
                         <label class="font-medium block mb-2 uppercase">
                             Amount <span class="text-red-500">*</span> </label>
                         <input type="number" name="amount" placeholder="Amount"
@@ -412,11 +413,12 @@
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-
                 </div>
 
+
+
                 <!-- Buttons -->
-                <div class="flex justify-center  uppercase col-span-2 gap-4 mt-2 md:gap-6">
+                <div class="flex justify-center  uppercase col-span-2 gap-4 mt-5 md:gap-6">
                     <button class="btn-primary" type="submit">OPEN RD</button>
                     <button class="btn-outline" type="reset">RESET</button>
                     <button class="btn-outline" type="button"
@@ -432,8 +434,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         /* ===============================
-       RD Amount → Auto-fill Amount
-       =============================== */
+           RD Amount → Auto-fill Amount
+           =============================== */
         document.addEventListener('DOMContentLoaded', () => {
             const rdAmount = document.getElementById('rdAmount');
             const amountField = document.querySelector('input[name="amount"]');
@@ -448,8 +450,8 @@
 
     <script>
         /* ===============================
-       Payment Mode Toggle
-       =============================== */
+           Payment Mode Toggle
+           =============================== */
         function togglePaymentMode(type) {
 
             ['cash', 'onlineTr', 'cheque', 'savingAcc'].forEach(id => {
@@ -473,8 +475,8 @@
 
     <script>
         /* ===============================
-       Account Type Toggle
-       =============================== */
+           Account Type Toggle
+           =============================== */
         function toggleAccountType(type) {
 
             ['single', 'joint'].forEach(id => {
@@ -491,8 +493,8 @@
 
     <script>
         /* ===============================
-       Member Dropdown → Fetch Accounts
-       =============================== */
+           Member Dropdown → Fetch Accounts
+           =============================== */
         $(document).ready(function() {
 
             $('#memberDropdown').on('change', function() {
@@ -538,7 +540,7 @@
                             response.member.minors.forEach(minor => {
                                 $minorSelect.append(
                                     `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
-                                    );
+                                );
                             });
                         } else {
                             $minorSelect.append('<option value="">No minors found</option>');
@@ -551,7 +553,7 @@
                         if (response.member?.branch?.id) {
                             $branchSelect.append(
                                 `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
-                                );
+                            );
                         } else {
                             $branchSelect.append(
                                 '<option value="">No branches available</option>');
@@ -562,10 +564,10 @@
                             response.accounts.forEach(account => {
                                 $jointSelect.append(
                                     `<option value="${account.id}">${account.account_no}</option>`
-                                    );
+                                );
                                 $savingSelect.append(
                                     `<option value="${account.id}" data-balance="${account.amount_deposit}">${account.account_no}</option>`
-                                    );
+                                );
                             });
                         } else {
                             $jointSelect.append('<option value="">No accounts found</option>');
@@ -597,58 +599,58 @@
         });
     </script>
 
-  <script>
-/* ===============================
-   RD Minimum Amount + Auto Fill
-   =============================== */
-document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        /* ===============================
+       RD Minimum Amount + Auto Fill
+       =============================== */
+        document.addEventListener('DOMContentLoaded', function() {
 
-    const schemeSelect = document.getElementById('scheme_id');
-    const rdAmountInput = document.getElementById('rdAmount');
-    const amountField = document.querySelector('input[name="amount"]');
-    const minAmountMsg = document.getElementById('minAmountMsg');
+            const schemeSelect = document.getElementById('scheme_id');
+            const rdAmountInput = document.getElementById('rdAmount');
+            const amountField = document.querySelector('input[name="amount"]');
+            const minAmountMsg = document.getElementById('minAmountMsg');
 
-    let currentMinAmount = 0;
+            let currentMinAmount = 0;
 
-    // When Scheme is selected
-    schemeSelect.addEventListener('change', function () {
+            // When Scheme is selected
+            schemeSelect.addEventListener('change', function() {
 
-        const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-        const minAmount = selectedOption.getAttribute('data-min');
+                const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+                const minAmount = selectedOption.getAttribute('data-min');
 
-        currentMinAmount = (minAmount && !isNaN(minAmount)) ? parseFloat(minAmount) : 0;
+                currentMinAmount = (minAmount && !isNaN(minAmount)) ? parseFloat(minAmount) : 0;
 
-        // Show green message
-        minAmountMsg.textContent = currentMinAmount
-            ? `Minimum amount to be deposited ₹ ${currentMinAmount.toFixed(2)}`
-            : '';
-        minAmountMsg.classList.remove('hidden');
-        minAmountMsg.style.color = "green";
+                // Show green message
+                minAmountMsg.textContent = currentMinAmount ?
+                    `Minimum amount to be deposited ₹ ${currentMinAmount.toFixed(2)}` :
+                    '';
+                minAmountMsg.classList.remove('hidden');
+                minAmountMsg.style.color = "green";
 
-        // Auto-fill RD Amount + Final Amount
-        if (currentMinAmount > 0) {
-            rdAmountInput.value = currentMinAmount.toFixed(2);
-            amountField.value = currentMinAmount.toFixed(2);
-            rdAmountInput.style.borderColor = ""; // remove red border if previously invalid
-        }
-    });
+                // Auto-fill RD Amount + Final Amount
+                if (currentMinAmount > 0) {
+                    rdAmountInput.value = currentMinAmount.toFixed(2);
+                    amountField.value = currentMinAmount.toFixed(2);
+                    rdAmountInput.style.borderColor = ""; // remove red border if previously invalid
+                }
+            });
 
-    // Validate RD amount while typing
-    rdAmountInput.addEventListener('input', function () {
-        let value = parseFloat(rdAmountInput.value) || 0;
+            // Validate RD amount while typing
+            rdAmountInput.addEventListener('input', function() {
+                let value = parseFloat(rdAmountInput.value) || 0;
 
-        // Update last Amount field when user edits RD amount
-        amountField.value = rdAmountInput.value;
+                // Update last Amount field when user edits RD amount
+                amountField.value = rdAmountInput.value;
 
-        if (value < currentMinAmount) {
-            rdAmountInput.style.borderColor = "red";
-        } else {
-            rdAmountInput.style.borderColor = "";
-        }
-    });
+                if (value < currentMinAmount) {
+                    rdAmountInput.style.borderColor = "red";
+                } else {
+                    rdAmountInput.style.borderColor = "";
+                }
+            });
 
-});
-</script>
+        });
+    </script>
 
 
     {{-- <script>
