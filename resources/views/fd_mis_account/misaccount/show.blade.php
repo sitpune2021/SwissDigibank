@@ -1138,6 +1138,7 @@
     tdsToggle: 'tds',
     holdToggle: 'hold'
   };
+  
   const updateUrl = "{{ route('mis.updateSetting', $misaccount->id) }}";
 
   document.querySelectorAll('.slider-toggle').forEach(toggle => {

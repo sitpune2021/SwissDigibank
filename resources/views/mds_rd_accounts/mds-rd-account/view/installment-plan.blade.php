@@ -6,11 +6,6 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">RD - {{ $rdAccount->id }} - Installments</h1>
-            <!-- <p class="text-gray-500">
-                <a href="{{ route('mds-rd-account.index') }}" class="text-gray-500">Recurring Deposits</a> >
-                <a href="#" class="text-gray-500">{{ $rdAccount->id }}</a> >
-                <span class="text-gray-500">Installments</span>
-            </p> -->
         </div>
     </div>
 
@@ -27,94 +22,270 @@
                     <th class="px-4 py-3">ACTION</th>
                 </tr>
             </thead>
+
             <tbody>
-                @foreach($installments as $inst)
-                <tr data-id="{{ $inst->id }}" class="border-b hover:bg-gray-50 text-center">
-                    <td class="px-4 py-3">{{ $inst->installment_no }}</td>
-                    <td class="px-4 py-3">₹{{ number_format($inst->amount, 2) }}</td>
-                    <td class="px-4 py-3">
-                        {{ $inst->due_date ? \Carbon\Carbon::parse($inst->due_date)->format('d M Y') : '—' }}
-                    </td>
-                    <td>
-                        @if($inst->approve_status === 'Approved')
-                        <span class="px-2 py-1 rounded-full text-xs bg-primary text-white">
+                @foreach($installments as $index => $inst)
+                @php
+                $today = \Carbon\Carbon::today()->format('Y-m-d');
+                $previousPending = false;
+
+                // check previous installments
+                for ($x = 0; $x < $index; $x++) {
+                    if ($installments[$x]['approve_status'] !=='approved' ) {
+                    $previousPending=true;
+                    break;
+                    }
+                    }
+
+                    // MIS-style logic
+                    $showProcessButton=(
+                    $inst['approve_status'] !=='approved' &&
+                    !$previousPending &&
+                    $inst['due_date']===$today
+                    );
+                    @endphp
+
+                    <tr class="border-b hover:bg-gray-50 text-center"
+                    data-id="{{ $inst['id'] }}"
+                    data-rd="{{ $rdAccount->id }}"
+                    data-no="{{ $inst['installment_no'] }}"
+                    data-amount="{{ $inst['amount'] }}"
+                    data-due="{{ $inst['due_date'] }}">
+
+                    <!-- Installment No -->
+                    <td class="px-4 py-3">{{ $inst['installment_no'] }}</td>
+
+                    <!-- Amount -->
+                    <td class="px-4 py-3">₹{{ number_format($inst['amount'], 2) }}</td>
+
+                    <!-- Due Date -->
+                    <td class="px-4 py-3">{{ $inst['display_due_date'] }}</td>
+
+                    <!-- Status -->
+                    <td class="installment-status px-4 py-3">
+                        @if($inst['approve_status'] === 'approved')
+                        <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-primary/20 text-primary text-xs">
                             Paid
                         </span>
-                        @elseif($inst->approve_status === 'Pending')
-                        <span class="px-2 py-1 rounded-full text-xs bg-error text-white">
+                        @else
+                        <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-error/20 text-error text-xs">
                             Pending
                         </span>
-                        @else
-                        
                         @endif
                     </td>
 
-                    <td class="installment-paid-on">
-                        {{ $inst->paid_on ? \Carbon\Carbon::parse($inst->paid_on)->format('d M Y') : '—' }}
+                    <!-- Paid On -->
+                    <td class="installment-paid-on px-4 py-3">
+                        {{ $inst['paid_on'] ? \Carbon\Carbon::parse($inst['paid_on'])->format('d M Y') : '—' }}
                     </td>
+
+                    <!-- Action -->
                     <td class="flex justify-center gap-2">
-                        <!-- Print Button -->
-                        <a href="#"
-                            class="print-btn inline-flex items-center justify-center px-3 py-1 text-sm text-black btn-outline rounded gap-2"
-                            @if($inst->print_flag)
+
+                        {{-- PROCESS BUTTON --}}
+                        @if($showProcessButton)
+                        <button class="btn btn-primary rounded-10 mt-2 py-2 process-btn"
+                            data-index="{{ $index }}">
+                            Process
+                        </button>
+                        @endif
+
+                        {{-- PRINT BUTTON --}}
+                        <a href="{{ route('rd.installment.receipt', ['id' => $inst['id']]) }}" target="_blank"
+                            class=" print-btn inline-flex items-center justify-center mt-2 py-2 text-sm
+                             text-black btn-outline rounded-10 gap-2"
+                            @if($inst['print_flag'])
                             style="display:inline-flex"
                             @else
                             style="display:none"
                             @endif>
                             <i class="las la-print"></i> PRINT
                         </a>
+
                     </td>
-                </tr>
-                @endforeach
+                    </tr>
+                    @endforeach
+
             </tbody>
         </table>
 
         <!-- AJAX Script -->
-        <script>
+         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- <script>
             document.addEventListener('DOMContentLoaded', () => {
+
                 document.querySelectorAll('.process-btn').forEach(btn => {
+
                     btn.addEventListener('click', function() {
+
                         const row = this.closest('tr');
                         const installmentId = row.dataset.id;
-                        // alert('Processing installment ID: ' + installmentId);
-                        fetch("{{ url('/installments') }}/" + installmentId + "/process", {
+
+                        // Data attributes required by controller
+                        const payload = {
+                            rd_account_id: row.dataset.rd,
+                            installment_no: row.dataset.no,
+                            amount: row.dataset.amount,
+                            due_date: row.dataset.due
+                        };
+
+                        fetch("{{ url('/mds-rds-dds/installments') }}/" + installmentId + "/process", {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                                 },
+                                body: JSON.stringify(payload)
                             })
-
                             .then(res => res.json())
                             .then(data => {
+
                                 if (data.success) {
-                                    console.log('Installment processed:', data);
-                                    // Update status
-                                    const statusEl = row.querySelector('.installment-status');
-                                    statusEl.textContent = 'Paid';
-                                    statusEl.classList.replace('bg-yellow-200', 'bg-green-200');
-                                    statusEl.classList.replace('text-yellow-700', 'text-green-700');
+console.log(data.success);
+                                    // Update Status to Paid
+                                    row.querySelector('.installment-status').innerHTML = `
+                        <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-primary/20 text-primary text-xs">
+                            Paid
+                        </span>
+                    `;
 
-                                    // Update paid on date
+                                    // Update Paid-On Date
                                     row.querySelector('.installment-paid-on').textContent = data.paid_on;
-                                    console.log(row.querySelector('.installment-paid-on').textContent = data.paid_on);
 
-                                    // Hide process button
+                                    // Hide Process Button
                                     btn.style.display = 'none';
 
-                                    // Show print button if applicable
-                                    const printBtn = row.querySelector('.print-btn');
-                                    if (data.print_flag && printBtn) printBtn.style.display = 'inline-flex';
-                                } else {
-
-                                    alert('Error: ' + data.error);
+                                    // Show Print Button
+                                    row.querySelector('.print-btn').style.display = 'inline-flex';
                                 }
                             })
-                            .catch(err => console.error(err));
+                            .catch(err => console.error("AJAX Error:", err));
+
                     });
+
                 });
+
             });
-        </script>
+        </script> -->
+
+
+<script>
+$(document).ready(function () {
+
+    $('.process-btn').each(function () {
+
+        $(this).on('click', function () {
+
+            const row = $(this).closest('tr');
+            const installmentId = row.data('id');
+
+            const payload = {
+                rd_account_id: row.data('rd'),
+                installment_no: row.data('no'),
+                amount: row.data('amount'),
+                due_date: row.data('due')
+            };
+
+            fetch("{{ url('/mds-rds-dds/installments') }}/" + installmentId + "/process", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) {
+console.log(data.success);
+                    // Update status
+                    row.find('.installment-status').html(`
+                        <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-primary/20 text-primary text-xs">
+                            Paid
+                        </span>
+                    `);
+
+                    // Update paid on
+                    row.find('.installment-paid-on').text(data.paid_on);
+
+                    // Hide process button
+                    $(this).hide();
+
+                    // Show print button
+                    row.find('.print-btn').css('display', 'inline-flex');
+                }
+            })
+            .catch(err => console.error("AJAX Error:", err));
+
+        });
+
+    });
+
+});
+</script>
+
+
+        <!-- <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                document.querySelectorAll('.process-btn').forEach(button => {
+
+                    button.addEventListener('click', function() {
+
+                        const row = button.closest('tr');
+                        const installmentId = row.dataset.id;
+
+                        // FIXED URL (no double slash)
+                        let url = "{{ url('installments/process') }}/" + installmentId;
+
+                        fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    rd_account_id: row.dataset.rd,
+                                    installment_no: row.dataset.no,
+                                    amount: row.dataset.amount,
+                                    due_date: row.dataset.due
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+
+                                if (data.success) {
+
+                                    // Update Paid status
+                                    row.querySelector('.installment-status').innerHTML = `
+                        <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-primary/20 text-primary text-xs">
+                            Paid
+                        </span>
+                    `;
+
+                                    // Update Paid On date
+                                    row.querySelector('.installment-paid-on').textContent = data.paid_on;
+
+                                    // Hide Process button
+                                    button.style.display = 'none';
+
+                                    // Show Print button
+                                    row.querySelector('.print-btn').style.display = 'inline-flex';
+                                }
+
+                            })
+                            .catch(err => console.error("Process Installment Error:", err));
+
+                    });
+
+                });
+
+            });
+        </script> -->
+
+
     </div>
 </div>
 @endsection

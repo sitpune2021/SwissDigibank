@@ -1,6 +1,46 @@
 @extends('layout.main')
-@section('content')
+
 <style>
+    .breadcrumb {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        margin-bottom: 1rem;
+        font-size: 14px;
+    }
+
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 8px;
+        color: #888;
+    }
+
+    .breadcrumb li a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .breadcrumb li.active {
+        color: #555;
+    }
+
+    .custom-thead {
+        background-color: #e6f4ea;
+        color: #14532d;
+    }
+
+    .custom-thead th {
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .custom-thead {
+            background-color: #14532d;
+            color: #d1fae5;
+        }
+    }
+
     input[type="checkbox"] {
         width: 28px;
         height: 28px;
@@ -28,13 +68,19 @@
     }
 </style>
 
+@section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-3 ">
                 <h1 class="text-2xl font-semibold dark:text-white">RD - {{$rdAccount->id}}</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Deposit Money (Installments)</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Withdraw Money (Installments)</p>
             </div>
+            <p class="text-gray-500 dark:text-gray-400">
+                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Recurring Deposits </a> >
+                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm"> RD{{$rdAccount->id}}</a> >
+                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Withdraw Money</a>
+            </p>
         </div>
     </div>
 
@@ -44,16 +90,16 @@
 
         <div class="flex flex-col lg:flex-row gap-6">
 
-            <!-- Deposit Form -->
+            <!-- WithDraw Form -->
             <div class=" w-full box dark:bg-bg3 shadow rounded-2xl p-6">
-                <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">DEPOSIT</h3>
+                <h3 class="text-lg font-semibold text-gray-800 dark:bg-bg3 dark:text-white uppercase ">Withdraw Money (Installments)</h3>
                 <hr class="my-4 border-gray-300 dark:border-gray-700">
                 @if(session('success'))
                 <div class="p-3 mb-3 text-green-800 bg-green-200 rounded">
                     {{ session('success') }}
                 </div>
                 @endif
-                <form class="space-y-6" action="{{ route('rd.deposit.store', $rdAccount->id) }}" method="POST">
+                <form class="space-y-6" action="{{ route('rd.withdraw.store', $rdAccount->id) }}" method="POST">
                     @csrf
 
                     <!-- Member Signature -->
@@ -85,15 +131,18 @@
                     <!-- Amount -->
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Amount to Deposit <span class="text-red-500">*</span>
+                            Amount to Withdraw <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" id="amount" name="amount" min="0" placeholder="Enter Amount to Deposit"
+                        <input type="number" id="amount" name="amount" min="0" placeholder="Enter Amount to Withdraw"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                             <x-number-to-word for="amount" />
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Maximum amount available : {{ number_format(
+                                    ($rdAccount->rdTransactions->whereNotNull('paid_on')->where('transaction_type', 'credit')->sum('amount')) -
+                                    ($rdAccount->rdTransactions->where('transaction_type', 'debit')->sum('amount')),2) }} </p>
                     </div>
                     @error('amount')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                     <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
 
                     <!-- Remarks -->
                     <div>
@@ -111,9 +160,9 @@
                         <input type="text" id="t_date" name="t_date"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                     </div>
-                    @error('t_date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                      @error('t_date')
+                     <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
 
 
                     <!-- Receipt -->
@@ -136,14 +185,14 @@
                                 Cash
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="payment_mode" value="online" class="text-green-600"> Online
+                                <input type="radio" name="payment_mode" value="onlineTr" class="text-green-600"> Online
                                 Tr.
                             </label>
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="payment_mode" value="cheque" class="text-green-600"> Cheque
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="payment_mode" value="saving" class="text-green-600"> Saving
+                                <input type="radio" name="payment_mode" value="savingAcc" class="text-green-600"> Saving
                                 Ac.
                             </label>
                         </div>
@@ -246,7 +295,7 @@
                     <!-- Buttons -->
                     <div class="flex justify-center gap-4 pt-4">
                         <button type="submit" class="btn-primary  rounded-10">
-                            DEPOSIT
+                            WITHDRAW
                         </button>
                         <a href="#" class="btn-outline rounded-10">
                             CANCEL
@@ -268,8 +317,9 @@
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Member</td>
                                 <td>
-                                    {{ $rdAccount->member->member_info_first_name ?? '' }}
-                                    {{ $rdAccount->member->member_info_last_name ?? '' }}
+                                    {{ $rdAccount->member->id ?? 'N/A' }} -
+                                {{ $rdAccount->member->member_info_first_name ?? '' }}
+                                {{ $rdAccount->member->member_info_last_name ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b">
@@ -294,25 +344,21 @@
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Amount Received</td>
-                                <td>{{ number_format($receivedAmount,2) }}</td>
+                                <td>{{ number_format($receivedAmount, 2) }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Balance Available</td>
                                 <td>
-                                    {{ number_format($balance, 2) }}
+                                    {{ number_format(
+                                    ($rdAccount->rdTransactions->whereNotNull('paid_on')->where('transaction_type', 'credit')->sum('amount')) -
+                                    ($rdAccount->rdTransactions->where('transaction_type', 'debit')->sum('amount')),2) }}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-
                 </div>
             </div>
-
         </div>
-
-
-
-
     </div>
 </div>
 
@@ -337,17 +383,15 @@
                 hideAll(); // Hide all first
                 if (this.value === "cheque") {
                     chequeFields.classList.remove("hidden");
-                } else if (this.value === "online") {
+                } else if (this.value === "onlineTr") {
                     onlineFields.classList.remove("hidden");
-                } else if (this.value === "saving") {
+                } else if (this.value === "savingAcc") {
                     savingFields.classList.remove("hidden");
                 }
             });
         });
     });
 </script>
-
-
 
 <!-- Datepicker CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
@@ -363,7 +407,7 @@
         // Initialize datepicker
         const picker = new Datepicker(dateInput, {
             autohide: true,
-            format: 'd-m-Y', // Format: day-month-year
+            format: 'dd-mm-yyyy', // Format: day-month-year
             maxDate: new Date(), // Disable future dates
         });
 
