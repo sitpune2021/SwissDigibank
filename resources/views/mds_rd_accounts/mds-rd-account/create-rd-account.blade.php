@@ -460,9 +460,6 @@
 
     }
 </script>
-
-
-
 <script>
     $(document).ready(function() {
         $('#memberDropdown').on('change', function() {

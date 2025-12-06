@@ -52,11 +52,11 @@
                     <td class="px-6 py-4 text-center">
                         @if($scheme->active === 'yes')
                         <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
-                            Approved
+                            Yes
                         </span>
                         @else
                         <span class="block w-28 rounded-[30px] border border-n30 bg-warning/20 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
-                            Pending
+                            No
                         </span>
                         @endif
                     </td>

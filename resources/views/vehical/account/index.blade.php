@@ -103,7 +103,7 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
                                     <a href="{{ route('vehical.account.show', $loan->id) }}" 
-                                        class="text-blue-600 hover:underline">
+                                        class="text-green-600 hover:underline">
                                         {{ $loan->id }}
                                     </a>
                                 </div>
@@ -111,7 +111,7 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
                                     <a href="{{ url('members/member/' . $loan->member_id) }}" 
-                                        class="text-blue-600 hover:underline">
+                                        class="text-green-600 hover:underline">
                                         {{ $loan->member->member_no ?? 'N/A' }}
                                     </a>
                                 </div>

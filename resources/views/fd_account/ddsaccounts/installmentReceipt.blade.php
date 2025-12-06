@@ -261,9 +261,7 @@
             </td>
           </tr>
         </table>
-
       </div>
-
     </div>
   </div>
   <div style=" border: 1px solid black; border-top:none; box-sizing: border-box;">
@@ -299,15 +297,7 @@
         </td>
       </tr>
     </table>
-
   </div>
-  
-
-
-
-
-
-
 </body>
 
 </html>

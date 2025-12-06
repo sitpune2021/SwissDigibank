@@ -28,7 +28,7 @@
     <div class="main-inner">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">ORNAMENTS INVENTORY</h3>
+                <h3 class="uppercase text-lg font-semibold">ORNAMENTS INVENTORY</h3>
             </div>
         </div>
 
@@ -141,7 +141,7 @@
                             
                             <!-- Application No -->
                             <div class="w-full">
-                                <label class="block text-md font-medium text-gray-700 capitalize">
+                                <label class="block text-md font-medium text-gray-700 uppercase">
                                     Application No :
                                 </label>
                                 <input type="search" name="application_id" value="{{ request('application_id') }}"
@@ -151,7 +151,7 @@
 
                             <!-- Item Type -->
                             <div class="w-full">
-                                <label class="block text-md font-medium text-gray-700 capitalize">
+                                <label class="block text-md font-medium text-gray-700 uppercase">
                                     Item Type :
                                 </label>
                                 <select name="item_type"
@@ -171,7 +171,7 @@
 
                             <!-- Item Name -->
                             <div class="w-full">
-                                <label class="block text-md font-medium text-gray-700 capitalize">
+                                <label class="block text-md font-medium text-gray-700 uppercase">
                                     Item Name :
                                 </label>
                                 <input type="text" name="item_name" value="{{ request('item_name') }}"
@@ -181,7 +181,7 @@
 
                             <!-- Status -->
                             <div class="w-full">
-                                <label class="block text-md font-medium text-gray-700 capitalize">
+                                <label class="block text-md font-medium text-gray-700 uppercase">
                                     Status :
                                 </label>
                                 <select name="status"
@@ -215,79 +215,79 @@
 
                 <div class="pb-4 overflow-x-auto lg:pb-6">
                     <div id="ornamentsTable">
-                        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                            <thead>
+                        <table class="w-full whitespace-nowrap border select-all-table" id="transactionTable1">
+                            <thead class="border">
                                 <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             APPLICATION NO
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             ITEM TYPE
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             ITEM NAME
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[130px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             TOTAL ITEMS
                                         </div>
                                     </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             Value Per Gram (A)(INR)
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             Gross Weight
                                         </div>
                                     </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             Net Weight (B) (gm)
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             Tunch (C)(%)
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             Fine Weight (D = C% of B) (gm)
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             TOTAL VALUE
                                             (A * D) (INR)
                                         </div>
                                     </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             IMAGE
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             STATUS
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             REMARK
                                         </div>
                                     </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <th class="text-start border !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex items-center gap-1">
                                             ACTIONS
                                         </div>

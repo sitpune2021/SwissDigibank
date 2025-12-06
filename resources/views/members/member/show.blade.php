@@ -108,9 +108,9 @@
                                 <div class="flex items-center gap-3 uppercase"><span>Membership Type</span></div>
                             </th>
                             <td
-                                class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-9">
+                                class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-1 text-center text-[10px] text-primary dark:border-n500 uppercase  dark:bg-bg3 xxl:w-19">
 
-                                <div><span class=" text-sm">{{ $member->membership_type }}</span></div>
+                                <div><span class=" uppercase text-sm">{{ $member->membership_type }}</span></div>
                             </td>
                         </tr>
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
@@ -135,7 +135,7 @@
                             </th>
                             <td>
                                 <span
-                                    class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-1 text-center text-[10px] text-primary dark:border-n500 dark:bg-bg3 xxl:w-19">
+                                    class="block w-20 rounded-[30px] border border-n30 bg-primary/20 py-1 text-center text-[10px] text-primary dark:border-n500 uppercase  dark:bg-bg3 xxl:w-19">
                                     ACTIVE
                                 </span>
                             </td>

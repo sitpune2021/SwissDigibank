@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <!-- Header -->
-    <h2 class="text-xl font-semibold mb-4">
+    <h2 class="text-xl font-semibold mb-4 uppercase">
         {{ $scheme->scheme_name ??''}}
     </h2>
     <!-- <p class="text-sm text-gray-500 mb-6">
@@ -170,7 +170,7 @@
                         <tbody>
                             <tr>
                                 <td class="font-medium px-4 py-2 border-b uppercase">Current Chart</td>
-                                <td class="text-gray-700 px-4 py-2 border-b">
+                                <td class="text-gray-700 px-4 py-2 border-b uppercase">
                                     {{ $scheme->commission_chart ?? 'None' }}
                                 </td>
                             </tr>
@@ -186,7 +186,7 @@
                                             <option value="rd(Tenure-2M)" {{ old('commission_chart', $scheme->commission_chart) == 'rd(Tenure-2M)' ? 'selected' : '' }}>rd (Tenure-2M)</option>
                                             <option value="fd(Tenure-1M)" {{ old('commission_chart', $scheme->commission_chart) == 'fd(Tenure-1M)' ? 'selected' : '' }}>fd (Tenure-1M)</option>
                                         </select>
-                                        <button class="btn-primary" type="submit">Update</button>
+                                        <button class="btn-primary uppercase" type="submit">Update</button>
                                     </div>
                                 </td>
                             </tr>

@@ -92,7 +92,7 @@
 
           <!-- Max Tenure Dropdown -->
             <div class="col-span-2">
-                <label class="md:text-lg font-medium block mb-2">Max. Tenure *</label>
+                <label class="md:text-lg font-medium block mb-2">Max. Tenure <span class="tet-error">*</span></label>
                 <select name="max_tenure" id="max_tenure" 
                     class="w-full bg-white border rounded px-3 py-2">
                     <option value="">Select Tenure</option>
@@ -120,8 +120,11 @@
 
             <!-- Interest Type -->
             <div class="col-span-2">
-              <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
-              <div class="flex gap-4">
+              <label class="md:text-lg font-medium block mb-2">
+                Interest Type 
+                <span class="text-error">*</span>
+              </label>
+              <div class="grid grid-cols-2 gap-2 ">
                 <label>
                     <input type="radio" name="interest_type" value="flat_emi"> Flat EMI
                 </label>
@@ -271,7 +274,7 @@
           </div>
 
           <!-- EMI Payout -->
-          <div class="mt-4">
+          <div class="">
             <label class="block font-medium mb-2">EMI Payout <span class="text-red-500">*</span></label>
             <select name="payout" id="payout" required class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
               <option value="">Select EMI Payout</option>
@@ -295,19 +298,23 @@
           <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage">
 
 
-          <div id="interestOptions" style="display:none; margin-top:10px;">
-
+          <div id="interestOptions" style="display:none; margin-top:10px;" class="mb-5">
+                 
+          <div class="flex gap-2">
               <!-- Checkbox 1 -->
               <label class="flex gap-2" id="chk_emi_box">
-                  <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="1">
-                  <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
+                  <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="1">  
               </label>
+              <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
+          </div>
 
-              <!-- Checkbox 2 -->
-              <label class="flex gap-2 mt-2" id="chk_first_box">
-                  <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1">
-                  Collect Interest as EMIs First & then after Principal as EMIs
+              <div class="flex gap-2">
+                <!-- Checkbox 2 -->
+              <label class="flex gap-2 mt-2" id="chk_first_box">                 
+                    <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1" style="width:20px !important; height:20px !important;" >
               </label>
+               <span id="">Collect Interest as EMIs First & then after Principal as EMIs</span>
+              </div>
 
           </div>
 

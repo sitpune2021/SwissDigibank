@@ -26,7 +26,7 @@
     @forelse($applications as $application)
         <tr class="text-center border-b">
             <td class="p-2"><a href="{{ route('loanagainst.applications.view', $application->id) }}" 
-                class="text-blue-600 hover:underline">
+                class="text-green-600 hover:underline">
                     {{ $application->id }}
                 </a></td>
             <td class="p-2">

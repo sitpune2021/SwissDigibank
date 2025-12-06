@@ -3,7 +3,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h1 class=" flex text-xl block  uppercase font-semibold">Gold Loans</h1>
+        <h1 class=" flex text-lg block  uppercase font-semibold">Gold Loans</h1>
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
@@ -102,7 +102,7 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
                                     <a href="{{ route('gold-loan.account.show', $loan->id) }}" 
-                                        class="text-blue-600 hover:underline">
+                                        class="text-green-600 hover:underline">
                                         {{ $loan->id }}
                                     </a>
                                 </div>
@@ -110,7 +110,7 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
                                      <a href="{{ url('members/member/' . $loan->member_id) }}" 
-                                        class="text-blue-600 hover:underline">
+                                        class="text-green-600 hover:underline">
                                         {{ $loan->member->member_no ?? 'N/A' }}
                                     </a>
                                 </div>

@@ -42,7 +42,7 @@
 
                     <tr>
                         <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Disburse Date</td>
-                        <td class="py-2 px-3 w-1/4 border border-gray-300">{{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d/m/Y') }}</td>
+                        <td class="py-2 px-3 w-1/4 border border-gray-300">{{ \Carbon\Carbon::parse($application->disbursal_date ?? $disburseDate)->format('d-m-Y') }}</td>
                         <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Loan Amount</td>
                         <td class="py-2 px-3 w-1/4 border border-gray-300">₹ {{ number_format($loanAmount, 2) }}</td>
                     </tr>

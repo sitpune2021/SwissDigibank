@@ -20,7 +20,7 @@
 
         input[type="checkbox"] {
             width: 20px !important;
-            height: 20px !importan t;
+            height: 20px !important;
             accent-color: green;
             /* For modern browsers */
         }
@@ -36,6 +36,9 @@
             height: 20px !important;
             accent-color: green;
             /* Modern browser support */
+        }
+        .uppercase {
+            text-transform: uppercase !important;
         }
     </style>
 

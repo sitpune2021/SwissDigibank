@@ -549,19 +549,21 @@ class LoanAgainstAccountController extends Controller
     public function saveEmiStatus(Request $request)
     {
         $request->validate([
-            'loan_id' => 'required|integer',
-            'emi_no'  => 'required|integer',
-            'status'  => 'required|string',
+            'loan_id'          => 'required|integer',
+            'emi_no'           => 'required|integer',
+            'status'           => 'required|string',
+            'remaining_amount' => 'required|numeric'
         ]);
 
-        DB::table('loan_against_emi_status')->updateOrInsert(
+        DB::table('gold_loan_emi_status')->updateOrInsert(
             [
                 'loan_id' => $request->loan_id,
                 'emi_no'  => $request->emi_no
             ],
             [
-                'status'    => $request->status,
-                'paid_date' => now()->format('d-m-Y')
+                'status'           => $request->status,
+                'remaining_amount' => $request->remaining_amount,
+                'paid_date'        => now()->format('d-m-Y')
             ]
         );
 
@@ -712,6 +714,14 @@ class LoanAgainstAccountController extends Controller
                 Log::info("🟨 Receipt uploaded: " . $receiptPath);
             }
 
+            // 🔥 GET NEXT EMI NUMBER (COUNT + 1)
+            $nextEmiNo = LoanAgainstTransactions::where('loan_id', $loan->id)->count() + 1;
+
+            Log::info("➡️ Next EMI No Calculated", [
+                'loan_id' => $loan->id,
+                'next_emi_no' => $nextEmiNo
+            ]);
+
             // Store Transaction
             $transaction = new LoanAgainstTransactions();
             $transaction->loan_id = $loan->id;
@@ -724,6 +734,9 @@ class LoanAgainstAccountController extends Controller
             $transaction->remarks = $request->remarks ?? null;
             $transaction->flag = 'emi_payment';
             $transaction->created_by = Auth::id() ?? null;
+
+            // 🟩 NEW LINE — SAVE EMI NO
+            $transaction->emi_no = $nextEmiNo;
 
             if ($receiptPath) {
                 $transaction->receipt = $receiptPath;
