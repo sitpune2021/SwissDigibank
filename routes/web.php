@@ -171,13 +171,16 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
 
-        // Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallments'])
-        //     ->name('dds.installments.regenerate');
+
         Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallment'])
             ->name('dds.installments.regenerate');
 
-        Route::get('/dds-accounts/{id}/installment-receipt', [DdsAccountsController::class, 'installmentReceipt'])
-            ->name('dds.installment.receipt');
+        Route::get(
+            '/dds-accounts/{id}/installment-receipt/{instNo}',
+            [DdsAccountsController::class, 'installmentReceipt']
+        )->name('dds.installment.receipt');
+
+
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
         // Deposit Routes
