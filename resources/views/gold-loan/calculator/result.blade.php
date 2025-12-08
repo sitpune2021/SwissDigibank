@@ -1,14 +1,14 @@
 @extends('layout.main')
 @section('content')
 <div class="p-6 bg-white shadow rounded-lg">
-  <h2 class="text-xl font-semibold mb-4 uppercase text-center text-gray-700">Calculator Result</h2>
+  <h2 class="text-xl font-semibold mb-4 uppercase text-center text-gray-700">loan information</h2>
 
   <div class="overflow-x-auto">
     <table class="w-full text-sm border border-gray-400 rounded-lg">
       <tbody>
         <tr>
           <td class="font-semibold py-2 px-3 uppercase w-1/4 border border-gray-300">Disburse Date</td>
-          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d/m/Y') }}</td>
+          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d-m-Y') }}</td>
           <td class="font-semibold py-2 px-3 uppercase w-1/4 border border-gray-300">Loan Amount</td>
           <td class="py-2 px-3 w-1/4 border border-gray-300">₹ {{ number_format($loan,2) }}</td>
         </tr>

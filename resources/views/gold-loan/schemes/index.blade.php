@@ -89,7 +89,7 @@
 
                    <tbody>
                         @forelse($schemes as $scheme)
-                            <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                            <tr class="dark:even:bg-bg3 border-b">
                                 <td class="text-start !py-5 px-6">
                                     <div class="flex items-center gap-1 text-secondary uppercase">
                                         <a href="{{ route('gold-loan.schemes.view', $scheme->id) }}" class="single-option text-green-600 hover:text-green-800 transition">

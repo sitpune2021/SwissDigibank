@@ -292,37 +292,36 @@
             <x-number-to-word for="request_loan_amount" />
           </div>
 
+          <input type="hidden" name="ratio_enabled" id="ratio_enabled" value="No">
+          <input type="hidden" name="ratio_first_emi" id="ratio_first_emi" value="">
+          <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage" value="">
 
-          <input type="hidden" name="ratio_enabled" id="ratio_enabled">
-          <input type="hidden" name="ratio_first_emi" id="ratio_first_emi">
-          <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage">
 
+          <div id="interestOptions" style="display:none; margin-top:10px;">
 
-          <div id="interestOptions" style="display:none; margin-top:10px;" class="mb-5">
-                 
-          <div class="flex gap-2">
               <!-- Checkbox 1 -->
               <label class="flex gap-2" id="chk_emi_box">
-                  <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="1">  
+                  <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="1">
+                  <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
               </label>
-              <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
-          </div>
 
-              <div class="flex gap-2">
-                <!-- Checkbox 2 -->
-              <label class="flex gap-2 mt-2" id="chk_first_box">                 
-                    <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1" style="width:20px !important; height:20px !important;" >
+              <!-- Checkbox 2 -->
+              <label class="flex gap-2 mt-2" id="chk_first_box">
+                  <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1">
+                  <span id="chk_emi_text">Collect Interest as EMIs First & then after Principal as EMIs</span>
               </label>
-               <span id="">Collect Interest as EMIs First & then after Principal as EMIs</span>
-              </div>
 
           </div>
 
+          
           <!-- REDUCING EMI SPECIAL CHECKBOX -->
-          <label class="flex gap-2 mt-3" id="reduce_ratio_box" style="display:none;">
-              <input type="checkbox" id="divide_emi_ratio" value="1">
-              Check this if you want to divide loan EMIs in ratio.
-          </label>
+          <div class="flex gap-2" id="reduce_ratio_box" style="display:none;">
+            <label class="flex gap-2 items-center" >
+              <input type="checkbox" id="divide_emi_ratio" value="1"  style="width:20px !important; height:20px !important;">      
+            </label>
+            <span id="" class="">Check this if you want to divide loan EMIs in ratio.</span>
+          </div>
+
 
           <!-- RATIO FIELDS -->
           <div id="ratioFields" style="display:none; margin-top:10px;">
@@ -331,16 +330,16 @@
               <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
 
               <div class="flex gap-3">
-                  <input type="number" id="emi_ratio_1" class="w-1/3 border p-2" min="1">
-                  <input type="number" id="emi_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+                  <input type="number" id="emi_ratio_1" class="w-full rounded-10 bg-secondary/5 border p-2" min="1">
+                  <input type="number" id="emi_ratio_2" class="w-full rounded-10 bg-secondary/5 border p-2 bg-gray-100" readonly>
               </div>
 
               <!-- Loan Amount Ratio -->
               <label class="block mt-4 mb-2 font-semibold">Loan Amount % Ratio</label>
 
               <div class="flex gap-3">
-                  <input type="number" id="amt_ratio_1" class="w-1/3 border p-2" min="1" max="100">
-                  <input type="number" id="amt_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+                  <input type="number" id="amt_ratio_1" class="w-full border bg-secondary/5 rounded-10 p-2" min="1" max="100">
+                  <input type="number" id="amt_ratio_2" class="w-full border bg-secondary/5 rounded-10 p-2 bg-gray-100" readonly>
               </div>
 
           </div>
@@ -348,8 +347,8 @@
           
            <!-- Buttons -->
           <div class="flex justify-center gap-4 pt-6">
-            <button type="submit" class="btn-primary">CALCULATE</button>
-            <a href="{{ route('gold-loan.schemes.index') }}" class="btn-outline">Back</a>
+            <button type="submit" class="btn-primary uppercase">CALCULATE</button>
+            <a href="{{ route('gold-loan.schemes.index') }}" class="btn-outline uppercase">Back</a>
           </div>
 
         </form>
@@ -559,42 +558,31 @@
 
 <!-- reducig emi check box result show o result page -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.querySelector("form");
+    const form = document.getElementById("loanForm");   // ← YAHA PAKKA Sahi ID
+
     const chkDivide = document.getElementById("divide_emi_ratio");
-
     const emi1 = document.getElementById("emi_ratio_1");
     const amt1 = document.getElementById("amt_ratio_1");
 
-    const hEnabled = document.getElementById("ratio_enabled");
-    const hFirstEmi = document.getElementById("ratio_first_emi");
-    const hFirstAmt = document.getElementById("ratio_first_percentage");
-
-    // ⭐ Checkbox toggle event → Show/Hide fields
-    chkDivide.addEventListener("change", function() {
-        document.getElementById("ratioFields").style.display =
-            chkDivide.checked ? "block" : "none";
-    });
-
     form.addEventListener("submit", function () {
 
-        // Checkbox ON → Yes, OFF → No
-        hEnabled.value = chkDivide.checked ? "Yes" : "No";
+        // Ratio Enabled
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
 
-        // If OFF → empty values must be sent
-        if (chkDivide.checked) {
-            hFirstEmi.value = emi1.value || "";
-            hFirstAmt.value = amt1.value || "";
-        } else {
-            hFirstEmi.value = "";
-            hFirstAmt.value = "";
-        }
+        // First EMI
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        // Percentage
+        document.getElementById("ratio_first_percentage").value =
+            amt1.value || "";
     });
+
 });
 </script>
-
-
 
 <script>
   // this script for get scheme details 
