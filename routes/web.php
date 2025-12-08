@@ -1933,6 +1933,13 @@ Route::get(
 
 Route::group(['prefix' => 'cut-report'], function () {
     //reports
+    Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
+        ->name('report.promoter-member');
+    Route::get('report/share-holdings', [CutReportController::class, 'shareHoldingIndex'])
+        ->name('report.share-holdings');
+    Route::get('report/share-transfer-history', [CutReportController::class, 'shareTransferHistoryIndex'])
+        ->name('report.share-transfer-history');
+
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
@@ -1963,50 +1970,49 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('report/gold-loan-account', [CutReportController::class, 'gold_loan_index'])
         ->name('report.gold-loan-account');
     Route::get('/accounts/gold-loan-export/csv', [CutReportController::class, 'gold_loan_exportCsv'])
-    ->name('accounts.export.csv');
+        ->name('accounts.export.csv');
 
     // Mortgage Cut Report
     Route::get('report/Mortgage-loan-account', [CutReportController::class, 'mortgage_index'])
         ->name('report.mortgage-loan-account');
     Route::get('/accounts/Mortgage-loan-export/csv', [CutReportController::class, 'mortgage_exportCsv'])
-    ->name('accounts.mortgage.export.csv');
+        ->name('accounts.mortgage.export.csv');
 
     // loanagainst Cut Report
     Route::get('report/loanagainst-account', [CutReportController::class, 'loanagainst_index'])
         ->name('report.loanagainst-account');
     Route::get('/accounts/loanagainst-export/csv', [CutReportController::class, 'loanagainst_exportCsv'])
-    ->name('accounts.loanagainst.export.csv');
+        ->name('accounts.loanagainst.export.csv');
 
     // Business Loan Accounts
     Route::get('report/business-account', [CutReportController::class, 'business_index'])
         ->name('report.business-loan-account');
     Route::get('/accounts/business-export/csv', [CutReportController::class, 'business_exportCsv'])
-    ->name('accounts.business.export.csv');
+        ->name('accounts.business.export.csv');
 
     // Personal Cut Report
     Route::get('report/personal-account', [CutReportController::class, 'personal_index'])
         ->name('report.personal-loan-account');
     Route::get('/accounts/personal-export/csv', [CutReportController::class, 'personal_exportCsv'])
-    ->name('accounts.personal.export.csv');
+        ->name('accounts.personal.export.csv');
 
     // Daily Weekly Cut Report
     Route::get('report/daily-weekly-account', [CutReportController::class, 'daily_weekly_index'])
         ->name('report.daily_weekly-loan-account');
     Route::get('/accounts/daily-weekly-export/csv', [CutReportController::class, 'dailyweekly_exportCsv'])
-    ->name('accounts.dailyweekly.export.csv');
+        ->name('accounts.dailyweekly.export.csv');
 
     // Vehical Cut Report
     Route::get('report/vehical-account', [CutReportController::class, 'vehical_index'])
         ->name('report.vehical-loan-account');
     Route::get('/accounts/vehical-export/csv', [CutReportController::class, 'vehical_exportCsv'])
-    ->name('accounts.vehical.export.csv');
+        ->name('accounts.vehical.export.csv');
 
     // CC OD Cut Report
     Route::get('report/cc-od-account', [CutReportController::class, 'cc_od_index'])
         ->name('report.cc_od-loan-account');
     Route::get('/accounts/cc_od-export/csv', [CutReportController::class, 'cc_od_exportCsv'])
-    ->name('accounts.cc_od.export.csv');
-
+        ->name('accounts.cc_od.export.csv');
 });
 
 
