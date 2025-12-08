@@ -13,7 +13,7 @@ class RdAccount extends Model
         'branch_id',
         'advisor_staff',
         'collection_advisor_staff',
-        'scheme',
+        'scheme_id',
         'rd_amount',
         'open_date',
         'tds',
@@ -44,7 +44,7 @@ class RdAccount extends Model
 
     public function scheme()
     {
-        return $this->belongsTo(Rdscheme::class, 'scheme', 'id');
+        return $this->belongsTo(Rdscheme::class, 'scheme_id', 'id');
     }
 
     public function branch()
@@ -55,6 +55,14 @@ class RdAccount extends Model
     public function minor()
     {
         return $this->belongsTo(Minor::class);
+    }
+    public function comments()
+    {
+        return $this->hasMany(Comments::class, 'rd_account_id');
+    }
+    public function jointMember()
+    {
+        return $this->belongsTo(Member::class, 'joint_member_id');
     }
     public function getFinalStatusAttribute()
     {

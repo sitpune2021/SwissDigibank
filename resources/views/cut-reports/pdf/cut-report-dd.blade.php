@@ -105,7 +105,7 @@
                 <tr>
                     <td style="font-family: dejavusans; ">{{ $associate['sr_no'] }}</td>
                     <td style="font-family: dejavusans; ">{{ $associate['dd_account_no'] }}</td>
-                    <td style="font-family: dejavusans; ">{{ $associate['name'] }}</td>
+                    <td style="font-family: dejavusans; ">{{ $associate['name'] }} {{ $associate['last_name'] }}</td>
                     <td style="font-family: dejavusans; ">{{ $associate['amount'] }}</td>
                     
                 </tr>
@@ -115,7 +115,7 @@
                     
                     <td style="font-family: dejavusans; ">  {{ number_format($totalAmount ?? 0, 2) }}</td>
                     
-                </tr>
+            </tr>
         </table>
     </div>
 </body>

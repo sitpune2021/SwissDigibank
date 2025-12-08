@@ -716,176 +716,17 @@ class DdsAccountsController extends Controller
             'installments' => $paginatedInstallments,
         ]);
     }
-
-    public function regenerateInstallment($id)
+    public function installmentReceipt($id, $instNo)
     {
-        $dd = DdsAccount::findOrFail($id);
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme')->findOrFail($id);
 
-        $dd->timestamps = false;
-        $dd->created_at = now();
-        $dd->updated_at = now();
-        $dd->save();
-
-        return redirect()
-            ->route('ddsaccounts.installments', $id)
-            ->with('success', 'Installment chart regenerated!');
-    }
-
-
-    // public function installmentReceipt($id)
-    // {
-    //     $ddaccount = DdsAccount::with('member', 'branch', 'transactions')->findOrFail($id);
-
-    //     function numberToWords($number)
-    //     {
-    //         $hyphen      = '-';
-    //         $dictionary  = [
-    //             0 => 'zero',
-    //             1 => 'one',
-    //             2 => 'two',
-    //             3 => 'three',
-    //             4 => 'four',
-    //             5 => 'five',
-    //             6 => 'six',
-    //             7 => 'seven',
-    //             8 => 'eight',
-    //             9 => 'nine',
-    //             10 => 'ten',
-    //             11 => 'eleven',
-    //             12 => 'twelve',
-    //             13 => 'thirteen',
-    //             14 => 'fourteen',
-    //             15 => 'fifteen',
-    //             16 => 'sixteen',
-    //             17 => 'seventeen',
-    //             18 => 'eighteen',
-    //             19 => 'nineteen',
-    //             20 => 'twenty',
-    //             30 => 'thirty',
-    //             40 => 'forty',
-    //             50 => 'fifty',
-    //             60 => 'sixty',
-    //             70 => 'seventy',
-    //             80 => 'eighty',
-    //             90 => 'ninety',
-    //             100 => 'hundred',
-    //             1000 => 'thousand'
-    //         ];
-
-    //         if ($number < 21) return $dictionary[$number];
-    //         elseif ($number < 100) {
-    //             $tens = ((int)($number / 10)) * 10;
-    //             $units = $number % 10;
-    //             return $dictionary[$tens] . ($units ? $hyphen . $dictionary[$units] : '');
-    //         } elseif ($number < 1000) {
-    //             $hundreds = (int)($number / 100);
-    //             $remainder = $number % 100;
-    //             return $dictionary[$hundreds] . ' hundred' . ($remainder ? ' and ' . numberToWords($remainder) : '');
-    //         }
-    //         return $number;
-    //     }
-
-    //     $wordAmt = ucfirst(numberToWords((int)$ddaccount->dd_amount)) . ' Only';
-
-    //     $txn = $ddaccount->transactions->sortByDesc('id')->first();
-    //     $pay_mode = $txn->pay_mode ?? 'Cash';
-
-    //     $dueDate = Carbon::parse($ddaccount->open_date)->format('d-m-Y');
-
-
-    //     // ---------------------------------------------------------
-    //     // ✅ FIXED — NEXT INSTALLMENT DUE DATE
-    //     // ---------------------------------------------------------
-    //     $frequency = strtolower($ddaccount->rd_dd_frequency ?? 'daily'); // daily / monthly / yearly
-
-    //     $transactions = $ddaccount->transactions->sortBy('transaction_date');
-
-    //     if ($transactions->isNotEmpty()) {
-
-    //         $lastPaidTxn = $transactions->last();
-
-    //         // Use transaction due_date → fallback → transaction_date
-    //         $lastPaidDueDate = Carbon::parse(
-    //             $lastPaidTxn->due_date ?? $lastPaidTxn->transaction_date
-    //         );
-
-    //         $nextinsdue = match ($frequency) {
-    //             'daily'   => $lastPaidDueDate->copy()->addDay(),
-    //             'monthly' => $lastPaidDueDate->copy()->addMonth(),
-    //             'yearly'  => $lastPaidDueDate->copy()->addYear(),
-    //             default   => $lastPaidDueDate->copy()->addDay(),
-    //         };
-    //     } else {
-    //         // No installment paid → first due date = open date
-    //         $nextinsdue = Carbon::parse($ddaccount->open_date);
-    //     }
-
-    //     $nextinsdueFormatted = $nextinsdue->format('d-m-Y');
-    //     // ---------------------------------------------------------
-
-
-    //     $depositAmountPerModeValue = $txn->amount
-    //         ?? $txn->deposit_amount
-    //         ?? $txn->installment_amount
-    //         ?? $ddaccount->dd_amount
-    //         ?? 0;
-
-    //     $DepositAmountperMode = number_format($depositAmountPerModeValue, 2);
-
-    //     $installmentNo = $ddaccount->transactions->count() + 1;
-    //     $otherCharges = 0;
-
-    //     $previousBalance = $txn->balance_available ?? $ddaccount->balance ?? 0;
-    //     $previousBalanceFormatted = number_format($previousBalance, 2);
-
-    //     $currentInstallment = $depositAmountPerModeValue;
-    //     $total = $previousBalance + $currentInstallment;
-    //     $totalFormatted = number_format($total, 2);
-
-
-    //     $data = [
-    //         'name'               => trim(
-    //             ($ddaccount->member->member_info_title ?? '') . ' ' .
-    //                 ($ddaccount->member->member_info_first_name ?? '') . ' ' .
-    //                 ($ddaccount->member->member_info_middle_name ?? '') . ' ' .
-    //                 ($ddaccount->member->member_info_last_name ?? '')
-    //         ),
-    //         'state'              => $ddaccount->member->member_address_state ?? '',
-    //         'branch'             => $ddaccount->branch->name ?? 'Main Branch',
-    //         'receipt_no'         => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
-    //         'receiptno'          => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
-    //         'dated'              => Carbon::now()->format('d-m-Y'),
-    //         'member_no'          => $ddaccount->member_id,
-    //         'dd_no'              => $ddaccount->dd_no,
-    //         'installment_amount' => number_format($ddaccount->dd_amount, 2),
-    //         'total_installments' => $ddaccount->total_installments,
-    //         'installmentNo'      => $installmentNo,
-    //         'open_date'          => Carbon::parse($ddaccount->open_date)->format('d-m-Y'),
-    //         'maturity_date'      => Carbon::parse($ddaccount->maturity_date)->format('d-m-Y'),
-    //         'maturity_amount'    => number_format($ddaccount->maturity_amount, 2),
-    //         'status'             => $ddaccount->status ? 'Active' : 'Pending',
-    //         'wordAmt'            => $wordAmt,
-    //         'pay_mode'           => $pay_mode,
-    //         'DepositAmountperMode' => $DepositAmountperMode,
-    //         'dueDate'            => $dueDate,
-    //         'depositAmount'      => $DepositAmountperMode,
-    //         'otherCharges'       => $otherCharges,
-    //         'previousBalance'    => $previousBalanceFormatted,
-    //         'total'              => $totalFormatted,
-    //         'nextinsdue'         => $nextinsdueFormatted,
-    //     ];
-
-    //     $pdf = Pdf::loadView('fd_account.ddsaccounts.installmentReceipt', $data);
-    //     return $pdf->stream('installment-receipt.pdf');
-    // }
-    public function installmentReceipt($id)
-    {
-        $ddaccount = DdsAccount::with('member', 'branch', 'transactions')->findOrFail($id);
-
+        // -------------------------
+        // Convert Number to Words
+        // -------------------------
         function numberToWords($number)
         {
-            $hyphen      = '-';
-            $dictionary  = [
+            $hyphen = '-';
+            $dictionary = [
                 0 => 'zero',
                 1 => 'one',
                 2 => 'two',
@@ -933,99 +774,124 @@ class DdsAccountsController extends Controller
 
         $wordAmt = ucfirst(numberToWords((int)$ddaccount->dd_amount)) . ' Only';
 
+        // -------------------------
+        // Last Transaction (for amount)
+        // -------------------------
         $txn = $ddaccount->transactions->sortByDesc('id')->first();
         $pay_mode = $txn->pay_mode ?? 'Cash';
 
-        $dueDate = Carbon::parse($ddaccount->open_date)->format('d-m-Y');
+        // -------------------------
+        // Generate Installment Schedule (same as installments() function)
+        // -------------------------
+        $emiAmount = $ddaccount->dd_amount;
+        $openDate = Carbon::parse($ddaccount->open_date);
 
+        $tenureType = $ddaccount->scheme->tenure_of_rd_dd_type;
+        $tenureValue = $ddaccount->scheme->tenure_of_rd_dd_value;
 
-        $frequency = strtolower($ddaccount->rd_dd_frequency ?? 'daily'); // daily / monthly / yearly
-
-        $transactions = $ddaccount->transactions->sortBy('transaction_date');
-
-        if ($transactions->isNotEmpty()) {
-
-            $lastPaidTxn = $transactions->last();
-
-            // Use due_date → fallback → transaction_date
-            $lastPaidDueDate = Carbon::parse(
-                $lastPaidTxn->due_date ?? $lastPaidTxn->transaction_date
-            );
-
-            $nextinsdue = match ($frequency) {
-                'daily'   => $lastPaidDueDate->copy()->addDay(),
-                'monthly' => $lastPaidDueDate->copy()->addMonth(),
-                'yearly'  => $lastPaidDueDate->copy()->addYear(),
-                default   => $lastPaidDueDate->copy()->addDay(),
-            };
-        } else {
-            // First installment → next due = open date
-            $nextinsdue = Carbon::parse($ddaccount->open_date);
+        switch ($tenureType) {
+            case 'days':
+                $totalInstallments = $tenureValue;
+                break;
+            case 'months':
+                $totalInstallments = $tenureValue;
+                break;
+            case 'years':
+                $totalInstallments = $tenureValue * 12;
+                break;
+            default:
+                $totalInstallments = 12;
         }
 
-        $nextinsdueFormatted = $nextinsdue->format('d-m-Y');
+        $frequency = strtolower($ddaccount->rd_dd_frequency ?? 'daily');
 
+        $installments = [];
+        for ($i = 0; $i < $totalInstallments; $i++) {
 
+            $dueDate = match ($frequency) {
+                'daily' => $openDate->copy()->addDays($i),
+                'monthly' => $openDate->copy()->addMonths($i),
+                'yearly' => $openDate->copy()->addYears($i),
+                default => $openDate->copy()->addDays($i),
+            };
+
+            $installments[$i + 1] = $dueDate->format('d-m-Y');  // store by number
+        }
+
+        // -------------------------
+        // Correct Next Installment Due Date
+        // -------------------------
+        $nextinsdueFormatted =
+            $installments[$instNo + 1] ??     // next installment
+            $installments[$instNo];           // if last installment
+
+        // -------------------------
+        // Prepare Data for PDF
+        // -------------------------
         $depositAmountPerModeValue = $txn->amount
             ?? $txn->deposit_amount
             ?? $txn->installment_amount
-            ?? $ddaccount->dd_amount
-            ?? 0;
-
-        $DepositAmountperMode = number_format($depositAmountPerModeValue, 2);
-
-
- 
-        $installmentNo = $ddaccount->transactions->count();
-
-
-        $otherCharges = 0;
+            ?? $ddaccount->dd_amount;
 
         $previousBalance = $txn->balance_available ?? $ddaccount->balance ?? 0;
-        $previousBalanceFormatted = number_format($previousBalance, 2);
 
-        $currentInstallment = $depositAmountPerModeValue;
-        $total = $previousBalance + $currentInstallment;
-        $totalFormatted = number_format($total, 2);
-
+        $total = $previousBalance + $depositAmountPerModeValue;
 
         $data = [
-            'name'               => trim(
+            'name' => trim(
                 ($ddaccount->member->member_info_title ?? '') . ' ' .
                     ($ddaccount->member->member_info_first_name ?? '') . ' ' .
                     ($ddaccount->member->member_info_middle_name ?? '') . ' ' .
                     ($ddaccount->member->member_info_last_name ?? '')
             ),
-            'state'              => $ddaccount->member->member_address_state ?? '',
-            'branch'             => $ddaccount->branch->name ?? 'Main Branch',
-            'receipt_no'         => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
-            'receiptno'          => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
-            'dated'              => Carbon::now()->format('d-m-Y'),
-            'member_no'          => $ddaccount->member_id,
-            'dd_no'              => $ddaccount->dd_no,
+            'state' => $ddaccount->member->member_address_state ?? '',
+            'branch' => $ddaccount->branch->name ?? 'Main Branch',
+            'receipt_no' => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
+            'receiptno' => 'DDS' . str_pad($ddaccount->id, 6, '0', STR_PAD_LEFT),
+            'dated' => Carbon::now()->format('d-m-Y'),
+            'member_no' => $ddaccount->member_id,
+            'dd_no' => $ddaccount->dd_no,
             'installment_amount' => number_format($ddaccount->dd_amount, 2),
-            'total_installments' => $ddaccount->total_installments,
+            'installmentNo' => $instNo,
+            'total_installments' => $totalInstallments,
 
-            // FIXED INSTALLMENT NUMBER
-            'installmentNo'      => $installmentNo,
+            // Correct Dates
+            'dueDate' => $installments[$instNo] ?? '',
+            'nextinsdue' => $nextinsdueFormatted,
 
-            'open_date'          => Carbon::parse($ddaccount->open_date)->format('d-m-Y'),
-            'maturity_date'      => Carbon::parse($ddaccount->maturity_date)->format('d-m-Y'),
-            'maturity_amount'    => number_format($ddaccount->maturity_amount, 2),
-            'status'             => $ddaccount->status ? 'Active' : 'Pending',
-            'wordAmt'            => $wordAmt,
-            'pay_mode'           => $pay_mode,
+            'open_date' => Carbon::parse($ddaccount->open_date)->format('d-m-Y'),
+            'maturity_date' => Carbon::parse($ddaccount->maturity_date)->format('d-m-Y'),
+            'maturity_amount' => number_format($ddaccount->maturity_amount, 2),
+
+            'status' => $ddaccount->status ? 'Active' : 'Pending',
+            'wordAmt' => $wordAmt,
+            'pay_mode' => $pay_mode,
+
             'DepositAmountperMode' => number_format($ddaccount->dd_amount, 2),
-            'dueDate'            => $dueDate,
-            'depositAmount'      => number_format($ddaccount->dd_amount, 2),
-            'otherCharges'       => $otherCharges,
-            'previousBalance'    => $previousBalanceFormatted,
-            'total'              => $totalFormatted,
-            'nextinsdue'         => $nextinsdueFormatted,
+
+            'depositAmount' => number_format($ddaccount->dd_amount, 2),
+            'otherCharges' => 0,
+            'previousBalance' => number_format($previousBalance, 2),
+            'total' => number_format($total, 2),
         ];
 
         $pdf = Pdf::loadView('fd_account.ddsaccounts.installmentReceipt', $data);
         return $pdf->stream('installment-receipt.pdf');
+    }
+
+   
+    public function regenerateInstallment($id)
+    {
+        $dd = DdsAccount::findOrFail($id);
+
+        $dd->timestamps = false;
+        $dd->created_at = now();
+        $dd->updated_at = now();
+        $dd->save();
+
+        return redirect()
+            ->route('ddsaccounts.installments', $id)
+            ->with('success', 'Installment chart regenerated!');
     }
 
     public function transactions(Request $request, $id)
@@ -1730,95 +1596,7 @@ class DdsAccountsController extends Controller
         );
     }
 
-    // public function updateAccountInfo(Request $request, $id)
-    // {
-    //     // -------------------------------
-    //     // VALIDATION
-    //     // -------------------------------
-    //     $request->validate([
-    //         'scheme_id'            => 'required|exists:rdschemes,id',
-    //         'account_holder_type'  => 'required|in:single,joint',   // <== important
-    //         'dd_amount'            => 'required|numeric|min:1',
-    //         'open_date'            => 'required|date',
-    //     ]);
-
-    //     $ddaccount = DdsAccount::findOrFail($id);
-
-    //     DB::beginTransaction();
-
-    //     try {
-
-    //         // -------------------------------
-    //         // LOG START
-    //         // -------------------------------
-    //         Log::info('DDS Account Info Update Started', [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'request_data'   => $request->all(),
-    //             'old_values'     => [
-    //                 'scheme_id'           => $ddaccount->scheme_id,
-    //                 'dd_amount'           => $ddaccount->dd_amount,
-    //                 'open_date'           => $ddaccount->open_date,
-    //                 'account_type'        => $ddaccount->account_type, // <== added
-    //                 'account_holder_type' => optional($ddaccount->account)->account_holder_type
-    //             ]
-    //         ]);
-
-    //         // -------------------------------
-    //         // UPDATE MAIN DDS ACCOUNT
-    //         // -------------------------------
-    //         $ddaccount->scheme_id   = $request->scheme_id;
-    //         $ddaccount->dd_amount   = $request->dd_amount;
-    //         $ddaccount->open_date   = $request->open_date;
-
-    //         // ⭐⭐ FIX ADDED — UPDATE account_type in dds_accounts table
-    //         $ddaccount->account_type = $request->account_holder_type;
-
-    //         $ddaccount->save();
-
-    //         // -------------------------------
-    //         // UPDATE ACCOUNT HOLDER TYPE (IF ACCOUNT EXISTS)
-    //         // -------------------------------
-    //         if ($ddaccount->account) {
-    //             $ddaccount->account->account_holder_type = $request->account_holder_type;
-    //             $ddaccount->account->save();
-    //         }
-
-    //         DB::commit();
-
-    //         // -------------------------------
-    //         // LOG SUCCESS
-    //         // -------------------------------
-    //         Log::info('DDS Account Info Updated Successfully', [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'new_values'     => [
-    //                 'scheme_id'           => $ddaccount->scheme_id,
-    //                 'dd_amount'           => $ddaccount->dd_amount,
-    //                 'open_date'           => $ddaccount->open_date,
-    //                 'account_type'        => $ddaccount->account_type, // <== added
-    //                 'account_holder_type' => optional($ddaccount->account)->account_holder_type
-    //             ]
-    //         ]);
-
-    //         return redirect()
-    //             ->route('ddsaccounts.show', $ddaccount->id)
-    //             ->with('success', 'Account Information Updated Successfully');
-    //     } catch (\Exception $e) {
-
-    //         DB::rollBack();
-
-    //         // -------------------------------
-    //         // LOG ERROR
-    //         // -------------------------------
-    //         Log::error('DDS Account Info Update Failed', [
-    //             'dds_account_id' => $ddaccount->id,
-    //             'error_message'  => $e->getMessage(),
-    //             'line'           => $e->getLine(),
-    //             'file'           => $e->getFile(),
-    //         ]);
-
-    //         return back()->with('error', 'Error: ' . $e->getMessage());
-    //     }
-    // }
+   
     public function updateAccountInfo(Request $request, $id)
     {
         // -----------------------------

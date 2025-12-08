@@ -436,7 +436,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="3" class="py-3 text-center text-gray-500">
-                                                No MIS passbooks found.
+                                                No DD passbooks found.
                                             </td>
                                         </tr>
                                     @endforelse

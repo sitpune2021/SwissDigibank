@@ -1,8 +1,9 @@
 <label class="font-medium block mb-2 uppercase">
     Nominee <span class="text-red-500">*</span>
 </label>
-
+          
 @php
+
 $nomineeSource = $account ? $account->nominee : [];
 
 $hasNominee = $account->nominee()->exists();
@@ -41,7 +42,9 @@ $hasNominee = $account->nominee()->exists();
 
     {{-- Prefilled Nominees (for update) --}}
     @if($hasNominee)
-    @foreach($nomineeSource->nominee as $index => $nominee)
+  
+    @foreach($nomineeSource as $index => $nominee)
+   
     <div class="w-full nominee-item columns-4 border-t gap-4 items-end bg-white p-4 rounded dark:bg-bg3">
         <div class="nominee-row flex flex-wrap justify-start gap-6">
             <!-- Relation -->

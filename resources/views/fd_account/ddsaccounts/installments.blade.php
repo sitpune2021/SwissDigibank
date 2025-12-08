@@ -48,8 +48,8 @@
                                 <td class="px-3 py-2">{{ $inst['updated_at'] }}</td>
                                 <td class="px-3 py-2">
                                     @if ($inst['state'] === 'PAID')
-                                        <a href="{{ route('dds.installment.receipt', $ddaccount->id) }}" target="_blank"
-                                            class="btn btn-sm btn-primary">
+                                        <a href="{{ route('dds.installment.receipt', [$ddaccount->id, $inst['number']]) }}"
+                                            target="_blank" class="btn btn-sm btn-primary">
                                             Print
                                         </a>
                                     @endif

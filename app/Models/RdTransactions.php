@@ -19,15 +19,20 @@ class RdTransactions extends Model
         'credited',
         'cheque_bank_name',
         'cheque_no',
+        'installment_no',
         'cheque_date',
+        'due_date',
+        'remark',
         'approve_status',
         'savings_account',
         'reverse_status',
         'payment_rev_rel',
+        'paid_on',
+        'print_flag'
     ];
 
     public function rdaccount()
     {
-        return $this->belongsTo(RdAccount::class);
+        return $this->belongsTo(RdAccount::class, 'rd_account_id', 'id');
     }
 }
