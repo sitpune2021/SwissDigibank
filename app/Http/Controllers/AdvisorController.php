@@ -376,25 +376,19 @@ class AdvisorController extends Controller
                 1  => "Field Head Officer",
                 2  => "Field Officer",
                 3  => "Relationship Manager",
-                4  => "Relationship Manager",
-                5  => "Area Relationship Manager",
-                6  => "Regional Relationship Manager",
-                7  => "Field Manager",
-                8  => "Field Associate",
-                9  => "Field Executive",
-                10 => "Sales Officer",
-                11 => "Field Organizer",
-                12 => "Field Associate",
-                13 => "Field Officer",
-                14 => "Adviser",
-                15 => "Sales Manager",
-                16 => "DEL Officer",
-                17 => "Asst Dev Officer",
-                18 => "Sales Officer",
-                19 => "Asst Sales Officer",
-                20 => "C Director",         
-                21 => "Collection Charge",
-                // add more if required
+                4  => "Area Relationship Manager",
+                5  => "Regional Relationship Manager",
+                6  => "Field Manager",
+                7  => "Field Associate",
+                8  => "Field Executive",
+                9 => "Sales Officer",
+                10 => "Field Organizer",
+                11 => "Adviser",
+                12 => "Sales Manager",
+                13 => "DEL Officer",
+                14 => "Asst Dev Officer",
+                15 => "Asst Sales Officer",
+                16 => "C Director", 
             ];
 
             // pass to view
@@ -403,84 +397,66 @@ class AdvisorController extends Controller
        
         public function chartstore(Request $request)
         {
+            $tenure = (int) $request->tenure_months;
+
             $rankData = [
-                1  => "Field Head Officer",
-                2  => "Field Officer",
-                3  => "Relationship Manager",
-                4  => "Relationship Manager",
-                5  => "Area Relationship Manager",
-                6  => "Regional Relationship Manager",
-                7  => "Field Manager",
-                8  => "Field Associate",
-                9  => "Field Executive",
-                10 => "Sales Officer",
-                11 => "Field Organizer",
-                12 => "Field Associate",
-                13 => "Field Officer",
-                14 => "Adviser",
-                15 => "Sales Manager",
-                16 => "DEL Officer",
-                17 => "Asst Dev Officer",
-                18 => "Sales Officer",
-                19 => "Asst Sales Officer",
-                20 => "C Director",
-                21 => "Collection Charge",
+                1=>"Field Head Officer",2=>"Field Officer",3=>"Relationship Manager",
+                4=>"Area Relationship Manager",5=>"Regional Relationship Manager",
+                6=>"Field Manager",7=>"Field Associate",8=>"Field Executive",
+                9=>"Sales Officer",10=>"Field Organizer",11=>"Adviser",
+                12=>"Sales Manager",13=>"DEL Officer",14=>"Asst Dev Officer",
+                15=>"Asst Sales Officer",16=>"C Director",17=>"Collection Charge",
             ];
 
             $cleanData = [];
 
-            if (!empty($request->rank)) 
+            foreach ($request->rank as $rankNo => $months)
             {
-                
-                
+                if ($rankNo == "total") continue;
 
-                foreach ($request->rank as $rankNo => $months) 
-                {
-                    // allow numeric ranks and 'collection_charge' (and ignore 'total' row)
-                    if ($rankNo === "total") {
-                        continue; // skip total row on saving (you already compute totals)
+                if (!isset($rankData[$rankNo])) continue;
+                $rankName = $rankData[$rankNo];
+
+                $cleanMonths = [];
+                $sum = 0;
+
+                for ($m = 1; $m <= $tenure; $m++) {
+
+                    $value = $months[$m] ?? null;
+
+                    $cleanMonths[$m] = ($value !== "" && $value !== null) ? $value : null;
+
+                    if (is_numeric($value)) {
+                        $sum += floatval($value);
                     }
-
-                    // Rank name — either numeric mapping or special key
-                    if ($rankNo === "collection_charge") {
-                        $rankName = "COLLECTION CHARGE";
-                    } elseif (is_numeric($rankNo) && $rankNo > 0) {
-                        $rankName = $rankData[$rankNo] ?? null;
-                    } else {
-                        // unknown key — skip
-                        continue;
-                    }
-
-                    if (!$rankName) continue;
-
-                    // Check if row has at least one value
-                    $rowHasValue = false;
-                    foreach ($months as $v) {
-                        if ($v !== null && $v !== "") {
-                            $rowHasValue = true;
-                            break;
-                        }
-                    }
-                    if (!$rowHasValue) continue;
-
-                    // Clean months and compute total (only numeric cells)
-                    $cleanMonths = [];
-                    $sum = 0;
-                    foreach ($months as $m => $v) {
-                        $cleanMonths[$m] = ($v !== "" && $v !== null) ? $v : null;
-                        if ($v !== null && $v !== "" && is_numeric($v)) {
-                            $sum += floatval($v);
-                        }
-                    }
-
-                    // FINAL STRUCTURE: keep same shape as your other rows
-                    $cleanData[$rankName] = [
-                        $cleanMonths,        // monthly values keyed by month number
-                        ["total" => $sum]    // total
-                    ];
                 }
 
+                $cleanData[$rankName] = [
+                    $cleanMonths,
+                    ["total" => $sum]
+                ];
+            }
 
+            // ADD COLLECTION CHARGE (only once)
+            if (isset($request->collection)) {
+                $collectionClean = [];
+                $collectionSum = 0;
+
+                for ($m = 1; $m <= $tenure; $m++) {
+                    $val = $request->collection[$m] ?? null;
+
+                    $collectionClean[$m] = ($val !== "" && $val !== null) ? $val : null;
+
+                    if (is_numeric($val)) {
+                        $collectionSum += floatval($val);
+                    }
+                }
+
+                // Add to final JSON
+                $cleanData["Collection Charge"] = [
+                    $collectionClean,
+                    ["total" => $collectionSum]
+                ];
             }
 
             CommissionChart::create([
@@ -492,9 +468,8 @@ class AdvisorController extends Controller
                 'rank_month_values' => $cleanData,
             ]);
 
-            return redirect()
-                ->route('associates-advisor.commission-charts.index')
-                ->with('success', 'Commission Chart Saved Successfully!');
+            return redirect()->route('associates-advisor.commission-charts.index')
+                ->with('success', 'Commission Chart Create successfully!');
         }
 
         public function comission_view($id)
@@ -562,24 +537,22 @@ class AdvisorController extends Controller
             $rankData = [
                 1  => "Field Head Officer",
                 2  => "Field Officer",
-                3  => "Relationship Manager",
-                4  => "Relationship Manager",
-                5  => "Area Relationship Manager",
-                6  => "Regional Relationship Manager",
-                7  => "Field Manager",
-                8  => "Field Associate",
-                9  => "Field Executive",
-                10 => "Sales Officer",
-                11 => "Field Organizer",
-                12 => "Field Associate",
-                13 => "Field Officer",
-                14 => "Adviser",
-                15 => "Sales Manager",
-                16 => "DEL Officer",
-                17 => "Asst Dev Officer",
-                18 => "Sales Officer",
-                19 => "Asst Sales Officer",
-                20 => "C Director",
+                3  => "Relationship Manager",             
+                4  => "Area Relationship Manager",
+                5  => "Regional Relationship Manager",
+                6  => "Field Manager",
+                7  => "Field Associate",
+                8  => "Field Executive",
+                9 => "Sales Officer",
+                10 => "Field Organizer",              
+                11 => "Adviser",
+                12 => "Sales Manager",
+                13 => "DEL Officer",
+                14 => "Asst Dev Officer",          
+                15 => "Asst Sales Officer",
+                16 => "C Director",
+                
+                
                 // if you want COLLECTION CHARGE to be part of rankData, add an entry like 21 => 'COLLECTION CHARGE'
             ];
 
@@ -590,93 +563,86 @@ class AdvisorController extends Controller
         // --- NEW: update_chart (save edits) ---
         public function update_chart(Request $request, $id)
         {
-            // optional: validate
-            $request->validate([
-                'chart_name' => 'required|string|max:255',
-                'chart_type' => 'required|string',
-                'payout_type' => 'required|string',
-                'commission_type' => 'required|string',
-                'tenure_months' => 'required|integer|min:1|max:99',
-                'rank' => 'array', // optional
-            ]);
+            $chart = CommissionChart::findOrFail($id);
+            $tenure = (int) $request->tenure_months;
 
+            // SAME rank list
             $rankData = [
-                1  => "Field Head Officer",
-                2  => "Field Officer",
-                3  => "Relationship Manager",
-                4  => "Relationship Manager",
-                5  => "Area Relationship Manager",
-                6  => "Regional Relationship Manager",
-                7  => "Field Manager",
-                8  => "Field Associate",
-                9  => "Field Executive",
-                10 => "Sales Officer",
-                11 => "Field Organizer",
-                12 => "Field Associate",
-                13 => "Field Officer",
-                14 => "Adviser",
-                15 => "Sales Manager",
-                16 => "DEL Officer",
-                17 => "Asst Dev Officer",
-                18 => "Sales Officer",
-                19 => "Asst Sales Officer",
-                20 => "C Director",
-                // optional collection charge mapping if needed
+                1=>"Field Head Officer",2=>"Field Officer",3=>"Relationship Manager",
+                4=>"Area Relationship Manager",5=>"Regional Relationship Manager",
+                6=>"Field Manager",7=>"Field Associate",8=>"Field Executive",
+                9=>"Sales Officer",10=>"Field Organizer",11=>"Adviser",
+                12=>"Sales Manager",13=>"DEL Officer",14=>"Asst Dev Officer",
+                15=>"Asst Sales Officer",16=>"C Director",
             ];
 
             $cleanData = [];
 
-            if (!empty($request->rank)) {
-                foreach ($request->rank as $rankNo => $months) {
-                    if ($rankNo === "total") continue;
+            // SAME LOGIC LIKE STORE FUNCTION
+            foreach ($request->rank as $rankNo => $months)
+            {
+                if ($rankNo == "total") continue;
+                if (!isset($rankData[$rankNo])) continue;
 
-                    if ($rankNo === "collection_charge") {
-                        $rankName = "COLLECTION CHARGE";
-                    } elseif (is_numeric($rankNo) && $rankNo > 0) {
-                        $rankName = $rankData[$rankNo] ?? null;
-                    } else {
-                        continue;
+                $rankName = $rankData[$rankNo];
+
+                $cleanMonths = [];
+                $sum = 0;
+
+                for ($m = 1; $m <= $tenure; $m++) {
+
+                    $value = $months[$m] ?? null;
+
+                    $cleanMonths[$m] = ($value !== "" && $value !== null) ? $value : null;
+
+                    if (is_numeric($value)) {
+                        $sum += floatval($value);
                     }
-
-                    if (!$rankName) continue;
-
-                    // check at least one value present
-                    $rowHasValue = false;
-                    foreach ($months as $v) {
-                        if ($v !== null && $v !== "") { $rowHasValue = true; break; }
-                    }
-                    if (!$rowHasValue) continue;
-
-                    $cleanMonths = [];
-                    $sum = 0;
-                    foreach ($months as $m => $v) {
-                        $cleanMonths[$m] = ($v !== "" && $v !== null) ? $v : null;
-                        if ($v !== null && $v !== "" && is_numeric($v)) {
-                            $sum += floatval($v);
-                        }
-                    }
-
-                    $cleanData[$rankName] = [
-                        $cleanMonths,
-                        ['total' => $sum]
-                    ];
                 }
+
+                $cleanData[$rankName] = [
+                    $cleanMonths,
+                    ["total" => $sum]
+                ];
             }
 
-            $chart = CommissionChart::findOrFail($id);
+            // COLLECTION CHARGE — EXACT SAME AS STORE
+            if (isset($request->collection)) {
 
+                $collectionClean = [];
+                $collectionSum = 0;
+
+                for ($m = 1; $m <= $tenure; $m++) {
+
+                    $val = $request->collection[$m] ?? null;
+
+                    $collectionClean[$m] = ($val !== "" && $val !== null) ? $val : null;
+
+                    if (is_numeric($val)) {
+                        $collectionSum += floatval($val);
+                    }
+                }
+
+                $cleanData["Collection Charge"] = [
+                    $collectionClean,
+                    ["total" => $collectionSum]
+                ];
+            }
+
+            // UPDATE CHART
             $chart->update([
-                'chart_name' => $request->chart_name,
-                'payout_type' => $request->payout_type,
-                'commission_type' => $request->commission_type,
-                'chart_type' => $request->chart_type,
-                'tenure_months' => $request->tenure_months,
+                'chart_name'        => $request->chart_name,
+                'payout_type'       => $request->payout_type,
+                'commission_type'   => $request->commission_type,
+                'chart_type'        => $request->chart_type,
+                'tenure_months'     => $request->tenure_months,
                 'rank_month_values' => $cleanData,
             ]);
 
             return redirect()->route('associates-advisor.commission-charts.index')
-                ->with('success', 'Commission Chart updated successfully!');
+                        ->with('success', 'Commission Chart Updated successfully!');
         }
+
 
 
 }
