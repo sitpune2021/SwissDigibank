@@ -269,7 +269,7 @@
 
         {{--intersetTypeRadio --}}
         <div class="w-full">
-                <div class="mb-4" id="intersetTypeRadio">
+                <div class="mb-4 mt-4" id="intersetTypeRadio">
                     <label class="md:text-lg font-medium block mb-2">
                         Interest Type <span class="text-red-600">*</span>
                     </label>

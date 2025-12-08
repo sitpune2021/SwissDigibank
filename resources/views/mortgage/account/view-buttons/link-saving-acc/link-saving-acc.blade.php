@@ -27,7 +27,7 @@
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
-            <h3 class="uppercase font-semibold">
+            <h3 class="uppercase text-lg font-semibold">
                 Mortgage Loan - Link Saving Account for Auto Debit EMI
             </h3>
         </div>
@@ -39,7 +39,7 @@
         <div class=" w-full  box overflow-hidden">
 
             <div class="col-span-2 md:col-span-1 mb-4">
-                <p class="uppercase text-lg font-bold"> Link member saving account to loan for auto debit EMI on due date</p>
+                <p class="uppercase border-b text-lg font-bold"> Link member saving account to loan for auto debit EMI on due date</p>
             </div>
 
             <form action="{{ route('mortgage.account.storeSavingAccount', $goldLoan->id) }}" method="POST">
@@ -102,54 +102,54 @@
                    <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                             <tbody>
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
+                                    <td class="font-semibold uppercase px-3 py-2 w-1/3">Loan No.</td>
                                     <td class="px-3 py-2">{{ $goldLoan->id }}</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Customer</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Customer</td>
                                     <td class="px-3 py-2">
                                         {{ $goldLoan->member->member_no }} - {{ $goldLoan->member->member_info_first_name }}
                                     </td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Open Date</td>
-                                    <td class="px-3 py-2">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Open Date</td>
+                                    <td class="px-3 py-2">{{ \Carbon\Carbon::now()->format('d-m-Y') }}</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Scheme</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Scheme</td>
                                     <td class="px-3 py-2">{{ $goldLoan->scheme->scheme_name }}</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Loan Amount</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Loan Amount</td>
                                     <td class="px-3 py-2">₹ {{ number_format($goldLoan->loan_amount, 2) }}</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Current Debt</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Current Debt</td>
                                     <td class="px-3 py-2">₹ {{ number_format($currentDebt, 2) }}</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                     <td class="px-3 py-2">{{ $goldLoan->scheme->annual_interest_rate }} %</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Interest Type</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Interest Type</td>
                                     <td class="px-3 py-2">{{ ucfirst($goldLoan->scheme->gold_loan_setting) }}</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Tenure</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Tenure</td>
                                     <td class="px-3 py-2">{{ $goldLoan->scheme->tenure }} MONTHS</td>
                                 </tr>
 
                                 <tr class="border-b border-gray-200">
-                                    <td class="font-semibold px-3 py-2">Status</td>
+                                    <td class="font-semibold uppercase px-3 py-2">Status</td>
                                     <td class="px-3 py-2">
                                         {{ $goldLoan->status == 1 ? 'Active' : 'Inactive' }}
                                     </td>
@@ -182,19 +182,21 @@
                    <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Customer</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Customer</td>
                                 <td class="px-3 py-2">{{ $goldLoan->member->member_no }} - {{ $goldLoan->member->member_info_first_name }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Branch</td>
+                                <td class="font-semibold uppercase px-3 py-2">Branch</td>
                                 <td class="px-3 py-2">{{ $goldLoan->branch->branch_name }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">DOB</td>
-                                <td class="px-3 py-2">{{ $goldLoan->member->member_info_dob }}/td>
+                                <td class="font-semibold uppercase px-3 py-2">DOB</td>
+                                <td class="px-3 py-2">
+                                       {{ \Carbon\Carbon::parse($goldLoan->member->member_info_dob)->format('d-m-Y') }}
+                                </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">
+                                <td class="font-semibold uppercase px-3 py-2">
                                     Gender
                                 </td>
                                 <td class="px-3 py-2">
@@ -202,13 +204,13 @@
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">
+                                <td class="font-semibold uppercase px-3 py-2">
                                     Father Name
                                 </td>
                                 <td class="px-3 py-2">{{ $goldLoan->member->member_info_middle_name }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">
+                                <td class="font-semibold uppercase px-3 py-2">
                                   Occupation
                                 </td>
                                 <td class="px-3 py-2">{{ $goldLoan->member->member_info_occupation }}</td>

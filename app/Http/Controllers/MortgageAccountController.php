@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\CsvExportHelper;
 use App\Models\Bank;
+use App\Models\Account;
 use App\Models\MortgageLoanTransaction;
 use App\Models\MortgageLoanApplication;
 use App\Models\MortgageLoanForeClosure;
@@ -581,6 +582,9 @@ class MortgageAccountController extends Controller
             'guarantor1'
         ])->findOrFail($id);
 
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+        $banks = Bank::pluck('name', 'id');
+
         $emiType = $goldLoan->scheme->gold_loan_setting;
         $totalLoan = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->interest_rate ?? 0;
@@ -661,7 +665,9 @@ class MortgageAccountController extends Controller
             'totalOverdueWithGst',
             'totalAmount',
             'rounding',
-            'netAmount'
+            'netAmount',
+            'savingAccounts',
+            'banks'
         ));
     }
 
@@ -737,6 +743,69 @@ class MortgageAccountController extends Controller
 
             // 🟩 NEW LINE — SAVE EMI NO
             $transaction->emi_no = $nextEmiNo;
+
+            // =============================================
+                // 🔥 MODE-WISE FIELDS STORE
+            // =============================================
+
+            $transaction->fee_mode = $request->fee_mode;
+
+            // CASH - kuch save nahi hoga
+            if ($request->fee_mode == 'cash') 
+            {
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // CHEQUE
+            elseif ($request->fee_mode == 'cheque') {
+
+                $transaction->bank_id = $request->bank_id;
+                $transaction->cheque_no = $request->cheque_no;
+                $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // ONLINE
+            elseif ($request->fee_mode == 'online') {
+
+                $transaction->utr_no = $request->utr_no;
+                $transaction->transfer_mode = $request->transfer_mode;
+                $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // SAVING ACCOUNT
+            elseif ($request->fee_mode == 'saving') {
+
+                $transaction->saving = $request->saving;
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+            }
 
             if ($receiptPath) {
                 $transaction->receipt = $receiptPath;
@@ -1475,6 +1544,7 @@ class MortgageAccountController extends Controller
     public function DebitOtherCharges($id)
     {
         $goldLoan = MortgageLoanApplication::with(['member', 'scheme', 'mortgageLoanTransactions'])->findOrFail($id);
+        
         return view('mortgage.account.view-buttons.debit-other-charges.debit-other-charges', compact('goldLoan'));
     }
 
@@ -1554,8 +1624,10 @@ class MortgageAccountController extends Controller
         $totalDue = MortgageLoanOtherCharge::where('loan_id', $id)
             ->where('status', 'unpaid')
             ->sum('amount');
-        $banks = Bank::all();
-        return view('mortgage.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks'));
+        $banks = Bank::pluck('name', 'id');
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+        
+        return view('mortgage.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks','savingAccounts'));
     }
 
     // update / store clear due tab

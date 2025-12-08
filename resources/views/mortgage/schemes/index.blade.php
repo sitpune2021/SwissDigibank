@@ -24,11 +24,12 @@
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h1 class=" flex text-xl block font-semibold uppercase">Loan Against Property Schemes</h1>
-                <a href="{{route('mortgage.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <a href="{{route('mortgage.schemes.create')}}" class=" block flex btn-primary uppercase ">Add
                 </a>
             </div>  
               
         <div class="col-span-12 box lg:col-span-12">
+
             <div class="pb-4 overflow-x-auto lg:pb-6">
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
@@ -148,13 +149,12 @@
 </tbody>
 
 
-                </table>
-
-                <div class="mt-6">
-                    <x-pagination :paginator="$schemes" />
-                </div>
+                </table>               
             </div>
 
+            <div class="mt-6">
+                <x-pagination :paginator="$schemes" />
+            </div>
 
         </div>
 @endsection

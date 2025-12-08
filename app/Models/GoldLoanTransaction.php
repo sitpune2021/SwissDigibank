@@ -24,6 +24,7 @@ class GoldLoanTransaction extends Model
         'cheque_date',
         'utr_no',
         'transfer_mode',
+        'transfer_date',
         'credited_to_company'
     ];
 

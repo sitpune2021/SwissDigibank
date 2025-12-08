@@ -27,7 +27,7 @@
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
-            <h3 class="uppercase font-semibold">
+            <h3 class="uppercase text-lg font-semibold">
                 Mortgage Loan - Link Saving Account for Auto Debit EMI
             </h3>
         </div>

@@ -39,7 +39,7 @@
     </div>
 
     <div class="">
-        <button class="btn-primary rounded-10 capitalize  dark:bg-bg3">
+        <button class="btn-primary rounded-10 uppercase  dark:bg-bg3">
             Re-generate balance in ledger
         </button>
     </div>
