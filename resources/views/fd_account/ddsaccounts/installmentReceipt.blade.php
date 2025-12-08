@@ -151,7 +151,7 @@
       <table class="receipt-table">
         <tr>
           <td class="receipt-label" style="border: 1px solid black; border-top: none;font-size: 12px;">RECEIPT NO.</td>
-          <td class="receipt-value" style="border-bottom: 1px solid black;font-size: 12px;">{{ $receiptno }}</td>
+          <td class="receipt-value" style="border-bottom: 1px solid black;font-size: 12px;">{{ $installmentNo }}</td>
         </tr>
         <tr>
           <td class="receipt-label" style="border-left: 1px solid black; font-size: 12px;">DATED</td>
