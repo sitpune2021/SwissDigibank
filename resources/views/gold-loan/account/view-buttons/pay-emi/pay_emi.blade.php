@@ -35,8 +35,8 @@ $settingLabel = '';
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
-                <h1 class="text-lg font-semibold uppercase ">
-                    Gold Loan - 004604
+                <h1 class="text-lg font-semibold uppercase">
+                    Gold Loan
 
                     </h3>
                     <!-- <p>Pay Due EMIs</p> -->
@@ -206,9 +206,111 @@ $settingLabel = '';
                         </div>
                     </div>
 
-                    <x-paymode :mode_2="$misaccount->amount ?? '' " :showSaving="true" id="amount" :readonly="false"
-                        :amountClass="true" :bgColor="false" :hiddenheading="false" :checkedDefault="'cash'"
-                        groupName="disburse_Mode_two" :rdShowing="true" />
+                    <div class="mt-3">
+                                        <div class="flex grid col-span-1">
+                                        <div class="flex gap-3">
+                                             <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="cash" checked> 
+                                            <p>Cash</p>
+                                            </label>
+                                            <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="cheque">
+                                            <p>Cheque</p> 
+                                            </label>
+                                            <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="online"> 
+                                            <p>Online Transfer</p>
+                                            </label>
+                                        </div>
+                                        <div class="flex gap-3 mt-3">
+                                            <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="saving"> 
+                                            <p>Saving Account</p>
+                                            </label>
+                                        </div>
+
+                                        </div>
+                                        <!-- Fields for Cheque -->
+                                        <div id="cheque_fields" style="display:none; margin-top:10px;">
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                                            <select id="bank_id" name="bank_id"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                    <option value="">-- Select Bank --</option>
+                                                    @foreach($banks as $id => $name)
+                                                        <option value="{{ $id }}">
+                                                            {{ $name }}
+                                                        </option>
+                                                    @endforeach
+                                            </select>
+                                            <!-- Cheque No -->
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                                <input type="text" name="cheque_no"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    placeholder="Enter Cheque No">
+                                            </div>
+
+                                            <!-- Cheque Date -->
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                                <input type="text" id="cheque_date" name="cheque_date"
+                                                value="{{ old('cheque_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                        </div>
+
+                                        <!-- Fields for Online -->
+                                        <div id="online_fields" style="display:none; margin-top:10px;">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    Transfer Date <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" id="transfer_date" name="transfer_date" 
+                                                value="{{ old('transfer_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    UTR / Transaction No. <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    Transfer Mode <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="imps">
+                                                        <span>IMPS</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fields for Saving Account -->
+                                        <div id="saving_fields" style="display:none; margin-top:10px;">
+                                            <label>Saving Account:</label>
+                                            <select id="saving" name="saving"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                <option value="">-- Select Saving Acc. --</option>
+
+                                                @foreach ($savingAccounts as $acc)
+                                                    <option value="{{ $acc }}">{{ $acc }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
                     <!-- Buttons -->
                     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -216,7 +318,7 @@ $settingLabel = '';
                             PAY
                         </button>
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                            <a href="{{ route('gold-loan.account.show', $goldLoan->id) }}"> BACK</a>
                         </button>
                     </div>
                 </form>
@@ -345,6 +447,29 @@ $settingLabel = '';
 
     </div>
 </div>
+
+
+<script>
+document.querySelectorAll('input[name="fee_mode"]').forEach((elem) => {
+  elem.addEventListener("change", function(event) {
+    let value = event.target.value;
+
+    // hide all first
+    document.getElementById("cheque_fields").style.display = "none";
+    document.getElementById("online_fields").style.display = "none";
+    document.getElementById("saving_fields").style.display = "none";
+
+    // show according to selection
+    if (value === "cheque") {
+      document.getElementById("cheque_fields").style.display = "block";
+    } else if (value === "online") {
+      document.getElementById("online_fields").style.display = "block";
+    } else if (value === "saving") {
+      document.getElementById("saving_fields").style.display = "block";
+    }
+  });
+});
+</script>
 
 
 <script>

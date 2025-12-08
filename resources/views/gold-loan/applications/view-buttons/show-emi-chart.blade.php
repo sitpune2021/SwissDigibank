@@ -20,22 +20,22 @@
     }
 </style>
 
-<div class="main-inner box dark:bg-bg3 shadow-md mt-5">
+<div class="main-inner mt-5">
     
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl font-semibold">
+            <h1 class="text-lg uppercase font-semibold">
                 Gold Loan Application - EMI Chart </h1>
         </div>
     </div>
     
    
-    <div class="container mx-auto p-6">
+    <div class="container  mx-auto p-6">
 
-        <div class="loan-info mb-6 p-4 rounded-lg shadow" style="background-color: #f9fafb;">
+        <div class="loan-info mb-6 p-4 rounded-lg shadow box">
             
-            <h2 class="text-lg font-semibold uppercase border-b pb-2 mb-3" style="color:#374151;">
-                <center>Loan Information</center> 
+            <h2 class="text-lg text-center mb-4 font-semibold uppercase">
+                Loan Information 
             </h2>
 
             <table class="w-full text-sm border border-gray-400 rounded-lg">
@@ -114,10 +114,10 @@
         </style>
 
 
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold"><center>EMI Chart</center></h3>
+        <div class="mt-6 box mt-3">
+            <h3 class="text-lg uppercase text-center font-semibold">EMI Chart</h3>
             <div class="overflow-x-auto mt-3">
-                <table class="min-w-full border-collapse border">
+                <table class="w-full border-collapse border">
                     <thead>
                         <tr class="bg-gray-100">
                             <th class="border px-2 py-1">EMI NO</th>
@@ -152,7 +152,7 @@
                         @endforeach
                     </tbody>
 
-                    <tfoot class="font-semibold" style="color: blueviolet;">
+                    <tfoot class="font-semibold">
 
                         @if(strtolower($interestType) === 'no_emi')
                         <tr>

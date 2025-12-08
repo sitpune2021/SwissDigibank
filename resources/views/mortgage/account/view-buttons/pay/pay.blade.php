@@ -40,7 +40,7 @@ $settingLabel = '';
                 <h3 class="text-xl font-semibold uppercase ">
                     Mortgage Loan Payment
                 </h3>
-                <p class="text-gray-500">Pay</p>
+                <p class="text-gray-500 uppercase">Pay</p>
             </div>
         </div>
     </div>
@@ -104,7 +104,7 @@ $settingLabel = '';
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="md:text-lg font-medium uppercase block mb-4">
+                        <label class="md:text-lg font-medium uppercase block ">
                             Pay Mode
                             <span class="text-error">*</span>
                         </label>
@@ -137,7 +137,7 @@ $settingLabel = '';
 
                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                         <select id="bank_id" name="bank_id"
-                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                             <option value="">-- Select Bank --</option>
 
                             @forelse($banks as $bank)
@@ -155,15 +155,15 @@ $settingLabel = '';
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                             <input type="text" name="cheque_no"
-                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                 placeholder="Enter Cheque No" value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
                         </div>
 
                         <!-- Cheque Date -->
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                            <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                            <input type="text" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
                     </div>
 
@@ -173,8 +173,8 @@ $settingLabel = '';
                             <label class="block text-sm font-medium text-gray-700 uppercase">
                                 Transfer Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" id="transfer_date" name="transfer_date" value=" {{ old('transfer_date', $application->transfer_date ?? '') }} "
-                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                            <input type="text" id="transfer_date" name="transfer_date" value=" {{ old('transfer_date', $application->transfer_date ?? '') }} "
+                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
 
                         <div>
@@ -183,7 +183,7 @@ $settingLabel = '';
                             </label>
                             <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
                                 value="{{ old('utr_no', $application->utr_no ?? '') }}"
-                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
 
                         <div>
@@ -247,7 +247,7 @@ $settingLabel = '';
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg mb-4">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Mortgage Loan Account Info</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">Mortgage Loan Account Info</h3>
                     <!-- Toggle Button -->
                     <button
                         class="p-1 rounded transition"
@@ -261,48 +261,48 @@ $settingLabel = '';
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Loan No.</td>
                                 <td class="px-3 py-2">{{$goldLoan->id??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Member</td>
                                 <td class="px-3 py-2">{{$goldLoan->member->member_no??''}} - {{$goldLoan->member->member_info_first_name??''}}</td>
                             </tr>
 
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Open Date</td>
+                                <td class="font-semibold uppercase px-3 py-2">Open Date</td>
                                 <td class="px-3 py-2">{{ \Carbon\Carbon::parse($goldLoan->application_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme</td>
+                                <td class="font-semibold uppercase px-3 py-2">Scheme</td>
                                 <td class="px-3 py-2">{{$goldLoan->scheme->scheme_name??''}} </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Loan Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Loan Amount</td>
                                 <td class="px-3 py-2"> ₹ {{$goldLoan->loan_amount??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Current Debt</td>
+                                <td class="font-semibold uppercase px-3 py-2">Current Debt</td>
                                 <td class="px-3 py-2"></td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2"> {{$goldLoan->scheme->annual_interest_rate??''}} %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Type</td>
                                 <td class="px-3 py-2">
                                     {{$settingLabel }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure </td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure </td>
                                 <td class="px-3 py-2">
                                     {{$goldLoan->tenure_value??''}} {{$goldLoan->tenure_type??''}}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Status</td>
                                 <td class="px-3 py-2">
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -369,7 +369,9 @@ $settingLabel = '';
         });
     });
 </script>
-<script>
+
+<!-- pay mode -->
+ <script>
     document.addEventListener("DOMContentLoaded", () => {
         const radios = document.querySelectorAll('input[name="fee_mode"]');
         const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
@@ -390,9 +392,16 @@ $settingLabel = '';
         });
 
         // Default dates
-        let today = new Date().toISOString().split('T')[0];
-        document.getElementById("cheque_date").value = today;
-        document.getElementById("transfer_date").value = today;
+        let d = new Date();
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let year = d.getFullYear();
+
+        let formatted = `${day}-${month}-${year}`;
+
+        document.getElementById("cheque_date").value = formatted;
+        document.getElementById("transfer_date").value = formatted;
+
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -410,4 +419,6 @@ $settingLabel = '';
         calcTotal(); // initial calculation
     });
 </script>
+
+
 @endsection

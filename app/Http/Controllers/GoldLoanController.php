@@ -54,8 +54,8 @@ class GoldLoanController extends Controller
                 'insurance_fee' => 'nullable|numeric|min:0',
                 'gold_loan_setting' => 'nullable|string',
                 'max_loan_limit' => 'required|numeric|max:100',
-                'overdue_interest_rate' => 'nullable|numeric|min:0',
-                'overdue_interest_type' => 'nullable|string|in:TYPE_1,TYPE_2',
+                'overdue_interest_rate' => 'required_if:overdue_type,TYPE_1,TYPE_2|numeric|min:0',
+                'overdue_interest_type' => 'nullable|string|max:50',
                 'penalty_charge' => 'nullable|numeric|min:0',
                 'fore_closer_charge' => 'nullable|numeric|min:0',
                 'credit_period' => 'nullable|numeric|min:0',
@@ -890,6 +890,21 @@ class GoldLoanController extends Controller
                     'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
                 ]);
             }
+
+            // Convert cheque_date
+            if ($request->filled('cheque_date')) {
+                $request->merge([
+                    'cheque_date' => Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
+                ]);
+            }
+
+            // Convert transfer_date
+            if ($request->filled('transfer_date')) {
+                $request->merge([
+                    'transfer_date' => Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d'),
+                ]);
+            }
+
             // Loan Application Save
             $loanApplication = LoanApplication::create($request->only([
                 'application_date',
@@ -952,7 +967,7 @@ class GoldLoanController extends Controller
                             'cibil_type'       => $type,
                             'cibil_score'      => $request->cibil_score[$index] ?? null,
                             'report_date'      => isset($request->report_date[$index])
-                                ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                                ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d')
                                 : null,
                             'report_file_path' => $filePath,
                         ]);
@@ -1163,56 +1178,6 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application', 'emiChart'));
     }
-
-    // public function generateEmiChart($application)
-    // {
-    //     $principalAmount = $application->approved_loan_amount;
-    //     $months = $application->tenure;
-    //     $annualInterest = $application->scheme->annual_interest_rate;
-
-    //     $monthlyInterestRate = ($annualInterest / 12) / 100;
-
-    //     // Other Charges Per EMI (set your correct field)
-    //     $otherPerEmi = $application->scheme->other_charge_per_emi ?? 0;
-
-    //     // EMI Formula
-    //     $emi = ($principalAmount * $monthlyInterestRate * pow(1 + $monthlyInterestRate, $months))
-    //         / (pow(1 + $monthlyInterestRate, $months) - 1);
-
-    //     $balance = $principalAmount;
-    //     $schedule = [];
-
-    //     $totalInterest = 0;
-
-    //     for ($i = 1; $i <= $months; $i++) {
-
-    //         $interest = $balance * $monthlyInterestRate;
-    //         $principal = $emi - $interest;
-
-    //         $balance -= $principal;
-
-    //         $totalInterest += $interest;
-
-    //         $schedule[] = [
-    //             'no'         => $i,
-    //             'principal'  => round($principal, 2),
-    //             'interest'   => round($interest, 2),
-    //             'other_charges' => round($otherPerEmi, 2),
-    //             'emi'        => round($emi + $otherPerEmi, 2),
-    //             'start_date' => now()->format('d/m/Y'),
-    //             'date'       => now()->addMonths($i)->format('d/m/Y'),
-    //             'due_date'   => now()->addMonths($i)->addDay()->format('d/m/Y'),
-    //             'due_principal' => round(max($balance, 0), 2),
-    //         ];
-    //     }
-
-    //     return [
-    //         "rows" => $schedule,
-    //         "total_interest" => round($totalInterest, 2),
-    //         "total_other" => round($months * $otherPerEmi, 2),
-    //     ];
-    // }
-
 
     public function generateEmiChart($application)
     {

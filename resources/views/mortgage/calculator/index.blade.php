@@ -93,7 +93,10 @@
     
               <!-- Max Tenure Dropdown -->
                 <div class="col-span-2">
-                    <label class="md:text-lg font-medium block mb-2">Max. Tenure *</label>
+                    <label class="md:text-lg font-medium block mb-2">
+                      Max. Tenure 
+                    <span class="text-error">*</span>  
+                  </label>
                     <select name="max_tenure" id="max_tenure" 
                         class="w-full bg-white border rounded px-3 py-2">
                         <option value="">Select Tenure</option>
@@ -121,7 +124,9 @@
 
                 <!-- Interest Type -->
                 <div class="col-span-2">
-                    <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
+                    <label class="md:text-lg font-medium block mb-2">Interest Type
+                       <span class="text-error">*</span>  
+                  </label>
                     <div class="flex gap-4">
                       <label>
                           <input type="radio" name="interest_type" value="flat_emi"> Flat EMI
@@ -139,7 +144,9 @@
 
                 <!-- Annual Interest Rate -->
                 <div class="col-span-2">
-                  <label class="md:text-lg font-medium block mb-2">Annual Interest Rate (%) *</label>
+                  <label class="md:text-lg font-medium block mb-2">Annual Interest Rate (%) 
+                    <span class="text-error">*</span>  
+                </label>
                   <input type="number" name="manual_interest_rate" id="manual_interest_rate"
                     class="w-full bg-white border rounded px-3 py-2"
                     placeholder="Interest Rate">
@@ -302,16 +309,20 @@
               <!-- Checkbox 2 -->
               <label class="flex gap-2 mt-2" id="chk_first_box">
                   <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1">
-                  Collect Interest as EMIs First & then after Principal as EMIs
+                  <span id="chk_emi_text">Collect Interest as EMIs First & then after Principal as EMIs</span>
               </label>
 
           </div>
 
+          
           <!-- REDUCING EMI SPECIAL CHECKBOX -->
-          <label class="flex gap-2 mt-3" id="reduce_ratio_box" style="display:none;">
-              <input type="checkbox" id="divide_emi_ratio" value="1">
-              Check this if you want to divide loan EMIs in ratio.
-          </label>
+          <div class="flex gap-2" id="reduce_ratio_box" style="display:none;">
+            <label class="flex gap-2 items-center" >
+              <input type="checkbox" id="divide_emi_ratio" value="1"  style="width:20px !important; height:20px !important;">      
+            </label>
+            <span id="" class="">Check this if you want to divide loan EMIs in ratio.</span>
+          </div>
+
 
           <!-- RATIO FIELDS -->
           <div id="ratioFields" style="display:none; margin-top:10px;">
@@ -320,23 +331,23 @@
               <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
 
               <div class="flex gap-3">
-                  <input type="number" id="emi_ratio_1" class="w-1/3 border p-2" min="1">
-                  <input type="number" id="emi_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+                  <input type="number" id="emi_ratio_1" class="w-full rounded-10 bg-secondary/5 border p-2" min="1">
+                  <input type="number" id="emi_ratio_2" class="w-full rounded-10 bg-secondary/5 border p-2 bg-gray-100" readonly>
               </div>
 
               <!-- Loan Amount Ratio -->
               <label class="block mt-4 mb-2 font-semibold">Loan Amount % Ratio</label>
 
               <div class="flex gap-3">
-                  <input type="number" id="amt_ratio_1" class="w-1/3 border p-2" min="1" max="100">
-                  <input type="number" id="amt_ratio_2" class="w-1/3 border p-2 bg-gray-100" readonly>
+                  <input type="number" id="amt_ratio_1" class="w-full border bg-secondary/5 rounded-10 p-2" min="1" max="100">
+                  <input type="number" id="amt_ratio_2" class="w-full border bg-secondary/5 rounded-10 p-2 bg-gray-100" readonly>
               </div>
 
           </div>
 
          
            <!-- Buttons -->
-          <div class="flex justify-center gap-4 pt-6">
+          <div class="flex justify-center gap-4 pt-6 mt-4">
             <button type="submit" class="btn-primary">CALCULATE</button>
             <a href="" class="btn-outline">Back</a>
           </div>
@@ -344,7 +355,7 @@
       </div>
       
       <!--Scheme Info Table-->
-      <div id="schemeBox" class="mt-5 hidden">
+      <div id="schemeBox" class=" hidden box">
         <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
           <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
           <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'schemeInfoBody')">
@@ -356,26 +367,26 @@
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
               <tbody>
-                <tr><td class="font-semibold py-2 pr-4">Scheme Code</td><td class="py-2" id="schemeCode">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td><td class="py-2" id="schemeLimit">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Minimum Loan Amount</td><td class="py-2" id="schemeMin">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Active</td><td class="py-2" id="schemeActive">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Scheme Code</td><td class="py-2" id="schemeCode">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Maximum Loan Limit Against Security</td><td class="py-2" id="schemeLimit">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Minimum Loan Amount</td><td class="py-2" id="schemeMin">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Active</td><td class="py-2" id="schemeActive">-</td></tr>
+                <tr class="border-b"><td class="font-semibold py-2 px-3  uppercase">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
+                  <td class="font-semibold px-3 uppercase py-2">Stamp Duty Fee</td>
                   <td class="px-3 py-2"><span id="schemeStamp">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Insurance Charges</td>
+                  <td class="font-semibold px-3 uppercase py-2">Insurance Charges</td>
                   <td class="px-3 py-2"><span id="schemeInsurance">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Processing Fee</td>
+                  <td class="font-semibold px-3 uppercase py-2">Processing Fee</td>
                   <td class="px-3 py-2"><span id="schemeProcessing">-</span> ₹</td>
                 </tr>
               </tbody>
