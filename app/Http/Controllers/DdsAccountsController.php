@@ -1595,7 +1595,6 @@ class DdsAccountsController extends Controller
             compact('ddaccount', 'members', 'schemes')
         );
     }
-
    
     public function updateAccountInfo(Request $request, $id)
     {
