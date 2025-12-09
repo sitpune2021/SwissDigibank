@@ -471,6 +471,20 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     // Add nominee
     Route::get('/rd/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('rd.accounts.nominee');
     Route::post('/accounts/{type}/{id}/save-nominee', [AccountsController::class, 'saveNominees'])->name('rd-accounts.saveNominee');
+
+    Route::get('/rd-accounts/{id}/upload-documents', [RdAccountController::class, 'uploadDocuments'])
+        ->name('rd.uploadDocuments');
+    Route::post('/rd-accounts/{id}/upload-documents', [RdAccountController::class, 'storeDocuments'])
+        ->name('rd.storeDocuments');
+    Route::delete('/rd-documents/{id}', [RdAccountController::class, 'destroy'])
+        ->name('rd.documents.destroy');
+
+    // add Comments
+    Route::get('/rd-accounts/{id}/add-comment', [RdAccountController::class, 'addComment'])->name('rd.addComment');
+    Route::post('/rd-accounts/{id}/store-comment', [RdAccountController::class, 'storeComment'])
+        ->name('rd.storeComment');
+
+    Route::post('/rdaccount/{id}/update-setting', [RdAccountController::class, 'updateSetting'])->name('rd.updateSetting');
 });
 
 Route::group(['prefix' => 'deposits'], function () {
@@ -2195,6 +2209,8 @@ Route::delete('/passbook/{id}', [PassbookController::class, 'destroy'])->name('p
 
 
 /////////////////////////////////////   end Passbook   ////////////////////////////////////////////////////////
+
+
 
 Route::get('/dev/run/{action}', function ($action) {
     try {

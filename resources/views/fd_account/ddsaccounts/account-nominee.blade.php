@@ -45,7 +45,7 @@
                 type="dd"
                 submitText="Save"
                 backText="Back"
-                :isUpdate="$hasNominee" />
+                :isUpdate="true" />
         </form>
     </div>
 </div>

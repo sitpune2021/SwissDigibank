@@ -65,36 +65,36 @@
 @section('content')
 
 <style>
-.tab.hidden {
-    display: block !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    overflow: hidden !important;
-}
+    .tab.hidden {
+        display: block !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
 </style>
 
 
-    <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
-            <div class="flex items-start flex-col  gap-2">
-                <div class="flex items-center gap-3">
-                    <h3 class="text-xl font-semibold uppercase">
-                        New Commission Chart
-                    </h3>
-                </div>
+<div class="main-inner">
+    <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
+        <div class="flex items-start flex-col  gap-2">
+            <div class="flex items-center gap-3">
+                <h3 class="text-xl font-semibold uppercase">
+                    New Commission Chart
+                </h3>
             </div>
         </div>
+    </div>
 
-        <!-- <form action="{{ route('associates-advisor.commission-charts.store') }}" method="POST">
+    <!-- <form action="{{ route('associates-advisor.commission-charts.store') }}" method="POST">
             @csrf -->
 
-            @if(isset($chart))
-                <form action="{{ route('associates-advisor.commission-charts.update', $chart->id) }}" method="POST">
-                @method('PUT')
-            @else
-                <form action="{{ route('associates-advisor.commission-charts.store') }}" method="POST">
+    @if(isset($chart))
+    <form action="{{ route('associates-advisor.commission-charts.update', $chart->id) }}" method="POST">
+        @method('PUT')
+        @else
+        <form action="{{ route('associates-advisor.commission-charts.store') }}" method="POST">
             @endif
-                @csrf
+            @csrf
 
             <!-- rest of fields -->
 
@@ -169,7 +169,7 @@
                             </label>
                             <input type="number" name="tenure_months" value="{{ old('tenure_months', $chart->tenure_months ?? 6) }}"
                                 class="tenure-input w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
-                                placeholder="0" min="1" max="99" value="6" />
+                                placeholder="0" min="1" max="99" />
                         </div>
 
                         <!-- Buttons -->
@@ -524,40 +524,41 @@
 
             <div class="w-full box mt-5">
                 <div class="rounded-10">
-                                                    
                     <div id="rd" class="tab p-4 bg-gray-100 rounded-10 mt-4">
-                        
+
                         @php
+
                         // ensure variables exist
                         // if controller passes $chart, use its tenure_months; otherwise default 6
-                         $months = isset($chart) ? (int) $chart->tenure_months : 6;
+
+                        $months = isset($chart) ? (int) $chart->tenure_months : 6;
 
                         // rankValues might be passed from controller; ensure it's an array
                         $rankValues = $rankValues ?? [];
 
                         // rankData should be passed from controller; if not, provide fallback
                         $rankData = $rankData ?? [
-                            1  => "Field Head Officer",
-                            2  => "Field Officer",
-                            3  => "Relationship Manager",
-                            4  => "Relationship Manager",
-                            5  => "Area Relationship Manager",
-                            6  => "Regional Relationship Manager",
-                            7  => "Field Manager",
-                            8  => "Field Associate",
-                            9  => "Field Executive",
-                            10 => "Sales Officer",
-                            11 => "Field Organizer",
-                            12 => "Field Associate",
-                            13 => "Field Officer",
-                            14 => "Adviser",
-                            15 => "Sales Manager",
-                            16 => "DEL Officer",
-                            17 => "Asst Dev Officer",
-                            18 => "Sales Officer",
-                            19 => "Asst Sales Officer",
-                            20 => "C Director",
-                            // optionally collection charge can be handled separately
+                        1 => "Field Head Officer",
+                        2 => "Field Officer",
+                        3 => "Relationship Manager",
+                        4 => "Relationship Manager",
+                        5 => "Area Relationship Manager",
+                        6 => "Regional Relationship Manager",
+                        7 => "Field Manager",
+                        8 => "Field Associate",
+                        9 => "Field Executive",
+                        10 => "Sales Officer",
+                        11 => "Field Organizer",
+                        12 => "Field Associate",
+                        13 => "Field Officer",
+                        14 => "Adviser",
+                        15 => "Sales Manager",
+                        16 => "DEL Officer",
+                        17 => "Asst Dev Officer",
+                        18 => "Sales Officer",
+                        19 => "Asst Sales Officer",
+                        20 => "C Director",
+                        // optionally collection charge can be handled separately
                         ];
                         @endphp
 
@@ -568,39 +569,39 @@
                                         <th class="text-center text-lg !py-5 px-6 min-w-[100px]">#</th>
                                         <th class="text-center text-lg !py-5 px-6 min-w-[200px]">RANK</th>
 
-                                        {{-- Dynamic Month Headings --}}                                       
+                                        {{-- Dynamic Month Headings --}}
                                         @for($i = 1; $i <= $months; $i++)
                                             <th class="month-th text-center text-lg !py-5 px-6 min-w-[80px]"> {{ $i }} M </th>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     @foreach($rankData as $id => $title)
-                                        @php
-                                            // $rankValues is stored as: [ "Rank Name" => [ { month map }, { total } ], ... ]
-                                            $rowValues = $rankValues[$title][0] ?? []; // first index is month map
-                                        @endphp
+                                    @php
+                                    // $rankValues is stored as: [ "Rank Name" => [ { month map }, { total } ], ... ]
+                                    $rowValues = $rankValues[$title][0] ?? []; // first index is month map
+                                    @endphp
 
-                                        <tr class="months-row {{ $id == 21 ? 'collection-charge-row' : '' }}" data-rank="{{ $id }}">
+                                    <tr class="months-row {{ $id == 21 ? 'collection-charge-row' : '' }}" data-rank="{{ $id }}">
+                                        <td>
+                                            <input type="text" name="rank_no[{{ $id }}]" value="{{ $id }}" readonly>
+                                        </td>
+
+                                        <td>
+                                            <input type="text" name="rank_name[{{ $id }}]" value="{{ $title }}" readonly>
+                                        </td>
+
+                                        {{-- Month wise inputs --}}
+                                        @for($m = 1; $m <= $months; $m++)
                                             <td>
-                                                <input type="text" name="rank_no[{{ $id }}]" value="{{ $id }}" readonly>
+                                            <input type="number"
+                                                name="rank[{{ $id }}][{{ $m }}]"
+                                                class="month-input border p-2 rounded w-20"
+                                                value="{{ $rowValues[$m] ?? '' }}">
                                             </td>
-
-                                            <td>
-                                                <input type="text" name="rank_name[{{ $id }}]" value="{{ $title }}" readonly>
-                                            </td>
-
-                                            {{-- Month wise inputs --}}
-                                            @for($m = 1; $m <= $months; $m++)
-                                                <td>
-                                                    <input type="number"
-                                                        name="rank[{{ $id }}][{{ $m }}]"
-                                                        class="month-input border p-2 rounded w-20"
-                                                        value="{{ $rowValues[$m] ?? '' }}">
-                                                </td>
                                             @endfor
-                                        </tr>
+                                    </tr>
                                     @endforeach
 
                                     {{-- TOTAL ROW --}}
@@ -611,7 +612,7 @@
                                         {{-- total placeholders (will be filled by JS) --}}
                                         @for($m = 1; $m <= $months; $m++)
                                             <td><input type="text" readonly name="rank[total][{{ $m }}]" class="px-3 border py-1 bg-gray-200 text-center"></td>
-                                        @endfor
+                                            @endfor
                                     </tr>
 
                                     {{-- COLLECTION CHARGE ROW (if you want to include in UI for RD) --}}
@@ -625,34 +626,33 @@
                                         </td>
 
                                         @php
-                                            $collectionValues = $rankValues['COLLECTION CHARGE'][0] ?? []; // may be stored as this
+                                        $collectionValues = $rankValues['collection_charge'][0] ?? []; // may be stored as this
+
                                         @endphp
 
                                         @for($m = 1; $m <= $months; $m++)
                                             <td class="px-6">
-                                                <input type="text" name="rank[collection_charge][{{ $m }}]" placeholder="percent" class="px-3 border py-1 text-center" value="{{ $collectionValues[$m] ?? '' }}">
+                                            <input type="text" name="rank[collection_charge][{{ $m }}]" placeholder="percent" class="px-3 border py-1 text-center" value="{{ $collectionValues[$m] ?? '' }}">
                                             </td>
-                                        @endfor
+                                            @endfor
                                     </tr>
 
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-
                     <div id="dd" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
 
                         @php
-                            // Safe fallback (ADD mode me chart null hota hai)
-                            $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
-                            $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
+                        // Safe fallback (ADD mode me chart null hota hai)
+                        $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
+                        $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
 
-                            // Auto TOTAL array
-                            $autoTotals = array_fill(1, $months, 0);
+                        // Auto TOTAL array
+                        $autoTotals = array_fill(1, $months, 0);
 
-                            // Old saved values (edit mode only)
-                            $existingChart = $existingChart ?? [];
+                        // Old saved values (edit mode only)
+                        $existingChart = $existingChart ?? [];
                         @endphp
 
                         <div class="w-full mt-4 overflow-x-auto">
@@ -665,7 +665,7 @@
                                         {{-- AUTO GENERATE MONTH HEADERS --}}
                                         @for ($m = 1; $m <= $months; $m++)
                                             <th class="text-start !py-5 px-6">M{{ $m }}</th>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -673,29 +673,29 @@
                                     {{-- ALL RANK ROWS --}}
                                     @foreach($rankData as $id => $title)
 
-                                        @php
-                                            $rowValues = $existingChart[$id] ?? []; // OLD SAVED VALUES
-                                        @endphp
+                                    @php
+                                    $rowValues = $existingChart[$id] ?? []; // OLD SAVED VALUES
+                                    @endphp
 
-                                        <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
-                                            data-rank="{{ $id }}">
+                                    <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
+                                        data-rank="{{ $id }}">
 
-                                            <td class="px-6">{{ $id }}</td>
+                                        <td class="px-6">{{ $id }}</td>
 
-                                            <td class="px-6 uppercase">
-                                                {{ $title }}
+                                        <td class="px-6 uppercase">
+                                            {{ $title }}
+                                        </td>
+
+                                        {{-- MONTH INPUT BOXES --}}
+                                        @for ($m = 1; $m <= $months; $m++)
+                                            <td class="px-6">
+                                            <input type="number"
+                                                name="rank[{{ $id }}][{{ $m }}]"
+                                                value="{{ $rowValues[$m] ?? '' }}"
+                                                class="month-input border p-2 rounded w-20 text-right">
                                             </td>
-
-                                            {{-- MONTH INPUT BOXES --}}
-                                            @for ($m = 1; $m <= $months; $m++)
-                                                <td class="px-6">
-                                                    <input type="number"
-                                                        name="rank[{{ $id }}][{{ $m }}]"
-                                                        value="{{ $rowValues[$m] ?? '' }}"
-                                                        class="month-input border p-2 rounded w-20 text-right">
-                                                </td>
                                             @endfor
-                                        </tr>
+                                    </tr>
 
                                     @endforeach
 
@@ -706,9 +706,9 @@
 
                                         @for ($m = 1; $m <= $months; $m++)
                                             <td class="px-6 total-col" data-month="{{ $m }}">
-                                                0 {{ $commissionSymbol }}
+                                            0 {{ $commissionSymbol }}
                                             </td>
-                                        @endfor
+                                            @endfor
                                     </tr>
 
                                 </tbody>
@@ -721,15 +721,15 @@
                     <div id="fd_one" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
 
                         @php
-                            // Safe fallback (ADD mode me chart null hota hai)
-                            $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
-                            $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
+                        // Safe fallback (ADD mode me chart null hota hai)
+                        $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
+                        $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
 
-                            // Auto TOTAL array
-                            $autoTotals = array_fill(1, $months, 0);
+                        // Auto TOTAL array
+                        $autoTotals = array_fill(1, $months, 0);
 
-                            // Old saved values (edit mode only)
-                            $existingChart = $existingChart ?? [];
+                        // Old saved values (edit mode only)
+                        $existingChart = $existingChart ?? [];
                         @endphp
 
                         <div class="w-full mt-4 overflow-x-auto">
@@ -742,7 +742,7 @@
                                         {{-- AUTO MONTH HEADERS --}}
                                         @for ($m = 1; $m <= $months; $m++)
                                             <th class="text-start !py-5 px-6">M{{ $m }}</th>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </thead>
 
@@ -751,29 +751,29 @@
                                     {{-- ALL RANK ROWS --}}
                                     @foreach($rankData as $id => $title)
 
-                                        @php
-                                            $rowValues = $existingFdOne[$id] ?? [];  // ← FD ONE saved values
-                                        @endphp
+                                    @php
+                                    $rowValues = $existingFdOne[$id] ?? []; // ← FD ONE saved values
+                                    @endphp
 
-                                        <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
-                                            data-rank="{{ $id }}">
+                                    <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
+                                        data-rank="{{ $id }}">
 
-                                            <td class="px-6">{{ $id }}</td>
+                                        <td class="px-6">{{ $id }}</td>
 
-                                            <td class="px-6 uppercase">
-                                                {{ $title }}
+                                        <td class="px-6 uppercase">
+                                            {{ $title }}
+                                        </td>
+
+                                        {{-- MONTH INPUT BOXES --}}
+                                        @for ($m = 1; $m <= $months; $m++)
+                                            <td class="px-6">
+                                            <input type="number"
+                                                name="fd_one[{{ $id }}][{{ $m }}]"
+                                                value="{{ $rowValues[$m] ?? '' }}"
+                                                class="month-input border p-2 rounded w-20 text-right">
                                             </td>
-
-                                            {{-- MONTH INPUT BOXES --}}
-                                            @for ($m = 1; $m <= $months; $m++)
-                                                <td class="px-6">
-                                                    <input type="number"
-                                                        name="fd_one[{{ $id }}][{{ $m }}]"
-                                                        value="{{ $rowValues[$m] ?? '' }}"
-                                                        class="month-input border p-2 rounded w-20 text-right">
-                                                </td>
                                             @endfor
-                                        </tr>
+                                    </tr>
 
                                     @endforeach
 
@@ -784,9 +784,9 @@
 
                                         @for ($m = 1; $m <= $months; $m++)
                                             <td class="px-6 total-col" data-month="{{ $m }}">
-                                                0 {{ $commissionSymbol }}
+                                            0 {{ $commissionSymbol }}
                                             </td>
-                                        @endfor
+                                            @endfor
                                     </tr>
 
                                 </tbody>
@@ -799,15 +799,15 @@
                     <div id="fd_payout" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
 
                         @php
-                            // Safe fallback (ADD mode me chart null hota hai)
-                            $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
-                            $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
+                        // Safe fallback (ADD mode me chart null hota hai)
+                        $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
+                        $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
 
-                            // Auto TOTAL array
-                            $autoTotals = array_fill(1, $months, 0);
+                        // Auto TOTAL array
+                        $autoTotals = array_fill(1, $months, 0);
 
-                            // Old saved values (edit mode only)
-                            $existingChart = $existingChart ?? [];
+                        // Old saved values (edit mode only)
+                        $existingChart = $existingChart ?? [];
                         @endphp
 
                         <div class="w-full mt-4 overflow-x-auto">
@@ -820,9 +820,9 @@
                                         {{-- Auto Month Columns --}}
                                         @for ($m = 1; $m <= $months; $m++)
                                             <th class="text-start !py-5 px-6 month-th">
-                                                M{{ $m }}
+                                            M{{ $m }}
                                             </th>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </thead>
 
@@ -831,30 +831,30 @@
                                     {{-- All Rank Rows --}}
                                     @foreach($rankData as $id => $title)
 
-                                        @php
-                                            $rowValues = $existingFdPayout[$id] ?? [];  
-                                        @endphp
+                                    @php
+                                    $rowValues = $existingFdPayout[$id] ?? [];
+                                    @endphp
 
-                                        <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
-                                            data-rank="{{ $id }}">
+                                    <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
+                                        data-rank="{{ $id }}">
 
-                                            <td class="px-6">{{ $id }}</td>
+                                        <td class="px-6">{{ $id }}</td>
 
-                                            <td class="px-6 uppercase">
-                                                {{ $title }}
+                                        <td class="px-6 uppercase">
+                                            {{ $title }}
+                                        </td>
+
+                                        {{-- Dynamic Month Input Boxes --}}
+                                        @for ($m = 1; $m <= $months; $m++)
+                                            <td>
+                                            <input type="number"
+                                                name="fd_payout[{{ $id }}][{{ $m }}]"
+                                                value="{{ $rowValues[$m] ?? '' }}"
+                                                class="month-input border p-2 rounded w-20 text-right">
                                             </td>
-
-                                            {{-- Dynamic Month Input Boxes --}}
-                                            @for ($m = 1; $m <= $months; $m++)
-                                                <td>
-                                                    <input type="number"
-                                                        name="fd_payout[{{ $id }}][{{ $m }}]"
-                                                        value="{{ $rowValues[$m] ?? '' }}"
-                                                        class="month-input border p-2 rounded w-20 text-right">
-                                                </td>
                                             @endfor
 
-                                        </tr>
+                                    </tr>
                                     @endforeach
 
                                     {{-- TOTAL ROW --}}
@@ -864,12 +864,12 @@
 
                                         @for ($m = 1; $m <= $months; $m++)
                                             <td class="px-6">
-                                                <input type="text"
-                                                    readonly
-                                                    name="fd_payout_total[{{ $m }}]"
-                                                    class="font-bold text-center bg-green-100 w-20">
+                                            <input type="text"
+                                                readonly
+                                                name="fd_payout_total[{{ $m }}]"
+                                                class="font-bold text-center bg-green-100 w-20">
                                             </td>
-                                        @endfor
+                                            @endfor
                                     </tr>
 
                                 </tbody>
@@ -882,16 +882,16 @@
                     <div id="mis_one" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
 
                         @php
-                            // Safe fallback (ADD mode me chart null hota hai)
-                            $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
-                            $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
+                        // Safe fallback (ADD mode me chart null hota hai)
+                        $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
+                        $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
 
-                            // Auto TOTAL array
-                            $autoTotals = array_fill(1, $months, 0);
+                        // Auto TOTAL array
+                        $autoTotals = array_fill(1, $months, 0);
 
-                            // Old saved values (edit mode only)
-                            $existingChart = $existingChart ?? [];
-                            
+                        // Old saved values (edit mode only)
+                        $existingChart = $existingChart ?? [];
+
                         @endphp
 
                         <div class="w-full mt-4 overflow-x-auto">
@@ -904,9 +904,9 @@
                                         {{-- Auto Month Columns --}}
                                         @for ($m = 1; $m <= $months; $m++)
                                             <th class="text-start !py-5 px-6 month-th">
-                                                M{{ $m }}
+                                            M{{ $m }}
                                             </th>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </thead>
 
@@ -915,30 +915,30 @@
                                     {{-- All Rank Rows --}}
                                     @foreach($rankData as $id => $title)
 
-                                        @php
-                                            $rowValues = $existingMisOne[$id] ?? [];  
-                                        @endphp
+                                    @php
+                                    $rowValues = $existingMisOne[$id] ?? [];
+                                    @endphp
 
-                                        <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
-                                            data-rank="{{ $id }}">
+                                    <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
+                                        data-rank="{{ $id }}">
 
-                                            <td class="px-6">{{ $id }}</td>
+                                        <td class="px-6">{{ $id }}</td>
 
-                                            <td class="px-6 uppercase">
-                                                {{ $title }}
+                                        <td class="px-6 uppercase">
+                                            {{ $title }}
+                                        </td>
+
+                                        {{-- Dynamic Month Input Boxes --}}
+                                        @for ($m = 1; $m <= $months; $m++)
+                                            <td>
+                                            <input type="number"
+                                                name="mis_one[{{ $id }}][{{ $m }}]"
+                                                value="{{ $rowValues[$m] ?? '' }}"
+                                                class="month-input border p-2 rounded w-20 text-right">
                                             </td>
-
-                                            {{-- Dynamic Month Input Boxes --}}
-                                            @for ($m = 1; $m <= $months; $m++)
-                                                <td>
-                                                    <input type="number"
-                                                        name="mis_one[{{ $id }}][{{ $m }}]"
-                                                        value="{{ $rowValues[$m] ?? '' }}"
-                                                        class="month-input border p-2 rounded w-20 text-right">
-                                                </td>
                                             @endfor
 
-                                        </tr>
+                                    </tr>
                                     @endforeach
 
                                     {{-- TOTAL ROW --}}
@@ -948,12 +948,12 @@
 
                                         @for ($m = 1; $m <= $months; $m++)
                                             <td class="px-6">
-                                                <input type="text"
-                                                    readonly
-                                                    name="mis_one_total[{{ $m }}]"
-                                                    class="font-bold text-center bg-green-100 w-20">
+                                            <input type="text"
+                                                readonly
+                                                name="mis_one_total[{{ $m }}]"
+                                                class="font-bold text-center bg-green-100 w-20">
                                             </td>
-                                        @endfor
+                                            @endfor
                                     </tr>
 
                                 </tbody>
@@ -966,17 +966,17 @@
                     <div id="mis_payout" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
 
                         @php
-                      
-                            // Safe fallback (ADD mode me chart null hota hai)
-                            $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
-                            
-                            $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
 
-                            // Auto TOTAL array
-                            $autoTotals = array_fill(1, $months, 0);
+                        // Safe fallback (ADD mode me chart null hota hai)
+                        $months = isset($chart) && isset($chart->tenure_months) ? $chart->tenure_months : 6;
 
-                            // Old saved values (edit mode only)
-                            $existingChart = $existingChart ?? [];
+                        $commissionSymbol = isset($chart) && $chart->commission_type === 'inr' ? '₹' : '%';
+
+                        // Auto TOTAL array
+                        $autoTotals = array_fill(1, $months, 0);
+
+                        // Old saved values (edit mode only)
+                        $existingChart = $existingChart ?? [];
                         @endphp
 
                         <div class="w-full mt-4 overflow-x-auto">
@@ -989,9 +989,9 @@
                                         {{-- Auto Month Columns --}}
                                         @for ($m = 1; $m <= $months; $m++)
                                             <th class="text-start !py-5 px-6 month-th">
-                                                M{{ $m }}
+                                            M{{ $m }}
                                             </th>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </thead>
 
@@ -1000,33 +1000,33 @@
                                     {{-- All Rank Rows --}}
                                     @foreach($rankData as $id => $title)
 
-                                        @php
-                                            $rowValues = $existingMisPayout[$id] ?? [];
-                                        @endphp
+                                    @php
+                                    $rowValues = $existingMisPayout[$id] ?? [];
+                                    @endphp
 
-                                        <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
-                                            data-rank="{{ $id }}">
+                                    <tr class="months-row {{ $id == 21 ? 'collection-charge-row bg-yellow-100' : '' }}"
+                                        data-rank="{{ $id }}">
 
-                                            <td class="px-6">
-                                                <input type="text" name="mis_payout_no[{{ $id }}]" value="{{ $id }}" readonly>
+                                        <td class="px-6">
+                                            <input type="text" name="mis_payout_no[{{ $id }}]" value="{{ $id }}" readonly>
+                                        </td>
+
+                                        <td class="px-6 uppercase">
+                                            <input type="text" name="mis_payout_name[{{ $id }}]"
+                                                value="{{ $title }}" readonly>
+                                        </td>
+
+                                        {{-- Dynamic Month Input Boxes --}}
+                                        @for ($m = 1; $m <= $months; $m++)
+                                            <td>
+                                            <input type="number"
+                                                name="mis_payout_value[{{ $id }}][{{ $m }}]"
+                                                value="{{ $rowValues[$m] ?? '' }}"
+                                                class="month-input border p-2 rounded w-20 text-right">
                                             </td>
-
-                                            <td class="px-6 uppercase">
-                                                <input type="text" name="mis_payout_name[{{ $id }}]"
-                                                    value="{{ $title }}" readonly>
-                                            </td>
-
-                                            {{-- Dynamic Month Input Boxes --}}
-                                            @for ($m = 1; $m <= $months; $m++)
-                                                <td>
-                                                    <input type="number"
-                                                        name="mis_payout_value[{{ $id }}][{{ $m }}]"
-                                                        value="{{ $rowValues[$m] ?? '' }}"
-                                                        class="month-input border p-2 rounded w-20 text-right">
-                                                </td>
                                             @endfor
 
-                                        </tr>
+                                    </tr>
 
                                     @endforeach
 
@@ -1037,12 +1037,12 @@
 
                                         @for ($m = 1; $m <= $months; $m++)
                                             <td class="px-6">
-                                                <input type="text"
-                                                    readonly
-                                                    name="mis_payout_total[{{ $m }}]"
-                                                    class="font-bold text-center bg-green-100 w-20">
+                                            <input type="text"
+                                                readonly
+                                                name="mis_payout_total[{{ $m }}]"
+                                                class="font-bold text-center bg-green-100 w-20">
                                             </td>
-                                        @endfor
+                                            @endfor
                                     </tr>
                                 </tbody>
                             </table>
@@ -1050,10 +1050,10 @@
 
                     </div>
 
-                    
+
                     <div id="saving" class="tab hidden p-4 bg-gray-100 rounded-10 mt-4">
                         <div class="w-full mt-4 overflow-x-auto ">
-                             <table class="w-full border-collapse whitespace-nowrap text-sm commission-table">
+                            <table class="w-full border-collapse whitespace-nowrap text-sm commission-table">
                                 <thead>
                                     <tr class="months-header bg-secondary/5 border-b dark:bg-bg3">
                                         <th class="text-center text-lg text-start !py-5 px-6 min-w-[100px] cursor-pointer">#
@@ -1374,9 +1374,9 @@
                                         <td class="px-6">
                                             <input type="text" name="rank[total][1]" readonly class="px-3 border py-1 bg-gray-200 text-center">
                                         </td>
-                                    </tr>                   
-                               
-                                </tbody>       
+                                    </tr>
+
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -1397,276 +1397,323 @@
                 </div>
             </div>
         </form>
-    </div>
+</div>
 
 
 <!-- Tenure month show dynamically and store -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-    const chartTypeSelect2 = document.getElementById("chart_type");
+        const chartTypeSelect2 = document.getElementById("chart_type");
 
-    function toggleCollectionChargeRows() {
-        const allowed = ["rd", "dd"];   // ONLY RD & DD show
+        function toggleCollectionChargeRows() {
+            const allowed = ["rd", "dd"]; // ONLY RD & DD show
 
-        document.querySelectorAll(".collection-charge-row").forEach(row => {
-            if (allowed.includes(chartTypeSelect2.value)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
+            document.querySelectorAll(".collection-charge-row").forEach(row => {
+                if (allowed.includes(chartTypeSelect2.value)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
 
-    chartTypeSelect2.addEventListener("change", toggleCollectionChargeRows);
-    toggleCollectionChargeRows();
+        chartTypeSelect2.addEventListener("change", toggleCollectionChargeRows);
 
-    const tenureInput = document.querySelector(".tenure-input");
-    const commissionTypeSelect = document.querySelector(".commission-type");
-    const tables = document.querySelectorAll(".commission-table");
+        toggleCollectionChargeRows();
 
-    let currentPlaceholder = commissionTypeSelect?.value === "inr" ? "inr" : "percent";
+        const tenureInput = document.querySelector(".tenure-input");
 
-    /* --------------------------
-       UPDATE TABLE (MAIN ENGINE)
-    ---------------------------*/
-    function updateTable(tenure) {
-        tables.forEach((table) => {
+        const commissionTypeSelect = document.querySelector(".commission-type");
+        const tables = document.querySelectorAll(".commission-table");
 
-            const header = table.querySelector(".months-header");
-            const rows = table.querySelectorAll("tbody tr.months-row:not(.total-row):not(.collection-row)");
-            const collectionRow = table.querySelector(".collection-row");
-            const totalRow = table.querySelector(".total-row");
+        let currentPlaceholder = commissionTypeSelect?.value === "inr" ? "inr" : "percent";
 
-            const currentMonths = header.querySelectorAll("th.month-th").length;
+        /* --------------------------
+           UPDATE TABLE (MAIN ENGINE)
+        ---------------------------*/
+        function updateTable(tenure) {
+            tables.forEach((table) => {
 
-            /* --------------------------
-               ADD NEW MONTH COLUMNS
-            ---------------------------*/
-            if (tenure > currentMonths) {
+                const header = table.querySelector(".months-header");
+                const rows = table.querySelectorAll("tbody tr.months-row:not(.total-row):not(.collection-row)");
+                const collectionRow = table.querySelector(".collection-row");
+                const totalRow = table.querySelector(".total-row");
 
-                for (let i = currentMonths + 1; i <= tenure; i++) {
+                const currentMonths = header.querySelectorAll("th.month-th").length;
 
-                    // HEADER
-                    const th = document.createElement("th");
-                    th.className = "text-center text-lg month-th";
-                    th.textContent = `${i} M`;
-                    header.appendChild(th);
+                /* --------------------------
+                   ADD NEW MONTH COLUMNS
+                ---------------------------*/
+                if (tenure > currentMonths) {
 
-                    // RANK ROWS
-                    rows.forEach((row) => {
-                        const rank_no = row.dataset.rank;
-                        const td = document.createElement("td");
+                    for (let i = currentMonths + 1; i <= tenure; i++) {
 
-                        const input = document.createElement("input");
-                        input.type = "text";
-                        input.className = "invoice_input text-center";
-                        input.name = `rank[${rank_no}][${i}]`;
-                        input.placeholder = currentPlaceholder;
+                        // HEADER
+                        const th = document.createElement("th");
+                        th.className = "text-center text-lg month-th";
+                        th.textContent = `${i} M`;
+                        header.appendChild(th);
 
-                        td.appendChild(input);
-                        row.appendChild(td);
-                    });
+                        // RANK ROWS
+                        rows.forEach((row) => {
+                            const rank_no = row.dataset.rank;
+                            const td = document.createElement("td");
 
-                    // COLLECTION ROW
-                    if (collectionRow) {
-                        const td = document.createElement("td");
-                        const input = document.createElement("input");
-                        input.type = "text";
-                        input.placeholder = currentPlaceholder;
-                        input.name = `rank[collection_charge][${i}]`;
-                        input.className = "invoice_input text-center";
-                        td.appendChild(input);
-                        collectionRow.appendChild(td);
-                    }
+                            const input = document.createElement("input");
+                            input.type = "text";
+                            input.className = "invoice_input text-center";
+                            input.name = `rank[${rank_no}][${i}]`;
+                            input.placeholder = currentPlaceholder;
+
+                            td.appendChild(input);
+                            row.appendChild(td);
+                        });
+
+                        // COLLECTION ROW
+                        if (collectionRow) {
+                            const td = document.createElement("td");
+                            const input = document.createElement("input");
+                            input.type = "text";
+                            input.placeholder = currentPlaceholder;
+                            input.name = `rank[collection_charge][${i}]`;
+                            input.className = "invoice_input text-center";
+                            td.appendChild(input);
+                            collectionRow.appendChild(td);
+                        }
 
 
-                    // TOTAL ROW (ONLY ONCE)
-                    if (totalRow) {
-                        const td = document.createElement("td");
-                        td.innerHTML = `<input type="text" readonly class="font-bold text-center bg-green-100"
+                        // TOTAL ROW (ONLY ONCE)
+                        if (totalRow) {
+                            const td = document.createElement("td");
+                            td.innerHTML = `<input type="text" readonly class="font-bold text-center bg-green-100"
                                             name="rank[total][${i}]">`;
-                        totalRow.appendChild(td);
+                            totalRow.appendChild(td);
+                        }
+
+
                     }
-
-
                 }
-            }
 
-            /* --------------------------
-               REMOVE EXTRA MONTH COLUMNS
-            ---------------------------*/
-            if (tenure < currentMonths) {
+                /* --------------------------
+                   REMOVE EXTRA MONTH COLUMNS
+                ---------------------------*/
+                if (tenure < currentMonths) {
 
-                for (let i = currentMonths; i > tenure; i--) {
+                    for (let i = currentMonths; i > tenure; i--) {
 
-                    header.removeChild(header.lastElementChild);
+                        header.removeChild(header.lastElementChild);
 
-                    rows.forEach((row) => row.removeChild(row.lastElementChild));
-                   
-                    if (collectionRow) collectionRow.removeChild(collectionRow.lastElementChild);
-                    if (totalRow) totalRow.removeChild(totalRow.lastElementChild);
-                }
-            }
+                        rows.forEach((row) => row.removeChild(row.lastElementChild));
 
-        });
-
-        calculateTotals();
-    }
-
-
-    /* --------------------------
-       INITIAL LOAD
-    ---------------------------*/
-    updateTable(parseInt(tenureInput.value, 10) || 1);
-
-
-    /* --------------------------
-       TENURE CHANGE
-    ---------------------------*/
-    tenureInput.addEventListener("input", () => {
-        let tenure = Math.max(1, Math.min(99, parseInt(tenureInput.value, 10)));
-        updateTable(tenure);
-    });
-
-
-    /* --------------------------
-       COMMISSION TYPE CHANGE
-    ---------------------------*/
-    commissionTypeSelect?.addEventListener("change", () => {
-        currentPlaceholder = commissionTypeSelect.value;
-        updateTable(parseInt(tenureInput.value, 10) || 1);
-    });
-
-
-    /* --------------------------
-       TOTAL CALCULATION
-    ---------------------------*/
-    function calculateTotals() {
-        tables.forEach((table) => {
-
-            const totalRow = table.querySelector(".total-row");
-            if (!totalRow) return;
-
-            const months = table.querySelectorAll("thead th.month-th").length;
-            const rows = table.querySelectorAll("tbody tr.months-row:not(.total-row):not(.collection-row)");
-
-            for (let m = 1; m <= months; m++) {
-
-                let sum = 0;
-                let hasValue = false;
-
-                rows.forEach((row) => {
-
-                    const input = row.querySelector(`input[name="rank[${row.dataset.rank}][${m}]"]`);
-
-                    if (input && input.value && !isNaN(input.value)) {
-                        sum += parseFloat(input.value);
-                        hasValue = true;
+                        if (collectionRow) collectionRow.removeChild(collectionRow.lastElementChild);
+                        if (totalRow) totalRow.removeChild(totalRow.lastElementChild);
                     }
-                });
+                }
 
-                const totalInput = totalRow.querySelector(`input[name="rank[total][${m}]"]`);
-                if (totalInput) totalInput.value = hasValue ? sum : "";
-            }
-        });
-    }
+            });
 
-
-    /* --------------------------
-       REAL TIME TOTAL UPDATE
-    ---------------------------*/
-    document.addEventListener("input", (e) => {
-        if (e.target.closest(".commission-table") && !e.target.readOnly) {
             calculateTotals();
         }
-    });
 
-});
+
+        /* --------------------------
+           INITIAL LOAD
+        ---------------------------*/
+        updateTable(parseInt(tenureInput.value, 10) || 1);
+
+
+        /* --------------------------
+           TENURE CHANGE
+        ---------------------------*/
+        tenureInput.addEventListener("input", () => {
+            let tenure = Math.max(1, Math.min(99, parseInt(tenureInput.value, 10)));
+
+            updateTable(tenure);
+        });
+
+
+        /* --------------------------
+           COMMISSION TYPE CHANGE
+        ---------------------------*/
+        commissionTypeSelect?.addEventListener("change", () => {
+            currentPlaceholder = commissionTypeSelect.value;
+
+            updateTable(parseInt(tenureInput.value, 10) || 1);
+        });
+
+
+        /* --------------------------
+           TOTAL CALCULATION
+        ---------------------------*/
+        // function calculateTotals() {
+        //     tables.forEach((table) => {
+
+        //         const totalRow = table.querySelector(".total-row");
+        //         if (!totalRow) return;
+
+        //         const months = table.querySelectorAll("thead th.month-th").length;
+
+        //         const rows = table.querySelectorAll("tbody tr.months-row:not(.total-row):not(.collection-row)");
+
+        //         for (let m = 1; m <= months; m++) {
+
+        //             let sum = 0;
+        //             let hasValue = false;
+
+        //             rows.forEach((row) => {
+
+        //                 const input = row.querySelector(`input[name="rank[${row.dataset.rank}][${m}]"]`);
+        //                 console.log(input.value);
+        //                 if (input && input.value && !isNaN(input.value)) {
+        //                     sum += parseFloat(input.value);
+
+        //                     hasValue = true;
+        //                 }
+        //             });
+
+        //             const totalInput = totalRow.querySelector(`input[name="rank[total][${m}]"]`);
+        //             if (totalInput) totalInput.value = hasValue ? sum : "";
+        //         }
+        //     });
+        // }
+
+        function calculateTotals() {
+            tables.forEach((table) => {
+
+                const totalRow = table.querySelector(".total-row");
+                if (!totalRow) return;
+
+                // Get all month headers
+                const monthHeaders = table.querySelectorAll("thead th.month-th");
+                const monthsCount = monthHeaders.length;
+
+                // Get all rows to sum (exclude total, collection, collection-charge rows)
+                const rows = table.querySelectorAll(
+                    "tbody tr.months-row:not(.total-row):not(.collection-row):not(.collection-charge-row)"
+                );
+
+                // Loop through each month header
+                monthHeaders.forEach((th, index) => {
+                    const monthIndex = index + 1; 
+                    let sum = 0;
+                    let hasValue = false;
+
+                    rows.forEach((row) => {
+                        const input = row.querySelector(`input[name="rank[${row.dataset.rank}][${monthIndex}]"]`);
+
+                        if (!input) return;
+
+                        const value = parseFloat(input.value);
+                        if (!isNaN(value)) {
+                            sum += value;
+                            console.log(sum);
+                            hasValue = true;
+                        }
+                    });
+
+                    // Set total input value for this month
+                    const totalInput = totalRow.querySelector(`input[name="rank[total][${monthIndex}]"]`);
+                    if (totalInput) totalInput.value = hasValue ? sum : "";
+                });
+            });
+        }
+
+
+        /* --------------------------
+           REAL TIME TOTAL UPDATE
+        ---------------------------*/
+        document.addEventListener("input", (e) => {
+            if (e.target.closest(".commission-table") && !e.target.readOnly) {
+                calculateTotals();
+            }
+        });
+
+    });
 </script>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
-    const schemeSelect = document.querySelector(".scheme-select");
+        const schemeSelect = document.querySelector(".scheme-select");
 
-    const idTabs = document.querySelectorAll(".tab[id]");
-    const classTabs = document.querySelectorAll(".tab-content .tab");
+        const idTabs = document.querySelectorAll(".tab[id]");
+        const classTabs = document.querySelectorAll(".tab-content .tab");
 
-    function hideAllTabs() {
-        idTabs.forEach(t => t.classList.add("hidden"));
-        classTabs.forEach(t => t.classList.add("hidden"));
-    }
+        function hideAllTabs() {
+            idTabs.forEach(t => t.classList.add("hidden"));
+            classTabs.forEach(t => t.classList.add("hidden"));
+        }
 
-    function showSelectedTabs(tabKey) {
-        if (!tabKey) return;
+        function showSelectedTabs(tabKey) {
+            if (!tabKey) return;
 
-        const idTab = document.getElementById(tabKey);
-        if (idTab) idTab.classList.remove("hidden");
+            const idTab = document.getElementById(tabKey);
+            if (idTab) idTab.classList.remove("hidden");
 
-        const classTab = document.querySelector(`.tab-content .tab-${tabKey}`);
-        if (classTab) classTab.classList.remove("hidden");
-    }
-
-    hideAllTabs();
-    showSelectedTabs("rd");
-
-    // ✅ When RD/DD changes
-    schemeSelect.addEventListener("change", () => {
-        const selected = schemeSelect.selectedOptions[0];
-        const tabKey = selected?.dataset.tab;
+            const classTab = document.querySelector(`.tab-content .tab-${tabKey}`);
+            if (classTab) classTab.classList.remove("hidden");
+        }
 
         hideAllTabs();
-        showSelectedTabs(tabKey);
-    });
+        showSelectedTabs("rd");
 
-});
+        // ✅ When RD/DD changes
+        schemeSelect.addEventListener("change", () => {
+            const selected = schemeSelect.selectedOptions[0];
+            const tabKey = selected?.dataset.tab;
+
+            hideAllTabs();
+            showSelectedTabs(tabKey);
+        });
+
+    });
 </script>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
-    const schemeSelect = document.querySelector(".scheme-select");
+        const schemeSelect = document.querySelector(".scheme-select");
 
-    function enableOnlyActiveTab(tabId) {
-        // Disable ALL inputs
-        document.querySelectorAll(".tab input").forEach(i => i.disabled = true);
+        function enableOnlyActiveTab(tabId) {
+            // Disable ALL inputs
+            document.querySelectorAll(".tab input").forEach(i => i.disabled = true);
 
-        // Enable ONLY selected tab inputs
-        document.querySelectorAll("#" + tabId + " input").forEach(i => i.disabled = false);
-    }
+            // Enable ONLY selected tab inputs
+            document.querySelectorAll("#" + tabId + " input").forEach(i => i.disabled = false);
+        }
 
-    // ✅ Default open RD
-    enableOnlyActiveTab("rd");
+        // ✅ Default open RD
+        enableOnlyActiveTab("rd");
 
-    // ✅ When scheme changes (RD/DD)
-    schemeSelect.addEventListener("change", () => {
-        const selected = schemeSelect.selectedOptions[0];
-        const tabKey = selected.dataset.tab;
-        enableOnlyActiveTab(tabKey);
+        // ✅ When scheme changes (RD/DD)
+        schemeSelect.addEventListener("change", () => {
+            const selected = schemeSelect.selectedOptions[0];
+            const tabKey = selected.dataset.tab;
+            enableOnlyActiveTab(tabKey);
+        });
+
     });
-
-});
 </script>
 
 <!-- chart_type = saving total -->
 <script>
-    document.addEventListener("input", function () {
+    document.addEventListener("input", function() {
 
-    const savingTab = document.querySelector("#saving");
-    if (!savingTab || savingTab.classList.contains("hidden")) return;
+        const savingTab = document.querySelector("#saving");
+        if (!savingTab || savingTab.classList.contains("hidden")) return;
 
-    let total = 0;
+        let total = 0;
 
-    savingTab.querySelectorAll("tbody tr[data-rank]:not([data-rank='total']) input[name^='rank']").forEach((input) => {
-        let val = parseFloat(input.value);
-        if (!isNaN(val)) total += val;
+        savingTab.querySelectorAll("tbody tr[data-rank]:not([data-rank='total']) input[name^='rank']").forEach((input) => {
+            let val = parseFloat(input.value);
+            if (!isNaN(val)) total += val;
+        });
+
+        const totalInput = savingTab.querySelector("input[name='rank[total][1]']");
+        if (totalInput) {
+            totalInput.value = total;
+        }
     });
-
-    const totalInput = savingTab.querySelector("input[name='rank[total][1]']");
-    if (totalInput) {
-        totalInput.value = total;
-    }
-});
 </script>
 
 {{-- Payout Type --}}

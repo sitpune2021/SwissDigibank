@@ -4,9 +4,9 @@
 <div class="main-inner">
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h4 class="h2">MDS/ RD ACCOUNTS</h4>
+        <h2 class="h2">MDS/ RD ACCOUNTS</h2>
         <a class="btn-primary flex items-center gap-2" href="{{ route('mds-rd-accounts.create-rd-account') }}">
-            ADD
+            Add
         </a>
     </div>
 
@@ -63,9 +63,9 @@
                         <a href="{{route('member.show',$account->member->id)}}" class="text-primary underline hover:text-primary/80">
                             {{
                                 optional($account->member)->member_no
-        ?? (optional($account->member)->id 
-            ? str_pad($account->member->id, 6, '0', STR_PAD_LEFT) 
-            : '')}}
+                                ?? (optional($account->member)->id 
+                                ? str_pad($account->member->id, 6, '0', STR_PAD_LEFT) 
+                                : '')}}
                         </a>
                     </td>
                     <td class="px-6 py-4 text-center">{{ optional($account->member)->full_name ?? '—' }}</td>
@@ -76,7 +76,8 @@
                         {{ $minor ? trim(($minor->first_name ?? '').' '.($minor->last_name ?? '')) : 'No' }}
                     </td>
                     <td class="px-6 py-4 text-center">{{ optional($account->branch)->branch_name ?? '—' }}</td>
-                    <td class="px-6 py-4 text-center">{{ $account->scheme ?? '—' }}</td>
+                    
+                    <td class="px-6 py-4 text-center">{{ $account->scheme->scheme_name ?? '—' }}</td>
                     <td class="px-6 py-4 text-center">₹{{ number_format($account->rd_amount, 2) }}</td>
 
                     <td class="px-6 py-4 text-center">—</td>
@@ -89,7 +90,7 @@
                     <td class="px-6 py-4 text-center">
                         {{ $account->open_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $account->open_date)->format('d-m-Y') : '' }}
                     </td>
-                    <td class="px-6 py-4 text-center">—</td>
+                    <td class="px-6 py-4 text-center">{{ $account->maturity_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $account->maturity_date)->format('d-m-Y') : '' }}</td>
                     <td class="px-6 py-4 text-center">Monthly</td>
 
                     <td class="px-6 py-4 text-center">
