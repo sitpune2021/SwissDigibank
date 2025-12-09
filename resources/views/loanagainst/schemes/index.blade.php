@@ -27,7 +27,7 @@
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h1 class="flex text-xl block font-semibold uppercase">Loan Against Property Schemes</h1>
-                <a href="{{route('loanagainst.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <a href="{{route('loanagainst.schemes.create')}}" class=" block flex btn-primary uppercase   ">Add
                 </a>
             </div>  
               

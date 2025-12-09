@@ -28,7 +28,7 @@
         <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
             <div class="flex items-start flex-col gap-2">
                 <div class="flex items-center gap-2">
-                    <h3 class="uppercase font-semibold">
+                    <h3 class="uppercase text-lg font-semibold">
                         BUSINESS LOAN
                     </h3>
                     <p class="text-gray-500 uppercase text-sm">
@@ -91,9 +91,9 @@
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-1 ">Amount</th>
-                                    <th class="text-center px-3 py-1 ">GST Rate (%) </th>
-                                    <th class="text-center px-3 py-1 ">Total Amount</th>
+                                    <th class="text-center px-3 py-1 uppercase ">Amount</th>
+                                    <th class="text-center px-3 py-1 uppercase ">GST Rate (%) </th>
+                                    <th class="text-center px-3 py-1 uppercase ">Total Amount</th>
 
                                 </tr>
 
@@ -169,53 +169,53 @@
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Loan No.</td>
                                 <td class="px-3 py-2"> 00462</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Member</td>
                                 <td class="px-3 py-2">DEMO-04439 - ajinkya muli</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Co-Applicant Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Co-Applicant Member</td>
                                 <td class="px-3 py-2"> DEMO-04391 - sam butler</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Open Date</td>
+                                <td class="font-semibold uppercase px-3 py-2">Open Date</td>
                                 <td class="px-3 py-2">29/09/2025</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme</td>
+                                <td class="font-semibold uppercase px-3 py-2">Scheme</td>
                                 <td class="px-3 py-2"> Suvarna shree yojana flat advanced deduction</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Loan Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Loan Amount</td>
                                 <td class="px-3 py-2">₹ 51,000.00</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Current Debt</td>
+                                <td class="font-semibold uppercase px-3 py-2">Current Debt</td>
                                 <td class="px-3 py-2">(51,000.00)</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
                                     15.0 %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Type</td>
                                 <td class="px-3 py-2">
                                    Flat Advanced Interest Deduction
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure</td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure</td>
                                 <td class="px-3 py-2">
                                    12 MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Status</td>
                                 <td class="px-3 py-2">
                                      <span
                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">

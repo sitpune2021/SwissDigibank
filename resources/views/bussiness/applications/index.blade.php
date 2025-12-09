@@ -24,8 +24,8 @@
 
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">BUSINESS LOAN APPLICATIONS</h3>
-                <a href="{{route('bussiness.applications.create')}}" class=" block flex btn-primary capitalize ">add
+                <h3 class=" flex text-lg uppercase block font-semibold">BUSINESS LOAN APPLICATIONS</h3>
+                <a href="{{route('bussiness.applications.create')}}" class=" block flex btn-primary uppercase ">add
                 </a>
             </div>
 

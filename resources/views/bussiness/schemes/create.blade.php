@@ -27,7 +27,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">NEW BUSINESS LOAN SCHEME</h1>
+            <h1 class="text-lg uppercase font-semibold">NEW BUSINESS LOAN SCHEME</h1>
         </div>
     </div>
     
@@ -260,7 +260,7 @@
         {{--intersetTypeRadio --}}
         <div class="w-full">
                 <div class="mb-4" id="intersetTypeRadio">
-                    <label class="md:text-lg font-medium block mb-2">
+                    <label class="md:text-lg font-medium mt-3 block mb-2">
                         Interest Type <span class="text-red-600">*</span>
                     </label>
 
