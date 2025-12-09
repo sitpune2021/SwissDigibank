@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Helpers\TransactionHelper;
+use App\Models\Minor;
 
 class FDController extends Controller
 {
@@ -738,7 +740,7 @@ class FDController extends Controller
             ], 500);
         }
     }
- 
+
 
     public function fdPayout($id)
     {
@@ -889,21 +891,167 @@ class FDController extends Controller
     // Change Account Info
     public function changeAccountInfo($id)
     {
-
-        $fdAccountDetail = FdAccount::with('member.kyc')->findOrFail($id);
+        $fdAccountDetail = FdAccount::with('member.kyc', 'fdscheme', 'minor')->findOrFail($id);
 
         $selectedMember = Member::find($fdAccountDetail->member_id);
+
+        $schemes = FdScheme::all();
+
+        // Fetch minors of this member
+        $minors = Minor::where('member_id', $fdAccountDetail->member_id)->get();
 
         $otherMembers = Member::where('id', '!=', $fdAccountDetail->member_id)->get();
 
         $members = collect([$selectedMember])->merge($otherMembers);
 
-        return view('fd_mis_account.fd-account.fdchangeaccinfo', compact('fdAccountDetail', 'members'));
+        return view('fd_mis_account.fd-account.fdchangeaccinfo', compact('fdAccountDetail', 'members', 'schemes', 'minors'));
     }
+    public function updateAccountInfo(Request $request, $id)
+    {
+        Log::info("FD ID Received: $id");
+        Log::info("Request Data: ", $request->all());
+
+        try {
+            // Validation
+            Log::info("Validating request data...");
+            $request->validate([
+                'scheme_id'        => 'required|exists:fd_schemes,id',
+                'member_id'        => 'required|exists:members,id',
+                'account_type'     => 'required|in:single,joint',
+                'joint_member_id'  => 'nullable|exists:members,id',
+                'minor_id'         => 'nullable|exists:minors,id',
+                'open_date'        => 'required|date_format:d-m-Y',
+            ]);
+            Log::info("Validation Success.");
+
+            // Fetch account
+            $fd = FdAccount::findOrFail($id);
+            Log::info("Current FD Details Before Update: ", $fd->toArray());
+
+            // Convert open date
+            $openDate = Carbon::createFromFormat('d-m-Y', $request->open_date)
+                ->format('Y-m-d');
+
+            // Store old values for comparison
+            $oldData = $fd->getOriginal();
+
+            // Update Values
+            $fd->scheme_id        = $request->scheme_id;
+            $fd->member_id        = $request->member_id;
+            $fd->account_type     = $request->account_type;
+            $fd->joint_member_id  = $request->account_type == 'joint' ? $request->joint_member_id : null;
+            $fd->minor_id         = $request->minor_id;
+            $fd->open_date        = $openDate;
+
+            $fd->save();
+
+            // Log updated values
+            Log::info("FD Details After Update: ", $fd->toArray());
+
+            // Compare and log what exactly changed
+            $changes = [];
+            foreach ($fd->getChanges() as $field => $newValue) {
+                $oldValue = $oldData[$field] ?? null;
+                $changes[$field] = [
+                    'old' => $oldValue,
+                    'new' => $newValue
+                ];
+            }
+
+            Log::info("Fields Updated: ", $changes);
+
+
+            return redirect()
+                ->route('fd-mis-schemes.fd_show', $fd->id)
+                ->with('success', 'Account info updated successfully');
+        } catch (\Exception $e) {
+
+            Log::error("===== UPDATE FD ACCOUNT INFO FAILED =====");
+            Log::error("Error Message: " . $e->getMessage());
+            Log::error("Error Trace: " . $e->getTraceAsString());
+
+            return back()->with('error', 'Something went wrong while updating FD account info.');
+        }
+    }
+
+
 
     // Add Nominee
     public function addNominee($id)
     {
         return view('fd_mis_account.fd-account.fd-accountnominee');
+    }
+
+    public function viewTransactions(Request $request, $id)
+    {
+        Log::info("DdsAccountsController@transactions called for DDS ID: $id");
+
+        $fdAccount = FdAccount::with('member', 'branch', 'fdscheme')->findOrFail($id);
+
+        $query = FdTransaction::where('fd_account_id', $id);
+
+        if ($request->filled('tranx_id')) {
+            $query->where('id', $request->tranx_id);
+        }
+
+        if ($request->filled('remarks')) {
+            $query->where('remarks', 'like', '%' . $request->remarks . '%');
+        }
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $fromDate = Carbon::parse($request->from_date)->startOfDay();
+            $toDate = Carbon::parse($request->to_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$fromDate, $toDate]);
+        }
+
+        if ($request->filled('from_amount') && $request->filled('to_amount')) {
+            $query->whereBetween('balance_available', [$request->from_amount, $request->to_amount]);
+        }
+
+        $transactions = $query
+            ->orderBy('transaction_date', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $transactions = TransactionHelper::calculateRunningBalance($transactions);
+
+        $transactions = $transactions->sortByDesc('transaction_date')->sortByDesc('id')->values();
+
+        return view('fd_mis_account.fd-account.viewTransactions', compact('fdAccount', 'transactions'));
+    }
+    public function transactionsDetails($accountId, $transactionId)
+    {
+        Log::info("DdsAccountsController@transactionShow called for DDS ID: $accountId, Transaction ID: $transactionId");
+
+        $fdAccount = FdAccount::with(['member', 'branch', 'fdscheme'])
+            ->findOrFail($accountId);
+        $transaction = $fdAccount->transactions()
+            ->with('fdAccount.branch')
+            ->findOrFail($transactionId);
+        // dd($transaction);
+        return view('fd_mis_account.fd-account.transaction-details', compact('fdAccount', 'transaction'));
+    }
+    public function destroyTransaction($ddsAccountId, $tranxId)
+    {
+        Log::info("Deleting Transaction ID: $tranxId for DDS Account: $ddsAccountId");
+
+        $tranx = FdTransaction::findOrFail($tranxId);
+        $tranx->delete();
+
+        return back()->with('success', 'Transaction deleted.');
+    }
+    public function printReceipt($id, $transactionId)
+    {
+        $transaction = FdAccount::with(['member', 'transactions' => function ($query) use ($transactionId) {
+            $query->where('id', $transactionId);
+        }])->find($id);
+
+        if (!$transaction || $transaction->transactions->isEmpty()) {
+            abort(404, "Transaction not found");
+        }
+        $printedOn = now()->format('d-m-Y H:i');
+        $printedBy = optional(Auth::user())->name ?? 'System';
+
+        return view('fd_mis_account.fd-account.transactionPrintReceipt', compact('transaction', 'printedOn', 'printedBy'));
     }
 }

@@ -42,7 +42,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col  gap-2">
-            <h1 class="text-xl font-semibold">BUSINESS LOAN APPLICATION</h1>
+            <h1 class="text-lg font-semibold">BUSINESS LOAN APPLICATION</h1>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
                         @endif
 
         <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
-          <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
+          <div class="w-full col-span-12 px-3 py-2 rounded-10 lg:col-span-12 bg-secondary/5 ">
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                         <div class="col-span-2 md:col-span-1">
@@ -63,8 +63,7 @@
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
+                            <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                         </div>
                         
                         <div class="col-span-2 md:col-span-1">
@@ -279,14 +278,14 @@
                         </div>
 
                         <!--  Tenure ( MONTHS ) -->
-                        <div class="w-full mt-4 ">
+                        <div class="w-full  ">
                             <div class="mb-2">
-                                <label class="font-medium text-gray-700 uppercase">
+                                <label class="font-medium text-gray-700 text-lg uppercase">
                                     Tenure <span id="tenureLabel">( MONTHS )</span>                          
                                 </label>
                                 <span class="text-error">*</span>
                             </div>
-                            <div class="flex flex-wrap gap-4">
+                            <div class="flex flex-wrap gap-4 mt-4">
                                 <input type="number" id="tenure_value" name="tenure_value"
                                     value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -327,7 +326,7 @@
                                 Loan Amount (₹) <span class="text-error">*</span>
                             </label>
                             <input type="number" id="loanAmount" name="loan_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 mt-7 md:py-3"
                                 placeholder="0" value="{{ old('loan_amount', $application->loan_amount ?? 0) }}">
                                 <p id="loanAmountWords" class="text-red-500 text-xs mt-1"></p>
                                 @error('loan_amount')
@@ -467,7 +466,7 @@
                             </div>
 
                     <div class="mt-3">
-                        <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2">
+                        <button type="button" id="addRow" class="btn-primary uppercase text-sm rounded-10 px-4 py-2">
                             + Add New Score
                         </button>
                     </div>
@@ -486,17 +485,18 @@
                     <div class="w-full overflow-x-auto bg-secondary/5 rounded-10 p-3">
 
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Collect Processing Fee :</label>
+                            Collect Processing Fee 
+                        </label>
                         <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
+                                    <th class="text-center uppercase px-3 py-2 ">Value</th>
+                                    <th class="text-center uppercase px-3 py-2 ">GST (%)</th>
+                                    <th class="text-center uppercase px-3 py-2 ">SGST</th>
+                                    <th class="text-center uppercase px-3 py-2 ">CGST</th>
+                                    <th class="text-center uppercase px-3 py-2 ">IGST</th>
+                                    <th class="text-center uppercase px-3 py-2 ">Total</th>
                                 </tr>
                                 <!-- Input Row -->
                                 <tr class="">
@@ -535,21 +535,25 @@
                         </table>
 
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Pay Mode :</label>
+                            Pay Mode 
+                        </label>
                             <!-- Radio Buttons -->
-                            <div class="mt-3">
+                            <div class="mt-3 flex gap-2 items-center">
                                 <!-- Pay Mode -->
-                                <label class="mr-4">
-                                    <input type="radio" name="fee_mode" value="cash"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> Cash
+                                <label class="mr-4 flex gap-2 items-center">
+                                    <input type="radio" name="fee_mode" value="cash" checked
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}> 
+                                        <p>Cash</p>
                                 </label>
-                                <label class="mr-4">
+                                <label class="mr-4 flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="cheque"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> 
+                                        <p>Cheque</p>
                                 </label>
-                                <label>
+                                <label class="mr-4 flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="online"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> 
+                                        <p>Online Tr.</p>
                                 </label>
                             </div>
 
@@ -557,7 +561,7 @@
                             <div id="bankDropdownWrapper" class="mt-3 hidden">
                                 <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                <select id="bank_id" name="bank_id"
-                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     <option value="">-- Select Bank --</option>
                                     @foreach($banks as $id => $name)
                                         <option value="{{ $id }}"
@@ -571,15 +575,15 @@
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                     <input type="text" name="cheque_no"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                         placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
                                 </div>
 
                                 <!-- Cheque Date -->
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                             </div>
 
@@ -589,8 +593,8 @@
                                     <label class="block text-sm font-medium text-gray-700">
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -598,7 +602,7 @@
                                         UTR / Transaction No. <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -658,7 +662,7 @@
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base capitalize font-semibold md:text-lg">Customer Info</h3>
+                        <h3 class="text-base uppercase font-semibold md:text-lg">Customer Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'memberInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -669,11 +673,11 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Customer Name</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Customer Name</td>
                                         <td class="py-2 capitalize" id="memberName">-</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Mobile No</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Mobile No</td>
                                         <td class="py-2" id="memberMobile">-</td>
                                     </tr>
                                 </tbody>
@@ -686,7 +690,7 @@
                 {{--schemeBox info --}}
                 <div id="schemeBox" class=" mt-5 hidden">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
+                        <h3 class="text-base uppercase font-semibold md:text-lg">Scheme Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'schemeInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -698,52 +702,52 @@
                             <table class="w-full text-sm text-left">
                                 <tbody>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Scheme Code</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Scheme Code</td>
                                         <td class="py-2" id="schemeCode">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Scheme Name</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Scheme Name</td>
                                         <td class="py-2" id="schemeName">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Max Tenure</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Max Tenure</td>
                                         <td class="py-2" id="schemeTenure">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Maximum Loan Amount</td>
                                         <td class="py-2" id="schemeMax">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Annual Interest Rate</td>
                                         <td class="py-2" id="schemeInterest">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Interest Type</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Interest Type</td>
                                         <td class="py-2" id="schemeType">-</td>
                                     </tr>
                                 
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Active</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Active</td>
                                         <td class="py-2" id="schemeActive">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Fore Closure Charges</td>
                                         <td class="py-2" id="schemeCharge">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Processing Fee</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Processing Fee</td>
                                         <td class="py-2" id="schemeProcessing">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Stamp Duty Fee</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Stamp Duty Fee</td>
                                         <td class="py-2" id="schemeStampDuty">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-semibold py-2 pr-4">Insurance Charges</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Insurance Charges</td>
                                         <td class="py-2" id="schemeInsurance">-</td>
                                     </tr>
                                     <tr class="border-b border-gray-200">
-                                        <td class="font-semibold px-3 py-2">Charges Per EMI Type</td>
+                                        <td class="font-semibold uppercase px-3 py-2">Charges Per EMI Type</td>
                                         <td class="px-3 py-2"><span id="schemeChargePerEmi">-</span></td>
                                     </tr>
                                 </tbody>
@@ -788,11 +792,11 @@
            <!-- Buttons -->
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
                 <button type="button" id="calculateBtn"
-                    class="btn-primary ruppercase justify-center">
+                    class="btn-primary uppercase justify-center">
                     Calculate
                 </button>
                 <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('bussiness.applications.index')}}"> BAck</a>
+                <a href="{{route('bussiness.applications.index')}}"> Back</a>
             </button>
             </div>
     </form>
@@ -898,47 +902,49 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const radios = document.querySelectorAll('input[name="fee_mode"]');
-    const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
-    const onlineFields = document.getElementById("onlineFields");
+<!-- pay Mode -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
 
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            bankDropdownWrapper.classList.add("hidden");
-            onlineFields.classList.add("hidden");
+        const radios = document.querySelectorAll('input[name="fee_mode"]');
+        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+        const onlineFields = document.getElementById("onlineFields");
 
-            if (radio.value === "cheque" && radio.checked) {
-                bankDropdownWrapper.classList.remove("hidden");
-            }
-            if (radio.value === "online" && radio.checked) {
-                onlineFields.classList.remove("hidden");
-            }
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                bankDropdownWrapper.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+
+                if (radio.value === "cheque" && radio.checked) {
+                    bankDropdownWrapper.classList.remove("hidden");
+                }
+                if (radio.value === "online" && radio.checked) {
+                    onlineFields.classList.remove("hidden");
+                }
+            });
         });
-    });
 
-    // ✅ Default dates only if no value set
-    let today = new Date().toISOString().split('T')[0];
-    if (!document.getElementById("cheque_date").value) {
-        document.getElementById("cheque_date").value = today;
-    }
-    if (!document.getElementById("transfer_date").value) {
-        document.getElementById("transfer_date").value = today;
-    }
+            // ---- FIX: Set default date as d-m-Y ----
+            function getDMY() {
+                const d = new Date();
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
 
-    // ✅ Check which pay mode is already selected and show fields
-    const selectedMode = document.querySelector('input[name="fee_mode"]:checked');
-    if (selectedMode) {
-        if (selectedMode.value === "cheque") {
-            bankDropdownWrapper.classList.remove("hidden");
-        } else if (selectedMode.value === "online") {
-            onlineFields.classList.remove("hidden");
-        }
-    }
-});
+            const chequeDateInput = document.getElementById("cheque_date");
+            if (chequeDateInput && !chequeDateInput.value) {
+                chequeDateInput.value = getDMY();
+            }
 
-</script>
+            const transferDateInput = document.getElementById("transfer_date");
+            if (transferDateInput && !transferDateInput.value) {
+                transferDateInput.value = getDMY();
+            }
+
+        });
+    </script>
 
 
 <script>
@@ -1008,7 +1014,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const year = today.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
+        const formattedDate = `${day}-${month}-${year}`;
 
         return `
             <tr class="nested-fields border-b">

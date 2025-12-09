@@ -234,7 +234,7 @@
         {{-- Active field Yes/No --}}
         <div class="w-full">
             <div class="mb-4">
-                <label class="md:text-lg font-medium block mb-2">
+                <label class="md:text-lg font-medium block mt-3 ">
                     Active <span class="text-red-600">*</span>
                 </label>
 

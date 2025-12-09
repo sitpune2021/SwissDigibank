@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\LoanAgainstApplication;
 use App\Models\LoanAgainstDisursement;
 use App\Models\Bank;
+use App\Models\Account;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -152,6 +153,7 @@ class LoanAgainstDisbursementController extends Controller
         // Load loan + scheme + member + branch
         $disbursement = LoanAgainstApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
         $banks = Bank::pluck('name', 'id');
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
 
         // Base scheme values
         $scheme = optional($disbursement->scheme);
@@ -238,7 +240,8 @@ class LoanAgainstDisbursementController extends Controller
                 'totalDeductions',
                 'totalInterest',      
                 'totalRecover',       
-                'emi'
+                'emi',
+                'savingAccounts'
                
             )
         );

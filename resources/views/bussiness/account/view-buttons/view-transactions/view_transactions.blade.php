@@ -32,14 +32,14 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold uppercase dark:text-white">BUSINESS LOAN -  
-                <span class="text-gray-500 text-sm">Transactions</span>
+            <h1 class="text-lg font-semibold uppercase dark:text-white">BUSINESS LOAN -  
+                <span class="text-gray-500 uppercase text-sm">Transactions</span>
             </h1>
         </div>
     </div>
 
     <div class="">
-        <button class="btn-primary rounded-10 capitalize  dark:bg-bg3">
+        <button class="btn-primary rounded-10 uppercase  dark:bg-bg3">
             Re-generate balance in ledger
         </button>
     </div>
