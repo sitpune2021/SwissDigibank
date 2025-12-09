@@ -27,7 +27,7 @@
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
-            <h3 class="uppercase font-semibold">
+            <h3 class="uppercase  text-lg font-semibold">
                 LOAN AGAINST DEPOSITE - Link Saving Account for Auto Debit EMI
             </h3>
         </div>
@@ -37,12 +37,11 @@
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class="col-span-2 md:col-span-1 mt-2 mb-2">
             <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                <button class="btn-primary uppercase justify-center"
-                    onclick="window.location.href='{{ route('loangainst.debitOtherCharges.form', $goldLoan->id) }}'">
-                    Debit other charges
+                <button class="btn-primary text-sm uppercase justify-center">
+                    <a href="{{route('loanagainst.debitOtherCharges.form',$goldLoan->id)}}">Debit other charges</a>
                 </button>
 
-                <button class="btn-outline uppercase justify-center" type="reset">
+                <button class="btn-outline uppercase text-sm  justify-center" type="reset">
                     <a href="{{route('loanagainst.clear-due.form',$goldLoan->id)}}"> clear dues</a>
                 </button>
             </div>

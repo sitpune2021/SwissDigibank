@@ -345,6 +345,7 @@
     }
 </script>
 
+<!-- pay mode -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const radios = document.querySelectorAll('input[name="fee_mode"]');

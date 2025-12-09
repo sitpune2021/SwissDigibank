@@ -25,8 +25,8 @@
     @endif
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">LOAN AGAINST DEPOSITE APPLICATIONS</h3>
-                <a href="{{route('loanagainst.applications.create')}}" class=" block flex btn-primary capitalize ">add
+                <h3 class=" flex text-xl uppercase block font-semibold">LOAN AGAINST DEPOSITE APPLICATIONS</h3>
+                <a href="{{route('loanagainst.applications.create')}}" class="uppercase block flex btn-primary capitalize ">add
                 </a>
             </div>
 
@@ -168,11 +168,11 @@
 
 
                 </table>
-                <div class="mt-6">
+               
+            </div>
+ <div class="mt-6">
                     <x-pagination :paginator="$applications" />
                 </div>
-            </div>
-
 
         </div>
 @endsection

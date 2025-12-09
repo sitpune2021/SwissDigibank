@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\CsvExportHelper;
 use App\Models\Bank;
+use App\Models\Account;
 use App\Models\LoanAgainstTransactions;
 use App\Models\LoanAgainstApplication;
 use App\Models\LoanAgainstForeClosure;
@@ -21,7 +22,7 @@ class LoanAgainstAccountController extends Controller
     // index page
     public function index(Request $request)
     {
-        $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransaction'])
+        $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransactions'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
             ->paginate(10);
@@ -109,7 +110,7 @@ class LoanAgainstAccountController extends Controller
             ->value('total_payable') ?? 0;
 
         
-        $goldLoan = LoanAgainstApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'LoanAgainstTransaction'])->find($id);
+        $goldLoan = LoanAgainstApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'LoanAgainstTransactions'])->find($id);
 
         
         if (!$goldLoan) {
@@ -581,6 +582,9 @@ class LoanAgainstAccountController extends Controller
             'guarantor1'
         ])->findOrFail($id);
 
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+        $banks = Bank::pluck('name', 'id');
+
         $emiType = $goldLoan->scheme->gold_loan_setting;
         $totalLoan = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->interest_rate ?? 0;
@@ -661,7 +665,9 @@ class LoanAgainstAccountController extends Controller
             'totalOverdueWithGst',
             'totalAmount',
             'rounding',
-            'netAmount'
+            'netAmount',
+            'savingAccounts',
+            'banks'
         ));
     }
 
@@ -737,6 +743,70 @@ class LoanAgainstAccountController extends Controller
 
             // 🟩 NEW LINE — SAVE EMI NO
             $transaction->emi_no = $nextEmiNo;
+
+            // =============================================
+                // 🔥 MODE-WISE FIELDS STORE
+            // =============================================
+
+            $transaction->fee_mode = $request->fee_mode;
+
+            // CASH - kuch save nahi hoga
+            if ($request->fee_mode == 'cash') 
+            {
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // CHEQUE
+            elseif ($request->fee_mode == 'cheque') {
+
+                $transaction->bank_id = $request->bank_id;
+                $transaction->cheque_no = $request->cheque_no;
+                $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // ONLINE
+            elseif ($request->fee_mode == 'online') {
+
+                $transaction->utr_no = $request->utr_no;
+                $transaction->transfer_mode = $request->transfer_mode;
+                $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // SAVING ACCOUNT
+            elseif ($request->fee_mode == 'saving') {
+
+                $transaction->saving = $request->saving;
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+            }
+
 
             if ($receiptPath) {
                 $transaction->receipt = $receiptPath;
@@ -1195,7 +1265,7 @@ class LoanAgainstAccountController extends Controller
     // foure closer tab
     public function fourcloser($id)
     {
-        $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransaction'])
+        $goldLoan = LoanAgainstApplication::with(['member', 'branch', 'scheme', 'LoanAgainstTransactions'])
             ->findOrFail($id);
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
@@ -1554,8 +1624,10 @@ class LoanAgainstAccountController extends Controller
         $totalDue = LoanAgainstOtherCharge::where('loan_id', $id)
             ->where('status', 'unpaid')
             ->sum('amount');
-        $banks = Bank::all();
-        return view('loanagainst.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks'));
+        $banks = Bank::pluck('name', 'id');
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+        
+        return view('loanagainst.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks','savingAccounts'));
     }
 
     // update / store clear due tab

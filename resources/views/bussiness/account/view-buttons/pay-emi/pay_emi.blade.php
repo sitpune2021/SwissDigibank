@@ -35,7 +35,7 @@ $settingLabel = '';
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
-                <h1 class="text-2xl font-semibold uppercase capitalize">
+                <h1 class="text-lg font-semibold uppercase capitalize">
                     BUSINESS LOAN
                 </h3>                 
             </div>
@@ -48,7 +48,7 @@ $settingLabel = '';
                 <form action="{{ route('bussiness.payEmiLoan', $goldLoan->id) }}" method="POST" enctype="multipart/form-data">
                     <!-- Header -->
                     @csrf
-                    <div class="px-4 py-3">
+                    <div class=" py-3">
                         <h3 class="text-lg border-b font-semibold text-black">EMI DETAILS</h3>
                     </div>
                     <!-- Body -->
@@ -72,8 +72,8 @@ $settingLabel = '';
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Overdue Interest(B)</th>
-                                    <th class="text-center px-3 py-2 ">Other Charges (C)</th>
+                                    <th class="text-center px-3 uppercase py-2 ">Overdue Interest(B)</th>
+                                    <th class="text-center px-3 uppercase py-2 ">Other Charges (C)</th>
 
                                 </tr>
 
@@ -102,9 +102,9 @@ $settingLabel = '';
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Amount</th>
-                                    <th class="text-center px-3 py-2 ">GST Rate (%) </th>
-                                    <th class="text-center px-3 py-2 ">Total Amount</th>
+                                    <th class="text-center px-3 uppercase py-2 ">Amount</th>
+                                    <th class="text-center px-3 uppercase py-2 ">GST Rate (%) </th>
+                                    <th class="text-center px-3 uppercase py-2 ">Total Amount</th>
                                 </tr>
 
                                 <!-- Input Row -->
@@ -199,9 +199,114 @@ $settingLabel = '';
                         </div>
                     </div>
 
-                    <x-paymode :mode_2="$misaccount->amount ?? '' " :showSaving="true" id="amount" :readonly="false"
-                        :amountClass="true" :bgColor="false" :hiddenheading="false" :checkedDefault="'cash'"
-                        groupName="disburse_Mode_two" :rdShowing="true" />
+                    <div class="mt-3">
+                         <label class="md:text-lg font-medium block mb-4">
+                            Pay Mode
+                        </label>
+                                        <div class="flex grid col-span-1">
+                                        <div class="flex gap-3">
+                                             <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="cash" checked> 
+                                            <p>Cash</p>
+                                            </label>
+                                            <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="cheque">
+                                            <p>Cheque</p> 
+                                            </label>
+                                            <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="online"> 
+                                            <p>Online Transfer</p>
+                                            </label>
+                                        </div>
+                                        <div class="flex gap-3 mt-3">
+                                            <label class="flex gap-2">
+                                            <input type="radio" name="fee_mode" value="saving"> 
+                                            <p>Saving Account</p>
+                                            </label>
+                                        </div>
+
+                                        </div>
+                                        <!-- Fields for Cheque -->
+                                        <div id="cheque_fields" style="display:none; margin-top:10px;">
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                                            <select id="bank_id" name="bank_id"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                    <option value="">-- Select Bank --</option>
+                                                    @foreach($banks as $id => $name)
+                                                        <option value="{{ $id }}">
+                                                            {{ $name }}
+                                                        </option>
+                                                    @endforeach
+                                            </select>
+                                            <!-- Cheque No -->
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                                <input type="text" name="cheque_no"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    placeholder="Enter Cheque No">
+                                            </div>
+
+                                            <!-- Cheque Date -->
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                                <input type="text" id="cheque_date" name="cheque_date"
+                                                value="{{ old('cheque_date', date('d-m-Y')) }}"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                        </div>
+
+                                        <!-- Fields for Online -->
+                                        <div id="online_fields" style="display:none; margin-top:10px;">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    Transfer Date <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" id="transfer_date" name="transfer_date" 
+                                                value="{{ old('transfer_date', date('d-m-Y')) }}"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    UTR / Transaction No. <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    Transfer Mode <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="imps">
+                                                        <span>IMPS</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fields for Saving Account -->
+                                        <div id="saving_fields" style="display:none; margin-top:10px;">
+                                            <label>Saving Account:</label>
+                                            <select id="saving" name="saving"
+                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                <option value="">-- Select Saving Acc. --</option>
+
+                                                @foreach ($savingAccounts as $acc)
+                                                    <option value="{{ $acc }}">{{ $acc }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
                     <!-- Buttons -->
                     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -209,7 +314,7 @@ $settingLabel = '';
                             PAY
                         </button>
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                            <a href="{{ route('bussiness.account.show', $goldLoan->id) }}"> BACK</a>
                         </button>
                     </div>
                 </form>
@@ -237,48 +342,48 @@ $settingLabel = '';
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Loan No.</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Loan No.</td>
                                 <td class="px-3 py-2">{{$goldLoan->id??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Customer</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Customer</td>
                                 <td class="px-3 py-2">{{$goldLoan->member->member_no??''}} - {{$goldLoan->member->member_info_first_name??''}}</td>
                             </tr>
 
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Open Date</td>
+                                <td class="font-semibold uppercase px-3 py-2">Open Date</td>
                                 <td class="px-3 py-2">{{ \Carbon\Carbon::parse($goldLoan->application_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Scheme</td>
+                                <td class="font-semibold uppercase px-3 py-2">Scheme</td>
                                 <td class="px-3 py-2">{{$goldLoan->scheme->scheme_name??''}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Loan Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Loan Amount</td>
                                 <td class="px-3 py-2"> ₹ {{$goldLoan->loan_amount??'0'}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Current Debt</td>
+                                <td class="font-semibold uppercase px-3 py-2">Current Debt</td>
                                 <td class="px-3 py-2">{{ number_format($goldLoan->current_debt, 2) }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2"> {{$goldLoan->scheme->annual_interest_rate??''}} %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Type</td>
                                 <td class="px-3 py-2">
                                     {{$settingLabel }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure </td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure </td>
                                 <td class="px-3 py-2">
                                     {{$goldLoan->tenure_value??''}} {{$goldLoan->tenure_type??''}}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Status </td>
+                                <td class="font-semibold uppercase px-3 py-2">Status </td>
                                 <td class="px-3 py-2">
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -294,7 +399,7 @@ $settingLabel = '';
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">EMIs Info</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">EMIs Info</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -310,23 +415,23 @@ $settingLabel = '';
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">No. of EMIs</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">No. of EMIs</td>
                                 <td class="px-3 py-2">000</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">PAID</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">PAID</td>
                                 <td class="px-3 py-2">2</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">LEFT</td>
+                                <td class="font-semibold uppercase px-3 py-2">LEFT</td>
                                 <td class="px-3 py-2">0</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">DUE</td>
+                                <td class="font-semibold uppercase px-3 py-2">DUE</td>
                                 <td class="px-3 py-2">0</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">OVER DUE</td>
+                                <td class="font-semibold uppercase px-3 py-2">OVER DUE</td>
                                 <td class="px-3 py-2">0</td>
                             </tr>
                         </tbody>
@@ -410,6 +515,29 @@ $settingLabel = '';
             });
         });
     });
+</script>
+
+<!-- pay mode -->
+ <script>
+document.querySelectorAll('input[name="fee_mode"]').forEach((elem) => {
+  elem.addEventListener("change", function(event) {
+    let value = event.target.value;
+
+    // hide all first
+    document.getElementById("cheque_fields").style.display = "none";
+    document.getElementById("online_fields").style.display = "none";
+    document.getElementById("saving_fields").style.display = "none";
+
+    // show according to selection
+    if (value === "cheque") {
+      document.getElementById("cheque_fields").style.display = "block";
+    } else if (value === "online") {
+      document.getElementById("online_fields").style.display = "block";
+    } else if (value === "saving") {
+      document.getElementById("saving_fields").style.display = "block";
+    }
+  });
+});
 </script>
 
 @endsection

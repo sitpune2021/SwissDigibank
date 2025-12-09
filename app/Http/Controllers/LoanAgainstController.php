@@ -1500,22 +1500,32 @@ class LoanAgainstController extends Controller
             $request->validate([
                 'bank_id' => 'required',
                 'cheque_no' => 'required',
-                'cheque_date' => 'required|date',
+                'cheque_date' => 'required',
             ]);
         }
 
         if ($request->fee_mode == 'online') {
             $request->validate([
-                'transfer_date' => 'required|date',
+                'transfer_date' => 'required',
                 'utr_no' => 'required',
                 'transfer_mode' => 'required|in:imps,vpa,neft_rtgs',
                 'credited' => 'required|in:yes,no',
             ]);
         }
 
+        // 🔥 UNIVERSAL DATE CONVERSION
+        if (!empty($data['cheque_date'])) {
+            $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
+        }
+
+        if (!empty($data['transfer_date'])) {
+            $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
+        }
+
         LoanagainstProcessingFee::create($data);
 
-        return redirect()->route('loanagainst.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
+        return redirect()->route('loanagainst.applications.view', $id)
+                        ->with('success', 'Processing Fee Collected Successfully!');
     }
 
     public function submitForApproval($id)
