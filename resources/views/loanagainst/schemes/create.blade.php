@@ -302,7 +302,7 @@
         {{--intersetTypeRadio --}}
         <div class="w-full">
                 <div class="mb-4" id="intersetTypeRadio">
-                    <label class="md:text-lg font-medium block mb-2">
+                    <label class="md:text-lg font-medium mt-3 block mb-2">
                         Interest Type <span class="text-red-600">*</span>
                     </label>
 
@@ -396,7 +396,7 @@
             <div class="w-full my-4">
                 <hr class="border-gray-300">
                 <h4
-                    class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center gap-2">
+                    class="text-center font-semibold text-lg sm:text-xl md:text-2xl mt-4 flex items-center justify-center uppercase gap-2">
                     Charges Per EMI
                     <i class="las la-info-circle"></i>
                     </button>
@@ -517,7 +517,7 @@
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
            <button type="submit"
-                class="px-6 py-3 btn-primary">
+                class="px-6 py-3 btn-primary uppercase">
                 {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
             </button>
 

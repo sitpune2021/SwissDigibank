@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use Illuminate\Http\Request;
 use App\Models\BusinessLoanScheme;
+use App\Models\BusinessProcessingFee;
 use App\Models\Member;
 use App\Models\Branch;
 use App\Models\Scheme;
@@ -1162,6 +1163,53 @@ class BusinessLoan extends Controller
         return redirect()->route('loans')
         ->with('success', 'Submitted for approval!');      
         
+    }
+
+    public function bussiness_process_fee($id)
+    {
+        $application = BusinessLoanApplication::with([
+            'member',
+            'coApplicant1',
+            'guarantor1',
+            'scheme',
+            'creditScores'
+        ])->findOrFail($id);
+
+        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+
+        return view("bussiness.applications.view-buttons.col_process_fee", compact('application','banks'));
+    }
+
+    public function bussinessstoreProcessFee(Request $request, $id)
+    {
+        $request->validate([
+            'total' => 'required|numeric|min:0',
+            'fee_mode' => 'required|in:cash,cheque,online'
+        ]);
+
+        $data = $request->all();
+        $data['application_id'] = $id;
+
+        if ($request->fee_mode == 'cheque') {
+            $request->validate([
+                'bank_id' => 'required',
+                'cheque_no' => 'required',
+                'cheque_date' => 'required|date',
+            ]);
+        }
+
+        if ($request->fee_mode == 'online') {
+            $request->validate([
+                'transfer_date' => 'required|date',
+                'utr_no' => 'required',
+                'transfer_mode' => 'required|in:imps,vpa,neft_rtgs',
+                'credited' => 'required|in:yes,no',
+            ]);
+        }
+
+        BusinessProcessingFee::create($data);
+
+        return redirect()->route('bussiness.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
     

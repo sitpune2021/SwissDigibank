@@ -372,8 +372,19 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::get('/fdpayout/{id}', [FDController::class, 'fdpayout'])->name('fd-mis-account.fd-payoutplan.fdpayoutplan');
     Route::post('/fd/process-payout', [FdController::class, 'processPayout'])->name('fd.processPayout');
-
+    Route::get('/fd-accounts/{id}/transactions', [FdController::class, 'viewTransactions'])->name('fd-accounts.transactions');
+    Route::get('/fd-accounts/{account}/transactions/{transaction}', [FdController::class, 'transactionsDetails'])
+        ->name('fd-accounts.transactions.details');
+    Route::delete('/fd-accounts/transactions/{fdAccountId}/{tranxId}', [FdController::class, 'destroyTransaction'])
+        ->name('fd-accounts.transactions.destroy');
+    Route::get('fd-accounts/transactions/printReceipt/{id}/{transactionId}', [FdController::class, 'printReceipt'])
+        ->name('fd-accounts.transactions.printReceipt');
     Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
+  // Update Account Info (FORM SUBMIT)
+Route::post('fd-account/update-info/{id}', 
+    [FDController::class, 'updateAccountInfo']
+)->name('fd.account.updateInfo');
+
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
 
@@ -975,8 +986,9 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.account.audit-trail');
 
     // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-    Route::get('/loanagainst/{id}/debit-charges-list', [LoanAgainstAccountController::class, 'showDebitChargesList'])
-        ->name('loanagainst.debitChargesList.form');
+    Route::get('/loanagainst/{id}/debit-charges-list', 
+    [LoanAgainstAccountController::class, 'showDebitChargesList'])
+    ->name('loanagainst.debitChargesList.list');
 
     // debit other charge page    
     Route::get('/loanagainst/{id}/debit-other-charges', [LoanAgainstAccountController::class, 'DebitOtherCharges'])

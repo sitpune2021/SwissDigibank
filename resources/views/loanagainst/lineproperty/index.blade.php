@@ -1,15 +1,17 @@
 @extends('layout.main')
 @section('content')
 <div class="main-inner">
-    <h3 class="text-2xl font-semibold">LOAN AGAINST DEPOSITE REPORT</h3>
+    <h3 class="text-lg mb-5 font-semibold">LOAN AGAINST DEPOSITE REPORT</h3>
 
-    <div class="box overflow-x-auto">
-        <div class="flex justify-end">
-            <a href="{{ route('loanagainst.lineproperty.export') }}" class="btn-primary rounded-10 uppercase">
+   <div class="box">
+     <div class="flex justify-end">
+            <a href="{{ route('loanagainst.lineproperty.export') }}" class="btn-primary tet-sm rounded-10 uppercase">
                         <i class="las la-download"></i>
                         Download XLS
-                    </a>
+             </a>
         </div>
+     <div class="mt-5 overflow-x-auto">
+       
         <table class="w-full border-collapse whitespace-nowrap  text-sm">
             <thead class="bg-secondary/5 ">
                 <tr class="text-center">
@@ -62,6 +64,7 @@
                 <x-pagination :paginator="$applications" />
             </div>
     </div>
+   </div>
 
 </div>
 @endsection

@@ -200,6 +200,9 @@ $settingLabel = '';
                     </div>
 
                     <div class="mt-3">
+                         <label class="md:text-lg font-medium block mb-4">
+                            Pay Mode
+                        </label>
                                         <div class="flex grid col-span-1">
                                         <div class="flex gap-3">
                                              <label class="flex gap-2">
