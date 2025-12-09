@@ -1936,6 +1936,13 @@ Route::get(
 
 Route::group(['prefix' => 'cut-report'], function () {
     //reports
+    Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
+        ->name('report.promoter-member');
+    Route::get('report/share-holdings', [CutReportController::class, 'shareHoldingIndex'])
+        ->name('report.share-holdings');
+    Route::get('report/share-transfer-history', [CutReportController::class, 'shareTransferHistoryIndex'])
+        ->name('report.share-transfer-history');
+
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])

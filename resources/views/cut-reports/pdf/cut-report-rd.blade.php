@@ -88,7 +88,6 @@
             </tr>
         </table>
 
-        <!- - Report Title -->
         <h3 style="font-family: dejavusans; font-size: 18x; margin:20px 20px; " >  RD ACCOUNTS CUT REPORT  : {{ date('d-m-Y') }}</h3>
 
         <!-- Data Table -->

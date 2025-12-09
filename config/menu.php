@@ -260,6 +260,9 @@ return [
         'position' => '10',
         'active' => '1',
         'submenu' => [
+            ['title' => 'PROMOTERS/CUSTOMERS', 'route' => 'report.promoter-member'],
+            ['title' => 'SHARE HOLDINGS', 'route' => 'report.share-holdings'],
+            ['title' => 'SHARE TRANSFER HISTORY', 'route' => 'report.share-transfer-history'],
             ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving-account'],
             ['title' => 'FD ACCOUNTS', 'route' => 'report.fd-account'],
             ['title' => 'MIS ACCOUNTS', 'route' => 'report.mis-account'],

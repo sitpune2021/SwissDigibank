@@ -479,7 +479,6 @@
                                                             class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
                                                     </td>
 
-
                                                     <td class="px-2 py-2 md:px-4 md:py-2 text-center">
                                                         <button type="button" class="removeRow text-red-500 hover:text-red-700">
                                                             <i class="las la-times" aria-hidden="true"></i>
@@ -491,12 +490,11 @@
                                             {{-- If no records, show default empty row --}}
                                         @endif
                                     </tbody>
-
                                 </table>
                             </div>
 
                             <div class="mt-3">
-                                <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2">
+                                <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2 uppercase">
                                     + Add New Score
                                 </button>
                             </div>
@@ -566,7 +564,7 @@
                                 </table>
 
                                 <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
-                                    Pay Mode :
+                                    Pay Mode
                                 </label>
                                 <!-- Radio Buttons -->
                                 <div class="mt-3 flex gap-3 ">
@@ -613,10 +611,10 @@
                                     <div class="mt-3">
                                         <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                                         <input 
-                                        type="date" 
+                                        type="text" 
                                         id="cheque_date" 
                                         name="cheque_date" 
-                                        value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
                                 </div>
@@ -628,7 +626,7 @@
                                             Transfer Date <span class="text-red-500">*</span>
                                         </label>
                                         <input 
-                                        type="date" 
+                                        type="text" 
                                         id="transfer_date" 
                                         name="transfer_date" 
                                         value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
@@ -1125,28 +1123,44 @@ loanAmountInput.addEventListener("input", function () {
     <!-- pay Mode -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const radios = document.querySelectorAll('input[name="fee_mode"]');
-            const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
-            const onlineFields = document.getElementById("onlineFields");
 
-            radios.forEach(radio => {
-                radio.addEventListener("change", () => {
-                    bankDropdownWrapper.classList.add("hidden");
-                    onlineFields.classList.add("hidden");
+        const radios = document.querySelectorAll('input[name="fee_mode"]');
+        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+        const onlineFields = document.getElementById("onlineFields");
 
-                    if (radio.value === "cheque" && radio.checked) {
-                        bankDropdownWrapper.classList.remove("hidden");
-                    }
-                    if (radio.value === "online" && radio.checked) {
-                        onlineFields.classList.remove("hidden");
-                    }
-                });
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                bankDropdownWrapper.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+
+                if (radio.value === "cheque" && radio.checked) {
+                    bankDropdownWrapper.classList.remove("hidden");
+                }
+                if (radio.value === "online" && radio.checked) {
+                    onlineFields.classList.remove("hidden");
+                }
             });
+        });
 
-            // Default dates
-            let today = new Date().toISOString().split('T')[0];
-            document.getElementById("cheque_date").value = today;
-            document.getElementById("transfer_date").value = today;
+            // ---- FIX: Set default date as d-m-Y ----
+            function getDMY() {
+                const d = new Date();
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            const chequeDateInput = document.getElementById("cheque_date");
+            if (chequeDateInput && !chequeDateInput.value) {
+                chequeDateInput.value = getDMY();
+            }
+
+            const transferDateInput = document.getElementById("transfer_date");
+            if (transferDateInput && !transferDateInput.value) {
+                transferDateInput.value = getDMY();
+            }
+
         });
     </script>
 
@@ -1295,7 +1309,7 @@ loanAmountInput.addEventListener("input", function () {
                 const day = String(today.getDate()).padStart(2, '0');
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const year = today.getFullYear();
-                const formattedDate = `${day}/${month}/${year}`;
+                const formattedDate = `${day}-${month}-${year}`;
 
                 return `
                                     <tr class="nested-fields border-b">

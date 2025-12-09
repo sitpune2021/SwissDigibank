@@ -339,7 +339,7 @@
                             <div class="mt-3">
                                 <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                                 <input 
-                                type="date" 
+                                type="text" 
                                 id="cheque_date" 
                                 name="cheque_date" 
                                 value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
@@ -354,7 +354,7 @@
                                     Transfer Date <span class="text-red-500">*</span>
                                 </label>
                                 <input 
-                                type="date" 
+                                type="text" 
                                 id="transfer_date" 
                                 name="transfer_date" 
                                 value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
@@ -424,7 +424,7 @@
                         </button>
 
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                            <a href="{{ route('gold-loan.account.show', $goldLoan->id) }}"> BACK</a>
                         </button>
                     </div>
                 </form>
@@ -731,9 +731,15 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // Default dates
-            let today = new Date().toISOString().split('T')[0];
-            document.getElementById("cheque_date").value = today;
-            document.getElementById("transfer_date").value = today;
+            let d = new Date();
+            let day = String(d.getDate()).padStart(2, '0');
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let year = d.getFullYear();
+
+            let formatted = `${day}-${month}-${year}`;
+
+            document.getElementById("cheque_date").value = formatted;
+            document.getElementById("transfer_date").value = formatted;
         });
 </script>
 

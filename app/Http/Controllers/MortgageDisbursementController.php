@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\MortgageLoanApplication;
 use App\Models\MortgageLoanDisbursement;
 use App\Models\Bank;
+use App\Models\Account;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -160,6 +161,7 @@ class MortgageDisbursementController extends Controller
         // Load loan + scheme + member + branch
         $disbursement = MortgageLoanApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
         $banks = Bank::pluck('name', 'id');
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
 
         // Base scheme values
         $scheme = optional($disbursement->scheme);
@@ -258,7 +260,8 @@ class MortgageDisbursementController extends Controller
                 'totalInterest',      
                 'totalRecover',       
                 'emi',
-                'isAdvanceInterest'
+                'isAdvanceInterest',
+                'savingAccounts'
                
             )
         );
