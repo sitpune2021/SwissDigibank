@@ -177,7 +177,7 @@ $settingLabel = '';
                         <!-- Cheque Date -->
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                            <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                            <input type="text" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
                                 class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
                     </div>
@@ -188,7 +188,7 @@ $settingLabel = '';
                             <label class="block text-sm font-medium text-gray-700 uppercase">
                                 Transfer Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" id="transfer_date" name="transfer_date" value=" {{ old('transfer_date', $application->transfer_date ?? '') }} "
+                            <input type="text" id="transfer_date" name="transfer_date" value=" {{ old('transfer_date', $application->transfer_date ?? '') }} "
                                 class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                         </div>
 
@@ -251,7 +251,7 @@ $settingLabel = '';
                             PAY
                         </button>
                         <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                            <a href="{{ route('gold-loan.account.show', $goldLoan->id) }}"> BACK</a>
                         </button>
                     </div>
                 </form>
@@ -362,6 +362,7 @@ $settingLabel = '';
 
 <!-- Datepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('.datepicker-field').forEach(function(dateInput) {
@@ -384,6 +385,7 @@ $settingLabel = '';
         });
     });
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -405,9 +407,16 @@ $settingLabel = '';
         });
 
         // Default dates
-        let today = new Date().toISOString().split('T')[0];
-        document.getElementById("cheque_date").value = today;
-        document.getElementById("transfer_date").value = today;
+        let d = new Date();
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let year = d.getFullYear();
+
+        let formatted = `${day}-${month}-${year}`;
+
+        document.getElementById("cheque_date").value = formatted;
+        document.getElementById("transfer_date").value = formatted;
+
     });
 
     document.addEventListener('DOMContentLoaded', function() {

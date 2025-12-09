@@ -168,7 +168,7 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 capitalize">
-                                {{ $row->member->member_info_first_name??'' }} {{ $row->member->member_info_last_name??'' }}
+                                 {{ $row->member->member_info_first_name??'' }} {{ $row->member->member_info_last_name??'' }}
                             </div>
                         </td>
 

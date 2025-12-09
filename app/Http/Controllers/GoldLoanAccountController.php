@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\CsvExportHelper;
 use App\Models\Bank;
+use App\Models\Account;
 use App\Models\GoldLoanOtherCharge;
 use App\Models\GoldLoanTransaction;
 use App\Models\LoanApplication;
@@ -875,8 +876,16 @@ class GoldLoanAccountController extends Controller
                 'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
                 'bank_id'               => $request->input('bank_id') ?? null,
                 'cheque_no'             => $request->input('cheque_no') ?? null,
-                'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
-                'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
+                // 'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
+                // 'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
+                'cheque_date' => $request->filled('cheque_date')
+                    ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                    : null,
+
+                'transfer_date' => $request->filled('transfer_date')
+                    ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                    : null,
+
                 'utr_no'                => $request->input('utr_no') ?? null,
                 'transfer_mode'         => $request->input('transfer_mode') ?? null,
                 'credited'              => is_null($request->input('credited')) ? null : (int)$request->input('credited'),
@@ -1092,6 +1101,9 @@ class GoldLoanAccountController extends Controller
             'guarantor1'
         ])->findOrFail($id);
 
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+        $banks = Bank::pluck('name', 'id');
+
         $emiType = $goldLoan->scheme->gold_loan_setting;
         $totalLoan = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->interest_rate ?? 0;
@@ -1172,7 +1184,9 @@ class GoldLoanAccountController extends Controller
             'totalOverdueWithGst',
             'totalAmount',
             'rounding',
-            'netAmount'
+            'netAmount',
+            'savingAccounts',
+            'banks'
         ));
     }
 
@@ -1262,6 +1276,69 @@ class GoldLoanAccountController extends Controller
             // 🟩 NEW LINE — SAVE EMI NO
             $transaction->emi_no = $nextEmiNo;
 
+            // =============================================
+                // 🔥 MODE-WISE FIELDS STORE
+            // =============================================
+
+            $transaction->fee_mode = $request->fee_mode;
+
+            // CASH - kuch save nahi hoga
+            if ($request->fee_mode == 'cash') 
+            {
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // CHEQUE
+            elseif ($request->fee_mode == 'cheque') {
+
+                $transaction->bank_id = $request->bank_id;
+                $transaction->cheque_no = $request->cheque_no;
+                $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // ONLINE
+            elseif ($request->fee_mode == 'online') {
+
+                $transaction->utr_no = $request->utr_no;
+                $transaction->transfer_mode = $request->transfer_mode;
+                $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->saving = null;
+            }
+
+            // SAVING ACCOUNT
+            elseif ($request->fee_mode == 'saving') {
+
+                $transaction->saving = $request->saving;
+
+                $transaction->bank_id = null;
+                $transaction->cheque_no = null;
+                $transaction->cheque_date = null;
+
+                $transaction->utr_no = null;
+                $transaction->transfer_mode = null;
+                $transaction->transfer_date = null;
+            }
+
             if ($receiptPath) {
                 $transaction->receipt = $receiptPath;
             }
@@ -1337,8 +1414,7 @@ class GoldLoanAccountController extends Controller
             'emi' => $emi
         ]);
     }
-
-    
+  
     public function goldLoanPay($id)
     {
         $goldLoan = LoanApplication::with([
@@ -1405,84 +1481,6 @@ class GoldLoanAccountController extends Controller
         ));
     }
 
-    // public function payEmi(Request $request)
-    // {
-    //     Log::info('payEmi() called', [
-    //         'request_data' => $request->all()
-    //     ]);
-
-    //     try {
-
-    //         // Validation Log
-    //         Log::info('payEmi(): Starting validation');
-
-    //         $request->validate([
-    //             'loan_id'           => 'required|exists:loan_applications,id',
-    //             'transaction_date'  => 'required|date',
-    //             'current_debt'      => 'required|numeric',
-    //             'total_payable'     => 'required|numeric',
-    //             'amount_collected'  => 'required|numeric|min:1',
-    //             'fee_mode'         => 'required|in:cash,cheque,online',
-    //         ]);
-
-    //         Log::info('payEmi(): Validation passed');
-
-    //         // Loan Fetch
-    //         Log::info('payEmi(): Fetching loan', ['loan_id' => $request->loan_id]);
-
-    //         $loan = LoanApplication::find($request->loan_id);
-
-    //         if (!$loan) {
-    //             Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
-    //             return back()->withErrors(['loan_id' => 'Loan not found.']);
-    //         }
-
-    //         // Last EMI No
-    //         $lastEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
-
-    //         Log::info('payEmi(): Last EMI No fetched', [
-    //             'loan_id' => $loan->id,
-    //             'last_emi_no' => $lastEmiNo
-    //         ]);
-
-    //         $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
-
-    //         Log::info('payEmi(): Next EMI No calculated', [
-    //             'next_emi_no' => $nextEmiNo
-    //         ]);
-
-    //         // Creating EMI Transaction
-    //         $transaction = GoldLoanTransaction::create([
-    //             'loan_id'          => $loan->id,
-    //             'emi_no'           => $nextEmiNo,
-    //             'transaction_date' => \Carbon\Carbon::parse($request->transaction_date)->format('Y-m-d'),
-    //             'current_debt'     => $request->current_debt,
-    //             'other_charges'    => $request->other_charges ?? 0,
-    //             'total_payable'    => $request->total_payable,
-    //             'amount_collected' => $request->amount_collected,
-    //             'remarks'          => $request->remarks ?? null,
-    //             'created_by'       => Auth::id(),
-    //         ]);
-
-    //         Log::info('payEmi(): EMI Transaction Created Successfully', [
-    //             'transaction_id' => $transaction->id,
-    //             'data' => $transaction->toArray()
-    //         ]);
-
-    //         return redirect()->back()->with('success', 'EMI Payment Recorded Successfully.');
-    //     } catch (\Exception $e) {
-
-    //         Log::error('payEmi(): Exception Occurred', [
-    //             'message' => $e->getMessage(),
-    //             'line' => $e->getLine(),
-    //             'file' => $e->getFile(),
-    //         ]);
-
-    //         return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
-    //     }
-    // }
-
-    
     public function payEmi(Request $request)
     {
         Log::info('payEmi() called', ['request_data' => $request->all()]);
@@ -1571,9 +1569,16 @@ class GoldLoanAccountController extends Controller
 
                 'bank_id'          => $request->bank_id ?? null,
                 'cheque_no'        => $request->cheque_no ?? null,
-                'cheque_date'      => $request->cheque_date ?? null,
+                //'cheque_date'      => $request->cheque_date ?? null,
+                'cheque_date' => $request->cheque_date 
+                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d') 
+                : null,
 
-                'transfer_date'    => $request->transfer_date ?? null,
+                //'transfer_date'    => $request->transfer_date ?? null,
+                'transfer_date' => $request->transfer_date
+                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                : null,
+
                 'utr_no'           => $request->utr_no ?? null,
                 'transfer_mode'    => $request->transfer_mode ?? null,
                 'credited'         => $request->credited ?? null,
@@ -1687,8 +1692,10 @@ class GoldLoanAccountController extends Controller
         $totalDue = GoldLoanOtherCharge::where('loan_id', $id)
             ->where('status', 'unpaid')
             ->sum('amount');
-        $banks = Bank::all();
-        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks'));
+        $banks = Bank::pluck('name', 'id');
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+        
+        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks','savingAccounts'));
     }
 
     public function clearDue(Request $request, $id)

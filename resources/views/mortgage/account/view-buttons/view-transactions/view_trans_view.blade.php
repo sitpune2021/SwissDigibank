@@ -72,7 +72,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-xl font-semibold uppercase dark:text-white">Transaction - GL9133
+                <h1 class="text-lg font-semibold uppercase dark:text-white">Transaction - GL9133
                  
                 </h1>
                 <p class="text-gray-500 dark:text-gray-400">
@@ -102,37 +102,37 @@
             <table class="w-full whitespace-nowrap text-sm text-left ">
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     <tr>
-                        <td class="font-semibold px-4 py-2 w-1/3">Member</td>
+                        <td class="font-semibold uppercase px-4  py-2 w-1/3">Member</td>
                         <td class="px-4 py-2 text-primary">
                             DEMO-04435 - atharv page
                         </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Loan A/c No.</td>
+                        <td class="font-semibold uppercase px-4 py-2">Loan A/c No.</td>
                         <td class="px-4 py-2">00456</td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Reference Id</td>
+                        <td class="font-semibold uppercase px-4 py-2">Reference Id</td>
                         <td class="px-4 py-2">GL9105</td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Transaction Date</td>
+                        <td class="font-semibold uppercase px-4 py-2">Transaction Date</td>
                         <td class="px-4 py-2">
                             01/06/2025
                         </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Transaction Type</td>
+                        <td class="font-semibold uppercase px-4 py-2">Transaction Type</td>
                         <td class="px-4 py-2">
                             Debit
                         </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Amount</td>
+                        <td class="font-semibold uppercase px-4 py-2">Amount</td>
                         <td class="px-4 py-2">₹43,000.00 </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Transaction Status</td>
+                        <td class="font-semibold uppercase px-4 py-2">Transaction Status</td>
                         <td class="px-4 py-2">
                             
                             <span
@@ -142,27 +142,27 @@
                         </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Payment Mode</td>
+                        <td class="font-semibold uppercase px-4 py-2">Payment Mode</td>
                         <td class="px-4 py-2">Cash</td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Remarks</td>
+                        <td class="font-semibold uppercase px-4 py-2">Remarks</td>
                         <td class="px-4 py-2"></td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Tranx Recipt</td>
+                        <td class="font-semibold uppercase px-4 py-2">Tranx Recipt</td>
                         <td class="px-4 py-2"> </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Created at</td>
+                        <td class="font-semibold uppercase px-4 py-2">Created at</td>
                         <td class="px-4 py-2">30/08/2025 </td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Updated at</td>
+                        <td class="font-semibold uppercase px-4 py-2">Updated at</td>
                         <td class="px-4 py-2"> 30/08/2025</td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Is Accounted</td>
+                        <td class="font-semibold uppercase px-4 py-2">Is Accounted</td>
                         <td class="px-4 py-2">
                            
                             <span
@@ -173,23 +173,23 @@
                     </tr>
                   
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Branch</td>
+                        <td class="font-semibold uppercase px-4 py-2">Branch</td>
                         <td class="px-4 py-2">magarpatta</td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Entry Created By</td>
+                        <td class="font-semibold uppercase px-4 py-2">Entry Created By</td>
                         <td class="px-4 py-2">SACHIN CHAUDHARY</td>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Entry Collected By</td>
+                        <td class="font-semibold uppercase px-4 py-2">Entry Collected By</td>
                         <td class="px-4 py-2">SACHIN CHAUDHARYtd>
                     </tr>
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Entry Approved By</td>
+                        <td class="font-semibold uppercase px-4 py-2">Entry Approved By</td>
                         <td class="px-4 py-2">SACHIN CHAUDHARY</td>
                     </tr>   
                     <tr class="border-t">
-                        <td class="font-semibold px-4 py-2">Approval Date</td>
+                        <td class="font-semibold uppercase px-4 py-2">Approval Date</td>
                         <td class="px-4 py-2">30/08/2025 </td>
                     </tr>
                 </tbody>

@@ -15,7 +15,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg font-semibold capitalize">Mortgage Processing Fee</h1>
+            <h1 class="text-lg font-semibold uppercase">Mortgage Processing Fee</h1>
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -40,12 +40,12 @@
                         <table class="min-w-full text-sm md:text-base whitespace-nowrap">
                             <tbody>
                                 <tr>
-                                    <th class="text-center px-3 py-2">Value</th>
-                                    <th class="text-center px-3 py-2">GST (%)</th>
-                                    <th class="text-center px-3 py-2">SGST</th>
-                                    <th class="text-center px-3 py-2">CGST</th>
-                                    <th class="text-center px-3 py-2">IGST</th>
-                                    <th class="text-center px-3 py-2">Total</th>
+                                    <th class="text-center uppercase px-3 py-2">Value</th>
+                                    <th class="text-center uppercase px-3 py-2">GST (%)</th>
+                                    <th class="text-center uppercase px-3 py-2">SGST</th>
+                                    <th class="text-center uppercase px-3 py-2">CGST</th>
+                                    <th class="text-center uppercase px-3 py-2">IGST</th>
+                                    <th class="text-center uppercase px-3 py-2">Total</th>
                                 </tr>
 
                                 @php
@@ -103,19 +103,20 @@
                     </div>
 
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Pay Mode :</label>
+                            Pay Mode 
+                    </label>
                             <!-- Radio Buttons -->
-                            <div class="mt-3">
+                            <div class="mt-3 flex gap-2">
                                 <!-- Pay Mode -->
-                                <label class="mr-4">
+                                <label class="mr-4 flex gap-2">
                                     <input type="radio" name="fee_mode" value="cash"
                                         {{ old('fee_mode', $application->fee_mode ?? 'cash') == 'cash' ? 'checked' : '' }}> Cash
                                 </label>
-                                <label class="mr-4">
+                                <label class="mr-4 flex gap-2">
                                     <input type="radio" name="fee_mode" value="cheque"
                                         {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
                                 </label>
-                                <label>
+                                <label class="flex gap-2"> 
                                     <input type="radio" name="fee_mode" value="online"
                                         {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
                                 </label>
@@ -125,7 +126,7 @@
                             <div id="bankDropdownWrapper" class="mt-3 hidden">
                                 <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                <select id="bank_id" name="bank_id"
-                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     <option value="">-- Select Bank --</option>
                                     @foreach($banks as $id => $name)
                                         <option value="{{ $id }}"
@@ -139,15 +140,15 @@
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                     <input type="text" name="cheque_no"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                         placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
                                 </div>
 
                                 <!-- Cheque Date -->
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                             </div>
 
@@ -157,8 +158,8 @@
                                     <label class="block text-sm font-medium text-gray-700">
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -166,7 +167,7 @@
                                         UTR / Transaction No. <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -236,7 +237,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">Mortgage Application Info</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">Mortgage Application Info</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -267,7 +268,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Amount Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -276,7 +277,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -284,7 +285,7 @@
                                 </td>
                             </tr>
                              <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                    EMI Payout
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -292,7 +293,7 @@
                                 </td>
                             </tr>
                              <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                    No. of EMIs
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -301,7 +302,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold px-4 py-2 uppercase">
                                    Credit Period
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -310,7 +311,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-bold px-4 py-2 uppercase">
                                     Total Amount to Recover
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -318,7 +319,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-bold px-4 py-2 uppercase">
                                     Processing Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -365,9 +366,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Default dates
-    let today = new Date().toISOString().split('T')[0];
-    document.getElementById("cheque_date").value = today;
-    document.getElementById("transfer_date").value = today;
+    let d = new Date();
+    let day = String(d.getDate()).padStart(2, '0');
+    let month = String(d.getMonth() + 1).padStart(2, '0');
+    let year = d.getFullYear();
+
+    let formatted = `${day}-${month}-${year}`;
+
+    document.getElementById("cheque_date").value = formatted;
+    document.getElementById("transfer_date").value = formatted;
+
 });
 </script>
 

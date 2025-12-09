@@ -189,7 +189,6 @@
                                 @enderror
                         </div>
                     </div>
-                    
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
