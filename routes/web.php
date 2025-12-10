@@ -1985,8 +1985,15 @@ Route::group(['prefix' => 'cut-report'], function () {
     //reports
     Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
         ->name('report.promoter-member');
+        
     Route::get('report/share-holdings', [CutReportController::class, 'shareHoldingIndex'])
         ->name('report.share-holdings');
+    Route::get('/promoter-report/download', [CutReportController::class, 'downloadPromoterCSV'])
+        ->name('promoter.report.csv');
+
+
+    Route::get('/share-allotment-report', [CutReportController::class, 'shareAllotmentReport'])->name('share-allotment.report');
+
     Route::get('report/share-transfer-history', [CutReportController::class, 'shareTransferHistoryIndex'])
         ->name('report.share-transfer-history');
 
