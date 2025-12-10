@@ -1,57 +1,57 @@
 @extends('layout.main')
 @section('content')
-<div class="p-6 bg-white shadow rounded-lg">
-  <h2 class="text-xl font-bold mb-4 text-gray-700"><center>Calculator Result</center></h2>
+<div class="p-6 box rounded-lg">
+  <h2 class="text-xl font-bold mb-4 text-center uppercase text-gray-700">Calculator Result</h2>
 
   <div class="overflow-x-auto">
     <table class="w-full text-sm border border-gray-400 rounded-lg">
       <tbody>
         <tr>
-          <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Disburse Date</td>
-          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d/m/Y') }}</td>
-          <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Loan Amount</td>
+          <td class="font-semibold uppercase py-2 px-3 w-1/4 border border-gray-300">Disburse Date</td>
+          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d-m-Y') }}</td>
+          <td class="font-semibold uppercase py-2 px-3 w-1/4 border border-gray-300">Loan Amount</td>
           <td class="py-2 px-3 w-1/4 border border-gray-300">₹ {{ number_format($loan,2) }}</td>
         </tr>
 
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Type</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest Type</td>
           <td class="py-2 px-3 border border-gray-300">{{ ucfirst($interest_type) }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Processing Charges</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Processing Charges</td>
           <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($processing_incl_gst,2) }} (Incl. 18% GST)</td>
         </tr>
 
         <tr>  
-          <td class="font-semibold py-2 px-3 border border-gray-300">Insurance Charges</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Insurance Charges</td>
           <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($insurance_amount,2) }} (Incl. 0% GST)</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Stamp Duty</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Stamp Duty</td>
           <td class="py-2 px-3 border border-gray-300">₹ {{ number_format($stamp_incl_gst,2) }} (Incl. 18% GST)</td>       
         </tr>
 
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">EMI Payout</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">EMI Payout</td>
           <td class="py-2 px-3 border border-gray-300">{{ strtoupper($payout) }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">EMI Count</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">EMI Count</td>
           <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }}</td>
         </tr>
 
         <tr>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Tenure</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Tenure</td>
           <td class="py-2 px-3 border border-gray-300">{{ $tenure_months }} {{ $tenure_unit }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest Rate ( Annually )</td>
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate  }} %</td>
         </tr>
 
         <tr>       
-          <td class="font-semibold py-2 px-3 border border-gray-300">Charge Per EMI Type</td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Charge Per EMI Type</td>
           <td class="py-2 px-3 border border-gray-300">{{ $charge_per_emi }}</td>
-          <td class="font-semibold py-2 px-3 border border-gray-300"></td>
+          <td class="font-semibold uppercase py-2 px-3 border border-gray-300"></td>
           <td class="py-2 px-3 border border-gray-300"></td>
         </tr>
 
         {{-- Show ONLY Interest as First EMI --}}
         @if($interest_as_first === 'Yes')
         <tr>
-            <td class="font-semibold py-2 px-3 border border-gray-300">Interest as First EMI</td>
+            <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest as First EMI</td>
             <td class="py-2 px-3 border border-gray-300">{{ $interest_as_first }}</td>
         </tr>
         @endif
@@ -59,7 +59,7 @@
         {{-- Show ONLY Interest as EMI --}}
         @if($interest_as_emi === 'Yes')
         <tr>
-            <td class="font-semibold py-2 px-3 border border-gray-300">Interest as EMI</td>
+            <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest as EMI</td>
             <td class="py-2 px-3 border border-gray-300">{{ $interest_as_emi }}</td>
         </tr>
         @endif
@@ -67,7 +67,7 @@
         @if ($interest_type == 'Reducing balance' && $ratio_enabled == 'Yes')
           <tr>
             <td colspan="4" class="py-3 px-4 border border-gray-300 bg-gray-50">
-                <p class="font-semibold text-gray-800">Loan In Ratio: Yes</p>
+                <p class="font-semibold uppercase text-gray-800">Loan In Ratio: Yes</p>
             </td>
           </tr>
           <tr>
@@ -94,7 +94,8 @@
 
 </div>
 
-  <h3 class="text-lg font-semibold mt-6 mb-2"><center>EMI CHART</center></h3>
+ <div class="box mt-5">
+   <h3 class="text-lg font-semibold uppercase mt-6 mb-2 text-center ">EMI CHART</h3>
   <div class="overflow-auto">
 
     <table class="w-full table-auto text-sm border border-gray-300 border-collapse">
@@ -179,6 +180,7 @@
     </table>
 
   </div>
+ </div>
 
 </div>
 

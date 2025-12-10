@@ -13,9 +13,9 @@
     </style>
 </head>
 <div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg font-semibold capitalize">LOAN AGAINST DEPOSITE PROCESSING FEE</h1>
+            <h1 class="text-lg font-semibold  uppercase">LOAN AGAINST DEPOSITE PROCESSING FEE</h1>
         </div>
     </div>
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -37,15 +37,15 @@
                     </div>
                     <!-- Body -->
                     <div class=" flex p-4 overflow-x-auto">
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                        <table class="w-full text-sm md:text-base whitespace-nowrap">
                             <tbody>
                                 <tr>
-                                    <th class="text-center px-3 py-2">Value</th>
-                                    <th class="text-center px-3 py-2">GST (%)</th>
-                                    <th class="text-center px-3 py-2">SGST</th>
-                                    <th class="text-center px-3 py-2">CGST</th>
-                                    <th class="text-center px-3 py-2">IGST</th>
-                                    <th class="text-center px-3 py-2">Total</th>
+                                    <th class="text-center px-3 uppercase py-2">Value</th>
+                                    <th class="text-center px-3 uppercase py-2">GST (%)</th>
+                                    <th class="text-center px-3 uppercase py-2">SGST</th>
+                                    <th class="text-center px-3 uppercase py-2">CGST</th>
+                                    <th class="text-center px-3 uppercase py-2">IGST</th>
+                                    <th class="text-center px-3 uppercase py-2">Total</th>
                                 </tr>
 
                                 @php
@@ -94,7 +94,7 @@
                                     <!-- Total -->
                                     <td class="px-2 py-2">
                                         <input type="number" name="total" value="{{ $total }}" readonly
-                                            class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                            class="w-full px-2 py-2 text-center bg-secondary/5 border rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
                             </tbody>
@@ -103,21 +103,25 @@
                     </div>
 
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Pay Mode :</label>
+                            Pay Mode 
+                    </label>
                             <!-- Radio Buttons -->
-                            <div class="mt-3">
+                            <div class="mt-3 flex gap-2">
                                 <!-- Pay Mode -->
-                                <label class="mr-4">
+                                <label class="flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="cash"
-                                        {{ old('fee_mode', $application->fee_mode ?? 'cash') == 'cash' ? 'checked' : '' }}> Cash
+                                        {{ old('fee_mode', $application->fee_mode ?? 'cash') == 'cash' ? 'checked' : '' }}> 
+                                        <p>Cash</p>
                                 </label>
-                                <label class="mr-4">
+                                <label class="flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="cheque"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> 
+                                        <p>Cheque</p>
                                 </label>
-                                <label>
+                                <label class="flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="online"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> 
+                                        <p>Online Tr.</p>
                                 </label>
                             </div>
 
@@ -125,7 +129,7 @@
                             <div id="bankDropdownWrapper" class="mt-3 hidden">
                                 <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                <select id="bank_id" name="bank_id"
-                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     <option value="">-- Select Bank --</option>
                                     @foreach($banks as $id => $name)
                                         <option value="{{ $id }}"
@@ -139,15 +143,15 @@
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                     <input type="text" name="cheque_no"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                         placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
                                 </div>
 
                                 <!-- Cheque Date -->
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                             </div>
 
@@ -157,8 +161,8 @@
                                     <label class="block text-sm font-medium text-gray-700">
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', isset($application->transfer_date) ? \Carbon\Carbon::parse($application->transfer_date)->format('d-m-Y') : '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -166,7 +170,7 @@
                                         UTR / Transaction No. <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -236,7 +240,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">LOAN AGAINST DEPOSITE APLICATION INFO</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">LOAN AGAINST DEPOSITE APLICATION INFO</h3>
 
                     <!-- Toggle Button -->
                     <button
@@ -253,7 +257,7 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">
+                                <td class="font-semibold uppercase  px-4 py-2 w-1/2 md:w-1/3 uppercase">
                                     Branch
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left uppercase">
@@ -262,12 +266,12 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 uppercase">Amount Requested</td>
+                                <td class="font-semibold uppercase  px-4 py-2 uppercase">Amount Requested</td>
                                 <td class="px-4 py-2 text-right md:text-left">₹ {{ $application->net_loan_amount }}</td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase  px-4 py-2">
                                     Amount Approvable
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -276,7 +280,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase  px-4 py-2">
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -284,7 +288,7 @@
                                 </td>
                             </tr>
                              <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase  px-4 py-2">
                                    EMI Payout
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -292,7 +296,7 @@
                                 </td>
                             </tr>
                              <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase  px-4 py-2">
                                    No. of EMIs
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -301,7 +305,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase  px-4 py-2">
                                    Credit Period
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -310,7 +314,7 @@
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-bold  uppercase px-4 py-2">
                                     Total Amount to Recover
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -318,7 +322,7 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-bold uppercase px-4 py-2">
                                     Processing Fee
                                 </td>
                                 <td class="px-4 py-2   text-right md:text-left">
@@ -344,6 +348,7 @@
     }
 </script>
 
+<!-- pay mode -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const radios = document.querySelectorAll('input[name="fee_mode"]');
@@ -364,11 +369,34 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Default dates
-    let today = new Date().toISOString().split('T')[0];
-    document.getElementById("cheque_date").value = today;
-    document.getElementById("transfer_date").value = today;
 });
 </script>
+
+<!-- pay mode date convert for store data-->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // Default d-m-Y format
+    let d = new Date();
+    let day = String(d.getDate()).padStart(2, '0');
+    let month = String(d.getMonth() + 1).padStart(2, '0');
+    let year = d.getFullYear();
+    let formatted = `${day}-${month}-${year}`;
+
+    let cheque = document.getElementById("cheque_date");
+    let transfer = document.getElementById("transfer_date");
+
+    // SET ONLY IF EMPTY (IMPORTANT FIX)
+    if (cheque && cheque.value.trim() === "") {
+        cheque.value = formatted;
+    }
+
+    if (transfer && transfer.value.trim() === "") {
+        transfer.value = formatted;
+    }
+
+});
+</script>
+
 
 @endsection

@@ -28,14 +28,14 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">CC Limit Disbursement</h3>
+                <h3 class="uppercase text-lg font-semibold">CC Limit Disbursement</h3>
             </div>
         </div>
 
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
             <!-- Left: Details -->
             <div class="w-full overflow-hidden">
-                <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
+                <div class=" dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                   
                 <form id="disbursementForm" 
                     action="{{ route('cc_od_disbursment.store') }}" 
@@ -45,7 +45,7 @@
 
                     <!-- Header -->
                     <div>
-                        <h3 class="text-lg sm:text-xl font-semibold text-gray-800 border-b pb-2">
+                        <h3 class="text-lg sm:text-xl uppercase font-semibold text-gray-800 border-b pb-2">
                             Application No - {{ $disbursement->id }}
                         </h3>
                         <input type="hidden" name="loan_application_id" 
@@ -54,11 +54,11 @@
 
                     <!-- Loan Disbursement Date -->
                     <div>
-                        <label for="disbursal_date" class="block text-sm sm:text-base font-medium text-gray-700 mb-1">
+                        <label for="disbursal_date" class="block text-sm sm:text-base  font-medium text-gray-700 mb-1">
                             Loan Disbursement Date <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="disbursal_date" name="disbursal_date" 
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            class="w-full border rounded-lg px-3 py-2 bg-secondary/5 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             value="{{ date('d-m-Y') }}" required readonly>
                     </div><br>
 
@@ -68,7 +68,7 @@
                             Approved CC Limit
                         </label>
                         <input type="number" id="loan_amount" name="loan_amount" 
-                            class="w-full border rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed"
+                            class="w-full border rounded-lg px-3  bg-secondary/5 py-2 bg-gray-100 cursor-not-allowed"
                             value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
                     </div><br>
 
@@ -78,7 +78,7 @@
                             Available CC Limit <span class="text-red-500">*</span>
                         </label>
                         <input type="number" id="finalAmount" name="final_amount" 
-                            class="w-full border rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed"
+                            class="w-full border rounded-lg px-3  bg-secondary/5 py-2 bg-gray-100 cursor-not-allowed"
                             value="{{ $disbursement->net_loan_amount ?? '' }}" readonly>
                     </div><br>
 
@@ -98,7 +98,7 @@
                 
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">CC Limit Application Info</h3>
+                    <h3 class="text-black uppercase font-semibold text-lg">CC Limit Application Info</h3>
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
@@ -110,83 +110,85 @@
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Application Date</td>
-                                <td class="px-3 py-2">{{ $disbursement->application_date }}</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Application Date</td>
+                                <td class="px-3 py-2">
+                                    {{ \Carbon\Carbon::parse(old($disbursementdisbursement->application_date ?? date('Y-m-d')))->format('d-m-Y') }}
+                                </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application Status</td>
                                 <td class="px-3 py-2">Approved</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application No</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application No</td>
                                 <td class="px-3 py-2">{{ $disbursement->id }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Branch</td>
+                                <td class="font-semibold uppercase px-3 py-2">Branch</td>
                                 <td class="px-3 py-2">{{ $disbursement->branch->branch_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Member</td>
                                 <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} - {{ $disbursement->member->member_info_first_name ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">1st Co-Applicant Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">1st Co-Applicant Member</td>
                                 <td class="px-3 py-2">{{ $disbursement->coApplicant1->id ?? '' }} - {{ $disbursement->coApplicant1->member_info_first_name ?? '' }}
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Requested</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Requested</td>
                                 <td class="px-3 py-2">{{ $disbursement->net_loan_amount ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approvable</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approvable</td>
                                 <td class="px-3 py-2">
                                  ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approved</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interst Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
                                  {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Amount</td>
                                 <td class="px-3 py-2">
                                 ₹ {{ number_format($totalInterest, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Credit Period</td>
+                                <td class="font-semibold uppercase px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
+                                <td class="font-semibold uppercase px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
                                    ₹ {{ number_format($totalRecover, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure of Loan</td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
+                                <td class="font-semibold uppercase px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
                                 <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                     Yes
@@ -194,19 +196,19 @@
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Processing Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
                                     {{ number_format($processingFee, 2, '.', '') }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Insurance Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>

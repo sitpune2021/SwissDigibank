@@ -975,8 +975,9 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.account.audit-trail');
 
     // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-    Route::get('/loanagainst/{id}/debit-charges-list', [LoanAgainstAccountController::class, 'showDebitChargesList'])
-        ->name('loanagainst.debitChargesList.form');
+    Route::get('/loanagainst/{id}/debit-charges-list', 
+    [LoanAgainstAccountController::class, 'showDebitChargesList'])
+    ->name('loanagainst.debitChargesList.list');
 
     // debit other charge page    
     Route::get('/loanagainst/{id}/debit-other-charges', [LoanAgainstAccountController::class, 'DebitOtherCharges'])

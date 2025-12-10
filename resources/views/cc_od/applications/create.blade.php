@@ -67,7 +67,7 @@
                         @endif
 
         <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
-          <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
+          <div class="w-full bg-secondary/5 col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                         <div class="col-span-2 md:col-span-1">
@@ -75,8 +75,8 @@
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
+                            <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                value="{{ \Carbon\Carbon::parse(old('application_date', default: $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                         </div>
                         
                         <div class="col-span-2 md:col-span-1">
@@ -286,11 +286,11 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-                            <label for="netLoanAmount" class="md:text-lg font-medium block mb-4">
+                            <label for="netLoanAmount" class="md:text-lg font-medium block mb-6">
                                 Requested CC Limit (₹) <span class="text-error">*</span>
                             </label>
                             <input type="number" id="netLoanAmount" name="net_loan_amount"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 mt-5 rounded-10 px-3 md:px-6 py-2 md:py-3 bg-gray-100"
                                 placeholder="0" value="{{ old('net_loan_amount', $application->net_loan_amount ?? 0) }}">
                                 <p id="amountInWords" class="text-red-500 text-xs mt-1 italic">Zero</p>
                                 @error('net_loan_amount')
@@ -405,7 +405,7 @@
                             </div>
 
                     <div class="mt-3">
-                        <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2">
+                        <button type="button" id="addRow" class="btn-primary uppercase text-sm rounded-10 px-4 py-2">
                             + Add New Score
                         </button>
                     </div>
@@ -429,12 +429,12 @@
                             <tbody>
                                 <!-- Column Labels -->
                                 <tr class="">
-                                    <th class="text-center px-3 py-2 ">Value</th>
-                                    <th class="text-center px-3 py-2 ">GST (%)</th>
-                                    <th class="text-center px-3 py-2 ">SGST</th>
-                                    <th class="text-center px-3 py-2 ">CGST</th>
-                                    <th class="text-center px-3 py-2 ">IGST</th>
-                                    <th class="text-center px-3 py-2 ">Total</th>
+                                    <th class="text-center px-3 py-2 uppercase ">Value</th>
+                                    <th class="text-center px-3 py-2 uppercase ">GST (%)</th>
+                                    <th class="text-center px-3 py-2 uppercase ">SGST</th>
+                                    <th class="text-center px-3 py-2 uppercase ">CGST</th>
+                                    <th class="text-center px-3 py-2 uppercase ">IGST</th>
+                                    <th class="text-center px-3 py-2 uppercase ">Total</th>
                                 </tr>
                                 <!-- Input Row -->
                                 <tr class="">
@@ -473,21 +473,24 @@
                         </table>
 
                         <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Pay Mode :</label>
+                            Pay Mode 
+                        </label>
                             <!-- Radio Buttons -->
-                            <div class="mt-3">
+                            <div class="mt-3 flex gap-2">
                                 <!-- Pay Mode -->
-                                <label class="mr-4">
+                                <label class="mr-4 flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="cash"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }} checked> Cash
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }} checked> <p>
+                                            Cash
+                                        </p>
                                 </label>
-                                <label class="mr-4">
+                                <label class="mr-4 flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="cheque"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> <p>Cheque</p>
                                 </label>
-                                <label>
+                                <label class="mr-4 flex gap-2 items-center">
                                     <input type="radio" name="fee_mode" value="online"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> <p>Online Tr.</p>
                                 </label>
                             </div>
 
@@ -595,7 +598,7 @@
                 {{-- Member Info Box --}}
                 <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
                     <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base capitalize font-semibold md:text-lg">Customer Info</h3>
+                        <h3 class="text-base uppercase font-semibold md:text-lg">Customer Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'memberInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -606,11 +609,11 @@
                             <table class="w-full text-sm text-left">
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Customer Name</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Customer Name</td>
                                         <td class="py-2 capitalize" id="memberName">-</td>
                                     </tr>
                                     <tr class="border-b">
-                                        <td class="font-semibold py-2 pr-4">Mobile No</td>
+                                        <td class="font-semibold uppercase py-2 pr-4">Mobile No</td>
                                         <td class="py-2" id="memberMobile">-</td>
                                     </tr>
                                 </tbody>
@@ -623,7 +626,7 @@
                 {{--schemeBox info --}}
                 <div id="schemeBox" class=" mt-5 hidden">
                     <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
+                        <h3 class="text-base uppercase font-semibold md:text-lg">Scheme Info</h3>
                         <button type="button" class="p-1 rounded transition"
                             onclick="toggleSection(this, 'schemeInfoBody')">
                             <span class="toggle-icon text-lg font-bold">−</span>
@@ -634,45 +637,45 @@
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
                                 <tbody>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Scheme Code</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Scheme Code</td>
                                         <td class="py-2" id="schemeCode">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Scheme Name</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Scheme Name</td>
                                         <td class="py-2" id="schemeName">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Max Tenure</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Max Tenure</td>
                                         <td class="py-2" id="schemeTenure">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Maximum Loan Amount</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Maximum Loan Amount</td>
                                         <td class="py-2" id="schemeMax">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Maximum Loan Limit Against Security</td>
                                         <td class="py-2" id="schemeLimit">- %</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Minimum Loan Amount</td>
                                         <td class="py-2" id="schemeMin">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Annual Interest Rate</td>
                                         <td class="py-2" id="schemeInterest">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Interest Type</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Interest Type</td>
                                         <td class="py-2" id="schemeType">-</td>
                                     </tr>
                                 
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Active</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Active</td>
                                         <td class="py-2" id="schemeActive">-</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-semibold py-2 pr-4">Fore Closure Charges</td>
+                                    <tr class="border-b">
+                                        <td class="font-semibold uppercase py-2 pr-4">Fore Closure Charges</td>
                                         <td class="py-2" id="schemeCharge">-</td>
                                     </tr>
                                 </tbody>
@@ -715,13 +718,13 @@
 
 
            <!-- Buttons -->
-            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+            <div class="flex flex-col min-w-10 sm:flex-row justify-start gap-3 mt-5">
                 <button type="button" id="calculateBtn"
-                    class="btn-primary ruppercase justify-center">
+                    class="btn-primary uppercase justify-center">
                     Calculate
                 </button>
                 <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('cc_od.applications.index')}}"> BAck</a>
+                <a href="{{route('cc_od.applications.index')}}"> Back</a>
             </button>
             </div>
     </form>
@@ -896,7 +899,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const year = today.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
+        const formattedDate = `${day}-${month}-${year}`;
 
         return `
             <tr class="nested-fields border-b">

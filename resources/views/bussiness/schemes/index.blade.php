@@ -23,8 +23,8 @@
     @endif
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h1 class=" flex text-xl block font-semibold">BUSINESS LOAN SCHEMES</h1>
-                <a href="{{route('bussiness.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <h1 class=" flex text-lg block font-semibold">BUSINESS LOAN SCHEMES</h1>
+                <a href="{{route('bussiness.schemes.create')}}" class=" block flex btn-primary uppercase ">Add
                 </a>
             </div>  
               

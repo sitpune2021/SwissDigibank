@@ -27,7 +27,7 @@
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
       <div class="flex items-start flex-col  gap-2">
         <div class="flex items-center gap-3">
-          <h1 class="text-xl font-semibold capitalize">
+          <h1 class="text-lg font-semibold uppercase">
             BUSINESS LOAN CALCULATOR
           </h1>
         </div>
@@ -91,7 +91,9 @@
 
             <!-- Max Tenure Dropdown -->
             <div class="col-span-2">
-                <label class="md:text-lg font-medium block mb-2">Max. Tenure *</label>
+                <label class="md:text-lg font-medium block mb-2">Max. Tenure 
+                  <span class="text-error">*</span>
+                </label>
                 <select name="max_tenure" id="max_tenure" 
                     class="w-full bg-white border rounded px-3 py-2">
                     <option value="">Select Tenure</option>
@@ -119,7 +121,9 @@
 
                 <!-- Interest Type -->
                 <div class="col-span-2">
-                    <label class="md:text-lg font-medium block mb-2">Interest Type *</label>
+                    <label class="md:text-lg font-medium block mb-2">Interest Type 
+                      <span class="text-error">*</span>
+                    </label>
                     <div class="flex gap-4">
                       <label>
                           <input type="radio" name="interest_type" value="flat_emi"> Flat EMI
@@ -137,7 +141,9 @@
 
             <!-- Annual Interest Rate -->
             <div class="col-span-2">
-              <label class="md:text-lg font-medium block mb-2">Annual Interest Rate (%) *</label>
+              <label class="md:text-lg font-medium block mb-2">Annual Interest Rate (%) 
+                  <span class="text-error">*</span>
+              </label>
               <input type="number" name="manual_interest_rate" id="manual_interest_rate"
                 class="w-full bg-white border rounded px-3 py-2"
                 placeholder="Interest Rate">
@@ -230,10 +236,12 @@
 
                   <!-- Charges Per EMI Type -->
                   <div class="col-span-2 mt-2">
-                    <label class="md:text-lg font-medium block mb-2">Charges Per EMI Type *</label>
+                    <label class="md:text-lg font-medium block mb-2">Charges Per EMI Type 
+                      <span class="text-error">*</span>
+                    </label>
                     <div class="flex gap-4">
-                      <label><input type="radio" name="manual_charge_per_emi_type" value="ON EMI" checked> On EMI</label>
-                      <label><input type="radio" name="manual_charge_per_emi_type" value="ON PRINCIPAL"> On Principal</label>
+                      <label class="flex gap-2 items-center"><input type="radio" name="manual_charge_per_emi_type" value="ON EMI" checked> <p>On EMI</p></label>
+                      <label class="flex gap-2 items-center"><input type="radio" name="manual_charge_per_emi_type" value="ON PRINCIPAL"> <p>On Principal</p></label>
                     </div>
                   </div>
 
@@ -309,10 +317,13 @@
               </label>
 
               <!-- Checkbox 2 -->
-              <label class="flex gap-2 mt-2" id="chk_first_box">
+              <div class="flex gap-2 items-center" id="chk_first_box">
+                <label class="flex gap-2 mt-2" >
                   <input type="checkbox" name="option_interest_first" id="option_interest_first" value="1">
-                  Collect Interest as EMIs First & then after Principal as EMIs
+                 
               </label>
+              <p class="uppercase"> Collect Interest as EMIs First & then after Principal as EMIs</p>
+              </div>
 
           </div>
 
@@ -354,9 +365,9 @@
     </div>
       
       <!--Scheme Info Table-->
-      <div id="schemeBox" class="mt-5 hidden">
+      <div id="schemeBox" class=" box hidden">
         <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-          <h3 class="text-base font-semibold md:text-lg">Scheme Info</h3>
+          <h3 class="text-base uppercase font-semibold md:text-lg">Scheme Info</h3>
           <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'schemeInfoBody')">
             <span class="toggle-icon text-lg font-bold">−</span>
           </button>
@@ -366,29 +377,29 @@
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
               <tbody>
-                <tr><td class="font-semibold py-2 pr-4">Scheme Code</td><td class="py-2" id="schemeCode">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Active</td><td class="py-2" id="schemeActive">-</td></tr>
-                <tr><td class="font-semibold py-2 pr-4">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Scheme Code</td><td class="py-2" id="schemeCode">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Scheme Name</td><td class="py-2" id="schemeName">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Max Tenure</td><td class="py-2" id="schemeTenure">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Maximum Loan Amount</td><td class="py-2" id="schemeMax">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Annual Interest Rate</td><td class="py-2" id="schemeInterest">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Active</td><td class="py-2" id="schemeActive">-</td></tr>
+                <tr class="border-b"><td class="font-semibold uppercase py-2 pr-4">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
-                  <td class="px-3 py-2"><span id="schemeStamp">-</span> %</td>
+                  <td class="font-semibold uppercase py-2">Stamp Duty Fee</td>
+                  <td class=" py-2"><span id="schemeStamp">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Insurance Charges</td>
-                  <td class="px-3 py-2"><span id="schemeInsurance">-</span> %</td>
+                  <td class="font-semibold uppercase  py-2">Insurance Charges</td>
+                  <td class=" py-2"><span id="schemeInsurance">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Processing Fee</td>
-                  <td class="px-3 py-2"><span id="schemeProcessing">-</span> %</td>
+                  <td class="font-semibold uppercase  py-2">Processing Fee</td>
+                  <td class=" py-2"><span id="schemeProcessing">-</span> %</td>
                 </tr>
                 <tr class="border-b border-gray-200">
-                  <td class="font-semibold px-3 py-2">Charges Per EMI Type</td>
-                  <td class="px-3 py-2"><span id="schemeChargePerEmi">-</span></td>
+                  <td class="font-semibold uppercase  py-2">Charges Per EMI Type</td>
+                  <td class=" py-2"><span id="schemeChargePerEmi">-</span></td>
                 </tr>             
               </tbody>
             </table>

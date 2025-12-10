@@ -29,7 +29,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">LOAN AGAINST DEPOSITE DISBURSMETS</h3>
+                <h3 class="uppercase text-lg font-semibold">LOAN AGAINST DEPOSITE DISBURSMETS</h3>
             </div>
         </div>
 
@@ -41,11 +41,11 @@
                     @csrf
 
                         <!-- Header -->
-                        <div class="px-4 py-3">
-                            <h3 class="text-lg border-b mb-4 font-semibold text-black">
+                        <div class="px-2 py-3">
+                            <h3 class="text-lg border-b mb-4 uppercase font-semibold text-black">
                                 Application No - {{ $disbursement->id }}
                             </h3>
-                            <input type="hidden" name="loan_application_id" 
+                            <input type="hidden" name="loan_application_id"  class=""
                                 value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
                         </div>
 
@@ -54,7 +54,7 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Loan Disbursement Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="disbursal_date" class="form-input"
+                            <input type="text" name="disbursal_date" class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 value="{{ date('d-m-Y') }}" required>
                         </div>
 
@@ -63,14 +63,14 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 First EMI Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="emi_date" class="form-input"
+                            <input type="text" name="emi_date" class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
                         </div>
 
                         <!-- Loan Amount -->
                         <div class="mb-4">
                             <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-                            <input type="number" name="loan_amount" class="form-input"
+                            <input type="number" name="loan_amount" class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                 value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
                         </div>
                         @if(!empty($processingFee) && $processingFee > 0)
@@ -142,14 +142,14 @@
 
                         <!-- Final Amount -->
                         <div class="mb-4">
-                            <label class="md:text-lg font-medium block mb-2">
+                            <label class="md:text-lg font-medium uppercase block mb-2">
                                 Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="final_amount" id="finalAmount" class="form-input"
+                            <input type="number" name="final_amount" id="finalAmount" class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                                     value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
                         </div>
 
-                        <h3>Disbursement Amount :</h3>
+                        <h3 class="uppercase text-lg ">Disbursement Amount :</h3>
                                 <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                     <div class="col-span-1 md:col-span-1 mb-4">
                                         <label for="" class="md:text-lg font-medium block mb-4 mt-4">
@@ -162,26 +162,30 @@
                                             value="{{ $disbursement->approved_loan_amount ?? '' }}" >
                                         <x-number-to-word for="D_mode_1" />
                                         <div class="mt-3">
-                                            <label>
-                                            <input type="radio" name="payment_mode" value="cash" checked> Cash
+                                           <div class="">
+                                            <div class="flex gap-2 items-center">
+                                            <label class="flex gap-2 items-center ">
+                                            <input type="radio" name="payment_mode" value="cash" checked> <p>Cash</p>
                                             </label>
 
-                                            <label>
-                                            <input type="radio" name="payment_mode" value="cheque"> Cheque
+                                            <label class="flex gap-2 items-center">
+                                            <input type="radio" name="payment_mode" value="cheque"> <p>Cheque</p>
                                             </label>
 
-                                            <label>
-                                            <input type="radio" name="payment_mode" value="online"> Online Transfer
+                                            <label class="flex gap-2 items-center">
+                                            <input type="radio" name="payment_mode" value="online"> <p>Online Transfer</p>
                                             </label>
-                                            <label>
-                                            <input type="radio" name="payment_mode" value="saving"> Saving Account
+                                            </div>
+                                            <label class="flex gap-2 items-center mt-3">
+                                            <input type="radio" name="payment_mode" value="saving"> <p>Saving Account</p>
                                             </label>
+                                           </div>
 
                                             <!-- Fields for Cheque -->
                                             <div id="cheque_fields" style="display:none; margin-top:10px;">
                                             <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                                 <select id="bank_id" name="bank_id"
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                         <option value="">-- Select Bank --</option>
                                                         @foreach($banks as $id => $name)
                                                             <option value="{{ $id }}">
@@ -193,16 +197,16 @@
                                             <div class="mt-3">
                                                 <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                                 <input type="text" name="cheque_no"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                     placeholder="Enter Cheque No">
                                             </div>
 
                                             <!-- Cheque Date -->
                                             <div class="mt-3">
                                                 <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                                <input type="date" id="cheque_date" name="cheque_date"
+                                                <input type="text" id="cheque_date" name="cheque_date"
                                                 value="{{ old('cheque_date', date('Y-m-d')) }}"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                         </div>
 
@@ -212,16 +216,16 @@
                                         <label class="block text-sm font-medium text-gray-700">
                                             Transfer Date <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="date" id="transfer_date" name="transfer_date"
+                                        <input type="text" id="transfer_date" name="transfer_date"
                                         value="{{ old('transfer_date', date('Y-m-d')) }}" 
-                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">
                                             UTR / Transaction No. <span class="text-red-500">*</span>
                                         </label>
                                         <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
-                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">
@@ -246,12 +250,16 @@
 
                                 <!-- Fields for Saving Account -->
                                 <div id="saving_fields" style="display:none; margin-top:10px;">
-                                <label>Saving Account:</label>
-                                <select id="saving" name="saving"
+                                    <label>Saving Account:</label>
+                                    <select id="saving" name="saving"
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                    <option value="">-- Select Saving Acc. --</option>                                              
-                                    <option value="abcd">abcd</option>                                             
-                                </select>
+
+                                        <option value="">-- Select Saving Acc. --</option>
+
+                                        @foreach ($savingAccounts as $acc)
+                                            <option value="{{ $acc }}">{{ $acc }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
 
@@ -267,22 +275,26 @@
                                             value="0" readonly>
                                         
                                         <div class="mt-3">
-                                        <label>
-                                            <input type="radio" name="payment_mode2" value="cash" checked> Cash
+                                          <div class="">
+                                            <div class="flex gap-2">
+                                            <label class="flex gap-2 items-center">
+                                            <input type="radio" name="payment_mode2" value="cash" checked> <p>Cash</p>
                                             </label>
-                                            <label>
-                                            <input type="radio" name="payment_mode2" value="cheque"> Cheque
+                                            <label class="flex gap-2 items-center">
+                                            <input type="radio" name="payment_mode2" value="cheque"> <p>Cheque</p>
                                             </label>
-                                            <label>
-                                            <input type="radio" name="payment_mode2" value="online"> Online Transfer
+                                            <label class="flex gap-2 items-center">
+                                            <input type="radio" name="payment_mode2" value="online"> <p>Online Transfer</p>
                                             </label>
-                                            <label>
-                                            <input type="radio" name="payment_mode2" value="saving"> Saving Account
+                                            </div>
+                                            <label class="flex gap-2 items-center mt-3">
+                                            <input type="radio" name="payment_mode2" value="saving"> <p>Saving Account</p>
                                             </label>
+                                          </div>
                                             <!-- Fields for Disburse Mode 2 -->
                                             <div id="cheque_fields2" style="display:none; margin-top:10px;">
                                                 <select id="bank_id2" name="bank_id2"
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                         <option value="">-- Select Bank --</option>
                                                         @foreach($banks as $id => $name)
                                                             <option value="{{ $id }}">
@@ -294,16 +306,16 @@
                                                 <div class="mt-3">
                                                     <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                                     <input type="text" name="cheque_no2"
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                         placeholder="Enter Cheque No">
                                                 </div>
 
                                                 <!-- Cheque Date -->
                                                 <div class="mt-3">
                                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                                    <input type="date" id="cheque_date2" name="cheque_date2"
+                                                    <input type="text" id="cheque_date2" name="cheque_date2"
                                                     value="{{ old('cheque_date2', date('Y-m-d')) }}" 
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                 </div>
                                             </div>
                                             <!-- Fields for Online -->
@@ -312,16 +324,16 @@
                                                     <label class="block text-sm font-medium text-gray-700">
                                                         Transfer Date <span class="text-red-500">*</span>
                                                     </label>
-                                                    <input type="date" id="transfer_date2" name="transfer_date2" 
+                                                    <input type="text" id="transfer_date2" name="transfer_date2" 
                                                     value="{{ old('transfer_date2', date('Y-m-d')) }}" 
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                 </div>
                                                 <div>
                                                     <label class="block text-sm font-medium text-gray-700">
                                                         UTR / Transaction No. <span class="text-red-500">*</span>
                                                     </label>
                                                     <input type="text" id="utr_no2" name="utr_no2" placeholder="Enter Transaction No."
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                 </div>
                                                 <div>
                                                     <label class="block text-sm font-medium text-gray-700">
@@ -347,11 +359,15 @@
                                             <div id="saving_fields2" style="display:none; margin-top:10px;">
                                                 <label>Saving Account:</label>
                                                 <select id="saving2" name="saving2"
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    <option value="">-- Select Saving Acc. --</option>                                              
-                                                    <option value="abcd">abcd</option>                                             
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                    <option value="">-- Select Saving Acc. --</option>
+
+                                                    @foreach ($savingAccounts as $acc)
+                                                        <option value="{{ $acc }}">{{ $acc }}</option>
+                                                    @endforeach
                                                 </select>
-                                            </div>                
+                                            </div>            
                                     
                                         </div>
 
@@ -437,83 +453,87 @@ document.addEventListener('DOMContentLoaded', function () {
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Application Date</td>
-                                <td class="px-3 py-2">{{ $disbursement->application_date }}</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Application Date</td>
+                                <td class="px-3 py-2">{{ $disbursement->application_date 
+                                            ? \Carbon\Carbon::parse($disbursement->application_date)->format('d-m-Y') 
+                                            : '' 
+                                    }}
+                                </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application Status</td>
                                 <td class="px-3 py-2">Approved</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application No</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application No</td>
                                 <td class="px-3 py-2">{{ $disbursement->id }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Branch</td>
+                                <td class="font-semibold uppercase px-3 py-2">Branch</td>
                                 <td class="px-3 py-2">{{ $disbursement->branch->branch_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Member</td>
                                 <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} - {{ $disbursement->member->member_info_first_name ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">1st Co-Applicant Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">1st Co-Applicant Member</td>
                                 <td class="px-3 py-2">{{ $disbursement->coApplicant1->id ?? '' }} - {{ $disbursement->coApplicant1->member_info_first_name ?? '' }}
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Requested</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Requested</td>
                                 <td class="px-3 py-2">₹ {{ $disbursement->net_loan_amount ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approvable</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approvable</td>
                                 <td class="px-3 py-2">
                                  ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approved</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interst Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
                                  {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Amount</td>
                                 <td class="px-3 py-2">
                                 ₹ {{ number_format($totalInterest, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Credit Period</td>
+                                <td class="font-semibold uppercase px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
+                                <td class="font-semibold uppercase px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
                                    ₹ {{ number_format($totalRecover, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure of Loan</td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
+                                <td class="font-semibold uppercase px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
                                <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                     Yes
@@ -521,19 +541,19 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Processing Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
                                     {{ number_format($processingTotal, 2, '.', '') }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
                                    ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }}  (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Insurance Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
                                    {{ $disbursement->scheme->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
@@ -550,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <div
                     class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold capitalize">EMI Chart</h3>
+                    <h3 class="text-lg font-semibold upercase">EMI Chart</h3>
 
                     <button type="button" class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">−</span>
@@ -561,23 +581,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 <!-- Body -->
                 <div class="p-4">
                     <div>
-                        <p class="text-center font-semibold">TOTAL INTEREST RECOVERABLE - 319,960.00</p>
-                        <p class="text-center font-semibold">TOTAL OTHER CHARGES RECOVERABLE - 0.00</p>
+                        <p class="text-center uppercase font-semibold">TOTAL INTEREST RECOVERABLE - 319,960.00</p>
+                        <p class="text-center upercase font-semibold">TOTAL OTHER CHARGES RECOVERABLE - 0.00</p>
                     </div>
                     <div class="overflow-x-auto text-center mt-4">
                         <div class="w-full overflow-x-auto">
                             <table class="w-full  rounded-lg text-sm">
                                 <thead class="bg-secondary/5">
                                     <tr>
-                                        <th class="px-3 py-2 text-left">NO</th>
-                                        <th class="px-3 py-2 text-left">PRINCIPAL</th>
-                                        <th class="px-3 py-2 text-center">INTEREST</th>
-                                        <th class="px-3 py-2 text-center">OTHER CHRG.</th>
-                                        <th class="px-3 py-2 text-center">EMI</th>
-                                        <th class="px-3 py-2 text-center">INT. START DATE</th>
-                                        <th class="px-3 py-2 text-center">DATE</th>
-                                        <th class="px-3 py-2 text-center">DUE DATE</th>
-                                        <th class="px-3 py-2 text-center">DUE PRINCIPAL</th>
+                                        <th class="px-3 py-2 uppercase text-left">NO</th>
+                                        <th class="px-3 py-2 uppercase text-left">PRINCIPAL</th>
+                                        <th class="px-3 py-2 uppercase text-center">INTEREST</th>
+                                        <th class="px-3 py-2 uppercase text-center">OTHER CHRG.</th>
+                                        <th class="px-3 py-2 uppercase text-center">EMI</th>
+                                        <th class="px-3 py-2 uppercase text-center">INT. START DATE</th>
+                                        <th class="px-3 py-2 uppercase text-center">DATE</th>
+                                        <th class="px-3 py-2 uppercase text-center">DUE DATE</th>
+                                        <th class="px-3 py-2 uppercase text-center">DUE PRINCIPAL</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
@@ -598,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <td class="px-3 py-2 text-center">2,666.00</td>
                                         <td class="px-3 py-2 text-center">0.00</td>
                                         <td class="px-3 py-2 text-center">4,333.00</td>
-                                        <td class="px-3 py-2 text-center">16/09/2025</td>
+                                        <td class="px-3 py-2 text-center">16-09-2025</td>
                                         <td class="px-3 py-2 text-center">100.0</td>
                                         <td class="px-3 py-2 text-center">2.0</td>
                                         <td class="px-3 py-2 text-center">198,333.00.0</td>
@@ -738,13 +758,26 @@ document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('cheque_date').value = today;
-    document.getElementById('transfer_date').value = today;
-    document.getElementById('cheque_date2').value = today;
-    document.getElementById('transfer_date2').value = today;
-});
+    document.addEventListener("DOMContentLoaded", function() {
+
+    const d = new Date();
+    const today =
+        ("0" + d.getDate()).slice(-2) + "-" +
+        ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+        d.getFullYear();
+
+    if (document.getElementById('cheque_date'))
+        document.getElementById('cheque_date').value = today;
+
+    if (document.getElementById('transfer_date'))
+        document.getElementById('transfer_date').value = today;
+
+    if (document.getElementById('cheque_date2'))
+        document.getElementById('cheque_date2').value = today;
+
+    if (document.getElementById('transfer_date2'))
+        document.getElementById('transfer_date2').value = today;
+    });
 </script>
     
 

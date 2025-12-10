@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\BusinessLoanApplication;
 use App\Models\BusinessLoanDisbursment;
 use App\Models\Bank;
+use App\Models\Account;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -157,6 +158,8 @@ class BusinessLoanDisburments extends Controller
         // Load loan + scheme + member + branch
         $disbursement = BusinessLoanApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
         $banks = Bank::pluck('name', 'id');
+        $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
+
 
         // Base scheme values
         $scheme = optional($disbursement->scheme);
@@ -243,7 +246,8 @@ class BusinessLoanDisburments extends Controller
                 'totalDeductions',
                 'totalInterest',      
                 'totalRecover',       
-                'emi'
+                'emi',
+                'savingAccounts'
                
             )
         );
