@@ -24,7 +24,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Member;
 use App\Models\Branch;
+use App\Models\Promotor;
 use App\Models\Scheme;
+use Illuminate\Support\Facades\Response;
 
 class CutReportController extends Controller
 {
@@ -32,21 +34,118 @@ class CutReportController extends Controller
     // Promoters/Members Cut Reports start here
     public function promoterMemberIndex()
     {
-        $members = Member::with('promotor')->orderBy('id', 'desc')->get();
+        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'desc')->get();
+        // dd( $members);
         return view('cut-reports.report.promoter-member', compact('members'));
     }
 
     // Promoters/Members Cut Reports start here
 
     // shareHoldingIndex Cut Reports start here
-    public function shareHoldingIndex() {}
+    public function shareHoldingIndex()
+    {
+        $promoters = Promotor::with('latestShare')->orderBy('id', 'desc')->get();
+        return view('cut-reports.report.share-holding', compact('promoters'));
+    }
+
+    public function shareAllotmentReport(Request $request)
+    {
+        $from = $request->from_date;
+        $to   = $request->to_date;
+
+        // Base query
+        $promoters = Promotor::with(['latestShare'])
+            ->when($from && $to, function ($query) use ($from, $to) {
+
+                // Convert DD/MM/YYYY → YYYY-MM-DD
+                $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', $from)->format('Y-m-d');
+                $toDate   = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
+
+                $query->whereHas('latestShare', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('allotment_date', [$fromDate, $toDate]);
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('cut-reports.report.share-holding', compact('promoters'));
+    }
+
+
+    public function downloadPromoterCSV(Request $request)
+    {
+
+        $records = Promotor::with('latestShare')->get();
+
+        $filename = 'promoter_holdings_report_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+        ];
+
+        $columns = [
+            'MEMBER',
+            'SHARE RANGE',
+            'TOTAL SHARES',
+            'NOMINAL VAL.',
+            'TOTAL SHARE VAL.',
+            'ALLOTMENT DATE',
+            'TRANSFER DATE',
+        ];
+
+        $callback = function () use ($records, $columns) {
+            $file = fopen('php://output', 'w');
+
+            // Add heading row
+            fputcsv($file, $columns);
+
+            foreach ($records as $promoter) {
+
+                $share = $promoter->latestShare;
+
+                fputcsv($file, [
+                    // MEMBER NAME
+                    strtoupper($promoter->first_name . ' ' . $promoter->last_name),
+
+                    // SHARE RANGE
+                    ($share->first_share ?? '') . ' - ' . ($share->share_no ?? ''),
+
+                    // TOTAL SHARES
+                    $share->total_share_held ?? '',
+
+                    // NOMINAL VAL
+                    $share->nominal_value ?? '',
+
+                    // TOTAL SHARE VAL
+                    $share->total_share_value ?? '',
+
+                    // ALLOTMENT DATE → d-m-Y
+                    $share && $share->allotment_date
+                        ? date('d-m-Y', strtotime($share->allotment_date))
+                        : '',
+
+                    // TRANSFER DATE (transaction_date) → d-m-Y
+                    $share && $share->transaction_date
+                        ? date('d-m-Y', strtotime($share->transaction_date))
+                        : '',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
 
 
     // shareHoldingIndex Cut Reports start here
 
     // shareHoldingIndex Cut Reports start here
-    public function shareTransferHistoryIndex() {}
-
+    public function shareTransferHistoryIndex()
+    {
+        return view('cut-reports.report.share-transfer-history');
+    }
 
     // shareHoldingIndex Cut Reports start here
 
