@@ -89,9 +89,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-2xl font-semibold">FD ACCOUNT - {{ $fdAccount->id }}</h1>
                 <!-- <p class="text-gray-500">
-                        <a href="#" class="text-gray-500">FD Account</a> >
-                        <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
-                    </p> -->
+                                                                                <a href="#" class="text-gray-500">FD Account</a> >
+                                                                                <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
+                                                                            </p> -->
             </div>
         </div>
 
@@ -127,6 +127,29 @@
                     </ul>
                 </div>
             </div>
+
+            @if ($fdAccount->link_status != 1)
+                <a href="{{ route('fd-accounts.createLinkSavingAcc', $fdAccount->id) }}"
+                    class="btn-primary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
+                    LINK SAVING ACCOUNT (AUTO DEBIT)
+                </a>
+            @endif
+
+            <!-- INTEREST/TDS Button -->
+            <div class="relative inline-block text-left">
+                <a id="interestButton" class="btn-secondary text-sm px-2 py-2 rounded-10 flex items-center">
+                    INTEREST/TDS
+                    <i id="interestArrow" class="las la-angle-down ml-2"></i>
+                </a>
+
+                <div id="interestMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+                    <a href="{{ route('fd-account.creditDebitInterest', $fdAccount->id) }}"
+                        class="block px-4 py-2 uppercase ">CREDIT/DEBIT INTEREST</a>
+                    <a href="{{ route('fd-account.deductReverseTds', $fdAccount->id) }}"
+                        class="block px-4 py-2 uppercase ">DEDUCT/REVESRE TDS</a>
+
+                </div>
+            </div>
             <!-- Print Documents -->
             <button class="btn-primary px-4 py-2 rounded-10 ">
                 PRINT DOCUMENTS
@@ -144,10 +167,10 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <!-- <div class="text-end p-3">
-                            <a href="#" class=" p-2 btn-outline">
-                                <i class="las la-pen"></i>
-                            </a>
-                        </div> -->
+                                                                                    <a href="#" class=" p-2 btn-outline">
+                                                                                        <i class="las la-pen"></i>
+                                                                                    </a>
+                                                                                </div> -->
                     <table class="min-w-full text-sm text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
                             <tr>
@@ -163,11 +186,11 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold  px-4 py-2 uppercase">Create on</td>
-                                <td class="px-4 py-2">Admin App</td>
+                                <td class="px-4 py-2">Admin App static*</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Created by</td>
-                                <td class="px-4 py-2">Test Test</td>
+                                <td class="px-4 py-2">Test Test static*</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">FD No.</td>
@@ -175,7 +198,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Old FD No.</td>
-                                <td class="px-4 py-2">—</td>
+                                <td class="px-4 py-2"> static*—</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
@@ -209,7 +232,7 @@
 
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
-                                <td class="px-4 py-2">—</td>
+                                <td class="px-4 py-2">-</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
@@ -221,7 +244,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Status</td>
-                                <td class="px-4 py-2">Fore close approved</td>
+                                <td class="px-4 py-2">Fore close approved static*</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
@@ -238,17 +261,20 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Special Account</td>
                                 <td class="px-4 py-2"><span
-                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
+                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No
+                                        static*</span></td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2 uppercase">IS Lien</td>
+                                <td class="font-semibold px-4 py-2 uppercase">IS Lien static*</td>
                                 <td class="px-4 py-2"><span
-                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
+                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No
+                                        static*</span></td>
                             </tr>
                             <tr>
-                                <td class="font-semibold px-4 py-2 uppercase">Sweep In</td>
+                                <td class="font-semibold px-4 py-2 uppercase">Sweep In static*</td>
                                 <td class="px-4 py-2"><span
-                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No</span></td>
+                                        class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600">No
+                                        static*</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -290,63 +316,125 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Table Wrapper -->
-                <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
-                    <table class="w-full text-sm  ">
-                        <thead class="bg-gray-100  text-start">
-                            <tr class="text-start">
-                                <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Status</th>
-                                <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Remarks</th>
-                                <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Updated at</th>
-                                <th class="px-4 py-2 font-semibold text-start text-gray-700 uppercase">Approved By</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-t border-b">
-                                <td class="px-4 py-2 text-gray-800">Pending for approval</td>
-                                <td class="px-4 py-2 text-gray-800">—</td>
-                                <td class="px-4 py-2 text-gray-800">21/08/2025 17:00</td>
-                                <td class="px-4 py-2 text-gray-800">—</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!--PASSBOOK-->
-                <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
+                <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                     <!-- Header -->
-                    <div class=" px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
-                        <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED passbook</h3>
-                        <button class="btn-primary px-3 py-2 rounded-3xl text-white">
+                    <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
+                        <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
+                        <a href="{{ route('passbook.create-passbook') }}"
+                            class="btn-primary px-3 py-2 rounded-3xl text-white">
                             <i class="las la-plus"></i>
-                            Passbok
-                        </button>
-                    </div>
-                </div>
-
-
-                <!--documents-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
-                        onclick="this.nextElementSibling.classList.toggle('hidden')">
-                        <h3 class="text-lg font-semibold">DOCUMENTS</h3>
-                        <button class=" btn-outline p-1  ">
-                            <i class="las la-upload"></i>
-                        </button>
+                            passbook
+                        </a>
                     </div>
 
                     <!-- Body -->
                     <div class="p-4">
                         <div class="overflow-x-auto">
-                            <p class="capitalize">No documents found</p>
+                            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                <thead class="bg-gray-100 text-gray-700">
+                                    <tr class="border-b">
+                                        <th class="px-4 py-2 font-semibold">Passbook No</th>
+                                        <th class="px-4 py-2 font-semibold">Issue Date</th>
+                                        <th class="px-4 py-2 font-semibold">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-gray-200 whitespace-nowrap">
+                                    @forelse($passbooks as $pass)
+                                        <tr class="border-b text-center">
+                                            <td class="px-4 py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
+                                            <td class="px-4 py-2">
+                                                {{ \Carbon\Carbon::parse($pass->issue_date)->format('d-m-Y') ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                <div class="w-full flex gap-3 justify-center">
+
+                                                    <!-- Edit -->
+                                                    <a href="{{ route('passbook.edit-passbook', $pass->id) }}"
+                                                        class="btn-primary  p-1">
+                                                        <i class="las la-edit "></i>
+                                                    </a>
+
+                                                    <!-- View -->
+                                                    <a href="{{ route('passbook.show', $pass->id) }}"
+                                                        class="btn-primary  p-1">
+                                                        <i class="las la-eye "></i>
+                                                    </a>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="py-3 text-center text-gray-500">
+                                                No FD passbooks found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--documents-->
+                <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                        onclick="this.nextElementSibling.classList.toggle('hidden')">
+                        <h3 class="text-lg font-semibold">DOCUMENTS</h3>
+                        <a href="{{ route('fd.uploadDocuments', $fdAccount->id) }}"
+                            class=" btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i>
+                        </a>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <div class="overflow-x-auto">
+                            @if ($documents->isEmpty())
+                                <p class="capitalize text-gray-500">No documents found</p>
+                            @else
+                                <table
+                                    class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                    <thead class="bg-gray-100  text-gray-700">
+                                        <tr class="border-b">
+                                            <th class="px-4 py-2 font-semibold">Name</th>
+                                            <th class="px-4 py-2 font-semibold">URL</th>
+                                            <th class="px-4 py-2 font-semibold">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach ($documents as $doc)
+                                            <tr class="border-b text-center">
+                                                <td class="px-4 py-2">{{ $doc->document_type }}</td>
+                                                <td class="px-4 py-2">
+                                                    <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank"
+                                                        class="text-primary underline">
+                                                        Show
+                                                    </a>
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    <form action="{{ route('documents.destroy', $doc->id) }}"
+                                                        method="POST" onsubmit="return confirm('Are you sure?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-800">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
                         </div>
                     </div>
                 </div>
 
                 <!--COMMENTS-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div class="bg-white box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                     <!-- Header -->
                     <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('hidden')">
@@ -356,8 +444,43 @@
 
                     <!-- Body -->
                     <div class="p-4">
-                        <div class="overflow-x-auto text-center mt-5">
-                            <button class="btn-primary px-3 py-2 rounded-3xl uppercase text-white">Add COMMENTS</button>
+
+                        <div class="overflow-x-auto">
+
+                            @if ($fdAccount->comments->count() == 0)
+                                <p class="capitalize text-gray-500">No comments found</p>
+                            @else
+                                <table class="w-full text-sm text-left">
+                                    <thead>
+                                        <tr class="border-b">
+                                            <th class="px-4 py-2 uppercase font-semibold">Comment</th>
+                                            <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
+                                            <th class="px-4 py-2 uppercase font-semibold">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach ($fdAccount->comments as $comment)
+                                            <tr class="hover:bg-gray-50 border-b">
+                                                <td class="px-4 py-2">{{ $comment->comment }}</td>
+                                                <td class="px-4 py-2">
+                                                    {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name : '-' }}
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    {{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ?? '' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                            <div class="overflow-x-auto text-center mt-5">
+                                @if ($fdAccount->comments->count() > 0)
+                                    <a href="{{ route('fd.addComment', $fdAccount->id) }}"
+                                        class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+                                @endif
+                                <a href="{{ route('fd.addComment', $fdAccount->id) }}"
+                                    class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+                            </div>
                         </div>
                     </div>
 
@@ -370,15 +493,13 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('hidden')">
                         <h3 class="text-lg font-semibold uppercase">Transactions Info</h3>
-
                     </div>
-
                     <!-- Body -->
                     <div class="p-4">
                         <div class="overflow-x-auto text-center mt-5">
                             <div class="overflow-x-auto">
                                 <table
-                                    class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                    class="w-full whitespace-nowrap  border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
                                     <thead class="bg-gray-100 text-start text-gray-700">
                                         <tr class="border-b">
                                             <th class="px-4 py-2 text-start text-sm font-semibold">DATE</th>
@@ -390,22 +511,23 @@
                                     </thead>
                                     <tbody class="text-left">
                                         <tr class="border-b hover:bg-gray-50">
-                                            <td class="px-4 py-2 text-sm">31/07/2024 13:32</td>
-                                            <td class="px-4 py-2 text-sm">Credit</td>
-                                            <td class="px-4 py-2 text-sm">System</td>
-                                            <td class="px-4 py-2 text-sm">10,000.00</td>
-                                            <td class="px-4 py-2 text-sm text-green-600 font-medium">Approved</td>
+                                            <td class="px-4 py-2 text-sm">
+                                                {{ $fdAccount->transaction_date ? \Carbon\Carbon::parse($fdAccount->transaction_date)->format('d-m-Y') : '' }}
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">{{ $fdAccount->mode }}</td>
+                                            <td class="px-4 py-2 text-sm">
+                                                {{ optional($fdAccount->transactions->last())->mode ?? '' }}</td>
+                                            <td class="px-4 py-2 text-sm">{{ $fdAccount->fd_amount }}</td>
+                                            <td class="px-4 py-2 text-sm text-green-600 font-medium">
+                                                {{ $fdAccount->status }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-
                             <button class="btn-primary  mt-3">View All</button>
                         </div>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- Right: Settings -->
@@ -614,7 +736,61 @@
                         </div>
                     </form>
                 </div>
+                {{-- AUTO DEBIT SAVING ACCOUNT INFO --}}
+                @if ($fdAccount->link_status == 1)
+                    <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
 
+                        <!-- Header -->
+                        <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                            onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            <h3 class="text-lg font-semibold uppercase">AUTO DEBIT SAVING ACCOUNT INFO</h3>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="overflow-x-auto mt-5">
+                            <table
+                                class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                                    <tr>
+                                        <td class="font-semibold px-4 py-2 uppercase w-1/2 md:w-1/3">Account No.
+                                        </td>
+                                        <td class="px-4 py-2 text-right md:text-left">
+                                            {{ optional($linkedSavingAcc)->account_no }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="font-semibold px-4 py-2 uppercase">Scheme Name</td>
+                                        <td class="px-4 py-2 text-right md:text-left">
+                                            {{ $fdAccount->fdscheme->scheme_name ?? '-' }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="font-semibold px-4 py-2 uppercase">Available Balance</td>
+                                        <td class="px-4 py-2 text-right md:text-left">
+                                            {{ $linkedSavingAcc ? $balances[$linkedSavingAcc->id] ?? 0 : 0 }}
+                                        </td>
+                                    </tr>
+
+                                    @if ($fdAccount->link_status !== 0)
+                                        <tr>
+                                            <td class="font-semibold px-4 py-2 uppercase">Un-link Saving Account
+                                            </td>
+                                            <td class="px-4 py-2 text-right md:text-left">
+                                                <a href="{{ route('fd-accounts.confirmUnlink', $fdAccount->id) }}"
+                                                    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                                    UNLINK ACCOUNT
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
                 <!--Scheme Info-->
                 <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                     <!-- Header -->
@@ -634,7 +810,7 @@
                                 <tr>
                                     <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
                                     <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $fdAccount->fdscheme->scheme_name }}{{ $fdAccount->fdscheme->id }}</td>
+                                        {{ $fdAccount->fdscheme->scheme_code }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-semibold px-4 py-2 uppercase">Minimum Locking Period</td>
@@ -832,11 +1008,17 @@
                                 <tr>
                                     <td class="font-semibold px-4 py-2 uppercase">Joint Account</td>
                                     <td class="px-4 py-2 text-right md:text-left">
-                                        @if (!empty($fdAccount->joint_member_id))
+                                        @if (!empty($fdAccount->account_type))
                                             <span class="text-green-600 font-semibold">Yes</span>
                                         @else
                                             <span class="text-red-600 font-semibold">No</span>
                                         @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Joint Account Member Name
+                                    </td>
+                                    {{-- <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->savingAccount->branch_name }} --}}
                                     </td>
                                 </tr>
                             </tbody>
