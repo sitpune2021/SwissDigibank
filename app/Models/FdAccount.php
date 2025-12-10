@@ -80,4 +80,12 @@ class FdAccount extends Model
 
         return '--';
     }
+    public function transactions()
+    {
+        return $this->hasMany(FdTransaction::class, 'fd_account_id');
+    }
+    public function minor()
+    {
+        return $this->belongsTo(Minor::class, 'minor_id');
+    }
 }

@@ -177,6 +177,7 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+            
 
                 <div class="col-span-2 md:col-span-1"></div>
 
