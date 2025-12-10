@@ -936,7 +936,7 @@ class MisaccountController extends Controller
         return view('fd_mis_account.misaccount.show', compact('misaccount', 'passbooks', 'savingAccounts', 'branches', 'balance', 'documents', 'transactions'));
     }
 
-    //edit editBranch
+    // edit editBranch
     public function updateBranch(Request $request, $misaccountId)
     {
         $misaccount = Misaccount::findOrFail($misaccountId);
@@ -1103,7 +1103,6 @@ class MisaccountController extends Controller
 
     public function storeCreditDebitInterestAndTDS(Request $request, $id)
     {
-
         $request->validate([
             'transaction_date' => 'required|date',
             'transaction_type' => 'required|in:credit,debit',
@@ -1377,8 +1376,6 @@ class MisaccountController extends Controller
 
         return response()->json(['success' => true]);
     }
-
-
 
     public function destroy($id)
     {
