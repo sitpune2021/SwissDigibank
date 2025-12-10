@@ -192,16 +192,19 @@ Route::middleware('auth.user')->group(function () {
             ->name('ddsaccounts.withdraw-create');
         Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
             ->name('ddsaccounts.withdraw');
+
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
         Route::post(
             'dds-accounts/{id}/link-saving',
             [DdsAccountsController::class, 'storeLinkSavingAcc']
         )->name('ddsaccounts.storeLinkSavingAcc');
+
         Route::get('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'confirmUnlink'])
             ->name('ddsaccounts.confirmUnlink');
         Route::post('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'storeLinkSavingAcc'])
             ->name('ddsaccounts.storeLinkSavingAcc');
+
         Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
         Route::post(
@@ -380,10 +383,40 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('fd-accounts/transactions/printReceipt/{id}/{transactionId}', [FdController::class, 'printReceipt'])
         ->name('fd-accounts.transactions.printReceipt');
     Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
-  // Update Account Info (FORM SUBMIT)
-Route::post('fd-account/update-info/{id}', 
-    [FDController::class, 'updateAccountInfo']
-)->name('fd.account.updateInfo');
+    // Update Account Info (FORM SUBMIT)
+    Route::post(
+        'fd-account/update-info/{id}',
+        [FDController::class, 'updateAccountInfo']
+    )->name('fd.account.updateInfo');
+    Route::get('fd-accounts/{id}/link-saving-account', [FdController::class, 'createLinkSavingAcc'])
+        ->name('fd-accounts.createLinkSavingAcc');
+
+    Route::post(
+        'fd-accounts/{id}/link-saving',
+        [FdController::class, 'storeLinkSavingAcc']
+    )->name('fd-accounts.storeLinkSavingAcc');
+
+    Route::get('fd-accounts/{id}/unlink', [FdController::class, 'confirmUnlink'])
+        ->name('fd-accounts.confirmUnlink');
+
+    Route::post('fd-accounts/{id}/unlink', [FdController::class, 'storeLinkSavingAcc'])
+        ->name('fd-accounts.unlinkSavingAcc');
+
+    Route::get('/fd-account/uploadDocuments/{id}', [FdController::class, 'uploadDocuments'])->name('fd.uploadDocuments');
+    Route::post('/fd-account/storeDocuments/{id}', [FdController::class, 'storeDocuments'])->name('fd.storeDocuments');
+    Route::delete('/documents/{id}', [FdController::class, 'destroy'])->name('documents.destroy');
+
+    Route::get('/fd-acccount/comment/{id}', [FdController::class, 'addComment'])->name('fd.addComment');
+    Route::post('/fd-account/store-comment/{id}', [FdController::class, 'storeComment'])->name('fd.storeComment');
+//////
+    Route::get('/fd-account/credit-debit-interest/{id}', [FdController::class, 'creditDebitInterest'])->name('fd-account.creditDebitInterest');
+    Route::post('/fd-account/{id}/credit-debit-interest', [FdController::class, 'storeCreditDebitInterestAndTDS'])
+        ->name('fd.creditdebit.store');
+
+    Route::get('/fd-account/deduct-reverse-tds/{id}', [FdController::class, 'deductReverseTds'])->name('fd-account.deductReverseTds');
+    Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
+        ->name('fd.creditdebit.store');
+//////
 
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
@@ -986,9 +1019,11 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.account.audit-trail');
 
     // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-    Route::get('/loanagainst/{id}/debit-charges-list', 
-    [LoanAgainstAccountController::class, 'showDebitChargesList'])
-    ->name('loanagainst.debitChargesList.list');
+    Route::get(
+        '/loanagainst/{id}/debit-charges-list',
+        [LoanAgainstAccountController::class, 'showDebitChargesList']
+    )
+        ->name('loanagainst.debitChargesList.list');
 
     // debit other charge page    
     Route::get('/loanagainst/{id}/debit-other-charges', [LoanAgainstAccountController::class, 'DebitOtherCharges'])
@@ -1950,8 +1985,15 @@ Route::group(['prefix' => 'cut-report'], function () {
     //reports
     Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
         ->name('report.promoter-member');
+        
     Route::get('report/share-holdings', [CutReportController::class, 'shareHoldingIndex'])
         ->name('report.share-holdings');
+    Route::get('/promoter-report/download', [CutReportController::class, 'downloadPromoterCSV'])
+        ->name('promoter.report.csv');
+
+
+    Route::get('/share-allotment-report', [CutReportController::class, 'shareAllotmentReport'])->name('share-allotment.report');
+
     Route::get('report/share-transfer-history', [CutReportController::class, 'shareTransferHistoryIndex'])
         ->name('report.share-transfer-history');
 

@@ -448,23 +448,6 @@
                 </div>
 
                 <!--documents-->
-                {{-- <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
-                        onclick="this.nextElementSibling.classList.toggle('hidden')">
-                        <h3 class="text-lg font-semibold">DOCUMENTS</h3>
-                        <button class=" btn-outline p-1  ">
-                            <i class="las la-upload"></i>
-                        </button>
-                    </div>
-                    <!-- Body -->
-                    <div class="p-4">
-                        <div class="overflow-x-auto">
-                            <p class="capitalize">No documents found</p>
-                        </div>
-                    </div>
-                </div> --}}
-                <!--documents-->
                 <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
                     <!-- Header -->
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"

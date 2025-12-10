@@ -466,6 +466,248 @@ class MortgageController extends Controller
         }
 
         /* -------------------------------------------------------
+            FIX: FLAT EMI + INTEREST AS FIRST EMI (ALL PAYOUTS)
+            1st EMI -> full interest
+            Other EMI -> interest = 0
+        ---------------------------------------------------------*/
+        /* -------------------------------------------------------
+            FLAT EMI + INTEREST AS FIRST EMI
+            (1st EMI = principal + interest)
+        ---------------------------------------------------------*/
+        // this code as per nidhi bi_weekly
+
+            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') 
+            {
+
+                $installments = count($schedule);
+                $loanAmount   = (float)$loan;
+                $rate         = (float)$annualRate;
+                $tenureMonths = (float)$tenureMonths;
+
+                // TOTAL INTEREST (flat)
+                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+
+                // FIXED EMI
+                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+
+                // Principal per EMI (2..n)
+                $principalOther = $flatEmi;
+
+                // First Principal
+                $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
+
+                // First Interest = EMI - first principal
+                //$interest1 = round($flatEmi - $principal1, 2);
+                // 1st EMI must take EXACT total interest
+                $interest1   = $totalInterest;
+
+                // Now recompute principal1 so EMI stays accurate
+                $principal1  = round($flatEmi - $interest1, 2);
+
+                $remaining = $loanAmount;
+
+                foreach ($schedule as $i => $row) {
+
+                    $emiNo = $row['no'];
+
+                    if ($emiNo == 1) {
+
+                        // FIRST EMI
+                        $schedule[$i]['principal'] = $principal1;
+                        $schedule[$i]['interest']  = $interest1;
+                        $schedule[$i]['emi']       = $flatEmi;
+
+                        $remaining -= $principal1;
+
+                    } else {
+
+                        // OTHER EMIs = principal only
+                        if ($emiNo == $installments) {
+                            $principal = round($remaining, 2);
+                        } else {
+                            $principal = $principalOther;
+                        }
+
+                        $schedule[$i]['principal'] = $principal;
+                        $schedule[$i]['interest']  = 0;
+                        $schedule[$i]['emi']       = $flatEmi;
+
+                        $remaining -= $principal;
+                    }
+
+                    // BALANCE UPDATE
+                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                }
+            }
+
+            // this code as per nidhi 4_weekly
+            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') 
+            {
+
+                $installments = count($schedule);
+                $loanAmount   = (float)$loan;
+                $rate         = (float)$annualRate;
+                $tenureMonths = (float)$tenureMonths;
+
+                // TOTAL INTEREST (flat)
+                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+
+                // FIXED EMI
+                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+
+                // FIRST EMI takes exact total interest
+                $interest1 = $totalInterest;
+
+                // First principal = EMI - interest
+                $principal1 = round($flatEmi - $interest1, 2);
+
+                $remaining = $loanAmount;
+
+                foreach ($schedule as $i => $row) {
+
+                    $emiNo = $row['no'];
+
+                    if ($emiNo == 1) {
+
+                        // FIRST EMI
+                        $schedule[$i]['principal'] = $principal1;
+                        $schedule[$i]['interest']  = $interest1;
+                        $schedule[$i]['emi']       = $flatEmi;
+
+                        $remaining -= $principal1;
+
+                    } else {
+
+                    // OTHER EMIs = principal only
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
+                    } else {
+                        $principal = $flatEmi;
+                    }
+
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['emi']       = $flatEmi;
+
+                    $remaining -= $principal;
+                }
+
+                // BALANCE UPDATE
+                $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                }
+            }
+
+
+           // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
+            $totalInterestAll = 0;
+            $total_charges = 0;
+            $total_interest = 0;
+
+            if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+
+                $emiCount = ceil($tenureMonths / 3);
+                $monthlyRate = ($annualRate / 12) / 100;
+
+                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+                $remaining_principal = $loan;
+                $totalInterestAll = 0;
+
+                for ($i = 1; $i <= $emiCount; $i++) {
+
+                    $emiDate = $startDate->copy()->addMonths($i * 3);
+                    $dueDate = $emiDate->copy()->addDay();
+
+                    $interest = 0;
+
+                    for ($m = 1; $m <= 3; $m++) {
+                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                        $interest += $monthInterest;
+
+                        $principalMonthly = round($emi - $monthInterest, 2);
+                        $remaining_principal -= $principalMonthly;
+                    }
+
+                    $totalInterestAll += $interest;
+
+                    $principal = round($emi * 3 - $interest, 2);
+
+                    $schedule[] = [
+                        'no' => $i,
+                        'emi_date'  => $emiDate->format('d/m/Y'),
+                        'due_date'  => $dueDate->format('d/m/Y'),
+                        'principal' => $principal,
+                        'interest'  => $interest,
+                        'charges'   => 0,
+                        'emi'       => $principal + $interest,
+                        'balance'   => max($remaining_principal, 0),
+                    ];
+                }
+
+                $finalTotals['principal'] = $loan;
+                $finalTotals['interest']  = $totalInterestAll;
+                $finalTotals['emi']       = $loan + $totalInterestAll;
+
+                $total_principal = $loan;
+                $total_interest  = $totalInterestAll;
+                $total_emi_paid  = $loan + $totalInterestAll;
+
+            }
+
+            // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
+            else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
+
+                $emiCount = ceil($tenureMonths / 6);
+                $monthlyRate = ($annualRate / 12) / 100;
+
+                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+                $remaining_principal = $loan;
+                $totalInterestAll = 0;
+
+                for ($i = 1; $i <= $emiCount; $i++) {
+
+                    $emiDate = $startDate->copy()->addMonths($i * 6);
+                    $dueDate = $emiDate->copy()->addDay();
+
+                    $interest = 0;
+
+                    for ($m = 1; $m <= 6; $m++) {
+                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                        $interest += $monthInterest;
+
+                        $principalMonthly = round($emi - $monthInterest, 2);
+                        $remaining_principal -= $principalMonthly;
+                    }
+
+                    $totalInterestAll += $interest;
+
+                    $principal = round($emi * 6 - $interest, 2);
+
+                    $schedule[] = [
+                        'no'        => $i,
+                        'emi_date'  => $emiDate->format('d/m/Y'),
+                        'due_date'  => $dueDate->format('d/m/Y'),
+                        'principal' => $principal,
+                        'interest'  => $interest,
+                        'charges'   => 0,
+                        'emi'       => $principal + $interest,
+                        'balance'   => max($remaining_principal, 0),
+                    ];
+                }
+
+                $finalTotals['principal'] = $loan;
+                $finalTotals['interest']  = $totalInterestAll;
+                $finalTotals['emi']       = $loan + $totalInterestAll;
+
+                $total_principal = $loan;
+                $total_interest  = $totalInterestAll;
+                $total_emi_paid  = $loan + $totalInterestAll;
+            }
+
+            
+
+        /* -------------------------------------------------------
              4(C). REDUCING EMI — FULLY FIXED 
         ---------------------------------------------------------*/
         elseif ($interestType === 'reducing') 
@@ -483,12 +725,15 @@ class MortgageController extends Controller
                 $dueDate = $emiDate->copy()->addDay();
 
                 // --- INTEREST CALCULATION FIX (FIRST 4 EMI ONLY) ---
-                if ($i <= 4) {
-                    $days = 30; // ya aap dynamic days calculate kar rahe ho to wahi use karein
-                    $interest = round($remaining_principal * ($annualRate / 100) * ($days / 365), 2);
-                } else {
-                    $interest = 0;  // 5th EMI se interest ZERO
-                }
+                // if ($i <= 4) {
+                //     $days = 30; // ya aap dynamic days calculate kar rahe ho to wahi use karein
+                //     $interest = round($remaining_principal * ($annualRate / 100) * ($days / 365), 2);
+                // } else {
+                //     $interest = 0;  // 5th EMI se interest ZERO
+                // }
+                
+                // ✔ Correct Reducing Interest
+                $interest = round($remaining_principal * $monthlyRate, 2);
 
                 $principal = round($emi - $interest, 2);
 
@@ -510,7 +755,8 @@ class MortgageController extends Controller
                 $remaining_principal -= $principal;
             }
         }
-
+        
+     
         /* -------------------------------------------------------
             4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
         ---------------------------------------------------------*/
@@ -610,151 +856,157 @@ class MortgageController extends Controller
                 // ensure no tiny negative balance due to rounding
                 $schedule[$i]['balance'] = round(max(0, $remaining), 2);
             }
+
         }
 
-///////////////////////////////////////////////////////////////////////////////////////////////        
+        ///////////////////////////////////////////////////////////////////////////////////////////////        
 
-        // weekly and daily and monthaly show perfect     
+        
+        // perefect only month show
+        /* ---------------------------------------------------------
+            PERFECT FIX — Flat EMI + Interest As First EMI (MONTHLY)
+        ---------------------------------------------------------*/
         if (
             $interestAsFirst === 'Yes' &&
             $interestType === 'flat_emi' &&
-            //in_array(strtolower($payout), ['daily', 'weekly'])
-            in_array(strtolower($payout), ['daily', 'weekly', 'monthly'])
-        ) 
-        {
-            // use request tenure if available, else fallback to rawTenureValue from earlier
-            $tenure = isset($request->tenure) ? intval($request->tenure) : (int) ($rawTenureValue ?? 0);
+            strtolower($payout) === 'monthly'
+        ) {
+            $installments = count($schedule);
+            $loanAmount   = (float)$loan;
+            $rate         = (float)$annualRate;
+            $tenureMonths = (float)$tenureMonths;
 
-            // make sure we have the annual rate (existing variable in your function)
-            // $annualRate is set earlier in your function — use it as $rate
-            $rate = floatval($annualRate ?? 0); // <-- FIX: define $rate to avoid undefined variable
+            // Total interest
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-            /* ----------------------------------------
-            1) CALCULATE INTEREST-ONLY COUNT (DYNAMIC)
-            You can tweak this formula if you want a different mapping.
-            ----------------------------------------*/
-            if (strtolower($payout) === 'daily') {
-                // Every 50 days => 1 interest-only EMI (approx)
-                $interestOnlyCount = max(1, (int) ceil($tenure / 50));
-            } else { // weekly
-                // Current formula: every 50 weeks => 4 interest-only EMIs (so scale accordingly)
-                // ceil(($tenure / 50) * 4) gives: 50->4, 70->8, 100->8 (if you want 100->12, we'll adjust — see note)
-                $interestOnlyCount = max(1, (int) ceil(($tenure / 50) * 4));
-            }
+            // EMI amount
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-            $mixEmiNo = $interestOnlyCount + 1;
-            $remainingPrincipal = $loan;
+            // Interest breakup (your expected pattern)
+            // 1st EMI interest = flatEmi
+            $interest1 = $flatEmi;
 
-            /* ---------------------------------------------------
-            Recalculate interest per period each row so schedule updates correctly
-            ---------------------------------------------------*/
-            foreach ($schedule as $k => $row) 
-            {
+            // Remaining interest
+            $interest2 = round($totalInterest - $interest1, 2);
+            if ($interest2 < 0) $interest2 = 0;
+
+            // Principal for remaining EMIs
+            $principalForOthers = round($loanAmount / ($installments - 1), 2);
+
+            $remaining = $loanAmount;
+
+            foreach ($schedule as $i => $row) {
                 $emiNo = $row['no'];
 
-                // per-period rates
-                $dailyRate  = ($rate / 100) / 365; // annual -> daily fraction
-                $weeklyRate = ($rate / 100) / 52;  // annual -> weekly fraction
+                if ($emiNo == 1) {
 
-                // choose correct per-period interest using remaining principal (more accurate)
-                if (strtolower($payout) === 'daily') {
-                    $currentInterest = round($remainingPrincipal * $dailyRate, 2);
-                } else {
-                    $currentInterest = round($remainingPrincipal * $weeklyRate, 2);
-                }
+                    // 1st EMI → interest only
+                    $schedule[$i]['principal'] = 0;
+                    $schedule[$i]['interest']  = $interest1;
+                    $schedule[$i]['emi']       = $flatEmi;
+                    $schedule[$i]['balance']   = $remaining;
 
-                /* -----------------------------
-                1) INTEREST ONLY ROWS
-                ------------------------------*/
-                if ($emiNo <= $interestOnlyCount) {
+                } elseif ($emiNo == 2) {
 
-                    $schedule[$k]['interest']  = $currentInterest;
-                    $schedule[$k]['principal'] = 0;
-                    $schedule[$k]['emi']       = $currentInterest;
-                    $schedule[$k]['balance']   = $remainingPrincipal;
+                    // 2nd EMI → remaining interest + partial principal
+                    $interest  = $interest2;
+                    $principal = round($flatEmi - $interest, 2);
 
-                    continue;
-                }
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest']  = $interest;
+                    $schedule[$i]['emi']       = $flatEmi;
 
-                /* -----------------------------
-                2) MIXED ROW (first normal EMI after interest-only block)
-                ------------------------------*/
-                if ($emiNo == $mixEmiNo) {
+                    $remaining -= $principal;
+                    $schedule[$i]['balance'] = round($remaining, 2);
 
-                    $emiAmt    = $row['emi'];   // pre-calculated EMI from earlier flat_emi loop
-                    $principal = round(max(0, $emiAmt - $currentInterest), 2);
+                } 
+                else {
 
-                    $schedule[$k]['interest']  = $currentInterest;
-                    $schedule[$k]['principal'] = $principal;
-                    $schedule[$k]['emi']       = $principal + $currentInterest;
+                        // 3rd EMI onward → principal = EMI (interest zero)
+                        if ($emiNo == $installments) {
+                            $principal = round($remaining, 2);
+                        } else {
+                            $principal = $flatEmi;
+                        }
 
-                    $remainingPrincipal -= $principal;
-                    $schedule[$k]['balance'] = max($remainingPrincipal, 0);
+                        $schedule[$i]['principal'] = $principal;
+                        $schedule[$i]['interest']  = 0;
+                        $schedule[$i]['emi']       = $flatEmi;
 
-                    continue;
-                }
+                        $remaining -= $principal;
+                        $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    }
 
-                /* -----------------------------
-                3) REMAINING = PRINCIPAL ONLY ROWS
-                ------------------------------*/
-                $emiAmt = $row['emi'];
-
-                $schedule[$k]['interest']  = 0;
-                $schedule[$k]['principal'] = $emiAmt;
-                $schedule[$k]['emi']       = $emiAmt;
-
-                $remainingPrincipal -= $emiAmt;
-                $schedule[$k]['balance'] = max($remainingPrincipal, 0);
             }
         }
 
- /////////////////////////////////////////////////////////////////////////////////////////////////       
 
-        // weekly wise show pefect -> flat emi -> interest as first emi checkbox logic
-        // if ($interestAsFirst === 'Yes' && strtolower($payout) === 'weekly') 
-        // {
+        // only daily and weekly case perfect show as per nidhi
+        if (
+            $interestAsFirst === 'Yes' &&
+            $interestType === 'flat_emi' &&
+            in_array(strtolower($payout), ['daily', 'weekly'])
+        ) {
+            $installments = count($schedule);
+            $loanAmount   = $loan;
+            $rate         = $annualRate;
+            $tenureMonths = $tenureMonths;
 
-        //     // DYNAMIC: tenure ka 10% interest-only EMI
-        //     $firstInterestCount = max(1, round($rawTenureValue * 0.10));  
-        //     // min 1 EMI always
+            // Total flat interest (example: 3,891.67)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-        //     foreach ($schedule as $k => $row) {
+            // Flat EMI (same for all)
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-        //         $emiNo = $row['no'];
+            $remaining = $loanAmount;
 
-        //         if ($emiNo <= $firstInterestCount) {
+            foreach ($schedule as $i => $row) {
 
-        //             // First X EMI → INTEREST ONLY
-        //             $schedule[$k]['principal'] = 0;
-        //             $schedule[$k]['balance'] = $loan;
-        //             $schedule[$k]['emi'] = $schedule[$k]['interest'];
+                $emiNo = $row['no'];
 
-        //         } elseif ($emiNo == $firstInterestCount + 1) {
+                if ($emiNo == 1) {
 
-        //             // Next EMI → MIXED (principal + interest)
-        //             $emiAmt = $row['emi'];
-        //             $interest = $row['interest'];
+                    // ---- CHANGE: show TOTAL interest in first row (not per-installment) ----
+                    $interest  = $totalInterest;                      // ← show totalInterest here (₹3,891.67)
+                    $principal = round($flatEmi - $interest, 2);      // EMI - totalInterest
 
-        //             $principal = $emiAmt - $interest;
+                    // safety: if principal became negative (rare), clamp to 0 and adjust interest to flatEmi
+                    if ($principal < 0) {
+                        $principal = 0.00;
+                        $interest = $flatEmi; // first EMI cannot exceed EMI amount visually
+                    }
 
-        //             $schedule[$k]['principal'] = round($principal, 2);
-        //             $loan -= $principal;
-        //             $schedule[$k]['balance'] = max($loan, 0);
+                    $schedule[$i]['interest']  = $interest;
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['emi']       = $flatEmi;
 
-        //         } else {
+                    $remaining -= $principal;
 
-        //             // Remaining → FULL PRINCIPAL ONLY
-        //             $emiAmt = $row['emi'];
+                } else {
 
-        //             $schedule[$k]['interest'] = 0;
-        //             $schedule[$k]['principal'] = $emiAmt;
+                    // OTHER EMIs -> ONLY PRINCIPAL = flatEmi (last one adjust)
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
+                        $schedule[$i]['emi'] = $principal;
+                    } else {
+                        $principal = $flatEmi;
+                        $schedule[$i]['emi'] = $flatEmi;
+                    }
 
-        //             $loan -= $emiAmt;
-        //             $schedule[$k]['balance'] = max($loan, 0);
-        //         }
-        //     }
-        // }
-        
+                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['principal'] = $principal;
+
+                    $remaining -= $principal;
+                }
+
+                $schedule[$i]['balance'] = max(0, round($remaining, 2));
+            }
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////       
+
+
         /* -------------------------------------------------------
              5. TOTAL PAYABLE
         ---------------------------------------------------------*/

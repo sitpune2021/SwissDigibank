@@ -94,4 +94,8 @@ class Promotor extends Model
     {
         return $this->hasMany(KycDocument::class, 'promoter_id');
     }
+    public function latestShare()
+    {
+        return $this->hasOne(ShareHolding::class, 'promotor_id')->latest();
+    }
 }
