@@ -222,6 +222,7 @@ class DdsAccountsController extends Controller
             $ddsAccount->branch_id = $request->branch_id;
             $ddsAccount->scheme_id = $request->scheme_id;
             $ddsAccount->dd_amount = $request->dd_amount;
+            $ddsAccount->balance = $ddsAccount->dd_amount;
             $ddsAccount->open_date = $request->open_date;
             // $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
             $ddsAccount->account_type = $request->account_type; // ✅ FIXED
